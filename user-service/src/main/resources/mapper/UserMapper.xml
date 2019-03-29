@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.user.mapper.UserMapper">
+    <resultMap id="userResultMap" type="com.github.tangyi.user.api.module.User">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="salt" property="salt"/>
+        <result column="phone" property="phone"/>
+        <result column="avatar" property="avatar"/>
+        <result column="avatar_id" property="avatarId"/>
+        <result column="email" property="email"/>
+        <result column="sex" property="sex"/>
+        <result column="born" property="born"/>
+        <result column="remark" property="remark"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="status" property="status"/>
+        <result column="creator" property="creator"/>
+        <result column="create_date" property="createDate"/>
+        <result column="modifier" property="modifier"/>
+        <result column="modify_date" property="modifyDate"/>
+        <result column="del_flag" property="delFlag"/>
+        <result column="application_code" property="applicationCode"/>
+    </resultMap>
+
+    <resultMap id="userVoResultMap" type="com.github.tangyi.common.core.vo.UserVo">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="salt" property="salt"/>
+        <result column="phone" property="phone"/>
+        <result column="avatar" property="avatar"/>
+        <result column="avatar_id" property="avatarId"/>
+        <result column="email" property="email"/>
+        <result column="sex" property="sex"/>
+        <result column="born" property="born"/>
+        <result column="remark" property="remark"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="status" property="status"/>
+        <result column="ucreator" property="creator"/>
+        <result column="ucreate_date" property="createDate"/>
+        <result column="umodifier" property="modifier"/>
+        <result column="umodify_date" property="modifyDate"/>
+        <result column="udel_flag" property="delFlag"/>
+        <result column="uapplication_code" property="applicationCode"/>
+        <collection property="roleList" ofType="com.github.tangyi.common.core.vo.Role">
+            <id column="roleId" property="id"/>
+            <result column="role_name" property="roleName"/>
+            <result column="role_code" property="roleCode"/>
+            <result column="role_desc" property="roleDesc"/>
+            <result column="rcreator" property="creator"/>
+            <result column="rcreate_date" property="createDate"/>
+            <result column="rmodifier" property="modifier"/>
+            <result column="rmodify_date" property="modifyDate"/>
+            <result column="rdel_flag" property="delFlag"/>
+            <result column="rapplication_code" property="applicationCode"/>
+        </collection>
+    </resultMap>
+
+    <sql id="userColumns">
+        a.id as "id",
+        a.name,
+        a.username,
+        a.password,
+        a.salt,
+        a.phone,
+        a.avatar,
+        a.avatar_id,
+        a.email,
+        a.sex,
+        a.born,
+        a.remark,
+        a.dept_id,
+        a.status,
+        a.creator,
+        a.create_date,
+        a.modifier,
+        a.modify_date,
+        a.del_flag,
+        a.application_code
+    </sql>
+
+    <!-- where 条件 -->
+    <sql id="whereColumnList">
+        <if test="name != null and name != ''">
+            and a.name like CONCAT('%', #{username},'%')
+        </if>
+        <if test="username != null and username != ''">
+            and a.username like #{username}
+        </if>
+        <if test="born != null and born != '' ">
+            and a.born like #{born}
+        </if>
+        <if test="phone != null and phone != ''">
+            and a.phone like #{phone}
+        </if>
+        <if test="email != null and email != ''">
+            and a.email = #{email}
+        </if>
+        <if test="status != null and status != ''">
+            and a.status = #{status}
+        </if>
+    </sql>
+
+    <sql id="selectUserVo">
+      SELECT
+        `user`.id,
+        `user`.name,
+        `user`.username,
+        `user`.password,
+        `user`.salt,
+        `user`.phone,
+        `user`.avatar,
+        `user`.avatar_id,
+        `user`.email,
+        `user`.sex,
+        `user`.born,
+        `user`.remark,
+        `user`.dept_id,
+        `user`.status,
+        `user`.creator as "ucreator",
+        `user`.create_date as "ucreate_date",
+        `user`.modifier as "umodifier",
+        `user`.modify_date as "umodify_date",
+        `user`.del_flag as "udel_flag",
+        `user`.application_code as "uapplication_code",
+        r.id as "roleId",
+        r.role_name,
+        r.role_code,
+        r.role_desc,
+        r.creator as "rcreator",
+        r.create_date as "rcreate_date",
+        r.modifier as "rmodifier",
+        r.modify_date as "rmodify_date",
+        r.del_flag as "rdel_flag",
+        r.application_code as "rapplication_code"
+        FROM
+        sys_user  as `user`
+        LEFT JOIN sys_user_role ur ON ur.user_id = `user`.id
+        LEFT JOIN sys_role r ON r.id = ur.role_id
+    </sql>
+
+    <select id="selectUserVoByUsername" resultMap="userVoResultMap">
+        <include refid="selectUserVo"/>
+        WHERE `user`.username = #{username}
+    </select>
+
+    <select id="get" resultMap="userResultMap">
+        SELECT
+        <include refid="userColumns"/>
+        FROM sys_user a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultMap="userResultMap">
+        SELECT
+        <include refid="userColumns"/>
+        FROM sys_user  a
+        WHERE a.del_flag = 0
+        <include refid="whereColumnList"/>
+    </select>
+
+    <select id="findListById" resultMap="userResultMap">
+        SELECT
+        <include refid="userColumns"/>
+        FROM sys_user  a
+        WHERE a.id IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <!-- 新增用户 -->
+    <insert id="insert">
+        insert  into sys_user (
+            id,
+            name,
+            username,
+            password,
+            salt,
+            phone,
+            avatar,
+            avatar_id,
+            email,
+            sex,
+            born,
+            remark,
+            dept_id,
+            status,
+            creator,
+            create_date,
+            modifier,
+            modify_date,
+            del_flag,
+            application_code
+        ) values (
+            #{id},
+            #{name},
+            #{username},
+            #{password},
+            #{salt},
+            #{phone},
+            #{avatar},
+            #{avatarId},
+            #{email},
+            #{sex},
+            #{born},
+            #{remark},
+            #{deptId},
+            #{status},
+            #{creator},
+            #{createDate},
+            #{modifier},
+            #{modifyDate},
+            #{delFlag},
+            #{applicationCode}
+        );
+    </insert>
+
+    <!-- 更新用户 -->
+    <update id="update">
+        update sys_user set
+        <if test="name != null">
+            name = #{name} ,
+        </if>
+        <if test="username != null">
+            username = #{username} ,
+        </if>
+        <if test="password != null">
+            password = #{password} ,
+        </if>
+        <if test="salt != null">
+            salt = #{salt} ,
+        </if>
+        <if test="phone != null">
+            phone = #{phone} ,
+        </if>
+        <if test="avatar != null">
+            avatar = #{avatar} ,
+        </if>
+        <if test="avatarId != null">
+            avatar_id = #{avatarId} ,
+        </if>
+        <if test="email != null">
+            email = #{email} ,
+        </if>
+        <if test="sex != null">
+            sex = #{sex} ,
+        </if>
+        <if test="born != null">
+            born = #{born} ,
+        </if>
+        <if test="remark != null">
+            remark = #{remark} ,
+        </if>
+        <if test="deptId != null">
+            dept_id = #{deptId} ,
+        </if>
+        <if test="status != null">
+            status = #{status} ,
+        </if>
+        <if test="creator != null">
+            creator = #{creator} ,
+        </if>
+        <if test="createDate != null">
+            create_date = #{createDate} ,
+        </if>
+        <if test="delFlag != null">
+            del_flag = #{delFlag} ,
+        </if>
+        <if test="applicationCode != null">
+            application_code = #{applicationCode} ,
+        </if>
+        modifier = #{modifier} ,
+        modify_date = #{modifyDate}
+        where id = #{id}
+    </update>
+
+    <update id="delete">
+        update sys_user set
+        del_flag = 1,
+        modifier = #{modifier} ,
+        modify_date = #{modifyDate}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAll">
+        update sys_user SET
+        del_flag = 1
+        where id in
+        <foreach item="item" index="index" collection="array" open="("
+                 separator="," close=")"> #{item}
+        </foreach>
+    </delete>
+</mapper>

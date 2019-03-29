@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.exam.mapper.SubjectMapper">
+    <resultMap id="subjectResultMap" type="com.github.tangyi.exam.api.module.Subject">
+        <id column="id" property="id"/>
+        <result column="examination_id" property="examinationId"/>
+        <result column="serial_number" property="serialNumber"/>
+        <result column="subject_name" property="subjectName"/>
+        <result column="type" property="type"/>
+        <result column="content" property="content"/>
+        <result column="option_a" property="optionA"/>
+        <result column="option_b" property="optionB"/>
+        <result column="option_c" property="optionC"/>
+        <result column="option_d" property="optionD"/>
+        <result column="option_e" property="optionE"/>
+        <result column="option_f" property="optionF"/>
+        <result column="answer" property="answer"/>
+        <result column="score" property="score"/>
+        <result column="analysis" property="analysis"/>
+        <result column="level" property="level"/>
+        <result column="creator" property="creator"/>
+        <result column="create_date" property="createDate"/>
+        <result column="modifier" property="modifier"/>
+        <result column="modify_date" property="modifyDate"/>
+        <result column="del_flag" property="delFlag"/>
+        <result column="application_code" property="applicationCode"/>
+    </resultMap>
+
+    <sql id="subjectColumns">
+        a.id as "id",
+        a.examination_id,
+        a.serial_number,
+        a.subject_name,
+        a.type,
+        a.content,
+        a.option_a,
+        a.option_b,
+        a.option_c,
+        a.option_d,
+        a.option_e,
+        a.option_f,
+        a.answer,
+        a.score,
+        a.analysis,
+        a.level,
+        a.creator,
+        a.create_date,
+        a.modifier,
+        a.modify_date,
+        a.del_flag,
+        a.application_code
+    </sql>
+
+    <!-- where 条件 -->
+    <sql id="whereColumnList">
+        <if test="examinationId != null and examinationId != ''">
+            and a.examination_id = #{examinationId}
+        </if>
+        <if test="serialNumber != null and serialNumber != ''">
+            and a.serial_number = #{serialNumber}
+        </if>
+        <if test="subjectName != null and subjectName != ''">
+            and a.subject_name like CONCAT('%',#{subjectName},'%')
+        </if>
+    </sql>
+
+    <select id="get" resultMap="subjectResultMap">
+        SELECT
+        <include refid="subjectColumns"/>
+        FROM subject a
+        WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
+    <select id="getByExaminationIdAndSerialNumber" resultMap="subjectResultMap">
+        SELECT
+        <include refid="subjectColumns"/>
+        FROM subject a
+        WHERE a.examination_id = #{examinationId} and a.serial_number = #{serialNumber} and a.del_flag = 0
+    </select>
+
+    <select id="getExaminationTotalSubject" resultType="java.lang.Integer">
+        SELECT
+        count(1)
+        FROM subject a
+        WHERE a.examination_id = #{examinationId} and a.del_flag = 0
+    </select>
+
+    <select id="findList" resultMap="subjectResultMap">
+        SELECT
+        <include refid="subjectColumns"/>
+        FROM subject a
+        WHERE a.del_flag = 0
+        <include refid="whereColumnList"/>
+    </select>
+
+    <select id="findListById" resultMap="subjectResultMap">
+        SELECT
+        <include refid="subjectColumns"/>
+        FROM subject a
+        WHERE a.id IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        ORDER BY serial_number ASC
+    </select>
+
+    <insert id="insert">
+        insert  into subject (
+            id,
+            examination_id,
+            serial_number,
+            subject_name,
+            type,
+            content,
+            option_a,
+            option_b,
+            option_c,
+            option_d,
+            option_e,
+            option_f,
+            answer,
+            score,
+            analysis,
+            level,
+            creator,
+            create_date,
+            modifier,
+            modify_date,
+            del_flag,
+            application_code
+        ) values (
+            #{id},
+            #{examinationId},
+            #{serialNumber},
+            #{subjectName},
+            #{type},
+            #{content},
+            #{optionA},
+            #{optionB},
+            #{optionC},
+            #{optionD},
+            #{optionE},
+            #{optionF},
+            #{answer},
+            #{score},
+            #{analysis},
+            #{level},
+            #{creator},
+            #{createDate},
+            #{modifier},
+            #{modifyDate},
+            #{delFlag},
+            #{applicationCode}
+        );
+    </insert>
+
+    <update id="update">
+        UPDATE subject  SET
+        <if test="examinationId != null">
+            examination_id = #{examinationId},
+        </if>
+        <if test="serialNumber != null">
+            serial_number = #{serialNumber},
+        </if>
+        <if test="subjectName != null">
+            subject_name = #{subjectName},
+        </if>
+        <if test="type != null">
+            type = #{type},
+        </if>
+        <if test="content != null">
+            content = #{content},
+        </if>
+        <if test="optionA != null">
+            option_a = #{optionA},
+        </if>
+        <if test="optionB != null">
+            option_b = #{optionB},
+        </if>
+        <if test="optionC != null">
+            option_c = #{optionC},
+        </if>
+        <if test="optionD != null">
+            option_d = #{optionD},
+        </if>
+        <if test="optionE != null">
+            option_e = #{optionE},
+        </if>
+        <if test="optionF != null">
+            option_f = #{optionF},
+        </if>
+        <if test="answer != null">
+            answer = #{answer},
+        </if>
+        <if test="score != null">
+            score = #{score},
+        </if>
+        <if test="analysis != null">
+            analysis = #{analysis},
+        </if>
+        <if test="level != null">
+            level = #{level},
+        </if>
+        <if test="delFlag != null">
+            del_flag = #{delFlag},
+        </if>
+        modifier = #{modifier},
+        modify_date = #{modifyDate}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        UPDATE subject SET
+			del_flag = 1
+		WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteAll">
+        UPDATE subject SET
+        del_flag = 1
+        WHERE id in
+        <foreach item="item" index="index" collection="array" open="("
+                 separator="," close=")"> #{item}
+        </foreach>
+    </delete>
+</mapper>

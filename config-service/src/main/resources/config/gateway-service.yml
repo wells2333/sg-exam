@@ -1,0 +1,87 @@
+server:
+  port: 8000
+spring:
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+  boot:
+    admin:
+      client:
+        url: http://${ADMIN_HOST:localhost}:${ADMIN_PORT:8085}/admin
+        username: ${ADMIN_USERNAME:admin}
+        password: ${ADMIN_PASSWORD:11}
+      instance:
+        service-base-url: http://localhost:${server.port}
+  # sleuth 配置
+  sleuth:
+    web:
+      client:
+        enabled: true
+    sampler:
+      probability: 1.0 # 采样比例为: 0.1(即10%),设置的值介于0.0到1.0之间，1.0则表示全部采集。
+  # zipkin 配置
+  zipkin:
+    base-url: http://localhost:9411  # 指定了Zipkin服务器的地址
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=2
+            - RemoveRequestHeader=Cookie, Set-Cookie
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - StripPrefix=2
+            - RemoveRequestHeader=Cookie, Set-Cookie
+        - id: exam-service
+          uri: lb://exam-service
+          predicates:
+            - Path=/api/exam/**
+          filters:
+            - StripPrefix=2
+            - RemoveRequestHeader=Cookie, Set-Cookie
+
+security:
+  encode:
+    key: '1234567887654321'
+
+feign:
+  hystrix:
+    enabled:  true
+
+# hystrix配置
+hystrix:
+  shareSecurityContext: true
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
+          strategy: SEMAPHORE             # 隔离策略，解决RequestContextHolder.getRequestAttributes()问题
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+# 提供swagger文档的服务
+swagger:
+  providers:
+    - user-service
+    - exam-service
+
+logging:
+  level:
+    root: info
+    com.github.tangyi: debug

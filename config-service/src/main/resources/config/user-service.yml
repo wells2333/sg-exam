@@ -1,0 +1,126 @@
+server:
+  port: 8082
+spring:
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:192.168.0.144}:${MYSQL_PORT:3306}/microservice-user?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: ${MYSQL_USERNAME:platform}
+    password: ${MYSQL_PASSWORD:11}
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+  boot:
+    admin:
+      client:
+        url: http://${ADMIN_HOST:localhost}:${ADMIN_PORT:8085}/admin
+        username: ${ADMIN_USERNAME:admin}
+        password: ${ADMIN_PASSWORD:11}
+      instance:
+        service-base-url: http://localhost:${server.port}
+  # sleuth 配置
+  sleuth:
+    web:
+      client:
+        enabled: true
+    sampler:
+      probability: 1.0 # 采样比例为: 0.1(即10%),设置的值介于0.0到1.0之间，1.0则表示全部采集。
+  # zipkin 配置
+  zipkin:
+    base-url: http://localhost:9411  # 指定了Zipkin服务器的地址
+security:
+  oauth2:
+    client:
+      clientId: spring-microservice-exam-client
+      clientSecret: $2a$10$etIT5xZXGY.g8/C.67lvX.N2PyvbEG1y0gGjATtp7LMsingWcd.1i
+      accessTokenUri: http://${AUTH_SERVICE_HOST:localhost}:${AUTH_SERVICE_PORT:8000}/api/auth/oauth/token
+      grant-type: password
+      scope: read
+    resource:
+      jwt:
+        keyValue: |
+           -----BEGIN PUBLIC KEY-----
+           MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAimUKhvBhsoeSM3HkIOP/Y3RXjvonBlZnLj8oO92TyAKG53lmAoK0wZ5MTZPsfrOz2Z7CeAp6mPhUANX2RUoFwVzG7rJmgWyqGmGFNBmtYL+uVqQ80TzWi5zyzXTxgVMWiCqqw/u4AeE1qhN8chnGwhUBnpgPAPd8v57mIwg0n5JxjdYe7pgHlpvt8ZXTXd1KBxB5K7WjNlCfMf75ZEeBaplxsSfJUwKbnHQKWcY3NnpjkVR8y4jviAbkOHmGMaliM7fcsLzbosBUPDQuNlvYdjPBRfH6MMPeXRW6On3u0Um9wIYmkQS+AEgHCq4UuLOnTTqqxnGkwFYeMAAXmRyMtQIDAQAB
+           -----END PUBLIC KEY-----
+
+mybatis:
+  mapperLocations: classpath:mapper/*.xml
+  configLocation: classpath:/mybatis-config.xml
+pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
+
+# ===================================================================
+# 分布式文件系统FDFS配置
+# ===================================================================
+fdfs:
+  so-timeout: 1501
+  connect-timeout: 601
+  thumb-image:             #缩略图生成参数
+    width: 150
+    height: 150
+  tracker-list:            #TrackerList参数,支持多个
+    - ${FDFS_HOST:192.168.0.95}:${FDFS_PORT:22122}
+
+# 系统配置
+sys:
+  fdfsHttpHost: ${ATTACHMENT_HOST:http://192.168.0.95}:${ATTACHMENT_PORT:80}  # fastDfs的HTTP配置
+  uploadUrl: api/user/v1/attachment/upload
+  defaultAvatar: https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80
+
+feign:
+  hystrix:
+    enabled:  true
+
+# hystrix配置
+hystrix:
+  shareSecurityContext: true
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+ignore:
+  urls:
+    - /
+    - /error
+    - /favicon.ico
+    - /**/*swagger*/**
+    - /v2/api-docs
+    - /csrf
+    - /actuator/**
+    - /hystrix.stream
+    - /v1/user/findUserByUsername/**
+    - /v1/code/**
+    - /v1/attachment/download
+    - /v1/log/**
+    - /authentication/**
+    - /**/*.css
+    - /**/*.js
+    - /social
+    - /signin
+    - /signup
+    - /info
+    - /health
+    - /metrics/**
+    - /loggers/**
+    - /mobile/token
+
+
+logging:
+  level:
+    root: info
+    com.github.tangyi: debug
