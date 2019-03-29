@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.user.mapper.DeptMapper">
+    <resultMap id="deptResultMap" type="com.github.tangyi.user.api.module.Dept">
+        <id column="id" property="id"/>
+        <result column="dept_name" property="deptName"/>
+        <result column="dept_desc" property="deptDesc"/>
+        <result column="dept_leader" property="deptLeader"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="sort" property="sort"/>
+        <result column="status" property="status"/>
+        <result column="creator" property="creator"/>
+        <result column="create_date" property="createDate"/>
+        <result column="modifier" property="modifier"/>
+        <result column="modify_date" property="modifyDate"/>
+        <result column="del_flag" property="delFlag"/>
+        <result column="application_code" property="applicationCode"/>
+    </resultMap>
+
+    <sql id="deptColumns">
+        a.id as "id",
+        a.dept_name,
+        a.dept_desc,
+        a.dept_leader,
+        a.parent_id,
+        a.sort,
+        a.status,
+        a.creator,
+        a.create_date,
+        a.modifier,
+        a.modify_date,
+        a.del_flag,
+        a.application_code
+    </sql>
+
+    <!-- where 条件 -->
+    <sql id="whereColumnList">
+        <if test="deptName != null and deptName != ''">
+            and a.dept_name like #{deptName}
+        </if>
+    </sql>
+
+    <select id="get" resultMap="deptResultMap">
+        SELECT
+        <include refid="deptColumns"/>
+        FROM sys_dept a
+        WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
+    <select id="findList" resultMap="deptResultMap">
+        SELECT
+        <include refid="deptColumns"/>
+        FROM sys_dept a
+        WHERE a.del_flag = 0
+        <include refid="whereColumnList"/>
+    </select>
+
+    <select id="findListById" resultMap="deptResultMap">
+        SELECT
+        <include refid="deptColumns"/>
+        FROM sys_dept a
+        WHERE a.id IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <insert id="insert">
+        INSERT  INTO sys_dept (
+            id,
+            dept_name,
+            dept_desc,
+            dept_leader,
+            parent_id,
+            sort,
+            status,
+            creator,
+            create_date,
+            modifier,
+            modify_date,
+            del_flag,
+            application_code
+        ) VALUES (
+            #{id},
+            #{deptName},
+            #{deptDesc},
+            #{deptLeader},
+            #{parentId},
+            #{sort},
+            #{status},
+            #{creator},
+            #{createDate},
+            #{modifier},
+            #{modifyDate},
+            #{delFlag},
+            #{applicationCode}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE sys_dept SET
+        <if test="deptName != null">
+            dept_name = #{deptName},
+        </if>
+        <if test="deptDesc != null">
+            dept_desc = #{deptDesc},
+        </if>
+        <if test="deptLeader != null">
+            dept_leader = #{deptLeader},
+        </if>
+        <if test="sort != null">
+            sort = #{sort},
+        </if>
+        <if test="status != null">
+            status = #{status},
+        </if>
+        <if test="delFlag != null">
+            del_flag = #{delFlag},
+        </if>
+        modifier = #{modifier},
+        modify_date = #{modifyDate}
+        WHERE
+        <if test="id != null">
+            id = #{id}
+        </if>
+        <if test="parentId != null">
+            and parent_id = #{parentId}
+        </if>
+    </update>
+
+    <delete id="delete">
+        UPDATE sys_dept SET
+        DEL_FLAG = 1
+        WHERE ID = #{id}
+    </delete>
+</mapper>

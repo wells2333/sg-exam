@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.github.tangyi</groupId>
+    <artifactId>spring-microservice-exam</artifactId>
+    <version>2.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>spring-microservice-exam</name>
+    <description>微服务在线考试系统</description>
+    <url>https://gitee.com/wells2333/spring-micoservices-exam.git</url>
+    <developers>
+        <developer>
+            <name>tangyi</name>
+            <email>1633736729@qq.com</email>
+            <url>https://gitee.com/wells2333</url>
+        </developer>
+    </developers>
+
+    <modules>
+        <module>config-service</module>
+        <module>gateway-service</module>
+        <module>auth-service</module>
+        <module>user-service</module>
+        <module>exam-service</module>
+        <module>common</module>
+        <module>monitor-service</module>
+        <module>service-api</module>
+        <module>zipkin-service</module>
+    </modules>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.3.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <properties>
+        <!-- 编译 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <!-- spring boot、spring cloud -->
+        <spring-boot.version>2.1.3.RELEASE</spring-boot.version>
+        <spring-cloud.version>Greenwich.SR1</spring-cloud.version>
+        <security.auth.version>2.3.5.RELEASE</security.auth.version>
+        <spring-boot-devtools.version>2.0.4.RELEASE</spring-boot-devtools.version>
+        <spring-boot-admin.version>2.1.3</spring-boot-admin.version>
+        <spring-cloud-sleuth.version>2.1.0.RELEASE</spring-cloud-sleuth.version>
+        <!--<spring-boot-devtools.version>2.0.4.RELEASE</spring-boot-devtools.version>-->
+        <zipkin.version>2.11.3</zipkin.version>
+        <swagger.version>2.9.2</swagger.version>
+        <driud.version>1.1.4</driud.version>
+        <fastdfs-client.version>1.26.5</fastdfs-client.version>
+
+        <!-- common-->
+        <commons-io.version>2.6</commons-io.version>
+        <commons-lang3.version>3.7</commons-lang3.version>
+        <commons-collections4.version>4.0</commons-collections4.version>
+        <commons-beanutils.version>1.9.2</commons-beanutils.version>
+
+        <!-- 其它依赖 -->
+        <hibernate-validator.version>6.0.14.Final</hibernate-validator.version>
+        <mybatis.version>1.1.1</mybatis.version>
+        <pagehelper.version>1.2.3</pagehelper.version>
+        <poi.version>3.9</poi.version>
+        <xmlbeans.version>2.3.0</xmlbeans.version>
+        <hutool.version>4.5.0</hutool.version>
+        <jasypt.version>1.18</jasypt.version>
+        <kaptcha.version>0.0.9</kaptcha.version>
+    </properties>
+
+    <dependencies>
+        <!-- spring boot test-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- 服务注册、发现 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-consul-discovery</artifactId>
+        </dependency>
+
+        <!-- hystrix 断路器 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+        </dependency>
+
+        <!-- 暴露指标 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- spring cloud bus -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bus-amqp</artifactId>
+        </dependency>
+
+        <!-- sleuth -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-sleuth</artifactId>
+        </dependency>
+
+        <!-- zipkin -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-zipkin</artifactId>
+        </dependency>
+
+        <!-- spring boot hot dev,WTF：在spring boot 2.1.3中依赖的是2.1.3的devtools,但是会导致启动失败，试了只要是2.1.x都会失败，只有换到devtools2.0.x才好-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+        </dependency>
+    </dependencies>
+
+    <!-- spring cloud base -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- common-core -->
+            <dependency>
+                <groupId>com.github.tangyi</groupId>
+                <artifactId>common-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- common-security -->
+            <dependency>
+                <groupId>com.github.tangyi</groupId>
+                <artifactId>common-security</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- common-feign -->
+            <dependency>
+                <groupId>com.github.tangyi</groupId>
+                <artifactId>common-feign</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- common-log -->
+            <dependency>
+                <groupId>com.github.tangyi</groupId>
+                <artifactId>common-log</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- user-api -->
+            <dependency>
+                <groupId>com.github.tangyi</groupId>
+                <artifactId>user-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- exam-api -->
+            <dependency>
+                <groupId>com.github.tangyi</groupId>
+                <artifactId>exam-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- 管理中心插件  -->
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-starter-server</artifactId>
+                <version>${spring-boot-admin.version}</version>
+            </dependency>
+
+            <!-- 管理中心插件 -->
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-starter-client</artifactId>
+                <version>${spring-boot-admin.version}</version>
+            </dependency>
+
+            <!-- swagger -->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+        </repository>
+    </repositories>
+
+</project>

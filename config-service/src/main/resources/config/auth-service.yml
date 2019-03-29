@@ -1,0 +1,93 @@
+server:
+  port: 8081
+spring:
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+  boot:
+    admin:
+      client:
+        url: http://${ADMIN_HOST:localhost}:${ADMIN_PORT:8085}/admin
+        username: ${ADMIN_USERNAME:admin}
+        password: ${ADMIN_PASSWORD:11}
+      instance:
+        service-base-url: http://localhost:${server.port}
+  # sleuth 配置
+  sleuth:
+    web:
+      client:
+        enabled: true
+    sampler:
+      probability: 1.0 # 采样比例为: 0.1(即10%),设置的值介于0.0到1.0之间，1.0则表示全部采集。
+  # zipkin 配置
+  zipkin:
+    base-url: http://localhost:9411  # 指定了Zipkin服务器的地址
+
+security:
+  properties:
+    client-id: spring-microservice-exam-client
+    # spring-microservice-exam-secret
+    client-secret: $2a$10$etIT5xZXGY.g8/C.67lvX.N2PyvbEG1y0gGjATtp7LMsingWcd.1i
+    grant-type-password: password
+    authorization-code: authorization_code
+    refresh-token: refresh_token
+    implicit: implicit
+    scope-read: read
+    scope-write: write
+    trust: trust
+    access-token-validity-seconds: 3600 # access_token有效时间
+    refresh-token-validity-seconds: 21600 # refresh_token有效时间
+
+feign:
+  hystrix:
+    enabled:  true
+
+# hystrix配置
+hystrix:
+  shareSecurityContext: true
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+ignore:
+  urls:
+    - /
+    - /error
+    - /favicon.ico
+    - /**/*swagger*/**
+    - /v2/api-docs
+    - /csrf
+    - /actuator/**
+    - /hystrix.stream
+    - /v1/user/findUserByUsername/**
+    - /v1/code/**
+    - /v1/attachment/download
+    - /v1/log/**
+    - /authentication/**
+    - /**/*.css
+    - /**/*.js
+    - /social
+    - /signin
+    - /signup
+    - /info
+    - /health
+    - /metrics/**
+    - /loggers/**
+    - /mobile/token
+
+logging:
+  level:
+    root: info
+    com.github.tangyi: debug

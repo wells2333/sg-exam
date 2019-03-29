@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.exam.mapper.IncorrectAnswerMapper">
+    <resultMap id="incorrectAnswerResultMap" type="com.github.tangyi.exam.api.module.IncorrectAnswer">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="examination_id" property="examinationId"/>
+        <result column="exam_record_id" property="examRecordId"/>
+        <result column="subject_id" property="subjectId"/>
+        <result column="serial_number" property="serialNumber"/>
+        <result column="incorrect_answer" property="incorrectAnswer"/>
+        <result column="creator" property="creator"/>
+        <result column="create_date" property="createDate"/>
+        <result column="modifier" property="modifier"/>
+        <result column="modify_date" property="modifyDate"/>
+        <result column="del_flag" property="delFlag"/>
+        <result column="application_code" property="applicationCode"/>
+    </resultMap>
+
+    <sql id="incorrectAnswerColumns">
+        a.id as "id",
+        a.user_id,
+        a.examination_id,
+        a.exam_record_id,
+        a.subject_id,
+        a.serial_number,
+        a.incorrect_answer,
+        a.creator,
+        a.create_date,
+        a.modifier,
+        a.modify_date,
+        a.del_flag,
+        a.application_code
+    </sql>
+
+    <!-- where 条件 -->
+    <sql id="whereColumnList">
+        <if test="userId != null and userId != ''">
+            and a.user_id = #{userId}
+        </if>
+        <if test="examinationId != null and examinationId != ''">
+            and a.examination_id = #{examinationId}
+        </if>
+        <if test="examRecordId != null and examRecordId != ''">
+            and a.exam_record_id = #{examRecordId}
+        </if>
+        <if test="serialNumber != null and serialNumber != ''">
+            and a.serial_number = #{serialNumber}
+        </if>
+    </sql>
+
+    <select id="get" resultMap="incorrectAnswerResultMap">
+        SELECT
+        <include refid="incorrectAnswerColumns"/>
+        FROM incorrect_answer a
+        WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
+    <select id="findList" resultMap="incorrectAnswerResultMap">
+        SELECT
+        <include refid="incorrectAnswerColumns"/>
+        FROM incorrect_answer a
+        WHERE a.del_flag = 0
+        <include refid="whereColumnList"/>
+    </select>
+
+    <insert id="insert">
+        insert  into incorrect_answer (
+            id,
+            user_id,
+            examination_id,
+            exam_record_id,
+            subject_id,
+            serial_number,
+            incorrect_answer,
+            creator,
+            create_date,
+            modifier,
+            modify_date,
+            del_flag,
+            application_code
+        ) values (
+            #{id},
+            #{userId},
+            #{examinationId},
+            #{examRecordId},
+            #{subjectId},
+            #{serialNumber},
+            #{incorrectAnswer},
+            #{creator},
+            #{createDate},
+            #{modifier},
+            #{modifyDate},
+            #{delFlag},
+            #{applicationCode}
+        );
+    </insert>
+
+    <!-- 批量插入 -->
+    <insert id="insertBatch">
+        insert into incorrect_answer (
+        id,
+        user_id,
+        examination_id,
+        exam_record_id,
+        subject_id,
+        serial_number,
+        incorrect_answer,
+        creator,
+        create_date,
+        modifier,
+        modify_date,
+        del_flag,
+        application_code
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},
+            #{item.userId},
+            #{item.examinationId},
+            #{item.examRecordId},
+            #{item.subjectId},
+            #{item.serialNumber},
+            #{item.incorrectAnswer},
+            #{item.creator},
+            #{item.createDate},
+            #{item.modifier},
+            #{item.modifyDate},
+            #{item.delFlag},
+            #{item.applicationCode}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="delete">
+        UPDATE incorrect_answer SET
+			del_flag = 1
+		WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByExaminationRecord">
+        UPDATE incorrect_answer SET
+        del_flag = 1
+        WHERE user_id = #{userId} and examination_id = #{examinationId} and exam_record_id = #{id}
+    </delete>
+</mapper>
