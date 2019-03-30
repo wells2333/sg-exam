@@ -1,3 +1,7 @@
+## spring-microservice-exam
+
+交流QQ群：996208878
+
 ## 简介
 
 重写[spring-cloud-online-exam](https://gitee.com/wells2333/spring-cloud-online-exam)
