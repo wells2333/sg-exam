@@ -1,6 +1,5 @@
 # bootstrap.yml文件中的内容不能放到application.yml中，否则config部分无法被加载
 # 因为config部分的配置先于application.yml被加载，而bootstrap.yml中的配置会先于application.yml加载
-
 server:
   port: 8769
 spring:
@@ -21,3 +20,8 @@ spring:
     consul:
       host: ${CONSUL_HOST:localhost}
       port: ${CONSUL_PORT:8500}
+  rabbitmq:
+    host: ${RABBIT_HOST:localhost}
+    port: ${RABBIT_PORT:5672}
+    username: guest
+    password: guest
