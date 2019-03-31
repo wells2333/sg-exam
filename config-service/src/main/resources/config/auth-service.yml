@@ -8,7 +8,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.jdbc.Driver
   redis:
-    host: ${REDIS_HOST:localhost}
+    host: ${REDIS_HOST:192.168.0.213}
     port: ${REDIS_PORT:6379}
   rabbitmq:
     host: ${RABBIT_HOST:localhost}

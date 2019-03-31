@@ -2,7 +2,7 @@ server:
   port: 8000
 spring:
   redis:
-    host: ${REDIS_HOST:localhost}
+    host: ${REDIS_HOST:192.168.0.213}
     port: ${REDIS_PORT:6379}
   boot:
     admin:
