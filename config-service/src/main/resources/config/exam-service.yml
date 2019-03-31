@@ -10,14 +10,19 @@ spring:
   redis:
     host: ${REDIS_HOST:localhost}
     port: ${REDIS_PORT:6379}
+  rabbitmq:
+    host: ${RABBIT_HOST:localhost}
+    port: ${RABBIT_PORT:5672}
+    username: guest
+    password: guest
   boot:
     admin:
       client:
         url: http://${ADMIN_HOST:localhost}:${ADMIN_PORT:8085}/admin
         username: ${ADMIN_USERNAME:admin}
         password: ${ADMIN_PASSWORD:11}
-    instance:
-      service-base-url: http://localhost:${server.port}
+        instance:
+          service-base-url: http://localhost:${server.port}
   # sleuth 配置
   sleuth:
     web:
@@ -31,8 +36,8 @@ spring:
 security:
   oauth2:
     client:
-      clientId: spring-microservice-exam-client
-      clientSecret: $2a$10$etIT5xZXGY.g8/C.67lvX.N2PyvbEG1y0gGjATtp7LMsingWcd.1i
+      clientId: web_app
+      clientSecret: $2a$10$S84wOzmAw4wqYBzAqNtmPOx1ZRWdDl9omm/W8T1hhW8S9EK2u57xG
       accessTokenUri: http://${AUTH_SERVICE_HOST:localhost}:${AUTH_SERVICE_PORT:8000}/api/auth/oauth/token
       grant-type: password
       scope: read

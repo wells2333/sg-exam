@@ -10,8 +10,8 @@ spring:
         url: http://${ADMIN_HOST:localhost}:${ADMIN_PORT:8085}/admin
         username: ${ADMIN_USERNAME:admin}
         password: ${ADMIN_PASSWORD:11}
-      instance:
-        service-base-url: http://localhost:${server.port}
+        instance:
+          service-base-url: http://localhost:${server.port}
   # sleuth 配置
   sleuth:
     web:
@@ -80,6 +80,7 @@ swagger:
   providers:
     - user-service
     - exam-service
+    - auth-service
 
 logging:
   level:

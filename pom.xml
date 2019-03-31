@@ -23,12 +23,10 @@
     <modules>
         <module>config-service</module>
         <module>gateway-service</module>
-        <module>auth-service</module>
-        <module>user-service</module>
-        <module>exam-service</module>
         <module>common</module>
         <module>monitor-service</module>
         <module>service-api</module>
+        <module>service-api-impl</module>
         <module>zipkin-service</module>
     </modules>
 
@@ -58,7 +56,7 @@
         <swagger.version>2.9.2</swagger.version>
         <driud.version>1.1.4</driud.version>
         <fastdfs-client.version>1.26.5</fastdfs-client.version>
-
+        <mysql.connector.version>8.0.13</mysql.connector.version>
         <!-- common-->
         <commons-io.version>2.6</commons-io.version>
         <commons-lang3.version>3.7</commons-lang3.version>
@@ -180,6 +178,13 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <!-- auth-api -->
+            <dependency>
+                <groupId>com.github.tangyi</groupId>
+                <artifactId>auth-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <!-- exam-api -->
             <dependency>
                 <groupId>com.github.tangyi</groupId>
@@ -212,6 +217,41 @@
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger-ui</artifactId>
                 <version>${swagger.version}</version>
+            </dependency>
+
+            <!--MySQL-->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.connector.version}</version>
+            </dependency>
+
+            <!-- druid阿里巴巴数据库连接池 -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>${driud.version}</version>
+            </dependency>
+
+            <!-- mybatis -->
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>${mybatis.version}</version>
+            </dependency>
+
+            <!--fastDfs-->
+            <dependency>
+                <groupId>com.github.tobato</groupId>
+                <artifactId>fastdfs-client</artifactId>
+                <version>${fastdfs-client.version}</version>
+            </dependency>
+
+            <!-- 验证码 -->
+            <dependency>
+                <groupId>com.github.axet</groupId>
+                <artifactId>kaptcha</artifactId>
+                <version>${kaptcha.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -15,5 +15,6 @@
     <modules>
         <module>user-api</module>
         <module>exam-api</module>
+        <module>auth-api</module>
     </modules>
 </project>

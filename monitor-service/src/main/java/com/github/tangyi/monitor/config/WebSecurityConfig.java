@@ -27,6 +27,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         successHandler.setAlwaysUseDefaultTargetUrl(true);
         successHandler.setDefaultTargetUrl(adminContextPath + "/");
 
+        // 解决spring boot不允许加载iframe问题
+        http.headers().frameOptions().disable();
+
         http.authorizeRequests()
                 .antMatchers("/actuator/**", "/hystrix/**","/hystrix","*.stream").permitAll()
                 .antMatchers(adminContextPath + "/assets/**").permitAll()
