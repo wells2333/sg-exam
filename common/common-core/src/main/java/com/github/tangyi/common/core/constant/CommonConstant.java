@@ -122,5 +122,10 @@ public class CommonConstant {
      * 参数校验失败
      */
     public static final String IllEGAL_ARGUMENT = "参数校验失败！";
+
+    /**
+     * 保存code的前缀
+     */
+    public static final String DEFAULT_CODE_KEY = "DEFAULT_CODE_KEY";
 }
 

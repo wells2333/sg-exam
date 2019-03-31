@@ -1,7 +1,7 @@
 package com.github.tangyi.gateway.filters;
 
 import cn.hutool.core.util.StrUtil;
-import com.github.tangyi.common.core.constant.SecurityConstant;
+import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.exceptions.InvalidValidateCodeException;
 import com.github.tangyi.common.core.exceptions.ValidateCodeExpiredException;
 import com.github.tangyi.gateway.constants.GatewayConstant;
@@ -74,7 +74,7 @@ public class ValidateCodeFilter implements GlobalFilter, Ordered {
         String randomStr = params.getFirst("randomStr");
         if (StrUtil.isBlank(randomStr))
             randomStr = params.getFirst("mobile");
-        String key = SecurityConstant.DEFAULT_CODE_KEY + randomStr;
+        String key = CommonConstant.DEFAULT_CODE_KEY + randomStr;
         // 验证码过期
         if (!redisTemplate.hasKey(key))
             throw new ValidateCodeExpiredException(EXPIRED_ERROR);

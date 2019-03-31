@@ -28,36 +28,71 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
 
     private Throwable throwable;
 
+    /**
+     * 根据用户名查询用户信息
+     *
+     * @param username username
+     * @return UserVo
+     */
     @Override
     public UserVo findUserByUsername(String username) {
         logger.error("feign 查询用户信息失败:{},{}", username, throwable);
         return null;
     }
 
+    /**
+     * 查询当前登录的用户信息
+     *
+     * @return ResponseBean
+     */
     @Override
     public ResponseBean<UserInfoDto> info() {
         logger.error("feign 查询用户信息失败:{},{}", throwable);
         return null;
     }
 
+    /**
+     * 根据用户ID批量查询用户信息
+     *
+     * @param userVo userVo
+     * @return ResponseBean
+     */
     @Override
     public ResponseBean<List<UserVo>> findUserById(@RequestBody UserVo userVo) {
         logger.error("调用{}异常:{},{}", "findById", userVo, throwable);
         return null;
     }
 
+    /**
+     * 根据部门ID批量查询部门信息
+     *
+     * @param deptVo deptVo
+     * @return ResponseBean
+     */
     @Override
     public ResponseBean<List<DeptVo>> findDeptById(@RequestBody DeptVo deptVo) {
         logger.error("调用{}异常:{},{}", "findById", deptVo, throwable);
         return null;
     }
 
+    /**
+     * 根据附件ID删除附件
+     *
+     * @param id id
+     * @return ResponseBean
+     */
     @Override
     public ResponseBean<Boolean> deleteAttachment(String id) {
         logger.error("调用{}异常:{},{}", "delete", id, throwable);
         return new ResponseBean<>(Boolean.FALSE);
     }
 
+    /**
+     * 根据附件ID批量查询附件信息
+     *
+     * @param attachmentVo attachmentVo
+     * @return ResponseBean
+     */
     @Override
     public ResponseBean<List<AttachmentVo>> findAttachmentById(AttachmentVo attachmentVo) {
         logger.error("调用{}异常:{},{}", "findById", attachmentVo, throwable);
@@ -67,7 +102,7 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
     /**
      * 保存日志
      *
-     * @param log
+     * @param log log
      * @return ResponseBean
      */
     @Override

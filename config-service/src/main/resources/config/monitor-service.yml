@@ -17,8 +17,10 @@ spring:
       client:
         enabled: false
         auto-registration: false
-      instance:
-        service-base-url: http://localhost:${server.port}
+        instance:
+          service-base-url: http://localhost:${server.port}
+      discovery:
+        ignored-services: consul  # 或略consul服务
   # sleuth 配置
   sleuth:
     web:
