@@ -15,4 +15,9 @@ public class GatewayConstant {
      * 手机登录URL
      */
     public static final String MOBILE_TOKEN_URL = "/mobile/token";
+
+    /**
+     * 注册
+     */
+    public static final String REGISTER = "/user/register";
 }

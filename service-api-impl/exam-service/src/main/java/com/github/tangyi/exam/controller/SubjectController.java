@@ -6,6 +6,7 @@ import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.*;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
+import com.github.tangyi.common.security.constant.SecurityConstant;
 import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.Answer;
@@ -70,7 +71,6 @@ public class SubjectController extends BaseController {
      * @date 2018/11/10 21:43
      */
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "获取题目信息", notes = "根据题目id获取题目详细信息")
     @ApiImplicitParam(name = "id", value = "题目ID", required = true, dataType = "String", paramType = "path")
     public ResponseBean<Subject> subject(@PathVariable String id) {
@@ -95,19 +95,18 @@ public class SubjectController extends BaseController {
      * @date 2018/11/10 21:43
      */
     @RequestMapping("subjectList")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "获取题目列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "pageNum", value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "pageSize", value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "sort", value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "order", value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.PAGE_SIZE, value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.SORT, value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.ORDER, value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
             @ApiImplicitParam(name = "subject", value = "题目信息", dataType = "Subject")
     })
-    public PageInfo<Subject> subjectList(@RequestParam(value = "pageNum", required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
-                                         @RequestParam(value = "pageSize", required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
-                                         @RequestParam(value = "sort", required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
-                                         @RequestParam(value = "order", required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
+    public PageInfo<Subject> subjectList(@RequestParam(value = CommonConstant.PAGE_NUM, required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
+                                         @RequestParam(value = CommonConstant.PAGE_SIZE, required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
+                                         @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
+                                         @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                          Subject subject) {
         return subjectService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), subject);
     }
@@ -121,7 +120,7 @@ public class SubjectController extends BaseController {
      * @date 2018/11/10 21:43
      */
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('exam:exam:subject:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "创建题目", notes = "创建题目")
     @ApiImplicitParam(name = "subject", value = "题目实体subject", required = true, dataType = "Subject")
     @Log("新增题目")
@@ -149,7 +148,7 @@ public class SubjectController extends BaseController {
      * @date 2018/11/10 21:43
      */
     @PutMapping
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('exam:exam:subject:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "更新题目信息", notes = "根据题目id更新题目的基本信息")
     @ApiImplicitParam(name = "subject", value = "角色实体subject", required = true, dataType = "Subject")
     @Log("更新题目")
@@ -167,7 +166,7 @@ public class SubjectController extends BaseController {
      * @date 2018/11/10 21:43
      */
     @DeleteMapping("{id}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('exam:exam:subject:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "删除题目", notes = "根据ID删除题目")
     @ApiImplicitParam(name = "id", value = "题目ID", required = true, paramType = "path")
     @Log("删除题目")
@@ -202,7 +201,7 @@ public class SubjectController extends BaseController {
      * @date 2018/11/28 12:53
      */
     @PostMapping("/export")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('exam:exam:subject:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "导出题目", notes = "根据分类id导出题目")
     @ApiImplicitParam(name = "subjectDto", value = "题目信息", required = true, dataType = "SubjectDto")
     @Log("导出题目")
@@ -243,7 +242,7 @@ public class SubjectController extends BaseController {
      * @date 2018/11/28 12:59
      */
     @RequestMapping("import")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('exam:exam:subject:import') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "导入题目", notes = "导入题目")
     @ApiImplicitParam(name = "examinationId", value = "考试ID", required = true, dataType = "String")
     @Log("导入题目")
@@ -286,7 +285,7 @@ public class SubjectController extends BaseController {
      * @date 2018/12/04 9:55
      */
     @PostMapping("deleteAll")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('exam:exam:subject:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "批量删除题目", notes = "根据题目id批量删除题目")
     @ApiImplicitParam(name = "subjectDto", value = "题目信息", dataType = "SubjectDto")
     @Log("批量删除题目")
@@ -326,7 +325,6 @@ public class SubjectController extends BaseController {
      * @date 2019/01/16 22:25
      */
     @GetMapping("subjectAnswer")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "查询题目和答题", notes = "根据题目id查询题目和答题")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "serialNumber", value = "题目序号", required = true, dataType = "String"),

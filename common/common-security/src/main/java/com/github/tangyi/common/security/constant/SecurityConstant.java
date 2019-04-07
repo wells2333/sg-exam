@@ -12,6 +12,16 @@ public class SecurityConstant {
     public static final String BASE_ROLE = "ROLE_USER";
 
     /**
+     * 管理员角色
+     */
+    public static final String ROLE_ADMIN = "ROLE_ADMIN";
+
+    /**
+     * 老师角色
+     */
+    public static final String ROLE_TEACHER = "ROLE_TEACHER";
+
+    /**
      * token
      */
     public static final String TOKEN_USER_DETAIL = "token-user-detail";

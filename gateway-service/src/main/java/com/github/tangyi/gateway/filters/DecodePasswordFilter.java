@@ -57,10 +57,11 @@ public class DecodePasswordFilter implements GlobalFilter, Ordered {
         // 请求的URI
         URI uri = request.getURI();
         // 获取token的请求
-        if ("POST".equals(request.getMethodValue()) && StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.OAUTH_TOKEN_URL, GatewayConstant.MOBILE_TOKEN_URL)) {
+        if ("POST".equals(request.getMethodValue()) && StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.OAUTH_TOKEN_URL, GatewayConstant.REGISTER,
+                GatewayConstant.MOBILE_TOKEN_URL)) {
             String grantType = request.getQueryParams().getFirst(GRANT_TYPE);
             // 授权类型为密码模式则解密
-            if (PASSWORD.equals(grantType)) {
+            if (PASSWORD.equals(grantType) || StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.REGISTER)) {
                 String password = request.getQueryParams().getFirst(PASSWORD);
                 if (password == null || password.isEmpty()) {
                     logger.info("password is empty...");

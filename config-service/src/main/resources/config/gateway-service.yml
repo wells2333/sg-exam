@@ -4,6 +4,11 @@ spring:
   redis:
     host: ${REDIS_HOST:192.168.0.213}
     port: ${REDIS_PORT:6379}
+  rabbitmq:
+    host: ${RABBIT_HOST:localhost}
+    port: ${RABBIT_PORT:5672}
+    username: guest
+    password: guest
   boot:
     admin:
       client:
@@ -22,30 +27,6 @@ spring:
   # zipkin 配置
   zipkin:
     base-url: http://localhost:9411  # 指定了Zipkin服务器的地址
-  cloud:
-    gateway:
-      routes:
-        - id: auth-service
-          uri: lb://auth-service
-          predicates:
-            - Path=/api/auth/**
-          filters:
-            - StripPrefix=2
-            - RemoveRequestHeader=Cookie, Set-Cookie
-        - id: user-service
-          uri: lb://user-service
-          predicates:
-            - Path=/api/user/**
-          filters:
-            - StripPrefix=2
-            - RemoveRequestHeader=Cookie, Set-Cookie
-        - id: exam-service
-          uri: lb://exam-service
-          predicates:
-            - Path=/api/exam/**
-          filters:
-            - StripPrefix=2
-            - RemoveRequestHeader=Cookie, Set-Cookie
 
 security:
   encode:

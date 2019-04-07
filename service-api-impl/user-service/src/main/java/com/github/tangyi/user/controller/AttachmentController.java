@@ -20,11 +20,8 @@ import io.swagger.annotations.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -86,19 +83,18 @@ public class AttachmentController extends BaseController {
      * @date 2018/10/30 21:05
      */
     @RequestMapping("attachmentList")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "获取附件列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "pageNum", value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "pageSize", value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "sort", value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "order", value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.PAGE_SIZE, value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.SORT, value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.ORDER, value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
             @ApiImplicitParam(name = "attachment", value = "附件信息", dataType = "Attachment")
     })
-    public PageInfo<Attachment> userList(@RequestParam(value = "pageNum", required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
-                                         @RequestParam(value = "pageSize", required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
-                                         @RequestParam(value = "sort", required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
-                                         @RequestParam(value = "order", required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
+    public PageInfo<Attachment> userList(@RequestParam(value = CommonConstant.PAGE_NUM, required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
+                                         @RequestParam(value = CommonConstant.PAGE_SIZE, required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
+                                         @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
+                                         @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                          Attachment attachment) {
         return attachmentService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), attachment);
     }
@@ -112,7 +108,6 @@ public class AttachmentController extends BaseController {
      * @date 2018/10/30 21:54
      */
     @RequestMapping("upload")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "上传文件", notes = "上传文件")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "busiType", value = "业务分类", dataType = "String"),
@@ -201,7 +196,6 @@ public class AttachmentController extends BaseController {
      * @date 2018/10/30 22:44
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "删除附件", notes = "根据ID删除附件")
     @ApiImplicitParam(name = "id", value = "附件ID", required = true, paramType = "path")
     @Log("删除附件")
@@ -228,7 +222,6 @@ public class AttachmentController extends BaseController {
      * @date 2018/12/4 10:01
      */
     @PostMapping("/deleteAll")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "批量删除附件", notes = "根据附件id批量删除附件")
     @ApiImplicitParam(name = "attachment", value = "附件信息", dataType = "Attachment")
     @Log("批量删除附件")
@@ -252,7 +245,6 @@ public class AttachmentController extends BaseController {
      * @date 2019/01/01 22:16
      */
     @RequestMapping(value = "/findById", method = RequestMethod.POST)
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "批量查询附件信息", notes = "根据附件ID批量查询附件信息")
     @ApiImplicitParam(name = "attachmentVo", value = "附件信息", dataType = "AttachmentVo")
     public ResponseBean<List<AttachmentVo>> findById(@RequestBody AttachmentVo attachmentVo) {

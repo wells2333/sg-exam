@@ -26,7 +26,7 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, ExamRecord>
      * @date 2019/1/3 14:10
      */
     @Override
-    @Cacheable(value = "recode", key = "#examRecord.id")
+    @Cacheable(value = "record", key = "#examRecord.id")
     public ExamRecord get(ExamRecord examRecord) {
         return super.get(examRecord);
     }
@@ -64,13 +64,13 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, ExamRecord>
     /**
      * 根据用户id、考试id查找
      *
-     * @param examRecode examRecode
-     * @return ExamRecode
+     * @param examRecord examRecord
+     * @return ExamRecord
      * @author tangyi
      * @date 2018/12/26 13:58
      */
-    public ExamRecord getByUserIdAndExaminationId(ExamRecord examRecode) {
-        return this.dao.getByUserIdAndExaminationId(examRecode);
+    public ExamRecord getByUserIdAndExaminationId(ExamRecord examRecord) {
+        return this.dao.getByUserIdAndExaminationId(examRecord);
     }
 
     /**

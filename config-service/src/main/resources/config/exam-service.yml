@@ -89,7 +89,7 @@ ignore:
     - /v2/api-docs
     - /csrf
     - /actuator/**
-    - /hystrix.stream
+    - /hystrix.sender
     - /v1/user/findUserByUsername/**
     - /v1/code/**
     - /v1/attachment/download

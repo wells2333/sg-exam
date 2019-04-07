@@ -6,7 +6,6 @@ import com.github.tangyi.user.config.SysConfig;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,7 +32,6 @@ public class SysConfigController extends BaseController {
      * @date 2019/2/28 17:31
      */
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "获取系统配置", notes = "获取系统配置")
     public ResponseBean<SysConfig> getSysConfig() {
         return new ResponseBean<>(sysConfig);

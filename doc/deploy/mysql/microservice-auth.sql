@@ -11,7 +11,7 @@
  Target Server Version : 50710
  File Encoding         : 65001
 
- Date: 31/03/2019 15:16:50
+ Date: 07/04/2019 21:11:11
 */
 
 SET NAMES utf8mb4;
@@ -47,6 +47,6 @@ CREATE TABLE `oauth_client_details`  (
 -- ----------------------------
 -- Records of oauth_client_details
 -- ----------------------------
-INSERT INTO `oauth_client_details` VALUES ('471037a0c1be4df99b40e3f84141cc56', 'web_app', NULL, 'spring-microservice-exam-secret', '$2a$10$S84wOzmAw4wqYBzAqNtmPOx1ZRWdDl9omm/W8T1hhW8S9EK2u57xG', 'read,write', 'password,authorization_code,refresh_token,implicit', NULL, NULL, '3600', '21600', NULL, NULL, 'admin', '2019-03-30 23:43:07', 'admin', '2019-03-31 15:06:55', '0', 'EXAM');
+INSERT INTO `oauth_client_details` VALUES ('471037a0c1be4df99b40e3f84141cc56', 'web_app', NULL, 'spring-microservice-exam-secret', '$2a$10$eDZwlN8oMoExblOCDDLc2OIS1JFxYnn3iWScWOkvT9UommlXmBK.6', 'read,write', 'password,authorization_code,refresh_token,implicit', NULL, NULL, '3600', '21600', NULL, NULL, 'admin', '2019-03-30 23:43:07', 'admin', '2019-04-06 23:39:29', '0', 'EXAM');
 
 SET FOREIGN_KEY_CHECKS = 1;

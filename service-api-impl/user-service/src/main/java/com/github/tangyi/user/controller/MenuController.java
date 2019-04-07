@@ -8,6 +8,7 @@ import com.github.tangyi.common.core.utils.*;
 import com.github.tangyi.common.core.vo.MenuVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
+import com.github.tangyi.common.security.constant.SecurityConstant;
 import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.user.api.dto.MenuDto;
 import com.github.tangyi.user.api.module.Menu;
@@ -17,8 +18,6 @@ import com.google.common.net.HttpHeaders;
 import io.swagger.annotations.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -49,7 +48,6 @@ public class MenuController extends BaseController {
      * @return 当前用户的树形菜单
      */
     @GetMapping(value = "/userMenu")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "获取当前用户的菜单列表")
     public List<MenuDto> userMenu() {
         // 查询菜单
@@ -88,7 +86,6 @@ public class MenuController extends BaseController {
      * @return 树形菜单集合
      */
     @GetMapping(value = "/menus")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "获取树形菜单列表")
     public List<MenuDto> menus() {
         // 查询所有菜单
@@ -109,7 +106,7 @@ public class MenuController extends BaseController {
      * @date 2018/8/27 16:12
      */
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('sys:menu:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "创建菜单", notes = "创建菜单")
     @ApiImplicitParam(name = "menu", value = "角色实体menu", required = true, dataType = "Menu")
     @Log("新增菜单")
@@ -127,7 +124,7 @@ public class MenuController extends BaseController {
      * @date 2018/10/24 16:34
      */
     @PutMapping
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('sys:menu:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "更新菜单信息", notes = "根据菜单id更新菜单的基本信息")
     @ApiImplicitParam(name = "menu", value = "角色实体menu", required = true, dataType = "Menu")
     @Log("更新菜单")
@@ -145,7 +142,7 @@ public class MenuController extends BaseController {
      * @date 2018/8/27 16:19
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('sys:menu:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "删除菜单", notes = "根据ID删除菜单")
     @ApiImplicitParam(name = "id", value = "菜单ID", required = true, paramType = "path")
     @Log("删除菜单")
@@ -164,7 +161,6 @@ public class MenuController extends BaseController {
      * @date 2018/8/27 16:11
      */
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "获取菜单信息", notes = "根据菜单id获取菜单详细信息")
     @ApiImplicitParam(name = "id", value = "菜单ID", required = true, dataType = "String", paramType = "path")
     public Menu menu(@PathVariable String id) {
@@ -186,19 +182,18 @@ public class MenuController extends BaseController {
      * @date 2018/8/26 23:17
      */
     @RequestMapping("/menuList")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "获取菜单列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "pageNum", value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "pageSize", value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "sort", value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "order", value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.PAGE_SIZE, value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.SORT, value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.ORDER, value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
             @ApiImplicitParam(name = "Menu", value = "菜单信息", dataType = "Menu")
     })
-    public PageInfo<Menu> menuList(@RequestParam(value = "pageNum", required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
-                                   @RequestParam(value = "pageSize", required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
-                                   @RequestParam(value = "sort", required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
-                                   @RequestParam(value = "order", required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
+    public PageInfo<Menu> menuList(@RequestParam(value = CommonConstant.PAGE_NUM, required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
+                                   @RequestParam(value = CommonConstant.PAGE_SIZE, required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
+                                   @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
+                                   @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                    Menu menu) {
         return menuService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), menu);
     }
@@ -212,7 +207,6 @@ public class MenuController extends BaseController {
      * @date 2018/8/27 15:58
      */
     @GetMapping("findMenuByRole/{role}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "根据角色查找菜单", notes = "根据角色id获取角色菜单")
     @ApiImplicitParam(name = "role", value = "角色名称", required = true, dataType = "String", paramType = "path")
     public List<Menu> findMenuByRole(@PathVariable String role) {
@@ -226,7 +220,6 @@ public class MenuController extends BaseController {
      * @return 属性集合
      */
     @GetMapping("/roleTree/{roleCode}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "根据角色查找菜单", notes = "根据角色code获取角色菜单")
     @ApiImplicitParam(name = "roleCode", value = "角色code", required = true, dataType = "String", paramType = "path")
     public List<String> roleTree(@PathVariable String roleCode) {
@@ -244,7 +237,7 @@ public class MenuController extends BaseController {
      * @date 2018/11/28 12:46
      */
     @PostMapping("/export")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('sys:menu:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "导出菜单", notes = "根据菜单id导出菜单")
     @ApiImplicitParam(name = "menuVo", value = "菜单信息", required = true, dataType = "MenuVo")
     @Log("导出菜单")
@@ -284,7 +277,7 @@ public class MenuController extends BaseController {
      * @date 2018/11/28 12:51
      */
     @RequestMapping("import")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('sys:menu:import') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "导入菜单", notes = "导入菜单")
     @Log("导入菜单")
     public ResponseBean<Boolean> importMenu(@ApiParam(value = "要上传的文件", required = true) MultipartFile file, HttpServletRequest request) {

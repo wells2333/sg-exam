@@ -7,6 +7,7 @@ import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
+import com.github.tangyi.common.security.constant.SecurityConstant;
 import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.user.service.LogService;
 import io.swagger.annotations.Api;
@@ -14,8 +15,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +33,6 @@ public class LogController extends BaseController {
     @Autowired
     private LogService logService;
 
-
     /**
      * 根据id获取日志
      *
@@ -44,7 +42,6 @@ public class LogController extends BaseController {
      * @date 2018/9/14 18:20
      */
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @ApiOperation(value = "获取日志信息", notes = "根据日志id获取日志详细信息")
     @ApiImplicitParam(name = "id", value = "日志ID", required = true, dataType = "String", paramType = "path")
     public Log log(@PathVariable String id) {
@@ -69,19 +66,18 @@ public class LogController extends BaseController {
      * @date 2018/10/24 0024 下午 10:13
      */
     @RequestMapping("logList")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @ApiOperation(value = "获取日志列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "pageNum", value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "pageSize", value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "sort", value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "order", value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.PAGE_SIZE, value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.SORT, value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.ORDER, value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
             @ApiImplicitParam(name = "log", value = "日志信息", dataType = "Log")
     })
-    public PageInfo<Log> userList(@RequestParam(value = "pageNum", required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
-                                  @RequestParam(value = "pageSize", required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
-                                  @RequestParam(value = "sort", required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
-                                  @RequestParam(value = "order", required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
+    public PageInfo<Log> userList(@RequestParam(value = CommonConstant.PAGE_NUM, required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
+                                  @RequestParam(value = CommonConstant.PAGE_SIZE, required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
+                                  @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
+                                  @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                   Log log) {
         return logService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), log);
     }
@@ -113,7 +109,7 @@ public class LogController extends BaseController {
      * @date 2018/10/31 21:27
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('monitor:log:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "删除日志", notes = "根据ID删除日志")
     @ApiImplicitParam(name = "id", value = "日志ID", required = true, paramType = "path")
     public ResponseBean<Boolean> delete(@PathVariable String id) {
@@ -131,7 +127,7 @@ public class LogController extends BaseController {
      * @date 2018/12/4 10:12
      */
     @PostMapping("/deleteAll")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('monitor:log:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "批量删除日志", notes = "根据日志ids批量删除日志")
     @ApiImplicitParam(name = "log", value = "日志信息", dataType = "Log")
     public ResponseBean<Boolean> deleteAllAttachments(@RequestBody Log log) {

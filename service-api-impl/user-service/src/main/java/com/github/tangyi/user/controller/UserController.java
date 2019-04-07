@@ -7,6 +7,7 @@ import com.github.tangyi.common.core.utils.*;
 import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
+import com.github.tangyi.common.security.constant.SecurityConstant;
 import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.user.api.constant.RoleConstant;
 import com.github.tangyi.user.api.dto.UserDto;
@@ -23,8 +24,6 @@ import com.github.tangyi.user.utils.UserUtils;
 import io.swagger.annotations.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -70,7 +69,6 @@ public class UserController extends BaseController {
      * @return ResponseBean
      */
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "获取用户信息", notes = "根据用户id获取用户详细信息")
     @ApiImplicitParam(name = "id", value = "用户ID", required = true, dataType = "String", paramType = "path")
     public ResponseBean<User> user(@PathVariable String id) {
@@ -88,7 +86,6 @@ public class UserController extends BaseController {
      * @return 用户名
      */
     @GetMapping("/info")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "获取用户信息", notes = "获取当前登录用户详细信息")
     public ResponseBean<UserInfoDto> user(Principal principal) {
         UserVo userVo = new UserVo();
@@ -122,19 +119,18 @@ public class UserController extends BaseController {
      * @date 2018/8/26 22:56
      */
     @RequestMapping("userList")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "获取用户列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "pageNum", value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "pageSize", value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "sort", value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "order", value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.PAGE_SIZE, value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.SORT, value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.ORDER, value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
             @ApiImplicitParam(name = "userVo", value = "用户信息", dataType = "UserVo")
     })
-    public PageInfo<User> userList(@RequestParam(value = "pageNum", required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
-                                   @RequestParam(value = "pageSize", required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
-                                   @RequestParam(value = "sort", required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
-                                   @RequestParam(value = "order", required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
+    public PageInfo<User> userList(@RequestParam(value = CommonConstant.PAGE_NUM, required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
+                                   @RequestParam(value = CommonConstant.PAGE_SIZE, required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
+                                   @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
+                                   @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                    @RequestParam(value = "username", required = false, defaultValue = "") String username,
                                    UserVo userVo) {
         User user = new User();
@@ -152,9 +148,13 @@ public class UserController extends BaseController {
                 userIdSet.add(tempUser.getId());
             });
             // 批量查找部门
-            Dept dept = new Dept();
-            dept.setIds(deptIdSet.toArray(new String[deptIdSet.size()]));
-            List<Dept> deptList = deptService.findListById(dept);
+            List<Dept> deptList = null;
+            if (!deptIdSet.isEmpty()) {
+                Dept dept = new Dept();
+                dept.setIds(deptIdSet.toArray(new String[deptIdSet.size()]));
+                deptList = deptService.findListById(dept);
+            }
+
             // 批量查找角色
             List<UserRole> userRoles = userRoleService.getByUserIds(new ArrayList<>(userIdSet));
             List<Role> roleList = new ArrayList<>();
@@ -172,11 +172,13 @@ public class UserController extends BaseController {
             for (User tempUser : users) {
                 List<Role> userRoleList = new ArrayList<>();
                 // 设置部门信息
-                for (Dept tempDept : deptList) {
-                    if (tempDept.getId().equals(tempUser.getDeptId())) {
-                        tempUser.setDeptName(tempDept.getDeptName());
-                        tempUser.setDeptId(tempDept.getId());
-                        break;
+                if (deptList != null) {
+                    for (Dept tempDept : deptList) {
+                        if (tempDept.getId().equals(tempUser.getDeptId())) {
+                            tempUser.setDeptName(tempDept.getDeptName());
+                            tempUser.setDeptId(tempDept.getId());
+                            break;
+                        }
                     }
                 }
                 for (UserRole tempUserRole : userRoles) {
@@ -203,7 +205,7 @@ public class UserController extends BaseController {
      * @date 2018/8/26 14:34
      */
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('sys:user:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "创建用户", notes = "创建用户")
     @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
     @Log("新增用户")
@@ -228,7 +230,7 @@ public class UserController extends BaseController {
      * @date 2018/8/26 15:06
      */
     @PutMapping
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('sys:user:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "更新用户信息", notes = "根据用户id更新用户的基本信息、角色信息")
     @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
     @Log("修改用户")
@@ -250,7 +252,6 @@ public class UserController extends BaseController {
      * @date 2018/10/30 10:06
      */
     @PutMapping("/updateInfo")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "更新用户基本信息", notes = "根据用户id更新用户的基本信息")
     @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
     @Log("更新用户基本信息")
@@ -278,7 +279,7 @@ public class UserController extends BaseController {
      * @date 2018/8/26 15:28
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('sys:user:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "删除用户", notes = "根据ID删除用户")
     @ApiImplicitParam(name = "id", value = "用户ID", required = true, paramType = "path")
     @Log("删除用户")
@@ -301,7 +302,7 @@ public class UserController extends BaseController {
      * @date 2018/11/26 22:11
      */
     @PostMapping("/export")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('sys:user:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "导出用户", notes = "根据用户id导出用户")
     @ApiImplicitParam(name = "userVo", value = "用户信息", required = true, dataType = "UserVo")
     @Log("导出用户")
@@ -339,7 +340,7 @@ public class UserController extends BaseController {
      * @date 2018/11/28 12:44
      */
     @RequestMapping("import")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('sys:user:import') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "导入数据", notes = "导入数据")
     @Log("导入用户")
     public ResponseBean<Boolean> importUser(@ApiParam(value = "要上传的文件", required = true) MultipartFile file, HttpServletRequest request) {
@@ -369,7 +370,7 @@ public class UserController extends BaseController {
      * @date 2018/12/4 9:58
      */
     @PostMapping("/deleteAll")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('sys:user:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "批量删除用户", notes = "根据用户id批量删除用户")
     @ApiImplicitParam(name = "user", value = "用户信息", dataType = "User")
     @Log("批量删除用户")
@@ -393,7 +394,6 @@ public class UserController extends BaseController {
      * @date 2018/12/31 21:16
      */
     @RequestMapping(value = "/findById", method = RequestMethod.POST)
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "根据ID查询用户", notes = "根据ID查询用户")
     @ApiImplicitParam(name = "userVo", value = "用户信息", required = true, paramType = "UserVo")
     public ResponseBean<List<UserVo>> findById(@RequestBody UserVo userVo) {
@@ -425,7 +425,7 @@ public class UserController extends BaseController {
     @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
     @PostMapping("register")
     @Log("注册用户")
-    public ResponseBean<Boolean> register(@RequestBody UserDto userDto) {
+    public ResponseBean<Boolean> register(UserDto userDto) {
         boolean success = false;
         User user = new User();
         BeanUtils.copyProperties(userDto, user);
@@ -434,6 +434,7 @@ public class UserController extends BaseController {
         if (StringUtils.isEmpty(userDto.getPassword()))
             userDto.setPassword(CommonConstant.DEFAULT_PASSWORD);
         user.setPassword(encoder.encode(userDto.getPassword()));
+        user.setStatus(CommonConstant.DEL_FLAG_NORMAL.toString());
         // 保存用户
         if (userService.insert(user) > 0) {
             // 分配默认角色

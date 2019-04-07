@@ -7,6 +7,7 @@ import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
+import com.github.tangyi.common.security.constant.SecurityConstant;
 import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.exam.api.module.Course;
 import com.github.tangyi.exam.service.CourseService;
@@ -46,7 +47,6 @@ public class CourseController extends BaseController {
      * @date 2018/11/10 21:28
      */
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "获取课程信息", notes = "根据课程id获取课程详细信息")
     @ApiImplicitParam(name = "id", value = "课程ID", required = true, dataType = "String", paramType = "path")
     public ResponseBean<Course> course(@PathVariable String id) {
@@ -71,19 +71,18 @@ public class CourseController extends BaseController {
      * @date 2018/11/10 21:30
      */
     @RequestMapping("courseList")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "获取课程列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "pageNum", value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "pageSize", value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "sort", value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "order", value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.PAGE_SIZE, value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.SORT, value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.ORDER, value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
             @ApiImplicitParam(name = "course", value = "课程信息", dataType = "Course")
     })
-    public PageInfo<Course> courseList(@RequestParam(value = "pageNum", required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
-                                       @RequestParam(value = "pageSize", required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
-                                       @RequestParam(value = "sort", required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
-                                       @RequestParam(value = "order", required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
+    public PageInfo<Course> courseList(@RequestParam(value = CommonConstant.PAGE_NUM, required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
+                                       @RequestParam(value = CommonConstant.PAGE_SIZE, required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
+                                       @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
+                                       @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                        Course course) {
         return courseService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), course);
     }
@@ -97,7 +96,7 @@ public class CourseController extends BaseController {
      * @date 2018/11/10 21:31
      */
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('exam:course:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "创建课程", notes = "创建课程")
     @ApiImplicitParam(name = "course", value = "课程实体course", required = true, dataType = "Course")
     @Log("新增课程")
@@ -115,7 +114,7 @@ public class CourseController extends BaseController {
      * @date 2018/11/10 21:31
      */
     @PutMapping
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('exam:course:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "更新课程信息", notes = "根据课程id更新课程的基本信息")
     @ApiImplicitParam(name = "course", value = "课程实体course", required = true, dataType = "Course")
     @Log("更新课程")
@@ -133,7 +132,7 @@ public class CourseController extends BaseController {
      * @date 2018/11/10 21:32
      */
     @DeleteMapping("{id}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('exam:course:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "删除课程", notes = "根据ID删除课程")
     @ApiImplicitParam(name = "id", value = "课程ID", required = true, paramType = "path")
     @Log("删除课程")
@@ -162,7 +161,7 @@ public class CourseController extends BaseController {
      * @date 2018/12/4 11:26
      */
     @PostMapping("/deleteAll")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('exam:course:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "批量删除课程", notes = "根据课程id批量删除课程")
     @ApiImplicitParam(name = "course", value = "课程信息", dataType = "Course")
     @Log("批量删除课程")
