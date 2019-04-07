@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -35,6 +34,7 @@ public class AnswerController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(AnswerController.class);
 
+
     @Autowired
     private AnswerService answerService;
 
@@ -47,7 +47,6 @@ public class AnswerController extends BaseController {
      * @date 2018/11/10 21:23
      */
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "获取答题信息", notes = "根据答题id获取答题详细信息")
     @ApiImplicitParam(name = "id", value = "答题ID", required = true, dataType = "String", paramType = "path")
     public ResponseBean<Answer> answer(@PathVariable String id) {
@@ -72,19 +71,18 @@ public class AnswerController extends BaseController {
      * @date 2018/11/10 21:25
      */
     @RequestMapping("answerList")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "获取答题列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "pageNum", value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "pageSize", value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "sort", value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "order", value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.PAGE_SIZE, value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.SORT, value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.ORDER, value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
             @ApiImplicitParam(name = "answer", value = "答题信息", dataType = "Answer")
     })
-    public PageInfo<Answer> answerList(@RequestParam(value = "pageNum", required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
-                                       @RequestParam(value = "pageSize", required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
-                                       @RequestParam(value = "sort", required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
-                                       @RequestParam(value = "order", required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
+    public PageInfo<Answer> answerList(@RequestParam(value = CommonConstant.PAGE_NUM, required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
+                                       @RequestParam(value = CommonConstant.PAGE_SIZE, required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
+                                       @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
+                                       @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                        Answer answer) {
         return answerService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), answer);
     }
@@ -98,7 +96,6 @@ public class AnswerController extends BaseController {
      * @date 2018/11/10 21:26
      */
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "创建答题", notes = "创建答题")
     @ApiImplicitParam(name = "answer", value = "答题实体answer", required = true, dataType = "Answer")
     @Log("新增答题")
@@ -116,7 +113,6 @@ public class AnswerController extends BaseController {
      * @date 2018/11/10 21:27
      */
     @PutMapping
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "更新答题信息", notes = "根据答题id更新答题的基本信息")
     @ApiImplicitParam(name = "answer", value = "答题实体answer", required = true, dataType = "Answer")
     @Log("修改答题")
@@ -134,7 +130,6 @@ public class AnswerController extends BaseController {
      * @date 2018/11/10 21:28
      */
     @DeleteMapping("{id}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "删除答题", notes = "根据ID删除答题")
     @ApiImplicitParam(name = "id", value = "答题ID", required = true, paramType = "path")
     @Log("删除答题")
@@ -161,7 +156,6 @@ public class AnswerController extends BaseController {
      * @date 2018/12/24 20:06
      */
     @PostMapping("saveOrUpdate")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "保存答题", notes = "保存答题")
     @ApiImplicitParam(name = "answer", value = "答题信息", dataType = "Answer")
     @Log("保存答题")
@@ -190,7 +184,6 @@ public class AnswerController extends BaseController {
      * @date 2018/12/24 20:44
      */
     @PostMapping("submit")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "提交答卷", notes = "提交答卷")
     @ApiImplicitParam(name = "answer", value = "答卷信息", dataType = "Answer")
     @Log("提交答题")

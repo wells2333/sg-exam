@@ -44,14 +44,24 @@ public class CommonConstant {
     public static final String PAGE_NUM = "pageNum";
 
     /**
-     * 默认页数
-     */
-    public static final String PAGE_NUM_DEFAULT = "1";
-
-    /**
      * 分页大小
      */
     public static final String PAGE_SIZE = "pageSize";
+
+    /**
+     * 排序
+     */
+    public static final String SORT = "sort";
+
+    /**
+     * 排序方向
+     */
+    public static final String ORDER = "order";
+
+    /**
+     * 默认页数
+     */
+    public static final String PAGE_NUM_DEFAULT = "1";
 
     /**
      * 默认分页大小
@@ -127,5 +137,6 @@ public class CommonConstant {
      * 保存code的前缀
      */
     public static final String DEFAULT_CODE_KEY = "DEFAULT_CODE_KEY";
+
 }
 

@@ -6,6 +6,7 @@ import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.utils.TreeUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
+import com.github.tangyi.common.security.constant.SecurityConstant;
 import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.exam.api.dto.SubjectCategoryDto;
 import com.github.tangyi.exam.api.module.SubjectCategory;
@@ -42,7 +43,6 @@ public class SubjectCategoryController extends BaseController {
      * @date 2018/12/04 22:03
      */
     @GetMapping(value = "/categories")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "获取分类列表")
     public List<SubjectCategoryDto> menus() {
         // 查询所有分类
@@ -63,7 +63,6 @@ public class SubjectCategoryController extends BaseController {
      * @date 2018/12/04 21:59
      */
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "获取分类信息", notes = "根据分类id获取分类详细信息")
     @ApiImplicitParam(name = "id", value = "分类ID", required = true, dataType = "String", paramType = "path")
     public ResponseBean<SubjectCategory> subjectCategory(@PathVariable String id) {
@@ -84,7 +83,7 @@ public class SubjectCategoryController extends BaseController {
      * @date 2018/12/04 22:00
      */
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('exam:subject:category:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "创建分类", notes = "创建分类")
     @ApiImplicitParam(name = "subjectCategory", value = "分类实体subjectCategory", required = true, dataType = "SubjectCategory")
     @Log("新增题目分类")
@@ -102,7 +101,7 @@ public class SubjectCategoryController extends BaseController {
      * @date 2018/12/04 22:01
      */
     @PutMapping
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('exam:subject:category:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "更新分类信息", notes = "根据分类id更新分类的基本信息")
     @ApiImplicitParam(name = "subjectCategory", value = "分类实体subjectCategory", required = true, dataType = "SubjectCategory")
     @Log("更新题目分类")
@@ -120,7 +119,7 @@ public class SubjectCategoryController extends BaseController {
      * @date 2018/12/04 22:02
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('exam:subject:category:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "删除分类", notes = "根据ID删除分类")
     @ApiImplicitParam(name = "id", value = "分类ID", required = true, paramType = "path")
     @Log("删除题目分类")

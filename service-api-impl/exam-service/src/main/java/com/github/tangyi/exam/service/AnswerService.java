@@ -36,7 +36,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
     private IncorrectAnswerService incorrectAnswerService;
 
     @Autowired
-    private ExamRecordService examRecodeService;
+    private ExamRecordService examRecordService;
 
     @Autowired
     private ExaminationService examinationService;
@@ -171,8 +171,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
                 examRecord.setScore(totalScore.toString());
                 examRecord.setCorrectNumber(correctNumber.toString());
                 examRecord.setInCorrectNumber(incorrectNumber.toString());
-                examRecodeService.getByUserIdAndExaminationId(examRecord);
-                success = examRecodeService.update(examRecord) > 0;
+                success = examRecordService.update(examRecord) > 0;
                 // 保存错题
                 ExamRecord searchExamRecord = new ExamRecord();
                 searchExamRecord.setUserId(answer.getUserId());

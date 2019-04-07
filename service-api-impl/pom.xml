@@ -8,6 +8,7 @@
         <version>2.0-SNAPSHOT</version>
     </parent>
     <artifactId>service-api-impl</artifactId>
+    <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     <description>api实现</description>
 

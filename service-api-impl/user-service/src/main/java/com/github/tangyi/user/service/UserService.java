@@ -18,8 +18,6 @@ import com.github.tangyi.user.mapper.UserMapper;
 import com.github.tangyi.user.mapper.UserRoleMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -42,8 +40,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 public class UserService extends CrudService<UserMapper, User> {
-
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     private UserMapper userMapper;
@@ -88,7 +84,7 @@ public class UserService extends CrudService<UserMapper, User> {
      * @param userVo userVo
      * @return User
      * @author tangyi
-     * @date 2018/9/11 下午 11:44
+     * @date 2018/9/11 23:44
      */
     public UserInfoDto findUserInfo(UserVo userVo) {
         // 根据用户名查询用户信息
@@ -128,7 +124,7 @@ public class UserService extends CrudService<UserMapper, User> {
      * @param userDto userDto
      * @return int
      * @author tangyi
-     * @date 2018/8/26 下午 3:15
+     * @date 2018/8/26 15:15
      */
     @Transactional
     @CacheEvict(value = "user", key = "#userDto.username")

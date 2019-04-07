@@ -1,12 +1,14 @@
 package com.github.tangyi.gateway.controller;
 
+import com.github.tangyi.common.core.constant.MqConstant;
 import com.github.tangyi.common.core.model.ResponseBean;
-import com.github.tangyi.gateway.module.GatewayFilterDefinition;
-import com.github.tangyi.gateway.module.GatewayPredicateDefinition;
-import com.github.tangyi.gateway.module.GatewayRouteDefinition;
+import com.github.tangyi.common.core.vo.RouteFilterVo;
+import com.github.tangyi.common.core.vo.RoutePredicateVo;
+import com.github.tangyi.common.core.vo.RouteVo;
 import com.github.tangyi.gateway.service.DynamicRouteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.FilterDefinition;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -32,10 +34,10 @@ import java.util.Map;
  * @date 2019/3/27 10:59
  */
 @RestController
-@RequestMapping("/route")
-public class RouteController {
+@RequestMapping("/api/route")
+public class GatewayRouteController {
 
-    private static final Logger logger = LoggerFactory.getLogger(RouteController.class);
+    private static final Logger logger = LoggerFactory.getLogger(GatewayRouteController.class);
 
     private final RouteDefinitionLocator routeDefinitionLocator;
 
@@ -43,11 +45,14 @@ public class RouteController {
 
     private final DynamicRouteService dynamicRouteService;
 
+    private final AmqpTemplate amqpTemplate;
+
     @Autowired
-    public RouteController(RouteDefinitionLocator routeDefinitionLocator, RouteLocator routeLocator, DynamicRouteService dynamicRouteService) {
+    public GatewayRouteController(RouteDefinitionLocator routeDefinitionLocator, RouteLocator routeLocator, DynamicRouteService dynamicRouteService, AmqpTemplate amqpTemplate) {
         this.routeDefinitionLocator = routeDefinitionLocator;
         this.routeLocator = routeLocator;
         this.dynamicRouteService = dynamicRouteService;
+        this.amqpTemplate = amqpTemplate;
     }
 
     /**
@@ -97,7 +102,7 @@ public class RouteController {
      * @return ResponseBean
      */
     @PostMapping
-    public ResponseBean<String> add(@RequestBody GatewayRouteDefinition gatewayRouteDefinition) {
+    public ResponseBean<String> add(@RequestBody RouteVo gatewayRouteDefinition) {
         try {
             RouteDefinition definition = assembleRouteDefinition(gatewayRouteDefinition);
             logger.info("新增路由：{}，{}", definition.getId(), definition);
@@ -123,43 +128,56 @@ public class RouteController {
     /**
      * 更新路由
      *
-     * @param gatewayRouteDefinition gatewayRouteDefinition
+     * @param routeVo routeVo
      * @return ResponseBean
      */
     @PutMapping
-    public ResponseBean<String> update(@RequestBody GatewayRouteDefinition gatewayRouteDefinition) {
-        RouteDefinition definition = assembleRouteDefinition(gatewayRouteDefinition);
+    public ResponseBean<String> update(@RequestBody RouteVo routeVo) {
+        RouteDefinition definition = assembleRouteDefinition(routeVo);
         return new ResponseBean<>(this.dynamicRouteService.update(definition));
     }
 
     /**
-     * @param gatewayRouteDefinition gatewayRouteDefinition
+     * 刷新路由
+     *
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/04/07 12:32
+     */
+    @GetMapping("/refresh")
+    public ResponseBean<Boolean> refresh() {
+        amqpTemplate.convertAndSend(MqConstant.REFRESH_GATEWAY_ROUTE_QUEUE, "refresh");
+        return new ResponseBean<>(Boolean.TRUE);
+    }
+
+    /**
+     * @param routeVo routeVo
      * @return RouteDefinition
      */
-    private RouteDefinition assembleRouteDefinition(GatewayRouteDefinition gatewayRouteDefinition) {
+    private RouteDefinition assembleRouteDefinition(RouteVo routeVo) {
         RouteDefinition definition = new RouteDefinition();
         // id
-        definition.setId(gatewayRouteDefinition.getId());
+        definition.setId(routeVo.getRouteId());
         List<PredicateDefinition> predicateDefinitions = new ArrayList<>();
         // predicates
-        for (GatewayPredicateDefinition gpDefinition : gatewayRouteDefinition.getPredicates()) {
+        for (RoutePredicateVo routePredicateVo : routeVo.getPredicates()) {
             PredicateDefinition predicate = new PredicateDefinition();
-            predicate.setArgs(gpDefinition.getArgs());
-            predicate.setName(gpDefinition.getName());
+            predicate.setArgs(routePredicateVo.getArgs());
+            predicate.setName(routePredicateVo.getName());
             predicateDefinitions.add(predicate);
         }
         definition.setPredicates(predicateDefinitions);
         // filters
         List<FilterDefinition> filterDefinitions = new ArrayList<>();
-        for (GatewayFilterDefinition gatewayFilterDefinition : gatewayRouteDefinition.getFilters()) {
+        for (RouteFilterVo routeFilterVo : routeVo.getFilters()) {
             FilterDefinition filterDefinition = new FilterDefinition();
-            filterDefinition.setName(gatewayFilterDefinition.getName());
-            filterDefinition.setArgs(gatewayFilterDefinition.getArgs());
+            filterDefinition.setName(routeFilterVo.getName());
+            filterDefinition.setArgs(routeFilterVo.getArgs());
             filterDefinitions.add(filterDefinition);
         }
         definition.setFilters(filterDefinitions);
         // uri
-        definition.setUri(URI.create(gatewayRouteDefinition.getUri()));
+        definition.setUri(URI.create(routeVo.getUri()));
         return definition;
     }
 }

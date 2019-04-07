@@ -8,6 +8,7 @@
         <version>2.0-SNAPSHOT</version>
     </parent>
     <artifactId>zipkin-service</artifactId>
+    <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     <description>zipkin监控服务</description>
 </project>

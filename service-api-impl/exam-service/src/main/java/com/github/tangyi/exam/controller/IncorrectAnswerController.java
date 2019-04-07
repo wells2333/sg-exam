@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -59,10 +58,9 @@ public class IncorrectAnswerController extends BaseController {
      * @date 2018/11/10 21:36
      */
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "获取错题信息", notes = "根据错题id获取错题详细信息")
     @ApiImplicitParam(name = "id", value = "错题ID", required = true, dataType = "String", paramType = "path")
-    public ResponseBean<IncorrectAnswer> examRecode(@PathVariable String id) {
+    public ResponseBean<IncorrectAnswer> examRecord(@PathVariable String id) {
         IncorrectAnswer incorrectAnswer = new IncorrectAnswer();
         if (StringUtils.isNotBlank(id)) {
             incorrectAnswer.setId(id);
@@ -84,19 +82,18 @@ public class IncorrectAnswerController extends BaseController {
      * @date 2018/11/10 21:37
      */
     @RequestMapping("incorrectAnswerList")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "获取错题列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "pageNum", value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "pageSize", value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "sort", value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "order", value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.PAGE_SIZE, value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.SORT, value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.ORDER, value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
             @ApiImplicitParam(name = "incorrectAnswer", value = "错题信息", dataType = "IncorrectAnswer")
     })
-    public PageInfo<IncorrectAnswerDto> incorrectAnswerList(@RequestParam(value = "pageNum", required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
-                                                            @RequestParam(value = "pageSize", required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
-                                                            @RequestParam(value = "sort", required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
-                                                            @RequestParam(value = "order", required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
+    public PageInfo<IncorrectAnswerDto> incorrectAnswerList(@RequestParam(value = CommonConstant.PAGE_NUM, required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
+                                                            @RequestParam(value = CommonConstant.PAGE_SIZE, required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
+                                                            @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
+                                                            @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                                             IncorrectAnswer incorrectAnswer) {
         // 查找错题
         PageInfo<IncorrectAnswer> incorrectAnswerPageInfo = incorrectAnswerService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), incorrectAnswer);
@@ -137,7 +134,6 @@ public class IncorrectAnswerController extends BaseController {
      * @date 2018/11/10 21:38
      */
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "创建错题", notes = "创建错题")
     @ApiImplicitParam(name = "incorrectAnswer", value = "错题实体incorrectAnswer", required = true, dataType = "IncorrectAnswer")
     @Log("新增错题")
@@ -155,7 +151,6 @@ public class IncorrectAnswerController extends BaseController {
      * @date 2018/11/10 21:38
      */
     @PutMapping
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "更新错题信息", notes = "根据错题id更新错题的基本信息")
     @ApiImplicitParam(name = "incorrectAnswer", value = "错题实体incorrectAnswer", required = true, dataType = "IncorrectAnswer")
     @Log("更新错题")
@@ -173,7 +168,6 @@ public class IncorrectAnswerController extends BaseController {
      * @date 2018/11/10 21:39
      */
     @DeleteMapping("{id}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "删除错题", notes = "根据ID删除错题")
     @ApiImplicitParam(name = "id", value = "错题ID", required = true, paramType = "path")
     @Log("删除错题")

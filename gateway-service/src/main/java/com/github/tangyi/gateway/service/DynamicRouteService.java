@@ -67,7 +67,7 @@ public class DynamicRouteService implements ApplicationEventPublisherAware {
      * 删除路由
      *
      * @param id id
-     * @return ResponseEntity
+     * @return Mono
      */
     public Mono<ResponseEntity<Object>> delete(String id) {
         return this.routeDefinitionWriter.delete(Mono.just(id))

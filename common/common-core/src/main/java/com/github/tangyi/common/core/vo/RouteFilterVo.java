@@ -1,25 +1,25 @@
-package com.github.tangyi.gateway.module;
+package com.github.tangyi.common.core.vo;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 断言信息
+ * 过滤器信息
  *
  * @author tangyi
- * @date 2019/3/27 11:08
+ * @date 2019/3/27 11:07
  */
-public class GatewayPredicateDefinition {
+public class RouteFilterVo {
 
     /**
-     * 断言对应的Name
+     * Filter Name
      */
     private String name;
 
     /**
-     * 配置的断言规则
+     * 对应的路由规则
      */
-    private Map<String, String> args = new LinkedHashMap<String, String>();
+    private Map<String, String> args = new LinkedHashMap<>();
 
     public String getName() {
         return name;

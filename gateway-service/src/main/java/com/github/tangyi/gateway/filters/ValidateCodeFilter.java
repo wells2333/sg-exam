@@ -43,10 +43,10 @@ public class ValidateCodeFilter implements GlobalFilter, Ordered {
         // 请求的URI
         URI uri = request.getURI();
         if ("POST".equals(request.getMethodValue())
-                && StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.OAUTH_TOKEN_URL, GatewayConstant.MOBILE_TOKEN_URL)) {
+                && StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.OAUTH_TOKEN_URL, GatewayConstant.REGISTER, GatewayConstant.MOBILE_TOKEN_URL)) {
             String grantType = request.getQueryParams().getFirst(GRANT_TYPE);
-            // 授权类型为密码模式才校验验证码
-            if (PASSWORD.equals(grantType)) {
+            // 授权类型为密码模式、注册才校验验证码
+            if (PASSWORD.equals(grantType) || StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.REGISTER)) {
                 // 校验验证码
                 checkCode(request);
             }

@@ -9,6 +9,7 @@ import com.github.tangyi.common.core.vo.DeptVo;
 import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
+import com.github.tangyi.common.security.constant.SecurityConstant;
 import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.exam.api.dto.ExamRecordDto;
 import com.github.tangyi.exam.api.module.ExamRecord;
@@ -67,10 +68,9 @@ public class ExamRecordController extends BaseController {
      * @date 2018/11/10 21:33
      */
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "获取考试记录信息", notes = "根据考试记录id获取考试记录详细信息")
     @ApiImplicitParam(name = "id", value = "考试记录ID", required = true, dataType = "String", paramType = "path")
-    public ResponseBean<ExamRecord> examRecode(@PathVariable String id) {
+    public ResponseBean<ExamRecord> examRecord(@PathVariable String id) {
         ExamRecord examRecord = new ExamRecord();
         if (StringUtils.isNotBlank(id)) {
             examRecord.setId(id);
@@ -92,19 +92,18 @@ public class ExamRecordController extends BaseController {
      * @date 2018/11/10 21:33
      */
     @RequestMapping("examRecordList")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "获取考试记录列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "pageNum", value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "pageSize", value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "sort", value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "order", value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.PAGE_SIZE, value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.SORT, value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.ORDER, value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
             @ApiImplicitParam(name = "examRecord", value = "考试记录信息", dataType = "ExamRecord")
     })
-    public PageInfo<ExamRecordDto> examRecodeList(@RequestParam(value = "pageNum", required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
-                                                  @RequestParam(value = "pageSize", required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
-                                                  @RequestParam(value = "sort", required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
-                                                  @RequestParam(value = "order", required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
+    public PageInfo<ExamRecordDto> examRecordList(@RequestParam(value = CommonConstant.PAGE_NUM, required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
+                                                  @RequestParam(value = CommonConstant.PAGE_SIZE, required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
+                                                  @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
+                                                  @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                                   ExamRecord examRecord) {
         PageInfo<ExamRecordDto> examRecordDtoPageInfo = new PageInfo<>();
         List<ExamRecordDto> examRecordDtoList = new ArrayList<>();
@@ -183,11 +182,10 @@ public class ExamRecordController extends BaseController {
      * @date 2018/11/10 21:33
      */
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "创建考试记录", notes = "创建考试记录")
     @ApiImplicitParam(name = "examRecord", value = "考试记录实体examRecord", required = true, dataType = "ExamRecord")
     @Log("新增考试记录")
-    public ResponseBean<ExamRecord> addExamRecode(@RequestBody ExamRecord examRecord) {
+    public ResponseBean<ExamRecord> addExamRecord(@RequestBody ExamRecord examRecord) {
         if (StringUtils.isEmpty(examRecord.getExaminationId()))
             throw new CommonException("参数校验失败，考试id为空！");
         if (StringUtils.isEmpty(examRecord.getUserId()))
@@ -215,11 +213,10 @@ public class ExamRecordController extends BaseController {
      * @date 2018/11/10 21:34
      */
     @PutMapping
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "更新考试记录信息", notes = "根据考试记录id更新考试记录的基本信息")
     @ApiImplicitParam(name = "examRecord", value = "考试记录实体examRecord", required = true, dataType = "ExamRecord")
     @Log("更新考试记录")
-    public ResponseBean<Boolean> updateExamRecode(@RequestBody ExamRecord examRecord) {
+    public ResponseBean<Boolean> updateExamRecord(@RequestBody ExamRecord examRecord) {
         examRecord.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
         return new ResponseBean<>(examRecordService.update(examRecord) > 0);
     }
@@ -233,11 +230,10 @@ public class ExamRecordController extends BaseController {
      * @date 2018/11/10 21:34
      */
     @DeleteMapping("{id}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiOperation(value = "删除考试记录", notes = "根据ID删除考试记录")
     @ApiImplicitParam(name = "id", value = "考试记录ID", required = true, paramType = "path")
     @Log("删除考试记录")
-    public ResponseBean<Boolean> deleteExamRecode(@PathVariable String id) {
+    public ResponseBean<Boolean> deleteExamRecord(@PathVariable String id) {
         boolean success = false;
         try {
             ExamRecord examRecord = examRecordService.get(id);
@@ -259,7 +255,7 @@ public class ExamRecordController extends BaseController {
      * @date 2018/12/31 22:28
      */
     @PostMapping("/export")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('exam:examRecord:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "导出考试成绩", notes = "根据成绩id导出成绩")
     @ApiImplicitParam(name = "examRecordDto", value = "成绩信息", required = true, dataType = "ExamRecordDto")
     @Log("导出考试记录")
