@@ -5,6 +5,7 @@ import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.security.core.GrantedAuthorityImpl;
 import com.github.tangyi.common.security.core.UserDetailsImpl;
 import com.github.tangyi.user.api.feign.UserServiceClient;
+import com.github.tangyi.user.api.module.Menu;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -62,11 +64,22 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      * @date 2019/03/17 14:41
      */
     private Set<GrantedAuthority> getAuthority(UserVo userVo) {
+        // 权限集合
         Set<GrantedAuthority> authorities = new HashSet<>();
-        if (CollectionUtils.isNotEmpty(userVo.getRoleList())) {
-            for (Role role : userVo.getRoleList()) {
+        // 角色
+        List<Role> roleList = userVo.getRoleList();
+        if (CollectionUtils.isNotEmpty(roleList)) {
+            for (Role role : roleList) {
                 // 权限如果前缀是ROLE_，security就会认为这是个角色信息，而不是权限，例如ROLE_ADMIN就是ADMIN角色，MENU:ADD就是MENU:ADD权限
                 authorities.add(new GrantedAuthorityImpl(role.getRoleCode().toUpperCase()));
+                // 根据角色查找菜单权限
+                List<Menu> menuList = userServiceClient.findMenuByRole(role.getRoleCode());
+                if (CollectionUtils.isNotEmpty(menuList)) {
+                    for (Menu menu : menuList) {
+                        // 菜单权限
+                        authorities.add(new GrantedAuthorityImpl(menu.getPermission()));
+                    }
+                }
             }
         }
         return authorities;

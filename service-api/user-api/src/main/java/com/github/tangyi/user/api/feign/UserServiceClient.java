@@ -9,6 +9,7 @@ import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.feign.config.CustomFeignConfig;
 import com.github.tangyi.user.api.dto.UserInfoDto;
 import com.github.tangyi.user.api.feign.factory.UserServiceClientFallbackFactory;
+import com.github.tangyi.user.api.module.Menu;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -92,4 +93,15 @@ public interface UserServiceClient {
      */
     @PostMapping("/v1/log")
     ResponseBean<Boolean> saveLog(@RequestBody Log log);
+
+    /**
+     * 根据角色查找菜单
+     *
+     * @param role 角色
+     * @return List
+     * @author tangyi
+     * @date 2019/04/08 20:42
+     */
+    @GetMapping("/v1/menu/findMenuByRole/{role}")
+    List<Menu> findMenuByRole(@PathVariable("role") String role);
 }

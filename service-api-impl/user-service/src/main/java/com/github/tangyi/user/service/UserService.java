@@ -173,8 +173,7 @@ public class UserService extends CrudService<UserMapper, User> {
      */
     @Cacheable(value = "user", key = "#username")
     public UserVo selectUserVoByUsername(String username) {
-        UserVo userVo = userMapper.selectUserVoByUsername(username);
-        return userVo;
+        return userMapper.selectUserVoByUsername(username);
     }
 
     /**

@@ -109,6 +109,7 @@ ignore:
     - /actuator/**
     - /hystrix.sender
     - /v1/user/findUserByUsername/**
+    - /v1/menu/findMenuByRole/**
     - /v1/user/register
     - /v1/code/**
     - /v1/attachment/download

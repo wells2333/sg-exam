@@ -7,6 +7,7 @@ import com.github.tangyi.common.core.vo.DeptVo;
 import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.user.api.dto.UserInfoDto;
 import com.github.tangyi.user.api.feign.UserServiceClient;
+import com.github.tangyi.user.api.module.Menu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -109,6 +110,18 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
     public ResponseBean<Boolean> saveLog(Log log) {
         logger.error("feign 插入日志失败,{}", throwable);
         return null;
+    }
+
+    /**
+     * 根据角色查找菜单
+     *
+     * @param role 角色
+     * @return List
+     */
+    @Override
+    public List<Menu> findMenuByRole(String role) {
+        logger.error("feign 获取角色菜单失败,{}", throwable);
+        return new ArrayList<>();
     }
 
     public Throwable getThrowable() {
