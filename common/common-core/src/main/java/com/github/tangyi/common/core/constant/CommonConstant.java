@@ -138,5 +138,10 @@ public class CommonConstant {
      */
     public static final String DEFAULT_CODE_KEY = "DEFAULT_CODE_KEY";
 
+    /**
+     * Bearer
+     */
+    public static final String AUTHORIZATION_BEARER = "Bearer ";
+
 }
 

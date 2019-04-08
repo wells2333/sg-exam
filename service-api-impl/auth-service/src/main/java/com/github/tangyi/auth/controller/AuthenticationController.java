@@ -1,14 +1,14 @@
 package com.github.tangyi.auth.controller;
 
-import com.github.tangyi.common.security.constant.SecurityConstant;
+import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.web.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,8 +44,9 @@ public class AuthenticationController extends BaseController {
      * @return ReturnT
      */
     @PostMapping("/removeToken")
-    @CacheEvict(value = SecurityConstant.TOKEN_USER_DETAIL, key = "#accesstoken")
-    public ResponseBean<Boolean> removeToken(String accesstoken) {
+    public ResponseBean<Boolean> removeToken(@RequestHeader("Authorization") String accesstoken) {
+        if (accesstoken.startsWith(CommonConstant.AUTHORIZATION_BEARER))
+            accesstoken = accesstoken.split(CommonConstant.AUTHORIZATION_BEARER)[1];
         return new ResponseBean<>(consumerTokenServices.revokeToken(accesstoken));
     }
 }
