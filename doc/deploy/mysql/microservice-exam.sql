@@ -11,7 +11,7 @@
  Target Server Version : 50710
  File Encoding         : 65001
 
- Date: 07/04/2019 21:11:20
+ Date: 11/04/2019 20:49:59
 */
 
 SET NAMES utf8mb4;
@@ -62,7 +62,7 @@ CREATE TABLE `course`  (
 -- ----------------------------
 -- Records of course
 -- ----------------------------
-INSERT INTO `course` VALUES ('6dcccd4639bc49b88810be1d30a77f92', '测试课程', '测试学院', '测试专业', '陈老师', '测试课程', 'admin', '2018-11-12 22:31:28', 'admin', '2019-03-29 11:53:28', '0', 'EXAM');
+INSERT INTO `course` VALUES ('6dcccd4639bc49b88810be1d30a77f92', '测试课程', '测试学院', '测试专业', '陈老师', '测试课程', 'admin', '2018-11-12 22:31:28', 'admin', '2019-04-11 16:51:15', '0', 'EXAM');
 
 -- ----------------------------
 -- Table structure for exam_record
@@ -121,10 +121,10 @@ CREATE TABLE `examination`  (
 -- ----------------------------
 -- Records of examination
 -- ----------------------------
-INSERT INTO `examination` VALUES ('4f9ced28ffe64fcea57a7367e9fd4c0c', '离散数学', '2', '离散数学', '2019-01-03 00:00', '2019-01-11 00:00', '', '100', '0', '1', 'group1/M00/00/00/wKgAX1x3gGqABz6cAAZyO2yzEwA450.jpg', 'da4b5623e9754abbb07320d8def18fe7', '信息学院', '软件工程', '6dcccd4639bc49b88810be1d30a77f92', '离散数学练习', 'admin', '2019-01-13 20:16:36', NULL, '2019-03-20 22:09:23', '0', 'EXAM');
+INSERT INTO `examination` VALUES ('4f9ced28ffe64fcea57a7367e9fd4c0c', '离散数学', '2', '离散数学', '2019-01-03 00:00', '2019-01-11 00:00', '', '100', '0', '1', 'group1/M00/00/00/wKgAX1x3gGqABz6cAAZyO2yzEwA450.jpg', 'da4b5623e9754abbb07320d8def18fe7', '信息学院', '软件工程', '6dcccd4639bc49b88810be1d30a77f92', '离散数学练习', 'admin', '2019-01-13 20:16:36', 'admin', '2019-04-11 10:56:03', '0', 'EXAM');
 INSERT INTO `examination` VALUES ('b5990bc1c48d49fcb0023de51772c309', '数学期末考试', '0', '期末考试', '2019-01-22 17:00', '2019-01-22 23:00', '', '150', '2', '1', 'group1/M00/00/00/wKgAX1x3gHWAa82wAAArtzxOXJ4599.jpg', '60df2d550bd9453a943122033a27fe72', '应用数学', '应用数学', '6dcccd4639bc49b88810be1d30a77f92', '期末考试', 'admin', '2018-11-20 22:48:40', NULL, '2019-03-18 14:09:49', '0', 'EXAM');
 INSERT INTO `examination` VALUES ('f051f54621fc4812b929a7777a701712', '语文考试', '0', '语文考试', '2019-01-22 17:00', '2019-01-22 23:00', '', '150', '2', '1', 'group1/M00/00/00/wKgAX1x3gIOAIVzXAABrb92CxLk678.jpg', '45d2ac58eb21436692e8cdbdd64291dd', '中文', '中文', '6dcccd4639bc49b88810be1d30a77f92', '语文考试', 'admin', '2018-11-20 22:50:55', 'admin', '2019-02-28 14:33:27', '0', 'EXAM');
-INSERT INTO `examination` VALUES ('fad663ea371f4250a81332bd3a346739', '四川省2016年普通高考适应性测试文综历史试题', '0', '文综历史试题', '2019-04-07 10:30', '2019-04-07 20:30', '', '100', '3', '0', 'group1/M00/00/00/wKgAX1x3f52AIE4IAADGq28ys0g361.jpg', 'a178c7b221524a89b44e884d8e3172cf', '文综历史试题', '文综历史试题', '6dcccd4639bc49b88810be1d30a77f92', '文综历史试题', 'admin', '2018-11-12 20:25:38', 'admin', '2019-03-06 13:57:13', '0', 'EXAM');
+INSERT INTO `examination` VALUES ('fad663ea371f4250a81332bd3a346739', '四川省2016年普通高考适应性测试文综历史试题', '0', '文综历史试题', '2019-04-11 00:00', '2019-04-11 20:30', '', '100', '3', '0', 'group1/M00/00/00/wKgAX1x3f52AIE4IAADGq28ys0g361.jpg', 'a178c7b221524a89b44e884d8e3172cf', '文综历史试题', '文综历史试题', '6dcccd4639bc49b88810be1d30a77f92', '文综历史试题', 'admin', '2018-11-12 20:25:38', 'admin', '2019-03-06 13:57:13', '0', 'EXAM');
 
 -- ----------------------------
 -- Table structure for incorrect_answer
