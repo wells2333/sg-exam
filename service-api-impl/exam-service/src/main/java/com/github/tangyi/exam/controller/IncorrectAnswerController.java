@@ -26,9 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * 错题controller
@@ -100,24 +98,21 @@ public class IncorrectAnswerController extends BaseController {
         PageInfo<IncorrectAnswerDto> pageInfo = new PageInfo<>();
         List<IncorrectAnswerDto> incorrectAnswerDtoList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(incorrectAnswerPageInfo.getList())) {
-            Set<String> subjectIds = new HashSet<>();
-            incorrectAnswerPageInfo.getList().forEach(incorrect -> {
-                subjectIds.add(incorrect.getSubjectId());
-            });
             Subject subject = new Subject();
-            subject.setIds(subjectIds.toArray(new String[subjectIds.size()]));
+            // 获取题目ID
+            subject.setIds(incorrectAnswerPageInfo.getList().stream().map(IncorrectAnswer::getSubjectId).distinct().toArray(String[]::new));
             // 查找题目
             List<Subject> subjects = subjectService.findListById(subject);
             if (CollectionUtils.isNotEmpty(subjects)) {
                 subjects.forEach(tempSubject -> {
-                    incorrectAnswerPageInfo.getList().forEach(tempIncorrectAnswer -> {
-                        if (tempSubject.getId().equalsIgnoreCase(tempIncorrectAnswer.getSubjectId())) {
-                            IncorrectAnswerDto incorrectAnswerDto = new IncorrectAnswerDto();
-                            BeanUtils.copyProperties(tempSubject, incorrectAnswerDto);
-                            incorrectAnswerDto.setIncorrectAnswer(tempIncorrectAnswer.getIncorrectAnswer());
-                            incorrectAnswerDtoList.add(incorrectAnswerDto);
-                        }
-                    });
+                    incorrectAnswerPageInfo.getList().stream()
+                            .filter(tempIncorrectAnswer -> tempSubject.getId().equalsIgnoreCase(tempIncorrectAnswer.getSubjectId()))
+                            .forEach(tempIncorrectAnswer -> {
+                                IncorrectAnswerDto incorrectAnswerDto = new IncorrectAnswerDto();
+                                BeanUtils.copyProperties(tempSubject, incorrectAnswerDto);
+                                incorrectAnswerDto.setIncorrectAnswer(tempIncorrectAnswer.getIncorrectAnswer());
+                                incorrectAnswerDtoList.add(incorrectAnswerDto);
+                            });
                 });
             }
         }

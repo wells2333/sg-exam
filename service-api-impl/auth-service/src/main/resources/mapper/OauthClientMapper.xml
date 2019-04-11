@@ -23,7 +23,7 @@
     </resultMap>
 
     <sql id="oauthClientColumns">
-        a.id as "id",
+        a.id,
         a.client_id,
         a.resource_ids,
         a.client_secret_plain_text,

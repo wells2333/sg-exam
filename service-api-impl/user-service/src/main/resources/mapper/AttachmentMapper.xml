@@ -19,7 +19,7 @@
     </resultMap>
 
     <sql id="attachmentColumns">
-        a.id as "id",
+        a.id,
         a.attach_name,
         a.attach_size,
         a.group_name,

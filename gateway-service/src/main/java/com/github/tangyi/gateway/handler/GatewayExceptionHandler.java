@@ -123,7 +123,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
 
     }
 
-    protected Mono<ServerResponse> renderErrorResponse(ServerRequest request) {
+    private Mono<ServerResponse> renderErrorResponse(ServerRequest request) {
         ResponseBean<?> responseBean = exceptionHandlerResult.get();
         return ServerResponse.status(responseBean.getStatus())
                 .contentType(MediaType.APPLICATION_JSON_UTF8)

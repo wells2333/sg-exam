@@ -22,7 +22,7 @@
     </resultMap>
 
     <sql id="logColumns">
-        a.id as "id",
+        a.id,
         a.type,
         a.title,
         a.ip,

@@ -23,7 +23,7 @@
     </resultMap>
 
     <sql id="menuColumns">
-        a.id as "id",
+        a.id,
         a.name,
         a.permission,
         a.url,
@@ -106,6 +106,14 @@
     </insert>
 
     <select id="findList" resultMap="menuResultMap">
+        SELECT
+        <include refid="menuColumns"/>
+        FROM sys_menu a
+        WHERE a.del_flag = 0
+        <include refid="whereColumnList"/>
+    </select>
+
+    <select id="findAllList" resultMap="menuResultMap">
         SELECT
         <include refid="menuColumns"/>
         FROM sys_menu a

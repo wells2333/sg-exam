@@ -5,7 +5,7 @@ spring:
     url: jdbc:mysql://${MYSQL_HOST:192.168.0.144}:${MYSQL_PORT:3306}/microservice-auth?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
     username: ${MYSQL_USERNAME:platform}
     password: ${MYSQL_PASSWORD:11}
-    type: com.alibaba.druid.pool.DruidDataSource
+    type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.jdbc.Driver
   redis:
     host: ${REDIS_HOST:192.168.0.213}
@@ -57,9 +57,15 @@ management:
     health:
       show-details: ALWAYS
 
+# mybatis配置
 mybatis:
-  mapperLocations: classpath:mapper/*.xml
-  configLocation: classpath:/mybatis-config.xml
+  type-aliases-package: com.github.tangyi.auth.api.module
+  configuration:
+    # 驼峰转换
+    map-underscore-to-camel-case: true
+    # 延迟加载
+    lazy-loading-enabled: true
+  mapper-locations: classpath:mapper/*.xml
 pagehelper:
     helperDialect: mysql
     reasonable: true

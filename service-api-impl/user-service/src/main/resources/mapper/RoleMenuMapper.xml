@@ -8,9 +8,9 @@
     </resultMap>
 
     <sql id="roleMenuColumns">
-        a.id as "id",
-        a.role_id as "role_id",
-        a.menu_id as "menu_id"
+        a.id,
+        a.role_id,
+        a.menu_id
     </sql>
 
     <insert id="insert">

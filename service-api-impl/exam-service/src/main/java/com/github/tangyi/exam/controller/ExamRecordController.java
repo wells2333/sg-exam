@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * 考试记录controller
@@ -110,59 +111,59 @@ public class ExamRecordController extends BaseController {
         // 查询考试记录
         PageInfo<ExamRecord> examRecordPageInfo = examRecordService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), examRecord);
         if (CollectionUtils.isNotEmpty(examRecordPageInfo.getList())) {
-            // 考试id、用户id
-            Set<String> examIdSet = new HashSet<>(), userIdSet = new HashSet<>();
-            examRecordPageInfo.getList().forEach(tempExamRecord -> {
-                examIdSet.add(tempExamRecord.getExaminationId());
-                userIdSet.add(tempExamRecord.getUserId());
-            });
             Examination examination = new Examination();
-            examination.setIds(examIdSet.toArray(new String[examIdSet.size()]));
+            // 获取考试ID集合，转成字符串数组
+            examination.setIds(examRecordPageInfo.getList().stream().map(ExamRecord::getExaminationId).distinct().toArray(String[]::new));
             // 查询考试信息
             List<Examination> examinations = examinationService.findListById(examination);
             // 查询用户信息
             UserVo userVo = new UserVo();
-            userVo.setIds(userIdSet.toArray(new String[userIdSet.size()]));
+            // 获取用户ID集合，转成字符串数组
+            userVo.setIds(examRecordPageInfo.getList().stream().map(ExamRecord::getUserId).distinct().toArray(String[]::new));
             ResponseBean<List<UserVo>> returnT = userServiceClient.findUserById(userVo);
             if (returnT != null && CollectionUtils.isNotEmpty(returnT.getData())) {
                 examRecordPageInfo.getList().forEach(tempExamRecord -> {
-                    examinations.forEach(tempExamination -> {
-                        if (tempExamRecord.getExaminationId().equals(tempExamination.getId())) {
-                            ExamRecordDto examRecordDto = new ExamRecordDto();
-                            BeanUtils.copyProperties(tempExamination, examRecordDto);
-                            examRecordDto.setId(tempExamRecord.getId());
-                            examRecordDto.setStartTime(tempExamRecord.getStartTime());
-                            examRecordDto.setEndTime(tempExamRecord.getEndTime());
-                            examRecordDto.setScore(tempExamRecord.getScore());
-                            examRecordDto.setUserId(tempExamRecord.getUserId());
-                            examRecordDtoList.add(examRecordDto);
-                        }
-                    });
+                    // 找到考试记录所属的考试信息
+                    Examination examinationRecordExamination = examinations.stream()
+                            .filter(tempExamination -> tempExamRecord.getExaminationId().equals(tempExamination.getId()))
+                            .findFirst().orElse(null);
+                    // 转换成ExamRecordDto
+                    if (examinationRecordExamination != null) {
+                        ExamRecordDto examRecordDto = new ExamRecordDto();
+                        BeanUtils.copyProperties(examinationRecordExamination, examRecordDto);
+                        examRecordDto.setId(tempExamRecord.getId());
+                        examRecordDto.setStartTime(tempExamRecord.getStartTime());
+                        examRecordDto.setEndTime(tempExamRecord.getEndTime());
+                        examRecordDto.setScore(tempExamRecord.getScore());
+                        examRecordDto.setUserId(tempExamRecord.getUserId());
+                        examRecordDtoList.add(examRecordDto);
+                    }
                 });
                 // 查询部门信息
-                Set<String> deptIdSet = new HashSet<>();
-                returnT.getData().forEach(tempUserVo -> deptIdSet.add(tempUserVo.getDeptId()));
                 DeptVo deptVo = new DeptVo();
-                deptVo.setIds(deptIdSet.toArray(new String[deptIdSet.size()]));
+                // 获取部门ID集合，转成字符串数组
+                deptVo.setIds(returnT.getData().stream().map(UserVo::getDeptId).distinct().toArray(String[]::new));
                 ResponseBean<List<DeptVo>> deptResponseBean = userServiceClient.findDeptById(deptVo);
-                for (ExamRecordDto tempExamRecordDto : examRecordDtoList) {
-                    for (UserVo tempUserVo : returnT.getData()) {
-                        if (tempExamRecordDto.getUserId().equals(tempUserVo.getId())) {
-                            tempExamRecordDto.setUserName(tempUserVo.getName());
-                            // 查询部门信息
-                            if (deptResponseBean != null && CollectionUtils.isNotEmpty(deptResponseBean.getData())) {
-                                for (DeptVo tempDept : deptResponseBean.getData()) {
-                                    // 设置所属部门名称
-                                    if (tempDept.getId().equals(tempUserVo.getDeptId())) {
-                                        tempExamRecordDto.setDeptName(tempDept.getDeptName());
-                                        break;
-                                    }
-                                }
-                            }
-                            break;
+                examRecordDtoList.forEach(tempExamRecordDto -> {
+                    // 查询、设置用户信息
+                    UserVo examRecordDtoUserVo = returnT.getData().stream()
+                            .filter(tempUserVo -> tempExamRecordDto.getUserId().equals(tempUserVo.getId()))
+                            .findFirst().orElse(null);
+                    if (examRecordDtoUserVo != null) {
+                        // 设置用户名
+                        tempExamRecordDto.setUserName(examRecordDtoUserVo.getName());
+                        // 查询、设置部门信息
+                        if (deptResponseBean != null && CollectionUtils.isNotEmpty(deptResponseBean.getData())) {
+                            DeptVo examRecordDtoDeptVo = deptResponseBean.getData().stream()
+                                    // 根据部门ID过滤
+                                    .filter(tempDept -> tempDept.getId().equals(examRecordDtoUserVo.getDeptId()))
+                                    .findFirst().orElse(null);
+                            // 设置部门名称
+                            if (examRecordDtoDeptVo != null)
+                                tempExamRecordDto.setDeptName(examRecordDtoDeptVo.getDeptName());
                         }
                     }
-                }
+                });
             }
         }
         examRecordDtoPageInfo.setTotal(examRecordPageInfo.getTotal());
@@ -267,13 +268,9 @@ public class ExamRecordController extends BaseController {
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request, "考试成绩" + new SimpleDateFormat("yyyyMMddhhmmssSSS").format(new Date()) + ".xlsx"));
             List<ExamRecord> examRecordList;
             if (StringUtils.isNotEmpty(examRecordDto.getIdString())) {
-                Set<String> examRecordIdSet = new HashSet<>();
-                for (String id : examRecordDto.getIdString().split(",")) {
-                    if (StringUtils.isNotEmpty(id))
-                        examRecordIdSet.add(id);
-                }
                 ExamRecord examRecord = new ExamRecord();
-                examRecord.setIds(examRecordIdSet.toArray(new String[examRecordIdSet.size()]));
+                // 按逗号切割ID，流处理获取ID集合，去重，转成字符串数组
+                examRecord.setIds(Stream.of(examRecordDto.getIdString().split(",")).filter(StringUtils::isNotEmpty).distinct().toArray(String[]::new));
                 examRecordList = examRecordService.findListById(examRecord);
             } else {
                 // 导出全部
@@ -283,51 +280,57 @@ public class ExamRecordController extends BaseController {
             if (CollectionUtils.isNotEmpty(examRecordList)) {
                 List<ExamRecordDto> examRecordDtoList = new ArrayList<>();
                 // 查询考试信息
-                Set<String> examIdSet = new HashSet<>();
-                examRecordList.forEach(tempExamRecord -> examIdSet.add(tempExamRecord.getExaminationId()));
                 Examination examination = new Examination();
-                examination.setIds(examIdSet.toArray(new String[examIdSet.size()]));
+                // 流处理获取考试ID集合，去重，转成字符串数组
+                examination.setIds(examRecordList.stream().map(ExamRecord::getExaminationId).distinct().toArray(String[]::new));
                 List<Examination> examinations = examinationService.findListById(examination);
                 // 用户id
                 Set<String> userIdSet = new HashSet<>();
                 examRecordList.forEach(tempExamRecord -> {
-                    examinations.forEach(tempExamination -> {
-                        if (tempExamRecord.getExaminationId().equals(tempExamination.getId())) {
-                            ExamRecordDto recordDto = new ExamRecordDto();
-                            recordDto.setId(tempExamRecord.getId());
-                            recordDto.setExaminationName(tempExamination.getExaminationName());
-                            recordDto.setExamTime(tempExamRecord.getCreateDate());
-                            recordDto.setScore(tempExamRecord.getScore());
-                            recordDto.setUserId(tempExamRecord.getUserId());
-                            userIdSet.add(tempExamRecord.getUserId());
-                            examRecordDtoList.add(recordDto);
-                        }
-                    });
+                    // 查找考试记录所属的考试信息
+                    Examination examRecordExamination = examinations.stream()
+                            .filter(tempExamination -> tempExamRecord.getExaminationId().equals(tempExamination.getId()))
+                            .findFirst().orElse(null);
+                    if (examRecordExamination != null) {
+                        ExamRecordDto recordDto = new ExamRecordDto();
+                        recordDto.setId(tempExamRecord.getId());
+                        recordDto.setExaminationName(examRecordExamination.getExaminationName());
+                        recordDto.setExamTime(tempExamRecord.getCreateDate());
+                        recordDto.setScore(tempExamRecord.getScore());
+                        recordDto.setUserId(tempExamRecord.getUserId());
+                        userIdSet.add(tempExamRecord.getUserId());
+                        examRecordDtoList.add(recordDto);
+                    }
                 });
                 // 查询用户信息
                 UserVo userVo = new UserVo();
-                userVo.setIds(userIdSet.toArray(new String[userIdSet.size()]));
+                userVo.setIds(userIdSet.toArray(new String[0]));
                 ResponseBean<List<UserVo>> returnT = userServiceClient.findUserById(userVo);
                 if (returnT != null && CollectionUtils.isNotEmpty(returnT.getData())) {
                     // 查询部门信息
-                    Set<String> deptIdSet = new HashSet<>();
-                    returnT.getData().forEach(tempUserVo -> deptIdSet.add(tempUserVo.getDeptId()));
                     DeptVo deptVo = new DeptVo();
-                    deptVo.setIds(deptIdSet.toArray(new String[deptIdSet.size()]));
+                    // 流处理获取部门ID集合，去重，转成字符串数组
+                    deptVo.setIds(returnT.getData().stream().map(UserVo::getDeptId).distinct().toArray(String[]::new));
+                    // 获取部门信息
                     ResponseBean<List<DeptVo>> deptResponseBean = userServiceClient.findDeptById(deptVo);
-                    examRecordDtoList.forEach(tempExamRecordDto -> returnT.getData().forEach(tempUserVo -> {
-                        if (tempExamRecordDto.getUserId().equals(tempUserVo.getId())) {
-                            tempExamRecordDto.setUserName(tempUserVo.getName());
+                    examRecordDtoList.forEach(tempExamRecordDto -> {
+                        // 查询用户信息
+                        UserVo examRecordDtoUserVo = returnT.getData().stream().filter(tempUserVo -> tempExamRecordDto.getUserId().equals(tempUserVo.getId()))
+                                .findFirst().orElse(null);
+                        if (examRecordDtoUserVo != null) {
+                            tempExamRecordDto.setUserName(examRecordDtoUserVo.getName());
                             // 查询部门信息
                             if (deptResponseBean != null && CollectionUtils.isNotEmpty(deptResponseBean.getData())) {
-                                deptResponseBean.getData().forEach(tempDept -> {
-                                    // 设置所属部门名称
-                                    if (tempDept.getId().equals(tempUserVo.getDeptId()))
-                                        tempExamRecordDto.setDeptName(tempDept.getDeptName());
-                                });
+                                // 查找用户所属部门
+                                DeptVo examRecordDtoDeptVo = deptResponseBean.getData().stream()
+                                        .filter(tempDept -> tempDept.getId().equals(examRecordDtoUserVo.getDeptId()))
+                                        .findFirst().orElse(null);
+                                // 设置所属部门名称
+                                if (examRecordDtoDeptVo != null)
+                                    tempExamRecordDto.setDeptName(examRecordDtoDeptVo.getDeptName());
                             }
                         }
-                    }));
+                    });
                 }
                 // 导出
                 ExcelToolUtil.exportExcel(request.getInputStream(), response.getOutputStream(), MapUtil.java2Map(examRecordDtoList), ExamRecordUtil.getExamRecordDtoMap());

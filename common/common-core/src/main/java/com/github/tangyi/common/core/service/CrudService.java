@@ -60,6 +60,16 @@ public abstract class CrudService<D extends CrudMapper<T>, T extends BaseEntity<
      * @param entity entity
      * @return List
      */
+    public List<T> findAllList(T entity) {
+        return dao.findList(entity);
+    }
+
+    /**
+     * 查询列表
+     *
+     * @param entity entity
+     * @return List
+     */
     public List<T> findListById(T entity) {
         return dao.findListById(entity);
     }

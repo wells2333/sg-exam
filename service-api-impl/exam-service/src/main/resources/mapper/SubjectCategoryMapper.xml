@@ -16,7 +16,7 @@
     </resultMap>
 
     <sql id="subjectCategoryColumns">
-        a.id as "id",
+        a.id,
         a.category_name,
         a.category_desc,
         a.parent_id,

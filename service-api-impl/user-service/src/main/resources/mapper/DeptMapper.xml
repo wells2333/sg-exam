@@ -18,7 +18,7 @@
     </resultMap>
 
     <sql id="deptColumns">
-        a.id as "id",
+        a.id,
         a.dept_name,
         a.dept_desc,
         a.dept_leader,

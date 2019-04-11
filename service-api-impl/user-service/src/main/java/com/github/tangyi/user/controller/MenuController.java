@@ -10,13 +10,13 @@ import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.constant.SecurityConstant;
 import com.github.tangyi.common.security.utils.SecurityUtil;
+import com.github.tangyi.user.api.constant.MenuConstant;
 import com.github.tangyi.user.api.dto.MenuDto;
 import com.github.tangyi.user.api.module.Menu;
 import com.github.tangyi.user.service.MenuService;
 import com.github.tangyi.user.utils.MenuUtil;
 import com.google.common.net.HttpHeaders;
 import io.swagger.annotations.*;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 菜单controller
@@ -50,34 +52,29 @@ public class MenuController extends BaseController {
     @GetMapping(value = "/userMenu")
     @ApiOperation(value = "获取当前用户的菜单列表")
     public List<MenuDto> userMenu() {
-        // 查询菜单
-        Set<Menu> menuSet = new HashSet<>();
-        SecurityUtil.getCurrentAuthentication().getAuthorities().forEach(roleName -> {
-            // 获取角色的菜单
-            List<Menu> menus = menuService.findMenuByRole(roleName.getAuthority());
-            if (CollectionUtils.isNotEmpty(menus)) {
-                menus.forEach(menu -> {
-                    // 检查是否已经存在
-                    boolean exist = false;
-                    for (Menu existMenu : menuSet) {
-                        if (existMenu.getId().equals(menu.getId()) && !exist)
-                            exist = true;
+        List<MenuDto> menuDtoList = new ArrayList<>();
+        // 根据角色code查找菜单
+        SecurityUtil.getCurrentAuthentication().getAuthorities().stream()
+                // 按角色过滤
+                .filter(authority -> authority.getAuthority() != null && authority.getAuthority().startsWith("role_"))
+                // 查找菜单
+                .forEach(roleName -> {
+                    // 获取角色的菜单
+                    Stream<Menu> menuStream = menuService.findMenuByRole(roleName.getAuthority()).stream();
+                    if (Optional.ofNullable(menuStream).isPresent()) {
+                        // 筛选出类型为菜单的菜单，放进menuMap，防止重复，用菜单的ID作为key
+                        menuStream
+                                // 菜单类型
+                                .filter(menu -> MenuConstant.MENU_TYPE_MENU.equals(menu.getType()))
+                                // dto封装
+                                .map(MenuDto::new)
+                                // 去重
+                                .distinct()
+                                .forEach(menuDtoList::add);
                     }
-                    // 不存在
-                    if (!exist)
-                        menuSet.add(menu);
-
                 });
-            }
-        });
-        List<MenuDto> menuTreeList = new ArrayList<MenuDto>();
-        menuSet.forEach(menuVo -> {
-            if (CommonConstant.MENU.equals(menuVo.getType())) {
-                menuTreeList.add(new MenuDto(menuVo));
-            }
-        });
-        CollUtil.sort(menuTreeList, Comparator.comparingInt(MenuDto::getSort));
-        return TreeUtil.buildTree(menuTreeList, "-1");
+        // 排序、构建树形关系
+        return TreeUtil.buildTree(CollUtil.sort(menuDtoList, Comparator.comparingInt(MenuDto::getSort)), "-1");
     }
 
     /**
@@ -89,12 +86,16 @@ public class MenuController extends BaseController {
     @ApiOperation(value = "获取树形菜单列表")
     public List<MenuDto> menus() {
         // 查询所有菜单
-        Set<Menu> menuSet = new HashSet<Menu>(menuService.findList(new Menu()));
-        List<MenuDto> menuTreeList = new ArrayList<MenuDto>();
-        menuSet.forEach(menuVo -> menuTreeList.add(new MenuDto(menuVo)));
-        // 排序
-        CollUtil.sort(menuTreeList, Comparator.comparingInt(MenuDto::getSort));
-        return TreeUtil.buildTree(menuTreeList, "-1");
+        Menu condition = new Menu();
+        condition.setApplicationCode(SysUtil.getSysCode());
+        Stream<Menu> menuStream = menuService.findAllList(condition).stream();
+        if (Optional.ofNullable(menuStream).isPresent()) {
+            // 转成MenuDto
+            List<MenuDto> menuDtoList = menuStream.map(MenuDto::new).collect(Collectors.toList());
+            // 排序、构建树形关系
+            return TreeUtil.buildTree(CollUtil.sort(menuDtoList, Comparator.comparingInt(MenuDto::getSort)), "-1");
+        }
+        return new ArrayList<>();
     }
 
     /**
@@ -223,10 +224,12 @@ public class MenuController extends BaseController {
     @ApiOperation(value = "根据角色查找菜单", notes = "根据角色code获取角色菜单")
     @ApiImplicitParam(name = "roleCode", value = "角色code", required = true, dataType = "String", paramType = "path")
     public List<String> roleTree(@PathVariable String roleCode) {
-        List<Menu> menus = menuService.findMenuByRole(roleCode);
-        List<String> menuList = new ArrayList<>();
-        menus.forEach(menu -> menuList.add(menu.getId()));
-        return menuList;
+        // 根据角色查找菜单
+        Stream<Menu> menuStream = menuService.findMenuByRole(roleCode).stream();
+        // 获取菜单ID
+        if (Optional.ofNullable(menuStream).isPresent())
+            return menuStream.map(Menu::getId).collect(Collectors.toList());
+        return new ArrayList<>();
     }
 
     /**
@@ -247,19 +250,15 @@ public class MenuController extends BaseController {
             response.setCharacterEncoding("utf-8");
             response.setContentType("multipart/form-data");
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request, "菜单信息" + new SimpleDateFormat("yyyyMMddhhmmssSSS").format(new Date()) + ".xlsx"));
-            List<Menu> menus = new ArrayList<>();
+            List<Menu> menus;
             // 导出所有
             if (StringUtils.isEmpty(menuVo.getIdString())) {
                 Menu menu = new Menu();
                 menus = menuService.findList(menu);
             } else {    // 导出选中
-                Set<String> menuIdSet = new HashSet<>();
-                for (String id : menuVo.getIdString().split(",")) {
-                    if (StringUtils.isNotBlank(id))
-                        menuIdSet.add(id);
-                }
                 Menu menu = new Menu();
-                menu.setIds(menuIdSet.toArray(new String[menuIdSet.size()]));
+                // 按逗号切割ID，流处理获取ID集合，去重，转成字符串数组
+                menu.setIds(Stream.of(menuVo.getIdString().split(",")).filter(StringUtils::isNotBlank).distinct().toArray(String[]::new));
                 menus = menuService.findListById(menu);
             }
             ExcelToolUtil.exportExcel(request.getInputStream(), response.getOutputStream(), MapUtil.java2Map(menus), MenuUtil.getMenuMap());
@@ -283,13 +282,13 @@ public class MenuController extends BaseController {
     public ResponseBean<Boolean> importMenu(@ApiParam(value = "要上传的文件", required = true) MultipartFile file, HttpServletRequest request) {
         try {
             logger.debug("开始导入菜单数据");
-            List<Menu> menus = MapUtil.map2Java(Menu.class,
-                    ExcelToolUtil.importExcel(file.getInputStream(), MenuUtil.getMenuMap()));
-            if (CollectionUtils.isNotEmpty(menus)) {
-                for (Menu menu : menus) {
+            Stream<Menu> menuStream = MapUtil.map2Java(Menu.class,
+                    ExcelToolUtil.importExcel(file.getInputStream(), MenuUtil.getMenuMap())).stream();
+            if (Optional.ofNullable(menuStream).isPresent()) {
+                menuStream.forEach(menu -> {
                     if (menuService.update(menu) < 1)
                         menuService.insert(menu);
-                }
+                });
             }
             return new ResponseBean<>(Boolean.TRUE);
         } catch (Exception e) {

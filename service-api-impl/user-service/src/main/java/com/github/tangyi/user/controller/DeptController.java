@@ -15,13 +15,17 @@ import com.github.tangyi.user.service.DeptService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 部门controller
@@ -47,13 +51,17 @@ public class DeptController extends BaseController {
     @GetMapping(value = "/depts")
     @ApiOperation(value = "获取部门列表")
     public List<DeptDto> depts() {
-        // 查询所有部门
-        Set<Dept> deptSet = new HashSet<Dept>(deptService.findList(new Dept()));
-        List<DeptDto> deptTreeList = new ArrayList<DeptDto>();
-        deptSet.forEach(dept -> deptTreeList.add(new DeptDto(dept)));
-        // 排序
-        CollUtil.sort(deptTreeList, Comparator.comparingInt(DeptDto::getSort));
-        return TreeUtil.buildTree(deptTreeList, "-1");
+        Dept dept = new Dept();
+        dept.setApplicationCode(SysUtil.getSysCode());
+        // 查询部门集合
+        Stream<Dept> deptStream = deptService.findList(dept).stream();
+        if (Optional.ofNullable(deptStream).isPresent()) {
+            // 流处理转成DeptDto
+            List<DeptDto> deptTreeList = deptStream.map(DeptDto::new).collect(Collectors.toList());
+            // 排序、构建树形结构
+            return TreeUtil.buildTree(CollUtil.sort(deptTreeList, Comparator.comparingInt(DeptDto::getSort)), "-1");
+        }
+        return new ArrayList<>();
     }
 
     /**
@@ -144,14 +152,14 @@ public class DeptController extends BaseController {
         ResponseBean<List<DeptVo>> returnT = null;
         Dept dept = new Dept();
         dept.setIds(deptVo.getIds());
-        List<Dept> depts = deptService.findListById(dept);
-        if (CollectionUtils.isNotEmpty(depts)) {
-            List<DeptVo> deptVoList = new ArrayList<>();
-            depts.forEach(tempDept -> {
+        Stream<Dept> deptStream = deptService.findListById(dept).stream();
+        if (Optional.ofNullable(deptStream).isPresent()) {
+            // 流处理转换成DeptVo
+            List<DeptVo> deptVoList = deptStream.map(tempDept -> {
                 DeptVo tempDeptVo = new DeptVo();
                 BeanUtils.copyProperties(tempDept, tempDeptVo);
-                deptVoList.add(tempDeptVo);
-            });
+                return tempDeptVo;
+            }).collect(Collectors.toList());
             returnT = new ResponseBean<>(deptVoList);
         }
         return returnT;

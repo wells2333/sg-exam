@@ -9,17 +9,17 @@ public class SecurityConstant {
     /**
      * 基础角色
      */
-    public static final String BASE_ROLE = "ROLE_USER";
+    public static final String BASE_ROLE = "role_user";
 
     /**
      * 管理员角色
      */
-    public static final String ROLE_ADMIN = "ROLE_ADMIN";
+    public static final String ROLE_ADMIN = "role_admin";
 
     /**
      * 老师角色
      */
-    public static final String ROLE_TEACHER = "ROLE_TEACHER";
+    public static final String ROLE_TEACHER = "role_teacher";
 
     /**
      * token
@@ -35,4 +35,14 @@ public class SecurityConstant {
      * oauth 客户端信息
      */
     public static final String CLIENT_DETAILS_KEY = "exam_oauth:client:details";
+
+    /**
+     * 正常状态
+     */
+    public static final String NORMAL = "0";
+
+    /**
+     * 异常状态
+     */
+    public static final String ABNORMAL = "1";
 }

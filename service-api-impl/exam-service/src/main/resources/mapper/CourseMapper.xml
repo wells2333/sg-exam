@@ -17,7 +17,7 @@
     </resultMap>
 
     <sql id="courseColumns">
-        a.id as "id",
+        a.id,
         a.course_name,
         a.college,
         a.major,
