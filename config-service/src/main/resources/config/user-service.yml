@@ -1,11 +1,17 @@
 server:
   port: 8082
 spring:
+  servlet:
+    multipart:
+      # 单个文件的大小
+      max-file-size: 10MB
+      # 单次请求的文件的总大小
+      max-request-size: 100MB
   datasource:
     url: jdbc:mysql://${MYSQL_HOST:192.168.0.144}:${MYSQL_PORT:3306}/microservice-user?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
     username: ${MYSQL_USERNAME:platform}
     password: ${MYSQL_PASSWORD:11}
-    type: com.alibaba.druid.pool.DruidDataSource
+    type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.jdbc.Driver
   redis:
     host: ${REDIS_HOST:192.168.0.213}
@@ -48,9 +54,15 @@ security:
            MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAimUKhvBhsoeSM3HkIOP/Y3RXjvonBlZnLj8oO92TyAKG53lmAoK0wZ5MTZPsfrOz2Z7CeAp6mPhUANX2RUoFwVzG7rJmgWyqGmGFNBmtYL+uVqQ80TzWi5zyzXTxgVMWiCqqw/u4AeE1qhN8chnGwhUBnpgPAPd8v57mIwg0n5JxjdYe7pgHlpvt8ZXTXd1KBxB5K7WjNlCfMf75ZEeBaplxsSfJUwKbnHQKWcY3NnpjkVR8y4jviAbkOHmGMaliM7fcsLzbosBUPDQuNlvYdjPBRfH6MMPeXRW6On3u0Um9wIYmkQS+AEgHCq4UuLOnTTqqxnGkwFYeMAAXmRyMtQIDAQAB
            -----END PUBLIC KEY-----
 
+# mybatis配置
 mybatis:
-  mapperLocations: classpath:mapper/*.xml
-  configLocation: classpath:/mybatis-config.xml
+  type-aliases-package: com.github.tangyi.user.api.module
+  configuration:
+    # 驼峰转换
+    map-underscore-to-camel-case: true
+    # 延迟加载
+    lazy-loading-enabled: true
+  mapper-locations: classpath:mapper/*.xml
 pagehelper:
     helperDialect: mysql
     reasonable: true

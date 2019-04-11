@@ -21,7 +21,7 @@
     </resultMap>
 
     <sql id="examRecordColumns">
-        a.id as "id",
+        a.id,
         a.user_id,
         a.examination_id,
         a.examination_name,

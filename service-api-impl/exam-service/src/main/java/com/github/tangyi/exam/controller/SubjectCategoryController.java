@@ -14,12 +14,16 @@ import com.github.tangyi.exam.service.SubjectCategoryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 题目分类controller
@@ -46,12 +50,14 @@ public class SubjectCategoryController extends BaseController {
     @ApiOperation(value = "获取分类列表")
     public List<SubjectCategoryDto> menus() {
         // 查询所有分类
-        Set<SubjectCategory> subjectCategorySet = new HashSet<SubjectCategory>(categoryService.findList(new SubjectCategory()));
-        List<SubjectCategoryDto> subjectCategorySetTreeList = new ArrayList<SubjectCategoryDto>();
-        subjectCategorySet.forEach(subjectCategory -> subjectCategorySetTreeList.add(new SubjectCategoryDto(subjectCategory)));
-        // 排序
-        CollUtil.sort(subjectCategorySetTreeList, Comparator.comparingInt(SubjectCategoryDto::getSort));
-        return TreeUtil.buildTree(subjectCategorySetTreeList, "-1");
+        List<SubjectCategory> subjectCategoryList = categoryService.findList(new SubjectCategory());
+        if (CollectionUtils.isNotEmpty(subjectCategoryList)) {
+            // 转成dto
+            List<SubjectCategoryDto> subjectCategorySetTreeList = subjectCategoryList.stream().map(SubjectCategoryDto::new).distinct().collect(Collectors.toList());
+            // 排序、组装树形结构
+            return TreeUtil.buildTree(CollUtil.sort(subjectCategorySetTreeList, Comparator.comparingInt(SubjectCategoryDto::getSort)), "-1");
+        }
+        return new ArrayList<>();
     }
 
     /**

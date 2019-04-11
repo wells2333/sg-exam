@@ -4,20 +4,18 @@ import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.IdGen;
 import com.github.tangyi.common.core.utils.SysUtil;
-import com.github.tangyi.common.core.vo.Role;
 import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.security.constant.SecurityConstant;
 import com.github.tangyi.common.security.utils.SecurityUtil;
+import com.github.tangyi.user.api.constant.MenuConstant;
 import com.github.tangyi.user.api.dto.UserDto;
 import com.github.tangyi.user.api.dto.UserInfoDto;
 import com.github.tangyi.user.api.module.Menu;
 import com.github.tangyi.user.api.module.User;
 import com.github.tangyi.user.api.module.UserRole;
-import com.github.tangyi.user.mapper.MenuMapper;
 import com.github.tangyi.user.mapper.UserMapper;
 import com.github.tangyi.user.mapper.UserRoleMapper;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -27,9 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -48,7 +44,7 @@ public class UserService extends CrudService<UserMapper, User> {
     private UserRoleMapper userRoleMapper;
 
     @Autowired
-    private MenuMapper menuMapper;
+    private MenuService menuService;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -92,28 +88,31 @@ public class UserService extends CrudService<UserMapper, User> {
         UserInfoDto user = new UserInfoDto();
         if (userVo != null) {
             user.setUser(userVo);
-            // 用户角色列表
-            List<Role> roleList = userVo.getRoleList();
-            List<String> roleCodes = new ArrayList<>();
-            if (CollectionUtils.isNotEmpty(roleList)) {
-                roleList.forEach(role -> {
-                    if (!SecurityConstant.BASE_ROLE.equals(role.getRoleName()))
-                        roleCodes.add(role.getRoleCode());
-                });
+            // 用户角色
+            List<String> roles = new ArrayList<>();
+            // 用户权限
+            List<String> permissions = new ArrayList<>();
+            // 根据角色获取权限
+            if (CollectionUtils.isNotEmpty(userVo.getRoleList())) {
+                userVo.getRoleList().stream()
+                        // 过滤普通用户角色
+                        .filter(role -> !SecurityConstant.BASE_ROLE.equals(role.getRoleName()))
+                        .forEach(role -> {
+                            // 根据角色查找菜单
+                            List<Menu> menuList = menuService.findMenuByRole(role.getRoleCode());
+                            if (CollectionUtils.isNotEmpty(menuList)) {
+                                menuList.stream()
+                                        // 获取权限菜单
+                                        .filter(menu -> MenuConstant.MENU_TYPE_PERMISSION.equals(menu.getType()))
+                                        // 获取权限
+                                        .forEach(menu -> permissions.add(menu.getPermission()));
+                            }
+                            // 保存角色code
+                            roles.add(role.getRoleCode());
+                        });
             }
-            String[] roleCodeArray = roleCodes.toArray(new String[roleCodes.size()]);
-            user.setRoles(roleCodeArray);
-            // 菜单列表
-            Set<Menu> menuSet = new HashSet<>();
-            for (String role : roleCodeArray)
-                menuSet.addAll(menuMapper.findByRole(role));
-            // 权限列表
-            Set<String> permissions = new HashSet<>();
-            menuSet.forEach(menu -> {
-                if (StringUtils.isNotEmpty(menu.getPermission()))
-                    permissions.add(menu.getPermission());
-            });
-            user.setPermissions(permissions.toArray(new String[permissions.size()]));
+            user.setRoles(roles.toArray(new String[0]));
+            user.setPermissions(permissions.toArray(new String[0]));
         }
         return user;
     }

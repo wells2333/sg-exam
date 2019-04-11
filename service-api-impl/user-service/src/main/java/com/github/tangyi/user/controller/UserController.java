@@ -37,7 +37,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author tangyi
@@ -140,58 +145,48 @@ public class UserController extends BaseController {
         PageInfo<User> page = userService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), user);
         List<User> users = page.getList();
         if (CollectionUtils.isNotEmpty(users)) {
-            // 收集用户、部门id
-            Set<String> deptIdSet = new HashSet<>(), userIdSet = new HashSet<>();
-            users.forEach(tempUser -> {
-                if (tempUser.getDeptId() != null)
-                    deptIdSet.add(tempUser.getDeptId());
-                userIdSet.add(tempUser.getId());
-            });
+            Dept dept = new Dept();
+            // 流处理获取部门ID集合，转成字符串数组
+            dept.setIds(users.stream().filter(tempUser -> tempUser.getDeptId() != null).map(User::getDeptId).distinct().toArray(String[]::new));
             // 批量查找部门
-            List<Dept> deptList = null;
-            if (!deptIdSet.isEmpty()) {
-                Dept dept = new Dept();
-                dept.setIds(deptIdSet.toArray(new String[deptIdSet.size()]));
-                deptList = deptService.findListById(dept);
-            }
-
-            // 批量查找角色
-            List<UserRole> userRoles = userRoleService.getByUserIds(new ArrayList<>(userIdSet));
+            List<Dept> deptList = deptService.findListById(dept);
+            // 流处理获取用户ID集合，根据用户ID批量查找角色
+            List<UserRole> userRoles = userRoleService.getByUserIds(users.stream().map(User::getId).collect(Collectors.toList()));
             List<Role> roleList = new ArrayList<>();
             if (CollectionUtils.isNotEmpty(userRoles)) {
-                Set<String> roleIdSet = new HashSet<>();
-                userRoles.forEach(tempUserRole -> {
-                    roleIdSet.add(tempUserRole.getRoleId());
-                });
                 Role role = new Role();
-                role.setIds(roleIdSet.toArray(new String[roleIdSet.size()]));
-                // 查询所有角色
+                // 获取角色ID集合，转成字节数组
+                role.setIds(userRoles.stream().map(UserRole::getRoleId).distinct().toArray(String[]::new));
+                // 批量查找角色
                 roleList = roleService.findListById(role);
             }
-            // 设置部门、角色信息
-            for (User tempUser : users) {
-                List<Role> userRoleList = new ArrayList<>();
+            // 遍历用户集合，设置部门、角色
+            List<Role> finalRoleList = roleList;
+            users.forEach(tempUser -> {
                 // 设置部门信息
-                if (deptList != null) {
-                    for (Dept tempDept : deptList) {
-                        if (tempDept.getId().equals(tempUser.getDeptId())) {
-                            tempUser.setDeptName(tempDept.getDeptName());
-                            tempUser.setDeptId(tempDept.getId());
-                            break;
-                        }
+                if (CollectionUtils.isNotEmpty(deptList)) {
+                    // 用户所属部门
+                    Dept userDept = deptList.stream()
+                            // 按部门ID找到部门信息
+                            .filter(tempDept -> tempDept.getId().equals(tempUser.getDeptId()))
+                            .findFirst().orElse(null);
+                    if (userDept != null) {
+                        tempUser.setDeptName(userDept.getDeptName());
+                        tempUser.setDeptId(userDept.getId());
                     }
                 }
-                for (UserRole tempUserRole : userRoles) {
-                    if (tempUser.getId().equals(tempUserRole.getUserId())) {
-                        for (Role role : roleList) {
-                            if (role.getId().equals(tempUserRole.getRoleId())) {
-                                userRoleList.add(role);
-                            }
-                        }
-                    }
+                // 设置角色信息
+                if (CollectionUtils.isNotEmpty(userRoles)) {
+                    List<Role> userRoleList = new ArrayList<>();
+                    userRoles.stream()
+                            // 过滤
+                            .filter(tempUserRole -> tempUser.getId().equals(tempUserRole.getUserId()))
+                            .forEach(tempUserRole -> finalRoleList.stream()
+                                    .filter(role -> role.getId().equals(tempUserRole.getRoleId()))
+                                    .forEach(userRoleList::add));
+                    tempUser.setRoleList(userRoleList);
                 }
-                tempUser.setRoleList(userRoleList);
-            }
+            });
         }
         return page;
     }
@@ -259,9 +254,7 @@ public class UserController extends BaseController {
         // 新密码不为空
         if (StringUtils.isNotEmpty(userDto.getNewPassword())) {
             if (!encoder.matches(userDto.getOldPassword(), userDto.getPassword())) {
-                ResponseBean<Boolean> returnT = new ResponseBean<>(Boolean.FALSE);
-                returnT.setMsg("新旧密码不匹配");
-                return returnT;
+                return new ResponseBean<>(Boolean.FALSE, "新旧密码不匹配");
             } else {
                 // 新旧密码一致，修改密码
                 userDto.setPassword(encoder.encode(userDto.getNewPassword()));
@@ -314,13 +307,9 @@ public class UserController extends BaseController {
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request, "用户信息" + new SimpleDateFormat("yyyyMMddhhmmssSSS").format(new Date()) + ".xlsx"));
             List<User> users;
             if (StringUtils.isNotEmpty(userVo.getIdString())) {
-                List<String> userIdList = new ArrayList<>();
-                for (String id : userVo.getIdString().split(",")) {
-                    if (StringUtils.isNotEmpty(id))
-                        userIdList.add(id);
-                }
                 User user = new User();
-                user.setIds(userIdList.toArray(new String[userIdList.size()]));
+                // 按逗号切割ID，流处理获取ID集合，去重，转成字符串数组
+                user.setIds(Stream.of(userVo.getIdString().split(",")).filter(StringUtils::isNotBlank).distinct().toArray(String[]::new));
                 users = userService.findListById(user);
             } else {    // 导出全部用户
                 users = userService.findList(new User());
@@ -400,14 +389,13 @@ public class UserController extends BaseController {
         ResponseBean<List<UserVo>> returnT = null;
         User user = new User();
         user.setIds(userVo.getIds());
-        List<User> users = userService.findListById(user);
-        if (CollectionUtils.isNotEmpty(users)) {
-            List<UserVo> userVoList = new ArrayList<>();
-            users.forEach(tempUser -> {
+        Stream<User> userStream = userService.findListById(user).stream();
+        if (Optional.ofNullable(userStream).isPresent()) {
+            List<UserVo> userVoList = userStream.map(tempUser -> {
                 UserVo tempUserVo = new UserVo();
                 BeanUtils.copyProperties(tempUser, tempUserVo);
-                userVoList.add(tempUserVo);
-            });
+                return tempUserVo;
+            }).collect(Collectors.toList());
             returnT = new ResponseBean<>(userVoList);
         }
         return returnT;
@@ -441,15 +429,17 @@ public class UserController extends BaseController {
             Role role = new Role();
             role.setIsDefault(RoleConstant.IS_DEFAULT_ROLE);
             // 查询默认角色
-            List<Role> roleList = roleService.findList(role);
-            if (CollectionUtils.isNotEmpty(roleList)) {
-                Role defaultRole = roleList.get(0);
-                UserRole userRole = new UserRole();
-                userRole.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
-                userRole.setUserId(user.getId());
-                userRole.setRoleId(defaultRole.getId());
-                // 保存用户角色关系
-                success = userRoleService.insert(userRole) > 0;
+            Stream<Role> roleStream = roleService.findList(role).stream();
+            if (Optional.ofNullable(roleStream).isPresent()) {
+                Role defaultRole = roleStream.findFirst().orElse(null);
+                if (defaultRole != null) {
+                    UserRole userRole = new UserRole();
+                    userRole.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+                    userRole.setUserId(user.getId());
+                    userRole.setRoleId(defaultRole.getId());
+                    // 保存用户角色关系
+                    success = userRoleService.insert(userRole) > 0;
+                }
             }
         }
         return new ResponseBean<>(success);

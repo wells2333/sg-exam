@@ -17,7 +17,7 @@
     </resultMap>
 
     <sql id="roleColumns">
-        a.id as "id",
+        a.id,
         a.role_name,
         a.role_code,
         a.role_desc,

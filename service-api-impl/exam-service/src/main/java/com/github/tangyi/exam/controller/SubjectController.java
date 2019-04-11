@@ -33,9 +33,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 题目controller
@@ -214,13 +214,15 @@ public class SubjectController extends BaseController {
             List<Subject> subjects = new ArrayList<>();
             // 根据题目id导出
             if (StringUtils.isNotEmpty(subjectDto.getIdString())) {
-                for (String id : subjectDto.getIdString().split(",")) {
-                    Subject subject = new Subject();
-                    subject.setId(id);
-                    subject = subjectService.get(subject);
-                    if (subject != null)
-                        subjects.add(subject);
-                }
+                subjects = Stream.of(subjectDto.getIdString().split(","))
+                        // 根据ID查找题目信息
+                        .map(id -> {
+                            Subject subject = new Subject();
+                            subject.setId(id);
+                            return subjectService.get(subject);
+                        })
+                        // 过滤收集
+                        .filter(Objects::nonNull).collect(Collectors.toList());
             } else if (StringUtils.isNotEmpty(subjectDto.getExaminationId())) {  // 根据考试id导出
                 Subject subject = new Subject();
                 subject.setExaminationId(subjectDto.getExaminationId());
@@ -251,17 +253,17 @@ public class SubjectController extends BaseController {
         Assert.notNull(examinationId, CommonConstant.IllEGAL_ARGUMENT);
         try {
             logger.debug("开始导入题目数据，分类ID：{}", examinationId);
-            List<Subject> subjects = MapUtil.map2Java(Subject.class,
-                    ExcelToolUtil.importExcel(file.getInputStream(), SubjectUtil.getSubjectMap()));
-            if (CollectionUtils.isNotEmpty(subjects)) {
-                for (Subject subject : subjects) {
+            Stream<Subject> subjectStream = MapUtil.map2Java(Subject.class,
+                    ExcelToolUtil.importExcel(file.getInputStream(), SubjectUtil.getSubjectMap())).stream();
+            if (Optional.ofNullable(subjectStream).isPresent()) {
+                subjectStream.forEach(subject -> {
                     // 初始化考试ID
                     if (StringUtils.isBlank(subject.getId())) {
                         subject.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
                         subject.setExaminationId(examinationId);
                         subjectService.insert(subject);
                     }
-                }
+                });
                 // 更新考试的题目数
                 Examination examination = new Examination();
                 examination.setId(examinationId);
@@ -297,9 +299,9 @@ public class SubjectController extends BaseController {
             success = subjectService.deleteAll(subjectIds) > 0;
             Subject subject = new Subject();
             subject.setIds(subjectIds);
-            List<Subject> subjectList = subjectService.findListById(subject);
-            if (CollectionUtils.isNotEmpty(subjectList)) {
-                subjectList.forEach(tempSubject -> {
+            Stream<Subject> subjectStream = subjectService.findListById(subject).stream();
+            if (Optional.ofNullable(subjectStream).isPresent()) {
+                subjectStream.forEach(tempSubject -> {
                     // 更新考试的题目数
                     Examination examination = new Examination();
                     examination.setId(tempSubject.getExaminationId());

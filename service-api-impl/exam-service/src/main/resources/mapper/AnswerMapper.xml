@@ -18,7 +18,7 @@
     </resultMap>
 
     <sql id="answerColumns">
-        a.id as "id",
+        a.id,
         a.user_id,
         a.examination_id,
         a.exam_record_id,

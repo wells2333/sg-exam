@@ -30,8 +30,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 附件信息管理
@@ -253,12 +253,12 @@ public class AttachmentController extends BaseController {
         attachment.setIds(attachmentVo.getIds());
         List<Attachment> attachmentList = attachmentService.findListById(attachment);
         if (CollectionUtils.isNotEmpty(attachmentList)) {
-            List<AttachmentVo> attachmentVoList = new ArrayList<>();
-            attachmentList.forEach(tempAttachment -> {
+            // 流处理转换成AttachmentVo
+            List<AttachmentVo> attachmentVoList = attachmentList.stream().map(tempAttachment -> {
                 AttachmentVo tempAttachmentVo = new AttachmentVo();
                 BeanUtils.copyProperties(tempAttachment, tempAttachmentVo);
-                attachmentVoList.add(tempAttachmentVo);
-            });
+                return tempAttachmentVo;
+            }).collect(Collectors.toList());
             returnT = new ResponseBean<>(attachmentVoList);
         }
         return returnT;

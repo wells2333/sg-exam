@@ -3,11 +3,11 @@ package com.github.tangyi.exam.service;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.security.utils.SecurityUtil;
-import com.github.tangyi.exam.mapper.AnswerMapper;
 import com.github.tangyi.exam.api.module.Answer;
 import com.github.tangyi.exam.api.module.ExamRecord;
 import com.github.tangyi.exam.api.module.IncorrectAnswer;
 import com.github.tangyi.exam.api.module.Subject;
+import com.github.tangyi.exam.mapper.AnswerMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -16,9 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * 答题service
@@ -38,9 +36,6 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
     @Autowired
     private ExamRecordService examRecordService;
 
-    @Autowired
-    private ExaminationService examinationService;
-
     /**
      * 查找答题
      *
@@ -57,6 +52,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
 
     /**
      * 根据用户ID、考试ID、考试记录ID、题目ID查找答题
+     *
      * @param answer answer
      * @return Answer
      * @author tangyi
@@ -121,37 +117,43 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
      */
     @Transactional
     public boolean submit(Answer answer) {
+        long start = System.currentTimeMillis();
         boolean success = false;
-        logger.debug("提交答卷：{}, {}", answer.getExaminationId(), answer.getUserId());
-        // 总分
-        Integer totalScore = 0, correctNumber = 0, incorrectNumber = 0;
+        String currentUsername = SecurityUtil.getCurrentUsername();
         // 查找已提交的题目
         List<Answer> answerList = findList(answer);
         if (CollectionUtils.isNotEmpty(answerList)) {
-            // 收集题目id
-            Set<String> subjectIdSet = new HashSet<>();
-            answerList.forEach(tempAnswer -> {
-                subjectIdSet.add(tempAnswer.getSubjectId());
-            });
             Subject subject = new Subject();
-            subject.setIds(subjectIdSet.toArray(new String[subjectIdSet.size()]));
+            // 获取题目ID，去重，转成字符串数组
+            subject.setIds(answerList.stream().map(Answer::getSubjectId).distinct().toArray(String[]::new));
             // 查找题目列表
             List<Subject> subjects = subjectService.findListById(subject);
             if (CollectionUtils.isNotEmpty(subjects)) {
+                // 保存答题正确的题目分数
+                List<String> rightScore = new ArrayList<>();
+                answerList.forEach(tempAnswer -> {
+                    // 题目集合
+                    subjects.stream()
+                            // 题目ID、题目答案匹配
+                            .filter(tempSubject -> tempSubject.getId().equals(tempAnswer.getSubjectId()) && tempSubject.getAnswer().equalsIgnoreCase(tempAnswer.getAnswer()))
+                            // 记录答题正确的成绩
+                            .findFirst().ifPresent(right -> rightScore.add(right.getScore()));
+                });
+                // 求和计算总分
+                int totalScore = rightScore.stream().mapToInt(Integer::parseInt).sum();
                 // 错题列表
                 List<IncorrectAnswer> incorrectAnswers = new ArrayList<>();
-                for (Subject tempSubject : subjects) {
-                    for (Answer tempAnswer : answerList) {
-                        if (tempAnswer.getSubjectId().equals(tempSubject.getId())) {
-                            // 答题正确
-                            if (tempSubject.getAnswer().toUpperCase().equalsIgnoreCase(tempAnswer.getAnswer())) {
-                                totalScore += Integer.parseInt(tempSubject.getScore());
-                                correctNumber++;
-                            } else {
-                                incorrectNumber++;
+                answerList.forEach(tempAnswer -> {
+                    // 题目集合
+                    subjects.stream()
+                            // 题目ID、题目答案匹配
+                            .filter(tempSubject -> tempSubject.getId().equals(tempAnswer.getSubjectId()) && !tempSubject.getAnswer().equalsIgnoreCase(tempAnswer.getAnswer()))
+                            // 错题
+                            .findFirst()
+                            .ifPresent(tempSubject -> {
                                 // 记录错题
                                 IncorrectAnswer incorrectAnswer = new IncorrectAnswer();
-                                incorrectAnswer.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+                                incorrectAnswer.setCommonValue(currentUsername, SysUtil.getSysCode());
                                 incorrectAnswer.setExaminationId(tempAnswer.getExaminationId());
                                 incorrectAnswer.setExamRecordId(answer.getExamRecordId());
                                 incorrectAnswer.setSubjectId(tempAnswer.getSubjectId());
@@ -159,18 +161,16 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
                                 incorrectAnswer.setUserId(tempAnswer.getUserId());
                                 incorrectAnswer.setIncorrectAnswer(tempAnswer.getAnswer());
                                 incorrectAnswers.add(incorrectAnswer);
-                            }
-                        }
-                    }
-                }
+                            });
+                });
                 // 保存成绩
                 ExamRecord examRecord = new ExamRecord();
                 examRecord.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
                 examRecord.setId(answer.getExamRecordId());
                 examRecord.setEndTime(examRecord.getCreateDate());
-                examRecord.setScore(totalScore.toString());
-                examRecord.setCorrectNumber(correctNumber.toString());
-                examRecord.setInCorrectNumber(incorrectNumber.toString());
+                examRecord.setScore(Integer.toString(totalScore));
+                examRecord.setCorrectNumber(String.valueOf(rightScore.size()));
+                examRecord.setInCorrectNumber(String.valueOf(incorrectAnswers.size()));
                 success = examRecordService.update(examRecord) > 0;
                 // 保存错题
                 ExamRecord searchExamRecord = new ExamRecord();
@@ -185,6 +185,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
                 }
             }
         }
+        logger.debug("提交答卷，用户名：{}，考试ID：{}，耗时：{}ms", currentUsername, answer.getExaminationId(), System.currentTimeMillis() - start);
         return success;
     }
 }

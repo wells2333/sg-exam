@@ -60,7 +60,7 @@
     </resultMap>
 
     <sql id="userColumns">
-        a.id as "id",
+        a.id,
         a.name,
         a.username,
         a.password,

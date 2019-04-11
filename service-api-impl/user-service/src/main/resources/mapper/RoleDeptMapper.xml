@@ -8,9 +8,9 @@
     </resultMap>
 
     <sql id="roleDeptColumns">
-        a.id as "id",
-        a.role_id as "role_id",
-        a.dept_id as "dept_id"
+        a.id,
+        a.role_id,
+        a.dept_id
     </sql>
 
     <select id="get" resultMap="roleDeptResultMap">

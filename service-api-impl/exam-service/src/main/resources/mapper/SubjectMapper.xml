@@ -27,7 +27,7 @@
     </resultMap>
 
     <sql id="subjectColumns">
-        a.id as "id",
+        a.id,
         a.examination_id,
         a.serial_number,
         a.subject_name,

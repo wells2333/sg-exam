@@ -8,9 +8,9 @@
     </resultMap>
 
     <sql id="userRoleColumns">
-        a.id as "id",
-        a.user_id as "userId",
-        a.role_id as "roleId"
+        a.id,
+        a.user_id,
+        a.role_id
     </sql>
 
     <select id="getByUserId" resultMap="userResultMap">

@@ -20,15 +20,16 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 角色controller
@@ -101,8 +102,9 @@ public class RoleController extends BaseController {
                                    Role role) {
         // 查询所属部门
         PageInfo<Role> pageInfo = roleService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), role);
-        if (CollectionUtils.isNotEmpty(pageInfo.getList())) {
-            pageInfo.getList().forEach(tempRole -> {
+        Stream<Role> roleStream = pageInfo.getList().stream();
+        if (Optional.ofNullable(roleStream).isPresent()) {
+            roleStream.forEach(tempRole -> {
                 RoleDept roleDept = new RoleDept();
                 roleDept.setRoleId(tempRole.getId());
                 // 查询角色部门关系
@@ -136,17 +138,13 @@ public class RoleController extends BaseController {
         List<Role> roles = new ArrayList<>();
         if (StringUtils.isNotBlank(deptId)) {
             // 获取角色部门关系
-            List<RoleDept> roleDepts = roleDeptService.getRoleByDeptId(deptId);
-            // 遍历
-            if (CollectionUtils.isNotEmpty(roleDepts)) {
-                roleDepts.forEach(roleDept -> {
-                    Role role = new Role();
-                    role.setId(roleDept.getRoleId());
-                    // 查询部门信息
-                    role = roleService.get(role);
-                    if (role != null)
-                        roles.add(role);
-                });
+            Stream<RoleDept> roleDeptStream = roleDeptService.getRoleByDeptId(deptId).stream();
+            // 获取角色列表
+            if (Optional.ofNullable(roleDeptStream).isPresent()) {
+                Role role = new Role();
+                // 流处理获取角色ID集合，去重，转成字符串数组
+                role.setIds(roleDeptStream.map(RoleDept::getRoleId).distinct().toArray(String[]::new));
+                roles = roleService.findListById(role);
             }
         }
         return roles;
@@ -190,7 +188,7 @@ public class RoleController extends BaseController {
             role = roleService.get(role);
             // 保存角色菜单关系
             if (role != null && StringUtils.isNotBlank(deptId))
-                success = roleMenuService.saveRoleMenus(role.getId(), Arrays.asList(deptId.split(","))) > 0;
+                success = roleMenuService.saveRoleMenus(role.getId(), Stream.of(deptId.split(",")).collect(Collectors.toList())) > 0;
         }
         return new ResponseBean<>(success);
     }

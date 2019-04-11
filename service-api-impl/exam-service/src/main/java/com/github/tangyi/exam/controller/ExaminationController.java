@@ -28,7 +28,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 考试controller
@@ -101,29 +103,26 @@ public class ExaminationController extends BaseController {
         PageInfo<Examination> page = examinationService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), examination);
         PageInfo<ExaminationDto> examinationDtoPageInfo = new PageInfo<>();
         BeanUtils.copyProperties(page, examinationDtoPageInfo);
-        List<ExaminationDto> examinationDtos = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(page.getList())) {
-            Set<String> courseIdSet = new HashSet<>();
-            page.getList().forEach(exam -> {
-                courseIdSet.add(exam.getCourseId());
-            });
             Course course = new Course();
-            course.setIds(courseIdSet.toArray(new String[courseIdSet.size()]));
+            // 流处理获取课程ID集合，转成字符串数组
+            course.setIds(page.getList().stream().map(Examination::getCourseId).distinct().toArray(String[]::new));
             List<Course> courses = courseService.findListById(course);
+            // 当前时间
             String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-            page.getList().forEach(exam -> {
+            // 流处理转成Dto集合
+            List<ExaminationDto> examinationDtos = page.getList().stream().map(exam -> {
                 ExaminationDto examinationDto = new ExaminationDto();
                 BeanUtils.copyProperties(exam, examinationDto);
                 examinationDto.setCurrentTime(currentTime);
-                courses.forEach(tempCourse -> {
-                    if (tempCourse.getId().equals(exam.getCourseId())) {
-                        examinationDto.setCourse(tempCourse);
-                    }
-                });
-                examinationDtos.add(examinationDto);
-            });
+                // 设置考试所属课程
+                Course examinationCourse = courses.stream().filter(tempCourse -> tempCourse.getId().equals(exam.getCourseId())).findFirst().orElse(null);
+                if (examinationCourse != null)
+                    examinationDto.setCourse(examinationCourse);
+                return examinationDto;
+            }).collect(Collectors.toList());
+            examinationDtoPageInfo.setList(examinationDtos);
         }
-        examinationDtoPageInfo.setList(examinationDtos);
         return examinationDtoPageInfo;
     }
 

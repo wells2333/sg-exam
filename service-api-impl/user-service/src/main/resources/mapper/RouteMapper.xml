@@ -19,7 +19,7 @@
     </resultMap>
 
     <sql id="routeColumns">
-        a.id as "id",
+        a.id,
         a.route_id,
         a.route_name,
         a.predicates,

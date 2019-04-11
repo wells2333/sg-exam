@@ -28,7 +28,11 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * 题库controller
@@ -98,22 +102,21 @@ public class SubjectBankController extends BaseController {
         PageInfo<SubjectBank> page = subjectBankService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), subjectBank);
         if (CollectionUtils.isNotEmpty(page.getList())) {
             // 查询分类信息
-            Set<String> categoryIdSet = new HashSet<>();
-            page.getList().forEach(tempSubjectBank -> {
-                categoryIdSet.add(tempSubjectBank.getCategoryId());
-            });
             SubjectCategory subjectCategory = new SubjectCategory();
-            subjectCategory.setIds(categoryIdSet.toArray(new String[categoryIdSet.size()]));
-            List<SubjectCategory> subjectCategoryList = subjectCategoryService.findListById(subjectCategory);
-            page.getList().forEach(tempSubjectBank -> {
-                for (SubjectCategory tempSubjectCategory : subjectCategoryList) {
-                    if (tempSubjectCategory.getId().equals(tempSubjectBank.getCategoryId())) {
-                        // 设置分类名称
-                        tempSubjectBank.setCategoryName(tempSubjectCategory.getCategoryName());
-                        break;
-                    }
-                }
-            });
+            // 流处理获取分类ID，去重，转成字符串数组
+            subjectCategory.setIds(page.getList().stream().map(SubjectBank::getCategoryId).distinct().toArray(String[]::new));
+            Stream<SubjectCategory> subjectCategoryStream = subjectCategoryService.findListById(subjectCategory).stream();
+            if (Optional.ofNullable(subjectCategoryStream).isPresent()) {
+                page.getList().forEach(tempSubjectBank -> {
+                    SubjectCategory category = subjectCategoryStream
+                            .filter(tempSubjectCategory -> tempSubjectCategory.getId().equals(tempSubjectBank.getCategoryId()))
+                            .findFirst()
+                            .orElse(null);
+                    // 设置分类名称
+                    if (category != null)
+                        tempSubjectBank.setCategoryName(category.getCategoryName());
+                });
+            }
         }
         return page;
     }

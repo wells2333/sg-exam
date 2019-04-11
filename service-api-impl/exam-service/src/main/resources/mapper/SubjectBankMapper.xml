@@ -27,7 +27,7 @@
     </resultMap>
 
     <sql id="subjectBankColumns">
-        a.id as "id",
+        a.id,
         a.category_id,
         a.serial_number,
         a.subject_name,

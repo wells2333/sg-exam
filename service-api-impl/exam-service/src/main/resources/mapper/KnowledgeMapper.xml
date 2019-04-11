@@ -16,7 +16,7 @@
     </resultMap>
 
     <sql id="knowledgeColumns">
-        a.id as "id",
+        a.id,
         a.knowledge_name,
         a.knowledge_desc,
         a.attachment_id,

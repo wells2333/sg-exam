@@ -99,31 +99,38 @@ public class KnowledgeController extends BaseController {
         PageInfo<Knowledge> knowledgePageInfo = knowledgeService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), knowledge);
         PageInfo<KnowledgeDto> knowledgeDtoPageInfo = new PageInfo<>();
         List<KnowledgeDto> knowledgeDtoList = new ArrayList<>();
-
         // 查询附件
         Set<String> attachmentIdSet = new HashSet<>();
         knowledgePageInfo.getList().forEach(tempKnowledge -> {
             attachmentIdSet.add(tempKnowledge.getAttachmentId());
         });
         AttachmentVo attachmentVo = new AttachmentVo();
-        attachmentVo.setIds(attachmentIdSet.toArray(new String[attachmentIdSet.size()]));
+        attachmentVo.setIds(attachmentIdSet.toArray(new String[0]));
         // 根据附件ID查询附件
         ResponseBean<List<AttachmentVo>> returnT = userServiceClient.findAttachmentById(attachmentVo);
-        for (Knowledge tempKnowledge : knowledgePageInfo.getList()) {
-            KnowledgeDto knowledgeDto = new KnowledgeDto();
-            BeanUtils.copyProperties(tempKnowledge, knowledgeDto);
-            if (returnT != null && CollectionUtils.isNotEmpty(returnT.getData())) {
-                for (AttachmentVo tempAttachmentVo : returnT.getData()) {
-                    // 设置附件名称和大小
-                    if (tempAttachmentVo.getId().equals(tempKnowledge.getAttachmentId())) {
-                        knowledgeDto.setAttachName(tempAttachmentVo.getAttachName());
-                        knowledgeDto.setAttachSize(tempAttachmentVo.getAttachSize());
-                        break;
+        knowledgePageInfo.getList().stream()
+                // 转成Dto
+                .map(tempKnowledge -> {
+                    KnowledgeDto knowledgeDto = new KnowledgeDto();
+                    BeanUtils.copyProperties(tempKnowledge, knowledgeDto);
+                    return knowledgeDto;
+                })
+                // 遍历
+                .forEach(tempKnowledgeDto -> {
+                    if (returnT != null && CollectionUtils.isNotEmpty(returnT.getData())) {
+                        AttachmentVo tempKnowledgeDtoAttachmentVo = returnT.getData().stream()
+                                // 根据ID过滤
+                                .filter(tempAttachmentVo -> tempAttachmentVo.getId().equals(tempKnowledgeDto.getAttachmentId()))
+                                // 匹配第一个
+                                .findFirst().orElse(null);
+                        // 设置附件名称、附件大小
+                        if (tempKnowledgeDtoAttachmentVo != null) {
+                            tempKnowledgeDto.setAttachName(tempKnowledgeDtoAttachmentVo.getAttachName());
+                            tempKnowledgeDto.setAttachSize(tempKnowledgeDtoAttachmentVo.getAttachSize());
+                        }
                     }
-                }
-            }
-            knowledgeDtoList.add(knowledgeDto);
-        }
+                    knowledgeDtoList.add(tempKnowledgeDto);
+                });
         knowledgeDtoPageInfo.setList(knowledgeDtoList);
         knowledgeDtoPageInfo.setTotal(knowledgePageInfo.getTotal());
         knowledgeDtoPageInfo.setPageNum(knowledgePageInfo.getPageNum());

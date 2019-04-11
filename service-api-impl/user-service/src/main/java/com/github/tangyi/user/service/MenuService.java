@@ -34,9 +34,23 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
      * @author tangyi
      * @date 2018/8/27 16:00
      */
-    @Cacheable(value = "menu", key = "#role  + '_menu'")
+    @Cacheable(value = "menu", key = "#role")
     public List<Menu> findMenuByRole(String role) {
         return menuMapper.findByRole(role);
+    }
+
+    /**
+     * 查询全部菜单
+     *
+     * @param menu menu
+     * @return List
+     * @author tangyi
+     * @date 2019/04/10 17:58
+     */
+    @Cacheable(value = "menu", key = "#menu.applicationCode")
+    @Override
+    public List<Menu> findAllList(Menu menu) {
+        return menuMapper.findAllList(menu);
     }
 
     /**
@@ -50,11 +64,6 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
     @Transactional
     @Override
     public int insert(Menu menu) {
-        // 初始化权限
-        /*if (MenuConstant.MENU_TYPE_MENU.equals(menu.getType())) {
-            List<Menu> menus = MenuUtil.initMenuPermission(menu);
-            menus.forEach(super::insert);
-        }*/
         return super.insert(menu);
     }
 

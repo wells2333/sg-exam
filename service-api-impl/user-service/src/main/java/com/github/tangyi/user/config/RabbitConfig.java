@@ -33,4 +33,15 @@ public class RabbitConfig {
     public Queue delQueue() {
         return new Queue(MqConstant.DEL_GATEWAY_ROUTE_QUEUE);
     }
+
+
+    /**
+     * 刷新路由
+     *
+     * @return Queue
+     */
+    @Bean
+    public Queue refreshQueue() {
+        return new Queue(MqConstant.REFRESH_GATEWAY_ROUTE_QUEUE);
+    }
 }
