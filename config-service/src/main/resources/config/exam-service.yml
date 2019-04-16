@@ -1,0 +1,119 @@
+server:
+  port: 8083
+spring:
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:192.168.0.144}:${MYSQL_PORT:3306}/microservice-exam?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&characterEncoding=UTF-8
+    username: ${MYSQL_USERNAME:platform}
+    password: ${MYSQL_PASSWORD:11}
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+  redis:
+    host: ${REDIS_HOST:192.168.0.213}
+    port: ${REDIS_PORT:6379}
+  rabbitmq:
+    host: ${RABBIT_HOST:localhost}
+    port: ${RABBIT_PORT:5672}
+    username: guest
+    password: guest
+  boot:
+    admin:
+      client:
+        url: http://${ADMIN_HOST:localhost}:${ADMIN_PORT:8085}/admin
+        username: ${ADMIN_USERNAME:admin}
+        password: ${ADMIN_PASSWORD:11}
+        instance:
+          service-base-url: http://localhost:${server.port}
+  # sleuth 配置
+  sleuth:
+    web:
+      client:
+        enabled: true
+    sampler:
+      probability: 1.0 # 采样比例为: 0.1(即10%),设置的值介于0.0到1.0之间，1.0则表示全部采集。
+  # zipkin 配置
+  zipkin:
+    base-url: http://localhost:9411  # 指定了Zipkin服务器的地址
+security:
+  oauth2:
+    client:
+      clientId: web_app
+      clientSecret: $2a$10$S84wOzmAw4wqYBzAqNtmPOx1ZRWdDl9omm/W8T1hhW8S9EK2u57xG
+      accessTokenUri: http://${AUTH_SERVICE_HOST:localhost}:${AUTH_SERVICE_PORT:8000}/api/auth/oauth/token
+      grant-type: password
+      scope: read
+    resource:
+      jwt:
+        keyValue: |
+           -----BEGIN PUBLIC KEY-----
+           MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAimUKhvBhsoeSM3HkIOP/Y3RXjvonBlZnLj8oO92TyAKG53lmAoK0wZ5MTZPsfrOz2Z7CeAp6mPhUANX2RUoFwVzG7rJmgWyqGmGFNBmtYL+uVqQ80TzWi5zyzXTxgVMWiCqqw/u4AeE1qhN8chnGwhUBnpgPAPd8v57mIwg0n5JxjdYe7pgHlpvt8ZXTXd1KBxB5K7WjNlCfMf75ZEeBaplxsSfJUwKbnHQKWcY3NnpjkVR8y4jviAbkOHmGMaliM7fcsLzbosBUPDQuNlvYdjPBRfH6MMPeXRW6On3u0Um9wIYmkQS+AEgHCq4UuLOnTTqqxnGkwFYeMAAXmRyMtQIDAQAB
+           -----END PUBLIC KEY-----
+
+# mybatis配置
+mybatis:
+  type-aliases-package: com.github.tangyi.exam.api.module
+  configuration:
+    # 驼峰转换
+    map-underscore-to-camel-case: true
+    # 延迟加载
+    lazy-loading-enabled: true
+  mapper-locations: classpath:mapper/*.xml
+pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
+
+feign:
+  hystrix:
+    enabled:  true
+
+# hystrix配置
+hystrix:
+  shareSecurityContext: true
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+ignore:
+  urls:
+    - /
+    - /error
+    - /favicon.ico
+    - /**/*swagger*/**
+    - /v2/api-docs
+    - /csrf
+    - /actuator/**
+    - /hystrix.sender
+    - /v1/user/findUserByUsername/**
+    - /v1/menu/findMenuByRole/**
+    - /v1/code/**
+    - /v1/attachment/download
+    - /v1/log/**
+    - /authentication/**
+    - /**/*.css
+    - /**/*.js
+    - /social
+    - /signin
+    - /signup
+    - /info
+    - /health
+    - /metrics/**
+    - /loggers/**
+    - /mobile/token
+
+logging:
+  level:
+    root: info
+    com.github.tangyi: debug

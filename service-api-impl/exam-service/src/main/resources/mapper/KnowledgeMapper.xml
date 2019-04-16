@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.exam.mapper.KnowledgeMapper">
+    <resultMap id="knowledgeResultMap" type="com.github.tangyi.exam.api.module.Knowledge">
+        <id column="id" property="id"/>
+        <result column="knowledge_name" property="knowledgeName"/>
+        <result column="knowledge_desc" property="knowledgeDesc"/>
+        <result column="attachment_id" property="attachmentId"/>
+        <result column="status" property="status"/>
+        <result column="creator" property="creator"/>
+        <result column="create_date" property="createDate"/>
+        <result column="modifier" property="modifier"/>
+        <result column="modify_date" property="modifyDate"/>
+        <result column="del_flag" property="delFlag"/>
+        <result column="application_code" property="applicationCode"/>
+    </resultMap>
+
+    <sql id="knowledgeColumns">
+        a.id,
+        a.knowledge_name,
+        a.knowledge_desc,
+        a.attachment_id,
+        a.status,
+        a.creator,
+        a.create_date,
+        a.modifier,
+        a.modify_date,
+        a.del_flag,
+        a.application_code
+    </sql>
+
+    <!-- where 条件 -->
+    <sql id="whereColumnList">
+        <if test="knowledgeName != null and knowledgeName != ''">
+            and a.knowledge_name like CONCAT('%',#{knowledgeName},'%')
+        </if>
+    </sql>
+
+    <select id="get" resultMap="knowledgeResultMap">
+        SELECT
+        <include refid="knowledgeColumns"/>
+        FROM knowledge a
+        WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
+    <select id="findList" resultMap="knowledgeResultMap">
+        SELECT
+        <include refid="knowledgeColumns"/>
+        FROM knowledge a
+        WHERE a.del_flag = 0
+        <include refid="whereColumnList"/>
+    </select>
+
+    <select id="findListById" resultMap="knowledgeResultMap">
+        SELECT
+        <include refid="knowledgeColumns"/>
+        FROM knowledge a
+        WHERE a.id IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <insert id="insert">
+        insert into knowledge (
+            id,
+            knowledge_name,
+            knowledge_desc,
+            attachment_id,
+            status,
+            creator,
+            create_date,
+            modifier,
+            modify_date,
+            del_flag,
+            application_code
+        ) values (
+            #{id},
+            #{knowledgeName},
+            #{knowledgeDesc},
+            #{attachmentId},
+            #{status},
+            #{creator},
+            #{createDate},
+            #{modifier},
+            #{modifyDate},
+            #{delFlag},
+            #{applicationCode}
+        );
+    </insert>
+
+    <update id="update">
+        UPDATE knowledge SET
+        <if test="knowledgeName != null">
+            knowledge_name = #{knowledgeName},
+        </if>
+        <if test="knowledgeDesc != null">
+            knowledge_desc = #{knowledgeDesc},
+        </if>
+        <if test="attachmentId != null">
+            attachment_id = #{attachmentId},
+        </if>
+        <if test="status != null">
+            status = #{status},
+        </if>
+        <if test="delFlag != null">
+            del_flag = #{delFlag},
+        </if>
+        modifier = #{modifier},
+        modify_date = #{modifyDate}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        UPDATE knowledge SET
+			del_flag = 1
+		WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteAll">
+        UPDATE knowledge SET
+        del_flag = 1
+        WHERE id in
+        <foreach item="item" index="index" collection="array" open="("
+                 separator="," close=")">#{item}
+        </foreach>
+    </delete>
+</mapper>
