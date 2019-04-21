@@ -12,9 +12,11 @@ spring:
   boot:
     admin:
       client:
-        url:
+        url: http://${ADMIN_HOST:localhost}:${ADMIN_PORT:8085}/admin
         username: ${ADMIN_USERNAME:admin}
         password: ${ADMIN_PASSWORD:11}
+        instance:
+          service-base-url: http://${CONFIG_SERVICE_HOST:localhost}:${server.port}
   # 使用consul作为注册中心
   cloud:
     consul:
@@ -23,5 +25,5 @@ spring:
   rabbitmq:
     host: ${RABBIT_HOST:localhost}
     port: ${RABBIT_PORT:5672}
-    username: guest
-    password: guest
+    username: ${RABBITMQ_DEFAULT_USER:guest}
+    password: ${RABBITMQ_DEFAULT_PASS:guest}

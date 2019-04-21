@@ -9,8 +9,13 @@ turbine:
 spring:
   security:
     user:
-      name: admin
-      password: 11
+      name: ${ADMIN_USERNAME:admin}
+      password: ${ADMIN_PASSWORD:11}
+  rabbitmq:
+    host: ${RABBIT_HOST:localhost}
+    port: ${RABBIT_PORT:5672}
+    username: ${RABBITMQ_DEFAULT_USER:guest}
+    password: ${RABBITMQ_DEFAULT_PASS:guest}
   boot:
     admin:
       context-path: /admin
@@ -18,7 +23,7 @@ spring:
         enabled: false
         auto-registration: false
         instance:
-          service-base-url: http://localhost:${server.port}
+          service-base-url: http://${MONITOR_HOST:localhost}:${server.port}
       discovery:
         ignored-services: consul  # 或略consul服务
   # sleuth 配置
@@ -30,4 +35,4 @@ spring:
       probability: 1.0 # 采样比例为: 0.1(即10%),设置的值介于0.0到1.0之间，1.0则表示全部采集。
   # zipkin 配置
   zipkin:
-    base-url: http://localhost:9411  # 指定了Zipkin服务器的地址
+    base-url: http://${ZIPKIN_HOST:localhost}:${ZIPKIN_PORT:9411}  # 指定了Zipkin服务器的地址
