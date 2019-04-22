@@ -4,15 +4,17 @@
 
 ## 简介
 
-重写[spring-cloud-online-exam](https://gitee.com/wells2333/spring-cloud-online-exam)
+- 重写[spring-cloud-online-exam](https://gitee.com/wells2333/spring-cloud-online-exam)
 
-采用前后端分离技术
+- 采用前后端分离技术
 
-前端采用`vue2.0`，通过`jwt`和后端交互
+- 前端采用`vue2.0`，通过`jwt`和后端交互
 
-后端基于`spring boot`、`spring cloud`、`MySQL`等技术实现权限管理、考试管理等功能。
+- 后端基于`spring boot`、`spring cloud`、`MySQL`等技术实现权限管理、考试管理等功能。
 
-访问地址：[在线体验](http://182.254.233.125)（服务器资源有限，只部署了前端页面）
+- [在线体验-前台](http://www.it99.club)
+
+- [在线体验-后台](http://www.it99.club:81)
 
 ## 技术选型
 
@@ -118,19 +120,21 @@
 
 ## 问题反馈
 
-欢迎提交 issue，请写清楚遇到问题的原因，浏览器和操作系统环境，重现的流程。 
+欢迎提交 issue，请写清楚遇到问题的原因、浏览器、操作系统环境、重现的流程和报错日志等。 
 
 如果有开发能力，建议在本地调试出出错的代码。
 
 ## 参考资料
 
-[在线考试系统V2.0部署文档](doc/在线考试系统V2.0_部署文档.md)
+- [在线考试系统V2.0部署文档](doc/在线考试系统V2.0_部署文档.md)
 
-[在线考试系统V2.0部署文档(docker版)](doc/在线考试系统V2.0_部署文档(docker版).md)
+- [在线考试系统V2.0部署文档(docker版)](doc/在线考试系统V2.0_部署文档(docker版).md)
 
-[在线考试系统V2.0项目结构说明文档](doc/在线考试系统V2.0_项目结构说明.md)
+- [在线考试系统V2.0项目结构说明文档](doc/在线考试系统V2.0_项目结构说明.md)
 
-[微服务架构下的安全设计方案](http://ehedgehog.net/2019/03/23/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E4%B8%8B%E7%9A%84%E5%AE%89%E5%85%A8%E8%AE%BE%E8%AE%A1%E6%96%B9%E6%A1%88/)
+- [微服务架构下的安全设计方案](http://ehedgehog.net/2019/03/23/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E4%B8%8B%E7%9A%84%E5%AE%89%E5%85%A8%E8%AE%BE%E8%AE%A1%E6%96%B9%E6%A1%88/)
+
+- [在线考试系统V2.0镜像构建、推送、部署](http://ehedgehog.net/2019/04/22/%E5%9C%A8%E7%BA%BF%E8%80%83%E8%AF%95%E7%B3%BB%E7%BB%9FV2.0%E9%95%9C%E5%83%8F%E6%9E%84%E5%BB%BA%E3%80%81%E6%8E%A8%E9%80%81%E3%80%81%E9%83%A8%E7%BD%B2/)
 
 ***
 
