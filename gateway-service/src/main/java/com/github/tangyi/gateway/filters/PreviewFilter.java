@@ -1,0 +1,74 @@
+package com.github.tangyi.gateway.filters;
+
+import cn.hutool.core.util.StrUtil;
+import com.github.tangyi.gateway.config.PreviewConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
+
+/**
+ * 演示环境过滤器
+ * 如果配置了preview.enabled为true则过滤器生效
+ *
+ * @author tangyi
+ * @date 2019/4/23 10:54
+ */
+@Configuration
+@ConditionalOnProperty(prefix = "preview", name = "enabled", havingValue = "true", matchIfMissing = true)
+public class PreviewFilter implements GlobalFilter, Ordered {
+
+    private static final Logger logger = LoggerFactory.getLogger(PreviewFilter.class);
+
+    @Autowired
+    private PreviewConfig previewConfig;
+
+    @Override
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        // 当前请求
+        ServerHttpRequest request = exchange.getRequest();
+        // GET或者忽略的URL，直接向下执行
+        if (StrUtil.equalsIgnoreCase(request.getMethodValue(), HttpMethod.GET.name()) || isIgnore(request.getURI().getPath()))
+            return chain.filter(exchange);
+        logger.warn("演示环境不能操作，{},{}", request.getMethodValue(), request.getURI().getPath());
+        ServerHttpResponse response = exchange.getResponse();
+        response.setStatusCode(HttpStatus.LOCKED);
+        return response.setComplete();
+    }
+
+    /**
+     * 是否忽略URI
+     *
+     * @param uri uri
+     * @return boolean
+     * @author tangyi
+     * @date 2019/04/23 13:44
+     */
+    private boolean isIgnore(String uri) {
+        List<String> ignoreUrls = previewConfig.getIgnoreUrls();
+        if (ignoreUrls != null && !ignoreUrls.isEmpty()) {
+            for (String ignoreUrl : ignoreUrls) {
+                if (StrUtil.containsIgnoreCase(uri, ignoreUrl))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int getOrder() {
+        return -100;
+    }
+}

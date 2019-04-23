@@ -11,7 +11,7 @@
  Target Server Version : 50710
  File Encoding         : 65001
 
- Date: 21/04/2019 13:47:02
+ Date: 23/04/2019 20:03:38
 */
 
 SET NAMES utf8mb4;
@@ -63,6 +63,7 @@ CREATE TABLE `course`  (
 -- Records of course
 -- ----------------------------
 INSERT INTO `course` VALUES ('6dcccd4639bc49b88810be1d30a77f92', '测试课程', '测试学院', '测试专业', '陈老师', '测试课程', 'admin', '2018-11-12 22:31:28', 'admin', '2019-04-11 16:51:15', '0', 'EXAM');
+INSERT INTO `course` VALUES ('b2321aa045d64448a3ad710aae6efbbf', '高等数学', '测试', '测试', '测试', '测试', 'admin', '2019-04-23 19:40:05', 'admin', '2019-04-23 19:40:05', '0', 'EXAM');
 
 -- ----------------------------
 -- Table structure for exam_record
@@ -121,10 +122,10 @@ CREATE TABLE `examination`  (
 -- ----------------------------
 -- Records of examination
 -- ----------------------------
-INSERT INTO `examination` VALUES ('4f9ced28ffe64fcea57a7367e9fd4c0c', '离散数学', '2', '离散数学', '2019-01-03 00:00', '2019-01-11 00:00', '', '100', '0', '1', 'group1/M00/00/00/wKgAX1x3gGqABz6cAAZyO2yzEwA450.jpg', 'da4b5623e9754abbb07320d8def18fe7', '信息学院', '软件工程', '6dcccd4639bc49b88810be1d30a77f92', '离散数学练习', 'admin', '2019-01-13 20:16:36', 'admin', '2019-04-11 10:56:03', '0', 'EXAM');
+INSERT INTO `examination` VALUES ('4f9ced28ffe64fcea57a7367e9fd4c0c', '离散数学', '2', '离散数学', '2019-01-03 00:00', '2019-01-11 00:00', '', '100', '0', '1', 'group1/M00/00/00/wKgAX1x3gGqABz6cAAZyO2yzEwA450.jpg', 'da4b5623e9754abbb07320d8def18fe7', '信息学院', '软件工程', 'b2321aa045d64448a3ad710aae6efbbf', '离散数学练习', 'admin', '2019-01-13 20:16:36', 'admin', '2019-04-23 19:40:15', '0', 'EXAM');
 INSERT INTO `examination` VALUES ('b5990bc1c48d49fcb0023de51772c309', '数学期末考试', '0', '期末考试', '2019-01-22 17:00', '2019-01-22 23:00', '', '150', '2', '1', 'group1/M00/00/00/wKgAX1x3gHWAa82wAAArtzxOXJ4599.jpg', '60df2d550bd9453a943122033a27fe72', '应用数学', '应用数学', '6dcccd4639bc49b88810be1d30a77f92', '期末考试', 'admin', '2018-11-20 22:48:40', NULL, '2019-03-18 14:09:49', '0', 'EXAM');
 INSERT INTO `examination` VALUES ('f051f54621fc4812b929a7777a701712', '语文考试', '0', '语文考试', '2019-01-22 17:00', '2019-01-22 23:00', '', '150', '2', '1', 'group1/M00/00/00/wKgAX1x3gIOAIVzXAABrb92CxLk678.jpg', '45d2ac58eb21436692e8cdbdd64291dd', '中文', '中文', '6dcccd4639bc49b88810be1d30a77f92', '语文考试', 'admin', '2018-11-20 22:50:55', 'admin', '2019-02-28 14:33:27', '0', 'EXAM');
-INSERT INTO `examination` VALUES ('fad663ea371f4250a81332bd3a346739', '四川省2016年普通高考适应性测试文综历史试题', '0', '文综历史试题', '2019-04-11 00:00', '2019-04-11 20:30', '', '100', '3', '0', 'group1/M00/00/00/wKgAX1x3f52AIE4IAADGq28ys0g361.jpg', 'a178c7b221524a89b44e884d8e3172cf', '文综历史试题', '文综历史试题', '6dcccd4639bc49b88810be1d30a77f92', '文综历史试题', 'admin', '2018-11-12 20:25:38', 'admin', '2019-03-06 13:57:13', '0', 'EXAM');
+INSERT INTO `examination` VALUES ('fad663ea371f4250a81332bd3a346739', '四川省2016年普通高考适应性测试文综历史试题', '0', '文综历史试题', '2019-04-23 12:00', '2019-04-23 20:30', '', '100', '3', '0', 'group1/M00/00/00/wKgAX1x3f52AIE4IAADGq28ys0g361.jpg', 'a178c7b221524a89b44e884d8e3172cf', '文综历史试题', '文综历史试题', '6dcccd4639bc49b88810be1d30a77f92', '文综历史试题', 'admin', '2018-11-12 20:25:38', 'admin', '2019-03-06 13:57:13', '0', 'EXAM');
 
 -- ----------------------------
 -- Table structure for incorrect_answer
@@ -232,6 +233,14 @@ CREATE TABLE `subject_bank`  (
   `application_code` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '系统编号',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '题库表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of subject_bank
+-- ----------------------------
+INSERT INTO `subject_bank` VALUES ('2f4d39409f164955b26941202e8f6d86', '700556b5becd4091821644a5288d489c', '323', '323', '0', '', '32', '323', '2323', '2323', '', '', 'B', '323', '32323', '2', 'admin', '2019-04-23 19:37:02', 'admin', '2019-04-23 19:37:02', '0', 'EXAM');
+INSERT INTO `subject_bank` VALUES ('50f5ca89942e4b468fc9d9fd1323231b', 'c664646337c345ac8a91e3b024ded8bb', '1', '1', '0', '', '1', '1', '1', '1', '', '', 'B', '1', '1', '2', 'admin', '2019-04-23 19:40:34', 'admin', '2019-04-23 19:40:34', '0', 'EXAM');
+INSERT INTO `subject_bank` VALUES ('a66c85dc98a243bdbb576ca699ed4a78', '700556b5becd4091821644a5288d489c', '1', '1', '0', '', '1', '1', '1', '1', '', '', 'B', '1', '1', '2', 'admin', '2019-04-23 19:36:54', 'admin', '2019-04-23 19:36:54', '0', 'EXAM');
+INSERT INTO `subject_bank` VALUES ('bc030f9138964031bca3de7ef1621ca6', 'c664646337c345ac8a91e3b024ded8bb', '32', '32', '0', '', '323', '32', '332', '3323', '', '', 'B', '32', '323', '2', 'admin', '2019-04-23 19:40:42', 'admin', '2019-04-23 19:40:42', '0', 'EXAM');
 
 -- ----------------------------
 -- Table structure for subject_category

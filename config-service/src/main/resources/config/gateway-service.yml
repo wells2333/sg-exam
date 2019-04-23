@@ -63,6 +63,19 @@ swagger:
     - exam-service
     - auth-service
 
+# 演示环境
+preview:
+  enabled: ${PREVIEW_ENABLED:false}
+  ignoreUrls:
+    - token
+    - examRecord
+    - saveOrUpdate
+    - register
+    - submit
+    - checkExist
+    - updateInfo
+    - attachment
+
 logging:
   level:
     root: info
