@@ -31,8 +31,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * 题库controller
@@ -105,10 +103,10 @@ public class SubjectBankController extends BaseController {
             SubjectCategory subjectCategory = new SubjectCategory();
             // 流处理获取分类ID，去重，转成字符串数组
             subjectCategory.setIds(page.getList().stream().map(SubjectBank::getCategoryId).distinct().toArray(String[]::new));
-            Stream<SubjectCategory> subjectCategoryStream = subjectCategoryService.findListById(subjectCategory).stream();
-            if (Optional.ofNullable(subjectCategoryStream).isPresent()) {
+            List<SubjectCategory> subjectCategoryList = subjectCategoryService.findListById(subjectCategory);
+            if (CollectionUtils.isNotEmpty(subjectCategoryList)) {
                 page.getList().forEach(tempSubjectBank -> {
-                    SubjectCategory category = subjectCategoryStream
+                    SubjectCategory category = subjectCategoryList.stream()
                             .filter(tempSubjectCategory -> tempSubjectCategory.getId().equals(tempSubjectBank.getCategoryId()))
                             .findFirst()
                             .orElse(null);

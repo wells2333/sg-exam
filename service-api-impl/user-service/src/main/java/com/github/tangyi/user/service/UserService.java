@@ -59,6 +59,7 @@ public class UserService extends CrudService<UserMapper, User> {
      */
     @Override
     @Transactional
+    @CacheEvict(value = "user", key = "#user.username")
     public int insert(User user) {
         // 保存角色
         if (CollectionUtils.isNotEmpty(user.getRole())) {

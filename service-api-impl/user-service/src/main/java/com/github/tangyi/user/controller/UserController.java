@@ -444,4 +444,22 @@ public class UserController extends BaseController {
         }
         return new ResponseBean<>(success);
     }
+
+    /**
+     * 检查用户是否存在
+     *
+     * @param username username
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/04/23 15:35
+     */
+    @ApiOperation(value = "检查用户是否存在", notes = "检查用户名是否存在")
+    @ApiImplicitParam(name = "username", value = "用户name", required = true, dataType = "String", paramType = "path")
+    @GetMapping("/checkExist/{username}")
+    public ResponseBean<Boolean> checkUsernameIsExist(@PathVariable("username") String username) {
+        boolean exist = Boolean.FALSE;
+        if (StringUtils.isNotEmpty(username))
+            exist = userService.selectUserVoByUsername(username) != null;
+        return new ResponseBean<>(exist);
+    }
 }

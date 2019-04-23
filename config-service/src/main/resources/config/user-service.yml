@@ -123,6 +123,7 @@ ignore:
     - /v1/user/findUserByUsername/**
     - /v1/menu/findMenuByRole/**
     - /v1/user/register
+    - /v1/user/checkExist/**
     - /v1/code/**
     - /v1/attachment/download
     - /v1/log/**

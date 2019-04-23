@@ -144,7 +144,7 @@
 
     <select id="selectUserVoByUsername" resultMap="userVoResultMap">
         <include refid="selectUserVo"/>
-        WHERE `user`.username = #{username}
+        WHERE `user`.username = #{username} and `user`.del_flag = 0
     </select>
 
     <select id="get" resultMap="userResultMap">
