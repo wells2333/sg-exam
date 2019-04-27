@@ -44,7 +44,7 @@ public class RoleService extends CrudService<RoleMapper, Role> {
         if (StringUtils.isNotBlank(role.getDeptId())) {
             RoleDept roleDept = new RoleDept();
             roleDept.setRoleId(role.getId());
-            roleDept.setId(IdGen.uuid());
+            roleDept.setId(IdGen.snowflakeId());
             roleDept.setDeptId(role.getDeptId());
             roleDeptMapper.insert(roleDept);
         }
@@ -65,7 +65,7 @@ public class RoleService extends CrudService<RoleMapper, Role> {
             RoleDept roleDept = new RoleDept();
             roleDept.setRoleId(role.getId());
             roleDeptMapper.deleteByRoleId(role.getId());
-            roleDept.setId(IdGen.uuid());
+            roleDept.setId(IdGen.snowflakeId());
             roleDept.setDeptId(role.getDeptId());
             roleDeptMapper.insert(roleDept);
         }

@@ -39,8 +39,9 @@ public class PreviewFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         // 当前请求
         ServerHttpRequest request = exchange.getRequest();
-        // GET或者忽略的URL，直接向下执行
-        if (StrUtil.equalsIgnoreCase(request.getMethodValue(), HttpMethod.GET.name()) || isIgnore(request.getURI().getPath()))
+        // enabled为false、GET请求、忽略的URL，直接向下执行
+        logger.debug("preview.enabled:{}", previewConfig.isEnabled());
+        if (!previewConfig.isEnabled() || StrUtil.equalsIgnoreCase(request.getMethodValue(), HttpMethod.GET.name()) || isIgnore(request.getURI().getPath()))
             return chain.filter(exchange);
         logger.warn("演示环境不能操作，{},{}", request.getMethodValue(), request.getURI().getPath());
         ServerHttpResponse response = exchange.getResponse();
@@ -57,7 +58,7 @@ public class PreviewFilter implements GlobalFilter, Ordered {
      * @date 2019/04/23 13:44
      */
     private boolean isIgnore(String uri) {
-        List<String> ignoreUrls = previewConfig.getIgnoreUrls();
+        List<String> ignoreUrls = previewConfig.getIgnores();
         if (ignoreUrls != null && !ignoreUrls.isEmpty()) {
             for (String ignoreUrl : ignoreUrls) {
                 if (StrUtil.containsIgnoreCase(uri, ignoreUrl))

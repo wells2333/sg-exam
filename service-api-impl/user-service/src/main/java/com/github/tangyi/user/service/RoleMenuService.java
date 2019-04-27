@@ -28,7 +28,7 @@ public class RoleMenuService extends CrudService<RoleMenuMapper, RoleMenu> {
      * @param menus 菜单ID集合
      * @return int
      * @author tangyi
-     * @date 2018/10/28 0028 下午 2:29
+     * @date 2018/10/28 14:29
      */
     @Transactional
     @CacheEvict(value = "menu", allEntries = true)
@@ -40,7 +40,7 @@ public class RoleMenuService extends CrudService<RoleMenuMapper, RoleMenu> {
             List<RoleMenu> roleMenus = new ArrayList<>();
             for (String menuId : menus) {
                 RoleMenu roleMenu = new RoleMenu();
-                roleMenu.setId(IdGen.uuid());
+                roleMenu.setId(IdGen.snowflakeId());
                 roleMenu.setRoleId(role);
                 roleMenu.setMenuId(menuId);
                 roleMenus.add(roleMenu);
@@ -56,7 +56,7 @@ public class RoleMenuService extends CrudService<RoleMenuMapper, RoleMenu> {
      * @param roleMenus roleMenus
      * @return int
      * @author tangyi
-     * @date 2018/10/30 0030 下午 7:59
+     * @date 2018/10/30 19:59
      */
     @Transactional
     public int insertBatch(List<RoleMenu> roleMenus) {

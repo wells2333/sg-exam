@@ -10,6 +10,7 @@ import java.util.List;
 
 /**
  * 演示环境配置
+ *
  * @author tangyi
  * @date 2019/4/23 13:38
  */
@@ -19,13 +20,23 @@ import java.util.List;
 @ConfigurationProperties(prefix = "preview")
 public class PreviewConfig {
 
-    private List<String> ignoreUrls = new ArrayList<>();
+    private boolean enabled;
 
-    public List<String> getIgnoreUrls() {
-        return ignoreUrls;
+    private List<String> ignores = new ArrayList<>();
+
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setIgnoreUrls(List<String> ignoreUrls) {
-        this.ignoreUrls = ignoreUrls;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public List<String> getIgnores() {
+        return ignores;
+    }
+
+    public void setIgnores(List<String> ignores) {
+        this.ignores = ignores;
     }
 }

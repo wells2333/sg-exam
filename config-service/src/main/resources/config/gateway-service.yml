@@ -66,7 +66,7 @@ swagger:
 # 演示环境
 preview:
   enabled: ${PREVIEW_ENABLED:false}
-  ignoreUrls:
+  ignores:
     - token
     - examRecord
     - saveOrUpdate
@@ -75,6 +75,11 @@ preview:
     - checkExist
     - updateInfo
     - attachment
+
+# 集群ID生成配置
+cluster:
+  workId: ${CLUSTER_WORKID:1}
+  dataCenterId: ${CLUSTER_DATA_CENTER_ID:1}
 
 logging:
   level:

@@ -11,7 +11,7 @@
  Target Server Version : 50710
  File Encoding         : 65001
 
- Date: 23/04/2019 20:03:38
+ Date: 26/04/2019 23:22:19
 */
 
 SET NAMES utf8mb4;
@@ -62,8 +62,7 @@ CREATE TABLE `course`  (
 -- ----------------------------
 -- Records of course
 -- ----------------------------
-INSERT INTO `course` VALUES ('6dcccd4639bc49b88810be1d30a77f92', '测试课程', '测试学院', '测试专业', '陈老师', '测试课程', 'admin', '2018-11-12 22:31:28', 'admin', '2019-04-11 16:51:15', '0', 'EXAM');
-INSERT INTO `course` VALUES ('b2321aa045d64448a3ad710aae6efbbf', '高等数学', '测试', '测试', '测试', '测试', 'admin', '2019-04-23 19:40:05', 'admin', '2019-04-23 19:40:05', '0', 'EXAM');
+INSERT INTO `course` VALUES ('571449673634680832', '大学语文', '信息学院', '软件工程', '陈老师', '大学语文', 'admin', '2019-04-26 21:36:59', 'admin', '2019-04-26 21:36:59', '0', 'EXAM');
 
 -- ----------------------------
 -- Table structure for exam_record
@@ -122,10 +121,8 @@ CREATE TABLE `examination`  (
 -- ----------------------------
 -- Records of examination
 -- ----------------------------
-INSERT INTO `examination` VALUES ('4f9ced28ffe64fcea57a7367e9fd4c0c', '离散数学', '2', '离散数学', '2019-01-03 00:00', '2019-01-11 00:00', '', '100', '0', '1', 'group1/M00/00/00/wKgAX1x3gGqABz6cAAZyO2yzEwA450.jpg', 'da4b5623e9754abbb07320d8def18fe7', '信息学院', '软件工程', 'b2321aa045d64448a3ad710aae6efbbf', '离散数学练习', 'admin', '2019-01-13 20:16:36', 'admin', '2019-04-23 19:40:15', '0', 'EXAM');
-INSERT INTO `examination` VALUES ('b5990bc1c48d49fcb0023de51772c309', '数学期末考试', '0', '期末考试', '2019-01-22 17:00', '2019-01-22 23:00', '', '150', '2', '1', 'group1/M00/00/00/wKgAX1x3gHWAa82wAAArtzxOXJ4599.jpg', '60df2d550bd9453a943122033a27fe72', '应用数学', '应用数学', '6dcccd4639bc49b88810be1d30a77f92', '期末考试', 'admin', '2018-11-20 22:48:40', NULL, '2019-03-18 14:09:49', '0', 'EXAM');
-INSERT INTO `examination` VALUES ('f051f54621fc4812b929a7777a701712', '语文考试', '0', '语文考试', '2019-01-22 17:00', '2019-01-22 23:00', '', '150', '2', '1', 'group1/M00/00/00/wKgAX1x3gIOAIVzXAABrb92CxLk678.jpg', '45d2ac58eb21436692e8cdbdd64291dd', '中文', '中文', '6dcccd4639bc49b88810be1d30a77f92', '语文考试', 'admin', '2018-11-20 22:50:55', 'admin', '2019-02-28 14:33:27', '0', 'EXAM');
-INSERT INTO `examination` VALUES ('fad663ea371f4250a81332bd3a346739', '四川省2016年普通高考适应性测试文综历史试题', '0', '文综历史试题', '2019-04-23 12:00', '2019-04-23 20:30', '', '100', '3', '0', 'group1/M00/00/00/wKgAX1x3f52AIE4IAADGq28ys0g361.jpg', 'a178c7b221524a89b44e884d8e3172cf', '文综历史试题', '文综历史试题', '6dcccd4639bc49b88810be1d30a77f92', '文综历史试题', 'admin', '2018-11-12 20:25:38', 'admin', '2019-03-06 13:57:13', '0', 'EXAM');
+INSERT INTO `examination` VALUES ('571450640874737664', '四川省2016年普通高考文科综合能力测试-语文部分', '0', '注意事项:\n1.本试卷分第工卷(选择题)和第II卷(非选择题)两部分。答卷前，考生务必将白己的姓名、准考证号填写在答题卡上。\n2.回答第Ⅰ卷时，选出每小题答案后，用铅笔把答题卡上对应题目的答案标号涂黑。如需改动，用橡皮擦干净后，再选涂其它答案标号。写在本试卷上无效。\n3.回答第Ⅱ卷时，将答案写在答题卡上。写在本试卷上无效。\n4.考试结束后，将本试卷和答题卡一并交回。', '2019-04-26 21:40', '2019-04-26 23:50', '', '48', '12', '0', '', NULL, '信息学院', '软件工程', '571449673634680832', '四川省2016年普通高考-文科综合能力测试', 'admin', '2019-04-26 21:40:49', 'admin', '2019-04-26 23:17:53', '0', 'EXAM');
+INSERT INTO `examination` VALUES ('571460951203778560', '四川省2016年普通高考文科综合能力测试-地理部分', '0', '本卷共35个小题，每小题4分，共140分。在每小题给出的四个选项中，只有一项是符合题目要求的。', '2019-04-26 22:21', '2019-04-26 22:21', '', '200', '0', '0', '', NULL, '信息学院', '软件工程', '571449673634680832', '四川省2016年普通高考文科综合能力测试-地理部分', 'admin', '2019-04-26 22:21:47', 'admin', '2019-04-26 22:21:47', '1', 'EXAM');
 
 -- ----------------------------
 -- Table structure for incorrect_answer
@@ -174,7 +171,7 @@ DROP TABLE IF EXISTS `subject`;
 CREATE TABLE `subject`  (
   `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `examination_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '考试ID',
-  `serial_number` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '序号',
+  `serial_number` int(64) NULL DEFAULT NULL COMMENT '序号',
   `subject_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '题目名称',
   `type` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '题目类型',
   `content` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '题目内容',
@@ -185,9 +182,9 @@ CREATE TABLE `subject`  (
   `option_e` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '选项e',
   `option_f` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '选项f',
   `answer` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '参考答案',
-  `score` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '分值',
+  `score` int(64) NULL DEFAULT NULL COMMENT '分值',
   `analysis` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '解析',
-  `level` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '难度等级',
+  `level` int(64) NULL DEFAULT NULL COMMENT '难度等级',
   `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
   `create_date` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建时间',
   `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改人',
@@ -200,9 +197,19 @@ CREATE TABLE `subject`  (
 -- ----------------------------
 -- Records of subject
 -- ----------------------------
-INSERT INTO `subject` VALUES ('1a934e62942640459b3a66c05f6c09b2', 'fad663ea371f4250a81332bd3a346739', '3', '唐前期的政治人物多为北方人，北宋时政治人物多出生于江西、福建、苏南等地。这一变化主要反映了', '0', '', '官僚集团重视本地域人才', '南北方士人志向差异', '科举制改变人才地域分布', '政治中心转移到南方', '', '', 'B', '4', '政治中心转移到南方', '2', 'admin', '2018-12-09 21:07:20', 'admin', '2018-12-29 20:32:20', '0', 'EXAM');
-INSERT INTO `subject` VALUES ('4d654c576f534f349278806b046608d6', 'fad663ea371f4250a81332bd3a346739', '2', '公元前212年，秦始皇坑杀“术士”，长子扶苏劝谏说：“远方黔首未集，诸生皆诵     法孔子，今上皆重法绳之，臣恐天下不安，唯上察之”。这反映当时', '0', '', '统一进程曲折', '地方治理不畅', '始皇灭儒崇法', '儒学影响较大', '', '', 'B', '4', '公元前212年，秦始皇坑杀“术士”，长子扶苏劝谏说：“远方黔首未集，诸生皆诵     法孔子，今上皆重法绳之，臣恐天下不安，唯上察之”。这反映当时', '4', 'admin', '2018-12-09 21:07:07', 'admin', '2019-01-01 14:42:12', '0', 'EXAM');
-INSERT INTO `subject` VALUES ('e34926a94a4a4895817d7ea78aa63012', 'fad663ea371f4250a81332bd3a346739', '1', '《小雅·鹿鸣》本是西周贵族宣扬宴飨之仪的乐歌，后扩散到民间，在乡人宴会上也可传唱。这表明西周时期', '0', '', '周人生活较为富足', '礼乐文明得到广泛认同', '乡人社会地位提高', '贵族奢靡之风波及民间', '', '', 'B', '4', '材料涉及西周贵族宣扬宴飨之仪的乐歌扩散到民间，并不能由此说明周人生活较为富足，故A项错误；据材料“西周贵族宣扬宴飨之仪的乐歌，后扩散到民间，在乡人宴会上也可传唱”可知礼乐文明得到广泛认同，故B项正确；仅凭材料宴飨之仪的乐歌的扩散不足以说明乡人社会地位提高，故C项错误；材料涉及贵族宴飨之仪的乐歌的扩散，并未涉及贵族奢靡之风，故D项错误。', '2', 'admin', '2018-12-09 20:30:07', 'admin', '2018-12-29 20:50:12', '0', 'EXAM');
+INSERT INTO `subject` VALUES ('571452549010427904', '571450640874737664', 1, '《小雅·鹿鸣>本是西周贵族宣扬宴飨之仪的乐歌，后扩散到民间，在乡人宴会上也可传唱。这表明西周时期', '0', '', '周人生活较为富足', '礼乐文明得到广泛认同', '乡人社会地位提高', '贵族奢靡之风波及民间', '', '', 'B', 4, '', 2, 'admin', '2019-04-26 21:48:24', 'admin', '2019-04-26 21:48:24', '0', 'EXAM');
+INSERT INTO `subject` VALUES ('571453252617506816', '571450640874737664', 2, '公元前 212 年，秦始皇坑杀“术士”，长子扶苏劝谏说：“远方黔首未集，诸生皆诵法孔子，今上皆重法绳之，臣恐天下不安，唯上察之”。这反映当时', '0', '', '统一进程曲折', '地方治理不畅', '始皇灭儒崇法', '儒学影响较大', '', '', 'D', 4, '', 2, 'admin', '2019-04-26 21:51:12', 'admin', '2019-04-26 21:51:12', '0', 'EXAM');
+INSERT INTO `subject` VALUES ('571453393525149696', '571450640874737664', 3, '唐前期的政治人物多为北方人，北宋时政治人物多出生于江西、福建、苏南等地。\n这一变化主要反映了', '0', '', '官僚集团重视本地域人才', '南北方士人志向差异', '科举制改变人才地域分布', '政治中心转移到南方', '', '', 'C', 4, '', 2, 'admin', '2019-04-26 21:51:46', 'admin', '2019-04-26 21:51:46', '0', 'EXAM');
+INSERT INTO `subject` VALUES ('571453523254972416', '571450640874737664', 5, '《荆楚岁时记》云：“社日，四邻并结宗会社，宰牲牢，为屋于树下，先祭神，然后食其胙。”据此可知，社日的民俗功能主要是', '0', '', '联谊乡邻', '颂扬盛世', '缅怀先祖', '助危济困', '', '', 'A', 4, '', 2, 'admin', '2019-04-26 21:52:17', 'admin', '2019-04-26 22:08:03', '0', 'EXAM');
+INSERT INTO `subject` VALUES ('571453689655595008', '571450640874737664', 4, '李鸿章凭淮军实力日渐强盛。一次，他在游孔林时说道：“孔子不会打洋枪，今不足贵也。”李鸿章这样评价孔子，其背景最可能是', '0', '', '“师夷长技”思想萌发', '“中体西用”思潮兴起', '“中体西用”思潮兴起', '“尊孔复古”思潮泛滥', '', '', 'B', 4, '', 2, 'admin', '2019-04-26 21:52:56', 'admin', '2019-04-26 21:52:56', '0', 'EXAM');
+INSERT INTO `subject` VALUES ('571457619294818304', '571450640874737664', 6, '李鸿章凭淮军实力日渐强盛。一次，他在游孔林时说道：“孔子不会打洋枪，今不足贵也。”李鸿章这样评价孔子，其背景最可能是', '0', '', '“师夷长技”思想萌发 ', '“中体西用”思潮兴起', '“托古改制”思想产生', '“尊孔复古”思潮泛滥', '', '', 'B', 4, '', 2, 'admin', '2019-04-26 22:08:33', 'admin', '2019-04-26 22:08:33', '0', 'EXAM');
+INSERT INTO `subject` VALUES ('571457724336967680', '571450640874737664', 7, '1930 年，中共中央在回应共产国际指示时说：党的任务决不是准备夺取部分的政权，如果认为现在还是准备夺取部分的政权,无疑是对革命形势估量不足的右倾观念。这一回应表明', '0', '', '中共夺取全国政权时机成熟', '中共找到符合国情的道路', '中共找到符合国情的道路', '中共出现自主革命的倾向', '', '', 'D', 4, '', 2, 'admin', '2019-04-26 22:08:58', 'admin', '2019-04-26 22:08:58', '0', 'EXAM');
+INSERT INTO `subject` VALUES ('571457810760601600', '571450640874737664', 8, '1938 年初，国民政府颁布多部法规，要求将每一工厂、商号、银行、钱庄都纳入到同业工会内，又将每一同业工会纳入当地商会内。这些法规', '0', '', '抑制了官僚资本膨胀', '挫败了日军经济掠夺', '防止了国民经济崩溃 ', '积聚了抗战经济力量', '', '', 'D', 4, '', 2, 'admin', '2019-04-26 22:09:19', 'admin', '2019-04-26 22:09:19', '0', 'EXAM');
+INSERT INTO `subject` VALUES ('571457947507494912', '571450640874737664', 9, '古代雅典法律规定：每个公民从出生起，城邦就是他的最高监护人，要按城邦的需要来抚养和教育。这反映出雅典', '0', '', '公民培养受强制性约束', '法律有违人文精神', '父母失去教育子女资格', '公民教育制度完备', '', '', 'A', 4, '', 2, 'admin', '2019-04-26 22:09:51', 'admin', '2019-04-26 22:09:51', '0', 'EXAM');
+INSERT INTO `subject` VALUES ('571458049324224512', '571450640874737664', 10, '19 世纪末 20 世纪初，一向傲慢的英国人惊奇地发现：“身上的衣服是德国缝制的，少女们周末穿的漂亮披风与上衣来自德国。更让人吃惊的是生活中有许多东西都产自德国，……连周末歌剧院里上演的歌剧也是德国人创作的，演员无一例外是德国人。”可见，当时傲慢的英国人', '0', '', '推崇德国文化', '注意到了德国的威胁', '喜爱德国产品', '意识到了德国的崛起', '', '', 'D', 4, '', 2, 'admin', '2019-04-26 22:10:16', 'admin', '2019-04-26 22:10:16', '0', 'EXAM');
+INSERT INTO `subject` VALUES ('571458149744250880', '571450640874737664', 11, '1920–1921 年，苏俄许多工人流往农村，还有一些则自谋生路成了小手工业者。据此推知当时苏俄', '0', '', '战时共产主义政策有所突破', '新经济政策成效显著', '国营农庄吸引了大量劳动力', '政府重视日用品生产', '', '', 'A', 4, '', 2, 'admin', '2019-04-26 22:10:40', 'admin', '2019-04-26 22:10:40', '0', 'EXAM');
+INSERT INTO `subject` VALUES ('571458244669739008', '571450640874737664', 12, '1964 年 6 月，美国《时代》杂志发表社论指出：“从北约到联合国，从拉丁美洲到红色中国，几乎在世界政治中的每一个问题或地区上，法国都采取和美国政策不一致的态度。”这一社论', '0', '', '揭示了法国倒向社会主义阵营', '反映了法国推行独立外交', '体现了两大阵营对抗趋于缓和', '体现了两大阵营对抗趋于缓和', '', '', 'B', 4, '', 2, 'admin', '2019-04-26 22:11:02', 'admin', '2019-04-26 22:11:02', '0', 'EXAM');
+INSERT INTO `subject` VALUES ('571461232968732672', '571460951203778560', 1, '若下列城市都安装了“风光互补路灯”，北半球夏至日这一天太阳能板左右摆动幅度最大的地点是', '0', '', '哈尔滨', '北京', '广州', '海口', '', '', 'A', 4, '', 2, 'admin', '2019-04-26 22:22:55', 'admin', '2019-04-26 22:22:55', '1', 'EXAM');
 
 -- ----------------------------
 -- Table structure for subject_bank
@@ -211,7 +218,7 @@ DROP TABLE IF EXISTS `subject_bank`;
 CREATE TABLE `subject_bank`  (
   `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `category_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '分类ID',
-  `serial_number` varchar(62) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '题目序号',
+  `serial_number` int(62) NULL DEFAULT NULL COMMENT '题目序号',
   `subject_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '题目名称',
   `type` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '题目类型',
   `content` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '题目内容',
@@ -222,7 +229,7 @@ CREATE TABLE `subject_bank`  (
   `option_e` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '选项e',
   `option_f` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '选项f',
   `answer` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '参考答案',
-  `score` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '分值',
+  `score` int(64) NULL DEFAULT NULL COMMENT '分值',
   `analysis` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '解析',
   `level` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '难度等级',
   `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
@@ -237,10 +244,11 @@ CREATE TABLE `subject_bank`  (
 -- ----------------------------
 -- Records of subject_bank
 -- ----------------------------
-INSERT INTO `subject_bank` VALUES ('2f4d39409f164955b26941202e8f6d86', '700556b5becd4091821644a5288d489c', '323', '323', '0', '', '32', '323', '2323', '2323', '', '', 'B', '323', '32323', '2', 'admin', '2019-04-23 19:37:02', 'admin', '2019-04-23 19:37:02', '0', 'EXAM');
-INSERT INTO `subject_bank` VALUES ('50f5ca89942e4b468fc9d9fd1323231b', 'c664646337c345ac8a91e3b024ded8bb', '1', '1', '0', '', '1', '1', '1', '1', '', '', 'B', '1', '1', '2', 'admin', '2019-04-23 19:40:34', 'admin', '2019-04-23 19:40:34', '0', 'EXAM');
-INSERT INTO `subject_bank` VALUES ('a66c85dc98a243bdbb576ca699ed4a78', '700556b5becd4091821644a5288d489c', '1', '1', '0', '', '1', '1', '1', '1', '', '', 'B', '1', '1', '2', 'admin', '2019-04-23 19:36:54', 'admin', '2019-04-23 19:36:54', '0', 'EXAM');
-INSERT INTO `subject_bank` VALUES ('bc030f9138964031bca3de7ef1621ca6', 'c664646337c345ac8a91e3b024ded8bb', '32', '32', '0', '', '323', '32', '332', '3323', '', '', 'B', '32', '323', '2', 'admin', '2019-04-23 19:40:42', 'admin', '2019-04-23 19:40:42', '0', 'EXAM');
+INSERT INTO `subject_bank` VALUES ('571463421858549760', '571450070935932928', 1, '若下列城市都安装了“风光互补路灯”，北半球夏至日这一天太阳能板左右摆动幅度最大的地点是', '0', '', '哈尔滨', '北京', '广州', '广州', '', '', 'A', 4, '', '2', 'admin', '2019-04-26 22:31:37', 'admin', '2019-04-26 22:33:35', '0', 'EXAM');
+INSERT INTO `subject_bank` VALUES ('571467576304078848', '571450070935932928', 2, '干热岩主要属于', '0', '', '岩浆', '喷出岩', '沉积岩', '侵入岩', '', '', 'B', 4, '', '2', 'admin', '2019-04-26 22:48:07', 'admin', '2019-04-26 22:48:07', '0', 'EXAM');
+INSERT INTO `subject_bank` VALUES ('571467771968360448', '571450070935932928', 3, '我国干热岩最主要分布在', '0', '', '东南沿海', '华北地区', '西北内陆', '青藏高原', '', '', 'D', 4, '', '2', 'admin', '2019-04-26 22:48:54', 'admin', '2019-04-26 22:52:01', '0', 'EXAM');
+INSERT INTO `subject_bank` VALUES ('571467945222475776', '571450070935932928', 4, '与传统地热资源相比，干热岩', '0', '', '开发难度小、成本低', '埋藏较浅、分布广', '无季节变化、污染少', '产业链短、效率低', '', '', 'C', 4, '', '2', 'admin', '2019-04-26 22:49:35', 'admin', '2019-04-26 22:52:15', '0', 'EXAM');
+INSERT INTO `subject_bank` VALUES ('571468124784824320', '571450070935932928', 5, '草场恢复促使光伏发电量大增的最主要原因是', '0', '', '蒸发增强，湿度增加', '气温升高，风力减小', '沙尘减少，晴天增多', '降水增加，气温降低', '', '', 'C', 4, '', '2', 'admin', '2019-04-26 22:50:18', 'admin', '2019-04-26 22:52:37', '0', 'EXAM');
 
 -- ----------------------------
 -- Table structure for subject_category
@@ -264,11 +272,13 @@ CREATE TABLE `subject_category`  (
 -- ----------------------------
 -- Records of subject_category
 -- ----------------------------
-INSERT INTO `subject_category` VALUES ('577ff5e3a9b345e18d40e505cc631110', '国际金融', NULL, '-1', '5', 'admin', '2018-12-06 20:38:30', 'admin', '2018-12-06 20:44:40', '0', 'EXAM');
-INSERT INTO `subject_category` VALUES ('700556b5becd4091821644a5288d489c', '架构基础', '4343434', 'aceeeb30b57f4d6982cd37682b5b7522', '1', 'admin', '2018-12-06 20:45:06', 'admin', '2019-03-06 13:59:01', '0', 'EXAM');
-INSERT INTO `subject_category` VALUES ('9fdbb0add5354249a8a2d530bdd48d08', '高等数学', NULL, '-1', '3', 'admin', '2018-12-06 20:37:45', 'admin', '2018-12-06 20:44:31', '0', 'EXAM');
-INSERT INTO `subject_category` VALUES ('aceeeb30b57f4d6982cd37682b5b7522', '计算机', NULL, '-1', '1', 'admin', '2018-12-06 20:41:44', 'admin', '2018-12-06 20:44:09', '0', 'EXAM');
-INSERT INTO `subject_category` VALUES ('c664646337c345ac8a91e3b024ded8bb', '操作系统', NULL, 'aceeeb30b57f4d6982cd37682b5b7522', '2', 'admin', '2018-12-06 20:45:21', 'admin', '2018-12-06 20:45:21', '0', 'EXAM');
-INSERT INTO `subject_category` VALUES ('caf8805fc7dc481b98d08ab13e5c5234', '数据库', NULL, 'aceeeb30b57f4d6982cd37682b5b7522', '3', 'admin', '2018-12-06 20:45:34', 'admin', '2018-12-06 20:45:34', '0', 'EXAM');
+INSERT INTO `subject_category` VALUES ('571449735345475584', '计算机', '计算机', '-1', '30', 'admin', '2019-04-26 21:37:13', 'admin', '2019-04-26 21:37:13', '0', 'EXAM');
+INSERT INTO `subject_category` VALUES ('571449792375427072', '英语', NULL, '-1', '31', 'admin', '2019-04-26 21:37:27', 'admin', '2019-04-26 21:37:27', '0', 'EXAM');
+INSERT INTO `subject_category` VALUES ('571449862449664000', '数据库基础', '数据库基础', '571449735345475584', '1', 'admin', '2019-04-26 21:37:44', 'admin', '2019-04-26 21:37:44', '0', 'EXAM');
+INSERT INTO `subject_category` VALUES ('571449921748733952', 'Java程序设计', 'Java程序设计', '571449735345475584', '2', 'admin', '2019-04-26 21:37:58', 'admin', '2019-04-26 21:38:03', '0', 'EXAM');
+INSERT INTO `subject_category` VALUES ('571449994326970368', '数据结构', '数据结构', '571449735345475584', '3', 'admin', '2019-04-26 21:38:15', 'admin', '2019-04-26 21:38:15', '0', 'EXAM');
+INSERT INTO `subject_category` VALUES ('571450070935932928', '地理', '地理', '-1', '33', 'admin', '2019-04-26 21:38:33', 'admin', '2019-04-26 22:24:16', '0', 'EXAM');
+INSERT INTO `subject_category` VALUES ('571450122261630976', '大学四级', NULL, '571449792375427072', '1', 'admin', '2019-04-26 21:38:46', 'admin', '2019-04-26 21:38:46', '0', 'EXAM');
+INSERT INTO `subject_category` VALUES ('571450172626833408', '大学六级', '大学六级', '571449792375427072', '2', 'admin', '2019-04-26 21:38:58', 'admin', '2019-04-26 21:38:58', '0', 'EXAM');
 
 SET FOREIGN_KEY_CHECKS = 1;

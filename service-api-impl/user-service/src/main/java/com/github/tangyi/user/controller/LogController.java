@@ -63,7 +63,7 @@ public class LogController extends BaseController {
      * @param log      log
      * @return PageInfo
      * @author tangyi
-     * @date 2018/10/24 0024 下午 10:13
+     * @date 2018/10/24 0024 22:13
      */
     @RequestMapping("logList")
     @ApiOperation(value = "获取日志列表")
