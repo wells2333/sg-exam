@@ -104,4 +104,14 @@ public interface UserServiceClient {
      */
     @GetMapping("/v1/menu/findMenuByRole/{role}")
     List<Menu> findMenuByRole(@PathVariable("role") String role);
+
+    /**
+     * 查询所有菜单
+     *
+     * @return List
+     * @author tangyi
+     * @date 2019/04/26 11:48
+     */
+    @GetMapping("/v1/menu/findAllMenu")
+    List<Menu> findAllMenu();
 }

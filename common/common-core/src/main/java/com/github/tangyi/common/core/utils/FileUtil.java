@@ -14,7 +14,7 @@ public class FileUtil {
      * @param fileName fileName
      * @return String
      * @author tangyi
-     * @date 2018/10/30 0030 下午 10:05
+     * @date 2018/10/30 22:05
      */
     public static String getFileNameEx(String fileName) {
         if ((fileName != null) && (fileName.length() > 0)) {

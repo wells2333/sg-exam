@@ -84,7 +84,7 @@ public class RoleController extends BaseController {
      * @param role     role
      * @return PageInfo
      * @author tangyi
-     * @date 2018/10/24 0024 下午 10:13
+     * @date 2018/10/24 22:13
      */
     @RequestMapping("roleList")
     @ApiOperation(value = "获取角色列表")
@@ -175,7 +175,7 @@ public class RoleController extends BaseController {
      * @param role role
      * @return ResponseBean
      * @author tangyi
-     * @date 2018/10/28 下午 2:20
+     * @date 2018/10/28 14:20
      */
     @PutMapping("roleMenuUpdate")
     @ApiOperation(value = "更新角色菜单信息", notes = "更新角色菜单信息")

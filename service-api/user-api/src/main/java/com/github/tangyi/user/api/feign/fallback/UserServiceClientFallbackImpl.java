@@ -124,6 +124,17 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
         return new ArrayList<>();
     }
 
+    /**
+     * 查询所有菜单
+     *
+     * @return List
+     */
+    @Override
+    public List<Menu> findAllMenu() {
+        logger.error("feign 获取所有菜单失败,{}", throwable);
+        return new ArrayList<>();
+    }
+
     public Throwable getThrowable() {
         return throwable;
     }

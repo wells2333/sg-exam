@@ -64,7 +64,7 @@ public class BaseEntity<T> implements Serializable {
      */
     public void setCommonValue(String userCode, String applicationCode) {
         if (this.isNewRecord()) {
-            this.setId(IdGen.uuid());
+            this.setId(IdGen.snowflakeId());
             this.setNewRecord(true);
             this.creator = userCode;
             this.createDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());

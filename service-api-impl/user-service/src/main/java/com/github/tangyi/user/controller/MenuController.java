@@ -215,6 +215,21 @@ public class MenuController extends BaseController {
     }
 
     /**
+     * 查询所有菜单
+     *
+     * @return List
+     * @author tangyi
+     * @date 2019/04/26 11:50
+     */
+    @GetMapping("findAllMenu")
+    @ApiOperation(value = "查询所有菜单", notes = "查询所有菜单")
+    public List<Menu> findAllMenu() {
+        Menu menu = new Menu();
+        menu.setApplicationCode(SysUtil.getSysCode());
+        return menuService.findAllList(menu);
+    }
+
+    /**
      * 根据角色查找菜单
      *
      * @param roleCode 角色code
