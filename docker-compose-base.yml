@@ -1,0 +1,88 @@
+version: '2'
+services:
+  # ---------------------------
+  # consul集群，3个节点
+  # ---------------------------
+  consul:
+    image: consul:1.2.0
+    container_name: consul
+    command: consul agent -server -client 0.0.0.0 -ui -bootstrap-expect=3 -data-dir=/consul/data -retry-join=consul2 -retry-join=consul3 -datacenter=blr
+    restart: always
+    ports:
+      - "8300:8300"
+      - "8400:8400"
+      - "8500:8500"
+      - "8600:8600/udp"
+    networks:
+      - net
+  consul2:
+    image: consul:1.2.0
+    container_name: consul-2
+    expose:
+      - "8500"
+      - "8600"
+    command: consul agent -server -data-dir=/consul/data -retry-join=consul -retry-join=consul3 -datacenter=blr
+    links:
+      - consul
+    networks:
+      - net
+  consul3:
+    image: consul:1.2.0
+    container_name: consul-3
+    expose:
+      - "8500"
+      - "8600"
+    command: consul agent -server -data-dir=/consul/data -retry-join=consul -retry-join=consul2 -datacenter=blr
+    links:
+      - consul
+      - consul2
+    networks:
+      - net
+
+  # ---------------------------
+  # rabbitMq
+  # ---------------------------
+  rabbit:
+    image: rabbitmq:3.6.6-management-alpine
+    container_name: rabbit-mq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - net
+
+  # ---------------------------
+  # Redis
+  # ---------------------------
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - net
+
+  # ---------------------------
+  # 配置中心
+  # ---------------------------
+  config-service:
+    image: registry.cn-hangzhou.aliyuncs.com/spring-microservice-exam/config-service:2.0
+    container_name: config-service
+    env_file: docker-compose.env  # 从文件中获取配置
+    restart: always
+    depends_on:
+      - consul
+      - rabbit
+      - redis
+    ports:
+      - "8769:8769"
+    networks:
+      - net
+
+networks:
+  net:
+    driver: bridge

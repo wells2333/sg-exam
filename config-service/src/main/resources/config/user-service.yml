@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8095
 spring:
   servlet:
     multipart:
@@ -19,8 +19,8 @@ spring:
   rabbitmq:
     host: ${RABBIT_HOST:localhost}
     port: ${RABBIT_PORT:5672}
-    username: guest
-    password: guest
+    username: ${RABBITMQ_DEFAULT_USER:guest}
+    password: ${RABBITMQ_DEFAULT_PASS:guest}
   boot:
     admin:
       client:
@@ -28,7 +28,7 @@ spring:
         username: ${ADMIN_USERNAME:admin}
         password: ${ADMIN_PASSWORD:11}
         instance:
-          service-base-url: http://localhost:${server.port}
+          service-base-url: http://${USER_SERVICE_HOST:localhost}:${server.port}
   # sleuth 配置
   sleuth:
     web:
@@ -38,7 +38,7 @@ spring:
       probability: 1.0 # 采样比例为: 0.1(即10%),设置的值介于0.0到1.0之间，1.0则表示全部采集。
   # zipkin 配置
   zipkin:
-    base-url: http://localhost:9411  # 指定了Zipkin服务器的地址
+    base-url: http://${ZIPKIN_HOST:localhost}:${ZIPKIN_PORT:9411}  # 指定了Zipkin服务器的地址
 security:
   oauth2:
     client:
@@ -122,7 +122,9 @@ ignore:
     - /hystrix.sender
     - /v1/user/findUserByUsername/**
     - /v1/menu/findMenuByRole/**
+    - /v1/menu/findAllMenu
     - /v1/user/register
+    - /v1/user/checkExist/**
     - /v1/code/**
     - /v1/attachment/download
     - /v1/log/**
@@ -138,6 +140,11 @@ ignore:
     - /loggers/**
     - /mobile/token
     - /bus/refresh
+
+# 集群ID生成配置
+cluster:
+  workId: ${CLUSTER_WORKID:1}
+  dataCenterId: ${CLUSTER_DATA_CENTER_ID:1}
 
 logging:
   level:

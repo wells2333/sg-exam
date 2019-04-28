@@ -8,6 +8,7 @@ import com.github.tangyi.common.core.utils.ReflectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -71,6 +72,8 @@ public abstract class CrudService<D extends CrudMapper<T>, T extends BaseEntity<
      * @return List
      */
     public List<T> findListById(T entity) {
+        if (entity.getIds() == null || entity.getIds().length == 0)
+            return new ArrayList<>();
         return dao.findListById(entity);
     }
 

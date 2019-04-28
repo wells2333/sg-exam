@@ -16,4 +16,15 @@ public class IdGen {
     public static String uuid() {
         return UUID.randomUUID().toString().replaceAll("-", "");
     }
+
+    /**
+     * 基于snowflake算法生成ID
+     *
+     * @return String
+     * @author tangyi
+     * @date 2019/04/26 11:24
+     */
+    public static String snowflakeId() {
+        return Long.toString(SpringContextHolder.getApplicationContext().getBean(SnowflakeIdWorker.class).nextId());
+    }
 }

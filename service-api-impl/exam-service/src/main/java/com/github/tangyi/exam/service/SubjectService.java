@@ -49,7 +49,7 @@ public class SubjectService extends CrudService<SubjectMapper, Subject> {
      * @param subject subject
      * @return int
      * @author tangyi
-     * @date 2019/01/23 下午 8:19
+     * @date 2019/01/23 20:19
      */
     int getExaminationTotalSubject(Subject subject) {
         return this.dao.getExaminationTotalSubject(subject);

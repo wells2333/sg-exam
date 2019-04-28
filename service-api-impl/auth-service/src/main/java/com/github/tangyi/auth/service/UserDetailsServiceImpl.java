@@ -1,5 +1,6 @@
 package com.github.tangyi.auth.service;
 
+import com.github.tangyi.auth.properties.SysProperties;
 import com.github.tangyi.common.core.vo.Role;
 import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.security.core.GrantedAuthorityImpl;
@@ -32,6 +33,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
     private UserServiceClient userServiceClient;
+
+    @Autowired
+    private SysProperties sysProperties;
 
     /**
      * 加载用户信息
@@ -72,7 +76,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 // 权限如果前缀是ROLE_，security就会认为这是个角色信息，而不是权限，例如ROLE_ADMIN就是ADMIN角色，MENU:ADD就是MENU:ADD权限
                 authorities.add(new GrantedAuthorityImpl(role.getRoleCode()));
                 // 根据角色查找菜单权限
-                Stream<Menu> menuStream = userServiceClient.findMenuByRole(role.getRoleCode()).stream();
+                Stream<Menu> menuStream;
+                // 判断是否是管理员，是则查找所有菜单权限
+                if (userVo.getUsername().equals(sysProperties.getAdminUser())) {
+                    // 查找所有菜单权限，因为角色一般是一个，这里只会执行一次
+                    menuStream = userServiceClient.findAllMenu().stream();
+                } else {
+                    // 根据角色查找菜单权限
+                    menuStream = userServiceClient.findMenuByRole(role.getRoleCode()).stream();
+                }
                 if (Optional.ofNullable(menuStream).isPresent()) {
                     menuStream
                             // 菜单权限

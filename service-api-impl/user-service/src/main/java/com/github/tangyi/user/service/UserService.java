@@ -59,6 +59,7 @@ public class UserService extends CrudService<UserMapper, User> {
      */
     @Override
     @Transactional
+    @CacheEvict(value = "user", key = "#user.username")
     public int insert(User user) {
         // 保存角色
         if (CollectionUtils.isNotEmpty(user.getRole())) {
@@ -141,7 +142,7 @@ public class UserService extends CrudService<UserMapper, User> {
         if (CollectionUtils.isNotEmpty(userDto.getRole())) {
             userDto.getRole().forEach(roleId -> {
                 UserRole role = new UserRole();
-                role.setId(IdGen.uuid());
+                role.setId(IdGen.snowflakeId());
                 role.setUserId(user.getId());
                 role.setRoleId(roleId);
                 // 保存角色信息

@@ -24,7 +24,7 @@ public class MenuUtil {
      * @param menu menu
      * @return List
      * @author tangyi
-     * @date 2018/10/28 0028 下午 3:59
+     * @date 2018/10/28 15:59
      */
     public static List<Menu> initMenuPermission(Menu menu) {
         List<Menu> menus = new ArrayList<>();

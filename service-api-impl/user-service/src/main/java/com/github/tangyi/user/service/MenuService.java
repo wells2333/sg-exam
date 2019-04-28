@@ -59,7 +59,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
      * @param menu menu
      * @return int
      * @author tangyi
-     * @date 2018/10/28 0028 下午 3:56
+     * @date 2018/10/28 15:56
      */
     @Transactional
     @Override
@@ -73,7 +73,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
      * @param menu menu
      * @return int
      * @author tangyi
-     * @date 2018/10/30 0030 下午 8:19
+     * @date 2018/10/30 20:19
      */
     @Transactional
     @Override
