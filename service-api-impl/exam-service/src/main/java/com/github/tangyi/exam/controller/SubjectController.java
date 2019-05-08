@@ -9,8 +9,6 @@ import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.constant.SecurityConstant;
 import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.exam.api.dto.SubjectDto;
-import com.github.tangyi.exam.api.module.Answer;
-import com.github.tangyi.exam.api.module.ExamRecord;
 import com.github.tangyi.exam.api.module.Examination;
 import com.github.tangyi.exam.api.module.Subject;
 import com.github.tangyi.exam.service.AnswerService;
@@ -20,11 +18,9 @@ import com.github.tangyi.exam.service.SubjectService;
 import com.github.tangyi.exam.utils.SubjectUtil;
 import com.google.common.net.HttpHeaders;
 import io.swagger.annotations.*;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,8 +28,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -210,7 +209,7 @@ public class SubjectController extends BaseController {
             // 配置response
             response.setCharacterEncoding("utf-8");
             response.setContentType("multipart/form-data");
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request, "题目信息" + new SimpleDateFormat("yyyyMMddhhmmssSSS").format(new Date()) + ".xlsx"));
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request, "题目信息" + DateUtils.localDateMillisToString(LocalDateTime.now()) + ".xlsx"));
             List<Subject> subjects = new ArrayList<>();
             // 根据题目id导出
             if (StringUtils.isNotEmpty(subjectDto.getIdString())) {
@@ -336,35 +335,6 @@ public class SubjectController extends BaseController {
     public ResponseBean<SubjectDto> subjectAnswer(@RequestParam("serialNumber") String serialNumber,
                                                   @RequestParam("examRecordId") String examRecordId,
                                                   @RequestParam(value = "userId", required = false) String userId) {
-        SubjectDto subjectDto = null;
-        ExamRecord examRecord = new ExamRecord();
-        examRecord.setId(examRecordId);
-        // 查找考试记录
-        examRecord = examRecordService.get(examRecord);
-        if (examRecord != null) {
-            // 查找题目
-            Subject subject = new Subject();
-            subject.setExaminationId(examRecord.getExaminationId());
-            subject.setSerialNumber(serialNumber);
-            subject = subjectService.getByExaminationIdAndSerialNumber(subject);
-            if (subject != null) {
-                subjectDto = new SubjectDto();
-                // 查找答题
-                Answer answer = new Answer();
-                answer.setSubjectId(subject.getId());
-                answer.setExaminationId(examRecord.getExaminationId());
-                answer.setExamRecordId(examRecordId);
-                answer.setUserId(userId);
-                List<Answer> answerList = answerService.findList(answer);
-                if (answerList != null && answerList.size() == 1) {
-                    answer = answerList.get(0);
-                }
-                BeanUtils.copyProperties(subject, subjectDto);
-                // 设置答题
-                subjectDto.setAnswer(answer);
-                subjectDto.setExaminationRecordId(examRecordId);
-            }
-        }
-        return new ResponseBean<>(subjectDto);
+        return new ResponseBean<>(subjectService.subjectAnswer(serialNumber, examRecordId, userId));
     }
 }

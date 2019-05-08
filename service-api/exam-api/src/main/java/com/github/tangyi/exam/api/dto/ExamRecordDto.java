@@ -105,6 +105,21 @@ public class ExamRecordDto extends BaseEntity<ExamRecordDto> {
      */
     private String examTime;
 
+    /**
+     * 错误题目数量
+     */
+    private String inCorrectNumber;
+
+    /**
+     * 正确题目数量
+     */
+    private String correctNumber;
+
+    /**
+     * 提交状态 1-已提交 0-未提交
+     */
+    private String submitStatus;
+
     public String getExaminationName() {
         return examinationName;
     }
@@ -255,5 +270,29 @@ public class ExamRecordDto extends BaseEntity<ExamRecordDto> {
 
     public void setExamTime(String examTime) {
         this.examTime = examTime;
+    }
+
+    public String getSubmitStatus() {
+        return submitStatus;
+    }
+
+    public void setSubmitStatus(String submitStatus) {
+        this.submitStatus = submitStatus;
+    }
+
+    public String getInCorrectNumber() {
+        return inCorrectNumber;
+    }
+
+    public void setInCorrectNumber(String inCorrectNumber) {
+        this.inCorrectNumber = inCorrectNumber;
+    }
+
+    public String getCorrectNumber() {
+        return correctNumber;
+    }
+
+    public void setCorrectNumber(String correctNumber) {
+        this.correctNumber = correctNumber;
     }
 }

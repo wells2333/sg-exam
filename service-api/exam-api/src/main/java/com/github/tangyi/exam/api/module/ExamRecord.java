@@ -55,6 +55,11 @@ public class ExamRecord extends BaseEntity<ExamRecord> {
      */
     private String correctNumber;
 
+    /**
+     * 提交状态 1-已提交 0-未提交
+     */
+    private String submitStatus;
+
     public String getUserId() {
         return userId;
     }
@@ -125,5 +130,13 @@ public class ExamRecord extends BaseEntity<ExamRecord> {
 
     public void setCorrectNumber(String correctNumber) {
         this.correctNumber = correctNumber;
+    }
+
+    public String getSubmitStatus() {
+        return submitStatus;
+    }
+
+    public void setSubmitStatus(String submitStatus) {
+        this.submitStatus = submitStatus;
     }
 }

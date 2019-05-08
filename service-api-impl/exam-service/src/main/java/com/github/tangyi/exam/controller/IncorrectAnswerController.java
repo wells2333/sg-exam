@@ -116,6 +116,9 @@ public class IncorrectAnswerController extends BaseController {
                 });
             }
         }
+        pageInfo.setPageSize(incorrectAnswerPageInfo.getPageSize());
+        pageInfo.setPageNum(incorrectAnswerPageInfo.getPageNum());
+        pageInfo.setTotal(incorrectAnswerPageInfo.getTotal());
         pageInfo.setList(incorrectAnswerDtoList);
         return pageInfo;
     }

@@ -1,14 +1,18 @@
 package com.github.tangyi.exam.service;
 
+import com.github.tangyi.common.core.constant.MqConstant;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.security.utils.SecurityUtil;
+import com.github.tangyi.exam.api.constants.ExamRecordConstant;
+import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.Answer;
 import com.github.tangyi.exam.api.module.ExamRecord;
 import com.github.tangyi.exam.api.module.IncorrectAnswer;
 import com.github.tangyi.exam.api.module.Subject;
 import com.github.tangyi.exam.mapper.AnswerMapper;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -26,6 +30,9 @@ import java.util.List;
  */
 @Service
 public class AnswerService extends CrudService<AnswerMapper, Answer> {
+
+    @Autowired
+    private AmqpTemplate amqpTemplate;
 
     @Autowired
     private SubjectService subjectService;
@@ -108,8 +115,43 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
     }
 
     /**
+     * 保存
+     *
+     * @param answer answer
+     * @return int
+     * @author tangyi
+     * @date 2019/04/30 18:03
+     */
+    @Transactional
+    public int save(Answer answer) {
+        answer.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+        return super.save(answer);
+    }
+
+    /**
+     * 保存答题，返回下一题信息
+     *
+     * @param answer answer
+     * @return SubjectDto
+     * @author tangyi
+     * @date 2019/05/01 11:42
+     */
+    @Transactional
+    public SubjectDto saveAndNext(Answer answer) {
+        Answer tempAnswer = this.getAnswer(answer);
+        if (tempAnswer != null) {
+            tempAnswer.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+            tempAnswer.setAnswer(answer.getAnswer());
+            this.update(tempAnswer);
+        } else {
+            answer.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+            this.insert(answer);
+        }
+        return subjectService.subjectAnswer(answer.getSerialNumber(), answer.getExamRecordId(), answer.getUserId());
+    }
+
+    /**
      * 提交答卷
-     * TODO 通过mq异步处理
      *
      * @param answer answer
      * @return boolean
@@ -120,7 +162,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
     public boolean submit(Answer answer) {
         long start = System.currentTimeMillis();
         boolean success = false;
-        String currentUsername = SecurityUtil.getCurrentUsername();
+        String currentUsername = answer.getModifier();
         // 查找已提交的题目
         List<Answer> answerList = findList(answer);
         if (CollectionUtils.isNotEmpty(answerList)) {
@@ -166,12 +208,14 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
                 });
                 // 保存成绩
                 ExamRecord examRecord = new ExamRecord();
-                examRecord.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+                examRecord.setCommonValue(currentUsername, SysUtil.getSysCode());
                 examRecord.setId(answer.getExamRecordId());
                 examRecord.setEndTime(examRecord.getCreateDate());
                 examRecord.setScore(Integer.toString(totalScore));
                 examRecord.setCorrectNumber(String.valueOf(rightScore.size()));
                 examRecord.setInCorrectNumber(String.valueOf(incorrectAnswers.size()));
+                // 更新状态为统计完成
+                examRecord.setSubmitStatus(ExamRecordConstant.STATUS_CALCULATED);
                 success = examRecordService.update(examRecord) > 0;
                 // 保存错题
                 ExamRecord searchExamRecord = new ExamRecord();
@@ -187,6 +231,36 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
             }
         }
         logger.debug("提交答卷，用户名：{}，考试ID：{}，耗时：{}ms", currentUsername, answer.getExaminationId(), System.currentTimeMillis() - start);
+        return success;
+    }
+
+    /**
+     * 通过mq异步处理
+     * 1. 先发送消息
+     * 2. 发送消息成功，更新提交状态，发送失败，返回提交失败
+     * 3. 消费消息，计算成绩
+     *
+     * @param answer answer
+     * @return boolean
+     * @author tangyi
+     * @date 2019/05/03 14:35
+     */
+    @Transactional
+    public boolean submitAsync(Answer answer) {
+        long start = System.currentTimeMillis();
+        String currentUsername = SecurityUtil.getCurrentUsername();
+        answer.setModifier(currentUsername);
+        ExamRecord examRecord = new ExamRecord();
+        examRecord.setCommonValue(currentUsername, SysUtil.getSysCode());
+        examRecord.setId(answer.getExamRecordId());
+        // 提交时间
+        examRecord.setEndTime(examRecord.getCreateDate());
+        examRecord.setSubmitStatus(ExamRecordConstant.STATUS_SUBMITTED);
+        // 1. 发送消息
+        amqpTemplate.convertAndSend(MqConstant.SUBMIT_EXAMINATION_QUEUE, answer);
+        // 2. 更新考试状态
+        boolean success = examRecordService.update(examRecord) > 0;
+        logger.debug("异步提交答卷成功，提交人：{}，考试ID：{}，耗时：{}ms", currentUsername, answer.getExaminationId(), System.currentTimeMillis() - start);
         return success;
     }
 }

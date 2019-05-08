@@ -1,9 +1,9 @@
 package com.github.tangyi.exam.service;
 
 import com.github.tangyi.common.core.service.CrudService;
-import com.github.tangyi.exam.mapper.ExaminationMapper;
 import com.github.tangyi.exam.api.module.Examination;
 import com.github.tangyi.exam.api.module.Subject;
+import com.github.tangyi.exam.mapper.ExaminationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -89,6 +89,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 
     /**
      * 查询考试数量
+     *
      * @param examination examination
      * @return int
      * @author tangyi

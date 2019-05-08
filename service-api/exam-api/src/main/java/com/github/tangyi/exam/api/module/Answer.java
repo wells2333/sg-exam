@@ -40,6 +40,11 @@ public class Answer extends BaseEntity<Answer> {
      */
     private String answer;
 
+    /**
+     * 下一题题目序号
+     */
+    private String serialNumber;
+
     public String getUserId() {
         return userId;
     }
@@ -86,5 +91,13 @@ public class Answer extends BaseEntity<Answer> {
 
     public void setExamRecordId(String examRecordId) {
         this.examRecordId = examRecordId;
+    }
+
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
     }
 }

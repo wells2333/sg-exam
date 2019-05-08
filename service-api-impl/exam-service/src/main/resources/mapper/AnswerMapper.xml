@@ -67,7 +67,7 @@
         and a.examination_id = #{examinationId}
         and a.exam_record_id = #{examRecordId}
         and a.subject_id = #{subjectId}
-    </select>
+</select>
 
     <select id="findList" resultMap="answerResultMap">
         SELECT

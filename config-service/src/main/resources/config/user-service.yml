@@ -8,13 +8,13 @@ spring:
       # 单次请求的文件的总大小
       max-request-size: 100MB
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:192.168.0.144}:${MYSQL_PORT:3306}/microservice-user?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&characterEncoding=UTF-8
-    username: ${MYSQL_USERNAME:platform}
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/microservice-user?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&characterEncoding=UTF-8
+    username: ${MYSQL_USERNAME:root}
     password: ${MYSQL_PASSWORD:11}
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.jdbc.Driver
   redis:
-    host: ${REDIS_HOST:192.168.0.213}
+    host: ${REDIS_HOST:localhost}
     port: ${REDIS_PORT:6379}
   rabbitmq:
     host: ${RABBIT_HOST:localhost}
@@ -79,11 +79,11 @@ fdfs:
     width: 150
     height: 150
   tracker-list:            #TrackerList参数,支持多个
-    - ${FDFS_HOST:192.168.0.95}:${FDFS_PORT:22122}
+    - ${FDFS_HOST:182.254.233.125}:${FDFS_PORT:22122}
 
 # 系统配置
 sys:
-  fdfsHttpHost: ${ATTACHMENT_HOST:http://192.168.0.95}:${ATTACHMENT_PORT:80}  # fastDfs的HTTP配置
+  fdfsHttpHost: ${ATTACHMENT_HOST:http://182.254.233.125}:${ATTACHMENT_PORT:80}  # fastDfs的HTTP配置
   uploadUrl: api/user/v1/attachment/upload
   defaultAvatar: https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80
 

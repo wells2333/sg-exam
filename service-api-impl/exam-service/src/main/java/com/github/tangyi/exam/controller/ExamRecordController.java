@@ -12,6 +12,7 @@ import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.constant.SecurityConstant;
 import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.exam.api.dto.ExamRecordDto;
+import com.github.tangyi.exam.api.dto.StartExamDto;
 import com.github.tangyi.exam.api.module.ExamRecord;
 import com.github.tangyi.exam.api.module.Examination;
 import com.github.tangyi.exam.service.ExamRecordService;
@@ -34,8 +35,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -136,6 +140,11 @@ public class ExamRecordController extends BaseController {
                         examRecordDto.setEndTime(tempExamRecord.getEndTime());
                         examRecordDto.setScore(tempExamRecord.getScore());
                         examRecordDto.setUserId(tempExamRecord.getUserId());
+                        // 正确题目数
+                        examRecordDto.setCorrectNumber(tempExamRecord.getCorrectNumber());
+                        examRecordDto.setInCorrectNumber(tempExamRecord.getInCorrectNumber());
+                        // 提交状态
+                        examRecordDto.setSubmitStatus(tempExamRecord.getSubmitStatus());
                         examRecordDtoList.add(examRecordDto);
                     }
                 });
@@ -265,7 +274,7 @@ public class ExamRecordController extends BaseController {
             // 配置response
             response.setCharacterEncoding("utf-8");
             response.setContentType("multipart/form-data");
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request, "考试成绩" + new SimpleDateFormat("yyyyMMddhhmmssSSS").format(new Date()) + ".xlsx"));
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request, "考试成绩" + DateUtils.localDateMillisToString(LocalDateTime.now()) + ".xlsx"));
             List<ExamRecord> examRecordList;
             if (StringUtils.isNotEmpty(examRecordDto.getIdString())) {
                 ExamRecord examRecord = new ExamRecord();
@@ -338,5 +347,31 @@ public class ExamRecordController extends BaseController {
         } catch (Exception e) {
             logger.error("导出成绩数据失败！", e);
         }
+    }
+
+    /**
+     * 开始考试
+     *
+     * @param examRecord examRecord
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/04/30 16:45
+     */
+    @PostMapping("start")
+    @Log("开始考试")
+    public ResponseBean<StartExamDto> start(@RequestBody ExamRecord examRecord) {
+        return new ResponseBean<>(examRecordService.start(examRecord));
+    }
+
+    /**
+     * 获取服务器当前时间
+     *
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/05/07 22:03
+     */
+    @GetMapping("currentTime")
+    public ResponseBean<String> currentTime() {
+        return new ResponseBean<>(DateUtils.localDateToString(LocalDateTime.now()));
     }
 }

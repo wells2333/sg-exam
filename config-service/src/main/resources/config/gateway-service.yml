@@ -2,7 +2,7 @@ server:
   port: 8000
 spring:
   redis:
-    host: ${REDIS_HOST:192.168.0.213}
+    host: ${REDIS_HOST:localhost}
     port: ${REDIS_PORT:6379}
   rabbitmq:
     host: ${RABBIT_HOST:localhost}
@@ -68,8 +68,8 @@ preview:
   enabled: ${PREVIEW_ENABLED:false}
   ignores:
     - token
-    - examRecord
-    - saveOrUpdate
+    - start
+    - saveAndNext
     - register
     - submit
     - checkExist
