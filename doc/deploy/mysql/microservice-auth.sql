@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 144
+ Source Server         : mysql_localhost
  Source Server Type    : MySQL
- Source Server Version : 50710
- Source Host           : 192.168.0.144:3306
+ Source Server Version : 50617
+ Source Host           : localhost:3306
  Source Schema         : microservice-auth
 
  Target Server Type    : MySQL
- Target Server Version : 50710
+ Target Server Version : 50617
  File Encoding         : 65001
 
- Date: 26/04/2019 23:22:30
+ Date: 03/05/2019 14:21:18
 */
 
 SET NAMES utf8mb4;
@@ -42,7 +42,7 @@ CREATE TABLE `oauth_client_details`  (
   `del_flag` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '删除标记',
   `application_code` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '系统编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of oauth_client_details

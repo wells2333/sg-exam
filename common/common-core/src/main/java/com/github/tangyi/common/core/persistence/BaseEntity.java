@@ -1,12 +1,12 @@
 package com.github.tangyi.common.core.persistence;
 
 import com.github.tangyi.common.core.constant.CommonConstant;
+import com.github.tangyi.common.core.utils.DateUtils;
 import com.github.tangyi.common.core.utils.IdGen;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * Entity基类
@@ -63,14 +63,15 @@ public class BaseEntity<T> implements Serializable {
      * @param applicationCode 系统编号
      */
     public void setCommonValue(String userCode, String applicationCode) {
+        String currentDate = DateUtils.localDateToString(LocalDateTime.now());
         if (this.isNewRecord()) {
             this.setId(IdGen.snowflakeId());
             this.setNewRecord(true);
             this.creator = userCode;
-            this.createDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+            this.createDate = currentDate;
         }
         this.modifier = userCode;
-        this.modifyDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        this.modifyDate = currentDate;
         this.delFlag = 0;
         this.applicationCode = applicationCode;
     }

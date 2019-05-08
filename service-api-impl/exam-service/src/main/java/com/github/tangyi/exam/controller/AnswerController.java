@@ -8,8 +8,10 @@ import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.utils.SecurityUtil;
+import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.Answer;
 import com.github.tangyi.exam.service.AnswerService;
+import com.github.tangyi.exam.service.SubjectService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -17,7 +19,6 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +38,9 @@ public class AnswerController extends BaseController {
 
     @Autowired
     private AnswerService answerService;
+
+    @Autowired
+    private SubjectService subjectService;
 
     /**
      * 根据ID获取
@@ -155,24 +159,27 @@ public class AnswerController extends BaseController {
      * @author tangyi
      * @date 2018/12/24 20:06
      */
-    @PostMapping("saveOrUpdate")
+    @PostMapping("save")
     @ApiOperation(value = "保存答题", notes = "保存答题")
     @ApiImplicitParam(name = "answer", value = "答题信息", dataType = "Answer")
     @Log("保存答题")
-    public ResponseBean<Boolean> saveOrUpdate(@RequestBody Answer answer) {
-        boolean success;
-        Answer search = new Answer();
-        BeanUtils.copyProperties(answer, search);
-        search = answerService.getAnswer(search);
-        if (search == null) {
-            answer.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
-            success = answerService.insert(answer) > 0;
-        } else {
-            search.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
-            search.setAnswer(answer.getAnswer());
-            success = answerService.update(search) > 0;
-        }
-        return new ResponseBean<>(success);
+    public ResponseBean<Boolean> save(@RequestBody Answer answer) {
+        return new ResponseBean<>(answerService.save(answer) > 0);
+    }
+
+    /**
+     * 保存答题，返回下一题信息
+     *
+     * @param answer answer
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/04/30 18:06
+     */
+    @PostMapping("saveAndNext")
+    @ApiOperation(value = "保存答题", notes = "保存答题")
+    @ApiImplicitParam(name = "answer", value = "答题信息", dataType = "Answer")
+    public ResponseBean<SubjectDto> saveAndNext(@RequestBody Answer answer) {
+        return new ResponseBean<>(answerService.saveAndNext(answer));
     }
 
     /**
@@ -188,6 +195,6 @@ public class AnswerController extends BaseController {
     @ApiImplicitParam(name = "answer", value = "答卷信息", dataType = "Answer")
     @Log("提交答题")
     public ResponseBean<Boolean> submit(@RequestBody Answer answer) {
-        return new ResponseBean<>(answerService.submit(answer));
+        return new ResponseBean<>(answerService.submitAsync(answer));
     }
 }

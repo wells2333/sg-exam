@@ -12,6 +12,7 @@
         <result column="score" property="score"/>
         <result column="correct_number" property="correctNumber"/>
         <result column="incorrect_number" property="inCorrectNumber"/>
+        <result column="submit_status" property="submitStatus"/>
         <result column="creator" property="creator"/>
         <result column="create_date" property="createDate"/>
         <result column="modifier" property="modifier"/>
@@ -31,6 +32,7 @@
         a.score,
         a.correct_number,
         a.incorrect_number,
+        a.submit_status,
         a.creator,
         a.create_date,
         a.modifier,
@@ -52,6 +54,9 @@
         </if>
         <if test="courseId != null and courseId != ''">
             and a.course_id = #{courseId}
+        </if>
+        <if test="submitStatus != null and submitStatus != ''">
+            and a.submit_status = #{submitStatus}
         </if>
     </sql>
 
@@ -99,6 +104,7 @@
             score,
             correct_number,
             incorrect_number,
+            submit_status,
             creator,
             create_date,
             modifier,
@@ -116,6 +122,7 @@
             #{score},
             #{correctNumber},
             #{inCorrectNumber},
+            #{submitStatus},
             #{creator},
             #{createDate},
             #{modifier},
@@ -153,6 +160,9 @@
         </if>
         <if test="inCorrectNumber != null">
             incorrect_number = #{inCorrectNumber},
+        </if>
+        <if test="submitStatus != null">
+            submit_status = #{submitStatus},
         </if>
         <if test="delFlag != null">
             del_flag = #{delFlag},

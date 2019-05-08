@@ -3,6 +3,7 @@ package com.github.tangyi.exam.controller;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.model.ResponseBean;
+import com.github.tangyi.common.core.utils.DateUtils;
 import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
@@ -27,8 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,9 +67,6 @@ public class ExaminationController extends BaseController {
         if (StringUtils.isNotBlank(id)) {
             examination.setId(id);
             examination = examinationService.get(examination);
-            // 获取当前时间
-            if (examination != null)
-                examination.setCurrentTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         }
         return new ResponseBean<>(examination);
     }
@@ -108,17 +105,12 @@ public class ExaminationController extends BaseController {
             // 流处理获取课程ID集合，转成字符串数组
             course.setIds(page.getList().stream().map(Examination::getCourseId).distinct().toArray(String[]::new));
             List<Course> courses = courseService.findListById(course);
-            // 当前时间
-            String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
             // 流处理转成Dto集合
             List<ExaminationDto> examinationDtos = page.getList().stream().map(exam -> {
                 ExaminationDto examinationDto = new ExaminationDto();
                 BeanUtils.copyProperties(exam, examinationDto);
-                examinationDto.setCurrentTime(currentTime);
                 // 设置考试所属课程
-                Course examinationCourse = courses.stream().filter(tempCourse -> tempCourse.getId().equals(exam.getCourseId())).findFirst().orElse(null);
-                if (examinationCourse != null)
-                    examinationDto.setCourse(examinationCourse);
+                courses.stream().filter(tempCourse -> tempCourse.getId().equals(exam.getCourseId())).findFirst().ifPresent(examinationDto::setCourse);
                 return examinationDto;
             }).collect(Collectors.toList());
             examinationDtoPageInfo.setList(examinationDtos);

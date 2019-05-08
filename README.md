@@ -2,6 +2,8 @@
 
 交流QQ群：996208878
 
+如果您觉得有帮助，请点右上角 "Star" 或者项目底部的“捐助”支持一下，谢谢！
+
 ## 简介
 
 - 重写[spring-cloud-online-exam](https://gitee.com/wells2333/spring-cloud-online-exam)
@@ -15,6 +17,12 @@
 - 在线体验-前台：[http://www.it99.club](http://www.it99.club)
 
 - 在线体验-后台：[http://www.it99.club:81](http://www.it99.club:81)
+
+默认账号：
+
+1. 管理员：admin/123456
+2. 学生：student/123456
+3. 教师：teacher/123456
 
 ## 技术选型
 
