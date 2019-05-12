@@ -65,6 +65,18 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
     }
 
     /**
+     * 查询用户数量
+     *
+     * @param userVo userVo
+     * @return ResponseBean
+     */
+    @Override
+    public ResponseBean<Integer> findUserCount(UserVo userVo) {
+        logger.error("调用{}异常:{},{}", "findUserCount", userVo, throwable);
+        return new ResponseBean<>(0);
+    }
+
+    /**
      * 根据部门ID批量查询部门信息
      *
      * @param deptVo deptVo

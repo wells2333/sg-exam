@@ -461,4 +461,17 @@ public class UserController extends BaseController {
             exist = userService.selectUserVoByUsername(username) != null;
         return new ResponseBean<>(exist);
     }
+
+    /**
+     * 查询用户数量
+     *
+     * @param userVo userVo
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/05/09 22:09
+     */
+    @PostMapping("userCount")
+    public ResponseBean<Integer> userCount(UserVo userVo) {
+        return new ResponseBean<>(userService.userCount(userVo));
+    }
 }

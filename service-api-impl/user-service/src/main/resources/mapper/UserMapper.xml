@@ -154,6 +154,10 @@
         WHERE a.id = #{id}
     </select>
 
+    <select id="userCount" resultType="Integer">
+        SELECT COUNT(1) FROM sys_user a WHERE a.del_flag = 0
+    </select>
+
     <select id="findList" resultMap="userResultMap">
         SELECT
         <include refid="userColumns"/>

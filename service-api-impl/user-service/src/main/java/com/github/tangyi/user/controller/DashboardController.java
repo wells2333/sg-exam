@@ -1,9 +1,11 @@
 package com.github.tangyi.user.controller;
 
 import com.github.tangyi.common.core.model.ResponseBean;
+import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.exam.api.feign.ExaminationServiceClient;
 import com.github.tangyi.user.api.dto.DashboardDto;
+import com.github.tangyi.user.api.feign.UserServiceClient;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class DashboardController extends BaseController {
     @Autowired
     private ExaminationServiceClient examinationService;
 
+    @Autowired
+    private UserServiceClient userServiceClient;
+
     /**
      * 获取管控台首页数据
      *
@@ -35,13 +40,12 @@ public class DashboardController extends BaseController {
      */
     @GetMapping
     @ApiOperation(value = "后台首页数据展示", notes = "后台首页数据展示")
-    @SuppressWarnings("unchecked")
     public ResponseBean<DashboardDto> dashboard() {
         DashboardDto dashboardDto = new DashboardDto();
-        // TODO 从redis里获取在线用户数
-        dashboardDto.setOnlineUserNumber("790");
+        // 查询用户数量
+        dashboardDto.setOnlineUserNumber(userServiceClient.findUserCount(new UserVo()).getData().toString());
         // 查询考试数量
-        dashboardDto.setExaminationNumber(examinationService.findExaminationCount().getData() + "");
+        dashboardDto.setExaminationNumber(examinationService.findExaminationCount().getData().toString());
         return new ResponseBean<>(dashboardDto);
     }
 }

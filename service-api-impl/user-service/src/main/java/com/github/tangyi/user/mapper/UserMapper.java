@@ -23,4 +23,12 @@ public interface UserMapper extends CrudMapper<User> {
      * @return userVo
      */
     UserVo selectUserVoByUsername(String username);
+
+    /**
+     * 查询用户数量
+     *
+     * @param userVo userVo
+     * @return Integer
+     */
+    Integer userCount(UserVo userVo);
 }
