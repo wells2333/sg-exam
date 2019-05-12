@@ -202,4 +202,16 @@ public class UserService extends CrudService<UserMapper, User> {
         userRoleMapper.deleteByUserId(user.getId());
         return super.delete(user);
     }
+
+    /**
+     * 查询用户数量
+     *
+     * @param userVo userVo
+     * @return int
+     * @author tangyi
+     * @date 2019/05/09 22:10
+     */
+    public Integer userCount(UserVo userVo) {
+        return this.dao.userCount(userVo);
+    }
 }

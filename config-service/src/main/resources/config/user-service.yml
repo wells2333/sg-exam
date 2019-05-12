@@ -83,7 +83,7 @@ fdfs:
 
 # 系统配置
 sys:
-  fdfsHttpHost: ${ATTACHMENT_HOST:http://182.254.233.125}:${ATTACHMENT_PORT:80}  # fastDfs的HTTP配置
+  fdfsHttpHost: ${ATTACHMENT_HOST:http://182.254.233.125}:${ATTACHMENT_PORT:8080}  # fastDfs的HTTP配置
   uploadUrl: api/user/v1/attachment/upload
   defaultAvatar: https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80
 

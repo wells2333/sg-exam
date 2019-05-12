@@ -55,6 +55,17 @@ public interface UserServiceClient {
     ResponseBean<List<UserVo>> findUserById(@RequestBody UserVo userVo);
 
     /**
+     * 查询用户数量
+     *
+     * @param userVo userVo
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/05/09 22:04
+     */
+    @RequestMapping(value = "/v1/user/userCount", method = RequestMethod.POST)
+    ResponseBean<Integer> findUserCount(@RequestBody UserVo userVo);
+
+    /**
      * 根据部门id获取部门
      *
      * @param deptVo deptVo

@@ -1,8 +1,18 @@
 ## spring-microservice-exam
 
+- 在线体验-前台：[http://www.it99.club](http://www.it99.club)
+
+- 在线体验-后台：[http://www.it99.club:81](http://www.it99.club:81)
+
 交流QQ群：996208878
 
 如果您觉得有帮助，请点右上角 "Star" 或者项目底部的“捐助”支持一下，谢谢！
+
+项目源码地址
+
+- 前台ui：[spring-microservice-exam-web](https://gitee.com/wells2333/spring-microservice-exam-web.git)
+- 后台ui：[spring-microservice-exam-ui](https://gitee.com/wells2333/spring-microservice-exam-ui.git)
+- 后端：[spring-microservice-exam](https://gitee.com/wells2333/spring-microservice-exam.git)
 
 ## 简介
 
@@ -13,10 +23,6 @@
 - 前端采用`vue2.0`，通过`jwt`和后端交互
 
 - 后端基于`spring boot`、`spring cloud`、`MySQL`等技术实现权限管理、考试管理等功能。
-
-- 在线体验-前台：[http://www.it99.club](http://www.it99.club)
-
-- 在线体验-后台：[http://www.it99.club:81](http://www.it99.club:81)
 
 默认账号：
 
@@ -80,7 +86,7 @@
 
 考务管理：提供课程、考试、题库、成绩等管理
 - 课程管理：课程信息增删改查
-- 考试管理：考试信息增删改查、题目管理、发布回收
+- 考试管理：考试信息增删改查、题目管理、发布回收，题目管理支持简单文本、富文本输入、从题库添加等
 - 题库管理：题目分类增删改查、题目信息增删改查
 - 成绩管理：查看成绩、导出成绩
 - 知识库：知识库增删改查、上传附件
@@ -94,26 +100,43 @@
 
 ## 功能演示
 
-### 前台
+### 前台功能
+
+1. 登录
 
 ![image](doc/images/image_web_login.png)
 
+2. 考试
 ![image](doc/images/image_web_exam.png)
 
+![image](doc/images/image_web_text_subject.png)
+
+3. 答题卡
 ![image](doc/images/image_web_exam_card.png)
 
+4. 查看成绩
+![image](doc/images/image_web_exam_score.png)
+
+5. 查看错题
 ![image](doc/images/image_web_incorrect_answer.png)
 
-### 后台
+### 后台功能
 
+1. 总体功能
 ![image](doc/images/image_ui_menu.png)
 
+2. 考试管理
 ![image](doc/images/image_ui_exam.png)
 
+3. 题目管理
 ![image](doc/images/image_ui_exam_subject.png)
 
+![image](doc/images/image_ui_subjects_rich_edit.png)
+
+4. 题库管理
 ![image](doc/images/image_ui_subject.png)
 
+5. 个人资料
 ![image](doc/images/image_ui_msg.png)
 
 ## 部署文档
