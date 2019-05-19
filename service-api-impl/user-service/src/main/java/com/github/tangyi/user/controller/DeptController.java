@@ -48,7 +48,7 @@ public class DeptController extends BaseController {
      * @author tangyi
      * @date 2018/10/25 12:57
      */
-    @GetMapping(value = "/depts")
+    @GetMapping(value = "depts")
     @ApiOperation(value = "获取部门列表")
     public List<DeptDto> depts() {
         Dept dept = new Dept();
@@ -145,7 +145,7 @@ public class DeptController extends BaseController {
      * @author tangyi
      * @date 2018/12/31 22:13
      */
-    @RequestMapping(value = "/findById", method = RequestMethod.POST)
+    @RequestMapping(value = "findById", method = RequestMethod.POST)
     @ApiOperation(value = "批量查询部门信息", notes = "根据Ids批量查询信息")
     @ApiImplicitParam(name = "deptVo", value = "部门实体", required = true, dataType = "DeptVo")
     public ResponseBean<List<DeptVo>> findById(@RequestBody DeptVo deptVo) {

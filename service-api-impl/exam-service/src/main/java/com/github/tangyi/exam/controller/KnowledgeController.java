@@ -17,10 +17,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -36,12 +35,11 @@ import java.util.Set;
  * @author tangyi
  * @date 2019/1/1 15:11
  */
+@Slf4j
 @Api("知识库信息管理")
 @RestController
 @RequestMapping("/v1/knowledge")
 public class KnowledgeController extends BaseController {
-
-    private static final Logger logger = LoggerFactory.getLogger(KnowledgeController.class);
 
     @Autowired
     private KnowledgeService knowledgeService;
@@ -198,7 +196,7 @@ public class KnowledgeController extends BaseController {
             if (knowledge != null && StringUtils.isNotBlank(knowledge.getAttachmentId()))
                 success = userServiceClient.deleteAttachment(knowledge.getAttachmentId()).getData();
         } catch (Exception e) {
-            logger.error("删除知识失败！", e);
+            log.error("删除知识失败！", e);
         }
         return new ResponseBean<>(success);
     }
@@ -221,7 +219,7 @@ public class KnowledgeController extends BaseController {
             if (StringUtils.isNotEmpty(knowledge.getIdString()))
                 success = knowledgeService.deleteAll(knowledge.getIdString().split(",")) > 0;
         } catch (Exception e) {
-            logger.error("删除知识失败！", e);
+            log.error("删除知识失败！", e);
         }
         return new ResponseBean<>(success);
     }

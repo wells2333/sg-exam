@@ -23,10 +23,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -48,12 +47,11 @@ import java.util.stream.Stream;
  * @author tangyi
  * @date 2018/11/8 21:27
  */
+@Slf4j
 @Api("考试记录信息管理")
 @RestController
 @RequestMapping("/v1/examRecord")
 public class ExamRecordController extends BaseController {
-
-    private static final Logger logger = LoggerFactory.getLogger(ExamRecordController.class);
 
     @Autowired
     private ExamRecordService examRecordService;
@@ -252,7 +250,7 @@ public class ExamRecordController extends BaseController {
                 success = examRecordService.delete(examRecord) > 0;
             }
         } catch (Exception e) {
-            logger.error("删除考试记录失败！", e);
+            log.error("删除考试记录失败！", e);
         }
         return new ResponseBean<>(success);
     }
@@ -345,7 +343,7 @@ public class ExamRecordController extends BaseController {
                 ExcelToolUtil.exportExcel(request.getInputStream(), response.getOutputStream(), MapUtil.java2Map(examRecordDtoList), ExamRecordUtil.getExamRecordDtoMap());
             }
         } catch (Exception e) {
-            logger.error("导出成绩数据失败！", e);
+            log.error("导出成绩数据失败！", e);
         }
     }
 

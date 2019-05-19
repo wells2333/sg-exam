@@ -1,5 +1,6 @@
 package com.github.tangyi.gateway.config;
 
+import lombok.Data;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -14,6 +15,7 @@ import java.util.List;
  * @author tangyi
  * @date 2019/4/23 13:38
  */
+@Data
 @Configuration
 @RefreshScope
 @ConditionalOnExpression("!'${preview}'.isEmpty()")
@@ -24,19 +26,4 @@ public class PreviewConfig {
 
     private List<String> ignores = new ArrayList<>();
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public List<String> getIgnores() {
-        return ignores;
-    }
-
-    public void setIgnores(List<String> ignores) {
-        this.ignores = ignores;
-    }
 }

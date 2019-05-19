@@ -18,9 +18,8 @@ import com.github.tangyi.exam.service.SubjectService;
 import com.github.tangyi.exam.utils.SubjectUtil;
 import com.google.common.net.HttpHeaders;
 import io.swagger.annotations.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -42,12 +41,11 @@ import java.util.stream.Stream;
  * @author tangyi
  * @date 2018/11/8 21:29
  */
+@Slf4j
 @Api("题目信息管理")
 @RestController
 @RequestMapping("/v1/subject")
 public class SubjectController extends BaseController {
-
-    private static final Logger logger = LoggerFactory.getLogger(SubjectController.class);
 
     @Autowired
     private SubjectService subjectService;
@@ -187,7 +185,7 @@ public class SubjectController extends BaseController {
                 }
             }
         } catch (Exception e) {
-            logger.error("删除题目失败！", e);
+            log.error("删除题目失败！", e);
         }
         return new ResponseBean<>(success);
     }
@@ -229,7 +227,7 @@ public class SubjectController extends BaseController {
             }
             ExcelToolUtil.exportExcel(request.getInputStream(), response.getOutputStream(), MapUtil.java2Map(subjects), SubjectUtil.getSubjectMap());
         } catch (Exception e) {
-            logger.error("导出题目数据失败！", e);
+            log.error("导出题目数据失败！", e);
         }
     }
 
@@ -251,7 +249,7 @@ public class SubjectController extends BaseController {
         boolean success = false;
         Assert.notNull(examinationId, CommonConstant.IllEGAL_ARGUMENT);
         try {
-            logger.debug("开始导入题目数据，分类ID：{}", examinationId);
+            log.debug("开始导入题目数据，分类ID：{}", examinationId);
             Stream<Subject> subjectStream = MapUtil.map2Java(Subject.class,
                     ExcelToolUtil.importExcel(file.getInputStream(), SubjectUtil.getSubjectMap())).stream();
             if (Optional.ofNullable(subjectStream).isPresent()) {
@@ -272,7 +270,7 @@ public class SubjectController extends BaseController {
             }
             return new ResponseBean<>(Boolean.TRUE);
         } catch (Exception e) {
-            logger.error("导入题目数据失败！", e);
+            log.error("导入题目数据失败！", e);
         }
         return new ResponseBean<>(success);
     }
@@ -310,7 +308,7 @@ public class SubjectController extends BaseController {
                 });
             }
         } catch (Exception e) {
-            logger.error("删除题目失败！", e);
+            log.error("删除题目失败！", e);
         }
         return new ResponseBean<>(success);
     }

@@ -5,12 +5,14 @@ import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.exam.api.constants.ExamRecordConstant;
+import com.github.tangyi.exam.api.constants.SubjectConstant;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.Answer;
 import com.github.tangyi.exam.api.module.ExamRecord;
 import com.github.tangyi.exam.api.module.IncorrectAnswer;
 import com.github.tangyi.exam.api.module.Subject;
 import com.github.tangyi.exam.mapper.AnswerMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,7 @@ import java.util.List;
  * @author tangyi
  * @date 2018/11/8 21:17
  */
+@Slf4j
 @Service
 public class AnswerService extends CrudService<AnswerMapper, Answer> {
 
@@ -142,6 +145,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
         if (tempAnswer != null) {
             tempAnswer.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
             tempAnswer.setAnswer(answer.getAnswer());
+            tempAnswer.setOptionAnswer(answer.getOptionAnswer());
             this.update(tempAnswer);
         } else {
             answer.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
@@ -151,7 +155,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
     }
 
     /**
-     * 提交答卷
+     * 提交答卷，自动统计选择题得分
      *
      * @param answer answer
      * @return boolean
@@ -177,6 +181,8 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
                 answerList.forEach(tempAnswer -> {
                     // 题目集合
                     subjects.stream()
+                            // 选择题
+                            .filter(tempSubject -> SubjectConstant.SUBJECT_TYPE_CHOICE.equals(tempSubject.getType()))
                             // 题目ID、题目答案匹配
                             .filter(tempSubject -> tempSubject.getId().equals(tempAnswer.getSubjectId()) && tempSubject.getAnswer().equalsIgnoreCase(tempAnswer.getAnswer()))
                             // 记录答题正确的成绩
@@ -189,6 +195,8 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
                 answerList.forEach(tempAnswer -> {
                     // 题目集合
                     subjects.stream()
+                            // 选择题
+                            .filter(tempSubject -> SubjectConstant.SUBJECT_TYPE_CHOICE.equals(tempSubject.getType()))
                             // 题目ID、题目答案匹配
                             .filter(tempSubject -> tempSubject.getId().equals(tempAnswer.getSubjectId()) && !tempSubject.getAnswer().equalsIgnoreCase(tempAnswer.getAnswer()))
                             // 错题
@@ -214,8 +222,9 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
                 examRecord.setScore(Integer.toString(totalScore));
                 examRecord.setCorrectNumber(String.valueOf(rightScore.size()));
                 examRecord.setInCorrectNumber(String.valueOf(incorrectAnswers.size()));
-                // 更新状态为统计完成
-                examRecord.setSubmitStatus(ExamRecordConstant.STATUS_CALCULATED);
+                // 如果全部为选择题，则更新状态为统计完成，否则需要阅卷完成后才更改统计状态
+                if (subjects.stream().noneMatch(tempSubject -> SubjectConstant.SUBJECT_TYPE_QAS.equals(tempSubject.getType())))
+                    examRecord.setSubmitStatus(ExamRecordConstant.STATUS_CALCULATED);
                 success = examRecordService.update(examRecord) > 0;
                 // 保存错题
                 ExamRecord searchExamRecord = new ExamRecord();
@@ -230,7 +239,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
                 }
             }
         }
-        logger.debug("提交答卷，用户名：{}，考试ID：{}，耗时：{}ms", currentUsername, answer.getExaminationId(), System.currentTimeMillis() - start);
+        log.debug("提交答卷，用户名：{}，考试ID：{}，耗时：{}ms", currentUsername, answer.getExaminationId(), System.currentTimeMillis() - start);
         return success;
     }
 
@@ -260,7 +269,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
         amqpTemplate.convertAndSend(MqConstant.SUBMIT_EXAMINATION_QUEUE, answer);
         // 2. 更新考试状态
         boolean success = examRecordService.update(examRecord) > 0;
-        logger.debug("异步提交答卷成功，提交人：{}，考试ID：{}，耗时：{}ms", currentUsername, answer.getExaminationId(), System.currentTimeMillis() - start);
+        log.debug("异步提交答卷成功，提交人：{}，考试ID：{}，耗时：{}ms", currentUsername, answer.getExaminationId(), System.currentTimeMillis() - start);
         return success;
     }
 }

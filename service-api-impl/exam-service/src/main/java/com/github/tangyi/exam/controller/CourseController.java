@@ -15,9 +15,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -28,12 +27,11 @@ import org.springframework.web.bind.annotation.*;
  * @author tangyi
  * @date 2018/11/8 21:25
  */
+@Slf4j
 @Api("课程信息管理")
 @RestController
 @RequestMapping("/v1/course")
 public class CourseController extends BaseController {
-
-    private static final Logger logger = LoggerFactory.getLogger(CourseController.class);
 
     @Autowired
     private CourseService courseService;
@@ -147,7 +145,7 @@ public class CourseController extends BaseController {
                 success = courseService.delete(course) > 0;
             }
         } catch (Exception e) {
-            logger.error("删除课程失败！", e);
+            log.error("删除课程失败！", e);
         }
         return new ResponseBean<>(success);
     }
@@ -171,7 +169,7 @@ public class CourseController extends BaseController {
             if (StringUtils.isNotEmpty(course.getIdString()))
                 success = courseService.deleteAll(course.getIdString().split(",")) > 0;
         } catch (Exception e) {
-            logger.error("删除课程失败！", e);
+            log.error("删除课程失败！", e);
         }
         return new ResponseBean<>(success);
     }

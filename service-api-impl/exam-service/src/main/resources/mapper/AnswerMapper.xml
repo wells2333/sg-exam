@@ -9,6 +9,7 @@
         <result column="course_id" property="courseId"/>
         <result column="subject_id" property="subjectId"/>
         <result column="answer" property="answer"/>
+        <result column="option_answer" property="optionAnswer"/>
         <result column="creator" property="creator"/>
         <result column="create_date" property="createDate"/>
         <result column="modifier" property="modifier"/>
@@ -25,6 +26,7 @@
         a.course_id,
         a.subject_id,
         a.answer,
+        a.option_answer,
         a.creator,
         a.create_date,
         a.modifier,
@@ -86,6 +88,7 @@
             course_id,
             subject_id,
             answer,
+            option_answer,
             creator,
             create_date,
             modifier,
@@ -100,6 +103,7 @@
             #{courseId},
             #{subjectId},
             #{answer},
+            #{optionAnswer},
             #{creator},
             #{createDate},
             #{modifier},
@@ -128,6 +132,9 @@
         </if>
         <if test="answer != null">
             answer = #{answer},
+        </if>
+        <if test="optionAnswer != null">
+            option_answer = #{optionAnswer},
         </if>
         <if test="delFlag != null">
             del_flag = #{delFlag},

@@ -11,14 +11,12 @@ import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.Answer;
 import com.github.tangyi.exam.service.AnswerService;
-import com.github.tangyi.exam.service.SubjectService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,19 +26,14 @@ import org.springframework.web.bind.annotation.*;
  * @author tangyi
  * @date 2018/11/8 21:24
  */
+@Slf4j
 @Api("答题信息管理")
 @RestController
 @RequestMapping("/v1/answer")
 public class AnswerController extends BaseController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AnswerController.class);
-
-
     @Autowired
     private AnswerService answerService;
-
-    @Autowired
-    private SubjectService subjectService;
 
     /**
      * 根据ID获取
@@ -146,7 +139,7 @@ public class AnswerController extends BaseController {
                 success = answerService.delete(answer) > 0;
             }
         } catch (Exception e) {
-            logger.error("删除答题失败！", e);
+            log.error("删除答题失败！", e);
         }
         return new ResponseBean<>(success);
     }

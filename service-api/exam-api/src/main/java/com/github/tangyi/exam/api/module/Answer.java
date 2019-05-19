@@ -41,6 +41,11 @@ public class Answer extends BaseEntity<Answer> {
     private String answer;
 
     /**
+     * 选择题答案
+     */
+    private String optionAnswer;
+
+    /**
      * 下一题题目序号
      */
     private String serialNumber;
@@ -99,5 +104,13 @@ public class Answer extends BaseEntity<Answer> {
 
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
+    }
+
+    public String getOptionAnswer() {
+        return optionAnswer;
+    }
+
+    public void setOptionAnswer(String optionAnswer) {
+        this.optionAnswer = optionAnswer;
     }
 }

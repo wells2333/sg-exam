@@ -18,3 +18,10 @@ spring:
         enabled: true
         # 指向配置中心在consul注册的服务名称（即：spring.application.name）
         service-id: config-service
+
+# jwt加密配置
+encrypt:
+  key-store:
+    location: classpath:/jwt.jks
+    alias: jwt
+    password: abc123

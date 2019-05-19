@@ -4,8 +4,7 @@ import com.github.tangyi.common.core.exceptions.InvalidValidateCodeException;
 import com.github.tangyi.common.core.exceptions.ValidateCodeExpiredException;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -32,9 +31,8 @@ import java.util.List;
  * @author tangyi
  * @date 2019/3/18 20:52
  */
+@Slf4j
 public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
-
-    private static final Logger logger = LoggerFactory.getLogger(GatewayExceptionHandler.class);
 
     /**
      * MessageReader
@@ -111,7 +109,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
         responseBean.setCode(code);
         // 错误记录
         ServerHttpRequest request = exchange.getRequest();
-        logger.error("[全局异常处理]异常请求路径:{},记录异常信息:{}", request.getPath(), ex.getMessage());
+        log.error("[全局异常处理]异常请求路径:{},记录异常信息:{}", request.getPath(), ex.getMessage());
         if (exchange.getResponse().isCommitted())
             return Mono.error(ex);
         exceptionHandlerResult.set(responseBean);

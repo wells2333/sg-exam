@@ -1,6 +1,7 @@
 package com.github.tangyi.common.core.vo;
 
 import com.github.tangyi.common.core.persistence.BaseEntity;
+import lombok.Data;
 
 /**
  * 附件VO
@@ -8,6 +9,7 @@ import com.github.tangyi.common.core.persistence.BaseEntity;
  * @author tangyi
  * @date 2019/1/1 20:40
  */
+@Data
 public class AttachmentVo extends BaseEntity<AttachmentVo> {
 
     /**
@@ -34,44 +36,4 @@ public class AttachmentVo extends BaseEntity<AttachmentVo> {
      * 业务模块
      */
     private String busiModule;
-
-    public String getAttachName() {
-        return attachName;
-    }
-
-    public void setAttachName(String attachName) {
-        this.attachName = attachName;
-    }
-
-    public String getAttachSize() {
-        return attachSize;
-    }
-
-    public void setAttachSize(String attachSize) {
-        this.attachSize = attachSize;
-    }
-
-    public String getBusiId() {
-        return busiId;
-    }
-
-    public void setBusiId(String busiId) {
-        this.busiId = busiId;
-    }
-
-    public String getBusiType() {
-        return busiType;
-    }
-
-    public void setBusiType(String busiType) {
-        this.busiType = busiType;
-    }
-
-    public String getBusiModule() {
-        return busiModule;
-    }
-
-    public void setBusiModule(String busiModule) {
-        this.busiModule = busiModule;
-    }
 }

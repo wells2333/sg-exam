@@ -1,8 +1,6 @@
 package com.github.tangyi.common.core.utils;
 
 import com.github.tangyi.common.core.exceptions.CommonException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
@@ -22,8 +20,6 @@ import org.springframework.stereotype.Service;
 public class SpringContextHolder implements ApplicationContextAware, DisposableBean {
 
     private static ApplicationContext applicationContext = null;
-
-    private static Logger logger = LoggerFactory.getLogger(SpringContextHolder.class);
 
     /**
      * 获取applicationContext

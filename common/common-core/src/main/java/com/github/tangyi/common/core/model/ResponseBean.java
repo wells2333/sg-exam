@@ -1,5 +1,7 @@
 package com.github.tangyi.common.core.model;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
 /**
@@ -8,6 +10,7 @@ import java.io.Serializable;
  * @author tangyi
  * @date 2019/3/17 12:08
  */
+@Data
 public class ResponseBean<T> implements Serializable {
 
     public static final long serialVersionUID = 42L;
@@ -85,37 +88,5 @@ public class ResponseBean<T> implements Serializable {
         super();
         this.msg = e.getMessage();
         this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
     }
 }

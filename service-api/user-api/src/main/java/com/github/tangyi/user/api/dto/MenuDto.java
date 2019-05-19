@@ -2,12 +2,14 @@ package com.github.tangyi.user.api.dto;
 
 import com.github.tangyi.common.core.persistence.TreeEntity;
 import com.github.tangyi.user.api.module.Menu;
+import lombok.Data;
 
 /**
  * 菜单dto
  * @author tangyi
  * @date 2018-09-13 20:39
  */
+@Data
 public class MenuDto extends TreeEntity<MenuDto> {
 
     /**
@@ -56,70 +58,6 @@ public class MenuDto extends TreeEntity<MenuDto> {
         this.remark = menu.getRemark();
     }
 
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public boolean isSpread() {
-        return spread;
-    }
-
-    public void setSpread(boolean spread) {
-        this.spread = spread;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public String getComponent() {
-        return component;
-    }
-
-    public void setComponent(String component) {
-        this.component = component;
-    }
-
-    public String getAuthority() {
-        return authority;
-    }
-
-    public void setAuthority(String authority) {
-        this.authority = authority;
-    }
-
-    public String getRedirect() {
-        return redirect;
-    }
-
-    public void setRedirect(String redirect) {
-        this.redirect = redirect;
-    }
-
     @Override
     public String getCode() {
         return code;
@@ -128,37 +66,5 @@ public class MenuDto extends TreeEntity<MenuDto> {
     @Override
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    public String getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
     }
 }

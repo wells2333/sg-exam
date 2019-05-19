@@ -2,8 +2,7 @@ package com.github.tangyi.gateway.filters;
 
 import cn.hutool.core.util.StrUtil;
 import com.github.tangyi.gateway.config.PreviewConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -26,11 +25,10 @@ import java.util.List;
  * @author tangyi
  * @date 2019/4/23 10:54
  */
+@Slf4j
 @Configuration
 @ConditionalOnProperty(prefix = "preview", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class PreviewFilter implements GlobalFilter, Ordered {
-
-    private static final Logger logger = LoggerFactory.getLogger(PreviewFilter.class);
 
     @Autowired
     private PreviewConfig previewConfig;
@@ -40,10 +38,10 @@ public class PreviewFilter implements GlobalFilter, Ordered {
         // 当前请求
         ServerHttpRequest request = exchange.getRequest();
         // enabled为false、GET请求、忽略的URL，直接向下执行
-        logger.debug("preview.enabled:{}", previewConfig.isEnabled());
+        log.debug("preview.enabled:{}", previewConfig.isEnabled());
         if (!previewConfig.isEnabled() || StrUtil.equalsIgnoreCase(request.getMethodValue(), HttpMethod.GET.name()) || isIgnore(request.getURI().getPath()))
             return chain.filter(exchange);
-        logger.warn("演示环境不能操作，{},{}", request.getMethodValue(), request.getURI().getPath());
+        log.warn("演示环境不能操作，{},{}", request.getMethodValue(), request.getURI().getPath());
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(HttpStatus.LOCKED);
         return response.setComplete();

@@ -4,9 +4,8 @@ import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.model.Route;
 import com.github.tangyi.common.core.utils.JsonMapper;
 import com.github.tangyi.gateway.receiver.GatewayRouteReceiver;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -22,10 +21,9 @@ import java.util.List;
  * @author tangyi
  * @date 2019/4/2 14:40
  */
+@Slf4j
 @Configuration
 public class RouteInitConfig {
-
-    private static final Logger logger = LoggerFactory.getLogger(RouteInitConfig.class);
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -40,7 +38,7 @@ public class RouteInitConfig {
         if (object != null) {
             List<Route> routes = JsonMapper.getInstance().fromJson(object.toString(), JsonMapper.getInstance().createCollectionType(ArrayList.class, Route.class));
             if (CollectionUtils.isNotEmpty(routes)) {
-                logger.info("加载{}条路由记录", routes.size());
+                log.info("加载{}条路由记录", routes.size());
                 for (Route route : routes)
                     gatewayRouteReceiver.editRoute(route);
             }

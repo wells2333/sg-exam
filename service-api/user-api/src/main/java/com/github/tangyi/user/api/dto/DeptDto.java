@@ -2,6 +2,7 @@ package com.github.tangyi.user.api.dto;
 
 import com.github.tangyi.common.core.persistence.TreeEntity;
 import com.github.tangyi.user.api.module.Dept;
+import lombok.Data;
 
 /**
  * 部门dto
@@ -9,6 +10,7 @@ import com.github.tangyi.user.api.module.Dept;
  * @author tangyi
  * @date 2018-10-25 12:49
  */
+@Data
 public class DeptDto extends TreeEntity<DeptDto> {
 
     /**
@@ -48,45 +50,5 @@ public class DeptDto extends TreeEntity<DeptDto> {
         this.createDate = dept.getCreateDate();
         this.modifier = dept.getModifier();
         this.modifyDate = dept.getModifyDate();
-    }
-
-    public String getDeptName() {
-        return deptName;
-    }
-
-    public void setDeptName(String deptName) {
-        this.deptName = deptName;
-    }
-
-    public String getDeptDesc() {
-        return deptDesc;
-    }
-
-    public void setDeptDesc(String deptDesc) {
-        this.deptDesc = deptDesc;
-    }
-
-    public String getDeptLeader() {
-        return deptLeader;
-    }
-
-    public void setDeptLeader(String deptLeader) {
-        this.deptLeader = deptLeader;
-    }
-
-    public String getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 }
