@@ -15,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +30,7 @@ import java.util.List;
  * @author tangyi
  * @date 2019/3/30 16:49
  */
+@Slf4j
 @Api("Oauth2客户端信息管理")
 @RestController
 @RequestMapping("/v1/client")
@@ -138,9 +140,11 @@ public class OauthClientDetailsController extends BaseController {
     @ApiImplicitParam(name = "oauthClientDetails", value = "客户端实体oauthClientDetails", required = true, dataType = "OauthClientDetails")
     @Log("修改客户端")
     public ResponseBean<Boolean> updateOauthClient(@RequestBody OauthClientDetails oauthClientDetails) {
+        OauthClientDetails tempOauthClientDetails = oauthClientDetailsService.get(oauthClientDetails);
+        // 有调整过明文则重新加密密钥
+        if (tempOauthClientDetails != null && !tempOauthClientDetails.getClientSecretPlainText().equals(oauthClientDetails.getClientSecretPlainText()))
+            oauthClientDetails.setClientSecret(bCryptPasswordEncoder.encode(oauthClientDetails.getClientSecretPlainText()));
         oauthClientDetails.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
-        // 加密密钥
-        oauthClientDetails.setClientSecret(bCryptPasswordEncoder.encode(oauthClientDetails.getClientSecretPlainText()));
         return new ResponseBean<>(oauthClientDetailsService.update(oauthClientDetails) > 0);
     }
 
@@ -184,7 +188,7 @@ public class OauthClientDetailsController extends BaseController {
             if (StringUtils.isNotEmpty(oauthClientDetails.getIdString()))
                 success = oauthClientDetailsService.deleteAll(oauthClientDetails.getIdString().split(",")) > 0;
         } catch (Exception e) {
-            logger.error("删除客户端失败！", e);
+            log.error("删除客户端失败！", e);
         }
         return new ResponseBean<>(success);
     }

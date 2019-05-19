@@ -22,6 +22,7 @@ import com.github.tangyi.user.service.UserRoleService;
 import com.github.tangyi.user.service.UserService;
 import com.github.tangyi.user.utils.UserUtils;
 import io.swagger.annotations.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -47,6 +48,7 @@ import java.util.stream.Stream;
  * @author tangyi
  * @date 2018-08-25 16:20
  */
+@Slf4j
 @Api("用户信息管理")
 @RestController
 @RequestMapping(value = "/v1/user")
@@ -232,7 +234,7 @@ public class UserController extends BaseController {
         try {
             return new ResponseBean<>(userService.updateUser(userDto));
         } catch (Exception e) {
-            logger.error("更新用户信息失败！", e);
+            log.error("更新用户信息失败！", e);
         }
         return new ResponseBean<>(Boolean.FALSE);
     }
@@ -245,7 +247,7 @@ public class UserController extends BaseController {
      * @author tangyi
      * @date 2018/10/30 10:06
      */
-    @PutMapping("/updateInfo")
+    @PutMapping("updateInfo")
     @ApiOperation(value = "更新用户基本信息", notes = "根据用户id更新用户的基本信息")
     @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
     @Log("更新用户基本信息")
@@ -281,7 +283,7 @@ public class UserController extends BaseController {
             user.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
             userService.delete(user);
         } catch (Exception e) {
-            logger.error("删除用户信息失败！", e);
+            log.error("删除用户信息失败！", e);
         }
         return new ResponseBean<>(Boolean.FALSE);
     }
@@ -293,7 +295,7 @@ public class UserController extends BaseController {
      * @author tangyi
      * @date 2018/11/26 22:11
      */
-    @PostMapping("/export")
+    @PostMapping("export")
     @PreAuthorize("hasAuthority('sys:user:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "导出用户", notes = "根据用户id导出用户")
     @ApiImplicitParam(name = "userVo", value = "用户信息", required = true, dataType = "UserVo")
@@ -315,7 +317,7 @@ public class UserController extends BaseController {
             }
             ExcelToolUtil.exportExcel(request.getInputStream(), response.getOutputStream(), MapUtil.java2Map(users), UserUtils.getUserMap());
         } catch (Exception e) {
-            logger.error("导出用户数据失败！", e);
+            log.error("导出用户数据失败！", e);
         }
     }
 
@@ -333,7 +335,7 @@ public class UserController extends BaseController {
     @Log("导入用户")
     public ResponseBean<Boolean> importUser(@ApiParam(value = "要上传的文件", required = true) MultipartFile file, HttpServletRequest request) {
         try {
-            logger.debug("开始导入用户数据");
+            log.debug("开始导入用户数据");
             List<User> users = MapUtil.map2Java(User.class,
                     ExcelToolUtil.importExcel(file.getInputStream(), UserUtils.getUserMap()));
             if (CollectionUtils.isNotEmpty(users)) {
@@ -344,7 +346,7 @@ public class UserController extends BaseController {
             }
             return new ResponseBean<>(Boolean.TRUE);
         } catch (Exception e) {
-            logger.error("导入用户数据失败！", e);
+            log.error("导入用户数据失败！", e);
         }
         return new ResponseBean<>(Boolean.FALSE);
     }
@@ -357,7 +359,7 @@ public class UserController extends BaseController {
      * @author tangyi
      * @date 2018/12/4 9:58
      */
-    @PostMapping("/deleteAll")
+    @PostMapping("deleteAll")
     @PreAuthorize("hasAuthority('sys:user:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "批量删除用户", notes = "根据用户id批量删除用户")
     @ApiImplicitParam(name = "user", value = "用户信息", dataType = "User")
@@ -368,7 +370,7 @@ public class UserController extends BaseController {
             if (StringUtils.isNotEmpty(user.getIdString()))
                 success = userService.deleteAll(user.getIdString().split(",")) > 0;
         } catch (Exception e) {
-            logger.error("删除用户失败！", e);
+            log.error("删除用户失败！", e);
         }
         return new ResponseBean<>(success);
     }
@@ -381,7 +383,7 @@ public class UserController extends BaseController {
      * @author tangyi
      * @date 2018/12/31 21:16
      */
-    @RequestMapping(value = "/findById", method = RequestMethod.POST)
+    @RequestMapping(value = "findById", method = RequestMethod.POST)
     @ApiOperation(value = "根据ID查询用户", notes = "根据ID查询用户")
     @ApiImplicitParam(name = "userVo", value = "用户信息", required = true, paramType = "UserVo")
     public ResponseBean<List<UserVo>> findById(@RequestBody UserVo userVo) {
@@ -454,7 +456,7 @@ public class UserController extends BaseController {
      */
     @ApiOperation(value = "检查用户是否存在", notes = "检查用户名是否存在")
     @ApiImplicitParam(name = "username", value = "用户name", required = true, dataType = "String", paramType = "path")
-    @GetMapping("/checkExist/{username}")
+    @GetMapping("checkExist/{username}")
     public ResponseBean<Boolean> checkUsernameIsExist(@PathVariable("username") String username) {
         boolean exist = Boolean.FALSE;
         if (StringUtils.isNotEmpty(username))

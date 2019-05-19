@@ -17,6 +17,7 @@ import com.github.tangyi.user.service.MenuService;
 import com.github.tangyi.user.utils.MenuUtil;
 import com.google.common.net.HttpHeaders;
 import io.swagger.annotations.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -39,6 +40,7 @@ import java.util.stream.Stream;
  * @author tangyi
  * @date 2018/8/26 22:48
  */
+@Slf4j
 @Api("菜单信息管理")
 @RestController
 @RequestMapping("/v1/menu")
@@ -52,7 +54,7 @@ public class MenuController extends BaseController {
      *
      * @return 当前用户的树形菜单
      */
-    @GetMapping(value = "/userMenu")
+    @GetMapping(value = "userMenu")
     @ApiOperation(value = "获取当前用户的菜单列表")
     public List<MenuDto> userMenu() {
         List<MenuDto> menuDtoList = new ArrayList<>();
@@ -85,7 +87,7 @@ public class MenuController extends BaseController {
      *
      * @return 树形菜单集合
      */
-    @GetMapping(value = "/menus")
+    @GetMapping(value = "menus")
     @ApiOperation(value = "获取树形菜单列表")
     public List<MenuDto> menus() {
         // 查询所有菜单
@@ -185,7 +187,7 @@ public class MenuController extends BaseController {
      * @author tangyi
      * @date 2018/8/26 23:17
      */
-    @RequestMapping("/menuList")
+    @RequestMapping("menuList")
     @ApiOperation(value = "获取菜单列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
@@ -238,7 +240,7 @@ public class MenuController extends BaseController {
      * @param roleCode 角色code
      * @return 属性集合
      */
-    @GetMapping("/roleTree/{roleCode}")
+    @GetMapping("roleTree/{roleCode}")
     @ApiOperation(value = "根据角色查找菜单", notes = "根据角色code获取角色菜单")
     @ApiImplicitParam(name = "roleCode", value = "角色code", required = true, dataType = "String", paramType = "path")
     public List<String> roleTree(@PathVariable String roleCode) {
@@ -257,7 +259,7 @@ public class MenuController extends BaseController {
      * @author tangyi
      * @date 2018/11/28 12:46
      */
-    @PostMapping("/export")
+    @PostMapping("export")
     @PreAuthorize("hasAuthority('sys:menu:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "导出菜单", notes = "根据菜单id导出菜单")
     @ApiImplicitParam(name = "menuVo", value = "菜单信息", required = true, dataType = "MenuVo")
@@ -281,7 +283,7 @@ public class MenuController extends BaseController {
             }
             ExcelToolUtil.exportExcel(request.getInputStream(), response.getOutputStream(), MapUtil.java2Map(menus), MenuUtil.getMenuMap());
         } catch (Exception e) {
-            logger.error("导出菜单数据失败！", e);
+            log.error("导出菜单数据失败！", e);
         }
     }
 
@@ -299,7 +301,7 @@ public class MenuController extends BaseController {
     @Log("导入菜单")
     public ResponseBean<Boolean> importMenu(@ApiParam(value = "要上传的文件", required = true) MultipartFile file, HttpServletRequest request) {
         try {
-            logger.debug("开始导入菜单数据");
+            log.debug("开始导入菜单数据");
             Stream<Menu> menuStream = MapUtil.map2Java(Menu.class,
                     ExcelToolUtil.importExcel(file.getInputStream(), MenuUtil.getMenuMap())).stream();
             if (Optional.ofNullable(menuStream).isPresent()) {
@@ -310,7 +312,7 @@ public class MenuController extends BaseController {
             }
             return new ResponseBean<>(Boolean.TRUE);
         } catch (Exception e) {
-            logger.error("导入菜单数据失败！", e);
+            log.error("导入菜单数据失败！", e);
         }
         return new ResponseBean<>(Boolean.FALSE);
     }

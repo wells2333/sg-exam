@@ -6,8 +6,7 @@ import com.github.tangyi.common.core.vo.RouteFilterVo;
 import com.github.tangyi.common.core.vo.RoutePredicateVo;
 import com.github.tangyi.common.core.vo.RouteVo;
 import com.github.tangyi.gateway.service.DynamicRouteService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.FilterDefinition;
@@ -33,11 +32,10 @@ import java.util.Map;
  * @author tangyi
  * @date 2019/3/27 10:59
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/route")
 public class GatewayRouteController {
-
-    private static final Logger logger = LoggerFactory.getLogger(GatewayRouteController.class);
 
     private final RouteDefinitionLocator routeDefinitionLocator;
 
@@ -105,7 +103,7 @@ public class GatewayRouteController {
     public ResponseBean<String> add(@RequestBody RouteVo gatewayRouteDefinition) {
         try {
             RouteDefinition definition = assembleRouteDefinition(gatewayRouteDefinition);
-            logger.info("新增路由：{}，{}", definition.getId(), definition);
+            log.info("新增路由：{}，{}", definition.getId(), definition);
             return new ResponseBean<>(this.dynamicRouteService.add(definition));
         } catch (Exception e) {
             e.printStackTrace();
@@ -121,7 +119,7 @@ public class GatewayRouteController {
      */
     @DeleteMapping("/{id}")
     public Mono<ResponseEntity<Object>> delete(@PathVariable String id) {
-        logger.info("删除路由：{}", id);
+        log.info("删除路由：{}", id);
         return this.dynamicRouteService.delete(id);
     }
 

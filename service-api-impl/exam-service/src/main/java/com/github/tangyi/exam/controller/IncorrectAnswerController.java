@@ -17,10 +17,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -34,12 +33,11 @@ import java.util.List;
  * @author tangyi
  * @date 2018/11/8 21:28
  */
+@Slf4j
 @Api("错题信息管理")
 @RestController
 @RequestMapping("/v1/incorrectAnswer")
 public class IncorrectAnswerController extends BaseController {
-
-    private static final Logger logger = LoggerFactory.getLogger(IncorrectAnswerController.class);
 
     @Autowired
     private IncorrectAnswerService incorrectAnswerService;
@@ -178,7 +176,7 @@ public class IncorrectAnswerController extends BaseController {
                 success = incorrectAnswerService.delete(incorrectAnswer) > 0;
             }
         } catch (Exception e) {
-            logger.error("删除错题失败！", e);
+            log.error("删除错题失败！", e);
         }
         return new ResponseBean<>(success);
     }

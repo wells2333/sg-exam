@@ -1,5 +1,6 @@
 package com.github.tangyi.user.config;
 
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
  * @author tangyi
  * @date 2019-02-24 20:06
  */
+@Data
 @Component
 @ConfigurationProperties(prefix = "sys")
 public class SysConfig {
@@ -27,28 +29,4 @@ public class SysConfig {
      * 默认头像
      */
     private String defaultAvatar;
-
-    public String getDefaultAvatar() {
-        return defaultAvatar;
-    }
-
-    public void setDefaultAvatar(String defaultAvatar) {
-        this.defaultAvatar = defaultAvatar;
-    }
-
-    public String getUploadUrl() {
-        return uploadUrl;
-    }
-
-    public void setUploadUrl(String uploadUrl) {
-        this.uploadUrl = uploadUrl;
-    }
-
-    public String getFdfsHttpHost() {
-        return fdfsHttpHost;
-    }
-
-    public void setFdfsHttpHost(String fdfsHttpHost) {
-        this.fdfsHttpHost = fdfsHttpHost;
-    }
 }

@@ -1,5 +1,7 @@
 package com.github.tangyi.common.core.vo;
 
+import lombok.Data;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -9,6 +11,7 @@ import java.util.Map;
  * @author tangyi
  * @date 2019/3/27 11:08
  */
+@Data
 public class RoutePredicateVo {
 
     /**
@@ -20,20 +23,4 @@ public class RoutePredicateVo {
      * 配置的断言规则
      */
     private Map<String, String> args = new LinkedHashMap<>();
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Map<String, String> getArgs() {
-        return args;
-    }
-
-    public void setArgs(Map<String, String> args) {
-        this.args = args;
-    }
 }

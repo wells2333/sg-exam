@@ -14,6 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
  * @author tangyi
  * @date 2018/10/31 20:48
  */
+@Slf4j
 @Api("日志信息管理")
 @RestController
 @RequestMapping("/v1/log")
@@ -48,7 +50,7 @@ public class LogController extends BaseController {
         try {
             return logService.get(id);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         return new Log();
     }
@@ -121,22 +123,22 @@ public class LogController extends BaseController {
     /**
      * 批量删除
      *
-     * @param log log
+     * @param logInfo logInfo
      * @return ResponseBean
      * @author tangyi
      * @date 2018/12/4 10:12
      */
-    @PostMapping("/deleteAll")
+    @PostMapping("deleteAll")
     @PreAuthorize("hasAuthority('monitor:log:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
     @ApiOperation(value = "批量删除日志", notes = "根据日志ids批量删除日志")
-    @ApiImplicitParam(name = "log", value = "日志信息", dataType = "Log")
-    public ResponseBean<Boolean> deleteAllAttachments(@RequestBody Log log) {
+    @ApiImplicitParam(name = "logInfo", value = "日志信息", dataType = "Log")
+    public ResponseBean<Boolean> deleteAllAttachments(@RequestBody Log logInfo) {
         boolean success = false;
         try {
-            if (StringUtils.isNotEmpty(log.getIdString()))
-                success = logService.deleteAll(log.getIdString().split(",")) > 0;
+            if (StringUtils.isNotEmpty(logInfo.getIdString()))
+                success = logService.deleteAll(logInfo.getIdString().split(",")) > 0;
         } catch (Exception e) {
-            logger.error("删除附件失败！", e);
+            log.error("删除附件失败！", e);
         }
         return new ResponseBean<>(success);
     }

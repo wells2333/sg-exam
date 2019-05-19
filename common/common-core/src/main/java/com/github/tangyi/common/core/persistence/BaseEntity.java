@@ -3,6 +3,8 @@ package com.github.tangyi.common.core.persistence;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.utils.DateUtils;
 import com.github.tangyi.common.core.utils.IdGen;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;
@@ -14,33 +16,63 @@ import java.time.LocalDateTime;
  * @author tangyi
  * @date 2018-08-24 18:58
  */
+@Data
+@NoArgsConstructor
 public class BaseEntity<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     protected String id;
 
-    protected String creator;    // 创建者
+    /**
+     * 创建者
+     */
+    protected String creator;
 
-    protected String createDate;    // 创建日期
+    /**
+     * 创建日期
+     */
+    protected String createDate;
 
-    protected String modifier;    // 更新者
+    /**
+     * 更新者
+     */
+    protected String modifier;
 
-    protected String modifyDate;    // 更新日期
+    /**
+     * 更新日期
+     */
+    protected String modifyDate;
 
-    protected Integer delFlag = CommonConstant.DEL_FLAG_NORMAL;  // 删除标记 0:正常，1-删除
+    /**
+     * 删除标记 0:正常，1-删除
+     */
+    protected Integer delFlag = CommonConstant.DEL_FLAG_NORMAL;
 
-    protected String applicationCode;   // 系统编号
+    /**
+     * 系统编号
+     */
+    protected String applicationCode;
 
-    protected boolean isNewRecord;  // 是否为新记录
+    /**
+     * 租户编号
+     */
+    protected String tenantCode;
 
-    protected String[] ids; // ID数组
+    /**
+     * 是否为新记录
+     */
+    protected boolean isNewRecord;
 
-    protected String idString;  // ID字符串，多个用逗号隔开
+    /**
+     * ID数组
+     */
+    protected String[] ids;
 
-    public BaseEntity() {
-
-    }
+    /**
+     * ID字符串，多个用逗号隔开
+     */
+    protected String idString;
 
     public BaseEntity(String id) {
         this();
@@ -63,6 +95,17 @@ public class BaseEntity<T> implements Serializable {
      * @param applicationCode 系统编号
      */
     public void setCommonValue(String userCode, String applicationCode) {
+        setCommonValue(userCode, applicationCode, "");
+    }
+
+    /**
+     * 设置基本属性
+     *
+     * @param userCode        用户编码
+     * @param applicationCode 系统编号
+     * @param tenantCode      租户编号
+     */
+    public void setCommonValue(String userCode, String applicationCode, String tenantCode) {
         String currentDate = DateUtils.localDateToString(LocalDateTime.now());
         if (this.isNewRecord()) {
             this.setId(IdGen.snowflakeId());
@@ -74,82 +117,7 @@ public class BaseEntity<T> implements Serializable {
         this.modifyDate = currentDate;
         this.delFlag = 0;
         this.applicationCode = applicationCode;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getCreator() {
-        return creator;
-    }
-
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
-
-    public String getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(String createDate) {
-        this.createDate = createDate;
-    }
-
-    public String getModifier() {
-        return modifier;
-    }
-
-    public void setModifier(String modifier) {
-        this.modifier = modifier;
-    }
-
-    public String getModifyDate() {
-        return modifyDate;
-    }
-
-    public void setModifyDate(String modifyDate) {
-        this.modifyDate = modifyDate;
-    }
-
-    public Integer getDelFlag() {
-        return delFlag;
-    }
-
-    public void setDelFlag(Integer delFlag) {
-        this.delFlag = delFlag;
-    }
-
-    public String getApplicationCode() {
-        return applicationCode;
-    }
-
-    public void setApplicationCode(String applicationCode) {
-        this.applicationCode = applicationCode;
-    }
-
-    public void setNewRecord(boolean newRecord) {
-        isNewRecord = newRecord;
-    }
-
-    public String[] getIds() {
-        return ids;
-    }
-
-    public void setIds(String[] ids) {
-        this.ids = ids;
-    }
-
-    public String getIdString() {
-        return idString;
-    }
-
-    public void setIdString(String idString) {
-        this.idString = idString;
+        this.tenantCode = tenantCode;
     }
 }
 

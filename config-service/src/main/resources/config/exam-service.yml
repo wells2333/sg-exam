@@ -36,16 +36,26 @@ spring:
 security:
   oauth2:
     client:
-      clientId: web_app
-      clientSecret: $2a$10$S84wOzmAw4wqYBzAqNtmPOx1ZRWdDl9omm/W8T1hhW8S9EK2u57xG
-      accessTokenUri: http://${AUTH_SERVICE_HOST:localhost}:${AUTH_SERVICE_PORT:8000}/api/auth/oauth/token
+      client-id: web_app
+      client-secret: $2a$10$S84wOzmAw4wqYBzAqNtmPOx1ZRWdDl9omm/W8T1hhW8S9EK2u57xG
+      access-token-uri: http://${AUTH_SERVICE_HOST:localhost}:${AUTH_SERVICE_PORT:8000}/api/auth/oauth/token
+      user-authorization-uri: http://${AUTH_SERVICE_HOST:localhost}:${AUTH_SERVICE_PORT:8000}/api/auth/oauth/authorize
       grant-type: password
       scope: read
     resource:
+      user-info-uri: http://${AUTH_SERVICE_HOST:localhost}:${AUTH_SERVICE_PORT:8000}/api/user/v1/user/info
+      prefer-token-info: false
       jwt:
-        keyValue: |
+        key-uri: http://${AUTH_SERVICE_HOST:localhost}:${AUTH_SERVICE_PORT:8000}/api/auth/oauth/token_key
+        key-value: |
            -----BEGIN PUBLIC KEY-----
-           MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAimUKhvBhsoeSM3HkIOP/Y3RXjvonBlZnLj8oO92TyAKG53lmAoK0wZ5MTZPsfrOz2Z7CeAp6mPhUANX2RUoFwVzG7rJmgWyqGmGFNBmtYL+uVqQ80TzWi5zyzXTxgVMWiCqqw/u4AeE1qhN8chnGwhUBnpgPAPd8v57mIwg0n5JxjdYe7pgHlpvt8ZXTXd1KBxB5K7WjNlCfMf75ZEeBaplxsSfJUwKbnHQKWcY3NnpjkVR8y4jviAbkOHmGMaliM7fcsLzbosBUPDQuNlvYdjPBRfH6MMPeXRW6On3u0Um9wIYmkQS+AEgHCq4UuLOnTTqqxnGkwFYeMAAXmRyMtQIDAQAB
+           MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjxSawA+NUNmhB2ctiVnt
+           YH41WCNoD5STW2iPm5AIsKvm6X67lr6A88qOMRwx9oySdZnUnJ+8L3QJ51fkwuDe
+           ix5w9yA3f/7LUPWZU8M/7Oi+2nda05JMgU999TUlhTGsp9SPiBqq/iwuqMxU8xKu
+           F8bpTJTOpzrxH4e5BM6J/UJcOwDZLY6/3zP5w+tbhTvxjc995G4NtUyS4owE1MHe
+           lj8IJepknjePrE6nXD6ecdL401hstMY838UOOFiCnM8NpiBuNI0nY0qCbb9mhQZ+
+           7gP3jjM+Ft7R+MFTuEHWQ5UN8qHAPIT9UlLcu9IXdk6YwTsqNavwaTLUcP/ih9HB
+           6wIDAQAB
            -----END PUBLIC KEY-----
 
 # mybatis配置

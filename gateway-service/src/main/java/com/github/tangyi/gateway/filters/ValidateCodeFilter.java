@@ -27,12 +27,6 @@ import java.net.URI;
 @Component
 public class ValidateCodeFilter implements GlobalFilter, Ordered {
 
-    private static final String EXPIRED_ERROR = "验证码已过期，请重新获取";
-
-    private static final String PASSWORD = "password";
-
-    private static final String GRANT_TYPE = "grant_type";
-
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -44,9 +38,9 @@ public class ValidateCodeFilter implements GlobalFilter, Ordered {
         URI uri = request.getURI();
         if ("POST".equals(request.getMethodValue())
                 && StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.OAUTH_TOKEN_URL, GatewayConstant.REGISTER, GatewayConstant.MOBILE_TOKEN_URL)) {
-            String grantType = request.getQueryParams().getFirst(GRANT_TYPE);
+            String grantType = request.getQueryParams().getFirst(GatewayConstant.GRANT_TYPE);
             // 授权类型为密码模式、注册才校验验证码
-            if (PASSWORD.equals(grantType) || StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.REGISTER)) {
+            if (GatewayConstant.GRANT_TYPE_PASSWORD.equals(grantType) || StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.REGISTER)) {
                 // 校验验证码
                 checkCode(request);
             }
@@ -77,14 +71,14 @@ public class ValidateCodeFilter implements GlobalFilter, Ordered {
         String key = CommonConstant.DEFAULT_CODE_KEY + randomStr;
         // 验证码过期
         if (!redisTemplate.hasKey(key))
-            throw new ValidateCodeExpiredException(EXPIRED_ERROR);
+            throw new ValidateCodeExpiredException(GatewayConstant.EXPIRED_ERROR);
         Object codeObj = redisTemplate.opsForValue().get(key);
         if (codeObj == null)
-            throw new ValidateCodeExpiredException(EXPIRED_ERROR);
+            throw new ValidateCodeExpiredException(GatewayConstant.EXPIRED_ERROR);
         String saveCode = codeObj.toString();
         if (StrUtil.isBlank(saveCode)) {
             redisTemplate.delete(key);
-            throw new ValidateCodeExpiredException(EXPIRED_ERROR);
+            throw new ValidateCodeExpiredException(GatewayConstant.EXPIRED_ERROR);
         }
         if (!StrUtil.equals(saveCode, code)) {
             redisTemplate.delete(key);

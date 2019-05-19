@@ -1,8 +1,6 @@
 package com.github.tangyi.common.core.utils;
 
 import com.github.tangyi.common.core.constant.CommonConstant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 系统工具类
@@ -11,8 +9,6 @@ import org.slf4j.LoggerFactory;
  * @date 2018-09-13 20:50
  */
 public class SysUtil {
-
-    private static final Logger logger = LoggerFactory.getLogger(SysUtil.class);
 
     private static final String KEY_USER = "user";
 

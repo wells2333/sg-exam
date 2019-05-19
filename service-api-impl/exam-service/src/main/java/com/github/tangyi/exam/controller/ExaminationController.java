@@ -3,7 +3,6 @@ package com.github.tangyi.exam.controller;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.model.ResponseBean;
-import com.github.tangyi.common.core.utils.DateUtils;
 import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
@@ -19,16 +18,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,12 +35,11 @@ import java.util.stream.Collectors;
  * @author tangyi
  * @date 2018/11/8 21:26
  */
+@Slf4j
 @Api("考试信息管理")
 @RestController
 @RequestMapping("/v1/examination")
 public class ExaminationController extends BaseController {
-
-    private static final Logger logger = LoggerFactory.getLogger(ExaminationController.class);
 
     @Autowired
     private ExaminationService examinationService;
@@ -184,7 +180,7 @@ public class ExaminationController extends BaseController {
                 success = examinationService.delete(examination) > 0;
             }
         } catch (Exception e) {
-            logger.error("删除考试失败！", e);
+            log.error("删除考试失败！", e);
         }
         return new ResponseBean<>(success);
     }
@@ -208,7 +204,7 @@ public class ExaminationController extends BaseController {
             if (StringUtils.isNotEmpty(examinationDto.getIdString()))
                 success = examinationService.deleteAll(examinationDto.getIdString().split(",")) > 0;
         } catch (Exception e) {
-            logger.error("删除考试失败！", e);
+            log.error("删除考试失败！", e);
         }
         return new ResponseBean<>(success);
     }

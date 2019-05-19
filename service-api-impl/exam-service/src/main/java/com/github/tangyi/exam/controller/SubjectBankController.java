@@ -16,10 +16,9 @@ import com.github.tangyi.exam.service.SubjectCategoryService;
 import com.github.tangyi.exam.utils.SubjectBankUtil;
 import com.google.common.net.HttpHeaders;
 import io.swagger.annotations.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -37,12 +36,11 @@ import java.util.List;
  * @author tangyi
  * @date 2018/12/9 14:12
  */
+@Slf4j
 @Api("题库信息管理")
 @RestController
 @RequestMapping("/v1/subjectBank")
 public class SubjectBankController extends BaseController {
-
-    private static final Logger logger = LoggerFactory.getLogger(SubjectBankController.class);
 
     @Autowired
     private SubjectBankService subjectBankService;
@@ -178,7 +176,7 @@ public class SubjectBankController extends BaseController {
                 success = subjectBankService.delete(subjectBank) > 0;
             }
         } catch (Exception e) {
-            logger.error("删除题目失败！", e);
+            log.error("删除题目失败！", e);
         }
         return new ResponseBean<>(success);
     }
@@ -218,7 +216,7 @@ public class SubjectBankController extends BaseController {
             }
             ExcelToolUtil.exportExcel(request.getInputStream(), response.getOutputStream(), MapUtil.java2Map(subjectBanks), SubjectBankUtil.getSubjectBankMap());
         } catch (Exception e) {
-            logger.error("导出题目数据失败！", e);
+            log.error("导出题目数据失败！", e);
         }
     }
 
@@ -238,7 +236,7 @@ public class SubjectBankController extends BaseController {
     @Log("导入题库题目")
     public ResponseBean<Boolean> importSubjectBank(String categoryId, @ApiParam(value = "要上传的文件", required = true) MultipartFile file) {
         try {
-            logger.debug("开始导入题目数据，分类ID：{}", categoryId);
+            log.debug("开始导入题目数据，分类ID：{}", categoryId);
             List<SubjectBank> subjectBanks = MapUtil.map2Java(SubjectBank.class,
                     ExcelToolUtil.importExcel(file.getInputStream(), SubjectBankUtil.getSubjectBankMap()));
             if (CollectionUtils.isNotEmpty(subjectBanks)) {
@@ -258,7 +256,7 @@ public class SubjectBankController extends BaseController {
             }
             return new ResponseBean<>(Boolean.TRUE);
         } catch (Exception e) {
-            logger.error("导入题目数据失败！", e);
+            log.error("导入题目数据失败！", e);
         }
         return new ResponseBean<>(Boolean.FALSE);
     }
@@ -282,7 +280,7 @@ public class SubjectBankController extends BaseController {
             if (StringUtils.isNotEmpty(subjectBankDto.getIdString()))
                 success = subjectBankService.deleteAll(subjectBankDto.getIdString().split(",")) > 0;
         } catch (Exception e) {
-            logger.error("删除题目失败！", e);
+            log.error("删除题目失败！", e);
         }
         return new ResponseBean<>(success);
     }

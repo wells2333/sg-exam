@@ -19,14 +19,14 @@ public class TreeUtil {
      */
     @SuppressWarnings(value = "unchecked")
     public static <T> List<T> buildTree(List<? extends TreeEntity<T>> treeEntities, Object root) {
-        List<TreeEntity<T>> treeEntityArrayList = new ArrayList<TreeEntity<T>>();
+        List<TreeEntity<T>> treeEntityArrayList = new ArrayList<>();
         treeEntities.forEach(treeEntity -> {
             if (treeEntity.getParentId().equals(root))
                 treeEntityArrayList.add(treeEntity);
             treeEntities.forEach(childTreeEntity -> {
                 if (childTreeEntity.getParentId().equals(treeEntity.getId())) {
                     if (treeEntity.getChildren() == null)
-                        treeEntity.setChildren(new ArrayList<TreeEntity>());
+                        treeEntity.setChildren(new ArrayList<>());
                     treeEntity.add(childTreeEntity);
                 }
             });

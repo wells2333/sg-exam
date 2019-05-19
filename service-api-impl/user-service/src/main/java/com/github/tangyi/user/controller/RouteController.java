@@ -16,6 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.amqp.core.AmqpTemplate;
@@ -32,6 +33,7 @@ import java.util.List;
  * @author tangyi
  * @date 2019/4/2 15:03
  */
+@Slf4j
 @Api("网关路由信息管理")
 @RestController
 @RequestMapping("/v1/route")
@@ -59,7 +61,7 @@ public class RouteController extends BaseController {
         try {
             return routeService.get(id);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         return new Route();
     }
@@ -176,7 +178,7 @@ public class RouteController extends BaseController {
      * @author tangyi
      * @date 2019/4/2 15:09
      */
-    @PostMapping("/deleteAll")
+    @PostMapping("deleteAll")
     @PreAuthorize("hasAuthority('sys:route:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "批量删除路由", notes = "根据路由id批量删除路由")
     @ApiImplicitParam(name = "route", value = "路由信息", dataType = "Route")
@@ -195,7 +197,7 @@ public class RouteController extends BaseController {
                 }
             }
         } catch (Exception e) {
-            logger.error("删除路由失败！", e);
+            log.error("删除路由失败！", e);
         }
         return new ResponseBean<>(success);
     }
