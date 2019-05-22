@@ -1,21 +1,22 @@
 package com.github.tangyi.exam.service;
 
 import com.github.tangyi.common.core.constant.MqConstant;
+import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.exam.api.constants.ExamRecordConstant;
 import com.github.tangyi.exam.api.constants.SubjectConstant;
+import com.github.tangyi.exam.api.dto.StartExamDto;
 import com.github.tangyi.exam.api.dto.SubjectDto;
-import com.github.tangyi.exam.api.module.Answer;
-import com.github.tangyi.exam.api.module.ExamRecord;
-import com.github.tangyi.exam.api.module.IncorrectAnswer;
-import com.github.tangyi.exam.api.module.Subject;
+import com.github.tangyi.exam.api.module.*;
 import com.github.tangyi.exam.mapper.AnswerMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,8 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
     private final IncorrectAnswerService incorrectAnswerService;
 
     private final ExamRecordService examRecordService;
+
+    private final ExaminationService examinationService;
 
     /**
      * 查找答题
@@ -148,7 +151,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
             answer.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
             this.insert(answer);
         }
-        return subjectService.subjectAnswer(answer.getSerialNumber(), answer.getExamRecordId(), answer.getUserId());
+        return this.subjectAnswer(answer.getSerialNumber(), answer.getExamRecordId(), answer.getUserId());
     }
 
     /**
@@ -268,5 +271,110 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
         boolean success = examRecordService.update(examRecord) > 0;
         log.debug("异步提交答卷成功，提交人：{}，考试ID：{}，耗时：{}ms", currentUsername, answer.getExaminationId(), System.currentTimeMillis() - start);
         return success;
+    }
+
+    /**
+     * 开始考试
+     *
+     * @param examRecord examRecord
+     * @return StartExamDto
+     * @author tangyi
+     * @date 2019/04/30 23:06
+     */
+    @Transactional
+    public StartExamDto start(ExamRecord examRecord) {
+        StartExamDto startExamDto = new StartExamDto();
+        String currentUsername = SecurityUtil.getCurrentUsername(), applicationCode = SysUtil.getSysCode();
+        // 创建考试记录
+        if (StringUtils.isEmpty(examRecord.getExaminationId()))
+            throw new CommonException("参数校验失败，考试id为空！");
+        if (StringUtils.isEmpty(examRecord.getUserId()))
+            throw new CommonException("参数校验失败，用户id为空！");
+        Examination examination = new Examination();
+        examination.setId(examRecord.getExaminationId());
+        // 查找考试信息
+        examination = examinationService.get(examination);
+        if (examination != null) {
+            examRecord.setExaminationName(examination.getExaminationName());
+            examRecord.setCourseId(examination.getCourseId());
+        }
+        examRecord.setCommonValue(currentUsername, applicationCode);
+        examRecord.setStartTime(examRecord.getCreateDate());
+        // 默认未提交状态
+        examRecord.setSubmitStatus(ExamRecordConstant.STATUS_NOT_SUBMITTED);
+        // 保存考试记录
+        if (examRecordService.insert(examRecord) > 0) {
+            startExamDto.setExamination(examination);
+            startExamDto.setExamRecord(examRecord);
+
+            // 封装dto
+            SubjectDto subjectDto = new SubjectDto();
+            startExamDto.setSubjectDto(subjectDto);
+
+            // 查找第一题
+            Subject subject = new Subject();
+            subject.setExaminationId(examRecord.getExaminationId());
+            subject.setSerialNumber(SubjectConstant.DEFAULT_SERIAL_NUMBER);
+            subject = subjectService.getByExaminationIdAndSerialNumber(subject);
+            if (subject == null)
+                throw new CommonException("没有第一题");
+            // 获取题目信息
+            BeanUtils.copyProperties(subject, subjectDto);
+            // 创建第一题的答题
+            Answer answer = new Answer();
+            answer.setCommonValue(currentUsername, applicationCode);
+            answer.setUserId(examRecord.getUserId());
+            answer.setExaminationId(examRecord.getExaminationId());
+            answer.setExamRecordId(examRecord.getId());
+            answer.setSubjectId(subject.getId());
+            // 默认题号为1
+            answer.setSerialNumber(subject.getSerialNumber());
+            // 保存答题
+            this.save(answer);
+            subjectDto.setAnswer(answer);
+        }
+        return startExamDto;
+    }
+
+    /**
+     * 查询题目和答题
+     *
+     * @param serialNumber serialNumber
+     * @param examRecordId examRecordId
+     * @param userId       userId
+     * @return SubjectDto
+     * @author tangyi
+     * @date 2019/04/30 17:10
+     */
+    @Transactional
+    public SubjectDto subjectAnswer(String serialNumber, String examRecordId, String userId) {
+        SubjectDto subjectDto = null;
+        ExamRecord examRecord = new ExamRecord();
+        examRecord.setId(examRecordId);
+        // 查找考试记录
+        examRecord = examRecordService.get(examRecord);
+        if (examRecord != null) {
+            // 查找题目
+            Subject subject = new Subject();
+            subject.setExaminationId(examRecord.getExaminationId());
+            subject.setSerialNumber(serialNumber);
+            subject = subjectService.getByExaminationIdAndSerialNumber(subject);
+            if (subject != null) {
+                subjectDto = new SubjectDto();
+                // 查找答题
+                Answer answer = new Answer();
+                answer.setSubjectId(subject.getId());
+                answer.setExaminationId(examRecord.getExaminationId());
+                answer.setExamRecordId(examRecordId);
+                answer.setUserId(userId);
+                Answer userAnswer = this.getAnswer(answer);
+                // 设置答题
+                if (userAnswer != null)
+                    subjectDto.setAnswer(userAnswer);
+                BeanUtils.copyProperties(subject, subjectDto);
+                subjectDto.setExaminationRecordId(examRecordId);
+            }
+        }
+        return subjectDto;
     }
 }

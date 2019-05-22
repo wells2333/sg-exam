@@ -11,7 +11,7 @@
  Target Server Version : 50617
  File Encoding         : 65001
 
- Date: 19/05/2019 21:43:07
+ Date: 22/05/2019 22:21:43
 */
 
 SET NAMES utf8mb4;
@@ -65,7 +65,7 @@ CREATE TABLE `sys_dept`  (
 -- ----------------------------
 -- Records of sys_dept
 -- ----------------------------
-INSERT INTO `sys_dept` VALUES ('571347099191480320', '测试部门', '-1', '30', 'admin', '2019-04-26 14:49:23', 'admin', '2019-05-19 11:54:19', '0', 'EXAM', '0', '测试部门', '管理员', NULL);
+INSERT INTO `sys_dept` VALUES ('571347099191480320', '测试部门', '-1', '30', 'admin', '2019-04-26 14:49:23', 'admin', '2019-05-22 22:15:31', '0', 'EXAM', '0', '测试部门', '管理员', NULL);
 
 -- ----------------------------
 -- Table structure for sys_log
@@ -161,7 +161,7 @@ INSERT INTO `sys_menu` VALUES ('571362994005610496', 'zipkin监控', 'monitor:li
 INSERT INTO `sys_menu` VALUES ('571363268497641472', '服务监控', 'monitor:admin', '/api/monitor/**', '571361163502292992', '', '33', '0', 'admin', '2019-04-26 15:53:38', 'admin', '2019-04-26 15:53:38', '0', 'EXAM', NULL, 'http://localhost:8085/admin', NULL, NULL, NULL);
 INSERT INTO `sys_menu` VALUES ('571363537549660160', '接口文档', 'monitor:document', '/api/monitor/**', '571361163502292992', '', '34', '0', 'admin', '2019-04-26 15:54:42', 'admin', '2019-04-26 15:54:42', '0', 'EXAM', NULL, 'http://localhost:8000/swagger-ui.html', NULL, NULL, NULL);
 INSERT INTO `sys_menu` VALUES ('571364115214372864', '删除日志', 'monitor:log:del', NULL, '571361526066319360', '', '30', '1', 'admin', '2019-04-26 15:57:00', 'admin', '2019-04-26 15:57:00', '0', 'EXAM', NULL, NULL, NULL, '删除日志', NULL);
-INSERT INTO `sys_menu` VALUES ('571365178965364736', '首页', 'dashboard', '/', '-1', 'dashboard', '0', '0', 'admin', '2019-04-26 16:01:14', 'admin', '2019-05-19 12:25:51', '0', 'EXAM', 'Layout', '/dashboard', NULL, '首页', NULL);
+INSERT INTO `sys_menu` VALUES ('571365178965364736', '首页', 'dashboard', '/', '-1', 'dashboard', '0', '0', 'admin', '2019-04-26 16:01:14', 'admin', '2019-05-22 22:15:49', '0', 'EXAM', 'Layout', '/dashboard', NULL, '首页', NULL);
 INSERT INTO `sys_menu` VALUES ('571367565360762880', '系统管理', 'sys', '/api/user/v1/**', '-1', 'component', '1', '0', 'admin', '2019-04-26 16:10:43', 'admin', '2019-05-15 23:51:07', '0', 'EXAM', 'Layout', '/sys', NULL, '系统管理', NULL);
 INSERT INTO `sys_menu` VALUES ('571367969767165952', '用户管理', 'sys:user', '/api/user/v1/user/**', '571367565360762880', '', '2', '0', 'admin', '2019-04-26 16:12:19', 'admin', '2019-04-26 16:12:19', '0', 'EXAM', 'views/sys/user', 'user', NULL, '用户管理', NULL);
 INSERT INTO `sys_menu` VALUES ('571368181252362240', '部门管理', 'sys:dept', '/api/user/v1/dept/**', '571367565360762880', '', '8', '0', 'admin', '2019-04-26 16:13:09', 'admin', '2019-04-26 16:13:09', '0', 'EXAM', 'views/sys/dept', 'dept', NULL, '部门管理', NULL);
@@ -221,7 +221,7 @@ CREATE TABLE `sys_role`  (
 -- ----------------------------
 INSERT INTO `sys_role` VALUES ('571347202849509376', '管理员', 'role_admin', '管理员', '0', 'admin', '2019-04-26 14:49:48', 'admin', '2019-04-26 14:49:48', '0', 'EXAM', '0', NULL);
 INSERT INTO `sys_role` VALUES ('571347272906969088', '教师', 'role_teacher', '教师', '0', 'admin', '2019-04-26 14:50:04', 'admin', '2019-05-19 17:40:08', '0', 'EXAM', '0', NULL);
-INSERT INTO `sys_role` VALUES ('571347357346697216', '普通用户', 'role_user', '普通用户', '1', 'admin', '2019-04-26 14:50:25', 'admin', '2019-05-19 17:38:15', '0', 'EXAM', '0', NULL);
+INSERT INTO `sys_role` VALUES ('571347357346697216', '普通用户', 'role_user', '普通用户', '1', 'admin', '2019-04-26 14:50:25', 'admin', '2019-05-22 22:15:42', '0', 'EXAM', '0', NULL);
 
 -- ----------------------------
 -- Table structure for sys_role_menu
@@ -369,10 +369,10 @@ INSERT INTO `sys_role_menu` VALUES ('577962109418213434', '571347272906969088', 
 INSERT INTO `sys_role_menu` VALUES ('577962109418213435', '571347272906969088', '571348650370928640');
 INSERT INTO `sys_role_menu` VALUES ('577962109418213436', '571347272906969088', '571349816924311552');
 INSERT INTO `sys_role_menu` VALUES ('577962109418213437', '571347272906969088', '571350099653955584');
-INSERT INTO `sys_role_menu` VALUES ('578366680363831296', '571347357346697216', '571365178965364736');
-INSERT INTO `sys_role_menu` VALUES ('578366680363831297', '571347357346697216', '571348650370928640');
-INSERT INTO `sys_role_menu` VALUES ('578366680363831298', '571347357346697216', '571349816924311552');
-INSERT INTO `sys_role_menu` VALUES ('578366680363831299', '571347357346697216', '571350099653955584');
+INSERT INTO `sys_role_menu` VALUES ('580882321092251648', '571347357346697216', '571365178965364736');
+INSERT INTO `sys_role_menu` VALUES ('580882321092251649', '571347357346697216', '571348650370928640');
+INSERT INTO `sys_role_menu` VALUES ('580882321092251650', '571347357346697216', '571349816924311552');
+INSERT INTO `sys_role_menu` VALUES ('580882321092251651', '571347357346697216', '571350099653955584');
 
 -- ----------------------------
 -- Table structure for sys_route
@@ -438,7 +438,6 @@ CREATE TABLE `sys_user`  (
 INSERT INTO `sys_user` VALUES ('571346919268421632', '管理员', 'admin', '$2a$10$6mW2B1GMnGLQejJ4QXb2ke.Oqu3cAUYWxX7rgsrO/.SP.Na4QFCwq', NULL, '15512345678', '', '', '15512345678@qq.com', '0', '2019-04-26', '0', 'admin', '2019-04-26 14:48:40', 'admin', '2019-04-26 14:51:13', 0, 'EXAM', '管理员', '571347099191480320', NULL);
 INSERT INTO `sys_user` VALUES ('571347698284892160', '林老师', 'teacher', '$2a$10$PvRqajVApOtseEy8jJCzU.AnvrtoE5ecwQHQ9zuf.ezYnlFTF1Vm2', NULL, '155123456789', NULL, NULL, '155123456789@qq.com', '0', '2019-04-26', '0', 'admin', '2019-04-26 14:51:46', 'admin', '2019-05-16 22:07:08', 0, 'EXAM', '林老师', '571347099191480320', NULL);
 INSERT INTO `sys_user` VALUES ('571347817814167552', '梁同学', 'student', '$2a$10$mtmSUZJwfgtqlK5J/wu9CeWAPhfr4j.k/C6njPFUzNht.GEw1H0r.', NULL, '155123456789', NULL, NULL, '155123456789@qq.com', '0', '2019-04-26', '0', 'admin', '2019-04-26 14:52:14', 'admin', '2019-05-16 22:07:04', 0, 'EXAM', '梁同学', '571347099191480320', NULL);
-INSERT INTO `sys_user` VALUES ('578707569342812160', '1', '1', '$2a$10$D0ue0eJrn33Bd1Z.6XMKpeixG.F7GKKHHEvQAYw4klJF/vwoCWoHC', NULL, '323', NULL, NULL, NULL, '0', '2019-05-30', '0', 'admin', '2019-05-16 22:17:16', 'admin', '2019-05-16 22:17:16', 0, 'EXAM', '3233', '571347099191480320', NULL);
 
 -- ----------------------------
 -- Table structure for sys_user_role
@@ -457,6 +456,5 @@ CREATE TABLE `sys_user_role`  (
 INSERT INTO `sys_user_role` VALUES ('571347558564237312', '571346919268421632', '571347202849509376');
 INSERT INTO `sys_user_role` VALUES ('578705002672033792', '571347817814167552', '571347272906969088');
 INSERT INTO `sys_user_role` VALUES ('578705020137115648', '571347698284892160', '571347272906969088');
-INSERT INTO `sys_user_role` VALUES ('578707569720299520', '578707569342812160', '571347357346697216');
 
 SET FOREIGN_KEY_CHECKS = 1;

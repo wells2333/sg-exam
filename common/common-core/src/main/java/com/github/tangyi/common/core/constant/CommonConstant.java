@@ -4,7 +4,7 @@ package com.github.tangyi.common.core.constant;
  * 公用常量
  *
  * @author tangyi
- * @date 2018-08-23-12:00
+ * @date 2018-08-23 12:00
  */
 public class CommonConstant {
 
@@ -12,6 +12,11 @@ public class CommonConstant {
      * 默认系统编号
      */
     public static final String SYS_CODE = "EXAM";
+
+    /**
+     * 默认租户编号
+     */
+    public static final String TENANT_CODE = "GITHUB";
 
     /**
      * JSON 资源

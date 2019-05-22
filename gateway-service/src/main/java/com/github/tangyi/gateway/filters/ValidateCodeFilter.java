@@ -29,7 +29,7 @@ import java.net.URI;
 @Component
 public class ValidateCodeFilter implements GlobalFilter, Ordered {
 
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate redisTemplate;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
