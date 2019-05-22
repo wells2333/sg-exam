@@ -1,13 +1,8 @@
 package com.github.tangyi.exam.service;
 
 import com.github.tangyi.common.core.service.CrudService;
-import com.github.tangyi.exam.api.dto.SubjectDto;
-import com.github.tangyi.exam.api.module.Answer;
-import com.github.tangyi.exam.api.module.ExamRecord;
 import com.github.tangyi.exam.api.module.Subject;
 import com.github.tangyi.exam.mapper.SubjectMapper;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -19,13 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
  * @author tangyi
  * @date 2018/11/8 21:23
  */
-@AllArgsConstructor
 @Service
 public class SubjectService extends CrudService<SubjectMapper, Subject> {
-
-    private final ExamRecordService examRecordService;
-
-    private final AnswerService answerService;
 
     /**
      * 查找题目
@@ -122,47 +112,5 @@ public class SubjectService extends CrudService<SubjectMapper, Subject> {
     @CacheEvict(value = "subject", allEntries = true)
     public int deleteAll(String[] ids) {
         return super.deleteAll(ids);
-    }
-
-    /**
-     * 查询题目和答题
-     *
-     * @param serialNumber serialNumber
-     * @param examRecordId examRecordId
-     * @param userId       userId
-     * @return SubjectDto
-     * @author tangyi
-     * @date 2019/04/30 17:10
-     */
-    @Transactional
-    public SubjectDto subjectAnswer(String serialNumber, String examRecordId, String userId) {
-        SubjectDto subjectDto = null;
-        ExamRecord examRecord = new ExamRecord();
-        examRecord.setId(examRecordId);
-        // 查找考试记录
-        examRecord = examRecordService.get(examRecord);
-        if (examRecord != null) {
-            // 查找题目
-            Subject subject = new Subject();
-            subject.setExaminationId(examRecord.getExaminationId());
-            subject.setSerialNumber(serialNumber);
-            subject = this.getByExaminationIdAndSerialNumber(subject);
-            if (subject != null) {
-                subjectDto = new SubjectDto();
-                // 查找答题
-                Answer answer = new Answer();
-                answer.setSubjectId(subject.getId());
-                answer.setExaminationId(examRecord.getExaminationId());
-                answer.setExamRecordId(examRecordId);
-                answer.setUserId(userId);
-                Answer userAnswer = answerService.getAnswer(answer);
-                // 设置答题
-                if (userAnswer != null)
-                    subjectDto.setAnswer(userAnswer);
-                BeanUtils.copyProperties(subject, subjectDto);
-                subjectDto.setExaminationRecordId(examRecordId);
-            }
-        }
-        return subjectDto;
     }
 }

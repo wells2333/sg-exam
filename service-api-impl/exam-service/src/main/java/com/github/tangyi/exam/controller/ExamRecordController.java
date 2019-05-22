@@ -15,6 +15,7 @@ import com.github.tangyi.exam.api.dto.ExamRecordDto;
 import com.github.tangyi.exam.api.dto.StartExamDto;
 import com.github.tangyi.exam.api.module.ExamRecord;
 import com.github.tangyi.exam.api.module.Examination;
+import com.github.tangyi.exam.service.AnswerService;
 import com.github.tangyi.exam.service.ExamRecordService;
 import com.github.tangyi.exam.service.ExaminationService;
 import com.github.tangyi.exam.utils.ExamRecordUtil;
@@ -59,6 +60,8 @@ public class ExamRecordController extends BaseController {
     private final ExaminationService examinationService;
 
     private final UserServiceClient userServiceClient;
+
+    private final AnswerService answerService;
 
     /**
      * 根据ID获取
@@ -356,7 +359,7 @@ public class ExamRecordController extends BaseController {
     @PostMapping("start")
     @Log("开始考试")
     public ResponseBean<StartExamDto> start(@RequestBody ExamRecord examRecord) {
-        return new ResponseBean<>(examRecordService.start(examRecord));
+        return new ResponseBean<>(answerService.start(examRecord));
     }
 
     /**

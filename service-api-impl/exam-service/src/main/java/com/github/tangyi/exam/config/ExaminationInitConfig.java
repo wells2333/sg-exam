@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 @Configuration
 public class ExaminationInitConfig {
 
-    private final RedisTemplate<String, Examination> redisTemplate;
+    private final RedisTemplate redisTemplate;
 
     private final ExaminationService examinationService;
 

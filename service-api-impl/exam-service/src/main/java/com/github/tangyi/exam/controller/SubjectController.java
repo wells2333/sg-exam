@@ -12,7 +12,6 @@ import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.Examination;
 import com.github.tangyi.exam.api.module.Subject;
 import com.github.tangyi.exam.service.AnswerService;
-import com.github.tangyi.exam.service.ExamRecordService;
 import com.github.tangyi.exam.service.ExaminationService;
 import com.github.tangyi.exam.service.SubjectService;
 import com.github.tangyi.exam.utils.SubjectUtil;
@@ -51,8 +50,6 @@ public class SubjectController extends BaseController {
     private final SubjectService subjectService;
 
     private final AnswerService answerService;
-
-    private final ExamRecordService examRecordService;
 
     private final ExaminationService examinationService;
 
@@ -330,6 +327,6 @@ public class SubjectController extends BaseController {
     public ResponseBean<SubjectDto> subjectAnswer(@RequestParam("serialNumber") String serialNumber,
                                                   @RequestParam("examRecordId") String examRecordId,
                                                   @RequestParam(value = "userId", required = false) String userId) {
-        return new ResponseBean<>(subjectService.subjectAnswer(serialNumber, examRecordId, userId));
+        return new ResponseBean<>(answerService.subjectAnswer(serialNumber, examRecordId, userId));
     }
 }

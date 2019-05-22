@@ -32,4 +32,13 @@ public class SysUtil {
     public static String getSysCode() {
         return CommonConstant.SYS_CODE;
     }
+
+    /**
+     * 获取租户编号
+     *
+     * @return String
+     */
+    public static String getTenantCode() {
+        return CommonConstant.TENANT_CODE;
+    }
 }
