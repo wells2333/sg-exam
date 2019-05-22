@@ -18,7 +18,7 @@ public class UserUtils {
      * @date 2018/11/26 22:35
      */
     public static LinkedHashMap<String, String> getUserMap() {
-        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
         map.put("id", "用户id");
         map.put("name", "账号");
         map.put("username", "姓名");

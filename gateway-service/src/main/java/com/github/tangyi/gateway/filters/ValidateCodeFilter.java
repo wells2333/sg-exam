@@ -5,11 +5,12 @@ import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.exceptions.InvalidValidateCodeException;
 import com.github.tangyi.common.core.exceptions.ValidateCodeExpiredException;
 import com.github.tangyi.gateway.constants.GatewayConstant;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
@@ -24,11 +25,11 @@ import java.net.URI;
  * @author tangyi
  * @date 2019/3/18 16:40
  */
+@AllArgsConstructor
 @Component
 public class ValidateCodeFilter implements GlobalFilter, Ordered {
 
-    @Autowired
-    private RedisTemplate redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -36,7 +37,7 @@ public class ValidateCodeFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         // 请求的URI
         URI uri = request.getURI();
-        if ("POST".equals(request.getMethodValue())
+        if (HttpMethod.POST.matches(request.getMethodValue())
                 && StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.OAUTH_TOKEN_URL, GatewayConstant.REGISTER, GatewayConstant.MOBILE_TOKEN_URL)) {
             String grantType = request.getQueryParams().getFirst(GatewayConstant.GRANT_TYPE);
             // 授权类型为密码模式、注册才校验验证码

@@ -7,9 +7,9 @@ import com.google.code.kaptcha.Producer;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,16 +26,15 @@ import java.awt.image.BufferedImage;
  * @author tangyi
  * @date 2018-09-14-19:24
  */
+@AllArgsConstructor
 @Api("生成验证码")
 @RestController
 @RequestMapping(value = "/v1/code")
 public class ValidateCodeController extends BaseController {
 
-    @Autowired
-    private Producer producer;
+    private final Producer producer;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     /**
      * 生成验证码

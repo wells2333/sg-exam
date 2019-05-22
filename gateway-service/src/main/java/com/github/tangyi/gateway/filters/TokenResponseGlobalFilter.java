@@ -59,8 +59,10 @@ public class TokenResponseGlobalFilter implements GlobalFilter, Ordered {
                 // 根据jti从Redis里获取真正的refresh_token
                 Object object = redisTemplate.opsForValue().get(GatewayConstant.GATEWAY_REFRESH_TOKENS + refreshToken);
                 refreshToken = object == null ? refreshToken : object.toString();
+                log.trace("refreshToken:{}", refreshToken);
                 // 替换refresh_token参数
                 URI newUri = UriComponentsBuilder.fromUri(uri).replaceQueryParam(GatewayConstant.GRANT_TYPE_REFRESH_TOKEN, refreshToken).build(true).toUri();
+                log.trace("newUri: {}", newUri);
                 ServerHttpRequest newRequest = exchange.getRequest().mutate().uri(newUri).build();
                 return chain.filter(exchange.mutate().request(newRequest).build());
             }
@@ -70,9 +72,11 @@ public class TokenResponseGlobalFilter implements GlobalFilter, Ordered {
             // 从Redis里获取实际的access_token
             Object object = redisTemplate.opsForValue().get(GatewayConstant.GATEWAY_ACCESS_TOKENS + authorization);
             authorization = object == null ? authorization : CommonConstant.TOKEN_SPLIT + object.toString();
-            log.trace("jti->token：{}", authorization);
-            // 更新请求头
-            ServerHttpRequest newRequest = request.mutate().header(CommonConstant.REQ_HEADER, authorization).build();
+            String realAuthorization = authorization;
+            log.trace("jti->token：{}", realAuthorization);
+            // 更新请求头，参考源码:SetRequestHeaderGatewayFilterFactory
+            ServerHttpRequest newRequest = request.mutate().headers(httpHeaders -> httpHeaders.set(CommonConstant.REQ_HEADER, realAuthorization)).build();
+            log.trace("newRequestHeader:{}", newRequest.getHeaders().getFirst(CommonConstant.REQ_HEADER));
             return chain.filter(exchange.mutate().request(newRequest).build());
         }
         return chain.filter(exchange);

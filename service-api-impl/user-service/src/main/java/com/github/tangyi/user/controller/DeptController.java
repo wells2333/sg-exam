@@ -15,8 +15,8 @@ import com.github.tangyi.user.service.DeptService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,13 +33,13 @@ import java.util.stream.Stream;
  * @author tangyi
  * @date 2018/8/26 0026 22:49
  */
+@AllArgsConstructor
 @Api("部门信息管理")
 @RestController
 @RequestMapping("/v1/dept")
 public class DeptController extends BaseController {
 
-    @Autowired
-    private DeptService deptService;
+    private final DeptService deptService;
 
     /**
      * 查询树形部门集合

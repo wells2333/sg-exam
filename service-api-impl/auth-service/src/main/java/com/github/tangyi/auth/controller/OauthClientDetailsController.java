@@ -15,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,16 +32,15 @@ import java.util.List;
  * @date 2019/3/30 16:49
  */
 @Slf4j
+@AllArgsConstructor
 @Api("Oauth2客户端信息管理")
 @RestController
 @RequestMapping("/v1/client")
 public class OauthClientDetailsController extends BaseController {
 
-    @Autowired
-    private OauthClientDetailsService oauthClientDetailsService;
+    private final OauthClientDetailsService oauthClientDetailsService;
 
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     /**
      * 根据ID获取

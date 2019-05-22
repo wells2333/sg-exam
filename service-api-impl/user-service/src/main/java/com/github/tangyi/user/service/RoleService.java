@@ -5,7 +5,7 @@ import com.github.tangyi.user.api.module.Role;
 import com.github.tangyi.user.mapper.RoleMapper;
 import com.github.tangyi.user.mapper.RoleMenuMapper;
 import com.github.tangyi.user.mapper.UserRoleMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,14 +18,13 @@ import java.util.List;
  * @author tangyi
  * @date 2018/8/26 14:16
  */
+@AllArgsConstructor
 @Service
 public class RoleService extends CrudService<RoleMapper, Role> {
 
-    @Autowired
-    private RoleMenuMapper roleMenuMapper;
+    private final RoleMenuMapper roleMenuMapper;
 
-    @Autowired
-    private UserRoleMapper userRoleMapper;
+    private final UserRoleMapper userRoleMapper;
 
     /**
      * 查询所有角色

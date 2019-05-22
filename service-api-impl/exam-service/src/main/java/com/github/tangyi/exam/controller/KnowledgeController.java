@@ -17,11 +17,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -36,16 +36,15 @@ import java.util.Set;
  * @date 2019/1/1 15:11
  */
 @Slf4j
+@AllArgsConstructor
 @Api("知识库信息管理")
 @RestController
 @RequestMapping("/v1/knowledge")
 public class KnowledgeController extends BaseController {
 
-    @Autowired
-    private KnowledgeService knowledgeService;
+    private final KnowledgeService knowledgeService;
 
-    @Autowired
-    private UserServiceClient userServiceClient;
+    private final UserServiceClient userServiceClient;
 
     /**
      * 根据ID获取

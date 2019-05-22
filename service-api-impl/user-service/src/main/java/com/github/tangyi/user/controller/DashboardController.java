@@ -8,7 +8,7 @@ import com.github.tangyi.user.api.dto.DashboardDto;
 import com.github.tangyi.user.api.feign.UserServiceClient;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,16 +19,15 @@ import org.springframework.web.bind.annotation.RestController;
  * @author tangyi
  * @date 2019-03-01 13:54
  */
+@AllArgsConstructor
 @Api("后台首页数据展示")
 @RestController
 @RequestMapping("/v1/dashboard")
 public class DashboardController extends BaseController {
 
-    @Autowired
-    private ExaminationServiceClient examinationService;
+    private final ExaminationServiceClient examinationService;
 
-    @Autowired
-    private UserServiceClient userServiceClient;
+    private final UserServiceClient userServiceClient;
 
     /**
      * 获取管控台首页数据

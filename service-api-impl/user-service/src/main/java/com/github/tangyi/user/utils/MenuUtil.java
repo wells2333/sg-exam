@@ -69,7 +69,7 @@ public class MenuUtil {
      * @date 2018/11/28 12:48
      */
     public static LinkedHashMap<String, String> getMenuMap() {
-        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
         map.put("id", "菜单id");
         map.put("name", "菜单名称");
         map.put("permission", "菜单权限标识");

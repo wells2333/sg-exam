@@ -6,7 +6,7 @@ import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.user.api.module.Menu;
 import com.github.tangyi.user.mapper.MenuMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -20,11 +20,11 @@ import java.util.List;
  * @author tangyi
  * @date 2018/8/26 22:45
  */
+@AllArgsConstructor
 @Service
 public class MenuService extends CrudService<MenuMapper, Menu> {
 
-    @Autowired
-    private MenuMapper menuMapper;
+    private final MenuMapper menuMapper;
 
     /**
      * 根据角色查找菜单

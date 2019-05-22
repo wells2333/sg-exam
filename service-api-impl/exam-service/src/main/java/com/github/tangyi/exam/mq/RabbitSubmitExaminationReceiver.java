@@ -6,9 +6,9 @@ import com.github.tangyi.exam.api.module.Answer;
 import com.github.tangyi.exam.api.module.ExamRecord;
 import com.github.tangyi.exam.service.AnswerService;
 import com.github.tangyi.exam.service.ExamRecordService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,14 +18,13 @@ import org.springframework.stereotype.Service;
  * @date 2019/5/3 14:55
  */
 @Slf4j
+@AllArgsConstructor
 @Service
 public class RabbitSubmitExaminationReceiver {
 
-    @Autowired
-    private AnswerService answerService;
+    private final AnswerService answerService;
 
-    @Autowired
-    private ExamRecordService examRecordService;
+    private final ExamRecordService examRecordService;
 
     /**
      * 处理提交考试逻辑：统计错题，计算成绩等

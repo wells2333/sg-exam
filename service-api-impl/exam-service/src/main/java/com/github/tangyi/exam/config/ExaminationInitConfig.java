@@ -3,8 +3,8 @@ package com.github.tangyi.exam.config;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.exam.api.module.Examination;
 import com.github.tangyi.exam.service.ExaminationService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -20,14 +20,13 @@ import java.util.stream.Stream;
  * @date 2019/4/30 16:02
  */
 @Slf4j
+@AllArgsConstructor
 @Configuration
 public class ExaminationInitConfig {
 
-    @Autowired
-    private RedisTemplate redisTemplate;
+    private final RedisTemplate<String, Examination> redisTemplate;
 
-    @Autowired
-    private ExaminationService examinationService;
+    private final ExaminationService examinationService;
 
     @PostConstruct
     public void initExamination() {

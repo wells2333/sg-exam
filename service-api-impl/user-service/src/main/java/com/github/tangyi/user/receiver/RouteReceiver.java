@@ -2,9 +2,9 @@ package com.github.tangyi.user.receiver;
 
 import com.github.tangyi.common.core.constant.MqConstant;
 import com.github.tangyi.user.config.RouteInitConfig;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
  * @date 2019/4/7 12:38
  */
 @Slf4j
+@AllArgsConstructor
 @Service
 public class RouteReceiver {
 
-    @Autowired
-    private RouteInitConfig routeInitConfig;
+    private final RouteInitConfig routeInitConfig;
 
     /**
      * 刷新路由

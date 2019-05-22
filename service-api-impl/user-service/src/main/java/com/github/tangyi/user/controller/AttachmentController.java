@@ -12,12 +12,12 @@ import com.github.tangyi.user.api.module.Attachment;
 import com.github.tangyi.user.service.AttachmentService;
 import com.google.common.net.HttpHeaders;
 import io.swagger.annotations.*;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,13 +36,13 @@ import java.util.stream.Collectors;
  * @date 2018/10/30 20:45
  */
 @Slf4j
+@AllArgsConstructor
 @Api("附件信息管理")
 @RestController
 @RequestMapping("/v1/attachment")
 public class AttachmentController extends BaseController {
 
-    @Autowired
-    private AttachmentService attachmentService;
+    private final AttachmentService attachmentService;
 
     /**
      * 根据ID获取

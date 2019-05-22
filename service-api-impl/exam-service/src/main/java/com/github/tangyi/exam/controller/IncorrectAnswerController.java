@@ -17,11 +17,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -34,16 +34,15 @@ import java.util.List;
  * @date 2018/11/8 21:28
  */
 @Slf4j
+@AllArgsConstructor
 @Api("错题信息管理")
 @RestController
 @RequestMapping("/v1/incorrectAnswer")
 public class IncorrectAnswerController extends BaseController {
 
-    @Autowired
-    private IncorrectAnswerService incorrectAnswerService;
+    private final IncorrectAnswerService incorrectAnswerService;
 
-    @Autowired
-    private SubjectService subjectService;
+    private final SubjectService subjectService;
 
     /**
      * 根据ID获取

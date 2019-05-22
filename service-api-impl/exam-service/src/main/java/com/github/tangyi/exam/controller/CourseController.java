@@ -15,9 +15,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,13 +28,13 @@ import org.springframework.web.bind.annotation.*;
  * @date 2018/11/8 21:25
  */
 @Slf4j
+@AllArgsConstructor
 @Api("课程信息管理")
 @RestController
 @RequestMapping("/v1/course")
 public class CourseController extends BaseController {
 
-    @Autowired
-    private CourseService courseService;
+    private final CourseService courseService;
 
     /**
      * 根据ID获取

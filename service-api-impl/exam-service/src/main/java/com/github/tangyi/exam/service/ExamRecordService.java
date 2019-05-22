@@ -13,9 +13,9 @@ import com.github.tangyi.exam.api.module.ExamRecord;
 import com.github.tangyi.exam.api.module.Examination;
 import com.github.tangyi.exam.api.module.Subject;
 import com.github.tangyi.exam.mapper.ExamRecordMapper;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -27,20 +27,17 @@ import org.springframework.transaction.annotation.Transactional;
  * @author tangyi
  * @date 2018/11/8 21:20
  */
+@AllArgsConstructor
 @Service
 public class ExamRecordService extends CrudService<ExamRecordMapper, ExamRecord> {
 
-    @Autowired
-    private SubjectService subjectService;
+    private final SubjectService subjectService;
 
-    @Autowired
-    private AnswerService answerService;
+    private final AnswerService answerService;
 
-    @Autowired
-    private ExamRecordService examRecordService;
+    private final ExamRecordService examRecordService;
 
-    @Autowired
-    private ExaminationService examinationService;
+    private final ExaminationService examinationService;
 
     /**
      * 查询考试记录

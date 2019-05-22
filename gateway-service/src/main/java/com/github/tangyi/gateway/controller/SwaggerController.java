@@ -17,7 +17,6 @@ import java.util.Optional;
  * @author tangyi
  * @date 2019/3/26 17:01
  */
-
 @RestController
 @RequestMapping("/swagger-resources")
 public class SwaggerController {

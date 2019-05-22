@@ -14,9 +14,9 @@ import com.github.tangyi.exam.service.SubjectCategoryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,13 +31,13 @@ import java.util.stream.Collectors;
  * @author tangyi
  * @date 2018/12/4 21:57
  */
+@AllArgsConstructor
 @Api("题库分类信息管理")
 @RestController
 @RequestMapping("/v1/subjectCategory")
 public class SubjectCategoryController extends BaseController {
 
-    @Autowired
-    private SubjectCategoryService categoryService;
+    private final SubjectCategoryService categoryService;
 
     /**
      * 返回树形分类集合
