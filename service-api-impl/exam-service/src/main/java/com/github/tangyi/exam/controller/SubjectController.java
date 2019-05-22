@@ -18,9 +18,9 @@ import com.github.tangyi.exam.service.SubjectService;
 import com.github.tangyi.exam.utils.SubjectUtil;
 import com.google.common.net.HttpHeaders;
 import io.swagger.annotations.*;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,22 +42,19 @@ import java.util.stream.Stream;
  * @date 2018/11/8 21:29
  */
 @Slf4j
+@AllArgsConstructor
 @Api("题目信息管理")
 @RestController
 @RequestMapping("/v1/subject")
 public class SubjectController extends BaseController {
 
-    @Autowired
-    private SubjectService subjectService;
+    private final SubjectService subjectService;
 
-    @Autowired
-    private AnswerService answerService;
+    private final AnswerService answerService;
 
-    @Autowired
-    private ExamRecordService examRecordService;
+    private final ExamRecordService examRecordService;
 
-    @Autowired
-    private ExaminationService examinationService;
+    private final ExaminationService examinationService;
 
     /**
      * 根据ID获取

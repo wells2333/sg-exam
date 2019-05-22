@@ -3,6 +3,9 @@ package com.github.tangyi.auth.config;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -26,7 +29,8 @@ import java.util.List;
  */
 @Configuration
 @EnableSwagger2
-public class SwaggerConfig {
+@EnableWebMvc
+public class SwaggerConfig implements WebMvcConfigurer {
 
     @Bean
     public Docket createRestApi() {
@@ -56,5 +60,17 @@ public class SwaggerConfig {
                 .contact(new Contact("tangyi","https://gitee.com/wells2333/spring-microservice-exam","1633736729@qq.com"))
                 .version("2.0")
                 .build();
+    }
+
+    /**
+     *
+     * 显示swagger-ui.html文档展示页，还必须注入swagger资源：
+     *
+     * @param registry
+     */
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 }

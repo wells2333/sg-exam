@@ -12,10 +12,10 @@ import com.github.tangyi.exam.api.module.ExamRecord;
 import com.github.tangyi.exam.api.module.IncorrectAnswer;
 import com.github.tangyi.exam.api.module.Subject;
 import com.github.tangyi.exam.mapper.AnswerMapper;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -31,20 +31,17 @@ import java.util.List;
  * @date 2018/11/8 21:17
  */
 @Slf4j
+@AllArgsConstructor
 @Service
 public class AnswerService extends CrudService<AnswerMapper, Answer> {
 
-    @Autowired
-    private AmqpTemplate amqpTemplate;
+    private final AmqpTemplate amqpTemplate;
 
-    @Autowired
-    private SubjectService subjectService;
+    private final SubjectService subjectService;
 
-    @Autowired
-    private IncorrectAnswerService incorrectAnswerService;
+    private final IncorrectAnswerService incorrectAnswerService;
 
-    @Autowired
-    private ExamRecordService examRecordService;
+    private final ExamRecordService examRecordService;
 
     /**
      * 查找答题

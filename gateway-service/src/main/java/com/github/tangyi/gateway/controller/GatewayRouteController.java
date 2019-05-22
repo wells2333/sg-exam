@@ -6,9 +6,9 @@ import com.github.tangyi.common.core.vo.RouteFilterVo;
 import com.github.tangyi.common.core.vo.RoutePredicateVo;
 import com.github.tangyi.common.core.vo.RouteVo;
 import com.github.tangyi.gateway.service.DynamicRouteService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.FilterDefinition;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
@@ -33,6 +33,7 @@ import java.util.Map;
  * @date 2019/3/27 10:59
  */
 @Slf4j
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/route")
 public class GatewayRouteController {
@@ -44,14 +45,6 @@ public class GatewayRouteController {
     private final DynamicRouteService dynamicRouteService;
 
     private final AmqpTemplate amqpTemplate;
-
-    @Autowired
-    public GatewayRouteController(RouteDefinitionLocator routeDefinitionLocator, RouteLocator routeLocator, DynamicRouteService dynamicRouteService, AmqpTemplate amqpTemplate) {
-        this.routeDefinitionLocator = routeDefinitionLocator;
-        this.routeLocator = routeLocator;
-        this.dynamicRouteService = dynamicRouteService;
-        this.amqpTemplate = amqpTemplate;
-    }
 
     /**
      * 获取路由信息列表

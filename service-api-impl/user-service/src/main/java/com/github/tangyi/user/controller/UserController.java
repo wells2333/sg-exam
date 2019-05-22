@@ -22,11 +22,11 @@ import com.github.tangyi.user.service.UserRoleService;
 import com.github.tangyi.user.service.UserService;
 import com.github.tangyi.user.utils.UserUtils;
 import io.swagger.annotations.*;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -49,6 +49,7 @@ import java.util.stream.Stream;
  * @date 2018-08-25 16:20
  */
 @Slf4j
+@AllArgsConstructor
 @Api("用户信息管理")
 @RestController
 @RequestMapping(value = "/v1/user")
@@ -56,17 +57,13 @@ public class UserController extends BaseController {
 
     private static final PasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private UserRoleService userRoleService;
+    private final UserRoleService userRoleService;
 
-    @Autowired
-    private DeptService deptService;
+    private final DeptService deptService;
 
-    @Autowired
-    private RoleService roleService;
+    private final RoleService roleService;
 
     /**
      * 根据id获取

@@ -16,9 +16,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,16 +33,15 @@ import java.util.stream.Stream;
  * @date 2018/8/26 22:50
  */
 @Slf4j
+@AllArgsConstructor
 @Api("角色信息管理")
 @RestController
 @RequestMapping("/v1/role")
 public class RoleController extends BaseController {
 
-    @Autowired
-    private RoleService roleService;
+    private final RoleService roleService;
 
-    @Autowired
-    private RoleMenuService roleMenuService;
+    private final RoleMenuService roleMenuService;
 
     /**
      * 根据id获取角色

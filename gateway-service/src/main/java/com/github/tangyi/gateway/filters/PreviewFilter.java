@@ -2,8 +2,8 @@ package com.github.tangyi.gateway.filters;
 
 import cn.hutool.core.util.StrUtil;
 import com.github.tangyi.gateway.config.PreviewConfig;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -26,19 +26,19 @@ import java.util.List;
  * @date 2019/4/23 10:54
  */
 @Slf4j
+@AllArgsConstructor
 @Configuration
 @ConditionalOnProperty(prefix = "preview", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class PreviewFilter implements GlobalFilter, Ordered {
 
-    @Autowired
-    private PreviewConfig previewConfig;
+    private final PreviewConfig previewConfig;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         // 当前请求
         ServerHttpRequest request = exchange.getRequest();
         // enabled为false、GET请求、忽略的URL，直接向下执行
-        log.debug("preview.enabled:{}", previewConfig.isEnabled());
+        log.trace("preview.enabled:{}", previewConfig.isEnabled());
         if (!previewConfig.isEnabled() || StrUtil.equalsIgnoreCase(request.getMethodValue(), HttpMethod.GET.name()) || isIgnore(request.getURI().getPath()))
             return chain.filter(exchange);
         log.warn("演示环境不能操作，{},{}", request.getMethodValue(), request.getURI().getPath());

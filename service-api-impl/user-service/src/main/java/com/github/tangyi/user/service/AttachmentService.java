@@ -7,26 +7,27 @@ import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.user.api.module.Attachment;
 import com.github.tangyi.user.mapper.AttachmentMapper;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author tangyi
  * @date 2018/10/30 20:55
  */
 @Slf4j
+@AllArgsConstructor
 @Service
 public class AttachmentService extends CrudService<AttachmentMapper, Attachment> {
 
-    @Autowired
-    private FastDfsService fastDfsService;
+    private final FastDfsService fastDfsService;
 
     /**
      * 上传
@@ -50,7 +51,7 @@ public class AttachmentService extends CrudService<AttachmentMapper, Attachment>
             newAttachment.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
             newAttachment.setGroupName(fastFileId.substring(0, fastFileId.indexOf("/")));
             newAttachment.setFastFileId(fastFileId);
-            newAttachment.setAttachName(new String(file.getOriginalFilename().getBytes(), "utf-8"));
+            newAttachment.setAttachName(new String(file.getOriginalFilename().getBytes(), StandardCharsets.UTF_8));
             newAttachment.setAttachSize(Long.toString(attachSize));
             newAttachment.setBusiId(attachment.getBusiId());
             newAttachment.setBusiModule(attachment.getBusiModule());

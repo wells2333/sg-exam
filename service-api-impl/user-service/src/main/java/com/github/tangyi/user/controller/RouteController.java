@@ -16,11 +16,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,16 +34,15 @@ import java.util.List;
  * @date 2019/4/2 15:03
  */
 @Slf4j
+@AllArgsConstructor
 @Api("网关路由信息管理")
 @RestController
 @RequestMapping("/v1/route")
 public class RouteController extends BaseController {
 
-    @Autowired
-    private RouteService routeService;
+    private final RouteService routeService;
 
-    @Autowired
-    private AmqpTemplate amqpTemplate;
+    private final AmqpTemplate amqpTemplate;
 
 
     /**

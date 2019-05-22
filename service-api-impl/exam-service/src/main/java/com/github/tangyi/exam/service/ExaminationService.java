@@ -4,8 +4,8 @@ import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.exam.api.module.Examination;
 import com.github.tangyi.exam.api.module.Subject;
 import com.github.tangyi.exam.mapper.ExaminationMapper;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -18,11 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
  * @date 2018/11/8 21:19
  */
 @Slf4j
+@AllArgsConstructor
 @Service
 public class ExaminationService extends CrudService<ExaminationMapper, Examination> {
 
-    @Autowired
-    private SubjectService subjectService;
+    private final SubjectService subjectService;
 
     /**
      * 查询考试

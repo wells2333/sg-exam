@@ -15,6 +15,7 @@ import com.github.tangyi.user.api.module.User;
 import com.github.tangyi.user.api.module.UserRole;
 import com.github.tangyi.user.mapper.UserMapper;
 import com.github.tangyi.user.mapper.UserRoleMapper;
+import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,20 +35,17 @@ import java.util.concurrent.TimeUnit;
  * @author tangyi
  * @date 2018-08-25 16:17
  */
+@AllArgsConstructor
 @Service
 public class UserService extends CrudService<UserMapper, User> {
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
-    @Autowired
-    private UserRoleMapper userRoleMapper;
+    private final UserRoleMapper userRoleMapper;
 
-    @Autowired
-    private MenuService menuService;
+    private final MenuService menuService;
 
-    @Autowired
-    private RedisTemplate redisTemplate;
+    private final RedisTemplate redisTemplate;
 
     /**
      * 新增用户

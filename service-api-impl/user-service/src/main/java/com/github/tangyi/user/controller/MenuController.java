@@ -17,9 +17,9 @@ import com.github.tangyi.user.service.MenuService;
 import com.github.tangyi.user.utils.MenuUtil;
 import com.google.common.net.HttpHeaders;
 import io.swagger.annotations.*;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,13 +41,13 @@ import java.util.stream.Stream;
  * @date 2018/8/26 22:48
  */
 @Slf4j
+@AllArgsConstructor
 @Api("菜单信息管理")
 @RestController
 @RequestMapping("/v1/menu")
 public class MenuController extends BaseController {
 
-    @Autowired
-    private MenuService menuService;
+    private final MenuService menuService;
 
     /**
      * 返回当前用户的树形菜单集合

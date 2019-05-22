@@ -23,11 +23,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -48,19 +48,17 @@ import java.util.stream.Stream;
  * @date 2018/11/8 21:27
  */
 @Slf4j
+@AllArgsConstructor
 @Api("考试记录信息管理")
 @RestController
 @RequestMapping("/v1/examRecord")
 public class ExamRecordController extends BaseController {
 
-    @Autowired
-    private ExamRecordService examRecordService;
+    private final ExamRecordService examRecordService;
 
-    @Autowired
-    private ExaminationService examinationService;
+    private final ExaminationService examinationService;
 
-    @Autowired
-    private UserServiceClient userServiceClient;
+    private final UserServiceClient userServiceClient;
 
     /**
      * 根据ID获取

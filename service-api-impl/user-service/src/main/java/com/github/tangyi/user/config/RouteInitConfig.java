@@ -5,10 +5,10 @@ import com.github.tangyi.common.core.constant.MqConstant;
 import com.github.tangyi.common.core.model.Route;
 import com.github.tangyi.common.core.utils.JsonMapper;
 import com.github.tangyi.user.service.RouteService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -22,17 +22,15 @@ import java.util.List;
  * @date 2019/4/2 18:42
  */
 @Slf4j
+@AllArgsConstructor
 @Configuration
 public class RouteInitConfig {
 
-    @Autowired
-    private RouteService routeService;
+    private final RouteService routeService;
 
-    @Autowired
-    private AmqpTemplate amqpTemplate;
+    private final AmqpTemplate amqpTemplate;
 
-    @Autowired
-    private RedisTemplate redisTemplate;
+    private final RedisTemplate redisTemplate;
 
     @PostConstruct
     public void initRoute() {

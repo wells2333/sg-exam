@@ -9,10 +9,10 @@ import com.github.tobato.fastdfs.domain.proto.storage.DownloadFileWriter;
 import com.github.tobato.fastdfs.service.AppendFileStorageClient;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.github.tobato.fastdfs.service.TrackerClient;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -28,17 +28,24 @@ import java.util.Set;
  * @date 2018-01-04 10:34
  */
 @Slf4j
+@AllArgsConstructor
 @Service
 public class FastDfsService {
 
-    @Autowired
-    private FastFileStorageClient fastFileStorageClient;    // 面向普通应用的文件操作接口
+    /**
+     * 面向普通应用的文件操作接口
+     */
+    private final FastFileStorageClient fastFileStorageClient;
 
-    @Autowired
-    private AppendFileStorageClient appendFileStorageClient;    // 支持断点续传的文件服务接口
+    /**
+     * 支持断点续传的文件服务接口
+     */
+    private final AppendFileStorageClient appendFileStorageClient;
 
-    @Autowired
-    private TrackerClient trackerClient;    // 目录服务(Tracker)客户端接口
+    /**
+     * 目录服务(Tracker)客户端接口
+     */
+    private final TrackerClient trackerClient;
 
     /**
      * 上传文件

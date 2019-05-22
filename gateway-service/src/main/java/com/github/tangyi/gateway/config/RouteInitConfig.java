@@ -4,9 +4,9 @@ import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.model.Route;
 import com.github.tangyi.common.core.utils.JsonMapper;
 import com.github.tangyi.gateway.receiver.GatewayRouteReceiver;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -22,14 +22,13 @@ import java.util.List;
  * @date 2019/4/2 14:40
  */
 @Slf4j
+@AllArgsConstructor
 @Configuration
 public class RouteInitConfig {
 
-    @Autowired
-    private RedisTemplate redisTemplate;
+    private final RedisTemplate redisTemplate;
 
-    @Autowired
-    private GatewayRouteReceiver gatewayRouteReceiver;
+    private final GatewayRouteReceiver gatewayRouteReceiver;
 
     @PostConstruct
     public void initRoute() {

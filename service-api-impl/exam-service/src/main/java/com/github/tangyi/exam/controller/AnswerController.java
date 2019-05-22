@@ -15,9 +15,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -27,13 +27,13 @@ import org.springframework.web.bind.annotation.*;
  * @date 2018/11/8 21:24
  */
 @Slf4j
+@AllArgsConstructor
 @Api("答题信息管理")
 @RestController
 @RequestMapping("/v1/answer")
 public class AnswerController extends BaseController {
 
-    @Autowired
-    private AnswerService answerService;
+    private final AnswerService answerService;
 
     /**
      * 根据ID获取

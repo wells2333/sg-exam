@@ -7,6 +7,7 @@ import com.github.tangyi.common.core.utils.JsonMapper;
 import com.github.tangyi.common.core.vo.RouteFilterVo;
 import com.github.tangyi.common.core.vo.RoutePredicateVo;
 import com.github.tangyi.gateway.service.DynamicRouteService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -28,11 +29,11 @@ import java.util.List;
  * @date 2019/4/2 18:07
  */
 @Slf4j
+@AllArgsConstructor
 @Service
 public class GatewayRouteReceiver {
 
-    @Autowired
-    private DynamicRouteService dynamicRouteService;
+    private final DynamicRouteService dynamicRouteService;
 
     /**
      * 修改路由

@@ -16,6 +16,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
@@ -24,8 +25,8 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -39,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class TokenRequestGlobalFilter implements GlobalFilter, Ordered {
 
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
 
     /**
      * 连接器
@@ -67,7 +68,7 @@ public class TokenRequestGlobalFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         // 请求的URI
         URI uri = request.getURI();
-        if ("POST".equals(request.getMethodValue())
+        if (HttpMethod.POST.matches(request.getMethodValue())
                 && StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.OAUTH_TOKEN_URL, GatewayConstant.REGISTER, GatewayConstant.MOBILE_TOKEN_URL)) {
             String grantType = request.getQueryParams().getFirst(GatewayConstant.GRANT_TYPE);
             // 授权类型为密码模式
@@ -86,11 +87,7 @@ public class TokenRequestGlobalFilter implements GlobalFilter, Ordered {
                                     dataBuffer.read(content);
                                     // 释放缓存
                                     DataBufferUtils.release(dataBuffer);
-                                    try {
-                                        contentList.add(new String(content, "utf-8"));
-                                    } catch (IOException e) {
-                                        log.error(e.getMessage(), e);
-                                    }
+                                    contentList.add(new String(content, StandardCharsets.UTF_8));
                                 });
                                 // 因为返回的数据量大时，获取到的buffer是不完整的，所以需要连接多个buffer
                                 String accessTokenContent = joiner.join(contentList);
@@ -104,7 +101,7 @@ public class TokenRequestGlobalFilter implements GlobalFilter, Ordered {
                                 String converted = JsonMapper.getInstance().toJson(accessToken);
                                 log.trace("转换token结果：{}", converted);
                                 // 将真正的access_token，refresh_token存入Redis，建立jti->access_token的映射关系，失效时间为token的失效时间
-                                // 暂时用Redis，可以考虑用内存队列实现来提高性能，参考TokenCacheMap
+                                // 暂时用Redis
                                 redisTemplate.opsForValue().set(GatewayConstant.GATEWAY_ACCESS_TOKENS + accessToken.getJti(), realAccessToken, accessToken.getExpiresIn(), TimeUnit.SECONDS);
                                 redisTemplate.opsForValue().set(GatewayConstant.GATEWAY_REFRESH_TOKENS + accessToken.getJti(), realRefreshToken, REFRESH_TOKEN_EXPIRE, TimeUnit.SECONDS);
                                 log.trace("转换token和建立映射关系成功，耗时：{}ms", System.currentTimeMillis() - start);

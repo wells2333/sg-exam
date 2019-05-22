@@ -16,6 +16,7 @@ import com.github.tangyi.exam.service.SubjectCategoryService;
 import com.github.tangyi.exam.utils.SubjectBankUtil;
 import com.google.common.net.HttpHeaders;
 import io.swagger.annotations.*;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -37,16 +38,15 @@ import java.util.List;
  * @date 2018/12/9 14:12
  */
 @Slf4j
+@AllArgsConstructor
 @Api("题库信息管理")
 @RestController
 @RequestMapping("/v1/subjectBank")
 public class SubjectBankController extends BaseController {
 
-    @Autowired
-    private SubjectBankService subjectBankService;
+    private final SubjectBankService subjectBankService;
 
-    @Autowired
-    private SubjectCategoryService subjectCategoryService;
+    private final SubjectCategoryService subjectCategoryService;
 
     /**
      * 根据ID获取
