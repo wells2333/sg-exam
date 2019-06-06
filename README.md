@@ -1,8 +1,8 @@
 ## spring-microservice-exam
 
-- 在线体验-前台：[http://www.it99.club](http://www.it99.club)
+- 在线体验-前台：[http://ehedgehog.net](http://ehedgehog.net)
 
-- 在线体验-后台：[http://www.it99.club:81](http://www.it99.club:81)
+- 在线体验-后台：[http://ehedgehog.net:81](http://ehedgehog.net:81)
 
 交流QQ群：996208878
 
