@@ -48,15 +48,15 @@ security:
       jwt:
         key-uri: http://${AUTH_SERVICE_HOST:localhost}:${AUTH_SERVICE_PORT:8000}/api/auth/oauth/token_key
         key-value: |
-           -----BEGIN PUBLIC KEY-----
-           MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjxSawA+NUNmhB2ctiVnt
-           YH41WCNoD5STW2iPm5AIsKvm6X67lr6A88qOMRwx9oySdZnUnJ+8L3QJ51fkwuDe
-           ix5w9yA3f/7LUPWZU8M/7Oi+2nda05JMgU999TUlhTGsp9SPiBqq/iwuqMxU8xKu
-           F8bpTJTOpzrxH4e5BM6J/UJcOwDZLY6/3zP5w+tbhTvxjc995G4NtUyS4owE1MHe
-           lj8IJepknjePrE6nXD6ecdL401hstMY838UOOFiCnM8NpiBuNI0nY0qCbb9mhQZ+
-           7gP3jjM+Ft7R+MFTuEHWQ5UN8qHAPIT9UlLcu9IXdk6YwTsqNavwaTLUcP/ih9HB
-           6wIDAQAB
-           -----END PUBLIC KEY-----
+          -----BEGIN PUBLIC KEY-----
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjxSawA+NUNmhB2ctiVnt
+          YH41WCNoD5STW2iPm5AIsKvm6X67lr6A88qOMRwx9oySdZnUnJ+8L3QJ51fkwuDe
+          ix5w9yA3f/7LUPWZU8M/7Oi+2nda05JMgU999TUlhTGsp9SPiBqq/iwuqMxU8xKu
+          F8bpTJTOpzrxH4e5BM6J/UJcOwDZLY6/3zP5w+tbhTvxjc995G4NtUyS4owE1MHe
+          lj8IJepknjePrE6nXD6ecdL401hstMY838UOOFiCnM8NpiBuNI0nY0qCbb9mhQZ+
+          7gP3jjM+Ft7R+MFTuEHWQ5UN8qHAPIT9UlLcu9IXdk6YwTsqNavwaTLUcP/ih9HB
+          6wIDAQAB
+          -----END PUBLIC KEY-----
 
 # mybatis配置
 mybatis:
@@ -68,10 +68,10 @@ mybatis:
     lazy-loading-enabled: true
   mapper-locations: classpath:mapper/*.xml
 pagehelper:
-    helperDialect: mysql
-    reasonable: true
-    supportMethodsArguments: true
-    params: count=countSql
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
 
 feign:
   hystrix:
@@ -107,6 +107,7 @@ ignore:
     - /actuator/**
     - /hystrix.sender
     - /v1/user/findUserByUsername/**
+    - /v1/tenant/findTenantByTenantCode/**
     - /v1/menu/findMenuByRole/**
     - /v1/menu/findAllMenu
     - /v1/user/checkExist/**

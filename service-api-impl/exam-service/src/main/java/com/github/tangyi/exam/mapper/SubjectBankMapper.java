@@ -11,5 +11,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @date 2018/12/9 14:10
  */
 @Mapper
-public interface SubjectBankMapper  extends CrudMapper<SubjectBank> {
+public interface SubjectBankMapper extends CrudMapper<SubjectBank> {
 }

@@ -7,7 +7,6 @@ import com.github.tangyi.common.core.utils.*;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.constant.SecurityConstant;
-import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.exam.api.dto.SubjectBankDto;
 import com.github.tangyi.exam.api.module.SubjectBank;
 import com.github.tangyi.exam.api.module.SubjectCategory;
@@ -20,13 +19,14 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,11 +61,8 @@ public class SubjectBankController extends BaseController {
     @ApiImplicitParam(name = "id", value = "题库ID", required = true, dataType = "String", paramType = "path")
     public ResponseBean<SubjectBank> subjectBank(@PathVariable String id) {
         SubjectBank subjectBank = new SubjectBank();
-        if (StringUtils.isNotBlank(id)) {
-            subjectBank.setId(id);
-            subjectBank = subjectBankService.get(subjectBank);
-        }
-        return new ResponseBean<>(subjectBank);
+        subjectBank.setId(id);
+        return new ResponseBean<>(subjectBankService.get(subjectBank));
     }
 
     /**
@@ -94,6 +91,7 @@ public class SubjectBankController extends BaseController {
                                                  @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
                                                  @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                                  SubjectBank subjectBank) {
+        subjectBank.setTenantCode(SysUtil.getTenantCode());
         PageInfo<SubjectBank> page = subjectBankService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), subjectBank);
         if (CollectionUtils.isNotEmpty(page.getList())) {
             // 查询分类信息
@@ -125,12 +123,12 @@ public class SubjectBankController extends BaseController {
      * @date 2018/12/9 14:14
      */
     @PostMapping
-    @PreAuthorize("hasAuthority('exam:subject:bank:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('exam:subject:bank:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "创建题库", notes = "创建题库")
     @ApiImplicitParam(name = "subjectBank", value = "题库实体subjectBank", required = true, dataType = "SubjectBank")
     @Log("新增题库")
-    public ResponseBean<Boolean> addSubjectBank(@RequestBody SubjectBank subjectBank) {
-        subjectBank.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> addSubjectBank(@RequestBody @Valid SubjectBank subjectBank) {
+        subjectBank.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(subjectBankService.insert(subjectBank) > 0);
     }
 
@@ -143,12 +141,12 @@ public class SubjectBankController extends BaseController {
      * @date 2018/12/9 14:15
      */
     @PutMapping
-    @PreAuthorize("hasAuthority('exam:subject:bank:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('exam:subject:bank:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "更新题库信息", notes = "根据题库id更新题库的基本信息")
     @ApiImplicitParam(name = "subjectBank", value = "题库实体subjectBank", required = true, dataType = "SubjectBank")
     @Log("更新题库")
-    public ResponseBean<Boolean> updateSubjectBank(@RequestBody SubjectBank subjectBank) {
-        subjectBank.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> updateSubjectBank(@RequestBody @Valid SubjectBank subjectBank) {
+        subjectBank.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(subjectBankService.update(subjectBank) > 0);
     }
 
@@ -161,7 +159,7 @@ public class SubjectBankController extends BaseController {
      * @date 2018/12/9 14:15
      */
     @DeleteMapping("{id}")
-    @PreAuthorize("hasAuthority('exam:subject:bank:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('exam:subject:bank:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "删除题库", notes = "根据ID删除题库")
     @ApiImplicitParam(name = "id", value = "题库ID", required = true, paramType = "path")
     @Log("删除题库")
@@ -172,7 +170,7 @@ public class SubjectBankController extends BaseController {
             subjectBank.setId(id);
             subjectBank = subjectBankService.get(subjectBank);
             if (subjectBank != null) {
-                subjectBank.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+                subjectBank.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
                 success = subjectBankService.delete(subjectBank) > 0;
             }
         } catch (Exception e) {
@@ -188,8 +186,8 @@ public class SubjectBankController extends BaseController {
      * @author tangyi
      * @date 2018/12/9 14:16
      */
-    @PostMapping("/export")
-    @PreAuthorize("hasAuthority('exam:subject:bank:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PostMapping("export")
+    @PreAuthorize("hasAuthority('exam:subject:bank:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "导出题目", notes = "根据分类id导出题目")
     @ApiImplicitParam(name = "subjectBankDto", value = "分类信息", required = true, dataType = "SubjectBankDto")
     @Log("导出题库题目")
@@ -229,12 +227,12 @@ public class SubjectBankController extends BaseController {
      * @author tangyi
      * @date 2018/12/9 14:19
      */
-    @RequestMapping("/import")
-    @PreAuthorize("hasAuthority('exam:subject:bank:import') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @RequestMapping("import")
+    @PreAuthorize("hasAuthority('exam:subject:bank:import') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "导入题目", notes = "导入题目")
     @ApiImplicitParam(name = "categoryId", value = "分类ID", required = true, dataType = "String")
     @Log("导入题库题目")
-    public ResponseBean<Boolean> importSubjectBank(String categoryId, @ApiParam(value = "要上传的文件", required = true) MultipartFile file) {
+    public ResponseBean<Boolean> importSubjectBank(@NotBlank String categoryId, @ApiParam(value = "要上传的文件", required = true) MultipartFile file) {
         try {
             log.debug("开始导入题目数据，分类ID：{}", categoryId);
             List<SubjectBank> subjectBanks = MapUtil.map2Java(SubjectBank.class,
@@ -243,13 +241,12 @@ public class SubjectBankController extends BaseController {
                 for (SubjectBank subjectBank : subjectBanks) {
                     // 初始化考试ID
                     if (StringUtils.isBlank(subjectBank.getId())) {
-                        subjectBank.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+                        subjectBank.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
                         subjectBank.setCategoryId(categoryId);
                         subjectBankService.insert(subjectBank);
                     } else {
                         // 绑定分类ID
-                        if (StringUtils.isNotBlank(categoryId))
-                            subjectBank.setCategoryId(categoryId);
+                        subjectBank.setCategoryId(categoryId);
                         subjectBankService.update(subjectBank);
                     }
                 }
@@ -269,8 +266,8 @@ public class SubjectBankController extends BaseController {
      * @author tangyi
      * @date 2018/12/04 9:55
      */
-    @PostMapping("/deleteAll")
-    @PreAuthorize("hasAuthority('exam:subject:bank:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PostMapping("deleteAll")
+    @PreAuthorize("hasAuthority('exam:subject:bank:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "批量删除题目", notes = "根据题目id批量删除题目")
     @ApiImplicitParam(name = "subjectBankDto", value = "题目信息", dataType = "SubjectBankDto")
     @Log("批量删除题库题目")

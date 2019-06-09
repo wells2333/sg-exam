@@ -149,11 +149,12 @@
         r.del_flag = 0
         AND a.del_flag = 0
         AND r.role_code = #{role}
+        AND r.tenant_code = #{tenantCode}
         ORDER BY a.sort DESC
     </select>
 
     <update id="update">
-        UPDATE sys_menu  SET
+        UPDATE sys_menu SET
         <if test="name != null">
             name = #{name},
         </if>

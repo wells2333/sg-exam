@@ -3,6 +3,8 @@ package com.github.tangyi.user.api.module;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * 附件信息
  *
@@ -15,11 +17,13 @@ public class Attachment extends BaseEntity<Attachment> {
     /**
      * 附件名称
      */
+    @NotBlank(message = "附件名称不能为空")
     private String attachName;
 
     /**
      * 附件大小
      */
+    @NotBlank(message = "附件大小不能为空")
     private String attachSize;
 
     /**
@@ -35,6 +39,7 @@ public class Attachment extends BaseEntity<Attachment> {
     /**
      * 业务流水号
      */
+    @NotBlank(message = "附件业务流水号不能为空")
     private String busiId;
 
     /**

@@ -98,7 +98,7 @@
     </select>
 
     <update id="update">
-        UPDATE subject_category  SET
+        UPDATE subject_category SET
         <if test="categoryName != null">
             category_name = #{categoryName},
         </if>

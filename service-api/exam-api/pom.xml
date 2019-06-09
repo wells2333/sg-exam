@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.github.tangyi</groupId>
         <artifactId>service-api</artifactId>
-        <version>2.0</version>
+        <version>3.0.0</version>
     </parent>
     <artifactId>exam-api</artifactId>
     <name>${project.artifactId}</name>

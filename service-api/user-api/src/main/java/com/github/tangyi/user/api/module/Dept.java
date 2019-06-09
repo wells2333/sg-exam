@@ -3,6 +3,8 @@ package com.github.tangyi.user.api.module;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * 部门
  *
@@ -15,6 +17,7 @@ public class Dept extends BaseEntity<Dept> {
     /**
      * 部门名称
      */
+    @NotBlank(message = "部门名称不能为空")
     private String deptName;
 
     /**
@@ -40,5 +43,6 @@ public class Dept extends BaseEntity<Dept> {
     /**
      * 状态， 0-启用，1-禁用
      */
+    @NotBlank(message = "部门状态不能为空")
     private String status;
 }

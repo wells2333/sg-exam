@@ -4,7 +4,11 @@
 
 - 在线体验-后台：[http://www.it99.club:81](http://www.it99.club:81)
 
-交流QQ群：996208878
+交流QQ群：
+
+<a target="_blank" href="https://jq.qq.com/?_wv=1027&k=5RKZNF2"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="Spring Cloud考试系统学习" title="Spring Cloud考试系统学习"></a>
+
+群号：996208878
 
 如果您觉得有帮助，请点右上角 "Star" 或者项目底部的“捐助”支持一下，谢谢！
 
@@ -25,6 +29,8 @@
 - 后端基于`spring boot`、`spring cloud`、`MySQL`等技术实现权限管理、考试管理等功能。
 
 默认账号：
+
+单位ID：gitee
 
 1. 管理员：admin/123456
 2. 学生：student/123456
@@ -59,7 +65,7 @@
 
 ## 系统架构
 
-![image](doc/产品设计/系统架构图.png)
+![image](doc/产品设计/系统架构图v3.0.jpg)
 
 ## 功能概述
 

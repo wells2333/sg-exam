@@ -3,6 +3,8 @@ package com.github.tangyi.common.core.model;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * 路由信息
  *
@@ -15,6 +17,7 @@ public class Route extends BaseEntity<Route> {
     /**
      * 路由ID
      */
+    @NotBlank(message = "路由id不能为空")
     private String routeId;
 
     /**
@@ -35,6 +38,7 @@ public class Route extends BaseEntity<Route> {
     /**
      * URI
      */
+    @NotBlank(message = "路由URI不能为空")
     private String uri;
 
     /**
@@ -45,5 +49,6 @@ public class Route extends BaseEntity<Route> {
     /**
      * 启用禁用
      */
+    @NotBlank(message = "路由状态不能为空")
     private String status;
 }

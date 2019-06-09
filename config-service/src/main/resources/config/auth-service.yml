@@ -83,6 +83,7 @@ ignore:
     - /actuator/**
     - /hystrix.sender
     - /v1/user/findUserByUsername/**
+    - /v1/tenant/findTenantByTenantCode/**
     - /v1/user/checkExist/**
     - /v1/menu/findMenuByRole/**
     - /v1/menu/findAllMenu

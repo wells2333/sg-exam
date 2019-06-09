@@ -5,7 +5,6 @@ import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.log.event.LogEvent;
 import com.github.tangyi.common.log.utils.LogUtil;
-import com.github.tangyi.common.security.utils.SecurityUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -35,7 +34,7 @@ public class LogAspect {
         Object obj = point.proceed();
         Long endTime = System.currentTimeMillis();
         logVo.setTime(String.valueOf(endTime - startTime));
-        logVo.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+        logVo.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
         SpringContextHolder.publishEvent(new LogEvent(logVo));
         return obj;
     }

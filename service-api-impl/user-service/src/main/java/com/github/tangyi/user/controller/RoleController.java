@@ -8,7 +8,6 @@ import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.constant.SecurityConstant;
-import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.user.api.module.Role;
 import com.github.tangyi.user.service.RoleMenuService;
 import com.github.tangyi.user.service.RoleService;
@@ -22,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -89,6 +89,7 @@ public class RoleController extends BaseController {
                                    @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
                                    @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                    Role role) {
+        role.setTenantCode(SysUtil.getTenantCode());
         return roleService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), role);
     }
 
@@ -105,6 +106,7 @@ public class RoleController extends BaseController {
     @ApiImplicitParam(name = "role", value = "角色信息", dataType = "Role")
     public ResponseBean<List<Role>> allRoles(Role role) {
         role.setApplicationCode(SysUtil.getSysCode());
+        role.setTenantCode(SysUtil.getTenantCode());
         return new ResponseBean<>(roleService.findAllList(role));
     }
 
@@ -117,12 +119,12 @@ public class RoleController extends BaseController {
      * @date 2018/9/14 18:22
      */
     @PutMapping
-    @PreAuthorize("hasAuthority('sys:role:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('sys:role:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "更新角色信息", notes = "根据角色id更新角色的基本信息")
     @ApiImplicitParam(name = "role", value = "角色实体role", required = true, dataType = "Role")
     @Log("修改角色")
-    public ResponseBean<Boolean> updateRole(@RequestBody Role role) {
-        role.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> updateRole(@RequestBody @Valid Role role) {
+        role.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(roleService.update(role) > 0);
     }
 
@@ -140,12 +142,12 @@ public class RoleController extends BaseController {
     @Log("更新角色菜单")
     public ResponseBean<Boolean> updateRoleMenu(@RequestBody Role role) {
         boolean success = false;
-        String deptId = role.getDeptId();
+        String menuIds = role.getMenuIds();
         if (StringUtils.isNotBlank(role.getId())) {
             role = roleService.get(role);
             // 保存角色菜单关系
-            if (role != null && StringUtils.isNotBlank(deptId))
-                success = roleMenuService.saveRoleMenus(role.getId(), Stream.of(deptId.split(",")).collect(Collectors.toList())) > 0;
+            if (role != null && StringUtils.isNotBlank(menuIds))
+                success = roleMenuService.saveRoleMenus(role.getId(), Stream.of(menuIds.split(",")).collect(Collectors.toList())) > 0;
         }
         return new ResponseBean<>(success);
     }
@@ -159,12 +161,12 @@ public class RoleController extends BaseController {
      * @date 2018/9/14 18:23
      */
     @PostMapping
-    @PreAuthorize("hasAuthority('sys:role:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('sys:role:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "创建角色", notes = "创建角色")
     @ApiImplicitParam(name = "role", value = "角色实体role", required = true, dataType = "Role")
     @Log("新增角色")
-    public ResponseBean<Boolean> role(@RequestBody Role role) {
-        role.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> role(@RequestBody @Valid Role role) {
+        role.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(roleService.insert(role) > 0);
     }
 
@@ -177,7 +179,7 @@ public class RoleController extends BaseController {
      * @date 2018/9/14 18:24
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('sys:role:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('sys:role:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "删除角色", notes = "根据ID删除角色")
     @ApiImplicitParam(name = "id", value = "角色ID", required = true, paramType = "path")
     @Log("删除角色")
@@ -185,7 +187,7 @@ public class RoleController extends BaseController {
         Role role = new Role();
         role.setId(id);
         role.setNewRecord(false);
-        role.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+        role.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(roleService.delete(role) > 0);
     }
 
@@ -198,7 +200,7 @@ public class RoleController extends BaseController {
      * @date 2018/12/4 10:00
      */
     @PostMapping("deleteAll")
-    @PreAuthorize("hasAuthority('sys:role:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('sys:role:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "批量删除角色", notes = "根据角色id批量删除角色")
     @ApiImplicitParam(name = "role", value = "角色信息", dataType = "Role")
     @Log("批量删除角色")

@@ -2,9 +2,8 @@ package com.github.tangyi.user.utils;
 
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.utils.SysUtil;
-import com.github.tangyi.common.security.utils.SecurityUtil;
-import com.github.tangyi.user.api.module.Menu;
 import com.github.tangyi.user.api.constant.MenuConstant;
+import com.github.tangyi.user.api.module.Menu;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -30,7 +29,7 @@ public class MenuUtil {
         List<Menu> menus = new ArrayList<>();
         // 新增权限
         Menu add = new Menu();
-        add.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+        add.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
         add.setParentId(menu.getId());
         add.setName(MenuConstant.PERMISSION_ADD);
         add.setPermission(menu.getPermission() + MenuConstant.PERMISSION_SUFFIX_ADD);
@@ -39,7 +38,7 @@ public class MenuUtil {
 
         // 删除权限
         Menu del = new Menu();
-        del.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+        del.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
         del.setParentId(menu.getId());
         del.setName(MenuConstant.PERMISSION_DELETE);
         del.setPermission(menu.getPermission() + MenuConstant.PERMISSION_SUFFIX_DELETE);
@@ -48,7 +47,7 @@ public class MenuUtil {
 
         // 修改权限
         Menu edit = new Menu();
-        edit.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+        edit.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
         edit.setParentId(menu.getId());
         edit.setName(MenuConstant.PERMISSION_MODIFY);
         edit.setPermission(menu.getPermission() + MenuConstant.PERMISSION_SUFFIX_MODIFY);
@@ -88,6 +87,7 @@ public class MenuUtil {
         map.put("modifyDate", "修改时间");
         map.put("delFlag", "删除标记");
         map.put("applicationCode", "系统编码");
+        map.put("tenantCode", "租户标识");
         return map;
     }
 }

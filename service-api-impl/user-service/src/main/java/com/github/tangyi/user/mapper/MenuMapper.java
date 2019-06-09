@@ -3,6 +3,7 @@ package com.github.tangyi.user.mapper;
 import com.github.tangyi.common.core.persistence.CrudMapper;
 import com.github.tangyi.user.api.module.Menu;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -18,8 +19,9 @@ public interface MenuMapper extends CrudMapper<Menu> {
     /**
      * 根据角色查找菜单
      *
-     * @param role 角色
+     * @param role       角色标识
+     * @param tenantCode 租户标识
      * @return List
      */
-    List<Menu> findByRole(String role);
+    List<Menu> findByRole(@Param("role") String role, @Param("tenantCode") String tenantCode);
 }

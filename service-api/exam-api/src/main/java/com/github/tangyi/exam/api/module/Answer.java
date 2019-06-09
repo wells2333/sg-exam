@@ -1,6 +1,9 @@
 package com.github.tangyi.exam.api.module;
 
 import com.github.tangyi.common.core.persistence.BaseEntity;
+import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * 答题
@@ -8,21 +11,25 @@ import com.github.tangyi.common.core.persistence.BaseEntity;
  * @author tangyi
  * @date 2018/11/8 20:59
  */
+@Data
 public class Answer extends BaseEntity<Answer> {
 
     /**
      * 用户ID
      */
+    @NotBlank(message = "用户ID不能为空")
     private String userId;
 
     /**
      * 考试ID
      */
+    @NotBlank(message = "考试ID不能为空")
     private String examinationId;
 
     /**
      * 考试记录id
      */
+    @NotBlank(message = "考试记录ID不能为空")
     private String examRecordId;
 
     /**
@@ -33,6 +40,7 @@ public class Answer extends BaseEntity<Answer> {
     /**
      * 题目ID
      */
+    @NotBlank(message = "题目ID不能为空")
     private String subjectId;
 
     /**
@@ -50,67 +58,4 @@ public class Answer extends BaseEntity<Answer> {
      */
     private String serialNumber;
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getExaminationId() {
-        return examinationId;
-    }
-
-    public void setExaminationId(String examinationId) {
-        this.examinationId = examinationId;
-    }
-
-    public String getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(String courseId) {
-        this.courseId = courseId;
-    }
-
-    public String getSubjectId() {
-        return subjectId;
-    }
-
-    public void setSubjectId(String subjectId) {
-        this.subjectId = subjectId;
-    }
-
-    public String getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
-
-    public String getExamRecordId() {
-        return examRecordId;
-    }
-
-    public void setExamRecordId(String examRecordId) {
-        this.examRecordId = examRecordId;
-    }
-
-    public String getSerialNumber() {
-        return serialNumber;
-    }
-
-    public void setSerialNumber(String serialNumber) {
-        this.serialNumber = serialNumber;
-    }
-
-    public String getOptionAnswer() {
-        return optionAnswer;
-    }
-
-    public void setOptionAnswer(String optionAnswer) {
-        this.optionAnswer = optionAnswer;
-    }
 }

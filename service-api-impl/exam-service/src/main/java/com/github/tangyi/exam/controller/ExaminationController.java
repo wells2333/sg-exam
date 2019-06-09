@@ -8,7 +8,6 @@ import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.constant.SecurityConstant;
-import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.exam.api.dto.ExaminationDto;
 import com.github.tangyi.exam.api.module.Course;
 import com.github.tangyi.exam.api.module.Examination;
@@ -26,6 +25,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,11 +60,8 @@ public class ExaminationController extends BaseController {
     @ApiImplicitParam(name = "id", value = "考试ID", required = true, dataType = "String", paramType = "path")
     public ResponseBean<Examination> examination(@PathVariable String id) {
         Examination examination = new Examination();
-        if (StringUtils.isNotBlank(id)) {
-            examination.setId(id);
-            examination = examinationService.get(examination);
-        }
-        return new ResponseBean<>(examination);
+        examination.setId(id);
+        return new ResponseBean<>(examinationService.get(examination));
     }
 
     /**
@@ -92,6 +90,7 @@ public class ExaminationController extends BaseController {
                                                     @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
                                                     @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                                     Examination examination) {
+        examination.setTenantCode(SysUtil.getTenantCode());
         PageInfo<Examination> page = examinationService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), examination);
         PageInfo<ExaminationDto> examinationDtoPageInfo = new PageInfo<>();
         BeanUtils.copyProperties(page, examinationDtoPageInfo);
@@ -122,15 +121,15 @@ public class ExaminationController extends BaseController {
      * @date 2018/11/10 21:14
      */
     @PostMapping
-    @PreAuthorize("hasAuthority('exam:exam:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('exam:exam:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "创建考试", notes = "创建考试")
     @ApiImplicitParam(name = "examinationDto", value = "考试实体examinationDto", required = true, dataType = "ExaminationDto")
     @Log("新增考试")
-    public ResponseBean<Boolean> addExamination(@RequestBody ExaminationDto examinationDto) {
+    public ResponseBean<Boolean> addExamination(@RequestBody @Valid ExaminationDto examinationDto) {
         Examination examination = new Examination();
         BeanUtils.copyProperties(examinationDto, examination);
         examination.setCourseId(examinationDto.getCourse().getId());
-        examination.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+        examination.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(examinationService.insert(examination) > 0);
     }
 
@@ -143,15 +142,15 @@ public class ExaminationController extends BaseController {
      * @date 2018/11/10 21:15
      */
     @PutMapping
-    @PreAuthorize("hasAuthority('exam:exam:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('exam:exam:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "更新考试信息", notes = "根据考试id更新考试的基本信息")
     @ApiImplicitParam(name = "examinationDto", value = "考试实体answer", required = true, dataType = "ExaminationDto")
     @Log("更新考试")
-    public ResponseBean<Boolean> updateExamination(@RequestBody ExaminationDto examinationDto) {
+    public ResponseBean<Boolean> updateExamination(@RequestBody @Valid ExaminationDto examinationDto) {
         Examination examination = new Examination();
         BeanUtils.copyProperties(examinationDto, examination);
         examination.setCourseId(examinationDto.getCourse().getId());
-        examination.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+        examination.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(examinationService.update(examination) > 0);
     }
 
@@ -164,7 +163,7 @@ public class ExaminationController extends BaseController {
      * @date 2018/11/10 21:20
      */
     @DeleteMapping("{id}")
-    @PreAuthorize("hasAuthority('exam:exam:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('exam:exam:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "删除考试", notes = "根据ID删除考试")
     @ApiImplicitParam(name = "id", value = "考试ID", required = true, paramType = "path")
     @Log("删除考试")
@@ -175,7 +174,7 @@ public class ExaminationController extends BaseController {
             examination.setId(id);
             examination = examinationService.get(examination);
             if (examination != null) {
-                examination.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+                examination.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
                 success = examinationService.delete(examination) > 0;
             }
         } catch (Exception e) {
@@ -192,8 +191,8 @@ public class ExaminationController extends BaseController {
      * @author tangyi
      * @date 2018/12/03 22:03
      */
-    @PostMapping("/deleteAll")
-    @PreAuthorize("hasAuthority('exam:exam:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PostMapping("deleteAll")
+    @PreAuthorize("hasAuthority('exam:exam:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "批量删除考试", notes = "根据考试id批量删除考试")
     @ApiImplicitParam(name = "examinationDto", value = "考试信息", dataType = "ExaminationDto")
     @Log("批量删除考试")
@@ -211,14 +210,15 @@ public class ExaminationController extends BaseController {
     /**
      * 查询考试数量
      *
+     * @param tenantCode 租户标识
      * @return ResponseBean
      * @author tangyi
      * @date 2019/3/1 15:30
      */
-    @GetMapping("/examinationCount")
-    public ResponseBean<Integer> findExaminationCount() {
+    @GetMapping("examinationCount")
+    public ResponseBean<Integer> findExaminationCount(@RequestParam @NotBlank String tenantCode) {
         Examination examination = new Examination();
-        examination.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+        examination.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), tenantCode);
         return new ResponseBean<>(examinationService.findExaminationCount(examination));
     }
 }

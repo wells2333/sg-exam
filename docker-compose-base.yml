@@ -70,7 +70,7 @@ services:
   # 配置中心
   # ---------------------------
   config-service:
-    image: registry.cn-hangzhou.aliyuncs.com/spring-microservice-exam/config-service:2.0
+    image: registry.cn-hangzhou.aliyuncs.com/spring-microservice-exam/config-service:3.0.0
     container_name: config-service
     env_file: docker-compose.env  # 从文件中获取配置
     restart: always

@@ -140,7 +140,7 @@
     </insert>
 
     <update id="update">
-        UPDATE exam_record  SET
+        UPDATE exam_record SET
         <if test="userId != null">
             user_id = #{userId},
         </if>

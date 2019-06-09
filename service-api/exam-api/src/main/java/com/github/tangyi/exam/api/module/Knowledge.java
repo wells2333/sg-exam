@@ -1,6 +1,9 @@
 package com.github.tangyi.exam.api.module;
 
 import com.github.tangyi.common.core.persistence.BaseEntity;
+import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * 知识库
@@ -8,11 +11,13 @@ import com.github.tangyi.common.core.persistence.BaseEntity;
  * @author tangyi
  * @date 2019/1/1 15:01
  */
+@Data
 public class Knowledge extends BaseEntity<Knowledge> {
 
     /**
      * 知识名称
      */
+    @NotBlank(message = "知识名称不能为空")
     private String knowledgeName;
 
     /**
@@ -28,37 +33,6 @@ public class Knowledge extends BaseEntity<Knowledge> {
     /**
      * 状态
      */
+    @NotBlank(message = "状态不能为空")
     private String status;
-
-    public String getKnowledgeName() {
-        return knowledgeName;
-    }
-
-    public void setKnowledgeName(String knowledgeName) {
-        this.knowledgeName = knowledgeName;
-    }
-
-    public String getKnowledgeDesc() {
-        return knowledgeDesc;
-    }
-
-    public void setKnowledgeDesc(String knowledgeDesc) {
-        this.knowledgeDesc = knowledgeDesc;
-    }
-
-    public String getAttachmentId() {
-        return attachmentId;
-    }
-
-    public void setAttachmentId(String attachmentId) {
-        this.attachmentId = attachmentId;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 }
