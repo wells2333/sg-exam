@@ -101,7 +101,7 @@
     </insert>
 
     <update id="update">
-        UPDATE course  SET
+        UPDATE course SET
         <if test="courseName != null">
             course_name = #{courseName},
         </if>
@@ -136,7 +136,7 @@
         del_flag = 1
         WHERE id in
         <foreach item="item" index="index" collection="array" open="("
-                 separator="," close=")"> #{item}
+                 separator="," close=")">#{item}
         </foreach>
     </delete>
 </mapper>

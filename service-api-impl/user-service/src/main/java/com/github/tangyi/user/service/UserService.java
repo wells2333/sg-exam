@@ -6,7 +6,6 @@ import com.github.tangyi.common.core.utils.IdGen;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.security.constant.SecurityConstant;
-import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.user.api.constant.MenuConstant;
 import com.github.tangyi.user.api.dto.UserDto;
 import com.github.tangyi.user.api.dto.UserInfoDto;
@@ -18,7 +17,6 @@ import com.github.tangyi.user.mapper.UserRoleMapper;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -63,7 +61,7 @@ public class UserService extends CrudService<UserMapper, User> {
         if (CollectionUtils.isNotEmpty(user.getRole())) {
             user.getRole().forEach(roleId -> {
                 UserRole sysUserRole = new UserRole();
-                sysUserRole.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+                sysUserRole.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
                 sysUserRole.setUserId(user.getId());
                 sysUserRole.setRoleId(roleId);
                 // 保存角色
@@ -82,8 +80,9 @@ public class UserService extends CrudService<UserMapper, User> {
      * @date 2018/9/11 23:44
      */
     public UserInfoDto findUserInfo(UserVo userVo) {
+        String tenantCode = userVo.getTenantCode();
         // 根据用户名查询用户信息
-        userVo = userMapper.selectUserVoByUsername(userVo.getUsername());
+        userVo = userMapper.selectUserVoByUsername(userVo.getUsername(), tenantCode);
         UserInfoDto user = new UserInfoDto();
         if (userVo != null) {
             user.setUser(userVo);
@@ -98,7 +97,7 @@ public class UserService extends CrudService<UserMapper, User> {
                         .filter(role -> !SecurityConstant.BASE_ROLE.equals(role.getRoleName()))
                         .forEach(role -> {
                             // 根据角色查找菜单
-                            List<Menu> menuList = menuService.findMenuByRole(role.getRoleCode());
+                            List<Menu> menuList = menuService.findMenuByRole(role.getRoleCode(), tenantCode);
                             if (CollectionUtils.isNotEmpty(menuList)) {
                                 menuList.stream()
                                         // 获取权限菜单
@@ -129,7 +128,7 @@ public class UserService extends CrudService<UserMapper, User> {
     public boolean updateUser(UserDto userDto) {
         User user = new User();
         BeanUtils.copyProperties(userDto, user);
-        user.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+        user.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         // 更新用户信息
         super.update(user);
         // 更新用户角色关系
@@ -166,12 +165,13 @@ public class UserService extends CrudService<UserMapper, User> {
     /**
      * 根据用户名查找
      *
-     * @param username username
+     * @param username   username
+     * @param tenantCode tenantCode
      * @return UserVo
      */
     @Cacheable(value = "user", key = "#username")
-    public UserVo selectUserVoByUsername(String username) {
-        return userMapper.selectUserVoByUsername(username);
+    public UserVo selectUserVoByUsername(String username, String tenantCode) {
+        return userMapper.selectUserVoByUsername(username, tenantCode);
     }
 
     /**

@@ -3,6 +3,10 @@ package com.github.tangyi.user.api.module;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 /**
@@ -16,18 +20,22 @@ public class User extends BaseEntity<User> {
 
     private String name;
 
+    @NotBlank(message = "用户名不能为空")
     private String username;
 
+    @NotBlank(message = "密码不能为空")
     private String password;
 
     private String salt;
 
+    @Pattern(regexp = "^\\d{11}$", message = "请输入11位手机号")
     private String phone;
 
     private String avatar;
 
     private String avatarId;
 
+    @Email(message = "邮箱格式不正确")
     private String email;
 
     private String sex;

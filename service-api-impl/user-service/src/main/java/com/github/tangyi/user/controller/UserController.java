@@ -2,13 +2,13 @@ package com.github.tangyi.user.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.constant.CommonConstant;
+import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.*;
 import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.constant.SecurityConstant;
-import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.user.api.constant.RoleConstant;
 import com.github.tangyi.user.api.dto.UserDto;
 import com.github.tangyi.user.api.dto.UserInfoDto;
@@ -36,6 +36,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -76,11 +78,8 @@ public class UserController extends BaseController {
     @ApiImplicitParam(name = "id", value = "用户ID", required = true, dataType = "String", paramType = "path")
     public ResponseBean<User> user(@PathVariable String id) {
         User user = new User();
-        if (StringUtils.isNotEmpty(id)) {
-            user.setId(id);
-            user = userService.get(user);
-        }
-        return new ResponseBean<>(user);
+        user.setId(id);
+        return new ResponseBean<>(userService.get(user));
     }
 
     /**
@@ -88,25 +87,30 @@ public class UserController extends BaseController {
      *
      * @return 用户名
      */
-    @GetMapping("/info")
+    @GetMapping("info")
     @ApiOperation(value = "获取用户信息", notes = "获取当前登录用户详细信息")
     public ResponseBean<UserInfoDto> user(Principal principal) {
         UserVo userVo = new UserVo();
         userVo.setUsername(principal.getName());
+        userVo.setTenantCode(SysUtil.getTenantCode());
         return new ResponseBean<>(userService.findUserInfo(userVo));
     }
 
     /**
      * 根据用户名获取用户详细信息
      *
-     * @param username username
+     * @param username   username
+     * @param tenantCode tenantCode
      * @return UserVo
      */
     @GetMapping("/findUserByUsername/{username}")
     @ApiOperation(value = "获取用户信息", notes = "根据用户name获取用户详细信息")
-    @ApiImplicitParam(name = "username", value = "用户name", required = true, dataType = "String", paramType = "path")
-    public UserVo findUserByUsername(@PathVariable String username) {
-        return userService.selectUserVoByUsername(username);
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "username", value = "用户name", required = true, dataType = "String", paramType = "path"),
+            @ApiImplicitParam(name = "tenantCode", value = "租户标识", required = true, dataType = "String"),
+    })
+    public UserVo findUserByUsername(@PathVariable String username, @RequestParam @NotBlank String tenantCode) {
+        return userService.selectUserVoByUsername(username, tenantCode);
     }
 
     /**
@@ -136,6 +140,7 @@ public class UserController extends BaseController {
                                    @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                    @RequestParam(value = "username", required = false, defaultValue = "") String username,
                                    UserVo userVo) {
+        userVo.setTenantCode(SysUtil.getTenantCode());
         User user = new User();
         BeanUtils.copyProperties(userVo, user);
         // 用户名查询条件
@@ -198,17 +203,14 @@ public class UserController extends BaseController {
      * @date 2018/8/26 14:34
      */
     @PostMapping
-    @PreAuthorize("hasAuthority('sys:user:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('sys:user:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "创建用户", notes = "创建用户")
     @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
     @Log("新增用户")
-    public ResponseBean<Boolean> addUser(@RequestBody UserDto userDto) {
+    public ResponseBean<Boolean> addUser(@RequestBody @Valid UserDto userDto) {
         User user = new User();
         BeanUtils.copyProperties(userDto, user);
-        user.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
-        // 设置默认密码
-        if (StringUtils.isEmpty(userDto.getPassword()))
-            userDto.setPassword(CommonConstant.DEFAULT_PASSWORD);
+        user.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         user.setPassword(encoder.encode(userDto.getPassword()));
         // 保存用户
         return new ResponseBean<>(userService.insert(user) > 0);
@@ -223,17 +225,17 @@ public class UserController extends BaseController {
      * @date 2018/8/26 15:06
      */
     @PutMapping
-    @PreAuthorize("hasAuthority('sys:user:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('sys:user:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "更新用户信息", notes = "根据用户id更新用户的基本信息、角色信息")
     @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
     @Log("修改用户")
-    public ResponseBean<Boolean> updateUser(@RequestBody UserDto userDto) {
+    public ResponseBean<Boolean> updateUser(@RequestBody @Valid UserDto userDto) {
         try {
             return new ResponseBean<>(userService.updateUser(userDto));
         } catch (Exception e) {
             log.error("更新用户信息失败！", e);
+            throw new CommonException("更新用户信息失败！");
         }
-        return new ResponseBean<>(Boolean.FALSE);
     }
 
     /**
@@ -248,7 +250,7 @@ public class UserController extends BaseController {
     @ApiOperation(value = "更新用户基本信息", notes = "根据用户id更新用户的基本信息")
     @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
     @Log("更新用户基本信息")
-    public ResponseBean<Boolean> updateInfo(@RequestBody UserDto userDto) {
+    public ResponseBean<Boolean> updateInfo(@RequestBody @Valid UserDto userDto) {
         // 新密码不为空
         if (StringUtils.isNotEmpty(userDto.getNewPassword())) {
             if (!encoder.matches(userDto.getOldPassword(), userDto.getPassword())) {
@@ -270,19 +272,21 @@ public class UserController extends BaseController {
      * @date 2018/8/26 15:28
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('sys:user:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('sys:user:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "删除用户", notes = "根据ID删除用户")
     @ApiImplicitParam(name = "id", value = "用户ID", required = true, paramType = "path")
     @Log("删除用户")
     public ResponseBean<Boolean> deleteUser(@PathVariable String id) {
         try {
-            User user = userService.get(id);
-            user.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
-            userService.delete(user);
+            User user = new User();
+            user.setId(id);
+            user = userService.get(user);
+            user.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+            return new ResponseBean<>(userService.delete(user) > 0);
         } catch (Exception e) {
             log.error("删除用户信息失败！", e);
+            throw new CommonException("删除用户信息失败！");
         }
-        return new ResponseBean<>(Boolean.FALSE);
     }
 
     /**
@@ -293,7 +297,7 @@ public class UserController extends BaseController {
      * @date 2018/11/26 22:11
      */
     @PostMapping("export")
-    @PreAuthorize("hasAuthority('sys:user:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('sys:user:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "导出用户", notes = "根据用户id导出用户")
     @ApiImplicitParam(name = "userVo", value = "用户信息", required = true, dataType = "UserVo")
     @Log("导出用户")
@@ -306,15 +310,18 @@ public class UserController extends BaseController {
             List<User> users;
             if (StringUtils.isNotEmpty(userVo.getIdString())) {
                 User user = new User();
-                // 按逗号切割ID，流处理获取ID集合，去重，转成字符串数组
                 user.setIds(Stream.of(userVo.getIdString().split(",")).filter(StringUtils::isNotBlank).distinct().toArray(String[]::new));
                 users = userService.findListById(user);
-            } else {    // 导出全部用户
-                users = userService.findList(new User());
+            } else {
+                // 导出本租户下的全部用户
+                User user = new User();
+                user.setTenantCode(SysUtil.getTenantCode());
+                users = userService.findList(user);
             }
             ExcelToolUtil.exportExcel(request.getInputStream(), response.getOutputStream(), MapUtil.java2Map(users), UserUtils.getUserMap());
         } catch (Exception e) {
             log.error("导出用户数据失败！", e);
+            throw new CommonException("导出用户数据失败！");
         }
     }
 
@@ -327,7 +334,7 @@ public class UserController extends BaseController {
      * @date 2018/11/28 12:44
      */
     @RequestMapping("import")
-    @PreAuthorize("hasAuthority('sys:user:import') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('sys:user:import') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "导入数据", notes = "导入数据")
     @Log("导入用户")
     public ResponseBean<Boolean> importUser(@ApiParam(value = "要上传的文件", required = true) MultipartFile file, HttpServletRequest request) {
@@ -344,8 +351,8 @@ public class UserController extends BaseController {
             return new ResponseBean<>(Boolean.TRUE);
         } catch (Exception e) {
             log.error("导入用户数据失败！", e);
+            throw new CommonException("导入用户数据失败！");
         }
-        return new ResponseBean<>(Boolean.FALSE);
     }
 
     /**
@@ -357,19 +364,20 @@ public class UserController extends BaseController {
      * @date 2018/12/4 9:58
      */
     @PostMapping("deleteAll")
-    @PreAuthorize("hasAuthority('sys:user:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('sys:user:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "批量删除用户", notes = "根据用户id批量删除用户")
     @ApiImplicitParam(name = "user", value = "用户信息", dataType = "User")
     @Log("批量删除用户")
     public ResponseBean<Boolean> deleteAllUsers(@RequestBody User user) {
-        boolean success = false;
         try {
+            boolean success = Boolean.FALSE;
             if (StringUtils.isNotEmpty(user.getIdString()))
                 success = userService.deleteAll(user.getIdString().split(",")) > 0;
+            return new ResponseBean<>(success);
         } catch (Exception e) {
             log.error("删除用户失败！", e);
+            throw new CommonException("删除用户失败！");
         }
-        return new ResponseBean<>(success);
     }
 
     /**
@@ -411,11 +419,12 @@ public class UserController extends BaseController {
     @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
     @PostMapping("register")
     @Log("注册用户")
-    public ResponseBean<Boolean> register(UserDto userDto) {
+    public ResponseBean<Boolean> register(@Valid UserDto userDto) {
         boolean success = false;
         User user = new User();
         BeanUtils.copyProperties(userDto, user);
-        user.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+        // 初始化用户名，系统编号，租户编号
+        user.setCommonValue(userDto.getUsername(), SysUtil.getSysCode(), userDto.getTenantCode());
         // 设置默认密码
         if (StringUtils.isEmpty(userDto.getPassword()))
             userDto.setPassword(CommonConstant.DEFAULT_PASSWORD);
@@ -426,13 +435,14 @@ public class UserController extends BaseController {
             // 分配默认角色
             Role role = new Role();
             role.setIsDefault(RoleConstant.IS_DEFAULT_ROLE);
+            role.setTenantCode(userDto.getTenantCode());
             // 查询默认角色
             Stream<Role> roleStream = roleService.findList(role).stream();
             if (Optional.ofNullable(roleStream).isPresent()) {
                 Role defaultRole = roleStream.findFirst().orElse(null);
                 if (defaultRole != null) {
                     UserRole userRole = new UserRole();
-                    userRole.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+                    userRole.setCommonValue(userDto.getUsername(), SysUtil.getSysCode(), userDto.getTenantCode());
                     userRole.setUserId(user.getId());
                     userRole.setRoleId(defaultRole.getId());
                     // 保存用户角色关系
@@ -446,7 +456,8 @@ public class UserController extends BaseController {
     /**
      * 检查用户是否存在
      *
-     * @param username username
+     * @param username   username
+     * @param tenantCode tenantCode
      * @return ResponseBean
      * @author tangyi
      * @date 2019/04/23 15:35
@@ -454,10 +465,10 @@ public class UserController extends BaseController {
     @ApiOperation(value = "检查用户是否存在", notes = "检查用户名是否存在")
     @ApiImplicitParam(name = "username", value = "用户name", required = true, dataType = "String", paramType = "path")
     @GetMapping("checkExist/{username}")
-    public ResponseBean<Boolean> checkUsernameIsExist(@PathVariable("username") String username) {
+    public ResponseBean<Boolean> checkUsernameIsExist(@PathVariable("username") @NotBlank String username, @RequestParam @NotBlank String tenantCode) {
         boolean exist = Boolean.FALSE;
         if (StringUtils.isNotEmpty(username))
-            exist = userService.selectUserVoByUsername(username) != null;
+            exist = userService.selectUserVoByUsername(username, tenantCode) != null;
         return new ResponseBean<>(exist);
     }
 
@@ -472,5 +483,30 @@ public class UserController extends BaseController {
     @PostMapping("userCount")
     public ResponseBean<Integer> userCount(UserVo userVo) {
         return new ResponseBean<>(userService.userCount(userVo));
+    }
+
+    /**
+     * 重置密码
+     *
+     * @param userDto userDto
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/6/7 12:00
+     */
+    @PutMapping("/resetPassword")
+    @PreAuthorize("hasAuthority('sys:user:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @ApiOperation(value = "重置密码", notes = "根据用户id重置密码")
+    @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
+    @Log("重置密码")
+    public ResponseBean<Boolean> resetPassword(@RequestBody @Valid UserDto userDto) {
+        try {
+            userDto.setCommonValue(SysUtil.getUser(), SysUtil.getTenantCode());
+            // 重置密码为123456
+            userDto.setPassword(encoder.encode(CommonConstant.DEFAULT_PASSWORD));
+            return new ResponseBean<>(userService.update(userDto) > 0);
+        } catch (Exception e) {
+            log.error("重置密码失败！", e);
+            throw new CommonException("重置密码失败！");
+        }
     }
 }

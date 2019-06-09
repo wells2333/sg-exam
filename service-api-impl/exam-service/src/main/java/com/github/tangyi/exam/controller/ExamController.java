@@ -12,7 +12,7 @@ import java.security.Principal;
 @RestController
 public class ExamController {
 
-    @GetMapping("/sayHello")
+    @GetMapping("sayHello")
     public String sayHello(Principal principal, String name) {
         return "hello, " + name + ", principal: " + principal.toString();
     }

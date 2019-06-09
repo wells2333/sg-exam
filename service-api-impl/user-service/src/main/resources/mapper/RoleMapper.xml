@@ -3,17 +3,17 @@
 <mapper namespace="com.github.tangyi.user.mapper.RoleMapper">
     <resultMap id="roleResultMap" type="com.github.tangyi.user.api.module.Role">
         <id column="id" property="id"/>
-        <result column="role_name" property="roleName" />
-        <result column="role_code" property="roleCode" />
-        <result column="role_desc" property="roleDesc" />
-        <result column="status" property="status" />
-        <result column="is_default" property="isDefault" />
-        <result column="creator" property="creator" />
-        <result column="create_date" property="createDate" />
-        <result column="modifier" property="modifier" />
-        <result column="modify_date" property="modifyDate" />
-        <result column="del_flag" property="delFlag" />
-        <result column="application_code" property="applicationCode" />
+        <result column="role_name" property="roleName"/>
+        <result column="role_code" property="roleCode"/>
+        <result column="role_desc" property="roleDesc"/>
+        <result column="status" property="status"/>
+        <result column="is_default" property="isDefault"/>
+        <result column="creator" property="creator"/>
+        <result column="create_date" property="createDate"/>
+        <result column="modifier" property="modifier"/>
+        <result column="modify_date" property="modifyDate"/>
+        <result column="del_flag" property="delFlag"/>
+        <result column="application_code" property="applicationCode"/>
         <result column="tenant_code" property="tenantCode"/>
     </resultMap>
 
@@ -59,7 +59,7 @@
     <select id="findList" resultMap="roleResultMap">
         SELECT
         <include refid="roleColumns"/>
-        FROM sys_role  a
+        FROM sys_role a
         WHERE a.del_flag = 0
         <include refid="whereColumnList"/>
     </select>
@@ -67,7 +67,7 @@
     <select id="findAllList" resultMap="roleResultMap">
         SELECT
         <include refid="roleColumns"/>
-        FROM sys_role  a
+        FROM sys_role a
         WHERE a.del_flag = 0
         <include refid="whereColumnList"/>
     </select>
@@ -75,7 +75,7 @@
     <select id="findListById" resultMap="roleResultMap">
         SELECT
         <include refid="roleColumns"/>
-        FROM sys_role  a
+        FROM sys_role a
         WHERE a.id IN
         <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
             #{item}
@@ -115,7 +115,7 @@
     </insert>
 
     <update id="update">
-        UPDATE sys_role  SET
+        UPDATE sys_role SET
         <if test="roleName != null">
             role_name = #{roleName},
         </if>
@@ -153,7 +153,7 @@
         del_flag = 1
         WHERE id in
         <foreach item="item" index="index" collection="array" open="("
-                 separator="," close=")"> #{item}
+                 separator="," close=")">#{item}
         </foreach>
     </delete>
 </mapper>

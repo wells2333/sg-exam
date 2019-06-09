@@ -106,7 +106,7 @@
     <delete id="deleteAll">
         DELETE FROM sys_log WHERE id in
         <foreach item="item" index="index" collection="array" open="("
-                 separator="," close=")"> #{item}
+                 separator="," close=")">#{item}
         </foreach>
     </delete>
 </mapper>

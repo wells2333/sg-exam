@@ -1,9 +1,9 @@
 package com.github.tangyi.exam.service;
 
 import com.github.tangyi.common.core.service.CrudService;
-import com.github.tangyi.exam.mapper.IncorrectAnswerMapper;
 import com.github.tangyi.exam.api.module.ExamRecord;
 import com.github.tangyi.exam.api.module.IncorrectAnswer;
+import com.github.tangyi.exam.mapper.IncorrectAnswerMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;

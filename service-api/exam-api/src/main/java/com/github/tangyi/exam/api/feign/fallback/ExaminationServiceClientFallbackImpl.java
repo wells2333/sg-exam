@@ -4,6 +4,7 @@ import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.exam.api.feign.ExaminationServiceClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 考试服务熔断
@@ -18,8 +19,8 @@ public class ExaminationServiceClientFallbackImpl implements ExaminationServiceC
     private Throwable throwable;
 
     @Override
-    public ResponseBean<Integer> findExaminationCount() {
-        log.error("调用{}异常,{}", "findExaminationCount", throwable);
+    public ResponseBean<Integer> findExaminationCount(@RequestParam String tenantCode) {
+        log.error("调用{}异常, {}， {}", "findExaminationCount", tenantCode, throwable);
         return new ResponseBean<>(0);
     }
 

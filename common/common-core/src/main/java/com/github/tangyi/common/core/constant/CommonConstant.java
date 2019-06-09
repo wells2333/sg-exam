@@ -16,7 +16,12 @@ public class CommonConstant {
     /**
      * 默认租户编号
      */
-    public static final String TENANT_CODE = "GITHUB";
+    public static final String DEFAULT_TENANT_CODE = "gitee";
+
+    /**
+     * 租户编号
+     */
+    public static final String TENANT_CODE = "tenantCode";
 
     /**
      * JSON 资源
@@ -147,6 +152,11 @@ public class CommonConstant {
      * Bearer
      */
     public static final String AUTHORIZATION_BEARER = "Bearer ";
+
+    /**
+     * 密码类型
+     */
+    public static final String GRANT_TYPE_PASSWORD = "password";
 
 }
 

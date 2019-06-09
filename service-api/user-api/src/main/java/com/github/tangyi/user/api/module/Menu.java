@@ -3,6 +3,8 @@ package com.github.tangyi.user.api.module;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * 菜单
  *
@@ -15,6 +17,7 @@ public class Menu extends BaseEntity<Menu> {
     /**
      * 菜单名称
      */
+    @NotBlank(message = "菜单名称不能为空")
     private String name;
 
     /**

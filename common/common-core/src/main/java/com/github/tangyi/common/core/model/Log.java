@@ -3,6 +3,8 @@ package com.github.tangyi.common.core.model;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * 日志
  *
@@ -15,11 +17,13 @@ public class Log extends BaseEntity<Log> {
     /**
      * 日志类型
      */
+    @NotBlank(message = "日志类型不能为空")
     private String type;
 
     /**
      * 日志标题
      */
+    @NotBlank(message = "日志标题不能为空")
     private String title;
 
     /**

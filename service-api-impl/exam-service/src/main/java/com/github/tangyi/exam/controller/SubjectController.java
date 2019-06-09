@@ -7,7 +7,6 @@ import com.github.tangyi.common.core.utils.*;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.constant.SecurityConstant;
-import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.Examination;
 import com.github.tangyi.exam.api.module.Subject;
@@ -26,6 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,11 +67,8 @@ public class SubjectController extends BaseController {
     @ApiImplicitParam(name = "id", value = "题目ID", required = true, dataType = "String", paramType = "path")
     public ResponseBean<Subject> subject(@PathVariable String id) {
         Subject subject = new Subject();
-        if (StringUtils.isNotBlank(id)) {
-            subject.setId(id);
-            subject = subjectService.get(subject);
-        }
-        return new ResponseBean<>(subject);
+        subject.setId(id);
+        return new ResponseBean<>(subjectService.get(subject));
     }
 
     /**
@@ -99,6 +97,7 @@ public class SubjectController extends BaseController {
                                          @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
                                          @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                          Subject subject) {
+        subject.setTenantCode(SysUtil.getTenantCode());
         return subjectService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), subject);
     }
 
@@ -111,14 +110,13 @@ public class SubjectController extends BaseController {
      * @date 2018/11/10 21:43
      */
     @PostMapping
-    @PreAuthorize("hasAuthority('exam:exam:subject:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('exam:exam:subject:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "创建题目", notes = "创建题目")
     @ApiImplicitParam(name = "subject", value = "题目实体subject", required = true, dataType = "Subject")
     @Log("新增题目")
-    public ResponseBean<Boolean> addSubject(@RequestBody Subject subject) {
-        Assert.notNull(subject.getExaminationId(), CommonConstant.IllEGAL_ARGUMENT);
+    public ResponseBean<Boolean> addSubject(@RequestBody @Valid Subject subject) {
         boolean success = false;
-        subject.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+        subject.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         if (subjectService.insert(subject) > 0) {
             // 更新考试的题目数
             Examination examination = new Examination();
@@ -139,12 +137,12 @@ public class SubjectController extends BaseController {
      * @date 2018/11/10 21:43
      */
     @PutMapping
-    @PreAuthorize("hasAuthority('exam:exam:subject:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('exam:exam:subject:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "更新题目信息", notes = "根据题目id更新题目的基本信息")
     @ApiImplicitParam(name = "subject", value = "角色实体subject", required = true, dataType = "Subject")
     @Log("更新题目")
-    public ResponseBean<Boolean> updateSubject(@RequestBody Subject subject) {
-        subject.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> updateSubject(@RequestBody @Valid Subject subject) {
+        subject.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(subjectService.update(subject) > 0);
     }
 
@@ -157,7 +155,7 @@ public class SubjectController extends BaseController {
      * @date 2018/11/10 21:43
      */
     @DeleteMapping("{id}")
-    @PreAuthorize("hasAuthority('exam:exam:subject:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('exam:exam:subject:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "删除题目", notes = "根据ID删除题目")
     @ApiImplicitParam(name = "id", value = "题目ID", required = true, paramType = "path")
     @Log("删除题目")
@@ -168,7 +166,7 @@ public class SubjectController extends BaseController {
             subject.setId(id);
             subject = subjectService.get(subject);
             if (subject != null) {
-                subject.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+                subject.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
                 if (subjectService.delete(subject) > 0) {
                     // 更新考试的题目数
                     Examination examination = new Examination();
@@ -192,7 +190,7 @@ public class SubjectController extends BaseController {
      * @date 2018/11/28 12:53
      */
     @PostMapping("/export")
-    @PreAuthorize("hasAuthority('exam:exam:subject:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('exam:exam:subject:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "导出题目", notes = "根据分类id导出题目")
     @ApiImplicitParam(name = "subjectDto", value = "题目信息", required = true, dataType = "SubjectDto")
     @Log("导出题目")
@@ -216,6 +214,7 @@ public class SubjectController extends BaseController {
                         .filter(Objects::nonNull).collect(Collectors.toList());
             } else if (StringUtils.isNotEmpty(subjectDto.getExaminationId())) {  // 根据考试id导出
                 Subject subject = new Subject();
+                subject.setTenantCode(SysUtil.getTenantCode());
                 subject.setExaminationId(subjectDto.getExaminationId());
                 subjects = subjectService.findList(subject);
             }
@@ -235,11 +234,11 @@ public class SubjectController extends BaseController {
      * @date 2018/11/28 12:59
      */
     @RequestMapping("import")
-    @PreAuthorize("hasAuthority('exam:exam:subject:import') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('exam:exam:subject:import') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "导入题目", notes = "导入题目")
     @ApiImplicitParam(name = "examinationId", value = "考试ID", required = true, dataType = "String")
     @Log("导入题目")
-    public ResponseBean<Boolean> importSubject(String examinationId, @ApiParam(value = "要上传的文件", required = true) MultipartFile file) {
+    public ResponseBean<Boolean> importSubject(@NotBlank String examinationId, @ApiParam(value = "要上传的文件", required = true) MultipartFile file) {
         boolean success = false;
         Assert.notNull(examinationId, CommonConstant.IllEGAL_ARGUMENT);
         try {
@@ -250,7 +249,7 @@ public class SubjectController extends BaseController {
                 subjectStream.forEach(subject -> {
                     // 初始化考试ID
                     if (StringUtils.isBlank(subject.getId())) {
-                        subject.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+                        subject.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
                         subject.setExaminationId(examinationId);
                         subjectService.insert(subject);
                     }
@@ -278,7 +277,7 @@ public class SubjectController extends BaseController {
      * @date 2018/12/04 9:55
      */
     @PostMapping("deleteAll")
-    @PreAuthorize("hasAuthority('exam:exam:subject:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('exam:exam:subject:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "批量删除题目", notes = "根据题目id批量删除题目")
     @ApiImplicitParam(name = "subjectDto", value = "题目信息", dataType = "SubjectDto")
     @Log("批量删除题目")
@@ -324,8 +323,8 @@ public class SubjectController extends BaseController {
             @ApiImplicitParam(name = "examRecordId", value = "考试记录ID", required = true, dataType = "String"),
             @ApiImplicitParam(name = "userId", value = "用户ID", dataType = "String")
     })
-    public ResponseBean<SubjectDto> subjectAnswer(@RequestParam("serialNumber") String serialNumber,
-                                                  @RequestParam("examRecordId") String examRecordId,
+    public ResponseBean<SubjectDto> subjectAnswer(@RequestParam("serialNumber") @NotBlank String serialNumber,
+                                                  @RequestParam("examRecordId") @NotBlank String examRecordId,
                                                   @RequestParam(value = "userId", required = false) String userId) {
         return new ResponseBean<>(answerService.subjectAnswer(serialNumber, examRecordId, userId));
     }

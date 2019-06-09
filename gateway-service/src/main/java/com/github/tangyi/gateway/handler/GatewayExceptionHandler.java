@@ -1,5 +1,6 @@
 package com.github.tangyi.gateway.handler;
 
+import com.github.tangyi.common.core.exceptions.InvalidAccessTokenException;
 import com.github.tangyi.common.core.exceptions.InvalidValidateCodeException;
 import com.github.tangyi.common.core.exceptions.ValidateCodeExpiredException;
 import com.github.tangyi.common.core.model.ResponseBean;
@@ -84,7 +85,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
         int code = ResponseBean.FAIL;
         if (ex instanceof NotFoundException) {
             httpStatus = HttpStatus.NOT_FOUND;
-            msg = "Service Not Found";
+            msg = "没有服务提供者.";
         } else if (ex instanceof ResponseStatusException) {
             ResponseStatusException responseStatusException = (ResponseStatusException) ex;
             httpStatus = responseStatusException.getStatus();
@@ -99,12 +100,17 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
             msg = ex.getMessage();
             // 验证码过期
             code = ResponseBean.VALIDATE_CODE_EXPIRED_ERROR;
+        } else if (ex instanceof InvalidAccessTokenException) {
+            httpStatus = HttpStatus.FORBIDDEN;
+            msg = ex.getMessage();
+            // token非法，返回403
+            code = HttpStatus.FORBIDDEN.value();
         } else {
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-            msg = "Internal Server Error";
+            msg = "服务器内部错误.";
         }
         // 封装响应体
-        ResponseBean<HttpStatus> responseBean = new ResponseBean<>(httpStatus, msg);
+        ResponseBean<String> responseBean = new ResponseBean<>(msg, msg);
         responseBean.setStatus(httpStatus.value());
         responseBean.setCode(code);
         // 错误记录
@@ -118,7 +124,6 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
                 .switchIfEmpty(Mono.error(ex))
                 .flatMap((handler) -> handler.handle(newRequest))
                 .flatMap((response) -> write(exchange, response));
-
     }
 
     private Mono<ServerResponse> renderErrorResponse(ServerRequest request) {

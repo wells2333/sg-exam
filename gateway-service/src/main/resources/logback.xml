@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false" scan="false">
-    <springProperty scop="context" name="spring.application.name" source="spring.application.name" defaultValue="spring-microservice-exam"/>
-    <property name="log.path" value="logs/${spring.application.name}" />
+    <springProperty scop="context" name="spring.application.name" source="spring.application.name"
+                    defaultValue="spring-microservice-exam"/>
+    <property name="log.path" value="logs/${spring.application.name}"/>
     <!-- Console log output -->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -40,8 +41,8 @@
 
     <!-- Level: FATAL 0  ERROR 3  WARN 4  INFO 6  DEBUG 7 -->
     <root level="info">
-        <appender-ref ref="console" />
-        <appender-ref ref="debug" />
-        <appender-ref ref="error" />
+        <appender-ref ref="console"/>
+        <appender-ref ref="debug"/>
+        <appender-ref ref="error"/>
     </root>
 </configuration>
