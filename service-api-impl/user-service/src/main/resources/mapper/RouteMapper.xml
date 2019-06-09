@@ -3,19 +3,19 @@
 <mapper namespace="com.github.tangyi.user.mapper.RouteMapper">
     <resultMap id="routeResultMap" type="com.github.tangyi.common.core.model.Route">
         <id column="id" property="id"/>
-        <result column="route_id" property="routeId" />
-        <result column="route_name" property="routeName" />
-        <result column="predicates" property="predicates" />
-        <result column="filters" property="filters" />
-        <result column="uri" property="uri" />
-        <result column="sort" property="sort" />
-        <result column="status" property="status" />
-        <result column="creator" property="creator" />
-        <result column="create_date" property="createDate" />
-        <result column="modifier" property="modifier" />
-        <result column="modify_date" property="modifyDate" />
-        <result column="del_flag" property="delFlag" />
-        <result column="application_code" property="applicationCode" />
+        <result column="route_id" property="routeId"/>
+        <result column="route_name" property="routeName"/>
+        <result column="predicates" property="predicates"/>
+        <result column="filters" property="filters"/>
+        <result column="uri" property="uri"/>
+        <result column="sort" property="sort"/>
+        <result column="status" property="status"/>
+        <result column="creator" property="creator"/>
+        <result column="create_date" property="createDate"/>
+        <result column="modifier" property="modifier"/>
+        <result column="modify_date" property="modifyDate"/>
+        <result column="del_flag" property="delFlag"/>
+        <result column="application_code" property="applicationCode"/>
     </resultMap>
 
     <sql id="routeColumns">
@@ -58,7 +58,7 @@
     <select id="findList" resultMap="routeResultMap">
         SELECT
         <include refid="routeColumns"/>
-        FROM sys_route  a
+        FROM sys_route a
         WHERE a.del_flag = 0
         <include refid="whereColumnList"/>
     </select>
@@ -66,7 +66,7 @@
     <select id="findListById" resultMap="routeResultMap">
         SELECT
         <include refid="routeColumns"/>
-        FROM sys_route  a
+        FROM sys_route a
         WHERE a.id IN
         <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
             #{item}
@@ -108,7 +108,7 @@
     </insert>
 
     <update id="update">
-        UPDATE sys_route  SET
+        UPDATE sys_route SET
         <if test="routeId != null">
             route_id = #{routeId},
         </if>
@@ -149,7 +149,7 @@
         del_flag = 1
         WHERE id in
         <foreach item="item" index="index" collection="array" open="("
-                 separator="," close=")"> #{item}
+                 separator="," close=")">#{item}
         </foreach>
     </delete>
 </mapper>

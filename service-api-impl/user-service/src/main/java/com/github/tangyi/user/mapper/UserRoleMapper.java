@@ -30,7 +30,6 @@ public interface UserRoleMapper extends CrudMapper<UserRole> {
     List<UserRole> getByUserIds(List<String> userIds);
 
 
-
     /**
      * 根据用户ID删除
      *

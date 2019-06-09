@@ -1,5 +1,6 @@
 package com.github.tangyi.common.security.utils;
 
+import com.github.tangyi.common.security.core.UserDetailsImpl;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +16,18 @@ import java.security.Principal;
 public class SecurityUtil {
 
     /**
+     * 获取当前用户的租户标识
+     *
+     * @return String
+     * @author tangyi
+     * @date 2019/05/25 14:19
+     */
+    public static String getCurrentUserTenantCode() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal instanceof UserDetails ? ((UserDetailsImpl) principal).getTenantCode() : "";
+    }
+
+    /**
      * 获取当前登录的用户名
      *
      * @return String
@@ -28,7 +41,6 @@ public class SecurityUtil {
         if (principal instanceof Principal)
             return ((Principal) principal).getName();
         return String.valueOf(principal);
-
     }
 
     /**

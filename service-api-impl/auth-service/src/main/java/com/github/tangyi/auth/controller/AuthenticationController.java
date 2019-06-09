@@ -32,7 +32,7 @@ public class AuthenticationController extends BaseController {
      * @param authentication 信息
      * @return 用户信息
      */
-    @RequestMapping("/user")
+    @RequestMapping("user")
     public Object user(Authentication authentication) {
         return authentication.getPrincipal();
     }
@@ -43,7 +43,7 @@ public class AuthenticationController extends BaseController {
      * @param accesstoken access_token
      * @return ReturnT
      */
-    @PostMapping("/removeToken")
+    @PostMapping("removeToken")
     public ResponseBean<Boolean> removeToken(@RequestHeader("Authorization") String accesstoken) {
         if (accesstoken.startsWith(CommonConstant.AUTHORIZATION_BEARER))
             accesstoken = accesstoken.split(CommonConstant.AUTHORIZATION_BEARER)[1];

@@ -74,7 +74,7 @@
         and a.examination_id = #{examinationId}
         and a.exam_record_id = #{examRecordId}
         and a.subject_id = #{subjectId}
-</select>
+    </select>
 
     <select id="findList" resultMap="answerResultMap">
         SELECT
@@ -85,7 +85,7 @@
     </select>
 
     <insert id="insert">
-        insert  into answer (
+        insert into answer (
             id,
             user_id,
             examination_id,
@@ -100,7 +100,7 @@
             modify_date,
             del_flag,
             application_code,
-            tenant_code,
+            tenant_code
         ) values (
             #{id},
             #{userId},
@@ -121,7 +121,7 @@
     </insert>
 
     <update id="update">
-        UPDATE answer  SET
+        UPDATE answer SET
         <if test="userId != null">
             user_id = #{userId},
         </if>

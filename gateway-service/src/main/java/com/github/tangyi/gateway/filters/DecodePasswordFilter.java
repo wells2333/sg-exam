@@ -2,6 +2,7 @@ package com.github.tangyi.gateway.filters;
 
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.util.StrUtil;
+import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.gateway.constants.GatewayConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,8 +56,8 @@ public class DecodePasswordFilter implements GlobalFilter, Ordered {
                 GatewayConstant.MOBILE_TOKEN_URL)) {
             String grantType = request.getQueryParams().getFirst(GatewayConstant.GRANT_TYPE);
             // 授权类型为密码模式则解密
-            if (GatewayConstant.GRANT_TYPE_PASSWORD.equals(grantType) || StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.REGISTER)) {
-                String password = request.getQueryParams().getFirst(GatewayConstant.GRANT_TYPE_PASSWORD);
+            if (CommonConstant.GRANT_TYPE_PASSWORD.equals(grantType) || StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.REGISTER)) {
+                String password = request.getQueryParams().getFirst(CommonConstant.GRANT_TYPE_PASSWORD);
                 if (password == null || password.isEmpty()) {
                     log.info("password is empty...");
                     exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
@@ -70,7 +71,7 @@ public class DecodePasswordFilter implements GlobalFilter, Ordered {
                 } catch (Exception e) {
                     log.error("password decrypt fail:{}", password);
                 }
-                URI newUri = UriComponentsBuilder.fromUri(uri).replaceQueryParam(GatewayConstant.GRANT_TYPE_PASSWORD, password).build(true).toUri();
+                URI newUri = UriComponentsBuilder.fromUri(uri).replaceQueryParam(CommonConstant.GRANT_TYPE_PASSWORD, password).build(true).toUri();
                 request = request.mutate().uri(newUri).build();
                 return chain.filter(exchange.mutate().request(request).build());
             }

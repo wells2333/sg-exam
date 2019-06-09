@@ -4,6 +4,7 @@ import com.github.tangyi.common.core.persistence.CrudMapper;
 import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.user.api.module.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 用户mapper接口
@@ -19,10 +20,11 @@ public interface UserMapper extends CrudMapper<User> {
     /**
      * 通过用户名查询用户信息（含有角色信息）
      *
-     * @param username 用户名
+     * @param username   用户名
+     * @param tenantCode 租户标识
      * @return userVo
      */
-    UserVo selectUserVoByUsername(String username);
+    UserVo selectUserVoByUsername(@Param("username") String username, @Param("tenantCode") String tenantCode);
 
     /**
      * 查询用户数量

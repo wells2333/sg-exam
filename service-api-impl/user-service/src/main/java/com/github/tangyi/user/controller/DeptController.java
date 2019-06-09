@@ -8,7 +8,6 @@ import com.github.tangyi.common.core.vo.DeptVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.constant.SecurityConstant;
-import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.user.api.dto.DeptDto;
 import com.github.tangyi.user.api.module.Dept;
 import com.github.tangyi.user.service.DeptService;
@@ -20,6 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -53,10 +53,10 @@ public class DeptController extends BaseController {
     public List<DeptDto> depts() {
         Dept dept = new Dept();
         dept.setApplicationCode(SysUtil.getSysCode());
+        dept.setTenantCode(SysUtil.getTenantCode());
         // 查询部门集合
         Stream<Dept> deptStream = deptService.findList(dept).stream();
         if (Optional.ofNullable(deptStream).isPresent()) {
-            // 流处理转成DeptDto
             List<DeptDto> deptTreeList = deptStream.map(DeptDto::new).collect(Collectors.toList());
             // 排序、构建树形结构
             return TreeUtil.buildTree(CollUtil.sort(deptTreeList, Comparator.comparingInt(DeptDto::getSort)), "-1");
@@ -90,12 +90,12 @@ public class DeptController extends BaseController {
      * @date 2018/8/28 10:15
      */
     @PostMapping
-    @PreAuthorize("hasAuthority('sys:dept:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('sys:dept:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "创建部门", notes = "创建部门")
     @ApiImplicitParam(name = "dept", value = "部门实体", required = true, dataType = "Dept")
     @Log("新增部门")
-    public ResponseBean<Boolean> add(@RequestBody Dept dept) {
-        dept.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> add(@RequestBody @Valid Dept dept) {
+        dept.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(deptService.insert(dept) > 0);
     }
 
@@ -108,14 +108,14 @@ public class DeptController extends BaseController {
      * @date 2018/8/28 10:16
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('sys:dept:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('sys:dept:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "删除部门", notes = "根据ID删除部门")
     @ApiImplicitParam(name = "id", value = "部门ID", required = true, paramType = "path")
     @Log("删除部门")
     public ResponseBean<Boolean> delete(@PathVariable String id) {
         Dept dept = new Dept();
         dept.setId(id);
-        dept.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+        dept.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(deptService.delete(dept) > 0);
     }
 
@@ -128,12 +128,12 @@ public class DeptController extends BaseController {
      * @date 2018/8/28 10:22
      */
     @PutMapping
-    @PreAuthorize("hasAuthority('sys:dept:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('sys:dept:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "更新部门信息", notes = "根据部门id更新部门的基本信息")
     @ApiImplicitParam(name = "dept", value = "部门实体", required = true, dataType = "Dept")
     @Log("更新部门")
-    public ResponseBean<Boolean> update(@RequestBody Dept dept) {
-        dept.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> update(@RequestBody @Valid Dept dept) {
+        dept.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(deptService.update(dept) > 0);
     }
 
