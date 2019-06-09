@@ -57,4 +57,9 @@ public class AccessToken implements Serializable {
      */
     @JsonProperty("token_type")
     private String tokenType;
+
+    /**
+     * 租户标识
+     */
+    private String tenantCode;
 }

@@ -5,6 +5,7 @@ import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.common.core.utils.Servlets;
+import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.vo.AttachmentVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
@@ -24,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
@@ -57,11 +59,8 @@ public class AttachmentController extends BaseController {
     @GetMapping("/{id}")
     public ResponseBean<Attachment> attachment(@PathVariable String id) {
         Attachment attachment = new Attachment();
-        if (StringUtils.isNotBlank(id)) {
-            attachment.setId(id);
-            attachment = attachmentService.get(attachment);
-        }
-        return new ResponseBean<>(attachment);
+        attachment.setId(id);
+        return new ResponseBean<>(attachmentService.get(attachment));
     }
 
     /**
@@ -90,6 +89,7 @@ public class AttachmentController extends BaseController {
                                          @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
                                          @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                          Attachment attachment) {
+        attachment.setTenantCode(SysUtil.getTenantCode());
         return attachmentService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), attachment);
     }
 
@@ -111,7 +111,6 @@ public class AttachmentController extends BaseController {
     @Log("上传文件")
     public ResponseBean<Attachment> upload(@ApiParam(value = "要上传的文件", required = true) @RequestParam("file") MultipartFile file,
                                            Attachment attachment) {
-
         if (file.isEmpty())
             return new ResponseBean<>(new Attachment());
         return new ResponseBean<>(attachmentService.upload(file, attachment));
@@ -127,22 +126,22 @@ public class AttachmentController extends BaseController {
     @RequestMapping("download")
     @ApiOperation(value = "下载附件", notes = "根据ID下载附件")
     @ApiImplicitParam(name = "id", value = "附件ID", required = true, dataType = "String")
-    public void download(String id, HttpServletRequest request, HttpServletResponse response) {
-        if (StringUtils.isBlank(id))
-            throw new IllegalArgumentException("附件ID不能为空！");
+    public void download(@NotBlank String id, HttpServletRequest request, HttpServletResponse response) {
         Attachment attachment = new Attachment();
         attachment.setId(id);
         InputStream inputStream = null;
         OutputStream outputStream = null;
         try {
             inputStream = attachmentService.download(attachment);
-            outputStream = response.getOutputStream();  // 输出流
+            // 输出流
+            outputStream = response.getOutputStream();
             response.setContentType("application/zip");
             response.setHeader(HttpHeaders.CACHE_CONTROL, "max-age=10");
             // IE之外的浏览器使用编码输出名称
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request, attachment.getAttachName()));
             response.setContentLength(inputStream.available());
-            FileCopyUtils.copy(inputStream, outputStream);  // 下载文件
+            // 下载文件
+            FileCopyUtils.copy(inputStream, outputStream);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         } finally {
@@ -164,8 +163,6 @@ public class AttachmentController extends BaseController {
     @ApiImplicitParam(name = "id", value = "附件ID", required = true, paramType = "path")
     @Log("删除附件")
     public ResponseBean<Boolean> delete(@PathVariable String id) {
-        if (StringUtils.isBlank(id))
-            throw new IllegalArgumentException("附件ID不能为空！");
         Attachment attachment = new Attachment();
         attachment.setId(id);
         attachment = attachmentService.get(attachment);

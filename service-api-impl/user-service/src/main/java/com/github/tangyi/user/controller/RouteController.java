@@ -10,7 +10,6 @@ import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.constant.SecurityConstant;
-import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.user.service.RouteService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -24,6 +23,7 @@ import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
 
@@ -107,8 +107,8 @@ public class RouteController extends BaseController {
     @ApiOperation(value = "更新路由信息", notes = "根据路由id更新路由的基本信息")
     @ApiImplicitParam(name = "route", value = "路由实体route", required = true, dataType = "Route")
     @Log("修改路由")
-    public ResponseBean<Boolean> updateRoute(@RequestBody Route route) {
-        route.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> updateRoute(@RequestBody @Valid Route route) {
+        route.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
         // 更新路由
         if (routeService.update(route) > 0) {
             // 发送消息
@@ -134,8 +134,8 @@ public class RouteController extends BaseController {
     @ApiOperation(value = "创建路由", notes = "创建路由")
     @ApiImplicitParam(name = "route", value = "路由实体route", required = true, dataType = "Route")
     @Log("新增路由")
-    public ResponseBean<Boolean> add(@RequestBody Route route) {
-        route.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> add(@RequestBody @Valid Route route) {
+        route.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
         if (routeService.insert(route) > 0 && Integer.parseInt(route.getStatus()) == CommonConstant.DEL_FLAG_NORMAL) {
             // 发送消息
             amqpTemplate.convertAndSend(MqConstant.EDIT_GATEWAY_ROUTE_QUEUE, route);
@@ -161,7 +161,7 @@ public class RouteController extends BaseController {
         route.setId(id);
         route = routeService.get(route);
         route.setNewRecord(false);
-        route.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+        route.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
         if (routeService.delete(route) > 0) {
             // 发送消息
             amqpTemplate.convertAndSend(MqConstant.DEL_GATEWAY_ROUTE_QUEUE, Collections.singletonList(route));

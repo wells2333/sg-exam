@@ -57,13 +57,12 @@ public class SwaggerConfig implements WebMvcConfigurer {
                 .title("Swagger API")
                 .description("https://gitee.com/wells2333/spring-microservice-exam")
                 .termsOfServiceUrl("https://gitee.com/wells2333/spring-microservice-exam")
-                .contact(new Contact("tangyi","https://gitee.com/wells2333/spring-microservice-exam","1633736729@qq.com"))
+                .contact(new Contact("tangyi", "https://gitee.com/wells2333/spring-microservice-exam", "1633736729@qq.com"))
                 .version("2.0")
                 .build();
     }
 
     /**
-     *
      * 显示swagger-ui.html文档展示页，还必须注入swagger资源：
      *
      * @param registry

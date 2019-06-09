@@ -6,10 +6,11 @@ import com.github.tangyi.common.feign.config.CustomFeignConfig;
 import com.github.tangyi.exam.api.feign.fallback.ExaminationServiceClientFallbackImpl;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 考试接口
- *
+ * <p>
  * FeignClient需要指定configuration为CustomFeignConfig，用于服务间调用携带token
  *
  * @author tangyi
@@ -21,8 +22,9 @@ public interface ExaminationServiceClient {
     /**
      * 查询考试数量
      *
+     * @param tenantCode 租户标识
      * @return ResponseBean
      */
     @GetMapping("/v1/examination/examinationCount")
-    ResponseBean<Integer> findExaminationCount();
+    ResponseBean<Integer> findExaminationCount(@RequestParam("tenantCode") String tenantCode);
 }

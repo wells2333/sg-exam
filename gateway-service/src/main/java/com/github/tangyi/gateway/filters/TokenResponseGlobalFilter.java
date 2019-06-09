@@ -2,6 +2,7 @@ package com.github.tangyi.gateway.filters;
 
 import cn.hutool.core.util.StrUtil;
 import com.github.tangyi.common.core.constant.CommonConstant;
+import com.github.tangyi.common.core.exceptions.InvalidAccessTokenException;
 import com.github.tangyi.gateway.constants.GatewayConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -71,7 +72,10 @@ public class TokenResponseGlobalFilter implements GlobalFilter, Ordered {
             log.trace("jti authorization: {}", authorization);
             // 从Redis里获取实际的access_token
             Object object = redisTemplate.opsForValue().get(GatewayConstant.GATEWAY_ACCESS_TOKENS + authorization);
-            authorization = object == null ? authorization : CommonConstant.TOKEN_SPLIT + object.toString();
+            // 缓存里没有access_token，抛异常，统一异常处理会返回403，前端自动重新获取access_token
+            if (object == null)
+                throw new InvalidAccessTokenException("access_token已失效.");
+            authorization = CommonConstant.TOKEN_SPLIT + object.toString();
             String realAuthorization = authorization;
             log.trace("jti->token：{}", realAuthorization);
             // 更新请求头，参考源码:SetRequestHeaderGatewayFilterFactory

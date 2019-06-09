@@ -1,13 +1,16 @@
 package com.github.tangyi.gateway.filters;
 
 import cn.hutool.core.util.StrUtil;
+import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.exceptions.CommonException;
+import com.github.tangyi.common.core.exceptions.InvalidAccessTokenException;
 import com.github.tangyi.common.core.utils.JsonMapper;
 import com.github.tangyi.gateway.constants.GatewayConstant;
 import com.github.tangyi.gateway.model.AccessToken;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -72,7 +75,7 @@ public class TokenRequestGlobalFilter implements GlobalFilter, Ordered {
                 && StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.OAUTH_TOKEN_URL, GatewayConstant.REGISTER, GatewayConstant.MOBILE_TOKEN_URL)) {
             String grantType = request.getQueryParams().getFirst(GatewayConstant.GRANT_TYPE);
             // 授权类型为密码模式
-            if (GatewayConstant.GRANT_TYPE_PASSWORD.equals(grantType) || GatewayConstant.GRANT_TYPE_REFRESH_TOKEN.equals(grantType) || StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.REGISTER)) {
+            if (CommonConstant.GRANT_TYPE_PASSWORD.equals(grantType) || GatewayConstant.GRANT_TYPE_REFRESH_TOKEN.equals(grantType)) {
                 // 装饰器
                 ServerHttpResponseDecorator decoratedResponse = new ServerHttpResponseDecorator(exchange.getResponse()) {
                     @Override
@@ -93,8 +96,8 @@ public class TokenRequestGlobalFilter implements GlobalFilter, Ordered {
                                 String accessTokenContent = joiner.join(contentList);
                                 log.trace("生成的accessToken: {}", accessTokenContent);
                                 AccessToken accessToken = JsonMapper.getInstance().fromJson(accessTokenContent, AccessToken.class);
-                                if (accessToken == null)
-                                    throw new CommonException("token转换失败！");
+                                if (accessToken == null || StringUtils.isBlank(accessToken.getJti()))
+                                    throw new InvalidAccessTokenException("token转换失败！");
                                 // 真正的access_token和refresh_token
                                 String realAccessToken = accessToken.getAccessToken(), realRefreshToken = accessToken.getRefreshToken();
                                 // 转换token

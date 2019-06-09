@@ -1,12 +1,20 @@
 package com.github.tangyi.common.core.config;
 
+import com.github.tangyi.common.core.cache.CustomRedisCacheWriter;
+import com.github.tangyi.common.core.cache.MultitenantCacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * redis配置
@@ -30,6 +38,19 @@ public class RedisConfig {
         redisTemplate.setEnableTransactionSupport(true);
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         return redisTemplate;
+    }
+
+    /**
+     * 多租户cacheManager
+     *
+     * @return RedisCacheManager
+     */
+    @Bean
+    public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+        RedisCacheWriter redisCacheWriter = new CustomRedisCacheWriter(connectionFactory);
+        RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig();
+        Map<String, RedisCacheConfiguration> initialCacheConfigurations = new LinkedHashMap<>();
+        return new MultitenantCacheManager(redisCacheWriter, redisCacheConfiguration, initialCacheConfigurations, true);
     }
 
     @Bean

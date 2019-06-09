@@ -4,7 +4,6 @@ import com.github.tangyi.common.core.constant.MqConstant;
 import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.SysUtil;
-import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.exam.api.constants.ExamRecordConstant;
 import com.github.tangyi.exam.api.constants.SubjectConstant;
 import com.github.tangyi.exam.api.dto.StartExamDto;
@@ -127,7 +126,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
      */
     @Transactional
     public int save(Answer answer) {
-        answer.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+        answer.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return super.save(answer);
     }
 
@@ -143,12 +142,12 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
     public SubjectDto saveAndNext(Answer answer) {
         Answer tempAnswer = this.getAnswer(answer);
         if (tempAnswer != null) {
-            tempAnswer.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+            tempAnswer.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
             tempAnswer.setAnswer(answer.getAnswer());
             tempAnswer.setOptionAnswer(answer.getOptionAnswer());
             this.update(tempAnswer);
         } else {
-            answer.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+            answer.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
             this.insert(answer);
         }
         return this.subjectAnswer(answer.getSerialNumber(), answer.getExamRecordId(), answer.getUserId());
@@ -210,7 +209,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
                                 incorrectAnswer.setSubjectId(tempAnswer.getSubjectId());
                                 incorrectAnswer.setSerialNumber(tempSubject.getSerialNumber());
                                 incorrectAnswer.setUserId(tempAnswer.getUserId());
-                                incorrectAnswer.setIncorrectAnswer(tempAnswer.getAnswer());
+                                incorrectAnswer.setIncorrectAnswer(tempAnswer.getOptionAnswer());
                                 incorrectAnswers.add(incorrectAnswer);
                             });
                 });
@@ -257,10 +256,10 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
     @Transactional
     public boolean submitAsync(Answer answer) {
         long start = System.currentTimeMillis();
-        String currentUsername = SecurityUtil.getCurrentUsername();
+        String currentUsername = SysUtil.getUser();
         answer.setModifier(currentUsername);
         ExamRecord examRecord = new ExamRecord();
-        examRecord.setCommonValue(currentUsername, SysUtil.getSysCode());
+        examRecord.setCommonValue(currentUsername, SysUtil.getSysCode(), SysUtil.getTenantCode());
         examRecord.setId(answer.getExamRecordId());
         // 提交时间
         examRecord.setEndTime(examRecord.getCreateDate());
@@ -284,7 +283,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
     @Transactional
     public StartExamDto start(ExamRecord examRecord) {
         StartExamDto startExamDto = new StartExamDto();
-        String currentUsername = SecurityUtil.getCurrentUsername(), applicationCode = SysUtil.getSysCode();
+        String currentUsername = SysUtil.getUser(), applicationCode = SysUtil.getSysCode(), tenantCode = SysUtil.getTenantCode();
         // 创建考试记录
         if (StringUtils.isEmpty(examRecord.getExaminationId()))
             throw new CommonException("参数校验失败，考试id为空！");
@@ -298,7 +297,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
             examRecord.setExaminationName(examination.getExaminationName());
             examRecord.setCourseId(examination.getCourseId());
         }
-        examRecord.setCommonValue(currentUsername, applicationCode);
+        examRecord.setCommonValue(currentUsername, applicationCode, tenantCode);
         examRecord.setStartTime(examRecord.getCreateDate());
         // 默认未提交状态
         examRecord.setSubmitStatus(ExamRecordConstant.STATUS_NOT_SUBMITTED);
@@ -322,7 +321,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
             BeanUtils.copyProperties(subject, subjectDto);
             // 创建第一题的答题
             Answer answer = new Answer();
-            answer.setCommonValue(currentUsername, applicationCode);
+            answer.setCommonValue(currentUsername, applicationCode, tenantCode);
             answer.setUserId(examRecord.getUserId());
             answer.setExaminationId(examRecord.getExaminationId());
             answer.setExamRecordId(examRecord.getId());

@@ -34,6 +34,7 @@ public class UserUtils {
         map.put("modifyDate", "修改时间");
         map.put("delFlag", "删除标记");
         map.put("applicationCode", "系统编码");
+        map.put("tenantCode", "租户标识");
         return map;
     }
 }

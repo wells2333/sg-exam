@@ -4,7 +4,6 @@ import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.FileUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
-import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.user.api.module.Attachment;
 import com.github.tangyi.user.mapper.AttachmentMapper;
 import lombok.AllArgsConstructor;
@@ -48,7 +47,7 @@ public class AttachmentService extends CrudService<AttachmentMapper, Attachment>
             if (StringUtils.isBlank(fastFileId))
                 throw new CommonException("上传失败！");
             Attachment newAttachment = new Attachment();
-            newAttachment.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+            newAttachment.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
             newAttachment.setGroupName(fastFileId.substring(0, fastFileId.indexOf("/")));
             newAttachment.setFastFileId(fastFileId);
             newAttachment.setAttachName(new String(file.getOriginalFilename().getBytes(), StandardCharsets.UTF_8));

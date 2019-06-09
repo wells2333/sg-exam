@@ -1,6 +1,9 @@
 package com.github.tangyi.exam.api.module;
 
 import com.github.tangyi.common.core.persistence.BaseEntity;
+import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * 考试
@@ -8,16 +11,19 @@ import com.github.tangyi.common.core.persistence.BaseEntity;
  * @author tangyi
  * @date 2018/11/8 20:47
  */
+@Data
 public class Examination extends BaseEntity<Examination> {
 
     /**
      * 考试名称
      */
+    @NotBlank(message = "考试名称不能为空")
     private String examinationName;
 
     /**
      * 考试类型
      */
+    @NotBlank(message = "考试类型不能为空")
     private String type;
 
     /**
@@ -43,6 +49,7 @@ public class Examination extends BaseEntity<Examination> {
     /**
      * 总分
      */
+    @NotBlank(message = "总分不能为空")
     private String totalScore;
 
     /**
@@ -84,124 +91,4 @@ public class Examination extends BaseEntity<Examination> {
      * 备注
      */
     private String remark;
-
-    public String getExaminationName() {
-        return examinationName;
-    }
-
-    public void setExaminationName(String examinationName) {
-        this.examinationName = examinationName;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getAttention() {
-        return attention;
-    }
-
-    public void setAttention(String attention) {
-        this.attention = attention;
-    }
-
-    public String getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
-    }
-
-    public String getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
-    }
-
-    public String getDuration() {
-        return duration;
-    }
-
-    public void setDuration(String duration) {
-        this.duration = duration;
-    }
-
-    public String getTotalScore() {
-        return totalScore;
-    }
-
-    public void setTotalScore(String totalScore) {
-        this.totalScore = totalScore;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public String getCollegeId() {
-        return collegeId;
-    }
-
-    public void setCollegeId(String collegeId) {
-        this.collegeId = collegeId;
-    }
-
-    public String getMajorId() {
-        return majorId;
-    }
-
-    public void setMajorId(String majorId) {
-        this.majorId = majorId;
-    }
-
-    public String getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(String courseId) {
-        this.courseId = courseId;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
-
-    public String getTotalSubject() {
-        return totalSubject;
-    }
-
-    public void setTotalSubject(String totalSubject) {
-        this.totalSubject = totalSubject;
-    }
-
-    public String getAvatarId() {
-        return avatarId;
-    }
-
-    public void setAvatarId(String avatarId) {
-        this.avatarId = avatarId;
-    }
 }

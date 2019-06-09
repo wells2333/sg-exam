@@ -1,6 +1,5 @@
 package com.github.tangyi.common.core.persistence;
 
-import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
 
 import java.util.ArrayList;

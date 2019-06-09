@@ -2,7 +2,6 @@ package com.github.tangyi.exam.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.constant.CommonConstant;
-import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.*;
 import com.github.tangyi.common.core.vo.DeptVo;
@@ -10,7 +9,6 @@ import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.constant.SecurityConstant;
-import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.exam.api.dto.ExamRecordDto;
 import com.github.tangyi.exam.api.dto.StartExamDto;
 import com.github.tangyi.exam.api.module.ExamRecord;
@@ -35,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -76,11 +75,8 @@ public class ExamRecordController extends BaseController {
     @ApiImplicitParam(name = "id", value = "考试记录ID", required = true, dataType = "String", paramType = "path")
     public ResponseBean<ExamRecord> examRecord(@PathVariable String id) {
         ExamRecord examRecord = new ExamRecord();
-        if (StringUtils.isNotBlank(id)) {
-            examRecord.setId(id);
-            examRecord = examRecordService.get(examRecord);
-        }
-        return new ResponseBean<>(examRecord);
+        examRecord.setId(id);
+        return new ResponseBean<>(examRecordService.get(examRecord));
     }
 
     /**
@@ -109,6 +105,7 @@ public class ExamRecordController extends BaseController {
                                                   @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
                                                   @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                                   ExamRecord examRecord) {
+        examRecord.setTenantCode(SysUtil.getTenantCode());
         PageInfo<ExamRecordDto> examRecordDtoPageInfo = new PageInfo<>();
         List<ExamRecordDto> examRecordDtoList = new ArrayList<>();
         // 查询考试记录
@@ -194,11 +191,7 @@ public class ExamRecordController extends BaseController {
     @ApiOperation(value = "创建考试记录", notes = "创建考试记录")
     @ApiImplicitParam(name = "examRecord", value = "考试记录实体examRecord", required = true, dataType = "ExamRecord")
     @Log("新增考试记录")
-    public ResponseBean<ExamRecord> addExamRecord(@RequestBody ExamRecord examRecord) {
-        if (StringUtils.isEmpty(examRecord.getExaminationId()))
-            throw new CommonException("参数校验失败，考试id为空！");
-        if (StringUtils.isEmpty(examRecord.getUserId()))
-            throw new CommonException("参数校验失败，用户id为空！");
+    public ResponseBean<ExamRecord> addExamRecord(@RequestBody @Valid ExamRecord examRecord) {
         Examination examination = new Examination();
         examination.setId(examRecord.getExaminationId());
         // 查找考试信息
@@ -207,7 +200,7 @@ public class ExamRecordController extends BaseController {
             examRecord.setExaminationName(examination.getExaminationName());
             examRecord.setCourseId(examination.getCourseId());
         }
-        examRecord.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+        examRecord.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         examRecord.setStartTime(examRecord.getCreateDate());
         examRecordService.insert(examRecord);
         return new ResponseBean<>(examRecord);
@@ -225,8 +218,8 @@ public class ExamRecordController extends BaseController {
     @ApiOperation(value = "更新考试记录信息", notes = "根据考试记录id更新考试记录的基本信息")
     @ApiImplicitParam(name = "examRecord", value = "考试记录实体examRecord", required = true, dataType = "ExamRecord")
     @Log("更新考试记录")
-    public ResponseBean<Boolean> updateExamRecord(@RequestBody ExamRecord examRecord) {
-        examRecord.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> updateExamRecord(@RequestBody @Valid ExamRecord examRecord) {
+        examRecord.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(examRecordService.update(examRecord) > 0);
     }
 
@@ -247,7 +240,7 @@ public class ExamRecordController extends BaseController {
         try {
             ExamRecord examRecord = examRecordService.get(id);
             if (examRecord != null) {
-                examRecord.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+                examRecord.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
                 success = examRecordService.delete(examRecord) > 0;
             }
         } catch (Exception e) {
@@ -263,8 +256,8 @@ public class ExamRecordController extends BaseController {
      * @author tangyi
      * @date 2018/12/31 22:28
      */
-    @PostMapping("/export")
-    @PreAuthorize("hasAuthority('exam:examRecord:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PostMapping("export")
+    @PreAuthorize("hasAuthority('exam:examRecord:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "导出考试成绩", notes = "根据成绩id导出成绩")
     @ApiImplicitParam(name = "examRecordDto", value = "成绩信息", required = true, dataType = "ExamRecordDto")
     @Log("导出考试记录")
@@ -282,7 +275,9 @@ public class ExamRecordController extends BaseController {
                 examRecordList = examRecordService.findListById(examRecord);
             } else {
                 // 导出全部
-                examRecordList = examRecordService.findList(new ExamRecord());
+                ExamRecord examRecord = new ExamRecord();
+                examRecord.setTenantCode(SysUtil.getTenantCode());
+                examRecordList = examRecordService.findList(examRecord);
             }
             // 查询考试、用户、部门数据
             if (CollectionUtils.isNotEmpty(examRecordList)) {

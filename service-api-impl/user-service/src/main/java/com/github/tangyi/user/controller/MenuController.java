@@ -26,6 +26,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -58,6 +60,7 @@ public class MenuController extends BaseController {
     @ApiOperation(value = "获取当前用户的菜单列表")
     public List<MenuDto> userMenu() {
         List<MenuDto> menuDtoList = new ArrayList<>();
+        String tenantCode = SysUtil.getTenantCode();
         // 根据角色code查找菜单
         SecurityUtil.getCurrentAuthentication().getAuthorities().stream()
                 // 按角色过滤
@@ -65,7 +68,7 @@ public class MenuController extends BaseController {
                 // 查找菜单
                 .forEach(roleName -> {
                     // 获取角色的菜单
-                    Stream<Menu> menuStream = menuService.findMenuByRole(roleName.getAuthority()).stream();
+                    Stream<Menu> menuStream = menuService.findMenuByRole(roleName.getAuthority(), tenantCode).stream();
                     if (Optional.ofNullable(menuStream).isPresent()) {
                         // 筛选出类型为菜单的菜单，放进menuMap，防止重复，用菜单的ID作为key
                         menuStream
@@ -93,6 +96,7 @@ public class MenuController extends BaseController {
         // 查询所有菜单
         Menu condition = new Menu();
         condition.setApplicationCode(SysUtil.getSysCode());
+        condition.setTenantCode(SysUtil.getTenantCode());
         Stream<Menu> menuStream = menuService.findAllList(condition).stream();
         if (Optional.ofNullable(menuStream).isPresent()) {
             // 转成MenuDto
@@ -112,12 +116,12 @@ public class MenuController extends BaseController {
      * @date 2018/8/27 16:12
      */
     @PostMapping
-    @PreAuthorize("hasAuthority('sys:menu:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('sys:menu:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "创建菜单", notes = "创建菜单")
     @ApiImplicitParam(name = "menu", value = "角色实体menu", required = true, dataType = "Menu")
     @Log("新增菜单")
-    public ResponseBean<Boolean> addMenu(@RequestBody Menu menu) {
-        menu.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> addMenu(@RequestBody @Valid Menu menu) {
+        menu.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(menuService.insert(menu) > 0);
     }
 
@@ -130,12 +134,12 @@ public class MenuController extends BaseController {
      * @date 2018/10/24 16:34
      */
     @PutMapping
-    @PreAuthorize("hasAuthority('sys:menu:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('sys:menu:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "更新菜单信息", notes = "根据菜单id更新菜单的基本信息")
     @ApiImplicitParam(name = "menu", value = "角色实体menu", required = true, dataType = "Menu")
     @Log("更新菜单")
-    public ResponseBean<Boolean> updateMenu(@RequestBody Menu menu) {
-        menu.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> updateMenu(@RequestBody @Valid Menu menu) {
+        menu.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(menuService.update(menu) > 0);
     }
 
@@ -148,7 +152,7 @@ public class MenuController extends BaseController {
      * @date 2018/8/27 16:19
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('sys:menu:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('sys:menu:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "删除菜单", notes = "根据ID删除菜单")
     @ApiImplicitParam(name = "id", value = "菜单ID", required = true, paramType = "path")
     @Log("删除菜单")
@@ -201,13 +205,16 @@ public class MenuController extends BaseController {
                                    @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
                                    @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                    Menu menu) {
+        // 租户标识过滤条件
+        menu.setTenantCode(SysUtil.getTenantCode());
         return menuService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), menu);
     }
 
     /**
      * 根据角色查找菜单
      *
-     * @param role 角色
+     * @param role       角色标识
+     * @param tenantCode 租户标识
      * @return List
      * @author tangyi
      * @date 2018/8/27 15:58
@@ -215,21 +222,23 @@ public class MenuController extends BaseController {
     @GetMapping("findMenuByRole/{role}")
     @ApiOperation(value = "根据角色查找菜单", notes = "根据角色id获取角色菜单")
     @ApiImplicitParam(name = "role", value = "角色名称", required = true, dataType = "String", paramType = "path")
-    public List<Menu> findMenuByRole(@PathVariable String role) {
-        return menuService.findMenuByRole(role);
+    public List<Menu> findMenuByRole(@PathVariable String role, @RequestParam @NotBlank String tenantCode) {
+        return menuService.findMenuByRole(role, tenantCode);
     }
 
     /**
      * 查询所有菜单
      *
+     * @param tenantCode 租户标识
      * @return List
      * @author tangyi
      * @date 2019/04/26 11:50
      */
     @GetMapping("findAllMenu")
     @ApiOperation(value = "查询所有菜单", notes = "查询所有菜单")
-    public List<Menu> findAllMenu() {
+    public List<Menu> findAllMenu(@RequestParam @NotBlank String tenantCode) {
         Menu menu = new Menu();
+        menu.setTenantCode(tenantCode);
         menu.setApplicationCode(SysUtil.getSysCode());
         return menuService.findAllList(menu);
     }
@@ -245,7 +254,7 @@ public class MenuController extends BaseController {
     @ApiImplicitParam(name = "roleCode", value = "角色code", required = true, dataType = "String", paramType = "path")
     public List<String> roleTree(@PathVariable String roleCode) {
         // 根据角色查找菜单
-        Stream<Menu> menuStream = menuService.findMenuByRole(roleCode).stream();
+        Stream<Menu> menuStream = menuService.findMenuByRole(roleCode, SysUtil.getTenantCode()).stream();
         // 获取菜单ID
         if (Optional.ofNullable(menuStream).isPresent())
             return menuStream.map(Menu::getId).collect(Collectors.toList());
@@ -260,20 +269,22 @@ public class MenuController extends BaseController {
      * @date 2018/11/28 12:46
      */
     @PostMapping("export")
-    @PreAuthorize("hasAuthority('sys:menu:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('sys:menu:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "导出菜单", notes = "根据菜单id导出菜单")
     @ApiImplicitParam(name = "menuVo", value = "菜单信息", required = true, dataType = "MenuVo")
     @Log("导出菜单")
     public void exportMenu(@RequestBody MenuVo menuVo, HttpServletRequest request, HttpServletResponse response) {
+        String tenantCode = SysUtil.getTenantCode();
         try {
             // 配置response
             response.setCharacterEncoding("utf-8");
             response.setContentType("multipart/form-data");
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request, "菜单信息" + DateUtils.localDateMillisToString(LocalDateTime.now()) + ".xlsx"));
             List<Menu> menus;
-            // 导出所有
+            // 导出当前租户下的所有菜单
             if (StringUtils.isEmpty(menuVo.getIdString())) {
                 Menu menu = new Menu();
+                menu.setTenantCode(tenantCode);
                 menus = menuService.findList(menu);
             } else {    // 导出选中
                 Menu menu = new Menu();
@@ -296,7 +307,7 @@ public class MenuController extends BaseController {
      * @date 2018/11/28 12:51
      */
     @RequestMapping("import")
-    @PreAuthorize("hasAuthority('sys:menu:import') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('sys:menu:import') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "导入菜单", notes = "导入菜单")
     @Log("导入菜单")
     public ResponseBean<Boolean> importMenu(@ApiParam(value = "要上传的文件", required = true) MultipartFile file, HttpServletRequest request) {

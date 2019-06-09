@@ -51,7 +51,7 @@ public class GatewayRouteController {
      *
      * @return Mono
      */
-    @GetMapping("/routeList")
+    @GetMapping("routeList")
     public Mono<List<Map<String, Object>>> routes() {
         Mono<Map<String, RouteDefinition>> routeDefs = this.routeDefinitionLocator
                 .getRouteDefinitions().collectMap(RouteDefinition::getId);
@@ -135,7 +135,7 @@ public class GatewayRouteController {
      * @author tangyi
      * @date 2019/04/07 12:32
      */
-    @GetMapping("/refresh")
+    @GetMapping("refresh")
     public ResponseBean<Boolean> refresh() {
         amqpTemplate.convertAndSend(MqConstant.REFRESH_GATEWAY_ROUTE_QUEUE, "refresh");
         return new ResponseBean<>(Boolean.TRUE);

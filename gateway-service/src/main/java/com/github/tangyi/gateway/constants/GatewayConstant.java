@@ -22,11 +22,6 @@ public class GatewayConstant {
     public static final String REGISTER = "/user/register";
 
     /**
-     * 密码类型
-     */
-    public static final String GRANT_TYPE_PASSWORD = "password";
-
-    /**
      * 刷新token类型
      */
     public static final String GRANT_TYPE_REFRESH_TOKEN = "refresh_token";

@@ -3,6 +3,7 @@ package com.github.tangyi.common.core.persistence;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.utils.DateUtils;
 import com.github.tangyi.common.core.utils.IdGen;
+import com.github.tangyi.common.core.utils.SysUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang.StringUtils;
@@ -95,7 +96,7 @@ public class BaseEntity<T> implements Serializable {
      * @param applicationCode 系统编号
      */
     public void setCommonValue(String userCode, String applicationCode) {
-        setCommonValue(userCode, applicationCode, "");
+        setCommonValue(userCode, applicationCode, SysUtil.getTenantCode());
     }
 
     /**
