@@ -1,6 +1,9 @@
 package com.github.tangyi.exam.api.module;
 
 import com.github.tangyi.common.core.persistence.BaseEntity;
+import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * 考试记录
@@ -8,21 +11,25 @@ import com.github.tangyi.common.core.persistence.BaseEntity;
  * @author tangyi
  * @date 2018/11/8 21:05
  */
+@Data
 public class ExamRecord extends BaseEntity<ExamRecord> {
 
     /**
      * 考生ID
      */
+    @NotBlank(message = "用户ID不能为空")
     private String userId;
 
     /**
      * 考试ID
      */
+    @NotBlank(message = "考试ID不能为空")
     private String examinationId;
 
     /**
      * 考试名称
      */
+    @NotBlank(message = "考试名称不能为空")
     private String examinationName;
 
     /**
@@ -55,75 +62,9 @@ public class ExamRecord extends BaseEntity<ExamRecord> {
      */
     private String correctNumber;
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getExaminationId() {
-        return examinationId;
-    }
-
-    public void setExaminationId(String examinationId) {
-        this.examinationId = examinationId;
-    }
-
-    public String getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(String courseId) {
-        this.courseId = courseId;
-    }
-
-    public String getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
-    }
-
-    public String getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
-    }
-
-    public String getScore() {
-        return score;
-    }
-
-    public void setScore(String score) {
-        this.score = score;
-    }
-
-    public String getExaminationName() {
-        return examinationName;
-    }
-
-    public void setExaminationName(String examinationName) {
-        this.examinationName = examinationName;
-    }
-
-    public String getInCorrectNumber() {
-        return inCorrectNumber;
-    }
-
-    public void setInCorrectNumber(String inCorrectNumber) {
-        this.inCorrectNumber = inCorrectNumber;
-    }
-
-    public String getCorrectNumber() {
-        return correctNumber;
-    }
-
-    public void setCorrectNumber(String correctNumber) {
-        this.correctNumber = correctNumber;
-    }
+    /**
+     * 提交状态 1-已提交 0-未提交
+     */
+    @NotBlank(message = "状态不能为空")
+    private String submitStatus;
 }

@@ -19,6 +19,7 @@
         <result column="modify_date" property="modifyDate"/>
         <result column="del_flag" property="delFlag"/>
         <result column="application_code" property="applicationCode"/>
+        <result column="tenant_code" property="tenantCode"/>
     </resultMap>
 
     <sql id="logColumns">
@@ -38,7 +39,8 @@
         a.modifier,
         a.modify_date,
         a.del_flag,
-        a.application_code
+        a.application_code,
+        a.tenant_code
     </sql>
 
     <select id="get" resultMap="logResultMap">
@@ -73,7 +75,8 @@
             modifier,
             modify_date,
             del_flag,
-            application_code
+            application_code,
+            tenant_code
         ) values (
             #{id},
             #{type},
@@ -91,7 +94,8 @@
             #{modifier},
             #{modifyDate},
             #{delFlag},
-            #{applicationCode}
+            #{applicationCode},
+            #{tenantCode}
         );
     </insert>
 
@@ -102,7 +106,7 @@
     <delete id="deleteAll">
         DELETE FROM sys_log WHERE id in
         <foreach item="item" index="index" collection="array" open="("
-                 separator="," close=")"> #{item}
+                 separator="," close=")">#{item}
         </foreach>
     </delete>
 </mapper>

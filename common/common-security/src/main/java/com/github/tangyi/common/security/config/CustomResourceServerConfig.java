@@ -21,11 +21,15 @@ public class CustomResourceServerConfig extends ResourceServerConfigurerAdapter 
 
     private static final String RESOURCE_ID = "resource_id";
 
+    private final FilterIgnorePropertiesConfig filterIgnorePropertiesConfig;
+
     @Autowired
-    private FilterIgnorePropertiesConfig filterIgnorePropertiesConfig;
+    public CustomResourceServerConfig(FilterIgnorePropertiesConfig filterIgnorePropertiesConfig) {
+        this.filterIgnorePropertiesConfig = filterIgnorePropertiesConfig;
+    }
 
     @Override
-    public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
+    public void configure(ResourceServerSecurityConfigurer resources) {
         resources.resourceId(RESOURCE_ID).stateless(false);
     }
 

@@ -8,7 +8,6 @@ import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.vo.AttachmentVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
-import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.exam.api.dto.KnowledgeDto;
 import com.github.tangyi.exam.api.module.Knowledge;
 import com.github.tangyi.exam.service.KnowledgeService;
@@ -17,14 +16,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -36,18 +35,16 @@ import java.util.Set;
  * @author tangyi
  * @date 2019/1/1 15:11
  */
+@Slf4j
+@AllArgsConstructor
 @Api("知识库信息管理")
 @RestController
 @RequestMapping("/v1/knowledge")
 public class KnowledgeController extends BaseController {
 
-    private static final Logger logger = LoggerFactory.getLogger(KnowledgeController.class);
+    private final KnowledgeService knowledgeService;
 
-    @Autowired
-    private KnowledgeService knowledgeService;
-
-    @Autowired
-    private UserServiceClient userServiceClient;
+    private final UserServiceClient userServiceClient;
 
     /**
      * 根据ID获取
@@ -62,11 +59,8 @@ public class KnowledgeController extends BaseController {
     @ApiImplicitParam(name = "id", value = "知识ID", required = true, dataType = "String", paramType = "path")
     public ResponseBean<Knowledge> knowledge(@PathVariable String id) {
         Knowledge knowledge = new Knowledge();
-        if (StringUtils.isNotBlank(id)) {
-            knowledge.setId(id);
-            knowledge = knowledgeService.get(knowledge);
-        }
-        return new ResponseBean<>(knowledge);
+        knowledge.setId(id);
+        return new ResponseBean<>(knowledgeService.get(knowledge));
     }
 
     /**
@@ -95,6 +89,7 @@ public class KnowledgeController extends BaseController {
                                                 @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
                                                 @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                                 Knowledge knowledge) {
+        knowledge.setTenantCode(SysUtil.getTenantCode());
         // 查询知识
         PageInfo<Knowledge> knowledgePageInfo = knowledgeService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), knowledge);
         PageInfo<KnowledgeDto> knowledgeDtoPageInfo = new PageInfo<>();
@@ -150,8 +145,8 @@ public class KnowledgeController extends BaseController {
     @ApiOperation(value = "创建知识", notes = "创建知识")
     @ApiImplicitParam(name = "knowledge", value = "知识实体knowledge", required = true, dataType = "Knowledge")
     @Log("新增知识")
-    public ResponseBean<Boolean> addKnowledge(@RequestBody Knowledge knowledge) {
-        knowledge.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> addKnowledge(@RequestBody @Valid Knowledge knowledge) {
+        knowledge.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(knowledgeService.insert(knowledge) > 0);
     }
 
@@ -167,8 +162,8 @@ public class KnowledgeController extends BaseController {
     @ApiOperation(value = "更新知识信息", notes = "根据知识id更新知识的基本信息")
     @ApiImplicitParam(name = "knowledge", value = "知识实体knowledge", required = true, dataType = "Knowledge")
     @Log("更新知识")
-    public ResponseBean<Boolean> updateKnowledge(@RequestBody Knowledge knowledge) {
-        knowledge.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> updateKnowledge(@RequestBody @Valid Knowledge knowledge) {
+        knowledge.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(knowledgeService.update(knowledge) > 0);
     }
 
@@ -191,14 +186,14 @@ public class KnowledgeController extends BaseController {
             knowledge.setId(id);
             knowledge = knowledgeService.get(knowledge);
             if (knowledge != null) {
-                knowledge.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+                knowledge.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
                 success = knowledgeService.delete(knowledge) > 0;
             }
             // 删除附件
             if (knowledge != null && StringUtils.isNotBlank(knowledge.getAttachmentId()))
                 success = userServiceClient.deleteAttachment(knowledge.getAttachmentId()).getData();
         } catch (Exception e) {
-            logger.error("删除知识失败！", e);
+            log.error("删除知识失败！", e);
         }
         return new ResponseBean<>(success);
     }
@@ -211,7 +206,7 @@ public class KnowledgeController extends BaseController {
      * @author tangyi
      * @date 2019/1/1 15:15
      */
-    @PostMapping("/deleteAll")
+    @PostMapping("deleteAll")
     @ApiOperation(value = "批量删除知识", notes = "根据知识id批量删除知识")
     @ApiImplicitParam(name = "knowledge", value = "知识信息", dataType = "Knowledge")
     @Log("批量删除知识")
@@ -221,7 +216,7 @@ public class KnowledgeController extends BaseController {
             if (StringUtils.isNotEmpty(knowledge.getIdString()))
                 success = knowledgeService.deleteAll(knowledge.getIdString().split(",")) > 0;
         } catch (Exception e) {
-            logger.error("删除知识失败！", e);
+            log.error("删除知识失败！", e);
         }
         return new ResponseBean<>(success);
     }

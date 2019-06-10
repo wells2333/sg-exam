@@ -1,6 +1,9 @@
 package com.github.tangyi.user.api.module;
 
 import com.github.tangyi.common.core.persistence.BaseEntity;
+import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * 附件信息
@@ -8,16 +11,19 @@ import com.github.tangyi.common.core.persistence.BaseEntity;
  * @author tangyi
  * @date 2018/10/30 20:47
  */
+@Data
 public class Attachment extends BaseEntity<Attachment> {
 
     /**
      * 附件名称
      */
+    @NotBlank(message = "附件名称不能为空")
     private String attachName;
 
     /**
      * 附件大小
      */
+    @NotBlank(message = "附件大小不能为空")
     private String attachSize;
 
     /**
@@ -33,6 +39,7 @@ public class Attachment extends BaseEntity<Attachment> {
     /**
      * 业务流水号
      */
+    @NotBlank(message = "附件业务流水号不能为空")
     private String busiId;
 
     /**
@@ -44,60 +51,4 @@ public class Attachment extends BaseEntity<Attachment> {
      * 业务模块
      */
     private String busiModule;
-
-    public String getAttachName() {
-        return attachName;
-    }
-
-    public void setAttachName(String attachName) {
-        this.attachName = attachName;
-    }
-
-    public String getAttachSize() {
-        return attachSize;
-    }
-
-    public void setAttachSize(String attachSize) {
-        this.attachSize = attachSize;
-    }
-
-    public String getGroupName() {
-        return groupName;
-    }
-
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
-
-    public String getFastFileId() {
-        return fastFileId;
-    }
-
-    public void setFastFileId(String fastFileId) {
-        this.fastFileId = fastFileId;
-    }
-
-    public String getBusiId() {
-        return busiId;
-    }
-
-    public void setBusiId(String busiId) {
-        this.busiId = busiId;
-    }
-
-    public String getBusiType() {
-        return busiType;
-    }
-
-    public void setBusiType(String busiType) {
-        this.busiType = busiType;
-    }
-
-    public String getBusiModule() {
-        return busiModule;
-    }
-
-    public void setBusiModule(String busiModule) {
-        this.busiModule = busiModule;
-    }
 }

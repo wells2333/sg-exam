@@ -1,6 +1,7 @@
 package com.github.tangyi.common.security.core;
 
 import com.github.tangyi.common.security.constant.SecurityConstant;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -12,6 +13,7 @@ import java.util.Set;
  * @author tangyi
  * @date 2019/3/17 14:37
  */
+@Data
 public class UserDetailsImpl implements UserDetails {
 
     private static final long serialVersionUID = -6509897037222767090L;
@@ -36,7 +38,13 @@ public class UserDetailsImpl implements UserDetails {
      */
     private String status;
 
-    public UserDetailsImpl(String username, String password, String status, Set<GrantedAuthority> authorities) {
+    /**
+     * 租户标识
+     */
+    private String tenantCode;
+
+    public UserDetailsImpl(String tenantCode, String username, String password, String status, Set<GrantedAuthority> authorities) {
+        this.tenantCode = tenantCode;
         this.authorities = authorities;
         this.username = username;
         this.password = password;

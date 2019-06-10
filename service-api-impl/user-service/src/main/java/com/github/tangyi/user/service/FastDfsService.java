@@ -9,11 +9,10 @@ import com.github.tobato.fastdfs.domain.proto.storage.DownloadFileWriter;
 import com.github.tobato.fastdfs.service.AppendFileStorageClient;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.github.tobato.fastdfs.service.TrackerClient;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -28,19 +27,25 @@ import java.util.Set;
  * @author tangyi
  * @date 2018-01-04 10:34
  */
+@Slf4j
+@AllArgsConstructor
 @Service
 public class FastDfsService {
 
-    private static final Logger logger = LoggerFactory.getLogger(FastDfsService.class);
+    /**
+     * 面向普通应用的文件操作接口
+     */
+    private final FastFileStorageClient fastFileStorageClient;
 
-    @Autowired
-    private FastFileStorageClient fastFileStorageClient;    // 面向普通应用的文件操作接口
+    /**
+     * 支持断点续传的文件服务接口
+     */
+    private final AppendFileStorageClient appendFileStorageClient;
 
-    @Autowired
-    private AppendFileStorageClient appendFileStorageClient;    // 支持断点续传的文件服务接口
-
-    @Autowired
-    private TrackerClient trackerClient;    // 目录服务(Tracker)客户端接口
+    /**
+     * 目录服务(Tracker)客户端接口
+     */
+    private final TrackerClient trackerClient;
 
     /**
      * 上传文件
@@ -69,12 +74,12 @@ public class FastDfsService {
      */
     public String uploadFile(InputStream inputStream, long size, String extName, Set<MetaData> metaDataSet) {
         try {
-            logger.info("上传文件大小{}，后缀名{}", size, extName);
+            log.info("上传文件大小{}，后缀名{}", size, extName);
             StorePath storePath = fastFileStorageClient.uploadFile(inputStream, size, extName, metaDataSet);
-            logger.info("上传文件成功，group：{}，path：{}", storePath.getGroup(), storePath.getPath());
+            log.info("上传文件成功，group：{}，path：{}", storePath.getGroup(), storePath.getPath());
             return storePath.getFullPath();
         } catch (Exception e) {
-            logger.error("上传文件失败！", e);
+            log.error("上传文件失败！", e);
         }
         return null;
     }
@@ -92,12 +97,12 @@ public class FastDfsService {
      */
     public String uploadAppenderFile(String groupName, InputStream inputStream, long size, String extName) {
         try {
-            logger.info("上传文件大小{}，后缀名{}", size, extName);
+            log.info("上传文件大小{}，后缀名{}", size, extName);
             StorePath storePath = appendFileStorageClient.uploadAppenderFile(groupName, inputStream, size, extName);
-            logger.info("上传文件成功，group：{}，path：{}", storePath.getGroup(), storePath.getPath());
+            log.info("上传文件成功，group：{}，path：{}", storePath.getGroup(), storePath.getPath());
             return storePath.getFullPath();
         } catch (Exception e) {
-            logger.error("上传文件失败！", e);
+            log.error("上传文件失败！", e);
         }
         return null;
     }
@@ -115,11 +120,11 @@ public class FastDfsService {
      */
     public boolean appendFile(String groupName, String path, InputStream inputStream, long size) {
         try {
-            logger.info("续传文件大小{}，组名{}，路径名{}", size, groupName, path);
+            log.info("续传文件大小{}，组名{}，路径名{}", size, groupName, path);
             appendFileStorageClient.appendFile(groupName, path, inputStream, size);
             return true;
         } catch (Exception e) {
-            logger.error("续传文件失败！", e);
+            log.error("续传文件失败！", e);
         }
         return false;
     }
@@ -137,11 +142,11 @@ public class FastDfsService {
         if (path.startsWith(groupName + "/"))
             path = path.split(groupName + "/")[1];
         try {
-            logger.info("下载文件，group：{}，path：{}", groupName, path);
+            log.info("下载文件，group：{}，path：{}", groupName, path);
             DownloadByteArray callback = new DownloadByteArray();
             return fastFileStorageClient.downloadFile(groupName, path, callback);
         } catch (Exception e) {
-            logger.error("下载文件失败!", e);
+            log.error("下载文件失败!", e);
         }
         return null;
     }
@@ -160,11 +165,11 @@ public class FastDfsService {
         if (path.startsWith(groupName + "/"))
             path = path.split(groupName + "/")[1];
         try {
-            logger.info("下载文件，group：{}，path：{}", groupName, path);
+            log.info("下载文件，group：{}，path：{}", groupName, path);
             DownloadFileWriter callback = new DownloadFileWriter(filePath);
             return fastFileStorageClient.downloadFile(groupName, path, callback);
         } catch (Exception e) {
-            logger.error("下载文件失败!", e);
+            log.error("下载文件失败!", e);
         }
         return null;
     }
@@ -183,7 +188,7 @@ public class FastDfsService {
             byte[] content = downloadFile(groupName, path);
             return new ByteArrayInputStream(content);
         } catch (Exception e) {
-            logger.error("下载附件失败！", e);
+            log.error("下载附件失败！", e);
         }
         return null;
     }
@@ -200,7 +205,7 @@ public class FastDfsService {
         if (path.startsWith(groupName + "/"))
             path = path.split(groupName + "/")[1];
         fastFileStorageClient.deleteFile(groupName, path);
-        logger.info("删除文件成功，group：{}，path：{}", groupName, path);
+        log.info("删除文件成功，group：{}，path：{}", groupName, path);
     }
 
     /**

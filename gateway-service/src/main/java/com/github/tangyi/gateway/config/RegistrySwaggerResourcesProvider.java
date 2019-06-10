@@ -1,10 +1,16 @@
 package com.github.tangyi.gateway.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.gateway.config.GatewayProperties;
+import com.github.tangyi.common.core.constant.CommonConstant;
+import com.github.tangyi.common.core.model.Route;
+import com.github.tangyi.common.core.utils.JsonMapper;
+import com.github.tangyi.common.core.vo.RoutePredicateVo;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.support.NameUtils;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import springfox.documentation.swagger.web.SwaggerResource;
 import springfox.documentation.swagger.web.SwaggerResourcesProvider;
@@ -14,28 +20,25 @@ import java.util.List;
 
 /**
  * Swagger聚合文档
+ * 目前问题：结合动态更新路由之后，GatewayProperties获取不到新的路由列表，导致swagger-ui显示不了
+ * 解决办法：从Redis里读取路由数据
  *
  * @author tangyi
  * @date 2019/3/26 15:39
  */
+@Slf4j
 @Component
 @Primary
+@AllArgsConstructor
 public class RegistrySwaggerResourcesProvider implements SwaggerResourcesProvider {
 
     private static final String API_URI = "/v2/api-docs";
 
     private final RouteLocator routeLocator;
 
-    private final GatewayProperties gatewayProperties;
-
     private final SwaggerProviderConfig swaggerProviderConfig;
 
-    @Autowired
-    public RegistrySwaggerResourcesProvider(RouteLocator routeLocator, GatewayProperties gatewayProperties, SwaggerProviderConfig swaggerProviderConfig) {
-        this.routeLocator = routeLocator;
-        this.gatewayProperties = gatewayProperties;
-        this.swaggerProviderConfig = swaggerProviderConfig;
-    }
+    private final RedisTemplate redisTemplate;
 
     @Override
     public List<SwaggerResource> get() {
@@ -47,13 +50,31 @@ public class RegistrySwaggerResourcesProvider implements SwaggerResourcesProvide
             if (swaggerProviderConfig.getProviders().contains(route.getId()))
                 routes.add(route.getId());
         });
+
         // 结合配置的route-路径(Path)，和route过滤，只获取有效的route节点
-        gatewayProperties.getRoutes().stream().filter(routeDefinition -> routes.contains(routeDefinition.getId()))
-                .forEach(routeDefinition -> routeDefinition.getPredicates().stream()
-                        .filter(predicateDefinition -> ("Path").equalsIgnoreCase(predicateDefinition.getName()))
-                        .forEach(predicateDefinition -> resources.add(swaggerResource(routeDefinition.getId(),
-                                predicateDefinition.getArgs().get(NameUtils.GENERATED_NAME_PREFIX + "0")
-                                        .replace("/**", API_URI)))));
+        Object object = redisTemplate.opsForValue().get(CommonConstant.ROUTE_KEY);
+        if (object != null) {
+            List<Route> routeList = JsonMapper.getInstance().fromJson(object.toString(), JsonMapper.getInstance().createCollectionType(ArrayList.class, Route.class));
+            if (CollectionUtils.isNotEmpty(routeList)) {
+                for (Route route : routeList) {
+                    if (routes.contains(route.getRouteId())) {
+                        try {
+                            List<RoutePredicateVo> routePredicateVoList = JsonMapper.getInstance().fromJson(route.getPredicates(), JsonMapper.getInstance().createCollectionType(ArrayList.class, RoutePredicateVo.class));
+                            if (CollectionUtils.isNotEmpty(routePredicateVoList)) {
+                                String genKey;
+                                RoutePredicateVo routePredicateVo = routePredicateVoList.stream().filter(routePredicate -> routePredicate.getArgs().containsKey(NameUtils.GENERATED_NAME_PREFIX + "0")).findFirst().orElse(null);
+                                if (routePredicateVo != null) {
+                                    genKey = routePredicateVo.getArgs().get(NameUtils.GENERATED_NAME_PREFIX + "0").replace("/**", API_URI);
+                                    resources.add(swaggerResource(route.getRouteId(), genKey));
+                                }
+                            }
+                        } catch (Exception e) {
+                            log.error(e.getMessage(), e);
+                        }
+                    }
+                }
+            }
+        }
         return resources;
     }
 

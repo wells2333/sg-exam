@@ -5,11 +5,10 @@ import com.github.tangyi.common.core.constant.MqConstant;
 import com.github.tangyi.common.core.model.Route;
 import com.github.tangyi.common.core.utils.JsonMapper;
 import com.github.tangyi.user.service.RouteService;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -22,19 +21,16 @@ import java.util.List;
  * @author tangyi
  * @date 2019/4/2 18:42
  */
+@Slf4j
+@AllArgsConstructor
 @Configuration
 public class RouteInitConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(RouteInitConfig.class);
+    private final RouteService routeService;
 
-    @Autowired
-    private RouteService routeService;
+    private final AmqpTemplate amqpTemplate;
 
-    @Autowired
-    private AmqpTemplate amqpTemplate;
-
-    @Autowired
-    private RedisTemplate redisTemplate;
+    private final RedisTemplate redisTemplate;
 
     @PostConstruct
     public void initRoute() {
@@ -53,7 +49,7 @@ public class RouteInitConfig {
             init.setStatus(CommonConstant.DEL_FLAG_NORMAL.toString());
             List<Route> routes = routeService.findList(init);
             if (CollectionUtils.isNotEmpty(routes)) {
-                logger.info("加载{}条路由记录", routes.size());
+                log.info("加载{}条路由记录", routes.size());
                 for (Route route : routes) {
                     // 发送消息
                     amqpTemplate.convertAndSend(MqConstant.EDIT_GATEWAY_ROUTE_QUEUE, route);
@@ -62,7 +58,7 @@ public class RouteInitConfig {
                 redisTemplate.opsForValue().set(CommonConstant.ROUTE_KEY, JsonMapper.getInstance().toJson(routes));
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 }

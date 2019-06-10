@@ -12,12 +12,14 @@
         <result column="score" property="score"/>
         <result column="correct_number" property="correctNumber"/>
         <result column="incorrect_number" property="inCorrectNumber"/>
+        <result column="submit_status" property="submitStatus"/>
         <result column="creator" property="creator"/>
         <result column="create_date" property="createDate"/>
         <result column="modifier" property="modifier"/>
         <result column="modify_date" property="modifyDate"/>
         <result column="del_flag" property="delFlag"/>
         <result column="application_code" property="applicationCode"/>
+        <result column="tenant_code" property="tenantCode"/>
     </resultMap>
 
     <sql id="examRecordColumns">
@@ -31,12 +33,14 @@
         a.score,
         a.correct_number,
         a.incorrect_number,
+        a.submit_status,
         a.creator,
         a.create_date,
         a.modifier,
         a.modify_date,
         a.del_flag,
-        a.application_code
+        a.application_code,
+        a.tenant_code
     </sql>
 
     <!-- where 条件 -->
@@ -52,6 +56,12 @@
         </if>
         <if test="courseId != null and courseId != ''">
             and a.course_id = #{courseId}
+        </if>
+        <if test="submitStatus != null and submitStatus != ''">
+            and a.submit_status = #{submitStatus}
+        </if>
+        <if test="tenantCode != null and tenantCode != ''">
+            and a.tenant_code = #{tenantCode}
         </if>
     </sql>
 
@@ -99,12 +109,14 @@
             score,
             correct_number,
             incorrect_number,
+            submit_status,
             creator,
             create_date,
             modifier,
             modify_date,
             del_flag,
-            application_code
+            application_code,
+            tenant_code
         ) values (
             #{id},
             #{userId},
@@ -116,17 +128,19 @@
             #{score},
             #{correctNumber},
             #{inCorrectNumber},
+            #{submitStatus},
             #{creator},
             #{createDate},
             #{modifier},
             #{modifyDate},
             #{delFlag},
-            #{applicationCode}
+            #{applicationCode},
+            #{tenantCode}
         );
     </insert>
 
     <update id="update">
-        UPDATE exam_record  SET
+        UPDATE exam_record SET
         <if test="userId != null">
             user_id = #{userId},
         </if>
@@ -153,6 +167,9 @@
         </if>
         <if test="inCorrectNumber != null">
             incorrect_number = #{inCorrectNumber},
+        </if>
+        <if test="submitStatus != null">
+            submit_status = #{submitStatus},
         </if>
         <if test="delFlag != null">
             del_flag = #{delFlag},

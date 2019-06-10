@@ -11,8 +11,7 @@ import com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook;
 import com.netflix.hystrix.strategy.metrics.HystrixMetricsPublisher;
 import com.netflix.hystrix.strategy.properties.HystrixPropertiesStrategy;
 import com.netflix.hystrix.strategy.properties.HystrixProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
@@ -30,11 +29,10 @@ import java.util.concurrent.TimeUnit;
  * @author tangyi
  * @date 2019/3/27 20:53
  */
+@Slf4j
 @Component
 @Primary
 public class CustomFeignHystrixConcurrencyStrategy extends HystrixConcurrencyStrategy {
-
-    private static final Logger logger = LoggerFactory.getLogger(CustomFeignHystrixConcurrencyStrategy.class);
 
     private HystrixConcurrencyStrategy hystrixConcurrencyStrategy;
 
@@ -59,17 +57,17 @@ public class CustomFeignHystrixConcurrencyStrategy extends HystrixConcurrencyStr
             HystrixPlugins.getInstance().registerMetricsPublisher(metricsPublisher);
             HystrixPlugins.getInstance().registerPropertiesStrategy(propertiesStrategy);
         } catch (Exception e) {
-            logger.error("Failed to register Sleuth Hystrix Concurrency Strategy", e);
+            log.error("Failed to register Sleuth Hystrix Concurrency Strategy", e);
         }
     }
 
     private void logCurrentStateOfHystrixPlugins(HystrixEventNotifier eventNotifier,
                                                  HystrixMetricsPublisher metricsPublisher, HystrixPropertiesStrategy propertiesStrategy) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Current Hystrix plugins configuration is [" + "concurrencyStrategy ["
+        if (log.isDebugEnabled()) {
+            log.debug("Current Hystrix plugins configuration is [" + "concurrencyStrategy ["
                     + this.hystrixConcurrencyStrategy + "]," + "eventNotifier [" + eventNotifier + "]," + "metricPublisher ["
                     + metricsPublisher + "]," + "propertiesStrategy [" + propertiesStrategy + "]," + "]");
-            logger.debug("Registering Sleuth Hystrix Concurrency Strategy.");
+            log.debug("Registering Sleuth Hystrix Concurrency Strategy.");
         }
     }
 

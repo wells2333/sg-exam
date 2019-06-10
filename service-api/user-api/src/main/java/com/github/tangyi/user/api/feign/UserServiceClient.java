@@ -10,6 +10,7 @@ import com.github.tangyi.common.feign.config.CustomFeignConfig;
 import com.github.tangyi.user.api.dto.UserInfoDto;
 import com.github.tangyi.user.api.feign.factory.UserServiceClientFallbackFactory;
 import com.github.tangyi.user.api.module.Menu;
+import com.github.tangyi.user.api.module.Tenant;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,13 +28,14 @@ public interface UserServiceClient {
     /**
      * 根据用户名获取用户详细信息
      *
-     * @param username username
+     * @param username   username
+     * @param tenantCode 租户标识
      * @return UserVo
      * @author tangyi
      * @date 2019/03/17 12:14
      */
     @GetMapping("/v1/user/findUserByUsername/{username}")
-    UserVo findUserByUsername(@PathVariable("username") String username);
+    UserVo findUserByUsername(@PathVariable("username") String username, @RequestParam("tenantCode") String tenantCode);
 
     /**
      * 获取当前用户的信息
@@ -53,6 +55,17 @@ public interface UserServiceClient {
      */
     @RequestMapping(value = "/v1/user/findById", method = RequestMethod.POST)
     ResponseBean<List<UserVo>> findUserById(@RequestBody UserVo userVo);
+
+    /**
+     * 查询用户数量
+     *
+     * @param userVo userVo
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/05/09 22:04
+     */
+    @RequestMapping(value = "/v1/user/userCount", method = RequestMethod.POST)
+    ResponseBean<Integer> findUserCount(@RequestBody UserVo userVo);
 
     /**
      * 根据部门id获取部门
@@ -97,21 +110,34 @@ public interface UserServiceClient {
     /**
      * 根据角色查找菜单
      *
-     * @param role 角色
+     * @param role       角色
+     * @param tenantCode 租户标识
      * @return List
      * @author tangyi
      * @date 2019/04/08 20:42
      */
     @GetMapping("/v1/menu/findMenuByRole/{role}")
-    List<Menu> findMenuByRole(@PathVariable("role") String role);
+    List<Menu> findMenuByRole(@PathVariable("role") String role, @RequestParam("tenantCode") String tenantCode);
 
     /**
      * 查询所有菜单
      *
+     * @param tenantCode 租户标识
      * @return List
      * @author tangyi
      * @date 2019/04/26 11:48
      */
     @GetMapping("/v1/menu/findAllMenu")
-    List<Menu> findAllMenu();
+    List<Menu> findAllMenu(@RequestParam("tenantCode") String tenantCode);
+
+    /**
+     * 根据租户code获取租户的详细信息
+     *
+     * @param tenantCode 租户标识
+     * @return UserVo
+     * @author tangyi
+     * @date 2019/05/26 10:21
+     */
+    @GetMapping("/v1/tenant/findTenantByTenantCode/{tenantCode}")
+    Tenant findTenantByTenantCode(@PathVariable("tenantCode") String tenantCode);
 }

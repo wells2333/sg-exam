@@ -2,7 +2,6 @@ package com.github.tangyi.exam.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.constant.CommonConstant;
-import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.*;
 import com.github.tangyi.common.core.vo.DeptVo;
@@ -10,10 +9,11 @@ import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.constant.SecurityConstant;
-import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.exam.api.dto.ExamRecordDto;
+import com.github.tangyi.exam.api.dto.StartExamDto;
 import com.github.tangyi.exam.api.module.ExamRecord;
 import com.github.tangyi.exam.api.module.Examination;
+import com.github.tangyi.exam.service.AnswerService;
 import com.github.tangyi.exam.service.ExamRecordService;
 import com.github.tangyi.exam.service.ExaminationService;
 import com.github.tangyi.exam.utils.ExamRecordUtil;
@@ -22,20 +22,23 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import javax.validation.Valid;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -44,21 +47,20 @@ import java.util.stream.Stream;
  * @author tangyi
  * @date 2018/11/8 21:27
  */
+@Slf4j
+@AllArgsConstructor
 @Api("考试记录信息管理")
 @RestController
 @RequestMapping("/v1/examRecord")
 public class ExamRecordController extends BaseController {
 
-    private static final Logger logger = LoggerFactory.getLogger(ExamRecordController.class);
+    private final ExamRecordService examRecordService;
 
-    @Autowired
-    private ExamRecordService examRecordService;
+    private final ExaminationService examinationService;
 
-    @Autowired
-    private ExaminationService examinationService;
+    private final UserServiceClient userServiceClient;
 
-    @Autowired
-    private UserServiceClient userServiceClient;
+    private final AnswerService answerService;
 
     /**
      * 根据ID获取
@@ -73,11 +75,8 @@ public class ExamRecordController extends BaseController {
     @ApiImplicitParam(name = "id", value = "考试记录ID", required = true, dataType = "String", paramType = "path")
     public ResponseBean<ExamRecord> examRecord(@PathVariable String id) {
         ExamRecord examRecord = new ExamRecord();
-        if (StringUtils.isNotBlank(id)) {
-            examRecord.setId(id);
-            examRecord = examRecordService.get(examRecord);
-        }
-        return new ResponseBean<>(examRecord);
+        examRecord.setId(id);
+        return new ResponseBean<>(examRecordService.get(examRecord));
     }
 
     /**
@@ -106,6 +105,7 @@ public class ExamRecordController extends BaseController {
                                                   @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
                                                   @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                                   ExamRecord examRecord) {
+        examRecord.setTenantCode(SysUtil.getTenantCode());
         PageInfo<ExamRecordDto> examRecordDtoPageInfo = new PageInfo<>();
         List<ExamRecordDto> examRecordDtoList = new ArrayList<>();
         // 查询考试记录
@@ -136,6 +136,11 @@ public class ExamRecordController extends BaseController {
                         examRecordDto.setEndTime(tempExamRecord.getEndTime());
                         examRecordDto.setScore(tempExamRecord.getScore());
                         examRecordDto.setUserId(tempExamRecord.getUserId());
+                        // 正确题目数
+                        examRecordDto.setCorrectNumber(tempExamRecord.getCorrectNumber());
+                        examRecordDto.setInCorrectNumber(tempExamRecord.getInCorrectNumber());
+                        // 提交状态
+                        examRecordDto.setSubmitStatus(tempExamRecord.getSubmitStatus());
                         examRecordDtoList.add(examRecordDto);
                     }
                 });
@@ -186,11 +191,7 @@ public class ExamRecordController extends BaseController {
     @ApiOperation(value = "创建考试记录", notes = "创建考试记录")
     @ApiImplicitParam(name = "examRecord", value = "考试记录实体examRecord", required = true, dataType = "ExamRecord")
     @Log("新增考试记录")
-    public ResponseBean<ExamRecord> addExamRecord(@RequestBody ExamRecord examRecord) {
-        if (StringUtils.isEmpty(examRecord.getExaminationId()))
-            throw new CommonException("参数校验失败，考试id为空！");
-        if (StringUtils.isEmpty(examRecord.getUserId()))
-            throw new CommonException("参数校验失败，用户id为空！");
+    public ResponseBean<ExamRecord> addExamRecord(@RequestBody @Valid ExamRecord examRecord) {
         Examination examination = new Examination();
         examination.setId(examRecord.getExaminationId());
         // 查找考试信息
@@ -199,7 +200,7 @@ public class ExamRecordController extends BaseController {
             examRecord.setExaminationName(examination.getExaminationName());
             examRecord.setCourseId(examination.getCourseId());
         }
-        examRecord.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+        examRecord.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         examRecord.setStartTime(examRecord.getCreateDate());
         examRecordService.insert(examRecord);
         return new ResponseBean<>(examRecord);
@@ -217,8 +218,8 @@ public class ExamRecordController extends BaseController {
     @ApiOperation(value = "更新考试记录信息", notes = "根据考试记录id更新考试记录的基本信息")
     @ApiImplicitParam(name = "examRecord", value = "考试记录实体examRecord", required = true, dataType = "ExamRecord")
     @Log("更新考试记录")
-    public ResponseBean<Boolean> updateExamRecord(@RequestBody ExamRecord examRecord) {
-        examRecord.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> updateExamRecord(@RequestBody @Valid ExamRecord examRecord) {
+        examRecord.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(examRecordService.update(examRecord) > 0);
     }
 
@@ -239,11 +240,11 @@ public class ExamRecordController extends BaseController {
         try {
             ExamRecord examRecord = examRecordService.get(id);
             if (examRecord != null) {
-                examRecord.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+                examRecord.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
                 success = examRecordService.delete(examRecord) > 0;
             }
         } catch (Exception e) {
-            logger.error("删除考试记录失败！", e);
+            log.error("删除考试记录失败！", e);
         }
         return new ResponseBean<>(success);
     }
@@ -255,8 +256,8 @@ public class ExamRecordController extends BaseController {
      * @author tangyi
      * @date 2018/12/31 22:28
      */
-    @PostMapping("/export")
-    @PreAuthorize("hasAuthority('exam:examRecord:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PostMapping("export")
+    @PreAuthorize("hasAuthority('exam:examRecord:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "导出考试成绩", notes = "根据成绩id导出成绩")
     @ApiImplicitParam(name = "examRecordDto", value = "成绩信息", required = true, dataType = "ExamRecordDto")
     @Log("导出考试记录")
@@ -265,7 +266,7 @@ public class ExamRecordController extends BaseController {
             // 配置response
             response.setCharacterEncoding("utf-8");
             response.setContentType("multipart/form-data");
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request, "考试成绩" + new SimpleDateFormat("yyyyMMddhhmmssSSS").format(new Date()) + ".xlsx"));
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request, "考试成绩" + DateUtils.localDateMillisToString(LocalDateTime.now()) + ".xlsx"));
             List<ExamRecord> examRecordList;
             if (StringUtils.isNotEmpty(examRecordDto.getIdString())) {
                 ExamRecord examRecord = new ExamRecord();
@@ -274,7 +275,9 @@ public class ExamRecordController extends BaseController {
                 examRecordList = examRecordService.findListById(examRecord);
             } else {
                 // 导出全部
-                examRecordList = examRecordService.findList(new ExamRecord());
+                ExamRecord examRecord = new ExamRecord();
+                examRecord.setTenantCode(SysUtil.getTenantCode());
+                examRecordList = examRecordService.findList(examRecord);
             }
             // 查询考试、用户、部门数据
             if (CollectionUtils.isNotEmpty(examRecordList)) {
@@ -336,7 +339,33 @@ public class ExamRecordController extends BaseController {
                 ExcelToolUtil.exportExcel(request.getInputStream(), response.getOutputStream(), MapUtil.java2Map(examRecordDtoList), ExamRecordUtil.getExamRecordDtoMap());
             }
         } catch (Exception e) {
-            logger.error("导出成绩数据失败！", e);
+            log.error("导出成绩数据失败！", e);
         }
+    }
+
+    /**
+     * 开始考试
+     *
+     * @param examRecord examRecord
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/04/30 16:45
+     */
+    @PostMapping("start")
+    @Log("开始考试")
+    public ResponseBean<StartExamDto> start(@RequestBody ExamRecord examRecord) {
+        return new ResponseBean<>(answerService.start(examRecord));
+    }
+
+    /**
+     * 获取服务器当前时间
+     *
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/05/07 22:03
+     */
+    @GetMapping("currentTime")
+    public ResponseBean<String> currentTime() {
+        return new ResponseBean<>(DateUtils.localDateToString(LocalDateTime.now()));
     }
 }

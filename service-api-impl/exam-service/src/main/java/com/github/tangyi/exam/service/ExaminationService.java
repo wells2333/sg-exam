@@ -1,10 +1,11 @@
 package com.github.tangyi.exam.service;
 
 import com.github.tangyi.common.core.service.CrudService;
-import com.github.tangyi.exam.mapper.ExaminationMapper;
 import com.github.tangyi.exam.api.module.Examination;
 import com.github.tangyi.exam.api.module.Subject;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.github.tangyi.exam.mapper.ExaminationMapper;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -16,11 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
  * @author tangyi
  * @date 2018/11/8 21:19
  */
+@Slf4j
+@AllArgsConstructor
 @Service
 public class ExaminationService extends CrudService<ExaminationMapper, Examination> {
 
-    @Autowired
-    private SubjectService subjectService;
+    private final SubjectService subjectService;
 
     /**
      * 查询考试
@@ -52,7 +54,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
         Subject subject = new Subject();
         subject.setExaminationId(examination.getId());
         int totalSubject = subjectService.getExaminationTotalSubject(subject);
-        logger.debug("totalSubject:{}", totalSubject);
+        log.debug("totalSubject:{}", totalSubject);
         examination.setTotalSubject(String.valueOf(totalSubject));
         return super.update(examination);
     }
@@ -89,6 +91,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 
     /**
      * 查询考试数量
+     *
      * @param examination examination
      * @return int
      * @author tangyi

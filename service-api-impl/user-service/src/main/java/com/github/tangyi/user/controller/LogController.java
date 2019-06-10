@@ -8,16 +8,18 @@ import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.security.constant.SecurityConstant;
-import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.user.service.LogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 /**
  * 日志controller
@@ -25,13 +27,14 @@ import org.springframework.web.bind.annotation.*;
  * @author tangyi
  * @date 2018/10/31 20:48
  */
+@Slf4j
+@AllArgsConstructor
 @Api("日志信息管理")
 @RestController
 @RequestMapping("/v1/log")
 public class LogController extends BaseController {
 
-    @Autowired
-    private LogService logService;
+    private final LogService logService;
 
     /**
      * 根据id获取日志
@@ -48,7 +51,7 @@ public class LogController extends BaseController {
         try {
             return logService.get(id);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         return new Log();
     }
@@ -79,6 +82,7 @@ public class LogController extends BaseController {
                                   @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
                                   @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                   Log log) {
+        log.setTenantCode(SysUtil.getTenantCode());
         return logService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), log);
     }
 
@@ -93,9 +97,9 @@ public class LogController extends BaseController {
     @PostMapping
     @ApiOperation(value = "新增日志", notes = "新增日志")
     @ApiImplicitParam(name = "log", value = "日志实体Log", required = true, dataType = "Log")
-    public ResponseBean<Boolean> addLog(@RequestBody Log log) {
+    public ResponseBean<Boolean> addLog(@RequestBody @Valid Log log) {
         if (StringUtils.isBlank(log.getId()))
-            log.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+            log.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         // 保存日志
         return new ResponseBean<>(logService.insert(log) > 0);
     }
@@ -109,7 +113,7 @@ public class LogController extends BaseController {
      * @date 2018/10/31 21:27
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('monitor:log:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('monitor:log:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "删除日志", notes = "根据ID删除日志")
     @ApiImplicitParam(name = "id", value = "日志ID", required = true, paramType = "path")
     public ResponseBean<Boolean> delete(@PathVariable String id) {
@@ -121,22 +125,22 @@ public class LogController extends BaseController {
     /**
      * 批量删除
      *
-     * @param log log
+     * @param logInfo logInfo
      * @return ResponseBean
      * @author tangyi
      * @date 2018/12/4 10:12
      */
-    @PostMapping("/deleteAll")
-    @PreAuthorize("hasAuthority('monitor:log:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PostMapping("deleteAll")
+    @PreAuthorize("hasAuthority('monitor:log:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "批量删除日志", notes = "根据日志ids批量删除日志")
-    @ApiImplicitParam(name = "log", value = "日志信息", dataType = "Log")
-    public ResponseBean<Boolean> deleteAllAttachments(@RequestBody Log log) {
+    @ApiImplicitParam(name = "logInfo", value = "日志信息", dataType = "Log")
+    public ResponseBean<Boolean> deleteAllAttachments(@RequestBody Log logInfo) {
         boolean success = false;
         try {
-            if (StringUtils.isNotEmpty(log.getIdString()))
-                success = logService.deleteAll(log.getIdString().split(",")) > 0;
+            if (StringUtils.isNotEmpty(logInfo.getIdString()))
+                success = logService.deleteAll(logInfo.getIdString().split(",")) > 0;
         } catch (Exception e) {
-            logger.error("删除附件失败！", e);
+            log.error("删除附件失败！", e);
         }
         return new ResponseBean<>(success);
     }

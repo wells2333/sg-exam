@@ -9,12 +9,14 @@
         <result column="course_id" property="courseId"/>
         <result column="subject_id" property="subjectId"/>
         <result column="answer" property="answer"/>
+        <result column="option_answer" property="optionAnswer"/>
         <result column="creator" property="creator"/>
         <result column="create_date" property="createDate"/>
         <result column="modifier" property="modifier"/>
         <result column="modify_date" property="modifyDate"/>
         <result column="del_flag" property="delFlag"/>
         <result column="application_code" property="applicationCode"/>
+        <result column="tenant_code" property="tenantCode"/>
     </resultMap>
 
     <sql id="answerColumns">
@@ -25,12 +27,14 @@
         a.course_id,
         a.subject_id,
         a.answer,
+        a.option_answer,
         a.creator,
         a.create_date,
         a.modifier,
         a.modify_date,
         a.del_flag,
-        a.application_code
+        a.application_code,
+        a.tenant_code
     </sql>
 
     <!-- where 条件 -->
@@ -49,6 +53,9 @@
         </if>
         <if test="subjectId != null and subjectId != ''">
             and a.subject_id = #{subjectId}
+        </if>
+        <if test="tenantCode != null and tenantCode != ''">
+            and a.tenant_code = #{tenantCode}
         </if>
     </sql>
 
@@ -78,7 +85,7 @@
     </select>
 
     <insert id="insert">
-        insert  into answer (
+        insert into answer (
             id,
             user_id,
             examination_id,
@@ -86,12 +93,14 @@
             course_id,
             subject_id,
             answer,
+            option_answer,
             creator,
             create_date,
             modifier,
             modify_date,
             del_flag,
-            application_code
+            application_code,
+            tenant_code
         ) values (
             #{id},
             #{userId},
@@ -100,17 +109,19 @@
             #{courseId},
             #{subjectId},
             #{answer},
+            #{optionAnswer},
             #{creator},
             #{createDate},
             #{modifier},
             #{modifyDate},
             #{delFlag},
-            #{applicationCode}
+            #{applicationCode},
+            #{tenantCode}
         );
     </insert>
 
     <update id="update">
-        UPDATE answer  SET
+        UPDATE answer SET
         <if test="userId != null">
             user_id = #{userId},
         </if>
@@ -128,6 +139,9 @@
         </if>
         <if test="answer != null">
             answer = #{answer},
+        </if>
+        <if test="optionAnswer != null">
+            option_answer = #{optionAnswer},
         </if>
         <if test="delFlag != null">
             del_flag = #{delFlag},

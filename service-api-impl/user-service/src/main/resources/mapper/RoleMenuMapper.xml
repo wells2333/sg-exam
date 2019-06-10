@@ -27,13 +27,13 @@
 
     <insert id="insertBatch" useGeneratedKeys="false">
         INSERT INTO sys_role_menu (
-            id,
-            role_id,
-            menu_id)
+        id,
+        role_id,
+        menu_id)
         VALUES
-            <foreach collection="list" item="item" index="index" separator=",">
-                (#{item.id}, #{item.roleId}, #{item.menuId})
-            </foreach>
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id}, #{item.roleId}, #{item.menuId})
+        </foreach>
     </insert>
 
     <delete id="deleteByRoleId">

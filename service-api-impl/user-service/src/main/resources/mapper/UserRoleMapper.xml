@@ -37,8 +37,8 @@
 
     <delete id="delete">
         delete from sys_user_role
-	    where user_id = #{userId}
-	    <if test="roleId != null and roleId != ''">
+        where user_id = #{userId}
+        <if test="roleId != null and roleId != ''">
             and role_id = #{roleId}
         </if>
     </delete>

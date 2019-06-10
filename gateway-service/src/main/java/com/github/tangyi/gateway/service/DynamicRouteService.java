@@ -20,10 +20,14 @@ import reactor.core.publisher.Mono;
 @Service
 public class DynamicRouteService implements ApplicationEventPublisherAware {
 
-    @Autowired
-    private RouteDefinitionWriter routeDefinitionWriter;
+    private final RouteDefinitionWriter routeDefinitionWriter;
 
     private ApplicationEventPublisher applicationEventPublisher;
+
+    @Autowired
+    public DynamicRouteService(RouteDefinitionWriter routeDefinitionWriter) {
+        this.routeDefinitionWriter = routeDefinitionWriter;
+    }
 
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {

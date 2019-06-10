@@ -1,6 +1,22 @@
 ## spring-microservice-exam
 
-交流QQ群：996208878
+- 在线体验-前台：[http://www.ehedgehog.net](http://www.ehedgehog.net)
+
+- 在线体验-后台：[http://www.ehedgehog.net:81](http://www.ehedgehog.net:81)
+
+交流QQ群：
+
+<a target="_blank" href="https://jq.qq.com/?_wv=1027&k=5RKZNF2"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="Spring Cloud考试系统学习" title="Spring Cloud考试系统学习"></a>
+
+群号：996208878
+
+如果您觉得有帮助，请点右上角 "Star" 或者项目底部的“捐助”支持一下，谢谢！
+
+项目源码地址
+
+- 前台ui：[spring-microservice-exam-web](https://gitee.com/wells2333/spring-microservice-exam-web.git)
+- 后台ui：[spring-microservice-exam-ui](https://gitee.com/wells2333/spring-microservice-exam-ui.git)
+- 后端：[spring-microservice-exam](https://gitee.com/wells2333/spring-microservice-exam.git)
 
 ## 简介
 
@@ -12,9 +28,13 @@
 
 - 后端基于`spring boot`、`spring cloud`、`MySQL`等技术实现权限管理、考试管理等功能。
 
-- 在线体验-前台：[http://www.it99.club](http://www.it99.club)
+默认账号：
 
-- 在线体验-后台：[http://www.it99.club:81](http://www.it99.club:81)
+单位ID：gitee
+
+1. 管理员：admin/123456
+2. 学生：student/123456
+3. 教师：teacher/123456
 
 ## 技术选型
 
@@ -45,7 +65,7 @@
 
 ## 系统架构
 
-![image](doc/产品设计/系统架构图.png)
+![image](doc/产品设计/系统架构图v3.0.jpg)
 
 ## 功能概述
 
@@ -55,57 +75,49 @@
 
 后台管理分为：系统管理、系统监控、考务管理、附件管理、个人管理
 
-系统管理：提供用户、部门、角色、权限等基础管理
-- 用户管理：用户信息增删改查、导入导出
-- 部门管理：部门信息增删改查
-- 角色管理：角色信息增删改查、分配权限
-- 菜单管理：菜单信息增删改查、导入导出
-- 终端管理：管理OAuth2.0的客户端，如client_id、client_secret、access_token有效时间等
-- 路由管理：网关路由管理，包括路由的增删改查、刷新路由等
+![image](doc/产品设计/功能概述.png)
 
-系统监控：监控服务、日志等
-- 日志监控：查看系统日志
-- `consul`监控：`consul`服务监控
-- `zipkin`监控：监控服务的调用链路
-- 服务监控：`spring boot admin`服务监控
-- 接口文档：`swagger api`文档
-
-考务管理：提供课程、考试、题库、成绩等管理
-- 课程管理：课程信息增删改查
-- 考试管理：考试信息增删改查、题目管理、发布回收
-- 题库管理：题目分类增删改查、题目信息增删改查
-- 成绩管理：查看成绩、导出成绩
-- 知识库：知识库增删改查、上传附件
-
-附件管理：项目的所有附件存储在`fastDfs`里，提供统一的管理入口
-- 附件列表：管理所有附件，如用户头像、考试附件、知识库附件等。
-
-个人管理：管理个人资料和修改密码
-- 个人资料：姓名、头像等基本信息的修改
-- 修改密码：修改密码
+- [在线考试系统V2.0功能概述](doc/在线考试系统V2.0_功能概述.md)
 
 ## 功能演示
 
-### 前台
+### 前台功能
+
+1. 登录
 
 ![image](doc/images/image_web_login.png)
 
+2. 考试
 ![image](doc/images/image_web_exam.png)
 
+![image](doc/images/image_web_text_subject.png)
+
+3. 答题卡
 ![image](doc/images/image_web_exam_card.png)
 
+4. 查看成绩
+![image](doc/images/image_web_exam_score.png)
+
+5. 查看错题
 ![image](doc/images/image_web_incorrect_answer.png)
 
-### 后台
+### 后台功能
 
+1. 总体功能
 ![image](doc/images/image_ui_menu.png)
 
+2. 考试管理
 ![image](doc/images/image_ui_exam.png)
 
+3. 题目管理
 ![image](doc/images/image_ui_exam_subject.png)
 
+![image](doc/images/image_ui_subjects_rich_edit.png)
+
+4. 题库管理
 ![image](doc/images/image_ui_subject.png)
 
+5. 个人资料
 ![image](doc/images/image_ui_msg.png)
 
 ## 部署文档
@@ -116,9 +128,15 @@
 
 ## 后续
 
-- [ ] zipkin链路监控完善
-- [ ] 业务功能完善
-- [ ] 补充相关中间件的文档
+- [ ] 多租户
+- [ ] 作业、考试、知识点管理、考试成绩排名、图表展示
+- [ ] 学生签到、请假
+- [ ] 短信验证码，第三方登录
+- [ ] swagger修复
+- [ ] 站内信
+- [x] jwt只存userId这些关键信息，各服务鉴权需要重新换取token
+- [x] 重构部门角色，用户直接绑定角色，部门不关联角色
+- [x] 简答题，题库完善，智能组卷，在线学习，成绩排名
 
 ## 问题反馈
 

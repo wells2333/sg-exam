@@ -1,7 +1,7 @@
 package com.github.tangyi.user.service;
 
-import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.model.Route;
+import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.user.mapper.RouteMapper;
 import org.springframework.stereotype.Service;
 

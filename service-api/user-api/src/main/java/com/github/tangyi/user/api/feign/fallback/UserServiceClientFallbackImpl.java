@@ -8,8 +8,8 @@ import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.user.api.dto.UserInfoDto;
 import com.github.tangyi.user.api.feign.UserServiceClient;
 import com.github.tangyi.user.api.module.Menu;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.github.tangyi.user.api.module.Tenant;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -22,22 +22,23 @@ import java.util.List;
  * @author tangyi
  * @date 2019/3/23 23:39
  */
+@Slf4j
 @Component
 public class UserServiceClientFallbackImpl implements UserServiceClient {
-
-    private static final Logger logger = LoggerFactory.getLogger(UserServiceClientFallbackImpl.class);
 
     private Throwable throwable;
 
     /**
      * 根据用户名查询用户信息
      *
-     * @param username username
+     * @param username   username
+     * @param tenantCode 租户标识
+     * @param tenantCode 租户标识
      * @return UserVo
      */
     @Override
-    public UserVo findUserByUsername(String username) {
-        logger.error("feign 查询用户信息失败:{},{}", username, throwable);
+    public UserVo findUserByUsername(String username, String tenantCode) {
+        log.error("feign 查询用户信息失败:{}, {}, {}", tenantCode, username, throwable);
         return null;
     }
 
@@ -48,7 +49,7 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      */
     @Override
     public ResponseBean<UserInfoDto> info() {
-        logger.error("feign 查询用户信息失败:{},{}", throwable);
+        log.error("feign 查询用户信息失败:{},{}", throwable);
         return null;
     }
 
@@ -60,8 +61,20 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      */
     @Override
     public ResponseBean<List<UserVo>> findUserById(@RequestBody UserVo userVo) {
-        logger.error("调用{}异常:{},{}", "findById", userVo, throwable);
+        log.error("调用{}异常:{},{}", "findById", userVo, throwable);
         return null;
+    }
+
+    /**
+     * 查询用户数量
+     *
+     * @param userVo userVo
+     * @return ResponseBean
+     */
+    @Override
+    public ResponseBean<Integer> findUserCount(UserVo userVo) {
+        log.error("调用{}异常:{},{}", "findUserCount", userVo, throwable);
+        return new ResponseBean<>(0);
     }
 
     /**
@@ -72,7 +85,7 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      */
     @Override
     public ResponseBean<List<DeptVo>> findDeptById(@RequestBody DeptVo deptVo) {
-        logger.error("调用{}异常:{},{}", "findById", deptVo, throwable);
+        log.error("调用{}异常:{},{}", "findById", deptVo, throwable);
         return null;
     }
 
@@ -84,7 +97,7 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      */
     @Override
     public ResponseBean<Boolean> deleteAttachment(String id) {
-        logger.error("调用{}异常:{},{}", "delete", id, throwable);
+        log.error("调用{}异常:{},{}", "delete", id, throwable);
         return new ResponseBean<>(Boolean.FALSE);
     }
 
@@ -96,43 +109,57 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      */
     @Override
     public ResponseBean<List<AttachmentVo>> findAttachmentById(AttachmentVo attachmentVo) {
-        logger.error("调用{}异常:{},{}", "findById", attachmentVo, throwable);
+        log.error("调用{}异常:{},{}", "findById", attachmentVo, throwable);
         return new ResponseBean<>(new ArrayList<>());
     }
 
     /**
      * 保存日志
      *
-     * @param log log
+     * @param logInfo logInfo
      * @return ResponseBean
      */
     @Override
-    public ResponseBean<Boolean> saveLog(Log log) {
-        logger.error("feign 插入日志失败,{}", throwable);
+    public ResponseBean<Boolean> saveLog(Log logInfo) {
+        log.error("feign 插入日志失败,{}", throwable);
         return null;
     }
 
     /**
      * 根据角色查找菜单
      *
-     * @param role 角色
+     * @param tenantCode 租户标识
+     * @param role       角色
      * @return List
      */
     @Override
-    public List<Menu> findMenuByRole(String role) {
-        logger.error("feign 获取角色菜单失败,{}", throwable);
+    public List<Menu> findMenuByRole(String role, String tenantCode) {
+        log.error("feign 获取角色菜单失败, {}, {}", tenantCode, throwable);
         return new ArrayList<>();
     }
 
     /**
      * 查询所有菜单
      *
+     * @param tenantCode 租户标识
      * @return List
      */
     @Override
-    public List<Menu> findAllMenu() {
-        logger.error("feign 获取所有菜单失败,{}", throwable);
+    public List<Menu> findAllMenu(String tenantCode) {
+        log.error("feign 获取所有菜单失败, {}, {}", tenantCode, throwable);
         return new ArrayList<>();
+    }
+
+    /**
+     * 根据租户标识查询租户详细信息
+     *
+     * @param tenantCode 租户标识
+     * @return Tenant
+     */
+    @Override
+    public Tenant findTenantByTenantCode(String tenantCode) {
+        log.error("feign 获取租户详细信息失败, {}, {}", tenantCode, throwable);
+        return null;
     }
 
     public Throwable getThrowable() {

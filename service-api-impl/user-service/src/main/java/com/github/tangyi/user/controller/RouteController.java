@@ -10,19 +10,20 @@ import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.constant.SecurityConstant;
-import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.user.service.RouteService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,16 +33,16 @@ import java.util.List;
  * @author tangyi
  * @date 2019/4/2 15:03
  */
+@Slf4j
+@AllArgsConstructor
 @Api("网关路由信息管理")
 @RestController
 @RequestMapping("/v1/route")
 public class RouteController extends BaseController {
 
-    @Autowired
-    private RouteService routeService;
+    private final RouteService routeService;
 
-    @Autowired
-    private AmqpTemplate amqpTemplate;
+    private final AmqpTemplate amqpTemplate;
 
 
     /**
@@ -59,7 +60,7 @@ public class RouteController extends BaseController {
         try {
             return routeService.get(id);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         return new Route();
     }
@@ -106,8 +107,8 @@ public class RouteController extends BaseController {
     @ApiOperation(value = "更新路由信息", notes = "根据路由id更新路由的基本信息")
     @ApiImplicitParam(name = "route", value = "路由实体route", required = true, dataType = "Route")
     @Log("修改路由")
-    public ResponseBean<Boolean> updateRoute(@RequestBody Route route) {
-        route.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> updateRoute(@RequestBody @Valid Route route) {
+        route.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
         // 更新路由
         if (routeService.update(route) > 0) {
             // 发送消息
@@ -133,8 +134,8 @@ public class RouteController extends BaseController {
     @ApiOperation(value = "创建路由", notes = "创建路由")
     @ApiImplicitParam(name = "route", value = "路由实体route", required = true, dataType = "Route")
     @Log("新增路由")
-    public ResponseBean<Boolean> add(@RequestBody Route route) {
-        route.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> add(@RequestBody @Valid Route route) {
+        route.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
         if (routeService.insert(route) > 0 && Integer.parseInt(route.getStatus()) == CommonConstant.DEL_FLAG_NORMAL) {
             // 发送消息
             amqpTemplate.convertAndSend(MqConstant.EDIT_GATEWAY_ROUTE_QUEUE, route);
@@ -160,7 +161,7 @@ public class RouteController extends BaseController {
         route.setId(id);
         route = routeService.get(route);
         route.setNewRecord(false);
-        route.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+        route.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
         if (routeService.delete(route) > 0) {
             // 发送消息
             amqpTemplate.convertAndSend(MqConstant.DEL_GATEWAY_ROUTE_QUEUE, Collections.singletonList(route));
@@ -176,7 +177,7 @@ public class RouteController extends BaseController {
      * @author tangyi
      * @date 2019/4/2 15:09
      */
-    @PostMapping("/deleteAll")
+    @PostMapping("deleteAll")
     @PreAuthorize("hasAuthority('sys:route:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "批量删除路由", notes = "根据路由id批量删除路由")
     @ApiImplicitParam(name = "route", value = "路由信息", dataType = "Route")
@@ -195,7 +196,7 @@ public class RouteController extends BaseController {
                 }
             }
         } catch (Exception e) {
-            logger.error("删除路由失败！", e);
+            log.error("删除路由失败！", e);
         }
         return new ResponseBean<>(success);
     }

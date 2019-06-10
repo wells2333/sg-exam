@@ -1,6 +1,7 @@
 package com.github.tangyi.exam.api.dto;
 
 import com.github.tangyi.exam.api.module.IncorrectAnswer;
+import lombok.Data;
 
 /**
  * 错题Dto
@@ -8,6 +9,7 @@ import com.github.tangyi.exam.api.module.IncorrectAnswer;
  * @author tangyi
  * @date 2018/12/25 22:29
  */
+@Data
 public class IncorrectAnswerDto extends IncorrectAnswer {
 
     /**
@@ -74,108 +76,4 @@ public class IncorrectAnswerDto extends IncorrectAnswer {
      * 难度等级
      */
     private String level;
-
-    public String getSubjectName() {
-        return subjectName;
-    }
-
-    public void setSubjectName(String subjectName) {
-        this.subjectName = subjectName;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getOptionA() {
-        return optionA;
-    }
-
-    public void setOptionA(String optionA) {
-        this.optionA = optionA;
-    }
-
-    public String getOptionB() {
-        return optionB;
-    }
-
-    public void setOptionB(String optionB) {
-        this.optionB = optionB;
-    }
-
-    public String getOptionC() {
-        return optionC;
-    }
-
-    public void setOptionC(String optionC) {
-        this.optionC = optionC;
-    }
-
-    public String getOptionD() {
-        return optionD;
-    }
-
-    public void setOptionD(String optionD) {
-        this.optionD = optionD;
-    }
-
-    public String getOptionE() {
-        return optionE;
-    }
-
-    public void setOptionE(String optionE) {
-        this.optionE = optionE;
-    }
-
-    public String getOptionF() {
-        return optionF;
-    }
-
-    public void setOptionF(String optionF) {
-        this.optionF = optionF;
-    }
-
-    public String getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
-
-    public String getScore() {
-        return score;
-    }
-
-    public void setScore(String score) {
-        this.score = score;
-    }
-
-    public String getAnalysis() {
-        return analysis;
-    }
-
-    public void setAnalysis(String analysis) {
-        this.analysis = analysis;
-    }
-
-    public String getLevel() {
-        return level;
-    }
-
-    public void setLevel(String level) {
-        this.level = level;
-    }
 }

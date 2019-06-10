@@ -8,19 +8,19 @@ import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.constant.SecurityConstant;
-import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.exam.api.module.Course;
 import com.github.tangyi.exam.service.CourseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 /**
  * 课程controller
@@ -28,15 +28,14 @@ import org.springframework.web.bind.annotation.*;
  * @author tangyi
  * @date 2018/11/8 21:25
  */
+@Slf4j
+@AllArgsConstructor
 @Api("课程信息管理")
 @RestController
 @RequestMapping("/v1/course")
 public class CourseController extends BaseController {
 
-    private static final Logger logger = LoggerFactory.getLogger(CourseController.class);
-
-    @Autowired
-    private CourseService courseService;
+    private final CourseService courseService;
 
     /**
      * 根据ID获取
@@ -51,11 +50,8 @@ public class CourseController extends BaseController {
     @ApiImplicitParam(name = "id", value = "课程ID", required = true, dataType = "String", paramType = "path")
     public ResponseBean<Course> course(@PathVariable String id) {
         Course course = new Course();
-        if (StringUtils.isNotBlank(id)) {
-            course.setId(id);
-            course = courseService.get(course);
-        }
-        return new ResponseBean<>(course);
+        course.setId(id);
+        return new ResponseBean<>(courseService.get(course));
     }
 
     /**
@@ -84,6 +80,7 @@ public class CourseController extends BaseController {
                                        @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
                                        @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                        Course course) {
+        course.setTeacher(SysUtil.getTenantCode());
         return courseService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), course);
     }
 
@@ -96,12 +93,12 @@ public class CourseController extends BaseController {
      * @date 2018/11/10 21:31
      */
     @PostMapping
-    @PreAuthorize("hasAuthority('exam:course:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('exam:course:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "创建课程", notes = "创建课程")
     @ApiImplicitParam(name = "course", value = "课程实体course", required = true, dataType = "Course")
     @Log("新增课程")
-    public ResponseBean<Boolean> addCourse(@RequestBody Course course) {
-        course.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> addCourse(@RequestBody @Valid Course course) {
+        course.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(courseService.insert(course) > 0);
     }
 
@@ -114,12 +111,12 @@ public class CourseController extends BaseController {
      * @date 2018/11/10 21:31
      */
     @PutMapping
-    @PreAuthorize("hasAuthority('exam:course:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('exam:course:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "更新课程信息", notes = "根据课程id更新课程的基本信息")
     @ApiImplicitParam(name = "course", value = "课程实体course", required = true, dataType = "Course")
     @Log("更新课程")
-    public ResponseBean<Boolean> updateCourse(@RequestBody Course course) {
-        course.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> updateCourse(@RequestBody @Valid Course course) {
+        course.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(courseService.update(course) > 0);
     }
 
@@ -132,7 +129,7 @@ public class CourseController extends BaseController {
      * @date 2018/11/10 21:32
      */
     @DeleteMapping("{id}")
-    @PreAuthorize("hasAuthority('exam:course:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('exam:course:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "删除课程", notes = "根据ID删除课程")
     @ApiImplicitParam(name = "id", value = "课程ID", required = true, paramType = "path")
     @Log("删除课程")
@@ -143,11 +140,11 @@ public class CourseController extends BaseController {
             course.setId(id);
             course = courseService.get(course);
             if (course != null) {
-                course.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+                course.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
                 success = courseService.delete(course) > 0;
             }
         } catch (Exception e) {
-            logger.error("删除课程失败！", e);
+            log.error("删除课程失败！", e);
         }
         return new ResponseBean<>(success);
     }
@@ -160,8 +157,8 @@ public class CourseController extends BaseController {
      * @author tangyi
      * @date 2018/12/4 11:26
      */
-    @PostMapping("/deleteAll")
-    @PreAuthorize("hasAuthority('exam:course:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PostMapping("deleteAll")
+    @PreAuthorize("hasAuthority('exam:course:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "批量删除课程", notes = "根据课程id批量删除课程")
     @ApiImplicitParam(name = "course", value = "课程信息", dataType = "Course")
     @Log("批量删除课程")
@@ -171,7 +168,7 @@ public class CourseController extends BaseController {
             if (StringUtils.isNotEmpty(course.getIdString()))
                 success = courseService.deleteAll(course.getIdString().split(",")) > 0;
         } catch (Exception e) {
-            logger.error("删除课程失败！", e);
+            log.error("删除课程失败！", e);
         }
         return new ResponseBean<>(success);
     }

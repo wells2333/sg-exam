@@ -4,8 +4,8 @@ import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.IdGen;
 import com.github.tangyi.user.api.module.RoleMenu;
 import com.github.tangyi.user.mapper.RoleMenuMapper;
+import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,11 +17,11 @@ import java.util.List;
  * @author tangyi
  * @date 2018/8/26 22:47
  */
+@AllArgsConstructor
 @Service
 public class RoleMenuService extends CrudService<RoleMenuMapper, RoleMenu> {
 
-    @Autowired
-    private RoleMenuMapper roleMenuMapper;
+    private final RoleMenuMapper roleMenuMapper;
 
     /**
      * @param role  role

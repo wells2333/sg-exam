@@ -6,10 +6,9 @@ import com.github.tangyi.common.core.vo.RouteFilterVo;
 import com.github.tangyi.common.core.vo.RoutePredicateVo;
 import com.github.tangyi.common.core.vo.RouteVo;
 import com.github.tangyi.gateway.service.DynamicRouteService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.FilterDefinition;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
@@ -33,11 +32,11 @@ import java.util.Map;
  * @author tangyi
  * @date 2019/3/27 10:59
  */
+@Slf4j
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/route")
 public class GatewayRouteController {
-
-    private static final Logger logger = LoggerFactory.getLogger(GatewayRouteController.class);
 
     private final RouteDefinitionLocator routeDefinitionLocator;
 
@@ -47,20 +46,12 @@ public class GatewayRouteController {
 
     private final AmqpTemplate amqpTemplate;
 
-    @Autowired
-    public GatewayRouteController(RouteDefinitionLocator routeDefinitionLocator, RouteLocator routeLocator, DynamicRouteService dynamicRouteService, AmqpTemplate amqpTemplate) {
-        this.routeDefinitionLocator = routeDefinitionLocator;
-        this.routeLocator = routeLocator;
-        this.dynamicRouteService = dynamicRouteService;
-        this.amqpTemplate = amqpTemplate;
-    }
-
     /**
      * 获取路由信息列表
      *
      * @return Mono
      */
-    @GetMapping("/routeList")
+    @GetMapping("routeList")
     public Mono<List<Map<String, Object>>> routes() {
         Mono<Map<String, RouteDefinition>> routeDefs = this.routeDefinitionLocator
                 .getRouteDefinitions().collectMap(RouteDefinition::getId);
@@ -105,7 +96,7 @@ public class GatewayRouteController {
     public ResponseBean<String> add(@RequestBody RouteVo gatewayRouteDefinition) {
         try {
             RouteDefinition definition = assembleRouteDefinition(gatewayRouteDefinition);
-            logger.info("新增路由：{}，{}", definition.getId(), definition);
+            log.info("新增路由：{}，{}", definition.getId(), definition);
             return new ResponseBean<>(this.dynamicRouteService.add(definition));
         } catch (Exception e) {
             e.printStackTrace();
@@ -121,7 +112,7 @@ public class GatewayRouteController {
      */
     @DeleteMapping("/{id}")
     public Mono<ResponseEntity<Object>> delete(@PathVariable String id) {
-        logger.info("删除路由：{}", id);
+        log.info("删除路由：{}", id);
         return this.dynamicRouteService.delete(id);
     }
 
@@ -144,7 +135,7 @@ public class GatewayRouteController {
      * @author tangyi
      * @date 2019/04/07 12:32
      */
-    @GetMapping("/refresh")
+    @GetMapping("refresh")
     public ResponseBean<Boolean> refresh() {
         amqpTemplate.convertAndSend(MqConstant.REFRESH_GATEWAY_ROUTE_QUEUE, "refresh");
         return new ResponseBean<>(Boolean.TRUE);

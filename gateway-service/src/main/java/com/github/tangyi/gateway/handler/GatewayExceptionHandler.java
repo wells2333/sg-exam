@@ -1,11 +1,11 @@
 package com.github.tangyi.gateway.handler;
 
+import com.github.tangyi.common.core.exceptions.InvalidAccessTokenException;
 import com.github.tangyi.common.core.exceptions.InvalidValidateCodeException;
 import com.github.tangyi.common.core.exceptions.ValidateCodeExpiredException;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -32,9 +32,8 @@ import java.util.List;
  * @author tangyi
  * @date 2019/3/18 20:52
  */
+@Slf4j
 public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
-
-    private static final Logger logger = LoggerFactory.getLogger(GatewayExceptionHandler.class);
 
     /**
      * MessageReader
@@ -86,7 +85,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
         int code = ResponseBean.FAIL;
         if (ex instanceof NotFoundException) {
             httpStatus = HttpStatus.NOT_FOUND;
-            msg = "Service Not Found";
+            msg = "没有服务提供者.";
         } else if (ex instanceof ResponseStatusException) {
             ResponseStatusException responseStatusException = (ResponseStatusException) ex;
             httpStatus = responseStatusException.getStatus();
@@ -101,17 +100,22 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
             msg = ex.getMessage();
             // 验证码过期
             code = ResponseBean.VALIDATE_CODE_EXPIRED_ERROR;
+        } else if (ex instanceof InvalidAccessTokenException) {
+            httpStatus = HttpStatus.FORBIDDEN;
+            msg = ex.getMessage();
+            // token非法，返回403
+            code = HttpStatus.FORBIDDEN.value();
         } else {
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-            msg = "Internal Server Error";
+            msg = "服务器内部错误.";
         }
         // 封装响应体
-        ResponseBean<HttpStatus> responseBean = new ResponseBean<>(httpStatus, msg);
+        ResponseBean<String> responseBean = new ResponseBean<>(msg, msg);
         responseBean.setStatus(httpStatus.value());
         responseBean.setCode(code);
         // 错误记录
         ServerHttpRequest request = exchange.getRequest();
-        logger.error("[全局异常处理]异常请求路径:{},记录异常信息:{}", request.getPath(), ex.getMessage());
+        log.error("[全局异常处理]异常请求路径:{},记录异常信息:{}", request.getPath(), ex.getMessage());
         if (exchange.getResponse().isCommitted())
             return Mono.error(ex);
         exceptionHandlerResult.set(responseBean);
@@ -120,7 +124,6 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
                 .switchIfEmpty(Mono.error(ex))
                 .flatMap((handler) -> handler.handle(newRequest))
                 .flatMap((response) -> write(exchange, response));
-
     }
 
     private Mono<ServerResponse> renderErrorResponse(ServerRequest request) {

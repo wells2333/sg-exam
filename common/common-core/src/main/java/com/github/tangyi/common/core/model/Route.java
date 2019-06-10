@@ -1,6 +1,9 @@
 package com.github.tangyi.common.core.model;
 
 import com.github.tangyi.common.core.persistence.BaseEntity;
+import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * 路由信息
@@ -8,11 +11,13 @@ import com.github.tangyi.common.core.persistence.BaseEntity;
  * @author tangyi
  * @date 2019/4/2 14:52
  */
+@Data
 public class Route extends BaseEntity<Route> {
 
     /**
      * 路由ID
      */
+    @NotBlank(message = "路由id不能为空")
     private String routeId;
 
     /**
@@ -33,6 +38,7 @@ public class Route extends BaseEntity<Route> {
     /**
      * URI
      */
+    @NotBlank(message = "路由URI不能为空")
     private String uri;
 
     /**
@@ -43,61 +49,6 @@ public class Route extends BaseEntity<Route> {
     /**
      * 启用禁用
      */
+    @NotBlank(message = "路由状态不能为空")
     private String status;
-
-    public String getRouteId() {
-        return routeId;
-    }
-
-    public void setRouteId(String routeId) {
-        this.routeId = routeId;
-    }
-
-    public String getRouteName() {
-        return routeName;
-    }
-
-    public void setRouteName(String routeName) {
-        this.routeName = routeName;
-    }
-
-    public String getPredicates() {
-        return predicates;
-    }
-
-    public void setPredicates(String predicates) {
-        this.predicates = predicates;
-    }
-
-    public String getFilters() {
-        return filters;
-    }
-
-    public void setFilters(String filters) {
-        this.filters = filters;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
-
-    public String getSort() {
-        return sort;
-    }
-
-    public void setSort(String sort) {
-        this.sort = sort;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 }

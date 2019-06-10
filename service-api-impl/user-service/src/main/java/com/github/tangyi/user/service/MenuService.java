@@ -3,10 +3,9 @@ package com.github.tangyi.user.service;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.SysUtil;
-import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.user.api.module.Menu;
 import com.github.tangyi.user.mapper.MenuMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -20,23 +19,24 @@ import java.util.List;
  * @author tangyi
  * @date 2018/8/26 22:45
  */
+@AllArgsConstructor
 @Service
 public class MenuService extends CrudService<MenuMapper, Menu> {
 
-    @Autowired
-    private MenuMapper menuMapper;
+    private final MenuMapper menuMapper;
 
     /**
      * 根据角色查找菜单
      *
-     * @param role 角色
+     * @param role       角色标识
+     * @param tenantCode 租户标识
      * @return List
      * @author tangyi
      * @date 2018/8/27 16:00
      */
     @Cacheable(value = "menu", key = "#role")
-    public List<Menu> findMenuByRole(String role) {
-        return menuMapper.findByRole(role);
+    public List<Menu> findMenuByRole(String role, String tenantCode) {
+        return menuMapper.findByRole(role, tenantCode);
     }
 
     /**
@@ -63,6 +63,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
      */
     @Transactional
     @Override
+    @CacheEvict(value = {"menu", "user"}, allEntries = true)
     public int insert(Menu menu) {
         return super.insert(menu);
     }
@@ -92,7 +93,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
      */
     @Override
     @Transactional
-    @CacheEvict(value = "menu", allEntries = true)
+    @CacheEvict(value = {"menu", "user"}, allEntries = true)
     public int delete(Menu menu) {
         // 删除当前菜单
         super.delete(menu);
@@ -100,7 +101,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
         Menu parentMenu = new Menu();
         parentMenu.setParentId(menu.getId());
         parentMenu.setNewRecord(false);
-        parentMenu.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+        parentMenu.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         parentMenu.setDelFlag(CommonConstant.DEL_FLAG_DEL);
         return super.update(parentMenu);
     }

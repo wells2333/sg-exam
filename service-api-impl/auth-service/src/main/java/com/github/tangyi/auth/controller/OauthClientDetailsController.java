@@ -10,13 +10,13 @@ import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.constant.SecurityConstant;
-import com.github.tangyi.common.security.utils.SecurityUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -29,16 +29,16 @@ import java.util.List;
  * @author tangyi
  * @date 2019/3/30 16:49
  */
+@Slf4j
+@AllArgsConstructor
 @Api("Oauth2客户端信息管理")
 @RestController
 @RequestMapping("/v1/client")
 public class OauthClientDetailsController extends BaseController {
 
-    @Autowired
-    private OauthClientDetailsService oauthClientDetailsService;
+    private final OauthClientDetailsService oauthClientDetailsService;
 
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     /**
      * 根据ID获取
@@ -118,7 +118,7 @@ public class OauthClientDetailsController extends BaseController {
     @ApiImplicitParam(name = "oauthClientDetails", value = "客户端实体oauthClientDetails", required = true, dataType = "OauthClientDetails")
     @Log("新增客户端")
     public ResponseBean<Boolean> oauthClient(@RequestBody OauthClientDetails oauthClientDetails) {
-        oauthClientDetails.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+        oauthClientDetails.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
         // 加密密钥
         oauthClientDetails.setClientSecret(bCryptPasswordEncoder.encode(oauthClientDetails.getClientSecretPlainText()));
         return new ResponseBean<>(oauthClientDetailsService.insert(oauthClientDetails) > 0);
@@ -138,9 +138,11 @@ public class OauthClientDetailsController extends BaseController {
     @ApiImplicitParam(name = "oauthClientDetails", value = "客户端实体oauthClientDetails", required = true, dataType = "OauthClientDetails")
     @Log("修改客户端")
     public ResponseBean<Boolean> updateOauthClient(@RequestBody OauthClientDetails oauthClientDetails) {
-        oauthClientDetails.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
-        // 加密密钥
-        oauthClientDetails.setClientSecret(bCryptPasswordEncoder.encode(oauthClientDetails.getClientSecretPlainText()));
+        OauthClientDetails tempOauthClientDetails = oauthClientDetailsService.get(oauthClientDetails);
+        // 有调整过明文则重新加密密钥
+        if (tempOauthClientDetails != null && !tempOauthClientDetails.getClientSecretPlainText().equals(oauthClientDetails.getClientSecretPlainText()))
+            oauthClientDetails.setClientSecret(bCryptPasswordEncoder.encode(oauthClientDetails.getClientSecretPlainText()));
+        oauthClientDetails.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
         return new ResponseBean<>(oauthClientDetailsService.update(oauthClientDetails) > 0);
     }
 
@@ -161,7 +163,7 @@ public class OauthClientDetailsController extends BaseController {
         OauthClientDetails oauthClientDetails = new OauthClientDetails();
         oauthClientDetails.setId(id);
         oauthClientDetails.setNewRecord(false);
-        oauthClientDetails.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+        oauthClientDetails.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
         return new ResponseBean<>(oauthClientDetailsService.delete(oauthClientDetails) > 0);
     }
 
@@ -173,7 +175,7 @@ public class OauthClientDetailsController extends BaseController {
      * @author tangyi
      * @date 2019/03/30 17:01
      */
-    @PostMapping("/deleteAll")
+    @PostMapping("deleteAll")
     @PreAuthorize("hasAuthority('sys:client:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "批量删除客户端", notes = "根据客户端id批量删除客户端")
     @ApiImplicitParam(name = "oauthClientDetails", value = "客户端信息", dataType = "OauthClientDetails")
@@ -184,7 +186,7 @@ public class OauthClientDetailsController extends BaseController {
             if (StringUtils.isNotEmpty(oauthClientDetails.getIdString()))
                 success = oauthClientDetailsService.deleteAll(oauthClientDetails.getIdString().split(",")) > 0;
         } catch (Exception e) {
-            logger.error("删除客户端失败！", e);
+            log.error("删除客户端失败！", e);
         }
         return new ResponseBean<>(success);
     }

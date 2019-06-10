@@ -1,6 +1,9 @@
 package com.github.tangyi.common.core.model;
 
 import com.github.tangyi.common.core.persistence.BaseEntity;
+import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * 日志
@@ -8,16 +11,19 @@ import com.github.tangyi.common.core.persistence.BaseEntity;
  * @author tangyi
  * @date 2018/10/31 20:29
  */
+@Data
 public class Log extends BaseEntity<Log> {
 
     /**
      * 日志类型
      */
+    @NotBlank(message = "日志类型不能为空")
     private String type;
 
     /**
      * 日志标题
      */
+    @NotBlank(message = "日志标题不能为空")
     private String title;
 
     /**
@@ -59,84 +65,4 @@ public class Log extends BaseEntity<Log> {
      * 耗时
      */
     private String time;
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    public String getUserAgent() {
-        return userAgent;
-    }
-
-    public void setUserAgent(String userAgent) {
-        this.userAgent = userAgent;
-    }
-
-    public String getRequestUri() {
-        return requestUri;
-    }
-
-    public void setRequestUri(String requestUri) {
-        this.requestUri = requestUri;
-    }
-
-    public String getMethod() {
-        return method;
-    }
-
-    public void setMethod(String method) {
-        this.method = method;
-    }
-
-    public String getParams() {
-        return params;
-    }
-
-    public void setParams(String params) {
-        this.params = params;
-    }
-
-    public String getException() {
-        return exception;
-    }
-
-    public void setException(String exception) {
-        this.exception = exception;
-    }
-
-    public String getServiceId() {
-        return serviceId;
-    }
-
-    public void setServiceId(String serviceId) {
-        this.serviceId = serviceId;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
 }

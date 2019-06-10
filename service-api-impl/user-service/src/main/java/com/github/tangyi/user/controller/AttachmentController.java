@@ -2,32 +2,30 @@ package com.github.tangyi.user.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.constant.CommonConstant;
-import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.model.ResponseBean;
-import com.github.tangyi.common.core.utils.FileUtil;
 import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.common.core.utils.Servlets;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.vo.AttachmentVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
-import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.user.api.module.Attachment;
 import com.github.tangyi.user.service.AttachmentService;
-import com.github.tangyi.user.service.FastDfsService;
 import com.google.common.net.HttpHeaders;
 import io.swagger.annotations.*;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
@@ -39,16 +37,14 @@ import java.util.stream.Collectors;
  * @author tangyi
  * @date 2018/10/30 20:45
  */
+@Slf4j
+@AllArgsConstructor
 @Api("附件信息管理")
 @RestController
 @RequestMapping("/v1/attachment")
 public class AttachmentController extends BaseController {
 
-    @Autowired
-    private AttachmentService attachmentService;
-
-    @Autowired
-    private FastDfsService fastDfsService;
+    private final AttachmentService attachmentService;
 
     /**
      * 根据ID获取
@@ -63,11 +59,8 @@ public class AttachmentController extends BaseController {
     @GetMapping("/{id}")
     public ResponseBean<Attachment> attachment(@PathVariable String id) {
         Attachment attachment = new Attachment();
-        if (StringUtils.isNotBlank(id)) {
-            attachment.setId(id);
-            attachment = attachmentService.get(attachment);
-        }
-        return new ResponseBean<>(attachment);
+        attachment.setId(id);
+        return new ResponseBean<>(attachmentService.get(attachment));
     }
 
     /**
@@ -96,6 +89,7 @@ public class AttachmentController extends BaseController {
                                          @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
                                          @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                          Attachment attachment) {
+        attachment.setTenantCode(SysUtil.getTenantCode());
         return attachmentService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), attachment);
     }
 
@@ -117,36 +111,9 @@ public class AttachmentController extends BaseController {
     @Log("上传文件")
     public ResponseBean<Attachment> upload(@ApiParam(value = "要上传的文件", required = true) @RequestParam("file") MultipartFile file,
                                            Attachment attachment) {
-        long start = System.currentTimeMillis();
-        logger.debug("{}", file.getName());
         if (file.isEmpty())
             return new ResponseBean<>(new Attachment());
-        InputStream inputStream = null;
-        Attachment newAttachment = null;
-        try {
-            inputStream = file.getInputStream();
-            long attachSize = file.getSize();
-            String fastFileId = fastDfsService.uploadFile(inputStream, attachSize, FileUtil.getFileNameEx(file.getOriginalFilename()));
-            logger.debug("fastFileId:{}", fastFileId);
-            if (StringUtils.isBlank(fastFileId))
-                throw new CommonException("上传失败！");
-            newAttachment = new Attachment();
-            newAttachment.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
-            newAttachment.setGroupName(fastFileId.substring(0, fastFileId.indexOf("/")));
-            newAttachment.setFastFileId(fastFileId);
-            newAttachment.setAttachName(new String(file.getOriginalFilename().getBytes(), "utf-8"));
-            newAttachment.setAttachSize(Long.toString(attachSize));
-            newAttachment.setBusiId(attachment.getBusiId());
-            newAttachment.setBusiModule(attachment.getBusiModule());
-            newAttachment.setBusiType(attachment.getBusiType());
-            attachmentService.insert(newAttachment);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        } finally {
-            IOUtils.closeQuietly(inputStream);
-        }
-        logger.info("上传文件{}成功，耗时：{}ms", file.getName(), System.currentTimeMillis() - start);
-        return new ResponseBean<>(newAttachment);
+        return new ResponseBean<>(attachmentService.upload(file, attachment));
     }
 
     /**
@@ -159,28 +126,24 @@ public class AttachmentController extends BaseController {
     @RequestMapping("download")
     @ApiOperation(value = "下载附件", notes = "根据ID下载附件")
     @ApiImplicitParam(name = "id", value = "附件ID", required = true, dataType = "String")
-    public void download(String id, HttpServletRequest request, HttpServletResponse response) {
-        if (StringUtils.isBlank(id))
-            throw new IllegalArgumentException("附件ID不能为空！");
+    public void download(@NotBlank String id, HttpServletRequest request, HttpServletResponse response) {
         Attachment attachment = new Attachment();
         attachment.setId(id);
-        attachment = attachmentService.get(attachment);
         InputStream inputStream = null;
         OutputStream outputStream = null;
         try {
-            if (attachment == null)
-                throw new CommonException("附件不存在！");
-            // 下载附件
-            inputStream = fastDfsService.downloadStream(attachment.getGroupName(), attachment.getFastFileId());
-            outputStream = response.getOutputStream();  // 输出流
+            inputStream = attachmentService.download(attachment);
+            // 输出流
+            outputStream = response.getOutputStream();
             response.setContentType("application/zip");
             response.setHeader(HttpHeaders.CACHE_CONTROL, "max-age=10");
             // IE之外的浏览器使用编码输出名称
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request, attachment.getAttachName()));
             response.setContentLength(inputStream.available());
-            FileCopyUtils.copy(inputStream, outputStream);  // 下载文件
+            // 下载文件
+            FileCopyUtils.copy(inputStream, outputStream);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         } finally {
             IOUtils.closeQuietly(outputStream);
             IOUtils.closeQuietly(inputStream);
@@ -200,16 +163,12 @@ public class AttachmentController extends BaseController {
     @ApiImplicitParam(name = "id", value = "附件ID", required = true, paramType = "path")
     @Log("删除附件")
     public ResponseBean<Boolean> delete(@PathVariable String id) {
-        if (StringUtils.isBlank(id))
-            throw new IllegalArgumentException("附件ID不能为空！");
         Attachment attachment = new Attachment();
         attachment.setId(id);
         attachment = attachmentService.get(attachment);
         boolean success = false;
-        if (attachment != null) {
-            fastDfsService.deleteFile(attachment.getGroupName(), attachment.getFastFileId());
+        if (attachment != null)
             success = attachmentService.delete(attachment) > 0;
-        }
         return new ResponseBean<>(success);
     }
 
@@ -221,7 +180,7 @@ public class AttachmentController extends BaseController {
      * @author tangyi
      * @date 2018/12/4 10:01
      */
-    @PostMapping("/deleteAll")
+    @PostMapping("deleteAll")
     @ApiOperation(value = "批量删除附件", notes = "根据附件id批量删除附件")
     @ApiImplicitParam(name = "attachment", value = "附件信息", dataType = "Attachment")
     @Log("批量删除附件")
@@ -231,7 +190,7 @@ public class AttachmentController extends BaseController {
             if (StringUtils.isNotEmpty(attachment.getIdString()))
                 success = attachmentService.deleteAll(attachment.getIdString().split(",")) > 0;
         } catch (Exception e) {
-            logger.error("删除附件失败！", e);
+            log.error("删除附件失败！", e);
         }
         return new ResponseBean<>(success);
     }
@@ -244,7 +203,7 @@ public class AttachmentController extends BaseController {
      * @author tangyi
      * @date 2019/01/01 22:16
      */
-    @RequestMapping(value = "/findById", method = RequestMethod.POST)
+    @RequestMapping(value = "findById", method = RequestMethod.POST)
     @ApiOperation(value = "批量查询附件信息", notes = "根据附件ID批量查询附件信息")
     @ApiImplicitParam(name = "attachmentVo", value = "附件信息", dataType = "AttachmentVo")
     public ResponseBean<List<AttachmentVo>> findById(@RequestBody AttachmentVo attachmentVo) {

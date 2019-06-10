@@ -1,8 +1,8 @@
 package com.github.tangyi.exam.service;
 
 import com.github.tangyi.common.core.service.CrudService;
-import com.github.tangyi.exam.mapper.CourseMapper;
 import com.github.tangyi.exam.api.module.Course;
+import com.github.tangyi.exam.mapper.CourseMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;

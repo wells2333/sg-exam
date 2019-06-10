@@ -1,6 +1,7 @@
 package com.github.tangyi.exam.api.dto;
 
 import com.github.tangyi.common.core.persistence.BaseEntity;
+import lombok.Data;
 
 /**
  * 考试记录DTO
@@ -8,6 +9,7 @@ import com.github.tangyi.common.core.persistence.BaseEntity;
  * @author tangyi
  * @date 2018-12-26 16:26
  */
+@Data
 public class ExamRecordDto extends BaseEntity<ExamRecordDto> {
 
     /**
@@ -105,155 +107,18 @@ public class ExamRecordDto extends BaseEntity<ExamRecordDto> {
      */
     private String examTime;
 
-    public String getExaminationName() {
-        return examinationName;
-    }
+    /**
+     * 错误题目数量
+     */
+    private String inCorrectNumber;
 
-    public void setExaminationName(String examinationName) {
-        this.examinationName = examinationName;
-    }
+    /**
+     * 正确题目数量
+     */
+    private String correctNumber;
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getAttention() {
-        return attention;
-    }
-
-    public void setAttention(String attention) {
-        this.attention = attention;
-    }
-
-    public String getCurrentTime() {
-        return currentTime;
-    }
-
-    public void setCurrentTime(String currentTime) {
-        this.currentTime = currentTime;
-    }
-
-    public String getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
-    }
-
-    public String getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
-    }
-
-    public String getDuration() {
-        return duration;
-    }
-
-    public void setDuration(String duration) {
-        this.duration = duration;
-    }
-
-    public String getTotalScore() {
-        return totalScore;
-    }
-
-    public void setTotalScore(String totalScore) {
-        this.totalScore = totalScore;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public String getCollegeId() {
-        return collegeId;
-    }
-
-    public void setCollegeId(String collegeId) {
-        this.collegeId = collegeId;
-    }
-
-    public String getMajorId() {
-        return majorId;
-    }
-
-    public void setMajorId(String majorId) {
-        this.majorId = majorId;
-    }
-
-    public String getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(String courseId) {
-        this.courseId = courseId;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
-
-    public String getScore() {
-        return score;
-    }
-
-    public void setScore(String score) {
-        this.score = score;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getDeptName() {
-        return deptName;
-    }
-
-    public void setDeptName(String deptName) {
-        this.deptName = deptName;
-    }
-
-    public String getExamTime() {
-        return examTime;
-    }
-
-    public void setExamTime(String examTime) {
-        this.examTime = examTime;
-    }
+    /**
+     * 提交状态 1-已提交 0-未提交
+     */
+    private String submitStatus;
 }

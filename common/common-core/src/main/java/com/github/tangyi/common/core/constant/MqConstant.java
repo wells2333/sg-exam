@@ -20,4 +20,9 @@ public class MqConstant {
      * 刷新路由
      */
     public static final String REFRESH_GATEWAY_ROUTE_QUEUE = "refresh_gateway_route_queue";
+
+    /**
+     * 提交考试
+     */
+    public static final String SUBMIT_EXAMINATION_QUEUE = "submit_examination_queue";
 }

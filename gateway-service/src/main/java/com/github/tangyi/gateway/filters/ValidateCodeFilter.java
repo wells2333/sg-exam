@@ -5,11 +5,12 @@ import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.exceptions.InvalidValidateCodeException;
 import com.github.tangyi.common.core.exceptions.ValidateCodeExpiredException;
 import com.github.tangyi.gateway.constants.GatewayConstant;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
@@ -24,17 +25,11 @@ import java.net.URI;
  * @author tangyi
  * @date 2019/3/18 16:40
  */
+@AllArgsConstructor
 @Component
 public class ValidateCodeFilter implements GlobalFilter, Ordered {
 
-    private static final String EXPIRED_ERROR = "验证码已过期，请重新获取";
-
-    private static final String PASSWORD = "password";
-
-    private static final String GRANT_TYPE = "grant_type";
-
-    @Autowired
-    private RedisTemplate redisTemplate;
+    private final RedisTemplate redisTemplate;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -42,11 +37,11 @@ public class ValidateCodeFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         // 请求的URI
         URI uri = request.getURI();
-        if ("POST".equals(request.getMethodValue())
+        if (HttpMethod.POST.matches(request.getMethodValue())
                 && StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.OAUTH_TOKEN_URL, GatewayConstant.REGISTER, GatewayConstant.MOBILE_TOKEN_URL)) {
-            String grantType = request.getQueryParams().getFirst(GRANT_TYPE);
+            String grantType = request.getQueryParams().getFirst(GatewayConstant.GRANT_TYPE);
             // 授权类型为密码模式、注册才校验验证码
-            if (PASSWORD.equals(grantType) || StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.REGISTER)) {
+            if (CommonConstant.GRANT_TYPE_PASSWORD.equals(grantType) || StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.REGISTER)) {
                 // 校验验证码
                 checkCode(request);
             }
@@ -77,14 +72,14 @@ public class ValidateCodeFilter implements GlobalFilter, Ordered {
         String key = CommonConstant.DEFAULT_CODE_KEY + randomStr;
         // 验证码过期
         if (!redisTemplate.hasKey(key))
-            throw new ValidateCodeExpiredException(EXPIRED_ERROR);
+            throw new ValidateCodeExpiredException(GatewayConstant.EXPIRED_ERROR);
         Object codeObj = redisTemplate.opsForValue().get(key);
         if (codeObj == null)
-            throw new ValidateCodeExpiredException(EXPIRED_ERROR);
+            throw new ValidateCodeExpiredException(GatewayConstant.EXPIRED_ERROR);
         String saveCode = codeObj.toString();
         if (StrUtil.isBlank(saveCode)) {
             redisTemplate.delete(key);
-            throw new ValidateCodeExpiredException(EXPIRED_ERROR);
+            throw new ValidateCodeExpiredException(GatewayConstant.EXPIRED_ERROR);
         }
         if (!StrUtil.equals(saveCode, code)) {
             redisTemplate.delete(key);

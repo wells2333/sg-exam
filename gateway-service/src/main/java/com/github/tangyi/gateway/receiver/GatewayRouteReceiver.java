@@ -7,12 +7,11 @@ import com.github.tangyi.common.core.utils.JsonMapper;
 import com.github.tangyi.common.core.vo.RouteFilterVo;
 import com.github.tangyi.common.core.vo.RoutePredicateVo;
 import com.github.tangyi.gateway.service.DynamicRouteService;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.FilterDefinition;
 import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinition;
@@ -28,13 +27,12 @@ import java.util.List;
  * @author tangyi
  * @date 2019/4/2 18:07
  */
+@Slf4j
+@AllArgsConstructor
 @Service
 public class GatewayRouteReceiver {
 
-    private static final Logger logger = LoggerFactory.getLogger(GatewayRouteReceiver.class);
-
-    @Autowired
-    private DynamicRouteService dynamicRouteService;
+    private final DynamicRouteService dynamicRouteService;
 
     /**
      * 修改路由
@@ -47,7 +45,7 @@ public class GatewayRouteReceiver {
     public void editRoute(Route route) {
         if (route.getRouteId() == null)
             throw new IllegalArgumentException("routeId不能为空！");
-        logger.info("更新{}路由", route.getRouteId());
+        log.info("更新{}路由", route.getRouteId());
         dynamicRouteService.update(routeDefinition(route));
     }
 
@@ -65,7 +63,7 @@ public class GatewayRouteReceiver {
         for (Route route : routes) {
             if (route.getRouteId() == null)
                 throw new IllegalArgumentException("routeId不能为空！");
-            logger.info("删除{}路由", route.getRouteId());
+            log.info("删除{}路由", route.getRouteId());
             dynamicRouteService.delete(route.getRouteId());
         }
     }
@@ -116,7 +114,7 @@ public class GatewayRouteReceiver {
                 }
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         return predicateDefinitions;
     }
@@ -141,7 +139,7 @@ public class GatewayRouteReceiver {
                 }
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         return filterDefinitions;
     }

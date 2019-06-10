@@ -1,8 +1,9 @@
 package com.github.tangyi.exam.service;
 
 import com.github.tangyi.common.core.service.CrudService;
-import com.github.tangyi.exam.mapper.ExamRecordMapper;
 import com.github.tangyi.exam.api.module.ExamRecord;
+import com.github.tangyi.exam.mapper.ExamRecordMapper;
+import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author tangyi
  * @date 2018/11/8 21:20
  */
+@AllArgsConstructor
 @Service
 public class ExamRecordService extends CrudService<ExamRecordMapper, ExamRecord> {
 

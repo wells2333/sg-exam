@@ -24,6 +24,7 @@
         <result column="modify_date" property="modifyDate"/>
         <result column="del_flag" property="delFlag"/>
         <result column="application_code" property="applicationCode"/>
+        <result column="tenant_code" property="tenantCode"/>
     </resultMap>
 
     <sql id="subjectBankColumns">
@@ -48,7 +49,8 @@
         a.modifier,
         a.modify_date,
         a.del_flag,
-        a.application_code
+        a.application_code,
+        a.tenant_code
     </sql>
 
     <!-- where 条件 -->
@@ -61,6 +63,9 @@
         </if>
         <if test="subjectName != null and subjectName != ''">
             and f.subject_name like CONCAT('%',#{subjectName},'%')
+        </if>
+        <if test="tenantCode != null and tenantCode != ''">
+            and f.tenant_code = #{tenantCode}
         </if>
     </sql>
 
@@ -75,8 +80,10 @@
         SELECT
         a.*
         FROM (
-        SELECT f.id, f.category_id, f.serial_number, f.subject_name, f.type, f.content, f.option_a, f.option_b, f.option_c, f.option_d, f.option_e, f.option_f,
-        f.answer, f.score, f.analysis, f.level, f.creator, f.create_date, f.modifier, f.modify_date, f.del_flag, f.application_code, c.category_name
+        SELECT f.id, f.category_id, f.serial_number, f.subject_name, f.type, f.content, f.option_a, f.option_b,
+        f.option_c, f.option_d, f.option_e, f.option_f,
+        f.answer, f.score, f.analysis, f.level, f.creator, f.create_date, f.modifier, f.modify_date, f.del_flag,
+        f.application_code, f.tenant_code, c.category_name
         FROM subject_bank f LEFT JOIN subject_category c ON c.del_flag = 0 AND c.id = f.category_id
         WHERE f.del_flag = 0
         <include refid="whereColumnList"/>
@@ -106,7 +113,8 @@
             modifier,
             modify_date,
             del_flag,
-            application_code
+            application_code,
+            tenant_code
         ) values (
             #{id},
             #{categoryId},
@@ -129,12 +137,13 @@
             #{modifier},
             #{modifyDate},
             #{delFlag},
-            #{applicationCode}
+            #{applicationCode},
+            #{tenantCode}
         );
     </insert>
 
     <update id="update">
-        UPDATE subject_bank  SET
+        UPDATE subject_bank SET
         <if test="categoryId != null">
             category_id = #{categoryId},
         </if>
@@ -199,7 +208,7 @@
         del_flag = 1
         WHERE id in
         <foreach item="item" index="index" collection="array" open="("
-                 separator="," close=")"> #{item}
+                 separator="," close=")">#{item}
         </foreach>
     </delete>
 </mapper>

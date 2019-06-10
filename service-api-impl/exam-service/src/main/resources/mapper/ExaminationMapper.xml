@@ -24,6 +24,7 @@
         <result column="modify_date" property="modifyDate"/>
         <result column="del_flag" property="delFlag"/>
         <result column="application_code" property="applicationCode"/>
+        <result column="tenant_code" property="tenantCode"/>
     </resultMap>
 
     <sql id="examinationColumns">
@@ -48,7 +49,8 @@
         a.modifier,
         a.modify_date,
         a.del_flag,
-        a.application_code
+        a.application_code,
+        a.tenant_code
     </sql>
 
     <!-- where 条件 -->
@@ -64,6 +66,9 @@
         </if>
         <if test="type != null and type != ''">
             and a.type = #{type}
+        </if>
+        <if test="tenantCode != null and tenantCode != ''">
+            and a.tenant_code = #{tenantCode}
         </if>
     </sql>
 
@@ -121,7 +126,8 @@
             modifier,
             modify_date,
             del_flag,
-            application_code
+            application_code,
+            tenant_code
         ) values (
             #{id},
             #{examinationName},
@@ -144,12 +150,13 @@
             #{modifier},
             #{modifyDate},
             #{delFlag},
-            #{applicationCode}
+            #{applicationCode},
+            #{tenantCode}
         );
     </insert>
 
     <update id="update">
-        UPDATE examination  SET
+        UPDATE examination SET
         <if test="examinationName != null">
             examination_name = #{examinationName},
         </if>
@@ -214,7 +221,7 @@
         del_flag = 1
         WHERE id in
         <foreach item="item" index="index" collection="array" open="("
-                 separator="," close=")"> #{item}
+                 separator="," close=")">#{item}
         </foreach>
     </delete>
 </mapper>

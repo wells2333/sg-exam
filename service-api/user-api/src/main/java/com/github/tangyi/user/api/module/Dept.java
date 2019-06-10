@@ -1,6 +1,9 @@
 package com.github.tangyi.user.api.module;
 
 import com.github.tangyi.common.core.persistence.BaseEntity;
+import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * 部门
@@ -8,11 +11,13 @@ import com.github.tangyi.common.core.persistence.BaseEntity;
  * @author tangyi
  * @date 2018/8/26 22:25
  */
+@Data
 public class Dept extends BaseEntity<Dept> {
 
     /**
      * 部门名称
      */
+    @NotBlank(message = "部门名称不能为空")
     private String deptName;
 
     /**
@@ -38,53 +43,6 @@ public class Dept extends BaseEntity<Dept> {
     /**
      * 状态， 0-启用，1-禁用
      */
+    @NotBlank(message = "部门状态不能为空")
     private String status;
-
-    public String getDeptName() {
-        return deptName;
-    }
-
-    public void setDeptName(String deptName) {
-        this.deptName = deptName;
-    }
-
-    public String getDeptDesc() {
-        return deptDesc;
-    }
-
-    public void setDeptDesc(String deptDesc) {
-        this.deptDesc = deptDesc;
-    }
-
-    public String getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
-
-    public String getSort() {
-        return sort;
-    }
-
-    public void setSort(String sort) {
-        this.sort = sort;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getDeptLeader() {
-        return deptLeader;
-    }
-
-    public void setDeptLeader(String deptLeader) {
-        this.deptLeader = deptLeader;
-    }
 }

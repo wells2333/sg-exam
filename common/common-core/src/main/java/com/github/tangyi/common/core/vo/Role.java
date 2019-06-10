@@ -1,6 +1,7 @@
 package com.github.tangyi.common.core.vo;
 
 import com.github.tangyi.common.core.persistence.BaseEntity;
+import lombok.Data;
 
 /**
  * 角色
@@ -8,6 +9,7 @@ import com.github.tangyi.common.core.persistence.BaseEntity;
  * @author tangyi
  * @date 2018-08-25 13:58
  */
+@Data
 public class Role extends BaseEntity<Role> {
 
     private String roleName;
@@ -16,27 +18,4 @@ public class Role extends BaseEntity<Role> {
 
     private String roleDesc;
 
-    public String getRoleName() {
-        return roleName;
-    }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
-
-    public String getRoleCode() {
-        return roleCode;
-    }
-
-    public void setRoleCode(String roleCode) {
-        this.roleCode = roleCode;
-    }
-
-    public String getRoleDesc() {
-        return roleDesc;
-    }
-
-    public void setRoleDesc(String roleDesc) {
-        this.roleDesc = roleDesc;
-    }
 }

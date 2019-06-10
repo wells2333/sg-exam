@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 144
+ Source Server         : mysql_localhost
  Source Server Type    : MySQL
- Source Server Version : 50710
- Source Host           : 192.168.0.144:3306
+ Source Server Version : 50617
+ Source Host           : localhost:3306
  Source Schema         : microservice-auth
 
  Target Server Type    : MySQL
- Target Server Version : 50710
+ Target Server Version : 50617
  File Encoding         : 65001
 
- Date: 26/04/2019 23:22:30
+ Date: 09/06/2019 16:45:45
 */
 
 SET NAMES utf8mb4;
@@ -41,12 +41,13 @@ CREATE TABLE `oauth_client_details`  (
   `modify_date` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改时间',
   `del_flag` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '删除标记',
   `application_code` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '系统编号',
+  `tenant_code` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of oauth_client_details
 -- ----------------------------
-INSERT INTO `oauth_client_details` VALUES ('471037a0c1be4df99b40e3f84141cc56', 'web_app', NULL, 'spring-microservice-exam-secret', '$2a$10$IWLD8r7e0rKMW.ZhGsGCUO./MZUNDKudIswSToa9puXJwty.h59.u', 'read,write', 'password,authorization_code,refresh_token,implicit', NULL, NULL, '3600', '21600', NULL, NULL, 'admin', '2019-03-30 23:43:07', 'admin', '2019-04-11 16:50:00', '0', 'EXAM');
+INSERT INTO `oauth_client_details` VALUES ('471037a0c1be4df99b40e3f84141cc56', 'web_app', NULL, 'spring-microservice-exam-secret', '$2a$10$IWLD8r7e0rKMW.ZhGsGCUO./MZUNDKudIswSToa9puXJwty.h59.u', 'read,write', 'password,authorization_code,refresh_token,implicit', NULL, NULL, '3600', '21600', NULL, NULL, 'admin', '2019-03-30 23:43:07', 'admin', '2019-06-07 21:48:31', '0', 'EXAM', NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

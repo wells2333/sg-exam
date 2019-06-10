@@ -7,7 +7,6 @@ import com.github.tangyi.common.core.utils.*;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.constant.SecurityConstant;
-import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.exam.api.dto.SubjectBankDto;
 import com.github.tangyi.exam.api.module.SubjectBank;
 import com.github.tangyi.exam.api.module.SubjectCategory;
@@ -16,20 +15,20 @@ import com.github.tangyi.exam.service.SubjectCategoryService;
 import com.github.tangyi.exam.utils.SubjectBankUtil;
 import com.google.common.net.HttpHeaders;
 import io.swagger.annotations.*;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.text.SimpleDateFormat;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,18 +37,16 @@ import java.util.List;
  * @author tangyi
  * @date 2018/12/9 14:12
  */
+@Slf4j
+@AllArgsConstructor
 @Api("题库信息管理")
 @RestController
 @RequestMapping("/v1/subjectBank")
 public class SubjectBankController extends BaseController {
 
-    private static final Logger logger = LoggerFactory.getLogger(SubjectBankController.class);
+    private final SubjectBankService subjectBankService;
 
-    @Autowired
-    private SubjectBankService subjectBankService;
-
-    @Autowired
-    private SubjectCategoryService subjectCategoryService;
+    private final SubjectCategoryService subjectCategoryService;
 
     /**
      * 根据ID获取
@@ -64,11 +61,8 @@ public class SubjectBankController extends BaseController {
     @ApiImplicitParam(name = "id", value = "题库ID", required = true, dataType = "String", paramType = "path")
     public ResponseBean<SubjectBank> subjectBank(@PathVariable String id) {
         SubjectBank subjectBank = new SubjectBank();
-        if (StringUtils.isNotBlank(id)) {
-            subjectBank.setId(id);
-            subjectBank = subjectBankService.get(subjectBank);
-        }
-        return new ResponseBean<>(subjectBank);
+        subjectBank.setId(id);
+        return new ResponseBean<>(subjectBankService.get(subjectBank));
     }
 
     /**
@@ -97,6 +91,7 @@ public class SubjectBankController extends BaseController {
                                                  @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
                                                  @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                                  SubjectBank subjectBank) {
+        subjectBank.setTenantCode(SysUtil.getTenantCode());
         PageInfo<SubjectBank> page = subjectBankService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), subjectBank);
         if (CollectionUtils.isNotEmpty(page.getList())) {
             // 查询分类信息
@@ -128,12 +123,12 @@ public class SubjectBankController extends BaseController {
      * @date 2018/12/9 14:14
      */
     @PostMapping
-    @PreAuthorize("hasAuthority('exam:subject:bank:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('exam:subject:bank:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "创建题库", notes = "创建题库")
     @ApiImplicitParam(name = "subjectBank", value = "题库实体subjectBank", required = true, dataType = "SubjectBank")
     @Log("新增题库")
-    public ResponseBean<Boolean> addSubjectBank(@RequestBody SubjectBank subjectBank) {
-        subjectBank.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> addSubjectBank(@RequestBody @Valid SubjectBank subjectBank) {
+        subjectBank.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(subjectBankService.insert(subjectBank) > 0);
     }
 
@@ -146,12 +141,12 @@ public class SubjectBankController extends BaseController {
      * @date 2018/12/9 14:15
      */
     @PutMapping
-    @PreAuthorize("hasAuthority('exam:subject:bank:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('exam:subject:bank:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "更新题库信息", notes = "根据题库id更新题库的基本信息")
     @ApiImplicitParam(name = "subjectBank", value = "题库实体subjectBank", required = true, dataType = "SubjectBank")
     @Log("更新题库")
-    public ResponseBean<Boolean> updateSubjectBank(@RequestBody SubjectBank subjectBank) {
-        subjectBank.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> updateSubjectBank(@RequestBody @Valid SubjectBank subjectBank) {
+        subjectBank.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(subjectBankService.update(subjectBank) > 0);
     }
 
@@ -164,7 +159,7 @@ public class SubjectBankController extends BaseController {
      * @date 2018/12/9 14:15
      */
     @DeleteMapping("{id}")
-    @PreAuthorize("hasAuthority('exam:subject:bank:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PreAuthorize("hasAuthority('exam:subject:bank:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "删除题库", notes = "根据ID删除题库")
     @ApiImplicitParam(name = "id", value = "题库ID", required = true, paramType = "path")
     @Log("删除题库")
@@ -175,11 +170,11 @@ public class SubjectBankController extends BaseController {
             subjectBank.setId(id);
             subjectBank = subjectBankService.get(subjectBank);
             if (subjectBank != null) {
-                subjectBank.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+                subjectBank.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
                 success = subjectBankService.delete(subjectBank) > 0;
             }
         } catch (Exception e) {
-            logger.error("删除题目失败！", e);
+            log.error("删除题目失败！", e);
         }
         return new ResponseBean<>(success);
     }
@@ -191,8 +186,8 @@ public class SubjectBankController extends BaseController {
      * @author tangyi
      * @date 2018/12/9 14:16
      */
-    @PostMapping("/export")
-    @PreAuthorize("hasAuthority('exam:subject:bank:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PostMapping("export")
+    @PreAuthorize("hasAuthority('exam:subject:bank:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "导出题目", notes = "根据分类id导出题目")
     @ApiImplicitParam(name = "subjectBankDto", value = "分类信息", required = true, dataType = "SubjectBankDto")
     @Log("导出题库题目")
@@ -201,7 +196,7 @@ public class SubjectBankController extends BaseController {
             // 配置response
             response.setCharacterEncoding("utf-8");
             response.setContentType("multipart/form-data");
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request, "题目信息" + new SimpleDateFormat("yyyyMMddhhmmssSSS").format(new Date()) + ".xlsx"));
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request, "题目信息" + DateUtils.localDateMillisToString(LocalDateTime.now()) + ".xlsx"));
             List<SubjectBank> subjectBanks = new ArrayList<>();
             // 根据题目id导出
             if (StringUtils.isNotEmpty(subjectBankDto.getIdString())) {
@@ -219,7 +214,7 @@ public class SubjectBankController extends BaseController {
             }
             ExcelToolUtil.exportExcel(request.getInputStream(), response.getOutputStream(), MapUtil.java2Map(subjectBanks), SubjectBankUtil.getSubjectBankMap());
         } catch (Exception e) {
-            logger.error("导出题目数据失败！", e);
+            log.error("导出题目数据失败！", e);
         }
     }
 
@@ -232,34 +227,33 @@ public class SubjectBankController extends BaseController {
      * @author tangyi
      * @date 2018/12/9 14:19
      */
-    @RequestMapping("/import")
-    @PreAuthorize("hasAuthority('exam:subject:bank:import') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @RequestMapping("import")
+    @PreAuthorize("hasAuthority('exam:subject:bank:import') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "导入题目", notes = "导入题目")
     @ApiImplicitParam(name = "categoryId", value = "分类ID", required = true, dataType = "String")
     @Log("导入题库题目")
-    public ResponseBean<Boolean> importSubjectBank(String categoryId, @ApiParam(value = "要上传的文件", required = true) MultipartFile file) {
+    public ResponseBean<Boolean> importSubjectBank(@NotBlank String categoryId, @ApiParam(value = "要上传的文件", required = true) MultipartFile file) {
         try {
-            logger.debug("开始导入题目数据，分类ID：{}", categoryId);
+            log.debug("开始导入题目数据，分类ID：{}", categoryId);
             List<SubjectBank> subjectBanks = MapUtil.map2Java(SubjectBank.class,
                     ExcelToolUtil.importExcel(file.getInputStream(), SubjectBankUtil.getSubjectBankMap()));
             if (CollectionUtils.isNotEmpty(subjectBanks)) {
                 for (SubjectBank subjectBank : subjectBanks) {
                     // 初始化考试ID
                     if (StringUtils.isBlank(subjectBank.getId())) {
-                        subjectBank.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+                        subjectBank.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
                         subjectBank.setCategoryId(categoryId);
                         subjectBankService.insert(subjectBank);
                     } else {
                         // 绑定分类ID
-                        if (StringUtils.isNotBlank(categoryId))
-                            subjectBank.setCategoryId(categoryId);
+                        subjectBank.setCategoryId(categoryId);
                         subjectBankService.update(subjectBank);
                     }
                 }
             }
             return new ResponseBean<>(Boolean.TRUE);
         } catch (Exception e) {
-            logger.error("导入题目数据失败！", e);
+            log.error("导入题目数据失败！", e);
         }
         return new ResponseBean<>(Boolean.FALSE);
     }
@@ -272,8 +266,8 @@ public class SubjectBankController extends BaseController {
      * @author tangyi
      * @date 2018/12/04 9:55
      */
-    @PostMapping("/deleteAll")
-    @PreAuthorize("hasAuthority('exam:subject:bank:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "', '" + SecurityConstant.ROLE_TEACHER + "')")
+    @PostMapping("deleteAll")
+    @PreAuthorize("hasAuthority('exam:subject:bank:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "批量删除题目", notes = "根据题目id批量删除题目")
     @ApiImplicitParam(name = "subjectBankDto", value = "题目信息", dataType = "SubjectBankDto")
     @Log("批量删除题库题目")
@@ -283,7 +277,7 @@ public class SubjectBankController extends BaseController {
             if (StringUtils.isNotEmpty(subjectBankDto.getIdString()))
                 success = subjectBankService.deleteAll(subjectBankDto.getIdString().split(",")) > 0;
         } catch (Exception e) {
-            logger.error("删除题目失败！", e);
+            log.error("删除题目失败！", e);
         }
         return new ResponseBean<>(success);
     }

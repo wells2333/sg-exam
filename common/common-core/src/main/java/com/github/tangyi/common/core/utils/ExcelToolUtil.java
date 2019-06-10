@@ -8,7 +8,9 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -16,6 +18,10 @@ import java.util.*;
  * @date 2018/11/26 22:20
  */
 public class ExcelToolUtil {
+
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    private static final DateTimeFormatter FORMATTER_DATE = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     /**
      * 根据数据和标题封装excel数据输出流
@@ -36,10 +42,7 @@ public class ExcelToolUtil {
         // 创建首行标题，设置高度
         Row rowHeader = sh.createRow(0);
         rowHeader.setHeightInPoints(16);
-
         Iterator<String> keys = keys2titlesMap.keySet().iterator();
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         int i = 0;
         List<String> keyList = new ArrayList<String>();
         while (keys.hasNext()) {
@@ -71,11 +74,13 @@ public class ExcelToolUtil {
                     if (dataMap.get(key) instanceof String) {
                         cell.setCellValue(MapUtil.getString(dataMap, key));
                     } else if (dataMap.get(key) instanceof Date) {
-                        cell.setCellValue(simpleDateFormat.format(MapUtil.getDate(dataMap, key)));
+                        Date date = MapUtil.getDate(dataMap, key);
+                        cell.setCellValue(date == null ? "" : FORMATTER.format(LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault())));
                     } else if (dataMap.get(key) instanceof Number) {
                         cell.setCellValue(MapUtil.getDouble(dataMap, key));
                     } else if (dataMap.get(key) instanceof Boolean) {
-                        cell.setCellValue(MapUtil.getBooleanValue(dataMap, key));
+                        Boolean value = MapUtil.getBooleanValue(dataMap, key);
+                        cell.setCellValue(value == null ? Boolean.FALSE : value);
                     }
                 } else if (key.contains(".")) {
                     // 标题的名称对应的可以是对象
@@ -214,7 +219,7 @@ public class ExcelToolUtil {
                     if (DateUtil.isCellDateFormatted(cell)) {
                         // 用于转化为日期格式
                         Date d = cell.getDateCellValue();
-                        map.put(keys[cellnum], new SimpleDateFormat("yyyy-MM-dd").format(d));
+                        map.put(keys[cellnum], FORMATTER_DATE.format(LocalDateTime.ofInstant(d.toInstant(), ZoneId.systemDefault())));
                     } else {
                         map.put(keys[cellnum], numToStringFormat(String.valueOf(cell.getNumericCellValue())));
                     }

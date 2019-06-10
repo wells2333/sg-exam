@@ -22,6 +22,7 @@
         <result column="modify_date" property="modifyDate"/>
         <result column="del_flag" property="delFlag"/>
         <result column="application_code" property="applicationCode"/>
+        <result column="tenant_code" property="tenantCode"/>
     </resultMap>
 
     <resultMap id="userVoResultMap" type="com.github.tangyi.common.core.vo.UserVo">
@@ -45,6 +46,7 @@
         <result column="umodify_date" property="modifyDate"/>
         <result column="udel_flag" property="delFlag"/>
         <result column="uapplication_code" property="applicationCode"/>
+        <result column="utenant_code" property="tenantCode"/>
         <collection property="roleList" ofType="com.github.tangyi.common.core.vo.Role">
             <id column="roleId" property="id"/>
             <result column="role_name" property="roleName"/>
@@ -56,6 +58,7 @@
             <result column="rmodify_date" property="modifyDate"/>
             <result column="rdel_flag" property="delFlag"/>
             <result column="rapplication_code" property="applicationCode"/>
+            <result column="rtenant_code" property="tenantCode"/>
         </collection>
     </resultMap>
 
@@ -79,7 +82,8 @@
         a.modifier,
         a.modify_date,
         a.del_flag,
-        a.application_code
+        a.application_code,
+        a.tenant_code
     </sql>
 
     <!-- where 条件 -->
@@ -101,6 +105,9 @@
         </if>
         <if test="status != null and status != ''">
             and a.status = #{status}
+        </if>
+        <if test="tenantCode != null and tenantCode != ''">
+            and a.tenant_code = #{tenantCode}
         </if>
     </sql>
 
@@ -126,6 +133,7 @@
         `user`.modify_date as "umodify_date",
         `user`.del_flag as "udel_flag",
         `user`.application_code as "uapplication_code",
+        `user`.tenant_code as "utenant_code",
         r.id as "roleId",
         r.role_name,
         r.role_code,
@@ -135,7 +143,8 @@
         r.modifier as "rmodifier",
         r.modify_date as "rmodify_date",
         r.del_flag as "rdel_flag",
-        r.application_code as "rapplication_code"
+        r.application_code as "rapplication_code",
+        r.tenant_code as "rtenant_code"
         FROM
         sys_user  as `user`
         LEFT JOIN sys_user_role ur ON ur.user_id = `user`.id
@@ -144,7 +153,7 @@
 
     <select id="selectUserVoByUsername" resultMap="userVoResultMap">
         <include refid="selectUserVo"/>
-        WHERE `user`.username = #{username} and `user`.del_flag = 0
+        WHERE `user`.username = #{username} and `user`.tenant_code = #{tenantCode} and `user`.del_flag = 0
     </select>
 
     <select id="get" resultMap="userResultMap">
@@ -154,10 +163,15 @@
         WHERE a.id = #{id}
     </select>
 
+    <select id="userCount" resultType="Integer">
+        SELECT COUNT(1) FROM sys_user a
+        WHERE a.del_flag = 0 and a.tenant_code = #{tenantCode}
+    </select>
+
     <select id="findList" resultMap="userResultMap">
         SELECT
         <include refid="userColumns"/>
-        FROM sys_user  a
+        FROM sys_user a
         WHERE a.del_flag = 0
         <include refid="whereColumnList"/>
     </select>
@@ -165,7 +179,7 @@
     <select id="findListById" resultMap="userResultMap">
         SELECT
         <include refid="userColumns"/>
-        FROM sys_user  a
+        FROM sys_user a
         WHERE a.id IN
         <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
             #{item}
@@ -194,7 +208,8 @@
             modifier,
             modify_date,
             del_flag,
-            application_code
+            application_code,
+            tenant_code
         ) values (
             #{id},
             #{name},
@@ -215,7 +230,8 @@
             #{modifier},
             #{modifyDate},
             #{delFlag},
-            #{applicationCode}
+            #{applicationCode},
+            #{tenantCode}
         );
     </insert>
 
@@ -291,7 +307,7 @@
         del_flag = 1
         where id in
         <foreach item="item" index="index" collection="array" open="("
-                 separator="," close=")"> #{item}
+                 separator="," close=")">#{item}
         </foreach>
     </delete>
 </mapper>

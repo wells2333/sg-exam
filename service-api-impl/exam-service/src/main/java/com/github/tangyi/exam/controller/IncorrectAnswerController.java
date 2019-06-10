@@ -7,7 +7,6 @@ import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
-import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.exam.api.dto.IncorrectAnswerDto;
 import com.github.tangyi.exam.api.module.IncorrectAnswer;
 import com.github.tangyi.exam.api.module.Subject;
@@ -17,14 +16,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,18 +32,16 @@ import java.util.List;
  * @author tangyi
  * @date 2018/11/8 21:28
  */
+@Slf4j
+@AllArgsConstructor
 @Api("错题信息管理")
 @RestController
 @RequestMapping("/v1/incorrectAnswer")
 public class IncorrectAnswerController extends BaseController {
 
-    private static final Logger logger = LoggerFactory.getLogger(IncorrectAnswerController.class);
+    private final IncorrectAnswerService incorrectAnswerService;
 
-    @Autowired
-    private IncorrectAnswerService incorrectAnswerService;
-
-    @Autowired
-    private SubjectService subjectService;
+    private final SubjectService subjectService;
 
     /**
      * 根据ID获取
@@ -60,11 +56,8 @@ public class IncorrectAnswerController extends BaseController {
     @ApiImplicitParam(name = "id", value = "错题ID", required = true, dataType = "String", paramType = "path")
     public ResponseBean<IncorrectAnswer> examRecord(@PathVariable String id) {
         IncorrectAnswer incorrectAnswer = new IncorrectAnswer();
-        if (StringUtils.isNotBlank(id)) {
-            incorrectAnswer.setId(id);
-            incorrectAnswer = incorrectAnswerService.get(incorrectAnswer);
-        }
-        return new ResponseBean<>(incorrectAnswer);
+        incorrectAnswer.setId(id);
+        return new ResponseBean<>(incorrectAnswerService.get(incorrectAnswer));
     }
 
     /**
@@ -93,6 +86,7 @@ public class IncorrectAnswerController extends BaseController {
                                                             @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
                                                             @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                                             IncorrectAnswer incorrectAnswer) {
+        incorrectAnswer.setTenantCode(SysUtil.getTenantCode());
         // 查找错题
         PageInfo<IncorrectAnswer> incorrectAnswerPageInfo = incorrectAnswerService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), incorrectAnswer);
         PageInfo<IncorrectAnswerDto> pageInfo = new PageInfo<>();
@@ -116,6 +110,9 @@ public class IncorrectAnswerController extends BaseController {
                 });
             }
         }
+        pageInfo.setPageSize(incorrectAnswerPageInfo.getPageSize());
+        pageInfo.setPageNum(incorrectAnswerPageInfo.getPageNum());
+        pageInfo.setTotal(incorrectAnswerPageInfo.getTotal());
         pageInfo.setList(incorrectAnswerDtoList);
         return pageInfo;
     }
@@ -132,8 +129,8 @@ public class IncorrectAnswerController extends BaseController {
     @ApiOperation(value = "创建错题", notes = "创建错题")
     @ApiImplicitParam(name = "incorrectAnswer", value = "错题实体incorrectAnswer", required = true, dataType = "IncorrectAnswer")
     @Log("新增错题")
-    public ResponseBean<Boolean> addIncorrectAnswer(@RequestBody IncorrectAnswer incorrectAnswer) {
-        incorrectAnswer.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> addIncorrectAnswer(@RequestBody @Valid IncorrectAnswer incorrectAnswer) {
+        incorrectAnswer.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(incorrectAnswerService.insert(incorrectAnswer) > 0);
     }
 
@@ -149,8 +146,8 @@ public class IncorrectAnswerController extends BaseController {
     @ApiOperation(value = "更新错题信息", notes = "根据错题id更新错题的基本信息")
     @ApiImplicitParam(name = "incorrectAnswer", value = "错题实体incorrectAnswer", required = true, dataType = "IncorrectAnswer")
     @Log("更新错题")
-    public ResponseBean<Boolean> updateIncorrectAnswer(@RequestBody IncorrectAnswer incorrectAnswer) {
-        incorrectAnswer.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+    public ResponseBean<Boolean> updateIncorrectAnswer(@RequestBody @Valid IncorrectAnswer incorrectAnswer) {
+        incorrectAnswer.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(incorrectAnswerService.update(incorrectAnswer) > 0);
     }
 
@@ -171,11 +168,11 @@ public class IncorrectAnswerController extends BaseController {
         try {
             IncorrectAnswer incorrectAnswer = incorrectAnswerService.get(id);
             if (incorrectAnswer != null) {
-                incorrectAnswer.setCommonValue(SecurityUtil.getCurrentUsername(), SysUtil.getSysCode());
+                incorrectAnswer.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
                 success = incorrectAnswerService.delete(incorrectAnswer) > 0;
             }
         } catch (Exception e) {
-            logger.error("删除错题失败！", e);
+            log.error("删除错题失败！", e);
         }
         return new ResponseBean<>(success);
     }

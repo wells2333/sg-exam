@@ -3,7 +3,7 @@ package com.github.tangyi.user.service;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.user.api.module.UserRole;
 import com.github.tangyi.user.mapper.UserRoleMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,11 +12,11 @@ import java.util.List;
  * @author tangyi
  * @date 2018/8/26 14:55
  */
+@AllArgsConstructor
 @Service
 public class UserRoleService extends CrudService<UserRoleMapper, UserRole> {
 
-    @Autowired
-    private UserRoleMapper userRoleMapper;
+    private final UserRoleMapper userRoleMapper;
 
     /**
      * 根据用户ID查询

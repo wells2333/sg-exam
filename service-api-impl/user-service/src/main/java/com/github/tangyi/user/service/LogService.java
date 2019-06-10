@@ -4,7 +4,6 @@ import com.github.tangyi.common.core.model.Log;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.user.mapper.LogMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 日志service
