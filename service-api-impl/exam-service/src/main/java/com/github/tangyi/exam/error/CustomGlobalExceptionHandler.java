@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.error;
 
+import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.model.ResponseBean;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
@@ -7,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -44,5 +46,16 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         ResponseBean<List<String>> responseBean = new ResponseBean<>(errors);
         responseBean.setStatus(status.value());
         return new ResponseEntity<>(responseBean, headers, status);
+    }
+
+    /**
+     * 处理CommonException
+     *
+     * @param e e
+     * @return ResponseEntity
+     */
+    @ExceptionHandler(CommonException.class)
+    public ResponseEntity<ResponseBean<String>> handleCommonException(Exception e) {
+        return new ResponseEntity<>(new ResponseBean<>(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

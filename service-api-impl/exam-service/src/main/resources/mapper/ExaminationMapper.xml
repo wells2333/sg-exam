@@ -8,14 +8,9 @@
         <result column="attention" property="attention"/>
         <result column="start_time" property="startTime"/>
         <result column="end_time" property="endTime"/>
-        <result column="duration" property="duration"/>
         <result column="total_score" property="totalScore"/>
-        <result column="total_subject" property="totalSubject"/>
         <result column="status" property="status"/>
-        <result column="avatar" property="avatar"/>
         <result column="avatar_id" property="avatarId"/>
-        <result column="college_id" property="collegeId"/>
-        <result column="major_id" property="majorId"/>
         <result column="course_id" property="courseId"/>
         <result column="remark" property="remark"/>
         <result column="creator" property="creator"/>
@@ -34,14 +29,9 @@
         a.attention,
         a.start_time,
         a.end_time,
-        a.duration,
         a.total_score,
-        a.total_subject,
         a.status,
-        a.avatar,
         a.avatar_id,
-        a.college_id,
-        a.major_id,
         a.course_id,
         a.remark,
         a.creator,
@@ -75,50 +65,41 @@
     <select id="get" resultMap="examinationResultMap">
         SELECT
         <include refid="examinationColumns"/>
-        FROM examination a
-        WHERE a.id = #{id} and a.del_flag = 0
+        FROM exam_examination a WHERE a.id = #{id} and a.del_flag = 0
     </select>
 
     <select id="findList" resultMap="examinationResultMap">
         SELECT
         <include refid="examinationColumns"/>
-        FROM examination a
-        WHERE a.del_flag = 0
+        FROM exam_examination a WHERE a.del_flag = 0
         <include refid="whereColumnList"/>
     </select>
 
     <select id="findListById" resultMap="examinationResultMap">
         SELECT
         <include refid="examinationColumns"/>
-        FROM examination a
-        WHERE a.id IN
+        FROM exam_examination a WHERE a.id IN
         <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
     </select>
 
     <select id="findExaminationCount" resultType="java.lang.Integer">
-        SELECT COUNT(*) FROM examination a
-        WHERE a.del_flag = 0
+        SELECT COUNT(*) FROM exam_examination a WHERE a.del_flag = 0
         <include refid="whereColumnList"/>
     </select>
 
     <insert id="insert">
-        insert  into examination (
+        insert into exam_examination (
             id,
             examination_name,
             type,
             attention,
             start_time,
             end_time,
-            duration,
             total_score,
-            total_subject,
             status,
-            avatar,
             avatar_id,
-            college_id,
-            major_id,
             course_id,
             remark,
             creator,
@@ -135,14 +116,9 @@
             #{attention},
             #{startTime},
             #{endTime},
-            #{duration},
             #{totalScore},
-            #{totalSubject},
             #{status},
-            #{avatar},
             #{avatarId},
-            #{collegeId},
-            #{majorId},
             #{courseId},
             #{remark},
             #{creator},
@@ -156,7 +132,7 @@
     </insert>
 
     <update id="update">
-        UPDATE examination SET
+        UPDATE exam_examination SET
         <if test="examinationName != null">
             examination_name = #{examinationName},
         </if>
@@ -172,29 +148,14 @@
         <if test="endTime != null">
             end_time = #{endTime},
         </if>
-        <if test="duration != null">
-            duration = #{duration},
-        </if>
         <if test="totalScore != null">
             total_score = #{totalScore},
-        </if>
-        <if test="totalSubject != null">
-            total_subject = #{totalSubject},
         </if>
         <if test="status != null">
             status = #{status},
         </if>
-        <if test="avatar != null">
-            avatar = #{avatar},
-        </if>
         <if test="avatarId != null">
             avatar_id = #{avatarId},
-        </if>
-        <if test="collegeId != null">
-            college_id = #{collegeId},
-        </if>
-        <if test="majorId != null">
-            major_id = #{majorId},
         </if>
         <if test="courseId != null">
             course_id = #{courseId},
@@ -211,15 +172,11 @@
     </update>
 
     <delete id="delete">
-        UPDATE examination SET
-			del_flag = 1
-		WHERE id = #{id}
+        UPDATE exam_examination SET del_flag = 1 WHERE id = #{id}
     </delete>
 
     <delete id="deleteAll">
-        UPDATE examination SET
-        del_flag = 1
-        WHERE id in
+        UPDATE exam_examination SET del_flag = 1 WHERE id in
         <foreach item="item" index="index" collection="array" open="("
                  separator="," close=")">#{item}
         </foreach>

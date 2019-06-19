@@ -1,15 +1,24 @@
 package com.github.tangyi.exam.service;
 
+import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.service.CrudService;
+import com.github.tangyi.common.core.utils.PageUtil;
+import com.github.tangyi.common.core.utils.SysUtil;
+import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.Examination;
-import com.github.tangyi.exam.api.module.Subject;
+import com.github.tangyi.exam.api.module.ExaminationSubject;
+import com.github.tangyi.exam.api.module.SubjectChoices;
 import com.github.tangyi.exam.mapper.ExaminationMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 考试service
@@ -22,7 +31,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ExaminationService extends CrudService<ExaminationMapper, Examination> {
 
+    private final SubjectChoicesService subjectChoicesService;
+
     private final SubjectService subjectService;
+
+    private final ExaminationSubjectService examinationSubjectService;
 
     /**
      * 查询考试
@@ -51,11 +64,9 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
     @CacheEvict(value = "examination", key = "#examination.id")
     public int update(Examination examination) {
         // 更新题目数量
-        Subject subject = new Subject();
-        subject.setExaminationId(examination.getId());
-        int totalSubject = subjectService.getExaminationTotalSubject(subject);
+        SubjectChoices subject = new SubjectChoices();
+        int totalSubject = subjectChoicesService.getExaminationTotalSubject(subject);
         log.debug("totalSubject:{}", totalSubject);
-        examination.setTotalSubject(String.valueOf(totalSubject));
         return super.update(examination);
     }
 
@@ -99,5 +110,52 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
      */
     public int findExaminationCount(Examination examination) {
         return this.dao.findExaminationCount(examination);
+    }
+
+    /**
+     * 根据考试ID获取题目分页数据
+     *
+     * @param subjectDto subjectDto
+     * @param pageNum    pageNum
+     * @param pageSize   pageSize
+     * @param sort       sort
+     * @param order      order
+     * @return PageInfo
+     * @author tangyi
+     * @date 2019/06/16 16:00
+     */
+    public PageInfo<SubjectDto> findSubjectPageById(SubjectDto subjectDto, String pageNum, String pageSize, String sort, String order) {
+        // 返回结果
+        PageInfo<SubjectDto> subjectDtoPageInfo = new PageInfo<>();
+        // 查询考试题目关联表
+        ExaminationSubject examinationSubject = new ExaminationSubject();
+        examinationSubject.setTenantCode(SysUtil.getTenantCode());
+        examinationSubject.setExaminationId(subjectDto.getExaminationId());
+        PageInfo<ExaminationSubject> examinationSubjects = examinationSubjectService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), examinationSubject);
+        // 根据题目ID查询题目信息
+        List<SubjectDto> subjectDtoList = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(examinationSubjects.getList())) {
+            // 按题目类型分组，获取对应的ID集合
+            subjectDtoList = subjectService.findSubjectDtoList(examinationSubjects.getList());
+        }
+        subjectDtoPageInfo.setList(subjectDtoList);
+        subjectDtoPageInfo.setTotal(examinationSubjects.getTotal());
+        subjectDtoPageInfo.setPageNum(examinationSubjects.getPageNum());
+        subjectDtoPageInfo.setPageSize(examinationSubjects.getPageSize());
+        return subjectDtoPageInfo;
+    }
+
+    /**
+     * 查询题目数量
+     *
+     * @param examination examination
+     * @return int
+     * @author tangyi
+     * @date 2019/06/18 14:34
+     */
+    public int findSubjectCount(Examination examination) {
+        ExaminationSubject examinationSubject = new ExaminationSubject();
+        examinationSubject.setExaminationId(examination.getId());
+        return examinationSubjectService.findSubjectCount(examinationSubject);
     }
 }

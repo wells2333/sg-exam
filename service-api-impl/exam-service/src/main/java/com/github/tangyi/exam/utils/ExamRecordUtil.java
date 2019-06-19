@@ -23,6 +23,9 @@ public class ExamRecordUtil {
         map.put("examinationName", "考试名称");
         map.put("userName", "考生名称");
         map.put("deptName", "部门名称");
+        map.put("correctNumber", "正确题数");
+        map.put("inCorrectNumber", "错误题数");
+        map.put("submitStatus", "批改状态");
         map.put("score", "成绩");
         map.put("examTime", "考试时间");
         return map;

@@ -3,8 +3,6 @@ package com.github.tangyi.exam.api.module;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-
 /**
  * 答题
  *
@@ -15,33 +13,19 @@ import javax.validation.constraints.NotBlank;
 public class Answer extends BaseEntity<Answer> {
 
     /**
-     * 用户ID
-     */
-    @NotBlank(message = "用户ID不能为空")
-    private String userId;
-
-    /**
-     * 考试ID
-     */
-    @NotBlank(message = "考试ID不能为空")
-    private String examinationId;
-
-    /**
      * 考试记录id
      */
-    @NotBlank(message = "考试记录ID不能为空")
     private String examRecordId;
-
-    /**
-     * 课程ID
-     */
-    private String courseId;
 
     /**
      * 题目ID
      */
-    @NotBlank(message = "题目ID不能为空")
     private String subjectId;
+
+    /**
+     * 题目类型
+     */
+    private Integer type;
 
     /**
      * 答案
@@ -49,13 +33,17 @@ public class Answer extends BaseEntity<Answer> {
     private String answer;
 
     /**
-     * 选择题答案
+     * 答题类型，0：正确，1：错误
      */
-    private String optionAnswer;
+    private Integer answerType;
 
     /**
-     * 下一题题目序号
+     * 得分
      */
-    private String serialNumber;
+    private Integer score;
 
+    /**
+     * 批改状态
+     */
+    private Integer markStatus;
 }

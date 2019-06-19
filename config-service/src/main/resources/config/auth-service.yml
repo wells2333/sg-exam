@@ -91,6 +91,7 @@ ignore:
     - /v1/attachment/download
     - /v1/log/**
     - /authentication/**
+    - /v1/authentication/**
     - /**/*.css
     - /**/*.js
     - /social

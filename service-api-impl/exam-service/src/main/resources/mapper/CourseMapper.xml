@@ -46,14 +46,14 @@
     <select id="get" resultMap="courseResultMap">
         SELECT
         <include refid="courseColumns"/>
-        FROM course a
+        FROM exam_course a
         WHERE a.id = #{id} and a.del_flag = 0
     </select>
 
     <select id="findList" resultMap="courseResultMap">
         SELECT
         <include refid="courseColumns"/>
-        FROM course a
+        FROM exam_course a
         WHERE a.del_flag = 0
         <include refid="whereColumnList"/>
     </select>
@@ -61,7 +61,7 @@
     <select id="findListById" resultMap="courseResultMap">
         SELECT
         <include refid="courseColumns"/>
-        FROM course a
+        FROM exam_course a
         WHERE a.id IN
         <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
             #{item}
@@ -69,7 +69,7 @@
     </select>
 
     <insert id="insert">
-        insert  into course (
+        insert into exam_course (
             id,
             course_name,
             college,
@@ -101,7 +101,7 @@
     </insert>
 
     <update id="update">
-        UPDATE course SET
+        UPDATE exam_course SET
         <if test="courseName != null">
             course_name = #{courseName},
         </if>
@@ -126,13 +126,13 @@
     </update>
 
     <delete id="delete">
-        UPDATE course SET
+        UPDATE exam_course SET
 			del_flag = 1
 		WHERE id = #{id}
     </delete>
 
     <delete id="deleteAll">
-        UPDATE course SET
+        UPDATE exam_course SET
         del_flag = 1
         WHERE id in
         <foreach item="item" index="index" collection="array" open="("

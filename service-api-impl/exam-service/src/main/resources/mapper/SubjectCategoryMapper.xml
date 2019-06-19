@@ -7,6 +7,7 @@
         <result column="category_desc" property="categoryDesc"/>
         <result column="parent_id" property="parentId"/>
         <result column="sort" property="sort"/>
+        <result column="type" property="type"/>
         <result column="creator" property="creator"/>
         <result column="create_date" property="createDate"/>
         <result column="modifier" property="modifier"/>
@@ -22,6 +23,7 @@
         a.category_desc,
         a.parent_id,
         a.sort,
+        a.type,
         a.creator,
         a.create_date,
         a.modifier,
@@ -44,17 +46,17 @@
     <select id="get" resultMap="subjectCategoryResultMap">
         SELECT
         <include refid="subjectCategoryColumns"/>
-        FROM subject_category a
-        WHERE a.id = #{id} and a.del_flag = 0
+        FROM exam_subject_category a WHERE a.id = #{id} and a.del_flag = 0
     </select>
 
     <insert id="insert">
-        INSERT  INTO subject_category (
+        INSERT INTO exam_subject_category (
             id,
             category_name,
             category_desc,
             parent_id,
             sort,
+            type,
             creator,
             create_date,
             modifier,
@@ -68,6 +70,7 @@
             #{categoryDesc},
             #{parentId},
             #{sort},
+            #{type},
             #{creator},
             #{createDate},
             #{modifier},
@@ -81,7 +84,7 @@
     <select id="findList" resultMap="subjectCategoryResultMap">
         SELECT
         <include refid="subjectCategoryColumns"/>
-        FROM subject_category a
+        FROM exam_subject_category a
         WHERE a.del_flag = 0
         <include refid="whereColumnList"/>
         order by sort desc
@@ -90,7 +93,7 @@
     <select id="findListById" resultMap="subjectCategoryResultMap">
         SELECT
         <include refid="subjectCategoryColumns"/>
-        FROM subject_category a
+        FROM exam_subject_category a
         WHERE a.id IN
         <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
             #{item}
@@ -98,7 +101,7 @@
     </select>
 
     <update id="update">
-        UPDATE subject_category SET
+        UPDATE exam_subject_category SET
         <if test="categoryName != null">
             category_name = #{categoryName},
         </if>
@@ -120,8 +123,6 @@
     </update>
 
     <delete id="delete">
-        UPDATE subject_category SET
-			del_flag = 1
-		WHERE id = #{id}
+        UPDATE exam_subject_category SET del_flag = 1 WHERE id = #{id}
     </delete>
 </mapper>

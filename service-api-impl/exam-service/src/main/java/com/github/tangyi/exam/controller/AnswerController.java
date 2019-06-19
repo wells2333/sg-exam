@@ -7,18 +7,25 @@ import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
+import com.github.tangyi.exam.api.dto.AnswerDto;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.Answer;
 import com.github.tangyi.exam.service.AnswerService;
+import com.github.tangyi.exam.service.SubjectService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 答题controller
@@ -34,6 +41,8 @@ import javax.validation.Valid;
 public class AnswerController extends BaseController {
 
     private final AnswerService answerService;
+
+    private final SubjectService subjectService;
 
     /**
      * 根据ID获取
@@ -169,7 +178,7 @@ public class AnswerController extends BaseController {
     @PostMapping("saveAndNext")
     @ApiOperation(value = "保存答题", notes = "保存答题")
     @ApiImplicitParam(name = "answer", value = "答题信息", dataType = "Answer")
-    public ResponseBean<SubjectDto> saveAndNext(@RequestBody @Valid Answer answer) {
+    public ResponseBean<SubjectDto> saveAndNext(@RequestBody AnswerDto answer) {
         return new ResponseBean<>(answerService.saveAndNext(answer));
     }
 
@@ -187,5 +196,67 @@ public class AnswerController extends BaseController {
     @Log("提交答题")
     public ResponseBean<Boolean> submit(@RequestBody Answer answer) {
         return new ResponseBean<>(answerService.submitAsync(answer));
+    }
+
+    /**
+     * 答题列表，包括题目的详情
+     * 支持查询正确、错误类型的题目
+     *
+     * @param recordId recordId
+     * @param answer   answer
+     * @return PageInfo
+     * @author tangyi
+     * @date 2019/06/18 19:16
+     */
+    @GetMapping("record/{recordId}/answerListInfo")
+    @ApiOperation(value = "获取答题信息列表", notes = "根据考试记录id获取答题详细信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.PAGE_SIZE, value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.SORT, value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.ORDER, value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = "recordId", value = "考试记录ID", required = true, dataType = "String", paramType = "path"),
+            @ApiImplicitParam(name = "answer", value = "答题信息", dataType = "Answer")
+    })
+    public PageInfo<AnswerDto> answerListInfo(
+            @RequestParam(value = CommonConstant.PAGE_NUM, required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
+            @RequestParam(value = CommonConstant.PAGE_SIZE, required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
+            @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
+            @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
+            @PathVariable String recordId, Answer answer) {
+        List<AnswerDto> answerDtos = new ArrayList<>();
+        answer.setExamRecordId(recordId);
+        PageInfo<Answer> answerPageInfo = answerService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), answer);
+        if (CollectionUtils.isNotEmpty(answerPageInfo.getList())) {
+            answerDtos = answerPageInfo.getList().stream().map(tempAnswer -> {
+                AnswerDto answerDto = new AnswerDto();
+                BeanUtils.copyProperties(tempAnswer, answerDto);
+                SubjectDto subjectDto = subjectService.get(tempAnswer.getSubjectId(), tempAnswer.getType());
+                answerDto.setSubject(subjectDto);
+                return answerDto;
+            }).collect(Collectors.toList());
+        }
+        PageInfo<AnswerDto> answerDtoPageInfo = new PageInfo<>();
+        answerDtoPageInfo.setList(answerDtos);
+        answerDtoPageInfo.setTotal(answerPageInfo.getTotal());
+        answerDtoPageInfo.setPageNum(answerPageInfo.getPageNum());
+        answerDtoPageInfo.setPageSize(answerPageInfo.getPageSize());
+        return answerDtoPageInfo;
+    }
+
+    /**
+     * 答题详情
+     *
+     * @param recordId recordId
+     * @param answer   answer
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/06/18 22:50
+     */
+    @GetMapping("record/{recordId}/answerInfo")
+    @ApiOperation(value = "保存答题", notes = "保存答题")
+    @ApiImplicitParam(name = "answer", value = "答题信息", dataType = "Answer")
+    public ResponseBean<AnswerDto> findBySerialNumber(@PathVariable String recordId, AnswerDto answer) {
+        return new ResponseBean<>(answerService.findBySerialNumber(recordId, answer));
     }
 }
