@@ -1,9 +1,10 @@
 package com.github.tangyi.exam.mq;
 
 import com.github.tangyi.common.core.constant.MqConstant;
-import com.github.tangyi.exam.api.constants.ExamRecordConstant;
+import com.github.tangyi.common.core.tenant.TenantContextHolder;
+import com.github.tangyi.exam.api.constants.ExamExaminationRecordConstant;
 import com.github.tangyi.exam.api.module.Answer;
-import com.github.tangyi.exam.api.module.ExamRecord;
+import com.github.tangyi.exam.api.module.ExaminationRecord;
 import com.github.tangyi.exam.service.AnswerService;
 import com.github.tangyi.exam.service.ExamRecordService;
 import lombok.AllArgsConstructor;
@@ -39,17 +40,19 @@ public class RabbitSubmitExaminationReceiver {
     public void submitExamination(Answer answer) {
         log.debug("处理考试提交ID：{}, 提交人：{}", answer.getExamRecordId(), answer.getModifier());
         try {
-            ExamRecord examRecord = new ExamRecord();
+            // 异步提交会丢失tenantCode，需要手动设置
+            TenantContextHolder.setTenantCode(answer.getTenantCode());
+            ExaminationRecord examRecord = new ExaminationRecord();
             examRecord.setId(answer.getExamRecordId());
             examRecord = examRecordService.get(examRecord);
             if (examRecord == null)
                 return;
-            if (ExamRecordConstant.STATUS_NOT_SUBMITTED.equals(examRecord.getSubmitStatus()))
+            if (ExamExaminationRecordConstant.STATUS_NOT_SUBMITTED.equals(examRecord.getSubmitStatus()))
                 log.warn("考试：{}未提交", examRecord.getId());
-            if (ExamRecordConstant.STATUS_CALCULATE.equals(examRecord.getSubmitStatus()))
+            if (ExamExaminationRecordConstant.STATUS_CALCULATE.equals(examRecord.getSubmitStatus()))
                 log.warn("考试：{}正在统计成绩，请勿重复提交", examRecord.getId());
             // 更新状态为正在统计
-            examRecord.setSubmitStatus(ExamRecordConstant.STATUS_CALCULATE);
+            examRecord.setSubmitStatus(ExamExaminationRecordConstant.STATUS_CALCULATE);
             // 更新成功
             if (examRecordService.update(examRecord) > 0) {
                 log.debug("考试：{}更新状态为正在统计成功", examRecord.getId());

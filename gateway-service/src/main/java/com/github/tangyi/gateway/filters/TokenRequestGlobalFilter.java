@@ -2,7 +2,6 @@ package com.github.tangyi.gateway.filters;
 
 import cn.hutool.core.util.StrUtil;
 import com.github.tangyi.common.core.constant.CommonConstant;
-import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.exceptions.InvalidAccessTokenException;
 import com.github.tangyi.common.core.utils.JsonMapper;
 import com.github.tangyi.gateway.constants.GatewayConstant;
@@ -12,7 +11,6 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.reactivestreams.Publisher;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -23,7 +21,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -40,7 +37,6 @@ import java.util.concurrent.TimeUnit;
  * @date 2019/5/19 15:03
  */
 @Slf4j
-@Component
 public class TokenRequestGlobalFilter implements GlobalFilter, Ordered {
 
     private final RedisTemplate<String, String> redisTemplate;
@@ -55,7 +51,6 @@ public class TokenRequestGlobalFilter implements GlobalFilter, Ordered {
      */
     private static long REFRESH_TOKEN_EXPIRE = 60 * 60 * 24 * 30;
 
-    @Autowired
     public TokenRequestGlobalFilter(RedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
     }

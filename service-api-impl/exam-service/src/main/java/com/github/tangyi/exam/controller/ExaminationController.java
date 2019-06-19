@@ -9,6 +9,7 @@ import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.constant.SecurityConstant;
 import com.github.tangyi.exam.api.dto.ExaminationDto;
+import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.Course;
 import com.github.tangyi.exam.api.module.Examination;
 import com.github.tangyi.exam.service.CourseService;
@@ -113,6 +114,38 @@ public class ExaminationController extends BaseController {
     }
 
     /**
+     * 根据考试ID获取题目分页数据
+     *
+     * @param pageNum    pageNum
+     * @param pageSize   pageSize
+     * @param sort       sort
+     * @param order      order
+     * @param subjectDto subjectDto
+     * @return PageInfo
+     * @author tangyi
+     * @date 2019/6/16 15:45
+     */
+    @RequestMapping("/{examinationId}/subjectList")
+    @ApiOperation(value = "获取题目列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.PAGE_SIZE, value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.SORT, value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = CommonConstant.ORDER, value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
+            @ApiImplicitParam(name = "examinationId", value = "考试ID", required = true, dataType = "String", paramType = "path"),
+            @ApiImplicitParam(name = "subjectDto", value = "题目信息", dataType = "SubjectDto")
+    })
+    public PageInfo<SubjectDto> subjectList(@RequestParam(value = CommonConstant.PAGE_NUM, required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
+                                            @RequestParam(value = CommonConstant.PAGE_SIZE, required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
+                                            @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
+                                            @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
+                                            @PathVariable String examinationId, SubjectDto subjectDto) {
+        subjectDto.setExaminationId(examinationId);
+        return examinationService.findSubjectPageById(subjectDto, pageNum, pageSize, sort, order);
+    }
+
+
+    /**
      * 创建
      *
      * @param examinationDto examinationDto
@@ -149,7 +182,8 @@ public class ExaminationController extends BaseController {
     public ResponseBean<Boolean> updateExamination(@RequestBody @Valid ExaminationDto examinationDto) {
         Examination examination = new Examination();
         BeanUtils.copyProperties(examinationDto, examination);
-        examination.setCourseId(examinationDto.getCourse().getId());
+        if (examinationDto.getCourse() != null)
+            examination.setCourseId(examinationDto.getCourse().getId());
         examination.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(examinationService.update(examination) > 0);
     }
@@ -220,5 +254,21 @@ public class ExaminationController extends BaseController {
         Examination examination = new Examination();
         examination.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), tenantCode);
         return new ResponseBean<>(examinationService.findExaminationCount(examination));
+    }
+
+    /**
+     * 根据考试ID查询题目数量
+     *
+     * @param examinationId examinationId
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/06/18 14:31
+     */
+    @ApiImplicitParam(name = "examinationId", value = "考试ID", required = true, paramType = "path")
+    @GetMapping("/{examinationId}/subjectCount")
+    public ResponseBean<Integer> findExaminationSubjectCount(@PathVariable String examinationId) {
+        Examination examination = new Examination();
+        examination.setId(examinationId);
+        return new ResponseBean<>(examinationService.findSubjectCount(examination));
     }
 }

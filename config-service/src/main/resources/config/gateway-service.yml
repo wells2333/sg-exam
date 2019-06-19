@@ -65,16 +65,20 @@ swagger:
 
 # 演示环境
 preview:
-  enabled: ${PREVIEW_ENABLED:false}
+  enabled: ${PREVIEW_ENABLED:true}
   ignores:
-    - token
-    - start
-    - saveAndNext
+    - api/auth  # 授权服务
+    - resetPassword   # 重置密码
     - register
-    - submit
     - checkExist
     - updateInfo
     - attachment
+    - api/exam  # 考试服务
+
+# 开启网关token转换
+gateway:
+  token-transfer:
+    enabled: ${GATEWAY_TOKEN_TRANSFER:true}
 
 # 集群ID生成配置
 cluster:

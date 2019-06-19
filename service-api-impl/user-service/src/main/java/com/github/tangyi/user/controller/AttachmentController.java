@@ -2,6 +2,7 @@ package com.github.tangyi.user.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.constant.CommonConstant;
+import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.common.core.utils.Servlets;
@@ -10,6 +11,7 @@ import com.github.tangyi.common.core.vo.AttachmentVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.user.api.module.Attachment;
+import com.github.tangyi.user.config.SysConfig;
 import com.github.tangyi.user.service.AttachmentService;
 import com.google.common.net.HttpHeaders;
 import io.swagger.annotations.*;
@@ -45,6 +47,8 @@ import java.util.stream.Collectors;
 public class AttachmentController extends BaseController {
 
     private final AttachmentService attachmentService;
+
+    private final SysConfig sysConfig;
 
     /**
      * 根据ID获取
@@ -132,6 +136,9 @@ public class AttachmentController extends BaseController {
         InputStream inputStream = null;
         OutputStream outputStream = null;
         try {
+            attachment = attachmentService.get(attachment);
+            if (attachment == null)
+                throw new CommonException("附件不存在！");
             inputStream = attachmentService.download(attachment);
             // 输出流
             outputStream = response.getOutputStream();
@@ -221,5 +228,27 @@ public class AttachmentController extends BaseController {
             returnT = new ResponseBean<>(attachmentVoList);
         }
         return returnT;
+    }
+
+    /**
+     * 获取预览地址
+     *
+     * @param id id
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/06/19 15:47
+     */
+    @GetMapping("/{id}/preview")
+    @ApiOperation(value = "获取预览地址", notes = "根据附件ID获取预览地址")
+    @ApiImplicitParam(name = "id", value = "附件id", required = true, dataType = "String", paramType = "path")
+    public ResponseBean<String> getPreviewUrl(@PathVariable String id) {
+        Attachment attachment = new Attachment();
+        attachment.setId(id);
+        attachment = attachmentService.get(attachment);
+        if (attachment == null)
+            throw new CommonException("附件不存在.");
+        String preview = sysConfig.getFdfsHttpHost() + "/" + attachment.getFastFileId();
+        log.debug("预览地址：{}", preview);
+        return new ResponseBean<>(preview);
     }
 }

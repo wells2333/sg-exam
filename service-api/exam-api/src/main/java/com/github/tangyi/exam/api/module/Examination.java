@@ -42,20 +42,10 @@ public class Examination extends BaseEntity<Examination> {
     private String endTime;
 
     /**
-     * 考试持续时间
-     */
-    private String duration;
-
-    /**
      * 总分
      */
     @NotBlank(message = "总分不能为空")
     private String totalScore;
-
-    /**
-     * 总题目数
-     */
-    private String totalSubject;
 
     /**
      * 考试状态
@@ -63,24 +53,9 @@ public class Examination extends BaseEntity<Examination> {
     private String status;
 
     /**
-     * 封面
-     */
-    private String avatar;
-
-    /**
-     * 封面对应的附件id
+     * 封面对应的图片id
      */
     private String avatarId;
-
-    /**
-     * 学院
-     */
-    private String collegeId;
-
-    /**
-     * 专业
-     */
-    private String majorId;
 
     /**
      * 课程

@@ -35,16 +35,39 @@ public class PreviewFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        // 当前请求
         ServerHttpRequest request = exchange.getRequest();
-        // enabled为false、GET请求、忽略的URL，直接向下执行
-        log.trace("preview.enabled:{}", previewConfig.isEnabled());
-        if (!previewConfig.isEnabled() || StrUtil.equalsIgnoreCase(request.getMethodValue(), HttpMethod.GET.name()) || isIgnore(request.getURI().getPath()))
-            return chain.filter(exchange);
-        log.warn("演示环境不能操作，{},{}", request.getMethodValue(), request.getURI().getPath());
-        ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(HttpStatus.LOCKED);
-        return response.setComplete();
+        if (shouldFilter(request)) {
+            log.warn("演示环境不能操作，{},{}", request.getMethodValue(), request.getURI().getPath());
+            ServerHttpResponse response = exchange.getResponse();
+            response.setStatusCode(HttpStatus.LOCKED);
+            return response.setComplete();
+        }
+        return chain.filter(exchange);
+    }
+
+    /**
+     * 是否拦截
+     *
+     * @param request request
+     * @return boolean
+     * @author tangyi
+     * @date 2019/06/19 20:06
+     */
+    private boolean shouldFilter(ServerHttpRequest request) {
+        // enabled为false
+        if (!previewConfig.isEnabled())
+            return false;
+        String method = request.getMethodValue(), uri = request.getURI().getPath();
+        // GET请求、POST请求
+        if (StrUtil.equalsIgnoreCase(method, HttpMethod.GET.name()))
+            return false;
+        if (StrUtil.equalsIgnoreCase(method, HttpMethod.POST.name()) && !StrUtil.containsIgnoreCase(uri, "delete"))
+            return false;
+        // 拦截DELETE请求
+        if (StrUtil.equalsIgnoreCase(method, HttpMethod.DELETE.name()) && !StrUtil.containsIgnoreCase(uri, "attachment"))
+            return true;
+        // URL白名单
+        return !isIgnore(uri);
     }
 
     /**

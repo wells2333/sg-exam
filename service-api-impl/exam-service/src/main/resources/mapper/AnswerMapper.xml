@@ -3,13 +3,13 @@
 <mapper namespace="com.github.tangyi.exam.mapper.AnswerMapper">
     <resultMap id="answerResultMap" type="com.github.tangyi.exam.api.module.Answer">
         <id column="id" property="id"/>
-        <result column="user_id" property="userId"/>
-        <result column="examination_id" property="examinationId"/>
         <result column="exam_record_id" property="examRecordId"/>
-        <result column="course_id" property="courseId"/>
         <result column="subject_id" property="subjectId"/>
+        <result column="type" property="type"/>
         <result column="answer" property="answer"/>
-        <result column="option_answer" property="optionAnswer"/>
+        <result column="answer_type" property="answerType"/>
+        <result column="score" property="score"/>
+        <result column="mark_status" property="markStatus"/>
         <result column="creator" property="creator"/>
         <result column="create_date" property="createDate"/>
         <result column="modifier" property="modifier"/>
@@ -21,13 +21,13 @@
 
     <sql id="answerColumns">
         a.id,
-        a.user_id,
-        a.examination_id,
         a.exam_record_id,
-        a.course_id,
         a.subject_id,
+        a.type,
         a.answer,
-        a.option_answer,
+        a.answer_type,
+        a.score,
+        a.mark_status,
         a.creator,
         a.create_date,
         a.modifier,
@@ -39,20 +39,20 @@
 
     <!-- where 条件 -->
     <sql id="whereColumnList">
-        <if test="userId != null and userId != ''">
-            and a.user_id = #{userId}
-        </if>
-        <if test="examinationId != null and examinationId != ''">
-            and a.examination_id = #{examinationId}
-        </if>
         <if test="examRecordId != null and examRecordId != ''">
             and a.exam_record_id = #{examRecordId}
         </if>
-        <if test="courseId != null and courseId != ''">
-            and a.course_id = #{courseId}
-        </if>
         <if test="subjectId != null and subjectId != ''">
             and a.subject_id = #{subjectId}
+        </if>
+        <if test="type != null and type != ''">
+            and a.type = #{type}
+        </if>
+        <if test="answerType != null and answerType != ''">
+            and a.answer_type = #{answerType}
+        </if>
+        <if test="markStatus != null and markStatus != ''">
+            and a.mark_status = #{markStatus}
         </if>
         <if test="tenantCode != null and tenantCode != ''">
             and a.tenant_code = #{tenantCode}
@@ -62,38 +62,36 @@
     <select id="get" resultMap="answerResultMap">
         SELECT
         <include refid="answerColumns"/>
-        FROM answer a
+        FROM exam_answer a
         WHERE a.id = #{id} and a.del_flag = 0
     </select>
 
     <select id="getAnswer" resultMap="answerResultMap">
         SELECT
         <include refid="answerColumns"/>
-        FROM answer a
-        WHERE a.user_id = #{userId}
-        and a.examination_id = #{examinationId}
-        and a.exam_record_id = #{examRecordId}
+        FROM exam_answer a
+        WHERE a.exam_record_id = #{examRecordId}
         and a.subject_id = #{subjectId}
     </select>
 
     <select id="findList" resultMap="answerResultMap">
         SELECT
         <include refid="answerColumns"/>
-        FROM answer a
+        FROM exam_answer a
         WHERE a.del_flag = 0
         <include refid="whereColumnList"/>
     </select>
 
     <insert id="insert">
-        insert into answer (
+        insert into exam_answer (
             id,
-            user_id,
-            examination_id,
             exam_record_id,
-            course_id,
             subject_id,
+            type,
             answer,
-            option_answer,
+            answer_type,
+            score,
+            mark_status,
             creator,
             create_date,
             modifier,
@@ -103,13 +101,13 @@
             tenant_code
         ) values (
             #{id},
-            #{userId},
-            #{examinationId},
             #{examRecordId},
-            #{courseId},
             #{subjectId},
+            #{type},
             #{answer},
-            #{optionAnswer},
+            #{answerType},
+            #{score},
+            #{markStatus},
             #{creator},
             #{createDate},
             #{modifier},
@@ -121,27 +119,27 @@
     </insert>
 
     <update id="update">
-        UPDATE answer SET
-        <if test="userId != null">
-            user_id = #{userId},
-        </if>
-        <if test="examinationId != null">
-            examination_id = #{examinationId},
-        </if>
+        UPDATE exam_answer SET
         <if test="examRecordId != null">
             exam_record_id = #{examRecordId},
-        </if>
-        <if test="courseId != null">
-            course_id = #{courseId},
         </if>
         <if test="subjectId != null">
             subject_id = #{subjectId},
         </if>
+        <if test="type != null">
+            type = #{type},
+        </if>
         <if test="answer != null">
             answer = #{answer},
         </if>
-        <if test="optionAnswer != null">
-            option_answer = #{optionAnswer},
+        <if test="answerType != null">
+            answer_type = #{answerType},
+        </if>
+        <if test="score != null">
+            score = #{score},
+        </if>
+        <if test="markStatus != null">
+            mark_status = #{markStatus},
         </if>
         <if test="delFlag != null">
             del_flag = #{delFlag},
@@ -152,8 +150,6 @@
     </update>
 
     <delete id="delete">
-        UPDATE answer SET
-			del_flag = 1
-		WHERE id = #{id}
+        UPDATE exam_answer SET del_flag = 1 WHERE id = #{id}
     </delete>
 </mapper>

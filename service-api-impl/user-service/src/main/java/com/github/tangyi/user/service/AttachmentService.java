@@ -73,9 +73,6 @@ public class AttachmentService extends CrudService<AttachmentMapper, Attachment>
      * @return InputStream
      */
     public InputStream download(Attachment attachment) {
-        attachment = super.get(attachment);
-        if (attachment == null)
-            throw new CommonException("附件不存在！");
         // 下载附件
         return fastDfsService.downloadStream(attachment.getGroupName(), attachment.getFastFileId());
     }

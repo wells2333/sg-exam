@@ -2,7 +2,10 @@ package com.github.tangyi.exam.api.dto;
 
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import com.github.tangyi.exam.api.module.Answer;
+import com.github.tangyi.exam.api.module.SubjectOption;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @author tangyi
@@ -22,9 +25,14 @@ public class SubjectDto extends BaseEntity<SubjectDto> {
     private String examinationRecordId;
 
     /**
+     * 题目分类ID
+     */
+    private String categoryId;
+
+    /**
      * 题目序号
      */
-    private String serialNumber;
+    private Integer serialNumber;
 
     /**
      * 题目名称
@@ -34,45 +42,36 @@ public class SubjectDto extends BaseEntity<SubjectDto> {
     /**
      * 题目类型
      */
-    private String type;
+    private Integer type;
 
     /**
-     * 题目内容
+     * 选择题类型
      */
-    private String content;
-
-    /**
-     * 选项A
-     */
-    private String optionA;
-
-    /**
-     * 选项B
-     */
-    private String optionB;
-
-    /**
-     * 选项C
-     */
-    private String optionC;
-
-    /**
-     * 选项D
-     */
-    private String optionD;
+    private Integer choicesType;
 
     /**
      * 分值
      */
-    private String score;
+    private Integer score;
+
+
+    /**
+     * 解析
+     */
+    private String analysis;
 
     /**
      * 难度等级
      */
-    private String level;
+    private Integer level;
 
     /**
      * 答题
      */
     private Answer answer;
+
+    /**
+     * 选项列表
+     */
+    private List<SubjectOption> options;
 }

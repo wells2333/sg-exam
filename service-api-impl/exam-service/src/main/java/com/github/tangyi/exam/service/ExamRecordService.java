@@ -1,7 +1,7 @@
 package com.github.tangyi.exam.service;
 
 import com.github.tangyi.common.core.service.CrudService;
-import com.github.tangyi.exam.api.module.ExamRecord;
+import com.github.tangyi.exam.api.module.ExaminationRecord;
 import com.github.tangyi.exam.mapper.ExamRecordMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @AllArgsConstructor
 @Service
-public class ExamRecordService extends CrudService<ExamRecordMapper, ExamRecord> {
+public class ExamRecordService extends CrudService<ExamRecordMapper, ExaminationRecord> {
 
     /**
      * 查询考试记录
@@ -29,7 +29,7 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, ExamRecord>
      */
     @Override
     @Cacheable(value = "record", key = "#examRecord.id")
-    public ExamRecord get(ExamRecord examRecord) {
+    public ExaminationRecord get(ExaminationRecord examRecord) {
         return super.get(examRecord);
     }
 
@@ -44,7 +44,7 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, ExamRecord>
     @Override
     @Transactional
     @CacheEvict(value = "record", key = "#examRecord.id")
-    public int update(ExamRecord examRecord) {
+    public int update(ExaminationRecord examRecord) {
         return super.update(examRecord);
     }
 
@@ -59,7 +59,7 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, ExamRecord>
     @Override
     @Transactional
     @CacheEvict(value = "record", key = "#examRecord.id")
-    public int insert(ExamRecord examRecord) {
+    public int insert(ExaminationRecord examRecord) {
         return super.insert(examRecord);
     }
 
@@ -71,7 +71,7 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, ExamRecord>
      * @author tangyi
      * @date 2018/12/26 13:58
      */
-    public ExamRecord getByUserIdAndExaminationId(ExamRecord examRecord) {
+    public ExaminationRecord getByUserIdAndExaminationId(ExaminationRecord examRecord) {
         return this.dao.getByUserIdAndExaminationId(examRecord);
     }
 

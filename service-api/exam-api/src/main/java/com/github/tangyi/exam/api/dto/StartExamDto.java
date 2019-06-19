@@ -1,6 +1,6 @@
 package com.github.tangyi.exam.api.dto;
 
-import com.github.tangyi.exam.api.module.ExamRecord;
+import com.github.tangyi.exam.api.module.ExaminationRecord;
 import com.github.tangyi.exam.api.module.Examination;
 import lombok.Data;
 
@@ -18,7 +18,7 @@ public class StartExamDto implements Serializable {
     /**
      * 考试记录信息
      */
-    private ExamRecord examRecord;
+    private ExaminationRecord examRecord;
 
     /**
      * 考试信息

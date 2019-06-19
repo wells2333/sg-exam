@@ -34,4 +34,9 @@ public class SubjectCategory extends BaseEntity<SubjectCategory> {
      * 排序号
      */
     private String sort;
+
+    /**
+     * 类型: 0-私共,1-公有
+     */
+    private String type;
 }
