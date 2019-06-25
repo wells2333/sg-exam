@@ -1,16 +1,19 @@
 package com.github.tangyi.auth.controller;
 
 import com.github.tangyi.common.core.constant.CommonConstant;
+import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.web.BaseController;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Authentication管理
@@ -40,13 +43,16 @@ public class AuthenticationController extends BaseController {
     /**
      * 清除access_token
      *
-     * @param accesstoken access_token
+     * @param request request
      * @return ReturnT
      */
     @PostMapping("removeToken")
-    public ResponseBean<Boolean> removeToken(@RequestHeader("Authorization") String accesstoken) {
-        if (accesstoken.startsWith(CommonConstant.AUTHORIZATION_BEARER))
-            accesstoken = accesstoken.split(CommonConstant.AUTHORIZATION_BEARER)[1];
-        return new ResponseBean<>(consumerTokenServices.revokeToken(accesstoken));
+    public ResponseBean<Boolean> removeToken(HttpServletRequest request) {
+        String accessToken = request.getHeader("Authorization");
+        if (StringUtils.isBlank(accessToken))
+            throw new CommonException("accessToken为空.");
+        if (accessToken.startsWith(CommonConstant.AUTHORIZATION_BEARER))
+            accessToken = accessToken.split(CommonConstant.AUTHORIZATION_BEARER)[1];
+        return new ResponseBean<>(consumerTokenServices.revokeToken(accessToken));
     }
 }

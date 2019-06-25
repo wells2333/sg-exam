@@ -6,6 +6,7 @@ import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.exceptions.TenantNotFoundException;
 import com.github.tangyi.common.core.vo.Role;
 import com.github.tangyi.common.core.vo.UserVo;
+import com.github.tangyi.common.security.core.CustomUserDetailsService;
 import com.github.tangyi.common.security.core.GrantedAuthorityImpl;
 import com.github.tangyi.user.api.constant.MenuConstant;
 import com.github.tangyi.user.api.feign.UserServiceClient;
@@ -58,6 +59,29 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
         if (userVo == null)
             throw new UsernameNotFoundException("用户名不存在.");
         return new CustomUserDetails(username, userVo.getPassword(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode());
+    }
+
+    /**
+     * 根据社交账号查询
+     *
+     * @param social     social
+     * @param tenantCode tenantCode
+     * @return UserDetails
+     * @author tangyi
+     * @date 2019/06/22 21:08
+     */
+    @Override
+    public UserDetails loadUserBySocialAndTenantCode(String social, String tenantCode) throws UsernameNotFoundException {
+        if (StringUtils.isBlank(tenantCode))
+            throw new TenantNotFoundException("租户code不能为空.");
+        // 先获取租户信息
+        Tenant tenant = userServiceClient.findTenantByTenantCode(tenantCode);
+        if (tenant == null)
+            throw new TenantNotFoundException("租户不存在.");
+        UserVo userVo = userServiceClient.findUserBySocial(social, tenantCode);
+        if (userVo == null)
+            throw new UsernameNotFoundException("用户名不存在.");
+        return new CustomUserDetails(social, userVo.getPassword(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode());
     }
 
     /**

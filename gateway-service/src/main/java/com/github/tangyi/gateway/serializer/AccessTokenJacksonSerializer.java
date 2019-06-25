@@ -25,6 +25,7 @@ public class AccessTokenJacksonSerializer extends StdSerializer<AccessToken> {
         gen.writeStringField("refresh_token", accessToken.getJti());
         gen.writeStringField("scope", accessToken.getScope());
         gen.writeStringField("token_type", accessToken.getTokenType());
+        gen.writeStringField("tenant_code", accessToken.getTenantCode());
         gen.writeEndObject();
     }
 }

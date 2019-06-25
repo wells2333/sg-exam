@@ -1,7 +1,7 @@
 package com.github.tangyi.auth.security;
 
 import com.github.tangyi.common.core.constant.CommonConstant;
-import com.github.tangyi.common.core.tenant.TenantContextHolder;
+import com.github.tangyi.common.security.tenant.TenantContextHolder;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;

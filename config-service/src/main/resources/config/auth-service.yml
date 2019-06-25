@@ -85,6 +85,7 @@ ignore:
     - /v1/user/findUserByUsername/**
     - /v1/tenant/findTenantByTenantCode/**
     - /v1/user/checkExist/**
+    - /v1/user/updatePassword
     - /v1/menu/findMenuByRole/**
     - /v1/menu/findAllMenu
     - /v1/code/**
@@ -101,7 +102,6 @@ ignore:
     - /health
     - /metrics/**
     - /loggers/**
-    - /mobile/token
 
 # 集群ID生成配置
 cluster:

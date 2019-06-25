@@ -1,4 +1,4 @@
-package com.github.tangyi.common.core.tenant;
+package com.github.tangyi.common.security.tenant;
 
 /**
  * ThreadLocal保存租户code

@@ -1,5 +1,6 @@
 package com.github.tangyi.common.security.config;
 
+import com.github.tangyi.common.security.mobile.MobileSecurityConfigurer;
 import com.github.tangyi.common.security.properties.FilterIgnorePropertiesConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -21,11 +22,20 @@ public class CustomResourceServerConfig extends ResourceServerConfigurerAdapter 
 
     private static final String RESOURCE_ID = "resource_id";
 
+    /**
+     * 开放权限的URL
+     */
     private final FilterIgnorePropertiesConfig filterIgnorePropertiesConfig;
 
+    /**
+     * 手机登录配置
+     */
+    private final MobileSecurityConfigurer mobileSecurityConfigurer;
+
     @Autowired
-    public CustomResourceServerConfig(FilterIgnorePropertiesConfig filterIgnorePropertiesConfig) {
+    public CustomResourceServerConfig(FilterIgnorePropertiesConfig filterIgnorePropertiesConfig, MobileSecurityConfigurer mobileSecurityConfigurer) {
         this.filterIgnorePropertiesConfig = filterIgnorePropertiesConfig;
+        this.mobileSecurityConfigurer = mobileSecurityConfigurer;
     }
 
     @Override
@@ -35,7 +45,6 @@ public class CustomResourceServerConfig extends ResourceServerConfigurerAdapter 
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        // 忽略的url要包含/actuator/**
         String[] ignores = new String[filterIgnorePropertiesConfig.getUrls().size()];
         http
                 .csrf().disable()
@@ -44,5 +53,7 @@ public class CustomResourceServerConfig extends ResourceServerConfigurerAdapter 
                 .antMatchers(filterIgnorePropertiesConfig.getUrls().toArray(ignores)).permitAll()
                 .anyRequest().authenticated()
                 .and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler());
+        // 手机号登录
+        http.apply(mobileSecurityConfigurer);
     }
 }

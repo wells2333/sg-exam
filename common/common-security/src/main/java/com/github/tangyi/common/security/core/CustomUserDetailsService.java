@@ -1,4 +1,4 @@
-package com.github.tangyi.auth.security;
+package com.github.tangyi.common.security.core;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,4 +21,15 @@ public interface CustomUserDetailsService {
      * @date 2019/05/28 21:06
      */
     UserDetails loadUserByUsernameAndTenantCode(String username, String tenantCode) throws UsernameNotFoundException;
+
+    /**
+     * 根据社交账号和租户标识查询
+     *
+     * @param social social
+     * @param tenantCode tenantCode
+     * @return UserDetails
+     * @author tangyi
+     * @date 2019/06/22 21:08
+     */
+    UserDetails loadUserBySocialAndTenantCode(String social, String tenantCode) throws UsernameNotFoundException;
 }

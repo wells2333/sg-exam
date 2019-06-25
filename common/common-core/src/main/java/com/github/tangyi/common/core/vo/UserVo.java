@@ -40,11 +40,6 @@ public class UserVo extends BaseEntity<UserVo> {
     private String phone;
 
     /**
-     * 头像
-     */
-    private String avatar;
-
-    /**
      * 头像对应的附件id
      */
     private String avatarId;

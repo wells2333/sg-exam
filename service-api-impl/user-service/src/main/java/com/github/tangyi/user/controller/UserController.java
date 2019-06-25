@@ -229,7 +229,7 @@ public class UserController extends BaseController {
     @ApiOperation(value = "更新用户信息", notes = "根据用户id更新用户的基本信息、角色信息")
     @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
     @Log("修改用户")
-    public ResponseBean<Boolean> updateUser(@RequestBody @Valid UserDto userDto) {
+    public ResponseBean<Boolean> updateUser(@RequestBody UserDto userDto) {
         try {
             return new ResponseBean<>(userService.updateUser(userDto));
         } catch (Exception e) {
@@ -250,7 +250,7 @@ public class UserController extends BaseController {
     @ApiOperation(value = "更新用户基本信息", notes = "根据用户id更新用户的基本信息")
     @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
     @Log("更新用户基本信息")
-    public ResponseBean<Boolean> updateInfo(@RequestBody @Valid UserDto userDto) {
+    public ResponseBean<Boolean> updateInfo(@RequestBody UserDto userDto) {
         // 新密码不为空
         if (StringUtils.isNotEmpty(userDto.getNewPassword())) {
             if (!encoder.matches(userDto.getOldPassword(), userDto.getPassword())) {
@@ -261,6 +261,58 @@ public class UserController extends BaseController {
             }
         }
         return new ResponseBean<>(userService.update(userDto) > 0);
+    }
+
+    /**
+     * 修改密码
+     *
+     * @param userDto userDto
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/06/21 20:09
+     */
+    @PutMapping("updatePassword")
+    @ApiOperation(value = "修改用户密码", notes = "修改用户密码")
+    @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
+    @Log("更新用户密码")
+    public ResponseBean<Boolean> updatePassword(@RequestBody UserDto userDto) {
+        if (StringUtils.isBlank(userDto.getUsername()))
+            throw new CommonException("用户名不能为空.");
+        if (StringUtils.isBlank(userDto.getTenantCode()))
+            throw new CommonException("租户编码不能为空.");
+        UserVo userVo = userService.selectUserVoByUsername(userDto.getUsername(), userDto.getTenantCode());
+        UserDto newUserDto = new UserDto();
+        newUserDto.setId(userVo.getId());
+        newUserDto.setUsername(userVo.getUsername());
+        newUserDto.setPassword(userVo.getPassword());
+        newUserDto.setOldPassword(userDto.getOldPassword());
+        newUserDto.setNewPassword(userDto.getNewPassword());
+        // 新密码不为空
+        if (StringUtils.isNotEmpty(newUserDto.getNewPassword())) {
+            if (!encoder.matches(newUserDto.getOldPassword(), newUserDto.getPassword())) {
+                return new ResponseBean<>(Boolean.FALSE, "新旧密码不匹配");
+            } else {
+                // 新旧密码一致，修改密码
+                newUserDto.setPassword(encoder.encode(newUserDto.getNewPassword()));
+            }
+        }
+        return new ResponseBean<>(userService.update(newUserDto) > 0);
+    }
+
+    /**
+     * 更新头像
+     *
+     * @param userDto userDto
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/06/21 18:08
+     */
+    @PutMapping("updateAvatar")
+    @ApiOperation(value = "更新用户头像", notes = "根据用户id更新用户的头像信息")
+    @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
+    @Log("更新用户头像")
+    public ResponseBean<Boolean> updateAvatar(@RequestBody UserDto userDto) {
+        return new ResponseBean<>(userService.updateAvatar(userDto) > 0);
     }
 
     /**
@@ -465,7 +517,7 @@ public class UserController extends BaseController {
     @ApiOperation(value = "检查用户是否存在", notes = "检查用户名是否存在")
     @ApiImplicitParam(name = "username", value = "用户name", required = true, dataType = "String", paramType = "path")
     @GetMapping("checkExist/{username}")
-    public ResponseBean<Boolean> checkUsernameIsExist(@PathVariable("username") @NotBlank String username, @RequestParam @NotBlank String tenantCode) {
+    public ResponseBean<Boolean> checkUsernameIsExist(@PathVariable("username") @NotBlank String username, @RequestHeader(SecurityConstant.TENANT_CODE_HEADER) String tenantCode) {
         boolean exist = Boolean.FALSE;
         if (StringUtils.isNotEmpty(username))
             exist = userService.selectUserVoByUsername(username, tenantCode) != null;

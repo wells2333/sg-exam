@@ -62,10 +62,11 @@ swagger:
     - user-service
     - exam-service
     - auth-service
+    - msc-service
 
 # 演示环境
 preview:
-  enabled: ${PREVIEW_ENABLED:true}
+  enabled: ${PREVIEW_ENABLED:false}
   ignores:
     - api/auth  # 授权服务
     - resetPassword   # 重置密码

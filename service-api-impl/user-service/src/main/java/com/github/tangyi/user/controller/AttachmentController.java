@@ -11,7 +11,6 @@ import com.github.tangyi.common.core.vo.AttachmentVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.user.api.module.Attachment;
-import com.github.tangyi.user.config.SysConfig;
 import com.github.tangyi.user.service.AttachmentService;
 import com.google.common.net.HttpHeaders;
 import io.swagger.annotations.*;
@@ -47,8 +46,6 @@ import java.util.stream.Collectors;
 public class AttachmentController extends BaseController {
 
     private final AttachmentService attachmentService;
-
-    private final SysConfig sysConfig;
 
     /**
      * 根据ID获取
@@ -244,11 +241,6 @@ public class AttachmentController extends BaseController {
     public ResponseBean<String> getPreviewUrl(@PathVariable String id) {
         Attachment attachment = new Attachment();
         attachment.setId(id);
-        attachment = attachmentService.get(attachment);
-        if (attachment == null)
-            throw new CommonException("附件不存在.");
-        String preview = sysConfig.getFdfsHttpHost() + "/" + attachment.getFastFileId();
-        log.debug("预览地址：{}", preview);
-        return new ResponseBean<>(preview);
+        return new ResponseBean<>(attachmentService.getPreviewUrl(attachment));
     }
 }

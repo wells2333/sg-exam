@@ -5,11 +5,14 @@ import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.FileUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.user.api.module.Attachment;
+import com.github.tangyi.user.config.SysConfig;
 import com.github.tangyi.user.mapper.AttachmentMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,6 +31,33 @@ public class AttachmentService extends CrudService<AttachmentMapper, Attachment>
 
     private final FastDfsService fastDfsService;
 
+    private final SysConfig sysConfig;
+
+    /**
+     * 根据id查询
+     *
+     * @param attachment attachment
+     * @return Attachment
+     */
+    @Cacheable(value = "attachment", key = "#attachment.id")
+    @Override
+    public Attachment get(Attachment attachment) {
+        return super.get(attachment);
+    }
+
+    /**
+     * 根据id更新
+     *
+     * @param attachment attachment
+     * @return int
+     */
+    @Override
+    @Transactional
+    @CacheEvict(value = "attachment", key = "#attachment.id")
+    public int update(Attachment attachment) {
+        return super.update(attachment);
+    }
+
     /**
      * 上传
      *
@@ -43,7 +73,6 @@ public class AttachmentService extends CrudService<AttachmentMapper, Attachment>
             inputStream = file.getInputStream();
             long attachSize = file.getSize();
             String fastFileId = fastDfsService.uploadFile(inputStream, attachSize, FileUtil.getFileNameEx(file.getOriginalFilename()));
-            log.debug("fastFileId:{}", fastFileId);
             if (StringUtils.isBlank(fastFileId))
                 throw new CommonException("上传失败！");
             Attachment newAttachment = new Attachment();
@@ -85,13 +114,41 @@ public class AttachmentService extends CrudService<AttachmentMapper, Attachment>
      */
     @Override
     @Transactional
+    @CacheEvict(value = "attachment", key = "#attachment.id")
     public int delete(Attachment attachment) {
-        try {
-            fastDfsService.deleteFile(attachment.getGroupName(), attachment.getFastFileId());
-            return super.delete(attachment);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        return -1;
+        fastDfsService.deleteFile(attachment.getGroupName(), attachment.getFastFileId());
+        return super.delete(attachment);
+    }
+
+    /**
+     * 批量删除
+     *
+     * @param ids ids
+     * @return int
+     */
+    @Override
+    @Transactional
+    @CacheEvict(value = "attachment", allEntries = true)
+    public int deleteAll(String[] ids) {
+        return super.deleteAll(ids);
+    }
+
+    /**
+     * 获取附件的预览地址
+     *
+     * @param attachment attachment
+     * @return String
+     * @author tangyi
+     * @date 2019/06/21 17:45
+     */
+    public String getPreviewUrl(Attachment attachment) {
+        attachment = this.get(attachment);
+        if (attachment == null)
+            throw new CommonException("附件不存在.");
+        String preview = attachment.getPreviewUrl();
+        if (StringUtils.isBlank(preview))
+            preview = sysConfig.getFdfsHttpHost() + "/" + attachment.getFastFileId();
+        log.debug("id为：{}的附件的预览地址：{}", attachment.getId(), preview);
+        return preview;
     }
 }

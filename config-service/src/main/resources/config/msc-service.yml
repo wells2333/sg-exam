@@ -1,0 +1,70 @@
+server:
+  port: 9000
+spring:
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+  rabbitmq:
+    host: ${RABBIT_HOST:localhost}
+    port: ${RABBIT_PORT:5672}
+    username: ${RABBITMQ_DEFAULT_USER:guest}
+    password: ${RABBITMQ_DEFAULT_PASS:guest}
+  boot:
+    admin:
+      client:
+        url: http://${ADMIN_HOST:localhost}:${ADMIN_PORT:8085}/admin
+        username: ${ADMIN_USERNAME:admin}
+        password: ${ADMIN_PASSWORD:11}
+        instance:
+          service-base-url: http://${AUTH_SERVICE_HOST:localhost}:${server.port}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+sms:
+  appKey:
+  appSecret:
+  regionId: cn-hangzhou
+  domain: dysmsapi.aliyuncs.com
+
+ignore:
+  urls:
+    - /
+    - /error
+    - /favicon.ico
+    - /**/*swagger*/**
+    - /v2/api-docs
+    - /csrf
+    - /actuator/**
+    - /hystrix.sender
+    - /v1/user/findUserByUsername/**
+    - /v1/tenant/findTenantByTenantCode/**
+    - /v1/user/checkExist/**
+    - /v1/user/updatePassword
+    - /v1/menu/findMenuByRole/**
+    - /v1/menu/findAllMenu
+    - /v1/code/**
+    - /v1/attachment/download
+    - /v1/log/**
+    - /authentication/**
+    - /v1/authentication/**
+    - /**/*.css
+    - /**/*.js
+    - /social
+    - /signin
+    - /signup
+    - /info
+    - /health
+    - /metrics/**
+    - /loggers/**
+
+logging:
+  level:
+    root: info
+    com.github.tangyi: debug

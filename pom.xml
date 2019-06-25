@@ -72,9 +72,12 @@
         <hutool.version>4.5.0</hutool.version>
         <jasypt.version>1.18</jasypt.version>
         <kaptcha.version>0.0.9</kaptcha.version>
+        <json.version>20140107</json.version>
+        <okhttp.version>3.8.1</okhttp.version>
+        <aliyun.version>4.1.0</aliyun.version>
 
         <!-- docker -->
-        <docker.maven.verion>1.0.0</docker.maven.verion>
+        <docker.maven.verion>1.4.3</docker.maven.verion>
         <docker.registry>registry.cn-hangzhou.aliyuncs.com</docker.registry>
         <docker.namespace>spring-microservice-exam</docker.namespace>
         <scanner.maven.version>3.3.0.603</scanner.maven.version>
@@ -201,6 +204,13 @@
             <dependency>
                 <groupId>com.github.tangyi</groupId>
                 <artifactId>exam-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- msc-api -->
+            <dependency>
+                <groupId>com.github.tangyi</groupId>
+                <artifactId>msc-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

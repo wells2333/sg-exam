@@ -47,35 +47,26 @@
             <!-- docker的maven插件 -->
             <plugin>
                 <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
                 <version>${docker.maven.verion}</version>
                 <executions>
-                    <!--执行 mvn package 时 自动 执行 mvn docker:build-->
+                    <!--执行 mvn package 时 自动构建docker镜像并推送到仓库 -->
                     <execution>
-                        <id>build-image</id>
+                        <id>default</id>
                         <phase>package</phase>
                         <goals>
                             <goal>build</goal>
+                            <goal>push</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <imageName>${docker.registry}/${docker.namespace}/${project.artifactId}</imageName>
-                    <imageTags>
-                        <imageTag>${project.version}</imageTag>
-                        <imageTag>latest</imageTag>
-                    </imageTags>
-                    <!-- 指定Dockerfile所在的路径 -->
-                    <dockerDirectory>${project.basedir}</dockerDirectory>
-                    <baseImage>java</baseImage>
-                    <entryPoint>["java", "-jar", "/${project.name}.jar"]</entryPoint>
-                    <resources>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>${project.name}.jar</include>
-                        </resource>
-                    </resources>
+                    <repository>${docker.registry}/${docker.namespace}/${project.artifactId}</repository>
+                    <tag>${project.version}</tag>
+                    <!-- 构建参数，指定jar包名称 -->
+                    <buildArgs>
+                        <JAR_FILE>${project.name}.jar</JAR_FILE>
+                    </buildArgs>
                 </configuration>
             </plugin>
         </plugins>

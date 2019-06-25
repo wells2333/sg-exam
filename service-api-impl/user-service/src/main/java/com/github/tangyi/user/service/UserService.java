@@ -1,6 +1,7 @@
 package com.github.tangyi.user.service;
 
 import com.github.tangyi.common.core.constant.CommonConstant;
+import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.IdGen;
 import com.github.tangyi.common.core.utils.SysUtil;
@@ -9,13 +10,17 @@ import com.github.tangyi.common.security.constant.SecurityConstant;
 import com.github.tangyi.user.api.constant.MenuConstant;
 import com.github.tangyi.user.api.dto.UserDto;
 import com.github.tangyi.user.api.dto.UserInfoDto;
+import com.github.tangyi.user.api.module.Attachment;
 import com.github.tangyi.user.api.module.Menu;
 import com.github.tangyi.user.api.module.User;
 import com.github.tangyi.user.api.module.UserRole;
+import com.github.tangyi.user.config.SysConfig;
 import com.github.tangyi.user.mapper.UserMapper;
 import com.github.tangyi.user.mapper.UserRoleMapper;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -34,6 +39,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2018-08-25 16:17
  */
 @AllArgsConstructor
+@Slf4j
 @Service
 public class UserService extends CrudService<UserMapper, User> {
 
@@ -44,6 +50,10 @@ public class UserService extends CrudService<UserMapper, User> {
     private final MenuService menuService;
 
     private final RedisTemplate redisTemplate;
+
+    private final AttachmentService attachmentService;
+
+    private final SysConfig sysConfig;
 
     /**
      * 新增用户
@@ -85,7 +95,7 @@ public class UserService extends CrudService<UserMapper, User> {
         userVo = userMapper.selectUserVoByUsername(userVo.getUsername(), tenantCode);
         UserInfoDto user = new UserInfoDto();
         if (userVo != null) {
-            user.setUser(userVo);
+            BeanUtils.copyProperties(userVo, user);
             // 用户角色
             List<String> roles = new ArrayList<>();
             // 用户权限
@@ -109,6 +119,8 @@ public class UserService extends CrudService<UserMapper, User> {
                             roles.add(role.getRoleCode());
                         });
             }
+            // 头像信息
+            this.initUserAvatar(user, userVo);
             user.setRoles(roles.toArray(new String[0]));
             user.setPermissions(permissions.toArray(new String[0]));
         }
@@ -163,6 +175,34 @@ public class UserService extends CrudService<UserMapper, User> {
     }
 
     /**
+     * 更新头像
+     *
+     * @param userDto userDto
+     * @return int
+     * @author tangyi
+     * @date 2019/06/21 18:14
+     */
+    @Transactional
+    @CacheEvict(value = "user", key = "#userDto.username")
+    public int updateAvatar(UserDto userDto) {
+        User user = new User();
+        user.setId(userDto.getId());
+        user = this.get(user);
+        if (user == null)
+            throw new CommonException("用户不存在.");
+        // 先删除旧头像
+        if (StringUtils.isNotBlank(user.getAvatarId())) {
+            Attachment attachment = new Attachment();
+            attachment.setId(user.getAvatarId());
+            attachment = attachmentService.get(attachment);
+            if (attachment != null)
+                attachmentService.delete(attachment);
+        }
+        user.setAvatarId(userDto.getAvatarId());
+        return super.update(user);
+    }
+
+    /**
      * 根据用户名查找
      *
      * @param username   username
@@ -211,5 +251,28 @@ public class UserService extends CrudService<UserMapper, User> {
      */
     public Integer userCount(UserVo userVo) {
         return this.dao.userCount(userVo);
+    }
+
+    /**
+     * 初始化用户头像信息
+     *
+     * @param userInfoDto userInfoDto
+     * @param userVo      userVo
+     * @author tangyi
+     * @date 2019/06/21 17:49
+     */
+    private void initUserAvatar(UserInfoDto userInfoDto, UserVo userVo) {
+        try {
+            // 附件id不为空，获取对应的预览地址，否则获取配置默认头像地址
+            if (StringUtils.isNotBlank(userVo.getAvatarId())) {
+                Attachment attachment = new Attachment();
+                attachment.setId(userVo.getAvatarId());
+                userInfoDto.setAvatarUrl(attachmentService.getPreviewUrl(attachment));
+            } else {
+                userInfoDto.setAvatarUrl(sysConfig.getDefaultAvatar());
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
     }
 }
