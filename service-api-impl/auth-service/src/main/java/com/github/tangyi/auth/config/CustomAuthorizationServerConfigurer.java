@@ -1,7 +1,6 @@
 package com.github.tangyi.auth.config;
 
 import com.github.tangyi.auth.security.CustomTokenConverter;
-import com.github.tangyi.auth.security.TenantTokenFilter;
 import com.github.tangyi.common.security.core.ClientDetailsServiceImpl;
 import com.github.tangyi.common.security.exceptions.CustomOauthException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,9 +144,7 @@ public class CustomAuthorizationServerConfigurer extends AuthorizationServerConf
                 .tokenKeyAccess("permitAll()")
                 // 开启/oauth/check_token验证端口认证权限访问
                 .checkTokenAccess("isAuthenticated()")
-                .allowFormAuthenticationForClients()
-                // 增加租户信息过滤器
-                .addTokenEndpointAuthenticationFilter(new TenantTokenFilter());
+                .allowFormAuthenticationForClients();
     }
 }
 

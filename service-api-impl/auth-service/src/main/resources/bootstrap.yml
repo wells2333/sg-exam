@@ -25,3 +25,9 @@ encrypt:
     location: classpath:/jwt.jks
     alias: jwt
     password: abc123
+
+
+logging:
+  level:
+    root: info
+    com.github.tangyi: debug

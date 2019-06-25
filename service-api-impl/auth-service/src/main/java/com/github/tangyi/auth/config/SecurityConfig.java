@@ -1,8 +1,7 @@
 package com.github.tangyi.auth.config;
 
 import com.github.tangyi.auth.security.CustomUserDetailsAuthenticationProvider;
-import com.github.tangyi.auth.security.CustomUserDetailsService;
-import lombok.AllArgsConstructor;
+import com.github.tangyi.common.security.core.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,13 +20,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  * @author tangyi
  * @date 2019-03-14 14:35
  */
-@AllArgsConstructor
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final CustomUserDetailsService userDetailsService;
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

@@ -140,4 +140,16 @@ public interface UserServiceClient {
      */
     @GetMapping("/v1/tenant/findTenantByTenantCode/{tenantCode}")
     Tenant findTenantByTenantCode(@PathVariable("tenantCode") String tenantCode);
+
+    /**
+     * 根据社交账号获取用户详细信息
+     *
+     * @param social     social
+     * @param tenantCode 租户标识
+     * @return UserVo
+     * @author tangyi
+     * @date 2019/06/22 21:10
+     */
+    @GetMapping("/v1/user/findUserBySocial/{social}")
+    UserVo findUserBySocial(@PathVariable("social") String social, @RequestParam("tenantCode") String tenantCode);
 }

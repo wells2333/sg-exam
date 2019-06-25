@@ -1,7 +1,7 @@
 package com.github.tangyi.common.core.utils;
 
-import com.github.tangyi.common.core.constant.CommonConstant;
-import com.github.tangyi.common.core.tenant.TenantContextHolder;
+import com.github.tangyi.common.security.constant.SecurityConstant;
+import com.github.tangyi.common.security.tenant.TenantContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,7 +47,7 @@ public class SysUtil {
      * @return String
      */
     public static String getSysCode() {
-        return CommonConstant.SYS_CODE;
+        return SecurityConstant.SYS_CODE;
     }
 
     /**
@@ -60,7 +60,7 @@ public class SysUtil {
         if (StringUtils.isBlank(tenantCode))
             tenantCode = getCurrentUserTenantCode();
         if (StringUtils.isBlank(tenantCode))
-            tenantCode = CommonConstant.DEFAULT_TENANT_CODE;
+            tenantCode = SecurityConstant.DEFAULT_TENANT_CODE;
         log.debug("租户code：{}", tenantCode);
         return tenantCode;
     }
@@ -78,14 +78,14 @@ public class SysUtil {
             if (details instanceof OAuth2AuthenticationDetails) {
                 OAuth2AuthenticationDetails oAuth2AuthenticationDetails = (OAuth2AuthenticationDetails) details;
                 OAuth2AccessToken oAuth2AccessToken = resourceServerTokenServices.readAccessToken(oAuth2AuthenticationDetails.getTokenValue());
-                Object tenantObj = oAuth2AccessToken.getAdditionalInformation().get(CommonConstant.TENANT_CODE);
+                Object tenantObj = oAuth2AccessToken.getAdditionalInformation().get(SecurityConstant.TENANT_CODE);
                 tenantCode = tenantObj == null ? "" : tenantObj.toString();
             } else if (details instanceof WebAuthenticationDetails) {
                 // 未认证
                 Object requestObj = RequestContextHolder.getRequestAttributes();
                 if (requestObj != null) {
                     HttpServletRequest request = ((ServletRequestAttributes) requestObj).getRequest();
-                    tenantCode = request.getParameter(CommonConstant.TENANT_CODE);
+                    tenantCode = request.getParameter(SecurityConstant.TENANT_CODE);
                 }
             }
         } catch (Exception e) {

@@ -6,7 +6,6 @@ import lombok.Data;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.util.List;
 
 /**
@@ -30,8 +29,6 @@ public class User extends BaseEntity<User> {
 
     @Pattern(regexp = "^\\d{11}$", message = "请输入11位手机号")
     private String phone;
-
-    private String avatar;
 
     private String avatarId;
 

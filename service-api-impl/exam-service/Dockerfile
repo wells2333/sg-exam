@@ -1,7 +1,9 @@
 FROM anapsix/alpine-java:8_server-jre_unlimited
 MAINTAINER tangyi(1633736729@qq.com)
-ADD ["target/exam-service.jar", "app.jar"]
+ARG JAR_FILE
+ENV PROFILE native
+ADD target/${JAR_FILE} /opt/app.jar
 EXPOSE 8098
-ENV JAVA_OPTS="-Xmx512m -Xms256m"
-RUN sh -c 'touch /app.jar'
-ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -jar /app.jar" ]
+ENTRYPOINT java ${JAVA_OPTS} -Djava.security.egd=file:/dev/./urandom -Duser.timezone=Asia/Shanghai -Dfile.encoding=UTF-8 -Dspring.profiles.active=${PROFILE} -jar /opt/app.jar
+
+# JAVA_OPS配置，如：JAVA_OPS='-Xmx512m -Xms256m'

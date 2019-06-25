@@ -16,5 +16,6 @@
         <module>user-api</module>
         <module>exam-api</module>
         <module>auth-api</module>
+        <module>msc-api</module>
     </modules>
 </project>

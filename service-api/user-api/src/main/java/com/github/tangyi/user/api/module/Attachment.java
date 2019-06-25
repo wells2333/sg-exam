@@ -51,4 +51,9 @@ public class Attachment extends BaseEntity<Attachment> {
      * 业务模块
      */
     private String busiModule;
+
+    /**
+     * 预览地址
+     */
+    private String previewUrl;
 }

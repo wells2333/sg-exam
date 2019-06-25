@@ -10,6 +10,7 @@
         <result column="busi_id" property="busiId"/>
         <result column="busi_module" property="busiModule"/>
         <result column="busi_type" property="busiType"/>
+        <result column="preview_url" property="previewUrl"/>
         <result column="creator" property="creator"/>
         <result column="create_date" property="createDate"/>
         <result column="modifier" property="modifier"/>
@@ -28,6 +29,7 @@
         a.busi_id,
         a.busi_module,
         a.busi_type,
+        a.preview_url,
         a.creator,
         a.create_date,
         a.modifier,
@@ -89,6 +91,7 @@
             busi_id,
             busi_module,
             busi_type,
+            preview_url,
             creator,
             create_date,
             modifier,
@@ -105,6 +108,7 @@
             #{busiId},
             #{busiModule},
             #{busiType},
+            #{previewUrl},
             #{creator},
             #{createDate},
             #{modifier},
@@ -137,6 +141,9 @@
         </if>
         <if test="busiType != null">
             busi_type = #{busiType},
+        </if>
+        <if test="previewUrl != null">
+            preview_url = #{previewUrl},
         </if>
         <if test="delFlag != null">
             del_flag = #{delFlag},

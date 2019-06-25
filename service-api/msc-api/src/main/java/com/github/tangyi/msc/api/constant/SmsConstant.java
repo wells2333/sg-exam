@@ -1,0 +1,8 @@
+package com.github.tangyi.msc.api.constant;
+
+/**
+ * @author tangyi
+ * @date 2019/6/22 13:18
+ */
+public class SmsConstant {
+}

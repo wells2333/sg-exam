@@ -8,7 +8,6 @@
         <result column="password" property="password"/>
         <result column="salt" property="salt"/>
         <result column="phone" property="phone"/>
-        <result column="avatar" property="avatar"/>
         <result column="avatar_id" property="avatarId"/>
         <result column="email" property="email"/>
         <result column="sex" property="sex"/>
@@ -32,7 +31,6 @@
         <result column="password" property="password"/>
         <result column="salt" property="salt"/>
         <result column="phone" property="phone"/>
-        <result column="avatar" property="avatar"/>
         <result column="avatar_id" property="avatarId"/>
         <result column="email" property="email"/>
         <result column="sex" property="sex"/>
@@ -69,7 +67,6 @@
         a.password,
         a.salt,
         a.phone,
-        a.avatar,
         a.avatar_id,
         a.email,
         a.sex,
@@ -119,7 +116,6 @@
         `user`.password,
         `user`.salt,
         `user`.phone,
-        `user`.avatar,
         `user`.avatar_id,
         `user`.email,
         `user`.sex,
@@ -195,7 +191,6 @@
             password,
             salt,
             phone,
-            avatar,
             avatar_id,
             email,
             sex,
@@ -217,7 +212,6 @@
             #{password},
             #{salt},
             #{phone},
-            #{avatar},
             #{avatarId},
             #{email},
             #{sex},
@@ -252,9 +246,6 @@
         </if>
         <if test="phone != null">
             phone = #{phone} ,
-        </if>
-        <if test="avatar != null">
-            avatar = #{avatar} ,
         </if>
         <if test="avatarId != null">
             avatar_id = #{avatarId} ,

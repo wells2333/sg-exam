@@ -89,11 +89,11 @@ fdfs:
     width: 150
     height: 150
   tracker-list:            #TrackerList参数,支持多个
-    - ${FDFS_HOST:localhost}:${FDFS_PORT:22122}
+    - ${FDFS_HOST:118.25.138.130}:${FDFS_PORT:22122}
 
 # 系统配置
 sys:
-  fdfsHttpHost: ${ATTACHMENT_HOST:http://localhost}:${ATTACHMENT_PORT:8080}  # fastDfs的HTTP配置
+  fdfsHttpHost: ${ATTACHMENT_HOST:http://118.25.138.130}:${ATTACHMENT_PORT:8080}  # fastDfs的HTTP配置
   uploadUrl: api/user/v1/attachment/upload
   defaultAvatar: https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80
 
@@ -136,6 +136,7 @@ ignore:
     - /v1/menu/findAllMenu
     - /v1/user/register
     - /v1/user/checkExist/**
+    - /v1/user/updatePassword
     - /v1/code/**
     - /v1/attachment/download
     - /v1/log/**
@@ -150,7 +151,6 @@ ignore:
     - /health
     - /metrics/**
     - /loggers/**
-    - /mobile/token
     - /bus/refresh
 
 # 集群ID生成配置

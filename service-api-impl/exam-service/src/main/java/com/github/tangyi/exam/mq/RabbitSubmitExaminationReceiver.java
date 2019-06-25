@@ -1,7 +1,7 @@
 package com.github.tangyi.exam.mq;
 
 import com.github.tangyi.common.core.constant.MqConstant;
-import com.github.tangyi.common.core.tenant.TenantContextHolder;
+import com.github.tangyi.common.security.tenant.TenantContextHolder;
 import com.github.tangyi.exam.api.constants.ExamExaminationRecordConstant;
 import com.github.tangyi.exam.api.module.Answer;
 import com.github.tangyi.exam.api.module.ExaminationRecord;

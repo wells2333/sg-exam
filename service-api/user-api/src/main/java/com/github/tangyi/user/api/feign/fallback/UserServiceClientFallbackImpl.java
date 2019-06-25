@@ -162,6 +162,19 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
         return null;
     }
 
+    /**
+     * 根据社交账号获取用户详细信息
+     *
+     * @param social     social
+     * @param tenantCode 租户标识
+     * @return UserVo
+     */
+    @Override
+    public UserVo findUserBySocial(String social, String tenantCode) {
+        log.error("feign 根据社交账号获取用户详细信息失败, {}, {}, {}", social, tenantCode, throwable);
+        return null;
+    }
+
     public Throwable getThrowable() {
         return throwable;
     }
