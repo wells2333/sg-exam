@@ -1,6 +1,7 @@
 package com.github.tangyi.user.service;
 
 import com.github.tangyi.common.core.constant.CommonConstant;
+import com.github.tangyi.common.core.enums.LoginType;
 import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.IdGen;
@@ -90,40 +91,42 @@ public class UserService extends CrudService<UserMapper, User> {
      * @date 2018/9/11 23:44
      */
     public UserInfoDto findUserInfo(UserVo userVo) {
-        String tenantCode = userVo.getTenantCode();
+        String tenantCode = userVo.getTenantCode(), username = userVo.getUsername();
         // 根据用户名查询用户信息
-        userVo = userMapper.selectUserVoByUsername(userVo.getUsername(), tenantCode);
+        userVo = userMapper.selectUserVoByUsername(username, tenantCode);
+        if (userVo == null)
+            userVo = userMapper.selectUserVoBySocial(username, tenantCode);
+        if (userVo == null)
+            throw new CommonException("查询用户信息失败.");
         UserInfoDto user = new UserInfoDto();
-        if (userVo != null) {
-            BeanUtils.copyProperties(userVo, user);
-            // 用户角色
-            List<String> roles = new ArrayList<>();
-            // 用户权限
-            List<String> permissions = new ArrayList<>();
-            // 根据角色获取权限
-            if (CollectionUtils.isNotEmpty(userVo.getRoleList())) {
-                userVo.getRoleList().stream()
-                        // 过滤普通用户角色
-                        .filter(role -> !SecurityConstant.BASE_ROLE.equals(role.getRoleName()))
-                        .forEach(role -> {
-                            // 根据角色查找菜单
-                            List<Menu> menuList = menuService.findMenuByRole(role.getRoleCode(), tenantCode);
-                            if (CollectionUtils.isNotEmpty(menuList)) {
-                                menuList.stream()
-                                        // 获取权限菜单
-                                        .filter(menu -> MenuConstant.MENU_TYPE_PERMISSION.equals(menu.getType()))
-                                        // 获取权限
-                                        .forEach(menu -> permissions.add(menu.getPermission()));
-                            }
-                            // 保存角色code
-                            roles.add(role.getRoleCode());
-                        });
-            }
-            // 头像信息
-            this.initUserAvatar(user, userVo);
-            user.setRoles(roles.toArray(new String[0]));
-            user.setPermissions(permissions.toArray(new String[0]));
+        BeanUtils.copyProperties(userVo, user);
+        // 用户角色
+        List<String> roles = new ArrayList<>();
+        // 用户权限
+        List<String> permissions = new ArrayList<>();
+        // 根据角色获取权限
+        if (CollectionUtils.isNotEmpty(userVo.getRoleList())) {
+            userVo.getRoleList().stream()
+                    // 过滤普通用户角色
+                    .filter(role -> !SecurityConstant.BASE_ROLE.equals(role.getRoleName()))
+                    .forEach(role -> {
+                        // 根据角色查找菜单
+                        List<Menu> menuList = menuService.findMenuByRole(role.getRoleCode(), tenantCode);
+                        if (CollectionUtils.isNotEmpty(menuList)) {
+                            menuList.stream()
+                                    // 获取权限菜单
+                                    .filter(menu -> MenuConstant.MENU_TYPE_PERMISSION.equals(menu.getType()))
+                                    // 获取权限
+                                    .forEach(menu -> permissions.add(menu.getPermission()));
+                        }
+                        // 保存角色code
+                        roles.add(role.getRoleCode());
+                    });
         }
+        // 头像信息
+        this.initUserAvatar(user, userVo);
+        user.setRoles(roles.toArray(new String[0]));
+        user.setPermissions(permissions.toArray(new String[0]));
         return user;
     }
 
@@ -215,15 +218,28 @@ public class UserService extends CrudService<UserMapper, User> {
     }
 
     /**
+     * 根据用户手机号查找
+     *
+     * @param social     social
+     * @param tenantCode tenantCode
+     * @return UserVo
+     */
+    @Cacheable(value = "user", key = "#social")
+    public UserVo selectUserVoBySocial(String social, String tenantCode) {
+        return userMapper.selectUserVoBySocial(social, tenantCode);
+    }
+
+    /**
      * 保存验证码
      *
-     * @param random    random
-     * @param imageCode imageCode
+     * @param tenantCode tenantCode
+     * @param random     random
+     * @param imageCode  imageCode
      * @author tangyi
      * @date 2018/9/14 20:12
      */
-    public void saveImageCode(String random, String imageCode) {
-        redisTemplate.opsForValue().set(CommonConstant.DEFAULT_CODE_KEY + random, imageCode, SecurityConstant.DEFAULT_IMAGE_EXPIRE, TimeUnit.SECONDS);
+    public void saveImageCode(String tenantCode, String random, String imageCode) {
+        redisTemplate.opsForValue().set(tenantCode + ":" + CommonConstant.DEFAULT_CODE_KEY + LoginType.PWD.getType() + "@" + random, imageCode, SecurityConstant.DEFAULT_IMAGE_EXPIRE, TimeUnit.SECONDS);
     }
 
     /**

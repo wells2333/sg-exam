@@ -126,7 +126,12 @@ public class CommonConstant {
     /**
      * 保存code的前缀
      */
-    public static final String DEFAULT_CODE_KEY = "DEFAULT_CODE_KEY";
+    public static final String DEFAULT_CODE_KEY = "DEFAULT_CODE_KEY_";
+
+    /**
+     * 验证码长度
+     */
+    public static final String CODE_SIZE = "4";
 
     /**
      * Bearer
@@ -137,6 +142,16 @@ public class CommonConstant {
      * 密码类型
      */
     public static final String GRANT_TYPE_PASSWORD = "password";
+
+    /**
+     * 手机号类型
+     */
+    public static final String GRANT_TYPE_MOBILE = "mobile";
+
+    /**
+     * 租户编号请求头
+     */
+    public static final String TENANT_CODE_HEADER = "Tenant-Code";
 
 }
 

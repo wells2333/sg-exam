@@ -75,6 +75,7 @@ preview:
     - updateInfo
     - attachment
     - api/exam  # 考试服务
+    - api/msc
 
 # 开启网关token转换
 gateway:

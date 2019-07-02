@@ -2,6 +2,7 @@ package com.github.tangyi.gateway.filters;
 
 import cn.hutool.core.util.StrUtil;
 import com.github.tangyi.common.core.constant.CommonConstant;
+import com.github.tangyi.common.core.enums.LoginType;
 import com.github.tangyi.common.core.exceptions.InvalidValidateCodeException;
 import com.github.tangyi.common.core.exceptions.ValidateCodeExpiredException;
 import com.github.tangyi.gateway.constants.GatewayConstant;
@@ -40,10 +41,10 @@ public class ValidateCodeFilter implements GlobalFilter, Ordered {
         if (HttpMethod.POST.matches(request.getMethodValue())
                 && StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.OAUTH_TOKEN_URL, GatewayConstant.REGISTER, GatewayConstant.MOBILE_TOKEN_URL)) {
             String grantType = request.getQueryParams().getFirst(GatewayConstant.GRANT_TYPE);
-            // 授权类型为密码模式、注册才校验验证码
-            if (CommonConstant.GRANT_TYPE_PASSWORD.equals(grantType) || StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.REGISTER)) {
+            // 授权类型为密码模式、手机号、注册才校验验证码
+            if (CommonConstant.GRANT_TYPE_PASSWORD.equals(grantType) || CommonConstant.GRANT_TYPE_MOBILE.equals(grantType) || StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.REGISTER)) {
                 // 校验验证码
-                checkCode(request);
+                checkCode(request, getLoginType(grantType));
             }
         }
         return chain.filter(exchange);
@@ -58,18 +59,23 @@ public class ValidateCodeFilter implements GlobalFilter, Ordered {
      * 校验验证码
      *
      * @param serverHttpRequest serverHttpRequest
+     * @param loginType         loginType
      * @throws InvalidValidateCodeException
      */
-    private void checkCode(ServerHttpRequest serverHttpRequest) throws InvalidValidateCodeException {
+    private void checkCode(ServerHttpRequest serverHttpRequest, LoginType loginType) throws InvalidValidateCodeException {
         MultiValueMap<String, String> params = serverHttpRequest.getQueryParams();
+        // 租户标识
+        String tenantCode = serverHttpRequest.getHeaders().getFirst("Tenant-Code");
+        // 验证码
         String code = params.getFirst("code");
         if (StrUtil.isBlank(code))
-            throw new InvalidValidateCodeException("请输入验证码");
+            throw new InvalidValidateCodeException("请输入验证码.");
         // 获取随机码
         String randomStr = params.getFirst("randomStr");
+        // 随机数为空，则获取手机号
         if (StrUtil.isBlank(randomStr))
             randomStr = params.getFirst("mobile");
-        String key = CommonConstant.DEFAULT_CODE_KEY + randomStr;
+        String key = tenantCode + ":" + CommonConstant.DEFAULT_CODE_KEY + loginType.getType() + "@" + randomStr;
         // 验证码过期
         if (!redisTemplate.hasKey(key))
             throw new ValidateCodeExpiredException(GatewayConstant.EXPIRED_ERROR);
@@ -83,9 +89,22 @@ public class ValidateCodeFilter implements GlobalFilter, Ordered {
         }
         if (!StrUtil.equals(saveCode, code)) {
             redisTemplate.delete(key);
-            throw new InvalidValidateCodeException("验证码错误，请重新输入");
+            throw new InvalidValidateCodeException("验证码错误.");
         }
         redisTemplate.delete(key);
     }
 
+    /**
+     * 获取登录类型
+     *
+     * @param grantType grantType
+     * @return LoginType
+     */
+    private LoginType getLoginType(String grantType) {
+        if (CommonConstant.GRANT_TYPE_PASSWORD.equals(grantType))
+            return LoginType.PWD;
+        if (CommonConstant.GRANT_TYPE_MOBILE.equals(grantType))
+            return LoginType.SMS;
+        return LoginType.PWD;
+    }
 }

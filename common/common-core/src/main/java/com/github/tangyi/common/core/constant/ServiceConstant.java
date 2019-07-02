@@ -22,4 +22,9 @@ public class ServiceConstant {
      * 授权服务名称
      */
     public static final String AUTH_SERVICE = "auth-service";
+
+    /**
+     * 消息中心服务名称
+     */
+    public static final String MSC_SERVICE = "msc-service";
 }

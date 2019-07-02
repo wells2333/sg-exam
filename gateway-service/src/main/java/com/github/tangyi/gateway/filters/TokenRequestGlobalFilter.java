@@ -69,8 +69,8 @@ public class TokenRequestGlobalFilter implements GlobalFilter, Ordered {
         if (HttpMethod.POST.matches(request.getMethodValue())
                 && StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.OAUTH_TOKEN_URL, GatewayConstant.REGISTER, GatewayConstant.MOBILE_TOKEN_URL)) {
             String grantType = request.getQueryParams().getFirst(GatewayConstant.GRANT_TYPE);
-            // 授权类型为密码模式
-            if (CommonConstant.GRANT_TYPE_PASSWORD.equals(grantType) || GatewayConstant.GRANT_TYPE_REFRESH_TOKEN.equals(grantType)) {
+            // 授权类型为密码、手机号模式
+            if (CommonConstant.GRANT_TYPE_PASSWORD.equals(grantType) || CommonConstant.GRANT_TYPE_MOBILE.equals(grantType) || GatewayConstant.GRANT_TYPE_REFRESH_TOKEN.equals(grantType)) {
                 // 装饰器
                 ServerHttpResponseDecorator decoratedResponse = new ServerHttpResponseDecorator(exchange.getResponse()) {
                     @Override
