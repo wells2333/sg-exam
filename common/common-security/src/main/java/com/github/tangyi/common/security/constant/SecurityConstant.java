@@ -22,6 +22,11 @@ public class SecurityConstant {
     public static final int DEFAULT_IMAGE_EXPIRE = 60;
 
     /**
+     * 默认短信验证码过期时间
+     */
+    public static final int DEFAULT_SMS_EXPIRE = 5 * 60;
+
+    /**
      * 正常状态
      */
     public static final String NORMAL = "0";

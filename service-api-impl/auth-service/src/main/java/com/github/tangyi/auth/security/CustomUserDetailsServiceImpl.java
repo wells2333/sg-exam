@@ -49,12 +49,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsernameAndTenantCode(String username, String tenantCode) throws UsernameNotFoundException, TenantNotFoundException {
-        if (StringUtils.isBlank(tenantCode))
-            throw new TenantNotFoundException("租户code不能为空.");
-        // 先获取租户信息
-        Tenant tenant = userServiceClient.findTenantByTenantCode(tenantCode);
-        if (tenant == null)
-            throw new TenantNotFoundException("租户不存在.");
+        Tenant tenant = this.validateTenantCode(tenantCode);
         UserVo userVo = userServiceClient.findUserByUsername(username, tenantCode);
         if (userVo == null)
             throw new UsernameNotFoundException("用户名不存在.");
@@ -72,16 +67,27 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
      */
     @Override
     public UserDetails loadUserBySocialAndTenantCode(String social, String tenantCode) throws UsernameNotFoundException {
+        Tenant tenant = this.validateTenantCode(tenantCode);
+        UserVo userVo = userServiceClient.findUserBySocial(social, tenantCode);
+        if (userVo == null)
+            throw new UsernameNotFoundException("用户手机号未注册.");
+        return new CustomUserDetails(social, userVo.getPassword(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode());
+    }
+
+    /**
+     * 校验租户标识
+     *
+     * @param tenantCode tenantCode
+     * @return Tenant
+     */
+    private Tenant validateTenantCode(String tenantCode) throws TenantNotFoundException {
         if (StringUtils.isBlank(tenantCode))
             throw new TenantNotFoundException("租户code不能为空.");
         // 先获取租户信息
         Tenant tenant = userServiceClient.findTenantByTenantCode(tenantCode);
         if (tenant == null)
             throw new TenantNotFoundException("租户不存在.");
-        UserVo userVo = userServiceClient.findUserBySocial(social, tenantCode);
-        if (userVo == null)
-            throw new UsernameNotFoundException("用户名不存在.");
-        return new CustomUserDetails(social, userVo.getPassword(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode());
+        return tenant;
     }
 
     /**

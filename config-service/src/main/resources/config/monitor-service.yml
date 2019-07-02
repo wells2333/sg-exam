@@ -2,9 +2,9 @@ server:
   port: 8085
 
 turbine:
-  appConfig: consul,auth-service,exam-service,user-service,gateway-service
+  appConfig: consul,auth-service,exam-service,user-service,gateway-service,msc-service
   aggregator:
-    clusterConfig: CONSUL,AUTH-SERVICE,EXAM-SERVICE,USER-SERVICE,GATEWAY-SERVICE
+    clusterConfig: CONSUL,AUTH-SERVICE,EXAM-SERVICE,USER-SERVICE,GATEWAY-SERVICE,MSC-SERVICE
 
 spring:
   security:

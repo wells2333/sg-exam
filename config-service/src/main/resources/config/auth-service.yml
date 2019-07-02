@@ -82,6 +82,8 @@ ignore:
     - /csrf
     - /actuator/**
     - /hystrix.sender
+    - /v1/sms/**
+    - /v1/user/findUserBySocial/**
     - /v1/user/findUserByUsername/**
     - /v1/tenant/findTenantByTenantCode/**
     - /v1/user/checkExist/**

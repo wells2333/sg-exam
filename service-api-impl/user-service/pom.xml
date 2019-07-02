@@ -36,6 +36,12 @@
             <artifactId>exam-api</artifactId>
         </dependency>
 
+        <!-- msc-api -->
+        <dependency>
+            <groupId>com.github.tangyi</groupId>
+            <artifactId>msc-api</artifactId>
+        </dependency>
+
         <!-- web 服务 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -34,15 +34,9 @@ public class SwaggerConfig implements WebMvcConfigurer {
 
     @Bean
     public Docket createRestApi() {
-        ParameterBuilder tokenBuilder = new ParameterBuilder();
         List<Parameter> parameterList = new ArrayList<>();
-        tokenBuilder.name("Authorization")
-                .defaultValue("去其他请求中获取heard中token参数")
-                .description("令牌")
-                .modelRef(new ModelRef("string"))
-                .parameterType("header")
-                .required(true).build();
-        parameterList.add(tokenBuilder.build());
+        parameterList.add(authorizationParameter());
+        parameterList.add(tenantCodeParameter());
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
@@ -50,6 +44,36 @@ public class SwaggerConfig implements WebMvcConfigurer {
                 .paths(PathSelectors.any())
                 .build()
                 .globalOperationParameters(parameterList);
+    }
+
+    /**
+     * Authorization 请求头
+     * @return Parameter
+     */
+    private Parameter authorizationParameter() {
+        ParameterBuilder tokenBuilder = new ParameterBuilder();
+        tokenBuilder.name("Authorization")
+                .defaultValue("bearer authorization参数")
+                .description("令牌")
+                .modelRef(new ModelRef("string"))
+                .parameterType("header")
+                .required(true).build();
+        return tokenBuilder.build();
+    }
+
+    /**
+     * Tenant-Code 请求头
+     * @return Parameter
+     */
+    private Parameter tenantCodeParameter() {
+        ParameterBuilder tokenBuilder = new ParameterBuilder();
+        tokenBuilder.name("Tenant-Code")
+                .defaultValue("租户标识")
+                .description("租户标识")
+                .modelRef(new ModelRef("string"))
+                .parameterType("header")
+                .required(true).build();
+        return tokenBuilder.build();
     }
 
     private ApiInfo apiInfo() {

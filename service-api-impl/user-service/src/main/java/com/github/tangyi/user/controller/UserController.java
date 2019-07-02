@@ -31,6 +31,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,7 +39,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,9 +89,9 @@ public class UserController extends BaseController {
      */
     @GetMapping("info")
     @ApiOperation(value = "获取用户信息", notes = "获取当前登录用户详细信息")
-    public ResponseBean<UserInfoDto> user(Principal principal) {
+    public ResponseBean<UserInfoDto> user(OAuth2Authentication authentication) {
         UserVo userVo = new UserVo();
-        userVo.setUsername(principal.getName());
+        userVo.setUsername(authentication.getName());
         userVo.setTenantCode(SysUtil.getTenantCode());
         return new ResponseBean<>(userService.findUserInfo(userVo));
     }
@@ -111,6 +111,23 @@ public class UserController extends BaseController {
     })
     public UserVo findUserByUsername(@PathVariable String username, @RequestParam @NotBlank String tenantCode) {
         return userService.selectUserVoByUsername(username, tenantCode);
+    }
+
+    /**
+     * 根据用户手机号获取用户详细信息
+     *
+     * @param social     social
+     * @param tenantCode tenantCode
+     * @return UserVo
+     */
+    @GetMapping("/findUserBySocial/{social}")
+    @ApiOperation(value = "获取用户信息", notes = "根据用户手机号获取用户详细信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "social", value = "用户手机号", required = true, dataType = "String", paramType = "path"),
+            @ApiImplicitParam(name = "tenantCode", value = "租户标识", required = true, dataType = "String"),
+    })
+    public UserVo findUserBySocial(@PathVariable String social, @RequestParam String tenantCode) {
+        return userService.selectUserVoBySocial(social, tenantCode);
     }
 
     /**

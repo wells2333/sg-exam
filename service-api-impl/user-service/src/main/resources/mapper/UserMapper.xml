@@ -152,6 +152,11 @@
         WHERE `user`.username = #{username} and `user`.tenant_code = #{tenantCode} and `user`.del_flag = 0
     </select>
 
+    <select id="selectUserVoBySocial" resultMap="userVoResultMap">
+        <include refid="selectUserVo"/>
+        WHERE `user`.phone = #{social} and `user`.tenant_code = #{tenantCode} and `user`.del_flag = 0
+    </select>
+
     <select id="get" resultMap="userResultMap">
         SELECT
         <include refid="userColumns"/>

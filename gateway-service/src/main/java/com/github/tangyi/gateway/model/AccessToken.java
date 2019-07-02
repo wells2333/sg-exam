@@ -62,4 +62,9 @@ public class AccessToken implements Serializable {
      * 租户标识
      */
     private String tenantCode;
+
+    /**
+     * 登录类型
+     */
+    private String loginType;
 }

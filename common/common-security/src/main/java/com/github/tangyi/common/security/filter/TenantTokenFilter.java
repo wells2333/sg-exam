@@ -33,7 +33,6 @@ public class TenantTokenFilter implements Filter {
         if (tenantCode == null)
             tenantCode = SecurityConstant.DEFAULT_TENANT_CODE;
         TenantContextHolder.setTenantCode(tenantCode);
-        log.info("租户code：{}", tenantCode);
         filterChain.doFilter(request, response);
         TenantContextHolder.clear();
     }
