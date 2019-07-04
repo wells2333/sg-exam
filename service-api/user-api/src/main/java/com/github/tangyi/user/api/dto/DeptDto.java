@@ -33,18 +33,12 @@ public class DeptDto extends TreeEntity<DeptDto> {
      */
     private String parentId;
 
-    /**
-     * 状态， 0-启用，1-禁用
-     */
-    private String status;
-
     public DeptDto(Dept dept) {
         this.id = dept.getId();
         this.deptName = dept.getDeptName();
         this.deptDesc = dept.getDeptDesc();
         this.deptLeader = dept.getDeptLeader();
         this.parentId = dept.getParentId();
-        this.status = dept.getStatus();
         this.sort = Integer.parseInt(dept.getSort());
         this.creator = dept.getCreator();
         this.createDate = dept.getCreateDate();

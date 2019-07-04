@@ -29,4 +29,9 @@ public class SysConfig {
      * 默认头像
      */
     private String defaultAvatar;
+
+    /**
+     * 管理员账号
+     */
+    private String adminUser;
 }

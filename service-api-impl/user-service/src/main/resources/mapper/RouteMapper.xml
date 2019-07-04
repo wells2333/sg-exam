@@ -11,9 +11,9 @@
         <result column="sort" property="sort"/>
         <result column="status" property="status"/>
         <result column="creator" property="creator"/>
-        <result column="create_date" property="createDate"/>
+        <result column="create_date" property="createDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="modifier" property="modifier"/>
-        <result column="modify_date" property="modifyDate"/>
+        <result column="modify_date" property="modifyDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="del_flag" property="delFlag"/>
         <result column="application_code" property="applicationCode"/>
     </resultMap>
@@ -99,9 +99,9 @@
         #{sort},
         #{status},
         #{creator},
-        #{createDate},
+        #{createDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
         #{modifier},
-        #{modifyDate},
+        #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
         #{delFlag},
         #{applicationCode}
         )
@@ -131,7 +131,7 @@
             status = #{status},
         </if>
         modifier = #{modifier},
-        modify_date = #{modifyDate}
+        modify_date = #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date}
         WHERE
         <if test="id != null">
             id = #{id}
@@ -140,7 +140,9 @@
 
     <delete id="delete">
         UPDATE sys_route SET
-        del_flag = 1
+        del_flag = 1,
+        modifier = #{modifier} ,
+        modify_date = #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date}
         WHERE id = #{id}
     </delete>
 

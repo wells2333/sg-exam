@@ -28,14 +28,14 @@ public interface UserServiceClient {
     /**
      * 根据用户名获取用户详细信息
      *
-     * @param username   username
+     * @param identifier identifier
      * @param tenantCode 租户标识
      * @return UserVo
      * @author tangyi
      * @date 2019/03/17 12:14
      */
-    @GetMapping("/v1/user/findUserByUsername/{username}")
-    UserVo findUserByUsername(@PathVariable("username") String username, @RequestParam("tenantCode") String tenantCode);
+    @GetMapping("/v1/user/findUserByIdentifier/{identifier}")
+    UserVo findUserByIdentifier(@PathVariable("identifier") String identifier, @RequestParam("tenantCode") String tenantCode);
 
     /**
      * 获取当前用户的信息

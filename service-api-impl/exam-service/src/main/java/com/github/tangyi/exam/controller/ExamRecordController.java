@@ -293,7 +293,7 @@ public class ExamRecordController extends BaseController {
                         ExaminationRecordDto recordDto = new ExaminationRecordDto();
                         recordDto.setId(tempExamRecord.getId());
                         recordDto.setExaminationName(examRecordExamination.getExaminationName());
-                        recordDto.setExamTime(tempExamRecord.getCreateDate());
+                        //recordDto.setExamTime(tempExamRecord.getCreateDate());
                         recordDto.setScore(tempExamRecord.getScore());
                         recordDto.setUserId(tempExamRecord.getUserId());
                         recordDto.setCorrectNumber(tempExamRecord.getCorrectNumber());

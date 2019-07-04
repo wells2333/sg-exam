@@ -22,7 +22,7 @@ public class Role extends BaseEntity<Role> {
 
     private String roleDesc;
 
-    private String status;
+    private Integer status;
 
     private String deptName;
 
@@ -31,5 +31,5 @@ public class Role extends BaseEntity<Role> {
     /**
      * 是否默认 0-否，1-是
      */
-    private String isDefault;
+    private Integer isDefault;
 }
