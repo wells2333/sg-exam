@@ -3,6 +3,8 @@ package com.github.tangyi.exam.api.dto;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * 考试记录DTO
  *
@@ -40,17 +42,17 @@ public class ExaminationRecordDto extends BaseEntity<ExaminationRecordDto> {
     /**
      * 当前时间
      */
-    private String currentTime;
+    private Date currentTime;
 
     /**
      * 考试开始时间
      */
-    private String startTime;
+    private Date startTime;
 
     /**
      * 考试结束时间
      */
-    private String endTime;
+    private Date endTime;
 
     /**
      * 考试持续时间

@@ -8,9 +8,9 @@
         <result column="attachment_id" property="attachmentId"/>
         <result column="status" property="status"/>
         <result column="creator" property="creator"/>
-        <result column="create_date" property="createDate"/>
+        <result column="create_date" property="createDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="modifier" property="modifier"/>
-        <result column="modify_date" property="modifyDate"/>
+        <result column="modify_date" property="modifyDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="del_flag" property="delFlag"/>
         <result column="application_code" property="applicationCode"/>
         <result column="tenant_code" property="tenantCode"/>
@@ -87,9 +87,9 @@
             #{attachmentId},
             #{status},
             #{creator},
-            #{createDate},
+            #{createDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
             #{modifier},
-            #{modifyDate},
+            #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
             #{delFlag},
             #{applicationCode},
             #{tenantCode}
@@ -114,7 +114,7 @@
             del_flag = #{delFlag},
         </if>
         modifier = #{modifier},
-        modify_date = #{modifyDate}
+        modify_date = #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date}
         WHERE id = #{id}
     </update>
 

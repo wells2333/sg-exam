@@ -4,7 +4,7 @@ import com.github.tangyi.auth.model.CustomUserDetails;
 import com.github.tangyi.auth.properties.SysProperties;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.exceptions.TenantNotFoundException;
-import com.github.tangyi.common.core.vo.Role;
+import com.github.tangyi.common.core.vo.RoleVo;
 import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.security.core.CustomUserDetailsService;
 import com.github.tangyi.common.security.core.GrantedAuthorityImpl;
@@ -12,6 +12,7 @@ import com.github.tangyi.user.api.constant.MenuConstant;
 import com.github.tangyi.user.api.feign.UserServiceClient;
 import com.github.tangyi.user.api.module.Menu;
 import com.github.tangyi.user.api.module.Tenant;
+import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -24,7 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * 从数据库获取用户信息
@@ -50,10 +50,10 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
     @Override
     public UserDetails loadUserByUsernameAndTenantCode(String username, String tenantCode) throws UsernameNotFoundException, TenantNotFoundException {
         Tenant tenant = this.validateTenantCode(tenantCode);
-        UserVo userVo = userServiceClient.findUserByUsername(username, tenantCode);
+        UserVo userVo = userServiceClient.findUserByIdentifier(username, tenantCode);
         if (userVo == null)
             throw new UsernameNotFoundException("用户名不存在.");
-        return new CustomUserDetails(username, userVo.getPassword(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode());
+        return new CustomUserDetails(username, userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode());
     }
 
     /**
@@ -71,7 +71,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
         UserVo userVo = userServiceClient.findUserBySocial(social, tenantCode);
         if (userVo == null)
             throw new UsernameNotFoundException("用户手机号未注册.");
-        return new CustomUserDetails(social, userVo.getPassword(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode());
+        return new CustomUserDetails(social, userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode());
     }
 
     /**
@@ -101,28 +101,32 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
     private Set<GrantedAuthority> getAuthority(UserVo userVo) {
         // 权限集合
         Set<GrantedAuthority> authorities = new HashSet<>();
-        // 角色
-        List<Role> roleList = userVo.getRoleList();
-        if (CollectionUtils.isNotEmpty(roleList)) {
-            roleList.forEach(role -> {
-                // 权限如果前缀是ROLE_，security就会认为这是个角色信息，而不是权限，例如ROLE_ADMIN就是ADMIN角色，MENU:ADD就是MENU:ADD权限
-                authorities.add(new GrantedAuthorityImpl(role.getRoleCode()));
-                // 根据角色查找菜单权限
-                Stream<Menu> menuStream;
-                // 判断是否是管理员，是则查找所有菜单权限
-                if (userVo.getUsername().equals(sysProperties.getAdminUser())) {
-                    // 查找所有菜单权限，因为角色一般是一个，这里只会执行一次
-                    menuStream = userServiceClient.findAllMenu(userVo.getTenantCode()).stream();
-                } else {
+        // 根据角色查找菜单权限
+        List<Menu> menus = Lists.newArrayList();
+        // 判断是否是管理员，是则查找所有菜单权限
+        if (userVo.getIdentifier().equals(sysProperties.getAdminUser())) {
+            // 查找所有菜单权限，因为角色一般是一个，这里只会执行一次
+            menus = userServiceClient.findAllMenu(userVo.getTenantCode());
+        } else {
+            // 根据角色查询菜单权限
+            List<RoleVo> roleList = userVo.getRoleList();
+            if (CollectionUtils.isNotEmpty(roleList)) {
+                for (RoleVo role : roleList) {
                     // 根据角色查找菜单权限
-                    menuStream = userServiceClient.findMenuByRole(role.getRoleCode(), userVo.getTenantCode()).stream();
+                    List<Menu> roleMenus = userServiceClient.findMenuByRole(role.getRoleCode(), userVo.getTenantCode());
+                    if (CollectionUtils.isNotEmpty(roleMenus))
+                        menus.addAll(roleMenus);
+                    // 权限如果前缀是ROLE_，security就会认为这是个角色信息，而不是权限，例如ROLE_ADMIN就是ADMIN角色，MENU:ADD就是MENU:ADD权限
+                    authorities.add(new GrantedAuthorityImpl(role.getRoleCode()));
                 }
-                // 菜单权限
-                List<GrantedAuthority> menus = menuStream
-                        .filter(menu -> MenuConstant.MENU_TYPE_PERMISSION.equals(menu.getType()))
-                        .map(menu -> new GrantedAuthorityImpl(menu.getPermission())).collect(Collectors.toList());
-                authorities.addAll(menus);
-            });
+            }
+        }
+        if (CollectionUtils.isNotEmpty(menus)) {
+            // 菜单权限
+            List<GrantedAuthority> authorityList = menus.stream()
+                    .filter(menu -> MenuConstant.MENU_TYPE_PERMISSION.equals(menu.getType()))
+                    .map(menu -> new GrantedAuthorityImpl(menu.getPermission())).collect(Collectors.toList());
+            authorities.addAll(authorityList);
         }
         return authorities;
     }

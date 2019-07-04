@@ -8,8 +8,8 @@ package com.github.tangyi.user.api.constant;
  */
 public class RoleConstant {
 
-    public static final String IS_DEFAULT_ROLE = "1";
+    public static final Integer IS_DEFAULT_ROLE = 1;
 
-    public static final String NORMAL_ROLE = "0";
+    public static final Integer NORMAL_ROLE = 0;
 
 }

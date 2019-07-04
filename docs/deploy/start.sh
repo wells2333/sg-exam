@@ -13,6 +13,7 @@ AUTH_SERVICE=$BASE_IMAGE_NAME/auth-service:$BSEE_IMAGE_TAG
 USER_SERVICE=$BASE_IMAGE_NAME/user-service:$BSEE_IMAGE_TAG
 EXAM_SERVICE=$BASE_IMAGE_NAME/exam-service:$BSEE_IMAGE_TAG
 GATEWAY_SERVICE=$BASE_IMAGE_NAME/gateway-service:$BSEE_IMAGE_TAG
+MSC_SERVICE=$BASE_IMAGE_NAME/msc-service:$BSEE_IMAGE_TAG
 MONITOR_SERVICE=$BASE_IMAGE_NAME/monitor-service:$BSEE_IMAGE_TAG
 UI_SERVICE=$BASE_IMAGE_NAME/spring-microservice-exam-ui:$BSEE_IMAGE_TAG
 WEB_SERVICE=$BASE_IMAGE_NAME/spring-microservice-exam-web:$BSEE_IMAGE_TAG
@@ -33,6 +34,7 @@ case "$1" in
         time docker pull $USER_SERVICE
         time docker pull $EXAM_SERVICE
         time docker pull $GATEWAY_SERVICE
+        time docker pull $MSC_SERVICE
         time docker pull $MONITOR_SERVICE
         echo "* 开始拉取前端镜像..."
         time docker pull $UI_SERVICE
@@ -61,6 +63,7 @@ case "$1" in
         time docker pull $USER_SERVICE
         time docker pull $EXAM_SERVICE
         time docker pull $GATEWAY_SERVICE
+        time docker pull $MSC_SERVICE
         time docker pull $MONITOR_SERVICE
         echo "* 开始拉取前端镜像..."
         time docker pull $UI_SERVICE

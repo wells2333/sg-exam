@@ -13,12 +13,16 @@ import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.user.api.constant.MenuConstant;
 import com.github.tangyi.user.api.dto.MenuDto;
 import com.github.tangyi.user.api.module.Menu;
+import com.github.tangyi.user.api.module.Role;
+import com.github.tangyi.user.config.SysConfig;
 import com.github.tangyi.user.service.MenuService;
 import com.github.tangyi.user.utils.MenuUtil;
+import com.google.common.collect.Lists;
 import com.google.common.net.HttpHeaders;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -51,6 +55,8 @@ public class MenuController extends BaseController {
 
     private final MenuService menuService;
 
+    private final SysConfig sysConfig;
+
     /**
      * 返回当前用户的树形菜单集合
      *
@@ -60,29 +66,41 @@ public class MenuController extends BaseController {
     @ApiOperation(value = "获取当前用户的菜单列表")
     public List<MenuDto> userMenu() {
         List<MenuDto> menuDtoList = new ArrayList<>();
-        String tenantCode = SysUtil.getTenantCode();
-        // 根据角色code查找菜单
-        SecurityUtil.getCurrentAuthentication().getAuthorities().stream()
-                // 按角色过滤
-                .filter(authority -> authority.getAuthority() != null && authority.getAuthority().startsWith("role_"))
-                // 查找菜单
-                .forEach(roleName -> {
-                    // 获取角色的菜单
-                    Stream<Menu> menuStream = menuService.findMenuByRole(roleName.getAuthority(), tenantCode).stream();
-                    if (Optional.ofNullable(menuStream).isPresent()) {
-                        // 筛选出类型为菜单的菜单，放进menuMap，防止重复，用菜单的ID作为key
-                        menuStream
-                                // 菜单类型
-                                .filter(menu -> MenuConstant.MENU_TYPE_MENU.equals(menu.getType()))
-                                // dto封装
-                                .map(MenuDto::new)
-                                // 去重
-                                .distinct()
-                                .forEach(menuDtoList::add);
-                    }
-                });
-        // 排序、构建树形关系
-        return TreeUtil.buildTree(CollUtil.sort(menuDtoList, Comparator.comparingInt(MenuDto::getSort)), "-1");
+        String tenantCode = SysUtil.getTenantCode(), identifier = SysUtil.getUser();
+        List<Menu> userMenus;
+        // 超级管理员
+        if (identifier.equals(sysConfig.getAdminUser())) {
+            // 获取角色的菜单
+            Menu menu = new Menu();
+            menu.setTenantCode(tenantCode);
+            menu.setApplicationCode(SysUtil.getSysCode());
+            menu.setType(MenuConstant.MENU_TYPE_MENU);
+            userMenus = menuService.findAllList(menu);
+        } else {
+            List<Role> roleList = SecurityUtil.getCurrentAuthentication().getAuthorities().stream()
+                    // 按角色过滤
+                    .filter(authority -> authority.getAuthority() != null && authority.getAuthority().startsWith("role_"))
+                    .map(authority -> {
+                        Role role = new Role();
+                        role.setRoleCode(authority.getAuthority());
+                        return role;
+                    }).collect(Collectors.toList());
+            // 根据角色code批量查找菜单
+            userMenus = menuService.finMenuByRoleList(roleList, tenantCode);
+        }
+        if (CollectionUtils.isNotEmpty(userMenus)) {
+            userMenus.stream()
+                    // 菜单类型
+                    .filter(menu -> MenuConstant.MENU_TYPE_MENU.equals(menu.getType()))
+                    // dto封装
+                    .map(MenuDto::new)
+                    // 去重
+                    .distinct()
+                    .forEach(menuDtoList::add);
+            // 排序、构建树形关系
+            return TreeUtil.buildTree(CollUtil.sort(menuDtoList, Comparator.comparingInt(MenuDto::getSort)), "-1");
+        }
+        return Lists.newArrayList();
     }
 
     /**

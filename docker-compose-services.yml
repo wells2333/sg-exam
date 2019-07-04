@@ -53,6 +53,19 @@ services:
       - net
 
   # ---------------------------
+  # 消息服务
+  # ---------------------------
+  msc-service:
+    image: registry.cn-hangzhou.aliyuncs.com/spring-microservice-exam/msc-service:3.0.0
+    container_name: msc-service
+    env_file: docker-compose.env  # 从文件中获取配置
+    restart: always
+    ports:
+      - "9000:9000"
+    networks:
+      - net
+
+  # ---------------------------
   # 监控服务
   # ---------------------------
   monitor-service:

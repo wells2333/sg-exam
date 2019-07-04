@@ -466,12 +466,12 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
         answer.setExamRecordId(examRecord.getId());
         List<Answer> answers = this.findList(answer);
         if (CollectionUtils.isNotEmpty(answers)) {
-            Long correctNumber = answers.stream().filter(tempAnswer -> tempAnswer.getAnswerType().equals(AnswerConstant.RIGHT)).count();
+            long correctNumber = answers.stream().filter(tempAnswer -> tempAnswer.getAnswerType().equals(AnswerConstant.RIGHT)).count();
             // 总分
             Integer score = answers.stream().mapToInt(Answer::getScore).sum();
             examRecord.setScore(score);
             examRecord.setSubmitStatus(ExamExaminationRecordConstant.STATUS_CALCULATED);
-            examRecord.setCorrectNumber(correctNumber.intValue());
+            examRecord.setCorrectNumber((int) correctNumber);
             examRecord.setInCorrectNumber(answers.size() - examRecord.getCorrectNumber());
             examRecordService.update(examRecord);
             log.debug("批改完成，用户名：{}，考试ID：{}，总分：{}，耗时：{}ms", examRecord.getCreator(), examRecord.getExaminationId(), score, System.currentTimeMillis() - start);

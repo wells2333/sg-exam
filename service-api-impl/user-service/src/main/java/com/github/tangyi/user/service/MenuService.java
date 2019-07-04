@@ -4,8 +4,11 @@ import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.user.api.module.Menu;
+import com.github.tangyi.user.api.module.Role;
 import com.github.tangyi.user.mapper.MenuMapper;
+import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -37,6 +40,25 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
     @Cacheable(value = "menu", key = "#role")
     public List<Menu> findMenuByRole(String role, String tenantCode) {
         return menuMapper.findByRole(role, tenantCode);
+    }
+
+    /**
+     * 批量查询菜单
+     *
+     * @param roleList   roleList
+     * @param tenantCode tenantCode
+     * @return List
+     * @author tangyi
+     * @date 2019/07/03 23:50:35
+     */
+    public List<Menu> finMenuByRoleList(List<Role> roleList, String tenantCode) {
+        List<Menu> menus = Lists.newArrayList();
+        for (Role role : roleList) {
+           List<Menu> roleMenus = this.findMenuByRole(role.getRoleCode(), tenantCode);
+           if (CollectionUtils.isNotEmpty(roleMenus))
+               menus.addAll(roleMenus);
+        }
+        return menus;
     }
 
     /**

@@ -47,7 +47,7 @@ public class RoleController extends BaseController {
      * 根据id获取角色
      *
      * @param id id
-     * @return Role
+     * @return RoleVo
      * @author tangyi
      * @date 2018/9/14 18:20
      */
@@ -82,7 +82,7 @@ public class RoleController extends BaseController {
             @ApiImplicitParam(name = CommonConstant.PAGE_SIZE, value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
             @ApiImplicitParam(name = CommonConstant.SORT, value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
             @ApiImplicitParam(name = CommonConstant.ORDER, value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "role", value = "角色信息", dataType = "Role")
+            @ApiImplicitParam(name = "role", value = "角色信息", dataType = "RoleVo")
     })
     public PageInfo<Role> roleList(@RequestParam(value = CommonConstant.PAGE_NUM, required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
                                    @RequestParam(value = CommonConstant.PAGE_SIZE, required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
@@ -103,7 +103,7 @@ public class RoleController extends BaseController {
      */
     @RequestMapping("allRoles")
     @ApiOperation(value = "获取全部角色列表")
-    @ApiImplicitParam(name = "role", value = "角色信息", dataType = "Role")
+    @ApiImplicitParam(name = "role", value = "角色信息", dataType = "RoleVo")
     public ResponseBean<List<Role>> allRoles(Role role) {
         role.setApplicationCode(SysUtil.getSysCode());
         role.setTenantCode(SysUtil.getTenantCode());
@@ -121,7 +121,7 @@ public class RoleController extends BaseController {
     @PutMapping
     @PreAuthorize("hasAuthority('sys:role:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "更新角色信息", notes = "根据角色id更新角色的基本信息")
-    @ApiImplicitParam(name = "role", value = "角色实体role", required = true, dataType = "Role")
+    @ApiImplicitParam(name = "role", value = "角色实体role", required = true, dataType = "RoleVo")
     @Log("修改角色")
     public ResponseBean<Boolean> updateRole(@RequestBody @Valid Role role) {
         role.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
@@ -138,7 +138,7 @@ public class RoleController extends BaseController {
      */
     @PutMapping("roleMenuUpdate")
     @ApiOperation(value = "更新角色菜单信息", notes = "更新角色菜单信息")
-    @ApiImplicitParam(name = "role", value = "角色实体role", required = true, dataType = "Role")
+    @ApiImplicitParam(name = "role", value = "角色实体role", required = true, dataType = "RoleVo")
     @Log("更新角色菜单")
     public ResponseBean<Boolean> updateRoleMenu(@RequestBody Role role) {
         boolean success = false;
@@ -163,7 +163,7 @@ public class RoleController extends BaseController {
     @PostMapping
     @PreAuthorize("hasAuthority('sys:role:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "创建角色", notes = "创建角色")
-    @ApiImplicitParam(name = "role", value = "角色实体role", required = true, dataType = "Role")
+    @ApiImplicitParam(name = "role", value = "角色实体role", required = true, dataType = "RoleVo")
     @Log("新增角色")
     public ResponseBean<Boolean> role(@RequestBody @Valid Role role) {
         role.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
@@ -174,7 +174,7 @@ public class RoleController extends BaseController {
      * 根据id删除角色
      *
      * @param id id
-     * @return Role
+     * @return RoleVo
      * @author tangyi
      * @date 2018/9/14 18:24
      */
@@ -202,7 +202,7 @@ public class RoleController extends BaseController {
     @PostMapping("deleteAll")
     @PreAuthorize("hasAuthority('sys:role:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "批量删除角色", notes = "根据角色id批量删除角色")
-    @ApiImplicitParam(name = "role", value = "角色信息", dataType = "Role")
+    @ApiImplicitParam(name = "role", value = "角色信息", dataType = "RoleVo")
     @Log("批量删除角色")
     public ResponseBean<Boolean> deleteAllRoles(@RequestBody Role role) {
         boolean success = false;

@@ -33,7 +33,7 @@ public class ExaminationInitConfig {
         log.info("开始加载考试信息.");
         // 查询已发布的考试
         Examination examination = new Examination();
-        examination.setStatus(CommonConstant.STATUS_NORMAL);
+        //examination.setStatus(CommonConstant.STATUS_NORMAL);
         Stream<Examination> examinationStream = examinationService.findList(examination).stream();
         if (Optional.ofNullable(examinationStream).isPresent())
             examinationStream.forEach(tempExamination -> redisTemplate.opsForValue().set("examination::" + tempExamination.getId(), tempExamination));
