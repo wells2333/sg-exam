@@ -8,9 +8,9 @@
         <result column="tenant_desc" property="tenantDesc"/>
         <result column="status" property="status"/>
         <result column="creator" property="creator"/>
-        <result column="create_date" property="createDate"/>
+        <result column="create_date" property="createDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="modifier" property="modifier"/>
-        <result column="modify_date" property="modifyDate"/>
+        <result column="modify_date" property="modifyDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="del_flag" property="delFlag"/>
     </resultMap>
 
@@ -77,9 +77,9 @@
             #{tenantDesc},
             #{status},
             #{creator},
-            #{createDate},
+            #{createDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
             #{modifier},
-            #{modifyDate},
+            #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
             #{delFlag}
         )
     </insert>
@@ -99,13 +99,15 @@
             del_flag = #{delFlag},
         </if>
         modifier = #{modifier},
-        modify_date = #{modifyDate}
+        modify_date = #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date}
         WHERE id = #{id}
     </update>
 
     <delete id="delete">
         UPDATE sys_tenant SET
-        DEL_FLAG = 1
+        del_flag = 1,
+        modifier = #{modifier} ,
+        modify_date = #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date}
         WHERE ID = #{id}
     </delete>
 

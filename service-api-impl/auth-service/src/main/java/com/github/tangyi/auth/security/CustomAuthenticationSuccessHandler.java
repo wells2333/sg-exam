@@ -48,7 +48,7 @@ public class CustomAuthenticationSuccessHandler {
             Log logInfo = new Log();
             logInfo.setCommonValue(username, SysUtil.getSysCode(), tenantCode);
             logInfo.setTitle("用户登录");
-            logInfo.setType(CommonConstant.STATUS_NORMAL);
+            //logInfo.setType(CommonConstant.STATUS_NORMAL);
             // 获取ip、浏览器信息
             this.initLogInfo(logInfo, event.getSource());
             logInfo.setServiceId(ServiceConstant.AUTH_SERVICE);

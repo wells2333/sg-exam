@@ -7,9 +7,9 @@
         <result column="option_name" property="optionName"/>
         <result column="option_content" property="optionContent"/>
         <result column="creator" property="creator"/>
-        <result column="create_date" property="createDate"/>
+        <result column="create_date" property="createDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="modifier" property="modifier"/>
-        <result column="modify_date" property="modifyDate"/>
+        <result column="modify_date" property="modifyDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="del_flag" property="delFlag"/>
         <result column="application_code" property="applicationCode"/>
         <result column="tenant_code" property="tenantCode"/>
@@ -84,9 +84,9 @@
             #{optionName},
             #{optionContent},
             #{creator},
-            #{createDate},
+            #{createDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
             #{modifier},
-            #{modifyDate},
+            #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
             #{delFlag},
             #{applicationCode},
             #{tenantCode}
@@ -115,9 +115,9 @@
             #{item.optionName},
             #{item.optionContent},
             #{item.creator},
-            #{item.createDate},
+            #{item.createDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
             #{item.modifier},
-            #{item.modifyDate},
+            #{item.modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
             #{item.delFlag},
             #{item.applicationCode},
             #{item.tenantCode}
@@ -140,7 +140,7 @@
             del_flag = #{delFlag},
         </if>
         modifier = #{modifier},
-        modify_date = #{modifyDate}
+        modify_date = #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date}
         WHERE id = #{id}
     </update>
 

@@ -31,14 +31,14 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
     /**
      * 根据用户名查询用户信息
      *
-     * @param username   username
+     * @param identifier identifier
      * @param tenantCode 租户标识
      * @param tenantCode 租户标识
      * @return UserVo
      */
     @Override
-    public UserVo findUserByUsername(String username, String tenantCode) {
-        log.error("feign 查询用户信息失败:{}, {}, {}", tenantCode, username, throwable);
+    public UserVo findUserByIdentifier(String identifier, String tenantCode) {
+        log.error("feign 查询用户信息失败:{}, {}, {}", tenantCode, identifier, throwable);
         return null;
     }
 

@@ -10,7 +10,7 @@ import lombok.Data;
  * @date 2018-08-25 13:58
  */
 @Data
-public class Role extends BaseEntity<Role> {
+public class RoleVo extends BaseEntity<RoleVo> {
 
     private String roleName;
 

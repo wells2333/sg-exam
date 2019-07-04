@@ -1,8 +1,10 @@
 package com.github.tangyi.user.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @author tangyi
@@ -16,14 +18,25 @@ public class UserInfoDto implements Serializable {
     private String id;
 
     /**
+     * 授权类型，1：用户名密码，2：手机号，3：邮箱，4：微信，5：QQ
+     */
+    private Integer identityType;
+
+    /**
+     * 唯一标识，如用户名、手机号
+     */
+    private String identifier;
+
+    /**
+     * 密码
+     */
+    @JsonIgnore
+    private String credential;
+
+    /**
      * 姓名
      */
     private String name;
-
-    /**
-     * 用户名
-     */
-    private String username;
 
     /**
      * 电话号码
@@ -48,12 +61,12 @@ public class UserInfoDto implements Serializable {
     /**
      * 性别
      */
-    private String sex;
+    private Integer sex;
 
     /**
      * 生日
      */
-    private String born;
+    private Date born;
 
     /**
      * 部门名称
@@ -73,7 +86,7 @@ public class UserInfoDto implements Serializable {
     /**
      * 状态，0-启用，1-禁用
      */
-    private String status;
+    private Integer status;
 
     /**
      * 权限信息
@@ -84,4 +97,14 @@ public class UserInfoDto implements Serializable {
      * 角色信息
      */
     private String[] roles;
+
+    /**
+     * 系统编号
+     */
+    private String applicationCode;
+
+    /**
+     * 租户标识
+     */
+    private String tenantCode;
 }

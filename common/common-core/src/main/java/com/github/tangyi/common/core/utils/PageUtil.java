@@ -57,4 +57,18 @@ public class PageUtil {
         PageHelper.orderBy(orderBy(sort, order));
         return page;
     }
+
+    /**
+     * 复制属性
+     *
+     * @param source source
+     * @param target target
+     * @author tangyi
+     * @date 2019/07/03 22:26:18
+     */
+    public static void copyProperties(PageInfo<?> source, PageInfo<?> target) {
+        target.setTotal(source.getTotal());
+        target.setPageSize(source.getPageSize());
+        target.setPageNum(source.getPageNum());
+    }
 }

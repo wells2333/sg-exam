@@ -4,6 +4,7 @@ import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import java.util.Date;
 
 /**
  * 考试记录
@@ -29,12 +30,12 @@ public class ExaminationRecord extends BaseEntity<ExaminationRecord> {
     /**
      * 开始时间
      */
-    private String startTime;
+    private Date startTime;
 
     /**
      * 结束时间
      */
-    private String endTime;
+    private Date endTime;
 
     /**
      * 成绩

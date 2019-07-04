@@ -9,18 +9,15 @@ import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.constant.SecurityConstant;
-import com.github.tangyi.user.api.constant.RoleConstant;
 import com.github.tangyi.user.api.dto.UserDto;
 import com.github.tangyi.user.api.dto.UserInfoDto;
-import com.github.tangyi.user.api.module.Dept;
-import com.github.tangyi.user.api.module.Role;
-import com.github.tangyi.user.api.module.User;
-import com.github.tangyi.user.api.module.UserRole;
+import com.github.tangyi.user.api.module.*;
 import com.github.tangyi.user.service.DeptService;
-import com.github.tangyi.user.service.RoleService;
+import com.github.tangyi.user.service.UserAuthsService;
 import com.github.tangyi.user.service.UserRoleService;
 import com.github.tangyi.user.service.UserService;
 import com.github.tangyi.user.utils.UserUtils;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,8 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,9 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -57,15 +50,13 @@ import java.util.stream.Stream;
 @RequestMapping(value = "/v1/user")
 public class UserController extends BaseController {
 
-    private static final PasswordEncoder encoder = new BCryptPasswordEncoder();
-
     private final UserService userService;
 
     private final UserRoleService userRoleService;
 
     private final DeptService deptService;
 
-    private final RoleService roleService;
+    private final UserAuthsService userAuthsService;
 
     /**
      * 根据id获取
@@ -89,45 +80,30 @@ public class UserController extends BaseController {
      */
     @GetMapping("info")
     @ApiOperation(value = "获取用户信息", notes = "获取当前登录用户详细信息")
-    public ResponseBean<UserInfoDto> user(OAuth2Authentication authentication) {
+    public ResponseBean<UserInfoDto> userInfo(OAuth2Authentication authentication) {
         UserVo userVo = new UserVo();
-        userVo.setUsername(authentication.getName());
+        userVo.setIdentifier(authentication.getName());
         userVo.setTenantCode(SysUtil.getTenantCode());
         return new ResponseBean<>(userService.findUserInfo(userVo));
     }
 
     /**
-     * 根据用户名获取用户详细信息
+     * 根据用户唯一标识获取用户详细信息
      *
-     * @param username   username
-     * @param tenantCode tenantCode
+     * @param identifier   identifier
+     * @param identityType identityType
+     * @param tenantCode   tenantCode
      * @return UserVo
      */
-    @GetMapping("/findUserByUsername/{username}")
+    @GetMapping("/findUserByIdentifier/{identifier}")
     @ApiOperation(value = "获取用户信息", notes = "根据用户name获取用户详细信息")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "username", value = "用户name", required = true, dataType = "String", paramType = "path"),
+            @ApiImplicitParam(name = "identifier", value = "用户唯一标识", required = true, dataType = "String", paramType = "path"),
+            @ApiImplicitParam(name = "identityType", value = "用户授权类型", dataType = "Integer"),
             @ApiImplicitParam(name = "tenantCode", value = "租户标识", required = true, dataType = "String"),
     })
-    public UserVo findUserByUsername(@PathVariable String username, @RequestParam @NotBlank String tenantCode) {
-        return userService.selectUserVoByUsername(username, tenantCode);
-    }
-
-    /**
-     * 根据用户手机号获取用户详细信息
-     *
-     * @param social     social
-     * @param tenantCode tenantCode
-     * @return UserVo
-     */
-    @GetMapping("/findUserBySocial/{social}")
-    @ApiOperation(value = "获取用户信息", notes = "根据用户手机号获取用户详细信息")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "social", value = "用户手机号", required = true, dataType = "String", paramType = "path"),
-            @ApiImplicitParam(name = "tenantCode", value = "租户标识", required = true, dataType = "String"),
-    })
-    public UserVo findUserBySocial(@PathVariable String social, @RequestParam String tenantCode) {
-        return userService.selectUserVoBySocial(social, tenantCode);
+    public UserVo findUserByIdentifier(@PathVariable String identifier, @RequestParam(required = false) Integer identityType, @RequestParam @NotBlank String tenantCode) {
+        return userService.findUserByIdentifier(identityType, identifier, tenantCode);
     }
 
     /**
@@ -151,64 +127,35 @@ public class UserController extends BaseController {
             @ApiImplicitParam(name = CommonConstant.ORDER, value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
             @ApiImplicitParam(name = "userVo", value = "用户信息", dataType = "UserVo")
     })
-    public PageInfo<User> userList(@RequestParam(value = CommonConstant.PAGE_NUM, required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
-                                   @RequestParam(value = CommonConstant.PAGE_SIZE, required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
-                                   @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
-                                   @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
-                                   @RequestParam(value = "username", required = false, defaultValue = "") String username,
-                                   UserVo userVo) {
+    public PageInfo<UserDto> userList(@RequestParam(value = CommonConstant.PAGE_NUM, required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
+                                      @RequestParam(value = CommonConstant.PAGE_SIZE, required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
+                                      @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
+                                      @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
+                                      @RequestParam(value = "name", required = false, defaultValue = "") String name,
+                                      UserVo userVo) {
+        PageInfo<UserDto> userDtoPageInfo = new PageInfo<>();
+        List<UserDto> userDtos = Lists.newArrayList();
         userVo.setTenantCode(SysUtil.getTenantCode());
         User user = new User();
         BeanUtils.copyProperties(userVo, user);
-        // 用户名查询条件
-        user.setUsername(username);
+        user.setName(name);
         PageInfo<User> page = userService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), user);
         List<User> users = page.getList();
         if (CollectionUtils.isNotEmpty(users)) {
-            Dept dept = new Dept();
-            // 流处理获取部门ID集合，转成字符串数组
-            dept.setIds(users.stream().filter(tempUser -> tempUser.getDeptId() != null).map(User::getDeptId).distinct().toArray(String[]::new));
+            // 批量查询账户
+            List<UserAuths> userAuths = userAuthsService.getListByUsers(users);
             // 批量查找部门
-            List<Dept> deptList = deptService.findListById(dept);
-            // 流处理获取用户ID集合，根据用户ID批量查找角色
+            List<Dept> deptList = deptService.getListByUsers(users);
+            // 查询用户角色关联关系
             List<UserRole> userRoles = userRoleService.getByUserIds(users.stream().map(User::getId).collect(Collectors.toList()));
-            List<Role> roleList = new ArrayList<>();
-            if (CollectionUtils.isNotEmpty(userRoles)) {
-                Role role = new Role();
-                // 获取角色ID集合，转成字节数组
-                role.setIds(userRoles.stream().map(UserRole::getRoleId).distinct().toArray(String[]::new));
-                // 批量查找角色
-                roleList = roleService.findListById(role);
-            }
-            // 遍历用户集合，设置部门、角色
-            List<Role> finalRoleList = roleList;
-            users.forEach(tempUser -> {
-                // 设置部门信息
-                if (CollectionUtils.isNotEmpty(deptList)) {
-                    // 用户所属部门
-                    Dept userDept = deptList.stream()
-                            // 按部门ID找到部门信息
-                            .filter(tempDept -> tempDept.getId().equals(tempUser.getDeptId()))
-                            .findFirst().orElse(null);
-                    if (userDept != null) {
-                        tempUser.setDeptName(userDept.getDeptName());
-                        tempUser.setDeptId(userDept.getId());
-                    }
-                }
-                // 设置角色信息
-                if (CollectionUtils.isNotEmpty(userRoles)) {
-                    List<Role> userRoleList = new ArrayList<>();
-                    userRoles.stream()
-                            // 过滤
-                            .filter(tempUserRole -> tempUser.getId().equals(tempUserRole.getUserId()))
-                            .forEach(tempUserRole -> finalRoleList.stream()
-                                    .filter(role -> role.getId().equals(tempUserRole.getRoleId()))
-                                    .forEach(userRoleList::add));
-                    tempUser.setRoleList(userRoleList);
-                }
-            });
+            // 批量查找角色
+            List<Role> finalRoleList = userService.getUsersRoles(users);
+            // 组装数据
+            users.forEach(tempUser -> userDtos.add(userService.getUserDtoByUserAndUserAuths(tempUser, userAuths, deptList, userRoles, finalRoleList)));
         }
-        return page;
+        PageUtil.copyProperties(page, userDtoPageInfo);
+        userDtoPageInfo.setList(userDtos);
+        return userDtoPageInfo;
     }
 
     /**
@@ -225,12 +172,7 @@ public class UserController extends BaseController {
     @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
     @Log("新增用户")
     public ResponseBean<Boolean> addUser(@RequestBody @Valid UserDto userDto) {
-        User user = new User();
-        BeanUtils.copyProperties(userDto, user);
-        user.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
-        user.setPassword(encoder.encode(userDto.getPassword()));
-        // 保存用户
-        return new ResponseBean<>(userService.insert(user) > 0);
+        return new ResponseBean<>(userService.createUser(userDto) > 0);
     }
 
     /**
@@ -268,16 +210,10 @@ public class UserController extends BaseController {
     @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
     @Log("更新用户基本信息")
     public ResponseBean<Boolean> updateInfo(@RequestBody UserDto userDto) {
-        // 新密码不为空
-        if (StringUtils.isNotEmpty(userDto.getNewPassword())) {
-            if (!encoder.matches(userDto.getOldPassword(), userDto.getPassword())) {
-                return new ResponseBean<>(Boolean.FALSE, "新旧密码不匹配");
-            } else {
-                // 新旧密码一致，修改密码
-                userDto.setPassword(encoder.encode(userDto.getNewPassword()));
-            }
-        }
-        return new ResponseBean<>(userService.update(userDto) > 0);
+        User user = new User();
+        BeanUtils.copyProperties(userDto, user);
+        user.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        return new ResponseBean<>(userService.update(user) > 0);
     }
 
     /**
@@ -293,27 +229,7 @@ public class UserController extends BaseController {
     @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
     @Log("更新用户密码")
     public ResponseBean<Boolean> updatePassword(@RequestBody UserDto userDto) {
-        if (StringUtils.isBlank(userDto.getUsername()))
-            throw new CommonException("用户名不能为空.");
-        if (StringUtils.isBlank(userDto.getTenantCode()))
-            throw new CommonException("租户编码不能为空.");
-        UserVo userVo = userService.selectUserVoByUsername(userDto.getUsername(), userDto.getTenantCode());
-        UserDto newUserDto = new UserDto();
-        newUserDto.setId(userVo.getId());
-        newUserDto.setUsername(userVo.getUsername());
-        newUserDto.setPassword(userVo.getPassword());
-        newUserDto.setOldPassword(userDto.getOldPassword());
-        newUserDto.setNewPassword(userDto.getNewPassword());
-        // 新密码不为空
-        if (StringUtils.isNotEmpty(newUserDto.getNewPassword())) {
-            if (!encoder.matches(newUserDto.getOldPassword(), newUserDto.getPassword())) {
-                return new ResponseBean<>(Boolean.FALSE, "新旧密码不匹配");
-            } else {
-                // 新旧密码一致，修改密码
-                newUserDto.setPassword(encoder.encode(newUserDto.getNewPassword()));
-            }
-        }
-        return new ResponseBean<>(userService.update(newUserDto) > 0);
+        return new ResponseBean<>(userService.updatePassword(userDto) > 0);
     }
 
     /**
@@ -387,7 +303,20 @@ public class UserController extends BaseController {
                 user.setTenantCode(SysUtil.getTenantCode());
                 users = userService.findList(user);
             }
-            ExcelToolUtil.exportExcel(request.getInputStream(), response.getOutputStream(), MapUtil.java2Map(users), UserUtils.getUserMap());
+            if (CollectionUtils.isEmpty(users))
+                throw new CommonException("无用户数据.");
+            // 查询用户授权信息
+            List<UserAuths> userAuths = userAuthsService.getListByUsers(users);
+            // 组装数据，转成dto
+            List<UserInfoDto> userInfoDtos = users.stream().map(tempUser -> {
+                UserInfoDto userDto = new UserInfoDto();
+                userAuths.stream()
+                        .filter(userAuth -> userAuth.getUserId().equals(tempUser.getId()))
+                        .findFirst()
+                        .ifPresent(userAuth -> UserUtils.toUserInfoDto(userDto, tempUser, userAuth));
+                return userDto;
+            }).collect(Collectors.toList());
+            ExcelToolUtil.exportExcel(request.getInputStream(), response.getOutputStream(), MapUtil.java2Map(userInfoDtos), UserUtils.getUserMap());
         } catch (Exception e) {
             log.error("导出用户数据失败！", e);
             throw new CommonException("导出用户数据失败！");
@@ -409,15 +338,11 @@ public class UserController extends BaseController {
     public ResponseBean<Boolean> importUser(@ApiParam(value = "要上传的文件", required = true) MultipartFile file, HttpServletRequest request) {
         try {
             log.debug("开始导入用户数据");
-            List<User> users = MapUtil.map2Java(User.class,
+            List<UserInfoDto> userInfoDtos = MapUtil.map2Java(UserInfoDto.class,
                     ExcelToolUtil.importExcel(file.getInputStream(), UserUtils.getUserMap()));
-            if (CollectionUtils.isNotEmpty(users)) {
-                for (User user : users) {
-                    if (userService.update(user) < 1)
-                        userService.insert(user);
-                }
-            }
-            return new ResponseBean<>(Boolean.TRUE);
+            if (CollectionUtils.isEmpty(userInfoDtos))
+                throw new CommonException("无用户数据导入.");
+            return new ResponseBean<>(userService.importUsers(userInfoDtos));
         } catch (Exception e) {
             log.error("导入用户数据失败！", e);
             throw new CommonException("导入用户数据失败！");
@@ -461,19 +386,7 @@ public class UserController extends BaseController {
     @ApiOperation(value = "根据ID查询用户", notes = "根据ID查询用户")
     @ApiImplicitParam(name = "userVo", value = "用户信息", required = true, paramType = "UserVo")
     public ResponseBean<List<UserVo>> findById(@RequestBody UserVo userVo) {
-        ResponseBean<List<UserVo>> returnT = null;
-        User user = new User();
-        user.setIds(userVo.getIds());
-        Stream<User> userStream = userService.findListById(user).stream();
-        if (Optional.ofNullable(userStream).isPresent()) {
-            List<UserVo> userVoList = userStream.map(tempUser -> {
-                UserVo tempUserVo = new UserVo();
-                BeanUtils.copyProperties(tempUser, tempUserVo);
-                return tempUserVo;
-            }).collect(Collectors.toList());
-            returnT = new ResponseBean<>(userVoList);
-        }
-        return returnT;
+        return new ResponseBean<>(userService.findUserVoListById(userVo));
     }
 
     /**
@@ -489,56 +402,28 @@ public class UserController extends BaseController {
     @PostMapping("register")
     @Log("注册用户")
     public ResponseBean<Boolean> register(@Valid UserDto userDto) {
-        boolean success = false;
-        User user = new User();
-        BeanUtils.copyProperties(userDto, user);
-        // 初始化用户名，系统编号，租户编号
-        user.setCommonValue(userDto.getUsername(), SysUtil.getSysCode(), userDto.getTenantCode());
-        // 设置默认密码
-        if (StringUtils.isEmpty(userDto.getPassword()))
-            userDto.setPassword(CommonConstant.DEFAULT_PASSWORD);
-        user.setPassword(encoder.encode(userDto.getPassword()));
-        user.setStatus(CommonConstant.DEL_FLAG_NORMAL.toString());
-        // 保存用户
-        if (userService.insert(user) > 0) {
-            // 分配默认角色
-            Role role = new Role();
-            role.setIsDefault(RoleConstant.IS_DEFAULT_ROLE);
-            role.setTenantCode(userDto.getTenantCode());
-            // 查询默认角色
-            Stream<Role> roleStream = roleService.findList(role).stream();
-            if (Optional.ofNullable(roleStream).isPresent()) {
-                Role defaultRole = roleStream.findFirst().orElse(null);
-                if (defaultRole != null) {
-                    UserRole userRole = new UserRole();
-                    userRole.setCommonValue(userDto.getUsername(), SysUtil.getSysCode(), userDto.getTenantCode());
-                    userRole.setUserId(user.getId());
-                    userRole.setRoleId(defaultRole.getId());
-                    // 保存用户角色关系
-                    success = userRoleService.insert(userRole) > 0;
-                }
-            }
-        }
-        return new ResponseBean<>(success);
+        return new ResponseBean<>(userService.register(userDto));
     }
 
     /**
-     * 检查用户是否存在
+     * 检查账号是否存在
      *
-     * @param username   username
-     * @param tenantCode tenantCode
+     * @param identityType identityType
+     * @param identifier   identifier
+     * @param tenantCode   tenantCode
      * @return ResponseBean
      * @author tangyi
      * @date 2019/04/23 15:35
      */
-    @ApiOperation(value = "检查用户是否存在", notes = "检查用户名是否存在")
-    @ApiImplicitParam(name = "username", value = "用户name", required = true, dataType = "String", paramType = "path")
-    @GetMapping("checkExist/{username}")
-    public ResponseBean<Boolean> checkUsernameIsExist(@PathVariable("username") @NotBlank String username, @RequestHeader(SecurityConstant.TENANT_CODE_HEADER) String tenantCode) {
-        boolean exist = Boolean.FALSE;
-        if (StringUtils.isNotEmpty(username))
-            exist = userService.selectUserVoByUsername(username, tenantCode) != null;
-        return new ResponseBean<>(exist);
+    @ApiOperation(value = "检查账号是否存在", notes = "检查账号是否存在")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "identityType", value = "用户唯一标识类型", required = true, dataType = "String", paramType = "path"),
+            @ApiImplicitParam(name = "identifier", value = "用户唯一标识", required = true, dataType = "String", paramType = "path"),
+            @ApiImplicitParam(name = "tenantCode", value = "租户标识", required = true, dataType = "String"),
+    })
+    @GetMapping("checkExist/{identifier}")
+    public ResponseBean<Boolean> checkExist(@PathVariable("identifier") String identifier, @RequestParam Integer identityType, @RequestHeader(SecurityConstant.TENANT_CODE_HEADER) String tenantCode) {
+        return new ResponseBean<>(userService.checkIdentifierIsExist(identityType, identifier, tenantCode));
     }
 
     /**
@@ -567,15 +452,7 @@ public class UserController extends BaseController {
     @ApiOperation(value = "重置密码", notes = "根据用户id重置密码")
     @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
     @Log("重置密码")
-    public ResponseBean<Boolean> resetPassword(@RequestBody @Valid UserDto userDto) {
-        try {
-            userDto.setCommonValue(SysUtil.getUser(), SysUtil.getTenantCode());
-            // 重置密码为123456
-            userDto.setPassword(encoder.encode(CommonConstant.DEFAULT_PASSWORD));
-            return new ResponseBean<>(userService.update(userDto) > 0);
-        } catch (Exception e) {
-            log.error("重置密码失败！", e);
-            throw new CommonException("重置密码失败！");
-        }
+    public ResponseBean<Boolean> resetPassword(@RequestBody UserDto userDto) {
+        return new ResponseBean<>(userService.resetPassword(userDto));
     }
 }

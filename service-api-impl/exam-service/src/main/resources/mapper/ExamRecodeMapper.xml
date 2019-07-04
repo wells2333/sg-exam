@@ -5,16 +5,16 @@
         <id column="id" property="id"/>
         <result column="user_id" property="userId"/>
         <result column="examination_id" property="examinationId"/>
-        <result column="start_time" property="startTime"/>
-        <result column="end_time" property="endTime"/>
+        <result column="start_time" property="startTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="end_time" property="endTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="score" property="score"/>
         <result column="correct_number" property="correctNumber"/>
         <result column="incorrect_number" property="inCorrectNumber"/>
         <result column="submit_status" property="submitStatus"/>
         <result column="creator" property="creator"/>
-        <result column="create_date" property="createDate"/>
+        <result column="create_date" property="createDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="modifier" property="modifier"/>
-        <result column="modify_date" property="modifyDate"/>
+        <result column="modify_date" property="modifyDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="del_flag" property="delFlag"/>
         <result column="application_code" property="applicationCode"/>
         <result column="tenant_code" property="tenantCode"/>
@@ -107,16 +107,16 @@
             #{id},
             #{userId},
             #{examinationId},
-            #{startTime},
-            #{endTime},
+            #{startTime, jdbcType=TIMESTAMP, javaType=java.util.Date},
+            #{endTime, jdbcType=TIMESTAMP, javaType=java.util.Date},
             #{score},
             #{correctNumber},
             #{inCorrectNumber},
             #{submitStatus},
             #{creator},
-            #{createDate},
+            #{createDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
             #{modifier},
-            #{modifyDate},
+            #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
             #{delFlag},
             #{applicationCode},
             #{tenantCode}
@@ -132,10 +132,10 @@
             examination_id = #{examinationId},
         </if>
         <if test="startTime != null">
-            start_time = #{startTime},
+            start_time = #{startTime, jdbcType=TIMESTAMP, javaType=java.util.Date},
         </if>
         <if test="endTime != null">
-            end_time = #{endTime},
+            end_time = #{endTime, jdbcType=TIMESTAMP, javaType=java.util.Date},
         </if>
         <if test="score != null">
             score = #{score},
@@ -153,7 +153,7 @@
             del_flag = #{delFlag},
         </if>
         modifier = #{modifier},
-        modify_date = #{modifyDate}
+        modify_date = #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date}
         WHERE id = #{id}
     </update>
 
