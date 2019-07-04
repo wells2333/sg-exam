@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * Entity基类
@@ -33,7 +34,7 @@ public class BaseEntity<T> implements Serializable {
     /**
      * 创建日期
      */
-    protected String createDate;
+    protected Date createDate;
 
     /**
      * 更新者
@@ -43,7 +44,7 @@ public class BaseEntity<T> implements Serializable {
     /**
      * 更新日期
      */
-    protected String modifyDate;
+    protected Date modifyDate;
 
     /**
      * 删除标记 0:正常，1-删除
@@ -107,7 +108,7 @@ public class BaseEntity<T> implements Serializable {
      * @param tenantCode      租户编号
      */
     public void setCommonValue(String userCode, String applicationCode, String tenantCode) {
-        String currentDate = DateUtils.localDateToString(LocalDateTime.now());
+        Date currentDate = DateUtils.asDate(LocalDateTime.now());
         if (this.isNewRecord()) {
             this.setId(IdGen.snowflakeId());
             this.setNewRecord(true);

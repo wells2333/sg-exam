@@ -9,6 +9,7 @@ import com.github.tangyi.common.security.constant.SecurityConstant;
 import com.github.tangyi.msc.api.constant.SmsConstant;
 import com.github.tangyi.msc.api.dto.SmsDto;
 import com.github.tangyi.msc.api.feign.MscServiceClient;
+import com.github.tangyi.user.api.enums.IdentityType;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -43,7 +44,7 @@ public class MobileService {
      * @date 2019/07/02 09:36:52
      */
     public ResponseBean<Boolean> sendSms(String mobile, String tenantCode) {
-        UserVo userVo = userService.selectUserVoBySocial(mobile, tenantCode);
+        UserVo userVo = userService.findUserByIdentifier(IdentityType.PHONE_NUMBER.getValue(), mobile, tenantCode);
         if (userVo == null) {
             log.info("手机号未注册：{}", mobile);
             return new ResponseBean<>(Boolean.FALSE, "手机号未注册.");

@@ -8,7 +8,7 @@ spring:
       # 单次请求的文件的总大小
       max-request-size: 100MB
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/microservice-user?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/microservice-user?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8
     username: ${MYSQL_USERNAME:root}
     password: ${MYSQL_PASSWORD:11}
     type: com.zaxxer.hikari.HikariDataSource
@@ -89,15 +89,21 @@ fdfs:
     width: 150
     height: 150
   tracker-list:            #TrackerList参数,支持多个
-    - ${FDFS_HOST:118.25.138.130}:${FDFS_PORT:22122}
+    - ${FDFS_HOST:192.168.0.95}:${FDFS_PORT:22122}
 
 # 系统配置
 sys:
-  fdfsHttpHost: ${ATTACHMENT_HOST:http://118.25.138.130}:${ATTACHMENT_PORT:8080}  # fastDfs的HTTP配置
+  adminUser: ${ADMIN_USER:admin}  # 管理员账号，默认是admin
+  fdfsHttpHost: ${ATTACHMENT_HOST:http://192.168.0.95}:${ATTACHMENT_PORT:8080}  # fastDfs的HTTP配置
   uploadUrl: api/user/v1/attachment/upload
   defaultAvatar: https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80
 
+# feign相关配置
 feign:
+  httpclient:
+    enabled: false
+  okhttp:
+    enabled: true
   hystrix:
     enabled:  true
 
@@ -132,8 +138,7 @@ ignore:
     - /hystrix.sender
     - /v1/sms/**
     - /v1/mobile/**
-    - /v1/user/findUserByUsername/**
-    - /v1/user/findUserBySocial/**
+    - /v1/user/findUserByIdentifier/**
     - /v1/tenant/findTenantByTenantCode/**
     - /v1/menu/findMenuByRole/**
     - /v1/menu/findAllMenu

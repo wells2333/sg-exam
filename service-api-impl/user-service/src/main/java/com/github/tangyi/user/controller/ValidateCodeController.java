@@ -1,6 +1,7 @@
 package com.github.tangyi.user.controller;
 
 import com.github.tangyi.common.core.web.BaseController;
+import com.github.tangyi.common.security.constant.SecurityConstant;
 import com.github.tangyi.user.service.UserService;
 import com.google.code.kaptcha.Producer;
 import io.swagger.annotations.Api;
@@ -45,7 +46,7 @@ public class ValidateCodeController extends BaseController {
             @ApiImplicitParam(name = "tenantCode", value = "租户标识", required = true, dataType = "String")
     })
     @GetMapping("/{random}")
-    public void produceCode(@PathVariable String random, @RequestParam String tenantCode, HttpServletResponse response) throws Exception {
+    public void produceCode(@PathVariable String random, @RequestParam(required = false, defaultValue = SecurityConstant.DEFAULT_TENANT_CODE) String tenantCode, HttpServletResponse response) throws Exception {
         response.setHeader("Cache-Control", "no-store, no-cache");
         response.setContentType("image/jpeg");
         // 生成文字验证码

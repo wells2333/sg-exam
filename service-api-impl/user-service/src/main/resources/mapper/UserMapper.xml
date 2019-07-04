@@ -4,74 +4,32 @@
     <resultMap id="userResultMap" type="com.github.tangyi.user.api.module.User">
         <id column="id" property="id"/>
         <result column="name" property="name"/>
-        <result column="username" property="username"/>
-        <result column="password" property="password"/>
-        <result column="salt" property="salt"/>
         <result column="phone" property="phone"/>
         <result column="avatar_id" property="avatarId"/>
         <result column="email" property="email"/>
         <result column="sex" property="sex"/>
-        <result column="born" property="born"/>
-        <result column="remark" property="remark"/>
+        <result column="born" property="born" jdbcType="DATE" javaType="java.util.Date"/>
+        <result column="user_desc" property="userDesc"/>
         <result column="dept_id" property="deptId"/>
         <result column="status" property="status"/>
         <result column="creator" property="creator"/>
-        <result column="create_date" property="createDate"/>
+        <result column="create_date" property="createDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="modifier" property="modifier"/>
-        <result column="modify_date" property="modifyDate"/>
+        <result column="modify_date" property="modifyDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="del_flag" property="delFlag"/>
         <result column="application_code" property="applicationCode"/>
         <result column="tenant_code" property="tenantCode"/>
     </resultMap>
 
-    <resultMap id="userVoResultMap" type="com.github.tangyi.common.core.vo.UserVo">
-        <id column="id" property="id"/>
-        <result column="name" property="name"/>
-        <result column="username" property="username"/>
-        <result column="password" property="password"/>
-        <result column="salt" property="salt"/>
-        <result column="phone" property="phone"/>
-        <result column="avatar_id" property="avatarId"/>
-        <result column="email" property="email"/>
-        <result column="sex" property="sex"/>
-        <result column="born" property="born"/>
-        <result column="remark" property="remark"/>
-        <result column="dept_id" property="deptId"/>
-        <result column="status" property="status"/>
-        <result column="ucreator" property="creator"/>
-        <result column="ucreate_date" property="createDate"/>
-        <result column="umodifier" property="modifier"/>
-        <result column="umodify_date" property="modifyDate"/>
-        <result column="udel_flag" property="delFlag"/>
-        <result column="uapplication_code" property="applicationCode"/>
-        <result column="utenant_code" property="tenantCode"/>
-        <collection property="roleList" ofType="com.github.tangyi.common.core.vo.Role">
-            <id column="roleId" property="id"/>
-            <result column="role_name" property="roleName"/>
-            <result column="role_code" property="roleCode"/>
-            <result column="role_desc" property="roleDesc"/>
-            <result column="rcreator" property="creator"/>
-            <result column="rcreate_date" property="createDate"/>
-            <result column="rmodifier" property="modifier"/>
-            <result column="rmodify_date" property="modifyDate"/>
-            <result column="rdel_flag" property="delFlag"/>
-            <result column="rapplication_code" property="applicationCode"/>
-            <result column="rtenant_code" property="tenantCode"/>
-        </collection>
-    </resultMap>
-
     <sql id="userColumns">
         a.id,
         a.name,
-        a.username,
-        a.password,
-        a.salt,
         a.phone,
         a.avatar_id,
         a.email,
         a.sex,
         a.born,
-        a.remark,
+        a.user_desc,
         a.dept_id,
         a.status,
         a.creator,
@@ -86,10 +44,7 @@
     <!-- where 条件 -->
     <sql id="whereColumnList">
         <if test="name != null and name != ''">
-            and a.name like CONCAT('%', #{username},'%')
-        </if>
-        <if test="username != null and username != ''">
-            and a.username like #{username}
+            and a.name like CONCAT('%', #{name},'%')
         </if>
         <if test="born != null and born != '' ">
             and a.born like #{born}
@@ -107,55 +62,6 @@
             and a.tenant_code = #{tenantCode}
         </if>
     </sql>
-
-    <sql id="selectUserVo">
-      SELECT
-        `user`.id,
-        `user`.name,
-        `user`.username,
-        `user`.password,
-        `user`.salt,
-        `user`.phone,
-        `user`.avatar_id,
-        `user`.email,
-        `user`.sex,
-        `user`.born,
-        `user`.remark,
-        `user`.dept_id,
-        `user`.status,
-        `user`.creator as "ucreator",
-        `user`.create_date as "ucreate_date",
-        `user`.modifier as "umodifier",
-        `user`.modify_date as "umodify_date",
-        `user`.del_flag as "udel_flag",
-        `user`.application_code as "uapplication_code",
-        `user`.tenant_code as "utenant_code",
-        r.id as "roleId",
-        r.role_name,
-        r.role_code,
-        r.role_desc,
-        r.creator as "rcreator",
-        r.create_date as "rcreate_date",
-        r.modifier as "rmodifier",
-        r.modify_date as "rmodify_date",
-        r.del_flag as "rdel_flag",
-        r.application_code as "rapplication_code",
-        r.tenant_code as "rtenant_code"
-        FROM
-        sys_user  as `user`
-        LEFT JOIN sys_user_role ur ON ur.user_id = `user`.id
-        LEFT JOIN sys_role r ON r.id = ur.role_id
-    </sql>
-
-    <select id="selectUserVoByUsername" resultMap="userVoResultMap">
-        <include refid="selectUserVo"/>
-        WHERE `user`.username = #{username} and `user`.tenant_code = #{tenantCode} and `user`.del_flag = 0
-    </select>
-
-    <select id="selectUserVoBySocial" resultMap="userVoResultMap">
-        <include refid="selectUserVo"/>
-        WHERE `user`.phone = #{social} and `user`.tenant_code = #{tenantCode} and `user`.del_flag = 0
-    </select>
 
     <select id="get" resultMap="userResultMap">
         SELECT
@@ -189,18 +95,15 @@
 
     <!-- 新增用户 -->
     <insert id="insert">
-        insert  into sys_user (
+        insert into sys_user (
             id,
             name,
-            username,
-            password,
-            salt,
             phone,
             avatar_id,
             email,
             sex,
             born,
-            remark,
+            user_desc,
             dept_id,
             status,
             creator,
@@ -213,21 +116,18 @@
         ) values (
             #{id},
             #{name},
-            #{username},
-            #{password},
-            #{salt},
             #{phone},
             #{avatarId},
             #{email},
             #{sex},
-            #{born},
-            #{remark},
+            #{born, jdbcType=DATE, javaType=java.util.Date},
+            #{userDesc},
             #{deptId},
             #{status},
             #{creator},
-            #{createDate},
+            #{createDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
             #{modifier},
-            #{modifyDate},
+            #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
             #{delFlag},
             #{applicationCode},
             #{tenantCode}
@@ -239,15 +139,6 @@
         update sys_user set
         <if test="name != null">
             name = #{name} ,
-        </if>
-        <if test="username != null">
-            username = #{username} ,
-        </if>
-        <if test="password != null">
-            password = #{password} ,
-        </if>
-        <if test="salt != null">
-            salt = #{salt} ,
         </if>
         <if test="phone != null">
             phone = #{phone} ,
@@ -264,8 +155,8 @@
         <if test="born != null">
             born = #{born} ,
         </if>
-        <if test="remark != null">
-            remark = #{remark} ,
+        <if test="userDesc != null">
+            user_desc = #{userDesc} ,
         </if>
         <if test="deptId != null">
             dept_id = #{deptId} ,
@@ -286,7 +177,7 @@
             application_code = #{applicationCode} ,
         </if>
         modifier = #{modifier} ,
-        modify_date = #{modifyDate}
+        modify_date = #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date}
         where id = #{id}
     </update>
 
@@ -294,7 +185,7 @@
         update sys_user set
         del_flag = 1,
         modifier = #{modifier} ,
-        modify_date = #{modifyDate}
+        modify_date = #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date}
         where id = #{id}
     </update>
 

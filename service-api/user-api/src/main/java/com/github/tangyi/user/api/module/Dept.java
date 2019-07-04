@@ -39,10 +39,4 @@ public class Dept extends BaseEntity<Dept> {
      * 排序
      */
     private String sort;
-
-    /**
-     * 状态， 0-启用，1-禁用
-     */
-    @NotBlank(message = "部门状态不能为空")
-    private String status;
 }
