@@ -75,6 +75,7 @@
         <json.version>20140107</json.version>
         <okhttp.version>3.8.1</okhttp.version>
         <aliyun.version>4.1.0</aliyun.version>
+        <weixin.version>3.4.0</weixin.version>
 
         <!-- docker -->
         <docker.maven.verion>1.4.3</docker.maven.verion>
@@ -137,6 +138,17 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+        </dependency>
+
+        <!-- swagger -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
         </dependency>
     </dependencies>
 
@@ -267,6 +279,20 @@
                 <groupId>com.github.axet</groupId>
                 <artifactId>kaptcha</artifactId>
                 <version>${kaptcha.version}</version>
+            </dependency>
+
+            <!-- 微信小程序 -->
+            <dependency>
+                <groupId>com.github.binarywang</groupId>
+                <artifactId>weixin-java-miniapp</artifactId>
+                <version>${weixin.version}</version>
+            </dependency>
+
+            <!-- 微信支付 -->
+            <dependency>
+                <groupId>com.github.binarywang</groupId>
+                <artifactId>weixin-java-pay</artifactId>
+                <version>${weixin.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

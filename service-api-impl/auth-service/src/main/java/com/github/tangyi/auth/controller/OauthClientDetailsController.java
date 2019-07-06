@@ -72,7 +72,7 @@ public class OauthClientDetailsController extends BaseController {
      * @author tangyi
      * @date 2019/03/30 16:54
      */
-    @RequestMapping("clientList")
+    @GetMapping("clientList")
     @ApiOperation(value = "获取客户端列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
@@ -97,7 +97,7 @@ public class OauthClientDetailsController extends BaseController {
      * @author tangyi
      * @date 2019/03/30 23:17
      */
-    @RequestMapping("clients")
+    @GetMapping("clients")
     @ApiOperation(value = "查询客户端列表", notes = "查询客户端列表")
     @ApiImplicitParam(name = "oauthClient", value = "客户端实体oauthClient", required = true, dataType = "OauthClientDetails")
     public ResponseBean<List<OauthClientDetails>> findOauthClientList(@RequestBody OauthClientDetails oauthClientDetails) {

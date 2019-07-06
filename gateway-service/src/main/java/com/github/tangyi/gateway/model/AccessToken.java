@@ -26,11 +26,6 @@ public class AccessToken implements Serializable {
     private String accessToken;
 
     /**
-     * 创建时间
-     */
-    private Integer createTime;
-
-    /**
      * 超时时间
      */
     @JsonProperty("expires_in")

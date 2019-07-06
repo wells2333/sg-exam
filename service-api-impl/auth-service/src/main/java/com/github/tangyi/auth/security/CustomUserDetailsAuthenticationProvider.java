@@ -70,7 +70,7 @@ public class CustomUserDetailsAuthenticationProvider extends AbstractUserDetails
         UserDetails loadedUser;
         try {
             // 加载用户信息
-            loadedUser = this.userDetailsService.loadUserByUsernameAndTenantCode(authentication.getPrincipal().toString(), TenantContextHolder.getTenantCode());
+            loadedUser = this.userDetailsService.loadUserByIdentifierAndTenantCode(authentication.getPrincipal().toString(), TenantContextHolder.getTenantCode());
         } catch (TenantNotFoundException tenantNotFound) {
             throw tenantNotFound;
         } catch (UsernameNotFoundException notFound) {

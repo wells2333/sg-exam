@@ -73,4 +73,44 @@ public class User extends BaseEntity<User> {
      * 角色
      */
     private List<String> role;
+
+    /**
+     * 引导注册人
+     */
+    private String parentUid;
+
+    /**
+     * 乡/镇
+     */
+    private String streetId;
+
+    /**
+     * 县
+     */
+    private String countyId;
+
+    /**
+     * 城市
+     */
+    private String cityId;
+
+    /**
+     * 省份
+     */
+    private String provinceId;
+
+    /**
+     * 最近登录时间
+     */
+    private Date loginTime;
+
+    /**
+     * 用户归档时间
+     */
+    private Date lockTime;
+
+    /**
+     * 微信
+     */
+    private String wechat;
 }

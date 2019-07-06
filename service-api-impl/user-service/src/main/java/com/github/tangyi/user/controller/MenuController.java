@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.model.ResponseBean;
+import com.github.tangyi.common.core.properties.SysProperties;
 import com.github.tangyi.common.core.utils.*;
 import com.github.tangyi.common.core.vo.MenuVo;
 import com.github.tangyi.common.core.web.BaseController;
@@ -14,7 +15,6 @@ import com.github.tangyi.user.api.constant.MenuConstant;
 import com.github.tangyi.user.api.dto.MenuDto;
 import com.github.tangyi.user.api.module.Menu;
 import com.github.tangyi.user.api.module.Role;
-import com.github.tangyi.user.config.SysConfig;
 import com.github.tangyi.user.service.MenuService;
 import com.github.tangyi.user.utils.MenuUtil;
 import com.google.common.collect.Lists;
@@ -55,7 +55,7 @@ public class MenuController extends BaseController {
 
     private final MenuService menuService;
 
-    private final SysConfig sysConfig;
+    private final SysProperties sysProperties;
 
     /**
      * 返回当前用户的树形菜单集合
@@ -69,7 +69,7 @@ public class MenuController extends BaseController {
         String tenantCode = SysUtil.getTenantCode(), identifier = SysUtil.getUser();
         List<Menu> userMenus;
         // 超级管理员
-        if (identifier.equals(sysConfig.getAdminUser())) {
+        if (identifier.equals(sysProperties.getAdminUser())) {
             // 获取角色的菜单
             Menu menu = new Menu();
             menu.setTenantCode(tenantCode);
@@ -209,7 +209,7 @@ public class MenuController extends BaseController {
      * @author tangyi
      * @date 2018/8/26 23:17
      */
-    @RequestMapping("menuList")
+    @GetMapping("menuList")
     @ApiOperation(value = "获取菜单列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
@@ -324,7 +324,7 @@ public class MenuController extends BaseController {
      * @author tangyi
      * @date 2018/11/28 12:51
      */
-    @RequestMapping("import")
+    @PostMapping("import")
     @PreAuthorize("hasAuthority('sys:menu:import') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "导入菜单", notes = "导入菜单")
     @Log("导入菜单")

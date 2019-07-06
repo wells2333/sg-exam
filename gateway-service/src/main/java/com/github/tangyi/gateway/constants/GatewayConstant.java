@@ -17,6 +17,11 @@ public class GatewayConstant {
     public static final String MOBILE_TOKEN_URL = "/mobile/token";
 
     /**
+     * 微信登录URL
+     */
+    public static final String WX_TOKEN_URL = "/wx/token";
+    
+    /**
      * 注册
      */
     public static final String REGISTER = "/user/register";

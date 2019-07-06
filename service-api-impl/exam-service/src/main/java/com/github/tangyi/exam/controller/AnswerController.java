@@ -73,7 +73,7 @@ public class AnswerController extends BaseController {
      * @author tangyi
      * @date 2018/11/10 21:25
      */
-    @RequestMapping("answerList")
+    @GetMapping("answerList")
     @ApiOperation(value = "获取答题列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),

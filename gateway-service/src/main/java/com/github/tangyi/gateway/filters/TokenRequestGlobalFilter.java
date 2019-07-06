@@ -25,7 +25,6 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -64,54 +63,79 @@ public class TokenRequestGlobalFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         // 当前请求
         ServerHttpRequest request = exchange.getRequest();
-        // 请求的URI
-        URI uri = request.getURI();
-        if (HttpMethod.POST.matches(request.getMethodValue())
-                && StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.OAUTH_TOKEN_URL, GatewayConstant.REGISTER, GatewayConstant.MOBILE_TOKEN_URL)) {
+        if (match(request)) {
             String grantType = request.getQueryParams().getFirst(GatewayConstant.GRANT_TYPE);
-            // 授权类型为密码、手机号模式
-            if (CommonConstant.GRANT_TYPE_PASSWORD.equals(grantType) || CommonConstant.GRANT_TYPE_MOBILE.equals(grantType) || GatewayConstant.GRANT_TYPE_REFRESH_TOKEN.equals(grantType)) {
-                // 装饰器
-                ServerHttpResponseDecorator decoratedResponse = new ServerHttpResponseDecorator(exchange.getResponse()) {
-                    @Override
-                    public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
-                        if (getStatusCode() != null && getStatusCode().equals(HttpStatus.OK) && body instanceof Flux) {
-                            Flux<? extends DataBuffer> fluxBody = Flux.from(body);
-                            return super.writeWith(fluxBody.buffer().map(dataBuffers -> {
-                                long start = System.currentTimeMillis();
-                                List<String> contentList = Lists.newArrayList();
-                                dataBuffers.forEach(dataBuffer -> {
-                                    byte[] content = new byte[dataBuffer.readableByteCount()];
-                                    dataBuffer.read(content);
-                                    // 释放缓存
-                                    DataBufferUtils.release(dataBuffer);
-                                    contentList.add(new String(content, StandardCharsets.UTF_8));
-                                });
-                                // 因为返回的数据量大时，获取到的buffer是不完整的，所以需要连接多个buffer
-                                String accessTokenContent = joiner.join(contentList);
-                                log.trace("生成的accessToken: {}", accessTokenContent);
-                                AccessToken accessToken = JsonMapper.getInstance().fromJson(accessTokenContent, AccessToken.class);
-                                if (accessToken == null || StringUtils.isBlank(accessToken.getJti()))
-                                    throw new InvalidAccessTokenException("token转换失败！");
-                                // 真正的access_token和refresh_token
-                                String realAccessToken = accessToken.getAccessToken(), realRefreshToken = accessToken.getRefreshToken();
-                                // 转换token
-                                String converted = JsonMapper.getInstance().toJson(accessToken);
-                                log.trace("转换token结果：{}", converted);
-                                // 将真正的access_token，refresh_token存入Redis，建立jti->access_token的映射关系，失效时间为token的失效时间
-                                // 暂时用Redis
-                                redisTemplate.opsForValue().set(GatewayConstant.GATEWAY_ACCESS_TOKENS + accessToken.getJti(), realAccessToken, accessToken.getExpiresIn(), TimeUnit.SECONDS);
-                                redisTemplate.opsForValue().set(GatewayConstant.GATEWAY_REFRESH_TOKENS + accessToken.getJti(), realRefreshToken, REFRESH_TOKEN_EXPIRE, TimeUnit.SECONDS);
-                                log.trace("转换token和建立映射关系成功，耗时：{}ms", System.currentTimeMillis() - start);
-                                return bufferFactory().wrap(converted.getBytes());
-                            }));
-                        }
-                        return super.writeWith(body);
-                    }
-                };
-                return chain.filter(exchange.mutate().response(decoratedResponse).build());
+            // 授权类型为密码、手机号、微信openId
+            if (matchGrantType(grantType)) {
+                return chain.filter(exchange.mutate().response(responseDecorator(exchange)).build());
             }
         }
         return chain.filter(exchange);
+    }
+
+    /**
+     * 修改响应体
+     *
+     * @param exchange exchange
+     * @return ServerHttpResponseDecorator
+     */
+    private ServerHttpResponseDecorator responseDecorator(ServerWebExchange exchange) {
+        // 装饰器
+        return new ServerHttpResponseDecorator(exchange.getResponse()) {
+            @Override
+            public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
+                if (getStatusCode() != null && getStatusCode().equals(HttpStatus.OK) && body instanceof Flux) {
+                    Flux<? extends DataBuffer> fluxBody = Flux.from(body);
+                    return super.writeWith(fluxBody.buffer().map(dataBuffers -> {
+                        long start = System.currentTimeMillis();
+                        List<String> contentList = Lists.newArrayList();
+                        dataBuffers.forEach(dataBuffer -> {
+                            byte[] content = new byte[dataBuffer.readableByteCount()];
+                            dataBuffer.read(content);
+                            // 释放缓存
+                            DataBufferUtils.release(dataBuffer);
+                            contentList.add(new String(content, StandardCharsets.UTF_8));
+                        });
+                        // 因为返回的数据量大时，获取到的buffer是不完整的，所以需要连接多个buffer
+                        String accessTokenContent = joiner.join(contentList);
+                        AccessToken accessToken = JsonMapper.getInstance().fromJson(accessTokenContent, AccessToken.class);
+                        if (accessToken == null || StringUtils.isBlank(accessToken.getJti()))
+                            throw new InvalidAccessTokenException("token转换失败！");
+                        // 真正的access_token和refresh_token
+                        String realAccessToken = accessToken.getAccessToken(), realRefreshToken = accessToken.getRefreshToken();
+                        // 转换token
+                        String converted = JsonMapper.getInstance().toJson(accessToken);
+                        // 将真正的access_token，refresh_token存入Redis，建立jti->access_token的映射关系，失效时间为token的失效时间
+                        // 暂时用Redis
+                        redisTemplate.opsForValue().set(GatewayConstant.GATEWAY_ACCESS_TOKENS + accessToken.getJti(), realAccessToken, accessToken.getExpiresIn(), TimeUnit.SECONDS);
+                        redisTemplate.opsForValue().set(GatewayConstant.GATEWAY_REFRESH_TOKENS + accessToken.getJti(), realRefreshToken, REFRESH_TOKEN_EXPIRE, TimeUnit.SECONDS);
+                        log.debug("转换token和建立映射关系成功，耗时：{}ms", System.currentTimeMillis() - start);
+                        return bufferFactory().wrap(converted.getBytes());
+                    }));
+                }
+                return super.writeWith(body);
+            }
+        };
+    }
+
+    /**
+     * 是否过滤
+     *
+     * @param request request
+     * @return boolean
+     */
+    private boolean match(ServerHttpRequest request) {
+        return HttpMethod.POST.matches(request.getMethodValue())
+                && StrUtil.containsAnyIgnoreCase(request.getURI().getPath(), GatewayConstant.OAUTH_TOKEN_URL, GatewayConstant.MOBILE_TOKEN_URL, GatewayConstant.WX_TOKEN_URL);
+    }
+
+    /**
+     * 需要过滤的授权类型
+     *
+     * @param grantType grantType
+     * @return boolean
+     */
+    private boolean matchGrantType(String grantType) {
+        return CommonConstant.GRANT_TYPE_PASSWORD.equals(grantType) || CommonConstant.GRANT_TYPE_MOBILE.equals(grantType) || CommonConstant.GRANT_TYPE_WX.equals(grantType) || GatewayConstant.GRANT_TYPE_REFRESH_TOKEN.equals(grantType);
     }
 }

@@ -5,6 +5,7 @@ import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.vo.AttachmentVo;
 import com.github.tangyi.common.core.vo.DeptVo;
 import com.github.tangyi.common.core.vo.UserVo;
+import com.github.tangyi.user.api.dto.UserDto;
 import com.github.tangyi.user.api.dto.UserInfoDto;
 import com.github.tangyi.user.api.feign.UserServiceClient;
 import com.github.tangyi.user.api.module.Menu;
@@ -39,6 +40,20 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
     @Override
     public UserVo findUserByIdentifier(String identifier, String tenantCode) {
         log.error("feign 查询用户信息失败:{}, {}, {}", tenantCode, identifier, throwable);
+        return null;
+    }
+
+    /**
+     * 根据用户名查询用户信息
+     *
+     * @param identifier   identifier
+     * @param identityType identityType
+     * @param tenantCode   租户标识
+     * @return UserVo
+     */
+    @Override
+    public UserVo findUserByIdentifier(String identifier, Integer identityType, String tenantCode) {
+        log.error("feign 查询用户信息失败:{}, {}, {}, {}", tenantCode, identityType, identifier, throwable);
         return null;
     }
 
@@ -172,6 +187,30 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
     @Override
     public UserVo findUserBySocial(String social, String tenantCode) {
         log.error("feign 根据社交账号获取用户详细信息失败, {}, {}, {}", social, tenantCode, throwable);
+        return null;
+    }
+
+    /**
+     * 注册用户
+     *
+     * @param userDto userDto
+     * @return ResponseBean
+     */
+    @Override
+    public ResponseBean<Boolean> registerUser(UserDto userDto) {
+        log.error("feign 注册用户失败, {}, {}, {}", userDto.getIdentityType(), userDto.getIdentifier(), throwable);
+        return null;
+    }
+
+    /**
+     * 更新用户
+     *
+     * @param userDto userDto
+     * @return ResponseBean
+     */
+    @Override
+    public ResponseBean<Boolean> updateUser(UserDto userDto) {
+        log.error("feign 更新用户失败, {}, {}, {}", userDto.getIdentityType(), userDto.getIdentifier(), throwable);
         return null;
     }
 

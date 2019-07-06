@@ -83,15 +83,10 @@
             <artifactId>mybatis-spring-boot-starter</artifactId>
         </dependency>
 
-        <!-- swagger -->
+        <!-- 微信小程序 -->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>weixin-java-miniapp</artifactId>
         </dependency>
     </dependencies>
 

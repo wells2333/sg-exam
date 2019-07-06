@@ -42,6 +42,11 @@ public class SecurityConstant {
     public static final String MOBILE_TOKEN_URL = "/mobile/token";
 
     /**
+     * 微信登录URL
+     */
+    public static final String WX_TOKEN_URL = "/wx/token";
+
+    /**
      * 租户编号请求头
      */
     public static final String TENANT_CODE_HEADER = "Tenant-Code";
