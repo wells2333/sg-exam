@@ -3,19 +3,20 @@ package com.github.tangyi.user.service;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.enums.LoginType;
 import com.github.tangyi.common.core.exceptions.CommonException;
+import com.github.tangyi.common.core.properties.SysProperties;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.DateUtils;
 import com.github.tangyi.common.core.utils.IdGen;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.security.constant.SecurityConstant;
+import com.github.tangyi.user.api.constant.AttachmentConstant;
 import com.github.tangyi.user.api.constant.MenuConstant;
 import com.github.tangyi.user.api.constant.RoleConstant;
 import com.github.tangyi.user.api.dto.UserDto;
 import com.github.tangyi.user.api.dto.UserInfoDto;
 import com.github.tangyi.user.api.enums.IdentityType;
 import com.github.tangyi.user.api.module.*;
-import com.github.tangyi.user.config.SysConfig;
 import com.github.tangyi.user.mapper.RoleMapper;
 import com.github.tangyi.user.mapper.UserMapper;
 import com.github.tangyi.user.mapper.UserRoleMapper;
@@ -66,7 +67,7 @@ public class UserService extends CrudService<UserMapper, User> {
 
     private final AttachmentService attachmentService;
 
-    private final SysConfig sysConfig;
+    private final SysProperties sysProperties;
 
     private final UserAuthsService userAuthsService;
 
@@ -503,7 +504,7 @@ public class UserService extends CrudService<UserMapper, User> {
                 attachment.setId(user.getAvatarId());
                 userInfoDto.setAvatarUrl(attachmentService.getPreviewUrl(attachment));
             } else {
-                userInfoDto.setAvatarUrl(sysConfig.getDefaultAvatar());
+                userInfoDto.setAvatarUrl(sysProperties.getDefaultAvatar());
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -521,7 +522,6 @@ public class UserService extends CrudService<UserMapper, User> {
     @Transactional
     @CacheEvict(value = "user", key = "#userDto.identifier")
     public boolean resetPassword(UserDto userDto) {
-        userDto.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
         UserAuths userAuths = new UserAuths();
         userAuths.setIdentifier(userDto.getIdentifier());
         userAuths = userAuthsService.getByIdentifier(userAuths);
@@ -533,7 +533,7 @@ public class UserService extends CrudService<UserMapper, User> {
     }
 
     /**
-     * 注册
+     * 注册，注意要清除缓存
      *
      * @param userDto userDto
      * @return boolean
@@ -541,16 +541,25 @@ public class UserService extends CrudService<UserMapper, User> {
      * @date 2019/07/03 13:30:03
      */
     @Transactional
+    @CacheEvict(value = "user", key = "#userDto.identifier")
     public boolean register(UserDto userDto) {
         boolean success = false;
+        // 解密
+        String password = this.decryptCredential(userDto.getCredential(), userDto.getIdentityType());
         User user = new User();
         BeanUtils.copyProperties(userDto, user);
         // 初始化用户名，系统编号，租户编号
         user.setCommonValue(userDto.getIdentifier(), SysUtil.getSysCode(), SysUtil.getTenantCode());
-        // 设置默认密码
-        if (StringUtils.isEmpty(userDto.getCredential()))
-            userDto.setCredential(CommonConstant.DEFAULT_PASSWORD);
         user.setStatus(CommonConstant.DEL_FLAG_NORMAL);
+        // 初始化头像
+        if (StringUtils.isNotBlank(userDto.getAvatarUrl())) {
+            Attachment attachment = new Attachment();
+            attachment.setCommonValue(userDto.getIdentifier(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+            attachment.setBusiType(AttachmentConstant.BUSI_TYPE_USER_AVATAR);
+            attachment.setPreviewUrl(userDto.getAvatarUrl());
+            if (attachmentService.insert(attachment) > 0)
+                user.setAvatarId(attachment.getId());
+        }
         // 保存用户基本信息
         if (this.insert(user) > 0) {
             // 保存账号信息
@@ -558,15 +567,41 @@ public class UserService extends CrudService<UserMapper, User> {
             userAuths.setCommonValue(userDto.getIdentifier(), user.getApplicationCode(), user.getTenantCode());
             userAuths.setUserId(user.getId());
             userAuths.setIdentifier(userDto.getIdentifier());
-            if (userDto.getIdentityType() == null)
-                userAuths.setIdentityType(IdentityType.PASSWORD.getValue());
-            // 设置密码，授权类型默认
-            userAuths.setCredential(encoder.encode(userDto.getCredential()));
+            if (userDto.getIdentityType() != null)
+                userAuths.setIdentityType(userDto.getIdentityType());
+            // 设置密码
+            userAuths.setCredential(encoder.encode(password));
             userAuthsService.insert(userAuths);
             // 分配默认角色
             success = this.defaultRole(user, userDto.getTenantCode(), userDto.getIdentifier());
         }
         return success;
+    }
+
+    /**
+     * 解密密码
+     *
+     * @param encoded encoded
+     * @return String
+     * @author tangyi
+     * @date 2019/07/05 12:39:13
+     */
+    private String decryptCredential(String encoded, Integer identityType) {
+        // 返回默认密码
+        if (StringUtils.isBlank(encoded))
+            return CommonConstant.DEFAULT_PASSWORD;
+        // 微信注册不需要解密
+        if (IdentityType.WE_CHAT.getValue().equals(identityType))
+            return encoded;
+        // 解密密码
+        try {
+            encoded = SysUtil.decryptAES(encoded, sysProperties.getKey()).trim();
+            log.info("密码解密结果：{}", encoded);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new CommonException("注册失败，密码非法.");
+        }
+        return encoded;
     }
 
     /**

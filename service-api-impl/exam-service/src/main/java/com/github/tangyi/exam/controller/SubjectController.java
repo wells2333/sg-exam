@@ -80,7 +80,7 @@ public class SubjectController extends BaseController {
      * @author tangyi
      * @date 2018/11/10 21:43
      */
-    @RequestMapping("subjectList")
+    @GetMapping("subjectList")
     @ApiOperation(value = "获取题目列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),

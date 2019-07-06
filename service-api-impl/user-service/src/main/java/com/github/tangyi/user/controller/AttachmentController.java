@@ -76,7 +76,7 @@ public class AttachmentController extends BaseController {
      * @author tangyi
      * @date 2018/10/30 21:05
      */
-    @RequestMapping("attachmentList")
+    @GetMapping("attachmentList")
     @ApiOperation(value = "获取附件列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
@@ -102,7 +102,7 @@ public class AttachmentController extends BaseController {
      * @author tangyi
      * @date 2018/10/30 21:54
      */
-    @RequestMapping("upload")
+    @PostMapping("upload")
     @ApiOperation(value = "上传文件", notes = "上传文件")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "busiType", value = "业务分类", dataType = "String"),
@@ -124,7 +124,7 @@ public class AttachmentController extends BaseController {
      * @author tangyi
      * @date 2018/10/30 22:26
      */
-    @RequestMapping("download")
+    @GetMapping("download")
     @ApiOperation(value = "下载附件", notes = "根据ID下载附件")
     @ApiImplicitParam(name = "id", value = "附件ID", required = true, dataType = "String")
     public void download(@NotBlank String id, HttpServletRequest request, HttpServletResponse response) {
@@ -207,7 +207,7 @@ public class AttachmentController extends BaseController {
      * @author tangyi
      * @date 2019/01/01 22:16
      */
-    @RequestMapping(value = "findById", method = RequestMethod.POST)
+    @PostMapping(value = "findById")
     @ApiOperation(value = "批量查询附件信息", notes = "根据附件ID批量查询附件信息")
     @ApiImplicitParam(name = "attachmentVo", value = "附件信息", dataType = "AttachmentVo")
     public ResponseBean<List<AttachmentVo>> findById(@RequestBody AttachmentVo attachmentVo) {

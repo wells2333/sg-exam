@@ -13,7 +13,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * 手机登录配置，配置
+ * 手机登录配置
  *
  * @author tangyi
  * @date 2019/6/22 21:26

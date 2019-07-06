@@ -30,6 +30,8 @@ public class CustomTokenConverter extends JwtAccessTokenConverter {
             additionalInfo.put("loginType", LoginType.PWD.getType());
         } else if (grantType.equalsIgnoreCase(CommonConstant.GRANT_TYPE_MOBILE)) {
             additionalInfo.put("loginType", LoginType.SMS.getType());
+        } else if (grantType.equalsIgnoreCase(LoginType.WECHAT.getType())) {
+            additionalInfo.put("loginType", LoginType.WECHAT.getType());
         }
         ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
         return super.enhance(accessToken, authentication);

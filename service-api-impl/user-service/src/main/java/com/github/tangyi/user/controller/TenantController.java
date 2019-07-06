@@ -80,7 +80,7 @@ public class TenantController extends BaseController {
      * @author tangyi
      * @date 2019/05/22 23:29
      */
-    @RequestMapping("tenantList")
+    @GetMapping("tenantList")
     @ApiOperation(value = "获取租户列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),

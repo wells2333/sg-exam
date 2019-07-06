@@ -1,19 +1,17 @@
-package com.github.tangyi.user.config;
+package com.github.tangyi.common.core.dto;
 
 import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
 
 /**
- * 附件配置
- *
  * @author tangyi
- * @date 2019-02-24 20:06
+ * @date 2019/07/05 15:05
  */
 @Data
-@Component
-@ConfigurationProperties(prefix = "sys")
-public class SysConfig {
+public class SysConfigDto implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * fastDfs服务器的HTTP地址

@@ -75,7 +75,7 @@ public class KnowledgeController extends BaseController {
      * @author tangyi
      * @date 2019/1/1 15:15
      */
-    @RequestMapping("knowledgeList")
+    @GetMapping("knowledgeList")
     @ApiOperation(value = "获取知识列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),

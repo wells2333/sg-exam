@@ -7,6 +7,7 @@ import com.github.tangyi.common.core.vo.AttachmentVo;
 import com.github.tangyi.common.core.vo.DeptVo;
 import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.feign.config.CustomFeignConfig;
+import com.github.tangyi.user.api.dto.UserDto;
 import com.github.tangyi.user.api.dto.UserInfoDto;
 import com.github.tangyi.user.api.feign.factory.UserServiceClientFallbackFactory;
 import com.github.tangyi.user.api.module.Menu;
@@ -36,6 +37,20 @@ public interface UserServiceClient {
      */
     @GetMapping("/v1/user/findUserByIdentifier/{identifier}")
     UserVo findUserByIdentifier(@PathVariable("identifier") String identifier, @RequestParam("tenantCode") String tenantCode);
+
+    /**
+     * 根据用户名获取用户详细信息
+     *
+     * @param identifier   identifier
+     * @param identityType identityType
+     * @param tenantCode   租户标识
+     * @return UserVo
+     * @author tangyi
+     * @date 2019/07/06 14:14:11
+     */
+    @GetMapping("/v1/user/findUserByIdentifier/{identifier}")
+    UserVo findUserByIdentifier(@PathVariable("identifier") String identifier, @RequestParam(required = false) Integer identityType, @RequestParam("tenantCode") String tenantCode);
+
 
     /**
      * 获取当前用户的信息
@@ -152,4 +167,26 @@ public interface UserServiceClient {
      */
     @GetMapping("/v1/user/findUserBySocial/{social}")
     UserVo findUserBySocial(@PathVariable("social") String social, @RequestParam("tenantCode") String tenantCode);
+
+    /**
+     * 注册用户
+     *
+     * @param userDto userDto
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/07/05 20:57:31
+     */
+    @PostMapping("/v1/user/register")
+    ResponseBean<Boolean> registerUser(@RequestBody UserDto userDto);
+
+    /**
+     * 更新用户
+     *
+     * @param userDto userDto
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/07/05 20:59:06
+     */
+    @PutMapping("/v1/user")
+    ResponseBean<Boolean> updateUser(UserDto userDto);
 }

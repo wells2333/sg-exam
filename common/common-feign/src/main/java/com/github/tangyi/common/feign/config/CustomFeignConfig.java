@@ -12,7 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 服务间调用携带authorization请求头
+ * 服务间调用携带Authorization、Tenant-Code请求头
  *
  * @author tangyi
  * @date 2019-03-15 14:14
@@ -22,11 +22,14 @@ public class CustomFeignConfig implements RequestInterceptor {
 
     private static final String TOKEN_HEADER = "authorization";
 
+    private static final String TENANT_HEADER = "Tenant-Code";
+
     @Override
     public void apply(RequestTemplate requestTemplate) {
         HttpServletRequest request = getHttpServletRequest();
         if (request != null) {
             requestTemplate.header(TOKEN_HEADER, getHeaders(request).get(TOKEN_HEADER));
+            requestTemplate.header(TENANT_HEADER, getHeaders(request).get(TENANT_HEADER));
         }
     }
 

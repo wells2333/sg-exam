@@ -66,7 +66,7 @@ public class CourseController extends BaseController {
      * @author tangyi
      * @date 2018/11/10 21:30
      */
-    @RequestMapping("courseList")
+    @GetMapping("courseList")
     @ApiOperation(value = "获取课程列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
