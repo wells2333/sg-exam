@@ -1,5 +1,6 @@
 package com.github.tangyi.user.utils;
 
+import com.github.tangyi.common.core.properties.SysProperties;
 import com.github.tangyi.common.core.utils.SpringContextHolder;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.vo.RoleVo;
@@ -7,7 +8,6 @@ import com.github.tangyi.user.api.dto.UserInfoDto;
 import com.github.tangyi.user.api.module.Role;
 import com.github.tangyi.user.api.module.User;
 import com.github.tangyi.user.api.module.UserAuths;
-import com.github.tangyi.user.config.SysConfig;
 import org.springframework.beans.BeanUtils;
 
 import java.util.LinkedHashMap;
@@ -89,8 +89,8 @@ public class UserUtils {
      * @date 2019/07/04 00:25:11
      */
     public static boolean isAdmin(String identifier) {
-        SysConfig sysConfig = SpringContextHolder.getApplicationContext().getBean(SysConfig.class);
-        return identifier.equals(sysConfig.getAdminUser());
+        SysProperties sysProperties = SpringContextHolder.getApplicationContext().getBean(SysProperties.class);
+        return identifier.equals(sysProperties.getAdminUser());
     }
 
     /**

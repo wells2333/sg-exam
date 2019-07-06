@@ -12,6 +12,14 @@
         <result column="user_desc" property="userDesc"/>
         <result column="dept_id" property="deptId"/>
         <result column="status" property="status"/>
+        <result column="parent_uid" property="parentUid"/>
+        <result column="street_id" property="streetId"/>
+        <result column="county_id" property="countyId"/>
+        <result column="city_id" property="cityId"/>
+        <result column="province_id" property="provinceId"/>
+        <result column="login_time" property="loginTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="lock_time" property="lockTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="wechat" property="wechat"/>
         <result column="creator" property="creator"/>
         <result column="create_date" property="createDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="modifier" property="modifier"/>
@@ -32,6 +40,14 @@
         a.user_desc,
         a.dept_id,
         a.status,
+        a.parent_uid,
+        a.street_id,
+        a.county_id,
+        a.city_id,
+        a.province_id,
+        a.login_time,
+        a.lock_time,
+        a.wechat,
         a.creator,
         a.create_date,
         a.modifier,
@@ -106,6 +122,14 @@
             user_desc,
             dept_id,
             status,
+            parent_uid,
+            street_id,
+            county_id,
+            city_id,
+            province_id,
+            login_time,
+            lock_time,
+            wechat,
             creator,
             create_date,
             modifier,
@@ -124,6 +148,14 @@
             #{userDesc},
             #{deptId},
             #{status},
+            #{parentUid},
+            #{streetId},
+            #{countyId},
+            #{cityId},
+            #{provinceId},
+            #{loginTime, jdbcType=TIMESTAMP, javaType=java.util.Date},
+            #{lockTime, jdbcType=TIMESTAMP, javaType=java.util.Date},
+            #{wechat},
             #{creator},
             #{createDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
             #{modifier},
@@ -164,6 +196,30 @@
         <if test="status != null">
             status = #{status} ,
         </if>
+        <if test="parentUid != null">
+            parent_uid = #{parentUid} ,
+        </if>
+        <if test="streetId != null">
+            street_id = #{streetId} ,
+        </if>
+        <if test="countyId != null">
+            county_id = #{countyId} ,
+        </if>
+        <if test="cityId != null">
+            city_id = #{cityId} ,
+        </if>
+        <if test="provinceId != null">
+            province_id = #{provinceId} ,
+        </if>
+        <if test="loginTime != null">
+            login_time = #{loginTime, jdbcType=TIMESTAMP, javaType=java.util.Date} ,
+        </if>
+        <if test="lockTime != null">
+            lock_time = #{lockTime, jdbcType=TIMESTAMP, javaType=java.util.Date} ,
+        </if>
+        <if test="wechat != null">
+            wechat = #{wechat} ,
+        </if>
         <if test="creator != null">
             creator = #{creator} ,
         </if>
@@ -182,17 +238,12 @@
     </update>
 
     <update id="delete">
-        update sys_user set
-        del_flag = 1,
-        modifier = #{modifier} ,
-        modify_date = #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date}
-        where id = #{id}
+        DELETE FROM sys_user WHERE id = #{id}
     </update>
 
     <delete id="deleteAll">
-        update sys_user SET
-        del_flag = 1
-        where id in
+        DELETE FROM sys_user
+        WHERE id in
         <foreach item="item" index="index" collection="array" open="("
                  separator="," close=")">#{item}
         </foreach>

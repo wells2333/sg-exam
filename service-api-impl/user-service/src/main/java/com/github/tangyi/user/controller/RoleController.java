@@ -75,7 +75,7 @@ public class RoleController extends BaseController {
      * @author tangyi
      * @date 2018/10/24 22:13
      */
-    @RequestMapping("roleList")
+    @GetMapping("roleList")
     @ApiOperation(value = "获取角色列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
@@ -101,7 +101,7 @@ public class RoleController extends BaseController {
      * @author tangyi
      * @date 2019/05/15 23:29
      */
-    @RequestMapping("allRoles")
+    @GetMapping("allRoles")
     @ApiOperation(value = "获取全部角色列表")
     @ApiImplicitParam(name = "role", value = "角色信息", dataType = "RoleVo")
     public ResponseBean<List<Role>> allRoles(Role role) {

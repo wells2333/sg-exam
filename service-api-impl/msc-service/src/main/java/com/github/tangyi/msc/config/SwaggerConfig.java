@@ -1,5 +1,6 @@
 package com.github.tangyi.msc.config;
 
+import com.github.tangyi.common.security.constant.SecurityConstant;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,31 +49,32 @@ public class SwaggerConfig implements WebMvcConfigurer {
 
     /**
      * Authorization 请求头
+     *
      * @return Parameter
      */
     private Parameter authorizationParameter() {
         ParameterBuilder tokenBuilder = new ParameterBuilder();
         tokenBuilder.name("Authorization")
-                .defaultValue("bearer authorization参数")
-                .description("令牌")
+                .description("access_token")
                 .modelRef(new ModelRef("string"))
                 .parameterType("header")
-                .required(true).build();
+                .required(false).build();
         return tokenBuilder.build();
     }
 
     /**
      * Tenant-Code 请求头
+     *
      * @return Parameter
      */
     private Parameter tenantCodeParameter() {
         ParameterBuilder tokenBuilder = new ParameterBuilder();
         tokenBuilder.name("Tenant-Code")
-                .defaultValue("租户标识")
+                .defaultValue(SecurityConstant.DEFAULT_TENANT_CODE)
                 .description("租户标识")
                 .modelRef(new ModelRef("string"))
                 .parameterType("header")
-                .required(true).build();
+                .required(false).build();
         return tokenBuilder.build();
     }
 

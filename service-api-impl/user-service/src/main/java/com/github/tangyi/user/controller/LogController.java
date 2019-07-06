@@ -68,7 +68,7 @@ public class LogController extends BaseController {
      * @author tangyi
      * @date 2018/10/24 0024 22:13
      */
-    @RequestMapping("logList")
+    @GetMapping("logList")
     @ApiOperation(value = "获取日志列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),

@@ -97,6 +97,7 @@ sys:
   fdfsHttpHost: ${ATTACHMENT_HOST:http://192.168.0.95}:${ATTACHMENT_PORT:8080}  # fastDfs的HTTP配置
   uploadUrl: api/user/v1/attachment/upload
   defaultAvatar: https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80
+  key: '1234567887654321'
 
 # feign相关配置
 feign:
