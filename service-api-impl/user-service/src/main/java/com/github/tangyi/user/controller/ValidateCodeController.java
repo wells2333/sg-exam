@@ -42,8 +42,7 @@ public class ValidateCodeController extends BaseController {
      */
     @ApiOperation(value = "生成验证码", notes = "生成验证码")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "random", value = "随机数", required = true, dataType = "String", paramType = "path"),
-            @ApiImplicitParam(name = "tenantCode", value = "租户标识", required = true, dataType = "String")
+            @ApiImplicitParam(name = "random", value = "随机数", required = true, dataType = "String", paramType = "path")
     })
     @GetMapping("/{random}")
     public void produceCode(@PathVariable String random, @RequestParam(required = false, defaultValue = SecurityConstant.DEFAULT_TENANT_CODE) String tenantCode, HttpServletResponse response) throws Exception {

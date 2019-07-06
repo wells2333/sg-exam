@@ -118,7 +118,7 @@ public class UserController extends BaseController {
      * @author tangyi
      * @date 2018/8/26 22:56
      */
-    @RequestMapping("userList")
+    @GetMapping("userList")
     @ApiOperation(value = "获取用户列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
@@ -331,7 +331,7 @@ public class UserController extends BaseController {
      * @author tangyi
      * @date 2018/11/28 12:44
      */
-    @RequestMapping("import")
+    @PostMapping("import")
     @PreAuthorize("hasAuthority('sys:user:import') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "导入数据", notes = "导入数据")
     @Log("导入用户")
@@ -382,7 +382,7 @@ public class UserController extends BaseController {
      * @author tangyi
      * @date 2018/12/31 21:16
      */
-    @RequestMapping(value = "findById", method = RequestMethod.POST)
+    @PostMapping(value = "findById")
     @ApiOperation(value = "根据ID查询用户", notes = "根据ID查询用户")
     @ApiImplicitParam(name = "userVo", value = "用户信息", required = true, paramType = "UserVo")
     public ResponseBean<List<UserVo>> findById(@RequestBody UserVo userVo) {
@@ -398,10 +398,15 @@ public class UserController extends BaseController {
      * @date 2019/01/10 22:35
      */
     @ApiOperation(value = "注册", notes = "注册")
-    @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "grant_type", value = "授权类型（password、mobile）", required = true, defaultValue = "password", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "code", value = "验证码", required = true, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "randomStr", value = "随机数", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "mobile", value = "手机号", dataType = "String", paramType = "query")
+    })
     @PostMapping("register")
     @Log("注册用户")
-    public ResponseBean<Boolean> register(@Valid UserDto userDto) {
+    public ResponseBean<Boolean> register(@RequestBody @Valid UserDto userDto) {
         return new ResponseBean<>(userService.register(userDto));
     }
 

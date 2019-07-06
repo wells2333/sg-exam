@@ -1,6 +1,7 @@
 package com.github.tangyi.user.api.module;
 
 import com.github.tangyi.common.core.persistence.BaseEntity;
+import com.github.tangyi.user.api.constant.AttachmentConstant;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -45,7 +46,7 @@ public class Attachment extends BaseEntity<Attachment> {
     /**
      * 业务类型
      */
-    private String busiType;
+    private String busiType = AttachmentConstant.BUSI_TYPE_NORMAL_ATTACHMENT;
 
     /**
      * 业务模块

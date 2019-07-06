@@ -77,7 +77,7 @@ public class RouteController extends BaseController {
      * @author tangyi
      * @date 2019/4/2 15:09
      */
-    @RequestMapping("routeList")
+    @GetMapping("routeList")
     @ApiOperation(value = "获取路由列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),

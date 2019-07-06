@@ -1,11 +1,13 @@
 package com.github.tangyi.user.controller;
 
+import com.github.tangyi.common.core.dto.SysConfigDto;
 import com.github.tangyi.common.core.model.ResponseBean;
+import com.github.tangyi.common.core.properties.SysProperties;
 import com.github.tangyi.common.core.web.BaseController;
-import com.github.tangyi.user.config.SysConfig;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v1/sysConfig")
 public class SysConfigController extends BaseController {
 
-    private final SysConfig sysConfig;
+    private final SysProperties sysProperties;
 
     /**
      * 获取系统配置
@@ -33,7 +35,9 @@ public class SysConfigController extends BaseController {
      */
     @GetMapping
     @ApiOperation(value = "获取系统配置", notes = "获取系统配置")
-    public ResponseBean<SysConfig> getSysConfig() {
-        return new ResponseBean<>(sysConfig);
+    public ResponseBean<SysConfigDto> getSysConfig() {
+        SysConfigDto sysConfigDto = new SysConfigDto();
+        BeanUtils.copyProperties(sysProperties, sysConfigDto);
+        return new ResponseBean<>(sysConfigDto);
     }
 }

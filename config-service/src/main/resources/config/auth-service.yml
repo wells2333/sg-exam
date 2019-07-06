@@ -117,6 +117,16 @@ cluster:
 # 系统配置
 sys:
   adminUser: ${ADMIN_USER:admin}  # 管理员账号，默认是admin
+  fdfsHttpHost: ${ATTACHMENT_HOST:http://192.168.0.95}:${ATTACHMENT_PORT:8080}  # fastDfs的HTTP配置
+  uploadUrl: api/user/v1/attachment/upload
+  defaultAvatar: https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80
+  key: '1234567887654321'
+
+# 微信配置
+wx:
+  appId: wx597d9f972f991a8c
+  appSecret: b5d44266271a08c6f75a347712a7334e
+  grantType: authorization_code
 
 logging:
   level:

@@ -56,6 +56,10 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
      */
     @ExceptionHandler(CommonException.class)
     public ResponseEntity<ResponseBean<String>> handleCommonException(Exception e) {
-        return new ResponseEntity<>(new ResponseBean<>(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        ResponseBean<String> responseBean = new ResponseBean<>();
+        responseBean.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        responseBean.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        responseBean.setMsg(e.getMessage());
+        return new ResponseEntity<>(responseBean, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

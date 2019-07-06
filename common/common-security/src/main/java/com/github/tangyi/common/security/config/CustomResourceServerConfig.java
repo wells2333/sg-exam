@@ -2,6 +2,7 @@ package com.github.tangyi.common.security.config;
 
 import com.github.tangyi.common.security.mobile.MobileSecurityConfigurer;
 import com.github.tangyi.common.security.properties.FilterIgnorePropertiesConfig;
+import com.github.tangyi.common.security.wx.WxSecurityConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,10 +33,16 @@ public class CustomResourceServerConfig extends ResourceServerConfigurerAdapter 
      */
     private final MobileSecurityConfigurer mobileSecurityConfigurer;
 
+    /**
+     * 微信登录配置
+     */
+    private final WxSecurityConfigurer wxSecurityConfigurer;
+
     @Autowired
-    public CustomResourceServerConfig(FilterIgnorePropertiesConfig filterIgnorePropertiesConfig, MobileSecurityConfigurer mobileSecurityConfigurer) {
+    public CustomResourceServerConfig(FilterIgnorePropertiesConfig filterIgnorePropertiesConfig, MobileSecurityConfigurer mobileSecurityConfigurer, WxSecurityConfigurer wxSecurityConfigurer) {
         this.filterIgnorePropertiesConfig = filterIgnorePropertiesConfig;
         this.mobileSecurityConfigurer = mobileSecurityConfigurer;
+        this.wxSecurityConfigurer = wxSecurityConfigurer;
     }
 
     @Override
@@ -55,5 +62,7 @@ public class CustomResourceServerConfig extends ResourceServerConfigurerAdapter 
                 .and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler());
         // 手机号登录
         http.apply(mobileSecurityConfigurer);
+        // 微信登录
+        http.apply(wxSecurityConfigurer);
     }
 }

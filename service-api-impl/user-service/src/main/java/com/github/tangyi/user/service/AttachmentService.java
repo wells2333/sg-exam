@@ -1,11 +1,11 @@
 package com.github.tangyi.user.service;
 
 import com.github.tangyi.common.core.exceptions.CommonException;
+import com.github.tangyi.common.core.properties.SysProperties;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.FileUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.user.api.module.Attachment;
-import com.github.tangyi.user.config.SysConfig;
 import com.github.tangyi.user.mapper.AttachmentMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class AttachmentService extends CrudService<AttachmentMapper, Attachment>
 
     private final FastDfsService fastDfsService;
 
-    private final SysConfig sysConfig;
+    private final SysProperties sysProperties;
 
     /**
      * 根据id查询
@@ -147,7 +147,7 @@ public class AttachmentService extends CrudService<AttachmentMapper, Attachment>
             throw new CommonException("附件不存在.");
         String preview = attachment.getPreviewUrl();
         if (StringUtils.isBlank(preview))
-            preview = sysConfig.getFdfsHttpHost() + "/" + attachment.getFastFileId();
+            preview = sysProperties.getFdfsHttpHost() + "/" + attachment.getFastFileId();
         log.debug("id为：{}的附件的预览地址：{}", attachment.getId(), preview);
         return preview;
     }

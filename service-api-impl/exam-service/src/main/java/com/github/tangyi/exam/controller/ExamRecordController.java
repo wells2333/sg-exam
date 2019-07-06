@@ -91,7 +91,7 @@ public class ExamRecordController extends BaseController {
      * @author tangyi
      * @date 2018/11/10 21:33
      */
-    @RequestMapping("examRecordList")
+    @GetMapping("examRecordList")
     @ApiOperation(value = "获取考试记录列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),

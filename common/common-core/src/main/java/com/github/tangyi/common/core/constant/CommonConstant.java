@@ -149,6 +149,11 @@ public class CommonConstant {
     public static final String GRANT_TYPE_MOBILE = "mobile";
 
     /**
+     * 微信类型
+     */
+    public static final String GRANT_TYPE_WX = "wx";
+
+    /**
      * 租户编号请求头
      */
     public static final String TENANT_CODE_HEADER = "Tenant-Code";
