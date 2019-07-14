@@ -80,11 +80,19 @@ public class UserController extends BaseController {
      */
     @GetMapping("info")
     @ApiOperation(value = "获取用户信息", notes = "获取当前登录用户详细信息")
-    public ResponseBean<UserInfoDto> userInfo(OAuth2Authentication authentication) {
-        UserVo userVo = new UserVo();
-        userVo.setIdentifier(authentication.getName());
-        userVo.setTenantCode(SysUtil.getTenantCode());
-        return new ResponseBean<>(userService.findUserInfo(userVo));
+    @ApiImplicitParam(name = "identityType", value = "账号类型", required = true, dataType = "String")
+    public ResponseBean<UserInfoDto> userInfo(@RequestParam(required = false) String identityType, OAuth2Authentication authentication) {
+        try {
+            UserVo userVo = new UserVo();
+            if (StringUtils.isNotEmpty(identityType))
+                userVo.setIdentityType(Integer.valueOf(identityType));
+            userVo.setIdentifier(authentication.getName());
+            userVo.setTenantCode(SysUtil.getTenantCode());
+            return new ResponseBean<>(userService.findUserInfo(userVo));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new CommonException("获取当前登录用户详细信息");
+        }
     }
 
     /**

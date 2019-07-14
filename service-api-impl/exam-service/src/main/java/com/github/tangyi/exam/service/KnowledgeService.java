@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.service;
 
+import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.exam.api.module.Knowledge;
 import com.github.tangyi.exam.mapper.KnowledgeMapper;
@@ -26,7 +27,7 @@ public class KnowledgeService extends CrudService<KnowledgeMapper, Knowledge> {
      * @date 2019/1/1 15:09
      */
     @Override
-    @Cacheable(value = "knowledge", key = "#knowledge.id")
+    @Cacheable(value = "knowledge#" + CommonConstant.CACHE_EXPIRE, key = "#knowledge.id")
     public Knowledge get(Knowledge knowledge) {
         return super.get(knowledge);
     }

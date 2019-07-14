@@ -144,6 +144,8 @@ public class UserService extends CrudService<UserMapper, User> {
         String tenantCode = userVo.getTenantCode(), identifier = userVo.getIdentifier();
         // 根据唯一标识查询账号信息
         UserAuths userAuths = new UserAuths();
+        if (userVo.getIdentityType() != null)
+            userAuths.setIdentityType(userVo.getIdentityType());
         userAuths.setIdentifier(userVo.getIdentifier());
         userAuths = userAuthsService.getByIdentifier(userAuths);
         if (userAuths == null)
@@ -191,8 +193,8 @@ public class UserService extends CrudService<UserMapper, User> {
      */
     public List<String> getUserPermissions(User user, String identifier, List<Role> roles) {
         // 用户权限
-        List<String> permissions = Lists.newArrayList();
-        List<Menu> menuList = Lists.newArrayList();
+        List<String> permissions = new ArrayList<>();
+        List<Menu> menuList = new ArrayList<>();
         // 管理员
         if (UserUtils.isAdmin(identifier)) {
             Menu menu = new Menu();
@@ -209,11 +211,12 @@ public class UserService extends CrudService<UserMapper, User> {
             }
         }
         if (CollectionUtils.isNotEmpty(menuList)) {
-            menuList.stream()
+            permissions = menuList.stream()
                     // 获取权限菜单
                     .filter(menu -> MenuConstant.MENU_TYPE_PERMISSION.equals(menu.getType()))
                     // 获取权限
-                    .forEach(menu -> permissions.add(menu.getPermission()));
+                    .map(Menu::getPermission).collect(Collectors.toList());
+
         }
         return permissions;
     }
@@ -375,7 +378,7 @@ public class UserService extends CrudService<UserMapper, User> {
      * @author tangyi
      * @date 2019/07/03 13:00:39
      */
-    @Cacheable(value = "user", key = "#identifier")
+    @Cacheable(value = "user#" + CommonConstant.CACHE_EXPIRE, key = "#identifier")
     public UserVo findUserByIdentifier(Integer identityType, String identifier, String tenantCode) {
         UserAuths userAuths = new UserAuths();
         userAuths.setIdentifier(identifier);
@@ -398,6 +401,19 @@ public class UserService extends CrudService<UserMapper, User> {
         BeanUtils.copyProperties(userAuths, userVo);
         userVo.setRoleList(UserUtils.rolesToVo(roles));
         return userVo;
+    }
+
+    /**
+     * 根据用户唯一标识获取用户详细信息
+     *
+     * @param identifier identifier
+     * @param tenantCode tenantCode
+     * @return UserVo
+     * @author tangyi
+     * @date 2019/07/10 18:04:15
+     */
+    public UserVo findUserByIdentifier(String identifier, String tenantCode) {
+        return this.findUserByIdentifier(null, identifier, tenantCode);
     }
 
     /**
@@ -544,6 +560,8 @@ public class UserService extends CrudService<UserMapper, User> {
     @CacheEvict(value = "user", key = "#userDto.identifier")
     public boolean register(UserDto userDto) {
         boolean success = false;
+        if (userDto.getIdentityType() == null)
+            userDto.setIdentityType(IdentityType.PASSWORD.getValue());
         // 解密
         String password = this.decryptCredential(userDto.getCredential(), userDto.getIdentityType());
         User user = new User();

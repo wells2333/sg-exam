@@ -195,3 +195,31 @@ export const encryption = (params) => {
   return result
 }
 ```
+
+#### 刷新token
+
+用于token失效后（token有效期默认为一个小时），根据refresh_token重新获取token
+
+1. token失效：token失效后，请求的api接口会统一返回403，可以定义http请求的拦截器，判断后端返回的状态码是否为403，是则尝试刷新token
+2. 根据不同的认证方式，`POST`到对应的认证URL，设置参数`grant_type=refresh_token、scope、refresh_token`，如账号密码登录方式下的刷新token：
+
+```
+/**
+ * 刷新token
+ */
+export function refreshToken () {
+  //  grant_type为refresh_token
+  const grantType = 'refresh_token'
+  const scope = 'read'
+  // refresh_token的具体值在登录获取token的时候返回的
+  const refreshToken = {refresh_token} 
+  return request({
+    url: '/api/auth/oauth/token',
+    headers: {
+      'Authorization': 'Basic ' + btoa('web_app:spring-microservice-exam-secret')
+    },
+    method: 'post',
+    params: { grant_type: grantType, scope, refresh_token: refreshToken }
+  })
+}
+```

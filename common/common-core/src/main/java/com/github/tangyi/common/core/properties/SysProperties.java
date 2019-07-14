@@ -1,9 +1,10 @@
 package com.github.tangyi.common.core.properties;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.PostConstruct;
 
 /**
  * @author tangyi
@@ -38,4 +39,9 @@ public class SysProperties {
      * 密码加密解密的key
      */
     private String key;
+
+    /**
+     * 缓存超时时间
+     */
+    private String cacheExpire;
 }

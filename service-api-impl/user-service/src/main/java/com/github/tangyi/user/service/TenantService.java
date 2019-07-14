@@ -1,5 +1,6 @@
 package com.github.tangyi.user.service;
 
+import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.user.api.module.Tenant;
 import com.github.tangyi.user.mapper.TenantMapper;
@@ -27,7 +28,7 @@ public class TenantService extends CrudService<TenantMapper, Tenant> {
      * @author tangyi
      * @date 2019/05/26 10:28
      */
-    @Cacheable(value = "tenant", key = "#tenantCode")
+    @Cacheable(value = "tenant#" + CommonConstant.CACHE_EXPIRE, key = "#tenantCode")
     public Tenant getByTenantCode(String tenantCode) {
         return this.dao.getByTenantCode(tenantCode);
     }

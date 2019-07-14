@@ -66,7 +66,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
      * @date 2019/1/3 14:27
      */
     @Override
-    @Cacheable(value = "answer", key = "#answer.id")
+    @Cacheable(value = "answer#" + CommonConstant.CACHE_EXPIRE, key = "#answer.id")
     public Answer get(Answer answer) {
         return super.get(answer);
     }
