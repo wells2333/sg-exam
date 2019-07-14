@@ -1,5 +1,6 @@
 package com.github.tangyi.user.service;
 
+import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.user.api.module.Role;
 import com.github.tangyi.user.mapper.RoleMapper;
@@ -35,7 +36,7 @@ public class RoleService extends CrudService<RoleMapper, Role> {
      * @date 2019/05/15 23:32
      */
     @Override
-    @Cacheable(value = "role", key = "#role.applicationCode")
+    @Cacheable(value = "role#" + CommonConstant.CACHE_EXPIRE, key = "#role.applicationCode")
     public List<Role> findAllList(Role role) {
         return super.findAllList(role);
     }

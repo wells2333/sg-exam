@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.service;
 
+import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.exam.api.module.ExaminationRecord;
 import com.github.tangyi.exam.mapper.ExamRecordMapper;
@@ -28,7 +29,7 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
      * @date 2019/1/3 14:10
      */
     @Override
-    @Cacheable(value = "record", key = "#examRecord.id")
+    @Cacheable(value = "record#" + CommonConstant.CACHE_EXPIRE, key = "#examRecord.id")
     public ExaminationRecord get(ExaminationRecord examRecord) {
         return super.get(examRecord);
     }

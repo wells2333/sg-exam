@@ -1,5 +1,6 @@
 package com.github.tangyi.user.service;
 
+import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.properties.SysProperties;
 import com.github.tangyi.common.core.service.CrudService;
@@ -39,7 +40,7 @@ public class AttachmentService extends CrudService<AttachmentMapper, Attachment>
      * @param attachment attachment
      * @return Attachment
      */
-    @Cacheable(value = "attachment", key = "#attachment.id")
+    @Cacheable(value = "attachment#" + CommonConstant.CACHE_EXPIRE, key = "#attachment.id")
     @Override
     public Attachment get(Attachment attachment) {
         return super.get(attachment);

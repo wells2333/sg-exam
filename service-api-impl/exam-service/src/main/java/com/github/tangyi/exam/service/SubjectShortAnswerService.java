@@ -1,6 +1,7 @@
 package com.github.tangyi.exam.service;
 
 import com.github.pagehelper.PageInfo;
+import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.SubjectShortAnswer;
@@ -32,7 +33,7 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
      * @date 2019/6/16 14:58
      */
     @Override
-    @Cacheable(value = "subjectShortAnswer", key = "#subjectShortAnswer.id")
+    @Cacheable(value = "subjectShortAnswer#" + CommonConstant.CACHE_EXPIRE, key = "#subjectShortAnswer.id")
     public SubjectShortAnswer get(SubjectShortAnswer subjectShortAnswer) {
         return super.get(subjectShortAnswer);
     }

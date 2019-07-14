@@ -1,7 +1,6 @@
 package com.github.tangyi.user.api.dto;
 
 
-import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.user.api.module.Role;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
