@@ -1,6 +1,7 @@
 package com.github.tangyi.exam.service;
 
 import com.github.pagehelper.PageInfo;
+import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.ExaminationSubject;
@@ -41,7 +42,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
      * @date 2019/1/3 14:24
      */
     @Override
-    @Cacheable(value = "subjectChoices", key = "#subjectChoices.id")
+    @Cacheable(value = "subjectChoices#" + CommonConstant.CACHE_EXPIRE, key = "#subjectChoices.id")
     public SubjectChoices get(SubjectChoices subjectChoices) {
         SubjectChoices subject = super.get(subjectChoices);
         // 查找选项信息

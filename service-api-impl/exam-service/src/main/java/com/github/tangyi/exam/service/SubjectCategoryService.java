@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.service;
 
+import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.exam.api.module.SubjectCategory;
 import com.github.tangyi.exam.mapper.SubjectCategoryMapper;
@@ -26,7 +27,7 @@ public class SubjectCategoryService extends CrudService<SubjectCategoryMapper, S
      * @date 2019/1/3 14:21
      */
     @Override
-    @Cacheable(value = "category", key = "#subjectCategory.id")
+    @Cacheable(value = "category#" + CommonConstant.CACHE_EXPIRE, key = "#subjectCategory.id")
     public SubjectCategory get(SubjectCategory subjectCategory) {
         return super.get(subjectCategory);
     }
