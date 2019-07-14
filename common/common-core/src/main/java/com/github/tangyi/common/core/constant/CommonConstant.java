@@ -131,7 +131,7 @@ public class CommonConstant {
     /**
      * 验证码长度
      */
-    public static final String CODE_SIZE = "4";
+    public static final String CODE_SIZE = "6";
 
     /**
      * Bearer
@@ -157,6 +157,11 @@ public class CommonConstant {
      * 租户编号请求头
      */
     public static final String TENANT_CODE_HEADER = "Tenant-Code";
+
+    /**
+     * 默认超时时间
+     */
+    public static final String CACHE_EXPIRE = "CACHE_EXPIRE";
 
 }
 

@@ -1,7 +1,6 @@
 package com.github.tangyi.user.api.module;
 
 import com.github.tangyi.common.core.persistence.BaseEntity;
-import com.github.tangyi.user.api.enums.IdentityType;
 import lombok.Data;
 
 /**
@@ -21,7 +20,7 @@ public class UserAuths extends BaseEntity<UserAuths> {
     /**
      * 授权类型，1：用户名密码，2：手机号，3：邮箱，4：微信，5：QQ
      */
-    private Integer identityType = IdentityType.PASSWORD.getValue();
+    private Integer identityType;
 
     /**
      * 唯一标识，如用户名、手机号

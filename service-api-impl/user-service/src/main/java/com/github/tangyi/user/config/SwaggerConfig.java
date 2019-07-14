@@ -4,6 +4,7 @@ import com.github.tangyi.common.security.constant.SecurityConstant;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -40,6 +41,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
         parameterList.add(tenantCodeParameter());
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
+                .ignoredParameterTypes(OAuth2Authentication.class)
                 .select()
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.any())

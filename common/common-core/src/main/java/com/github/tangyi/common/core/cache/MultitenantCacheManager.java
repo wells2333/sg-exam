@@ -1,6 +1,5 @@
 package com.github.tangyi.common.core.cache;
 
-import com.github.tangyi.common.security.tenant.TenantContextHolder;
 import com.github.tangyi.common.core.utils.SysUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -40,17 +39,22 @@ public class MultitenantCacheManager extends RedisCacheManager {
      */
     @Override
     protected RedisCache createRedisCache(String name, RedisCacheConfiguration cacheConfig) {
-        if (StringUtils.isNotBlank(name) || !name.contains(SPLIT_FLAG))
-            return super.createRedisCache(name, cacheConfig);
-        String[] cacheArray = name.split(SPLIT_FLAG);
-        if (cacheArray.length < CACHE_LENGTH) {
+        if (StringUtils.isBlank(name) || !name.contains(SPLIT_FLAG)) {
+            log.debug("create cache name[{}]", name);
             return super.createRedisCache(name, cacheConfig);
         }
-        String cacheName = cacheArray[0] + ":" + TenantContextHolder.getTenantCode();
+        String[] cacheArray = name.split(SPLIT_FLAG);
+        if (cacheArray.length < CACHE_LENGTH) {
+            log.debug("create cache name[{}]", name);
+            return super.createRedisCache(name, cacheConfig);
+        }
+        String cacheName = cacheArray[0];
         if (cacheConfig != null) {
+            // 从系统属性里读取超时时间
             long cacheAge = Long.getLong(cacheArray[1], -1);
             cacheConfig = cacheConfig.entryTtl(Duration.ofSeconds(cacheAge));
         }
+        log.debug("create cache[{}]", cacheName);
         return super.createRedisCache(cacheName, cacheConfig);
     }
 
@@ -63,7 +67,7 @@ public class MultitenantCacheManager extends RedisCacheManager {
     @Override
     public Cache getCache(String name) {
         name = SysUtil.getTenantCode() + ":" + name;
-        log.info("cache name: {}", name);
+        log.info("get cache[{}]", name);
         return super.getCache(name);
     }
 }

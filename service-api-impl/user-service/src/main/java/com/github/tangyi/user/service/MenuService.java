@@ -37,7 +37,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
      * @author tangyi
      * @date 2018/8/27 16:00
      */
-    @Cacheable(value = "menu", key = "#role")
+    @Cacheable(value = "menu#" + CommonConstant.CACHE_EXPIRE, key = "#role")
     public List<Menu> findMenuByRole(String role, String tenantCode) {
         return menuMapper.findByRole(role, tenantCode);
     }
@@ -54,9 +54,9 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
     public List<Menu> finMenuByRoleList(List<Role> roleList, String tenantCode) {
         List<Menu> menus = Lists.newArrayList();
         for (Role role : roleList) {
-           List<Menu> roleMenus = this.findMenuByRole(role.getRoleCode(), tenantCode);
-           if (CollectionUtils.isNotEmpty(roleMenus))
-               menus.addAll(roleMenus);
+            List<Menu> roleMenus = this.findMenuByRole(role.getRoleCode(), tenantCode);
+            if (CollectionUtils.isNotEmpty(roleMenus))
+                menus.addAll(roleMenus);
         }
         return menus;
     }
@@ -69,7 +69,6 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
      * @author tangyi
      * @date 2019/04/10 17:58
      */
-    @Cacheable(value = "menu", key = "#menu.applicationCode")
     @Override
     public List<Menu> findAllList(Menu menu) {
         return menuMapper.findAllList(menu);

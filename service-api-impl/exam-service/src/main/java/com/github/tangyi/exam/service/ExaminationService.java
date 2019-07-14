@@ -1,6 +1,7 @@
 package com.github.tangyi.exam.service;
 
 import com.github.pagehelper.PageInfo;
+import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
@@ -46,7 +47,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
      * @date 2019/1/3 14:06
      */
     @Override
-    @Cacheable(value = "examination", key = "#examination.id")
+    @Cacheable(value = "examination#" + CommonConstant.CACHE_EXPIRE, key = "#examination.id")
     public Examination get(Examination examination) {
         return super.get(examination);
     }
