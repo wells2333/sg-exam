@@ -1,4 +1,4 @@
-package com.github.tangyi.common.core.vo;
+package com.github.tangyi.gateway.vo;
 
 import lombok.Data;
 
