@@ -1,71 +1,114 @@
-package com.github.tangyi.gateway.receiver;
+package com.github.tangyi.gateway.service;
 
 import com.fasterxml.jackson.databind.JavaType;
-import com.github.tangyi.common.core.constant.MqConstant;
-import com.github.tangyi.common.core.model.Route;
+import com.github.tangyi.common.core.constant.CommonConstant;
+import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.JsonMapper;
-import com.github.tangyi.common.core.vo.RouteFilterVo;
-import com.github.tangyi.common.core.vo.RoutePredicateVo;
-import com.github.tangyi.gateway.service.DynamicRouteService;
+import com.github.tangyi.gateway.constants.GatewayConstant;
+import com.github.tangyi.gateway.mapper.RouteMapper;
+import com.github.tangyi.gateway.module.Route;
+import com.github.tangyi.gateway.vo.RouteFilterVo;
+import com.github.tangyi.gateway.vo.RoutePredicateVo;
+import com.github.tangyi.gateway.vo.RouteVo;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.cloud.gateway.filter.FilterDefinition;
 import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinition;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 动态路由
+ * 路由service
  *
  * @author tangyi
- * @date 2019/4/2 18:07
+ * @date 2019/4/2 15:01
  */
 @Slf4j
 @AllArgsConstructor
 @Service
-public class GatewayRouteReceiver {
+public class RouteService extends CrudService<RouteMapper, Route> {
 
     private final DynamicRouteService dynamicRouteService;
 
+    private final RedisTemplate redisTemplate;
+
     /**
-     * 修改路由
+     * 新增路由
      *
      * @param route route
-     * @author tangyi
-     * @date 2019/04/02 20:51
+     * @return int
      */
-    @RabbitListener(queues = {MqConstant.EDIT_GATEWAY_ROUTE_QUEUE})
-    public void editRoute(Route route) {
-        if (route.getRouteId() == null)
-            throw new IllegalArgumentException("routeId不能为空！");
-        log.info("更新{}路由", route.getRouteId());
-        dynamicRouteService.update(routeDefinition(route));
+    @Override
+    public int insert(Route route) {
+        int update;
+        route.setCommonValue("", GatewayConstant.SYS_CODE, GatewayConstant.DEFAULT_TENANT_CODE);
+        if ((update = this.dao.insert(route)) > 0) {
+            dynamicRouteService.add(routeDefinition(route));
+        }
+        return update;
+    }
+
+    /**
+     * 更新路由
+     *
+     * @param route route
+     * @return int
+     */
+    @Override
+    public int update(Route route) {
+        int update;
+        route.setNewRecord(false);
+        route.setCommonValue("", GatewayConstant.SYS_CODE, GatewayConstant.DEFAULT_TENANT_CODE);
+        if ((update = this.dao.update(route)) > 0) {
+            dynamicRouteService.update(routeDefinition(route));
+        }
+        return update;
     }
 
     /**
      * 删除路由
      *
-     * @param routes routes
-     * @author tangyi
-     * @date 2019/04/02 20:51
+     * @param id id
+     * @return Mono
      */
-    @RabbitListener(queues = {MqConstant.DEL_GATEWAY_ROUTE_QUEUE})
-    public void delRoute(List<Route> routes) {
-        if (routes == null || routes.isEmpty())
-            return;
-        for (Route route : routes) {
-            if (route.getRouteId() == null)
-                throw new IllegalArgumentException("routeId不能为空！");
-            log.info("删除{}路由", route.getRouteId());
-            dynamicRouteService.delete(route.getRouteId());
+    @Transactional
+    public int delete(String id) {
+        Route route = new Route();
+        route.setId(id);
+        route.setNewRecord(false);
+        route.setCommonValue("", GatewayConstant.SYS_CODE, GatewayConstant.DEFAULT_TENANT_CODE);
+        int update = this.dao.delete(route);
+        dynamicRouteService.delete(id);
+        return update;
+    }
+
+    /**
+     * 刷新路由
+     *
+     * @return boolean
+     */
+    public boolean refresh() {
+        Route init = new Route();
+        init.setStatus(CommonConstant.DEL_FLAG_NORMAL.toString());
+        List<Route> routes = this.findList(init);
+        if (CollectionUtils.isNotEmpty(routes)) {
+            log.info("加载{}条路由记录", routes.size());
+            for (Route route : routes)
+                dynamicRouteService.update(routeDefinition(route));
+            // 存入Redis
+            redisTemplate.opsForValue().set(CommonConstant.ROUTE_KEY, JsonMapper.getInstance().toJson(routes));
         }
+        return true;
     }
 
     /**

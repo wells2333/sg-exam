@@ -49,7 +49,7 @@ public interface UserServiceClient {
      * @date 2019/07/06 14:14:11
      */
     @GetMapping("/v1/user/findUserByIdentifier/{identifier}")
-    UserVo findUserByIdentifier(@PathVariable("identifier") String identifier, @RequestParam(required = false) Integer identityType, @RequestParam("tenantCode") String tenantCode);
+    UserVo findUserByIdentifier(@PathVariable("identifier") String identifier, @RequestParam(value = "identityType", required = false) Integer identityType, @RequestParam("tenantCode") String tenantCode);
 
 
     /**

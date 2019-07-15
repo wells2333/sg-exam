@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.github.tangyi.user.mapper.RouteMapper">
-    <resultMap id="routeResultMap" type="com.github.tangyi.common.core.model.Route">
+<mapper namespace="com.github.tangyi.gateway.mapper.RouteMapper">
+    <resultMap id="routeResultMap" type="com.github.tangyi.gateway.module.Route">
         <id column="id" property="id"/>
         <result column="route_id" property="routeId"/>
         <result column="route_name" property="routeName"/>

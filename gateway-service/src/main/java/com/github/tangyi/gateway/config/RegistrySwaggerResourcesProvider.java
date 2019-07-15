@@ -1,9 +1,9 @@
 package com.github.tangyi.gateway.config;
 
 import com.github.tangyi.common.core.constant.CommonConstant;
-import com.github.tangyi.common.core.model.Route;
+import com.github.tangyi.gateway.module.Route;
 import com.github.tangyi.common.core.utils.JsonMapper;
-import com.github.tangyi.common.core.vo.RoutePredicateVo;
+import com.github.tangyi.gateway.vo.RoutePredicateVo;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

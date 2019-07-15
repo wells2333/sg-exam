@@ -1,4 +1,4 @@
-package com.github.tangyi.common.core.model;
+package com.github.tangyi.gateway.module;
 
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;

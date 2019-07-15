@@ -53,4 +53,14 @@ public class Student extends BaseEntity<Student> {
      * 就读学校
      */
     private String school;
+
+    /**
+     * 城市id
+     */
+    private String cityId;
+
+    /**
+     * 县id
+     */
+    private String countyId;
 }

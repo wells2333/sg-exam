@@ -82,4 +82,16 @@ public class StudentDto implements Serializable {
      */
     @ApiModelProperty(value = "就读学校")
     private String school;
+
+    /**
+     * 城市id
+     */
+    @ApiModelProperty(value = "就读学校")
+    private String cityId;
+
+    /**
+     * 县id
+     */
+    @ApiModelProperty(value = "县id")
+    private String countyId;
 }

@@ -1,6 +1,12 @@
 server:
   port: 8000
 spring:
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/microservice-gateway?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:11}
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.jdbc.Driver
   redis:
     host: ${REDIS_HOST:localhost}
     port: ${REDIS_PORT:6379}
@@ -27,6 +33,21 @@ spring:
   # zipkin 配置
   zipkin:
     base-url: http://${ZIPKIN_HOST:localhost}:${ZIPKIN_PORT:9411}  # 指定了Zipkin服务器的地址
+
+# mybatis配置
+mybatis:
+  type-aliases-package: com.github.tangyi.gateway.module
+  configuration:
+    # 驼峰转换
+    map-underscore-to-camel-case: true
+    # 延迟加载
+    lazy-loading-enabled: true
+  mapper-locations: classpath:mapper/*.xml
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
 
 # 系统配置
 sys:

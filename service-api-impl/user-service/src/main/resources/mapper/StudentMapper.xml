@@ -11,6 +11,8 @@
         <result column="grade" property="grade"/>
         <result column="school" property="school"/>
         <result column="wechat" property="wechat"/>
+        <result column="cityId" property="city_id"/>
+        <result column="countyId" property="county_id"/>
         <result column="creator" property="creator"/>
         <result column="create_date" property="createDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="modifier" property="modifier"/>
@@ -28,6 +30,8 @@
         a.grade,
         a.school,
         a.wechat,
+        a.cityId,
+        a.countyId,
         a.creator,
         a.create_date,
         a.modifier,
@@ -70,6 +74,8 @@
             grade,
             school,
             wechat,
+            city_id,
+            county_id,
             creator,
             create_date,
             modifier,
@@ -85,6 +91,8 @@
             #{grade},
             #{school},
             #{wechat},
+            #{cityId},
+            #{countyId},
             #{creator},
             #{createDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
             #{modifier},
@@ -118,6 +126,12 @@
         </if>
         <if test="wechat != null">
             wechat = #{wechat},
+        </if>
+        <if test="cityId != null">
+            city_id = #{cityId},
+        </if>
+        <if test="countyId != null">
+            county_id = #{countyId},
         </if>
         <if test="delFlag != null">
             del_flag = #{delFlag},
