@@ -2,6 +2,7 @@ package com.github.tangyi.gateway.service;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.github.tangyi.common.core.constant.CommonConstant;
+import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.JsonMapper;
 import com.github.tangyi.gateway.constants.GatewayConstant;
@@ -9,7 +10,6 @@ import com.github.tangyi.gateway.mapper.RouteMapper;
 import com.github.tangyi.gateway.module.Route;
 import com.github.tangyi.gateway.vo.RouteFilterVo;
 import com.github.tangyi.gateway.vo.RoutePredicateVo;
-import com.github.tangyi.gateway.vo.RouteVo;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -18,10 +18,8 @@ import org.springframework.cloud.gateway.filter.FilterDefinition;
 import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -51,6 +49,14 @@ public class RouteService extends CrudService<RouteMapper, Route> {
     @Override
     public int insert(Route route) {
         int update;
+        if (StringUtils.isBlank(route.getRouteId()))
+            throw new CommonException("服务ID不能为空！");
+        // 校验服务路由是否存在
+        Route condition = new Route();
+        condition.setRouteId(route.getRouteId());
+        List<Route> routes = this.findList(condition);
+        if (CollectionUtils.isNotEmpty(routes))
+            throw new CommonException("该服务的路由已存在！");
         route.setCommonValue("", GatewayConstant.SYS_CODE, GatewayConstant.DEFAULT_TENANT_CODE);
         if ((update = this.dao.insert(route)) > 0) {
             dynamicRouteService.add(routeDefinition(route));
@@ -67,6 +73,8 @@ public class RouteService extends CrudService<RouteMapper, Route> {
     @Override
     public int update(Route route) {
         int update;
+        if (StringUtils.isBlank(route.getRouteId()))
+            throw new CommonException("服务ID不能为空！");
         route.setNewRecord(false);
         route.setCommonValue("", GatewayConstant.SYS_CODE, GatewayConstant.DEFAULT_TENANT_CODE);
         if ((update = this.dao.update(route)) > 0) {

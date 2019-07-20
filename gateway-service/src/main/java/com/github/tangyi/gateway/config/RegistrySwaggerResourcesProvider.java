@@ -1,8 +1,9 @@
 package com.github.tangyi.gateway.config;
 
 import com.github.tangyi.common.core.constant.CommonConstant;
-import com.github.tangyi.gateway.module.Route;
 import com.github.tangyi.common.core.utils.JsonMapper;
+import com.github.tangyi.gateway.module.Route;
+import com.github.tangyi.gateway.service.RouteService;
 import com.github.tangyi.gateway.vo.RoutePredicateVo;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,8 @@ public class RegistrySwaggerResourcesProvider implements SwaggerResourcesProvide
 
     private final RedisTemplate redisTemplate;
 
+    private final RouteService routeService;
+
     @Override
     public List<SwaggerResource> get() {
         List<SwaggerResource> resources = new ArrayList<>();
@@ -50,32 +53,48 @@ public class RegistrySwaggerResourcesProvider implements SwaggerResourcesProvide
             if (swaggerProviderConfig.getProviders().contains(route.getId()))
                 routes.add(route.getId());
         });
-
         // 结合配置的route-路径(Path)，和route过滤，只获取有效的route节点
-        Object object = redisTemplate.opsForValue().get(CommonConstant.ROUTE_KEY);
-        if (object != null) {
-            List<Route> routeList = JsonMapper.getInstance().fromJson(object.toString(), JsonMapper.getInstance().createCollectionType(ArrayList.class, Route.class));
-            if (CollectionUtils.isNotEmpty(routeList)) {
-                for (Route route : routeList) {
-                    if (routes.contains(route.getRouteId())) {
-                        try {
-                            List<RoutePredicateVo> routePredicateVoList = JsonMapper.getInstance().fromJson(route.getPredicates(), JsonMapper.getInstance().createCollectionType(ArrayList.class, RoutePredicateVo.class));
-                            if (CollectionUtils.isNotEmpty(routePredicateVoList)) {
-                                String genKey;
-                                RoutePredicateVo routePredicateVo = routePredicateVoList.stream().filter(routePredicate -> routePredicate.getArgs().containsKey(NameUtils.GENERATED_NAME_PREFIX + "0")).findFirst().orElse(null);
-                                if (routePredicateVo != null) {
-                                    genKey = routePredicateVo.getArgs().get(NameUtils.GENERATED_NAME_PREFIX + "0").replace("/**", API_URI);
-                                    resources.add(swaggerResource(route.getRouteId(), genKey));
-                                }
+        List<Route> routeList = this.routeList();
+        if (CollectionUtils.isNotEmpty(routeList)) {
+            for (Route route : routeList) {
+                if (routes.contains(route.getRouteId())) {
+                    try {
+                        List<RoutePredicateVo> routePredicateVoList = JsonMapper.getInstance().fromJson(route.getPredicates(), JsonMapper.getInstance().createCollectionType(ArrayList.class, RoutePredicateVo.class));
+                        if (CollectionUtils.isNotEmpty(routePredicateVoList)) {
+                            String genKey;
+                            RoutePredicateVo routePredicateVo = routePredicateVoList.stream().filter(routePredicate -> routePredicate.getArgs().containsKey(NameUtils.GENERATED_NAME_PREFIX + "0")).findFirst().orElse(null);
+                            if (routePredicateVo != null) {
+                                genKey = routePredicateVo.getArgs().get(NameUtils.GENERATED_NAME_PREFIX + "0").replace("/**", API_URI);
+                                resources.add(swaggerResource(route.getRouteId(), genKey));
                             }
-                        } catch (Exception e) {
-                            log.error(e.getMessage(), e);
                         }
+                    } catch (Exception e) {
+                        log.error(e.getMessage(), e);
                     }
                 }
             }
         }
         return resources;
+    }
+
+    /**
+     * 获取路由列表
+     *
+     * @return List<Route>
+     */
+    private List<Route> routeList() {
+        List<Route> routeList;
+        // 结合配置的route-路径(Path)，和route过滤，只获取有效的route节点
+        Object object = redisTemplate.opsForValue().get(CommonConstant.ROUTE_KEY);
+        if (object == null) {
+            // 放入缓存
+            routeList = routeService.findList(new Route());
+            if (CollectionUtils.isNotEmpty(routeList))
+                redisTemplate.opsForValue().set(CommonConstant.ROUTE_KEY, JsonMapper.getInstance().toJson(routeList));
+        } else {
+            routeList = JsonMapper.getInstance().fromJson(object.toString(), JsonMapper.getInstance().createCollectionType(ArrayList.class, Route.class));
+        }
+        return routeList;
     }
 
     /**

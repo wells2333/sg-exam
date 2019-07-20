@@ -11,7 +11,7 @@
  Target Server Version : 50617
  File Encoding         : 65001
 
- Date: 15/07/2019 22:56:05
+ Date: 18/07/2019 23:06:48
 */
 
 SET NAMES utf8mb4;
@@ -118,11 +118,6 @@ CREATE TABLE `sys_log`  (
   `tenant_code` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Compact;
-
--- ----------------------------
--- Records of sys_log
--- ----------------------------
-INSERT INTO `sys_log` VALUES ('600442842367791104', NULL, '用户登录', NULL, NULL, NULL, NULL, NULL, NULL, 'auth-service', NULL, 'admin', '2019-07-15 21:45:29', 'admin', '2019-07-15 21:45:29', '0', 'EXAM', 'gitee');
 
 -- ----------------------------
 -- Table structure for sys_menu
@@ -648,7 +643,7 @@ CREATE TABLE `sys_user`  (
 INSERT INTO `sys_user` VALUES ('596078038307966976', '管理员', '15521089185', '596094244884713472', '1633736729@qq.com', '2019-07-01', 0, 0, '571347099191480320', '管理员', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2019-07-04 13:51:34', 'admin', '2019-07-04 13:51:35', 0, 'EXAM', 'gitee');
 INSERT INTO `sys_user` VALUES ('596307222997372928', '梁同学', '15521089185', NULL, '1633736729@qq.com', '2019-07-01', 0, 1, NULL, '梁同学', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2019-07-05 21:53:16', 'admin', '2019-07-05 21:53:17', 0, 'EXAM', 'gitee');
 INSERT INTO `sys_user` VALUES ('596332387600830464', '林老师', '15521089185', NULL, '1633736729@qq.com', '2019-07-03', 0, 1, NULL, '林老师', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2019-07-04 13:34:28', 'admin', '2019-07-04 13:38:06', 0, 'EXAM', 'gitee');
-INSERT INTO `sys_user` VALUES ('597110984758398976', '白炽灯', NULL, '597110984758398977', NULL, NULL, 0, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2019-07-06 17:05:52', NULL, NULL, 'ovLl45InRn4Hz_jrpEk-gF-kEFf8', '2019-07-06 17:05:53', 'ovLl45InRn4Hz_jrpEk-gF-kEFf8', '2019-07-06 17:05:53', 0, 'EXAM', 'gitee');
+INSERT INTO `sys_user` VALUES ('597110984758398976', '测试', '15521089182', '597110984758398977', NULL, NULL, 0, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2019-07-06 17:05:52', NULL, NULL, 'ovLl45InRn4Hz_jrpEk-gF-kEFf8', '2019-07-18 23:06:24', 'admin', '2019-07-18 23:06:25', 0, 'EXAM', 'gitee');
 
 -- ----------------------------
 -- Table structure for sys_user_auths
@@ -696,7 +691,7 @@ CREATE TABLE `sys_user_role`  (
 INSERT INTO `sys_user_role` VALUES ('596307898116739072', '596078038307966976', '596117256346406912');
 INSERT INTO `sys_user_role` VALUES ('596333922548322304', '596332387600830464', '596330074307956736');
 INSERT INTO `sys_user_role` VALUES ('596820924016234496', '596307222997372928', '596116511031169024');
-INSERT INTO `sys_user_role` VALUES ('597110985244938240', '597110984758398976', '596116511031169024');
+INSERT INTO `sys_user_role` VALUES ('601550371109867520', '597110984758398976', '596116511031169024');
 
 -- ----------------------------
 -- Table structure for sys_user_student

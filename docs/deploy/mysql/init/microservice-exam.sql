@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : mysql_localhost
+ Source Server         : 127.0.0.1
  Source Server Type    : MySQL
- Source Server Version : 50617
+ Source Server Version : 80016
  Source Host           : localhost:3306
  Source Schema         : microservice-exam
 
  Target Server Type    : MySQL
- Target Server Version : 50617
+ Target Server Version : 80016
  File Encoding         : 65001
 
- Date: 04/07/2019 14:36:12
+ Date: 19/07/2019 22:56:29
 */
 
 SET NAMES utf8mb4;
@@ -21,126 +21,131 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- Table structure for exam_answer
 -- ----------------------------
 DROP TABLE IF EXISTS `exam_answer`;
-CREATE TABLE `exam_answer`  (
+CREATE TABLE `exam_answer` (
   `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '主键',
-  `exam_record_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '考试记录id',
-  `subject_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '题目ID',
-  `type` int(11) NULL DEFAULT NULL,
-  `answer` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '答案',
-  `answer_type` int(11) NULL DEFAULT NULL COMMENT '答题类型，0：正确，1：错误',
-  `score` int(11) NULL DEFAULT NULL COMMENT '实际得分',
-  `mark_status` int(255) NULL DEFAULT NULL,
-  `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
-  `create_date` timestamp(0) NULL DEFAULT NULL COMMENT '创建时间',
-  `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改人',
-  `modify_date` timestamp(0) NULL DEFAULT NULL COMMENT '修改时间',
-  `del_flag` int(11) NULL DEFAULT 0 COMMENT '删除标记 0:正常;1:删除',
-  `application_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '系统编号',
-  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `exam_record_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '考试记录id',
+  `subject_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '题目ID',
+  `type` int(11) DEFAULT NULL,
+  `answer` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '答案',
+  `answer_type` int(11) DEFAULT NULL COMMENT '答题类型，0：正确，1：错误',
+  `score` int(11) DEFAULT NULL COMMENT '实际得分',
+  `mark_status` int(255) DEFAULT NULL,
+  `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '创建人',
+  `create_date` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '修改人',
+  `modify_date` timestamp NULL DEFAULT NULL COMMENT '修改时间',
+  `del_flag` int(11) DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
+  `application_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '系统编号',
+  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '答题表' ROW_FORMAT = Compact;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='答题表';
 
 -- ----------------------------
 -- Table structure for exam_course
 -- ----------------------------
 DROP TABLE IF EXISTS `exam_course`;
-CREATE TABLE `exam_course`  (
+CREATE TABLE `exam_course` (
   `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '主键',
-  `course_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '课程名称',
-  `college` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '学院',
-  `major` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '专业',
-  `teacher` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '老师',
-  `course_description` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '课程描述',
-  `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
-  `create_date` timestamp(0) NULL DEFAULT NULL COMMENT '创建时间',
-  `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改人',
-  `modify_date` timestamp(0) NULL DEFAULT NULL COMMENT '修改时间',
-  `del_flag` int(11) NULL DEFAULT 0 COMMENT '删除标记 0:正常;1:删除',
-  `application_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '系统编号',
-  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '租户编号',
+  `course_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '课程名称',
+  `college` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '学院',
+  `major` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '专业',
+  `teacher` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '老师',
+  `course_description` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '课程描述',
+  `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '创建人',
+  `create_date` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '修改人',
+  `modify_date` timestamp NULL DEFAULT NULL COMMENT '修改时间',
+  `del_flag` int(11) DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
+  `application_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '系统编号',
+  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '课程表' ROW_FORMAT = Compact;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='课程表';
 
 -- ----------------------------
 -- Records of exam_course
 -- ----------------------------
+BEGIN;
 INSERT INTO `exam_course` VALUES ('590968789617741824', '计算机基础', '信息学院', '软件工程', '', '计算机基础', 'admin', '2019-06-19 18:18:59', 'admin', '2019-06-23 13:55:51', 0, 'EXAM', 'gitee');
-INSERT INTO `exam_course` VALUES ('590968881187786752', '大学语文', '信息学院', '软件工程', '陈老师', '大学语文', 'admin', '2019-06-19 18:19:20', 'admin', '2019-07-04 13:50:45', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_course` VALUES ('590968881187786752', '大学语文', '信息学院', '软件工程', '陈老师', '大学语文', 'admin', '2019-06-19 18:19:20', 'admin', '2019-07-19 22:09:42', 0, 'EXAM', 'gitee');
+COMMIT;
 
 -- ----------------------------
 -- Table structure for exam_examination
 -- ----------------------------
 DROP TABLE IF EXISTS `exam_examination`;
-CREATE TABLE `exam_examination`  (
+CREATE TABLE `exam_examination` (
   `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '主键',
-  `examination_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '考试名称',
-  `type` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '考试类型',
-  `attention` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '考试注意事项',
-  `start_time` timestamp(0) NULL DEFAULT NULL COMMENT '考试开始时间',
-  `end_time` timestamp(0) NULL DEFAULT NULL COMMENT '考试结束时间',
-  `total_score` int(11) NULL DEFAULT NULL COMMENT '总分',
-  `status` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '考试状态',
-  `avatar_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '图片ID',
-  `course_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '课程',
-  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
-  `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
-  `create_date` timestamp(0) NULL DEFAULT NULL COMMENT '创建时间',
-  `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改人',
-  `modify_date` timestamp(0) NULL DEFAULT NULL COMMENT '修改时间',
-  `del_flag` int(11) NULL DEFAULT 0 COMMENT '删除标记 0:正常;1:删除',
-  `application_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '系统编号',
-  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '租户编号',
+  `examination_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '考试名称',
+  `type` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '考试类型',
+  `attention` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '考试注意事项',
+  `start_time` timestamp NULL DEFAULT NULL COMMENT '考试开始时间',
+  `end_time` timestamp NULL DEFAULT NULL COMMENT '考试结束时间',
+  `total_score` int(11) DEFAULT NULL COMMENT '总分',
+  `status` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '考试状态',
+  `avatar_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '图片ID',
+  `course_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '课程',
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
+  `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '创建人',
+  `create_date` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '修改人',
+  `modify_date` timestamp NULL DEFAULT NULL COMMENT '修改时间',
+  `del_flag` int(11) DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
+  `application_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '系统编号',
+  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '考试信息表' ROW_FORMAT = Compact;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='考试信息表';
 
 -- ----------------------------
 -- Records of exam_examination
 -- ----------------------------
+BEGIN;
 INSERT INTO `exam_examination` VALUES ('590969316204220416', '全国计算机统考练习题10道', '2', '练习', '2019-06-19 18:20:00', '2019-06-19 20:20:00', 50, '0', NULL, '590968789617741824', '全国计算机统考练习题10道', 'admin', '2019-06-19 18:21:04', 'admin', '2019-06-19 18:45:33', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_examination` VALUES ('590969514372501504', '四川省2016年普通高考文科综合能力测试-语文部分', '0', '注意事项:\n1.本试卷分第工卷(选择题)和第II卷(非选择题)两部分。答卷前，考生务必将白己的姓名、准考证号填写在答题卡上。\n2.回答第Ⅰ卷时，选出每小题答案后，用铅笔把答题卡上对应题目的答案标号涂黑。如需改动，用橡皮擦干净后，再选涂其它答案标号。写在本试卷上无效。\n3.回答第Ⅱ卷时，将答案写在答题卡上。写在本试卷上无效。\n4.考试结束后，将本试卷和答题卡一并交回。', '2019-07-02 19:21:00', '2019-07-04 16:02:00', 60, '0', NULL, '590968881187786752', '四川省2016年普通高考-文科综合能力测试', 'admin', '2019-06-19 18:21:51', 'admin', '2019-07-04 14:20:36', 0, 'EXAM', 'gitee');
+COMMIT;
 
 -- ----------------------------
 -- Table structure for exam_examination_record
 -- ----------------------------
 DROP TABLE IF EXISTS `exam_examination_record`;
-CREATE TABLE `exam_examination_record`  (
+CREATE TABLE `exam_examination_record` (
   `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '主键',
-  `user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户id',
-  `examination_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '考试ID',
-  `start_time` timestamp(0) NULL DEFAULT NULL COMMENT '开始时间',
-  `end_time` timestamp(0) NULL DEFAULT NULL COMMENT '结束时间',
-  `score` int(11) NULL DEFAULT NULL COMMENT '成绩',
-  `correct_number` int(11) NULL DEFAULT NULL COMMENT '正确题目数量',
-  `incorrect_number` int(11) NULL DEFAULT NULL COMMENT '错误题目数量',
-  `submit_status` int(11) NULL DEFAULT NULL,
-  `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
-  `create_date` timestamp(0) NULL DEFAULT NULL COMMENT '创建时间',
-  `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改人',
-  `modify_date` timestamp(0) NULL DEFAULT NULL COMMENT '修改时间',
-  `del_flag` int(11) NULL DEFAULT 0 COMMENT '删除标记 0:正常;1:删除',
-  `application_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '系统编号',
-  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '租户编号',
+  `user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '用户id',
+  `examination_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '考试ID',
+  `start_time` timestamp NULL DEFAULT NULL COMMENT '开始时间',
+  `end_time` timestamp NULL DEFAULT NULL COMMENT '结束时间',
+  `score` int(11) DEFAULT NULL COMMENT '成绩',
+  `correct_number` int(11) DEFAULT NULL COMMENT '正确题目数量',
+  `incorrect_number` int(11) DEFAULT NULL COMMENT '错误题目数量',
+  `submit_status` int(11) DEFAULT NULL,
+  `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '创建人',
+  `create_date` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '修改人',
+  `modify_date` timestamp NULL DEFAULT NULL COMMENT '修改时间',
+  `del_flag` int(11) DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
+  `application_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '系统编号',
+  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '考试记录表' ROW_FORMAT = Compact;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='考试记录表';
 
 -- ----------------------------
 -- Table structure for exam_examination_subject
 -- ----------------------------
 DROP TABLE IF EXISTS `exam_examination_subject`;
-CREATE TABLE `exam_examination_subject`  (
+CREATE TABLE `exam_examination_subject` (
   `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '主键',
-  `examination_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '考试ID',
-  `subject_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '题目ID',
-  `type` int(11) NULL DEFAULT NULL COMMENT '类型 0-选择题，1-简答题',
-  `application_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '系统编号',
-  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `serial_number` int(11) NULL DEFAULT NULL,
+  `examination_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '考试ID',
+  `subject_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '题目ID',
+  `type` int(11) DEFAULT NULL COMMENT '类型 0-选择题，1-简答题',
+  `application_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '系统编号',
+  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `serial_number` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '考试题目表' ROW_FORMAT = Compact;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='考试题目表';
 
 -- ----------------------------
 -- Records of exam_examination_subject
 -- ----------------------------
+BEGIN;
 INSERT INTO `exam_examination_subject` VALUES ('590970743886581760', '590969316204220416', '590970743878193152', 0, 'EXAM', 'gitee', 1);
 INSERT INTO `exam_examination_subject` VALUES ('590970887440830464', '590969316204220416', '590970887432441856', 0, 'EXAM', 'gitee', 2);
 INSERT INTO `exam_examination_subject` VALUES ('590971026888855552', '590969316204220416', '590971026880466944', 0, 'EXAM', 'gitee', 3);
@@ -163,108 +168,114 @@ INSERT INTO `exam_examination_subject` VALUES ('590973027999682560', '5909695143
 INSERT INTO `exam_examination_subject` VALUES ('590973115165708288', '590969514372501504', '590973115157319680', 0, 'EXAM', 'gitee', 10);
 INSERT INTO `exam_examination_subject` VALUES ('590973253548380160', '590969514372501504', '590973253544185856', 0, 'EXAM', 'gitee', 11);
 INSERT INTO `exam_examination_subject` VALUES ('590973360670904320', '590969514372501504', '590973360662515712', 0, 'EXAM', 'gitee', 12);
+COMMIT;
 
 -- ----------------------------
 -- Table structure for exam_knowledge
 -- ----------------------------
 DROP TABLE IF EXISTS `exam_knowledge`;
-CREATE TABLE `exam_knowledge`  (
+CREATE TABLE `exam_knowledge` (
   `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '主键',
-  `knowledge_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '知识名称',
-  `knowledge_desc` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '知识描述',
-  `attachment_id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '附件ID',
-  `status` int(11) NULL DEFAULT NULL COMMENT '状态',
-  `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
-  `create_date` timestamp(0) NULL DEFAULT NULL COMMENT '创建时间',
-  `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改人',
-  `modify_date` timestamp(0) NULL DEFAULT NULL COMMENT '修改时间',
-  `del_flag` int(11) NULL DEFAULT 0 COMMENT '删除标记 0:正常;1:删除',
-  `application_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '系统编号',
-  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '租户编号',
+  `knowledge_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '知识名称',
+  `knowledge_desc` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '知识描述',
+  `attachment_id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '附件ID',
+  `status` int(11) DEFAULT NULL COMMENT '状态',
+  `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '创建人',
+  `create_date` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '修改人',
+  `modify_date` timestamp NULL DEFAULT NULL COMMENT '修改时间',
+  `del_flag` int(11) DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
+  `application_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '系统编号',
+  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '知识表' ROW_FORMAT = Compact;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='知识表';
 
 -- ----------------------------
 -- Records of exam_knowledge
 -- ----------------------------
+BEGIN;
 INSERT INTO `exam_knowledge` VALUES ('590978901526843392', '四川省2016年普通高考适应性测试', '四川省2016年普通高考适应性测试', '590978944174526464', 0, 'admin', '2019-06-19 18:59:09', 'admin', '2019-07-04 13:51:27', 0, 'EXAM', 'gitee');
+COMMIT;
 
 -- ----------------------------
 -- Table structure for exam_pictures
 -- ----------------------------
 DROP TABLE IF EXISTS `exam_pictures`;
-CREATE TABLE `exam_pictures`  (
+CREATE TABLE `exam_pictures` (
   `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '主键',
-  `picture_address` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '知识名称',
-  `attachment_id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '附件ID',
-  `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
-  `create_date` timestamp(0) NULL DEFAULT NULL COMMENT '创建时间',
-  `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改人',
-  `modify_date` timestamp(0) NULL DEFAULT NULL COMMENT '修改时间',
-  `del_flag` int(11) NULL DEFAULT 0 COMMENT '删除标记 0:正常;1:删除',
-  `application_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '系统编号',
-  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '租户编号',
+  `picture_address` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '知识名称',
+  `attachment_id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '附件ID',
+  `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '创建人',
+  `create_date` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '修改人',
+  `modify_date` timestamp NULL DEFAULT NULL COMMENT '修改时间',
+  `del_flag` int(11) DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
+  `application_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '系统编号',
+  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '图片表' ROW_FORMAT = Compact;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='图片表';
 
 -- ----------------------------
 -- Table structure for exam_subject_category
 -- ----------------------------
 DROP TABLE IF EXISTS `exam_subject_category`;
-CREATE TABLE `exam_subject_category`  (
+CREATE TABLE `exam_subject_category` (
   `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '主键',
-  `category_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '分类名称',
-  `category_desc` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '分类描述',
-  `parent_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '父分类ID',
-  `sort` int(11) NULL DEFAULT NULL COMMENT '排序号',
-  `type` int(11) NULL DEFAULT NULL COMMENT '类型: 0-私共,1-公有',
-  `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
-  `create_date` timestamp(0) NULL DEFAULT NULL COMMENT '创建时间',
-  `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改人',
-  `modify_date` timestamp(0) NULL DEFAULT NULL COMMENT '修改时间',
-  `del_flag` int(11) NULL DEFAULT 0 COMMENT '删除标记 0:正常;1:删除',
+  `category_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '分类名称',
+  `category_desc` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '分类描述',
+  `parent_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '父分类ID',
+  `sort` int(11) DEFAULT NULL COMMENT '排序号',
+  `type` int(11) DEFAULT NULL COMMENT '类型: 0-私共,1-公有',
+  `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '创建人',
+  `create_date` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '修改人',
+  `modify_date` timestamp NULL DEFAULT NULL COMMENT '修改时间',
+  `del_flag` int(11) DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
   `application_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '系统编号',
-  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '租户编号',
+  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '题目分类表' ROW_FORMAT = Compact;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='题目分类表';
 
 -- ----------------------------
 -- Records of exam_subject_category
 -- ----------------------------
+BEGIN;
 INSERT INTO `exam_subject_category` VALUES ('590975991732637696', '计算机', NULL, '-1', 30, NULL, 'admin', '2019-06-19 18:47:36', 'admin', '2019-06-19 18:47:36', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_category` VALUES ('590976037467328512', '数据库基础', NULL, '590975991732637696', 30, NULL, 'admin', '2019-06-19 18:47:47', 'admin', '2019-07-04 13:51:03', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_category` VALUES ('590976094983819264', 'Java程序设计', NULL, '590975991732637696', 31, NULL, 'admin', '2019-06-19 18:48:00', 'admin', '2019-06-19 18:48:00', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_category` VALUES ('590976142211682304', '数据结构', NULL, '590975991732637696', 33, NULL, 'admin', '2019-06-19 18:48:12', 'admin', '2019-06-19 18:48:12', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_category` VALUES ('590976191398285312', '地理', NULL, '-1', 31, NULL, 'admin', '2019-06-19 18:48:23', 'admin', '2019-06-19 18:48:23', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_category` VALUES ('590976335996915712', '计算机基础', NULL, '590975991732637696', 34, NULL, 'admin', '2019-06-19 18:48:58', 'admin', '2019-06-19 18:48:58', 0, 'EXAM', 'gitee');
+COMMIT;
 
 -- ----------------------------
 -- Table structure for exam_subject_choices
 -- ----------------------------
 DROP TABLE IF EXISTS `exam_subject_choices`;
-CREATE TABLE `exam_subject_choices`  (
+CREATE TABLE `exam_subject_choices` (
   `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '主键',
-  `category_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `serial_number` int(11) NULL DEFAULT NULL COMMENT '题目序号',
-  `subject_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '题目名称',
-  `choices_type` int(11) NULL DEFAULT NULL COMMENT '题目类型',
-  `answer` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '参考答案',
-  `score` int(11) NULL DEFAULT NULL COMMENT '题目分值',
-  `analysis` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '解析',
-  `level` int(11) NULL DEFAULT NULL COMMENT '难度等级',
-  `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
-  `create_date` timestamp(0) NULL DEFAULT NULL COMMENT '创建时间',
-  `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改人',
-  `modify_date` timestamp(0) NULL DEFAULT NULL COMMENT '修改时间',
-  `del_flag` int(11) NULL DEFAULT 0 COMMENT '删除标记 0:正常;1:删除',
-  `application_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '系统编号',
-  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `category_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `serial_number` int(11) DEFAULT NULL COMMENT '题目序号',
+  `subject_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '题目名称',
+  `choices_type` int(11) DEFAULT NULL COMMENT '题目类型',
+  `answer` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '参考答案',
+  `score` int(11) DEFAULT NULL COMMENT '题目分值',
+  `analysis` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '解析',
+  `level` int(11) DEFAULT NULL COMMENT '难度等级',
+  `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '创建人',
+  `create_date` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '修改人',
+  `modify_date` timestamp NULL DEFAULT NULL COMMENT '修改时间',
+  `del_flag` int(11) DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
+  `application_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '系统编号',
+  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '选择题表' ROW_FORMAT = Compact;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='选择题表';
 
 -- ----------------------------
 -- Records of exam_subject_choices
 -- ----------------------------
+BEGIN;
 INSERT INTO `exam_subject_choices` VALUES ('590970743878193152', '0', 1, '自计算机问世至今已经经历了四个时代，划分时代的主要依据是计算机的_', 0, 'D', 5, '<p>无</p>', 2, 'admin', '2019-06-19 18:26:45', 'admin', '2019-06-19 18:31:29', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_choices` VALUES ('590970887432441856', '0', 2, '第一台计算机是在1946年在美国诞生，该机的英文缩写是_', 0, 'A', 5, '<p>无</p>', 2, 'admin', '2019-06-19 18:27:19', 'admin', '2019-06-19 18:27:19', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_choices` VALUES ('590971026880466944', '0', 3, '当前的计算机一般被认为是第四代计算机，它所采用的逻辑元件是_', 0, 'C', 5, '无', 2, 'admin', '2019-06-19 18:27:52', 'admin', '2019-06-19 18:27:52', 0, 'EXAM', 'gitee');
@@ -288,29 +299,54 @@ INSERT INTO `exam_subject_choices` VALUES ('590973115157319680', '0', 10, '19 �
 INSERT INTO `exam_subject_choices` VALUES ('590973253544185856', '0', 11, '1920–1921 年，苏俄许多工人流往农村，还有一些则自谋生路成了小手工业者。据此推知当时苏俄', 0, 'A', 5, '', 2, 'admin', '2019-06-19 18:36:43', 'admin', '2019-06-19 18:36:43', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_choices` VALUES ('590973360662515712', '0', 12, '1964 年 6 月，美国《时代》杂志发表社论指出：“从北约到联合国，从拉丁美洲到红色中国，几乎在世界政治中的每一个问题或地区上，法国都采取和美国政策不一致的态度。”这一社论', 0, 'B', 5, '', 2, 'admin', '2019-06-19 18:37:08', 'admin', '2019-06-19 18:37:08', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_choices` VALUES ('590976455786237952', '590976335996915712', 1, '自计算机问世至今已经经历了四个时代，划分时代的主要依据是计算机的_', 0, 'D', 5, '', 2, 'admin', '2019-06-19 18:49:26', 'admin', '2019-07-04 13:51:17', 0, 'EXAM', 'gitee');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for exam_subject_judgement
+-- ----------------------------
+DROP TABLE IF EXISTS `exam_subject_judgement`;
+CREATE TABLE `exam_subject_judgement` (
+  `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '主键',
+  `category_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '分类ID',
+  `serial_number` int(11) DEFAULT NULL COMMENT '序号',
+  `subject_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '题目名称',
+  `answer` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '参考答案',
+  `score` int(11) DEFAULT NULL COMMENT '分值',
+  `analysis` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '解析',
+  `level` int(11) DEFAULT NULL COMMENT '难度等级',
+  `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '创建人',
+  `create_date` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '修改人',
+  `modify_date` timestamp NULL DEFAULT NULL COMMENT '修改时间',
+  `del_flag` int(11) DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
+  `application_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '系统编号',
+  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='简答题表';
 
 -- ----------------------------
 -- Table structure for exam_subject_option
 -- ----------------------------
 DROP TABLE IF EXISTS `exam_subject_option`;
-CREATE TABLE `exam_subject_option`  (
+CREATE TABLE `exam_subject_option` (
   `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '主键',
-  `subject_choices_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '选择题ID',
-  `option_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '选项名称',
-  `option_content` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '选项内容',
-  `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
-  `create_date` timestamp(0) NULL DEFAULT NULL COMMENT '创建时间',
-  `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改人',
-  `modify_date` timestamp(0) NULL DEFAULT NULL COMMENT '修改时间',
-  `del_flag` int(11) NULL DEFAULT 0 COMMENT '删除标记 0:正常;1:删除',
-  `application_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '系统编号',
-  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '租户编号',
+  `subject_choices_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '选择题ID',
+  `option_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '选项名称',
+  `option_content` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '选项内容',
+  `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '创建人',
+  `create_date` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '修改人',
+  `modify_date` timestamp NULL DEFAULT NULL COMMENT '修改时间',
+  `del_flag` int(11) DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
+  `application_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '系统编号',
+  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '选择题选项表' ROW_FORMAT = Compact;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='选择题选项表';
 
 -- ----------------------------
 -- Records of exam_subject_option
 -- ----------------------------
+BEGIN;
 INSERT INTO `exam_subject_option` VALUES ('590970743911747584', '590970743878193152', 'A', '<p>规模</p>', 'admin', '2019-06-19 18:26:45', 'admin', '2019-06-19 18:31:29', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_option` VALUES ('590970743911747585', '590970743878193152', 'B', '<p>功能</p>', 'admin', '2019-06-19 18:26:45', 'admin', '2019-06-19 18:31:29', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_option` VALUES ('590970743911747586', '590970743878193152', 'C', '<p>性能</p>', 'admin', '2019-06-19 18:26:45', 'admin', '2019-06-19 18:31:29', 0, 'EXAM', 'gitee');
@@ -407,28 +443,29 @@ INSERT INTO `exam_subject_option` VALUES ('590976456683819008', '590976456675430
 INSERT INTO `exam_subject_option` VALUES ('590976456683819009', '590976456675430400', 'B', '<p>功能</p>', 'admin', '2019-06-19 18:49:27', 'admin', '2019-06-19 18:49:27', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_option` VALUES ('590976456683819010', '590976456675430400', 'C', '<p>性能</p>', 'admin', '2019-06-19 18:49:27', 'admin', '2019-06-19 18:49:27', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_option` VALUES ('590976456683819011', '590976456675430400', 'D', '构成元件', 'admin', '2019-06-19 18:49:27', 'admin', '2019-06-19 18:49:27', 0, 'EXAM', 'gitee');
+COMMIT;
 
 -- ----------------------------
 -- Table structure for exam_subject_short_answer
 -- ----------------------------
 DROP TABLE IF EXISTS `exam_subject_short_answer`;
-CREATE TABLE `exam_subject_short_answer`  (
+CREATE TABLE `exam_subject_short_answer` (
   `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '主键',
-  `category_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '分类ID',
-  `serial_number` int(11) NULL DEFAULT NULL COMMENT '序号',
-  `subject_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '题目名称',
-  `answer` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '参考答案',
-  `score` int(11) NULL DEFAULT NULL COMMENT '分值',
-  `analysis` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '解析',
-  `level` int(11) NULL DEFAULT NULL COMMENT '难度等级',
-  `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
-  `create_date` timestamp(0) NULL DEFAULT NULL COMMENT '创建时间',
-  `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改人',
-  `modify_date` timestamp(0) NULL DEFAULT NULL COMMENT '修改时间',
-  `del_flag` int(11) NULL DEFAULT 0 COMMENT '删除标记 0:正常;1:删除',
-  `application_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '系统编号',
-  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '租户编号',
+  `category_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '分类ID',
+  `serial_number` int(11) DEFAULT NULL COMMENT '序号',
+  `subject_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '题目名称',
+  `answer` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '参考答案',
+  `score` int(11) DEFAULT NULL COMMENT '分值',
+  `analysis` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '解析',
+  `level` int(11) DEFAULT NULL COMMENT '难度等级',
+  `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '创建人',
+  `create_date` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '修改人',
+  `modify_date` timestamp NULL DEFAULT NULL COMMENT '修改时间',
+  `del_flag` int(11) DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
+  `application_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '系统编号',
+  `tenant_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '简答题表' ROW_FORMAT = Compact;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='简答题表';
 
 SET FOREIGN_KEY_CHECKS = 1;

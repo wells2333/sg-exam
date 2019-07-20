@@ -28,5 +28,6 @@ public class AppStartupRunner implements CommandLineRunner {
         // 设置系统属性
         if (StringUtils.isNotBlank(sysProperties.getCacheExpire()))
             System.setProperty(CommonConstant.CACHE_EXPIRE, sysProperties.getCacheExpire());
+        log.info("end command line...");
     }
 }
