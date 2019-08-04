@@ -120,6 +120,8 @@ public class StudentController extends BaseController {
         try {
             Student student = new Student();
             BeanUtils.copyProperties(studentDto, student);
+            student.setId(studentDto.getId());
+            student.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
             return new ResponseBean<>(studentService.update(student) > 0);
         } catch (Exception e) {
             log.error("更新学生信息失败！", e);

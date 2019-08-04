@@ -9,10 +9,11 @@
         <result column="sex" property="sex"/>
         <result column="address" property="address"/>
         <result column="grade" property="grade"/>
+        <result column="grade_name" property="gradeName"/>
         <result column="school" property="school"/>
         <result column="wechat" property="wechat"/>
-        <result column="cityId" property="city_id"/>
-        <result column="countyId" property="county_id"/>
+        <result column="city_id" property="cityId"/>
+        <result column="county_id" property="countyId"/>
         <result column="creator" property="creator"/>
         <result column="create_date" property="createDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="modifier" property="modifier"/>
@@ -28,10 +29,11 @@
         a.sex,
         a.address,
         a.grade,
+         a.grade_name,
         a.school,
         a.wechat,
-        a.cityId,
-        a.countyId,
+        a.city_id,
+        a.county_id,
         a.creator,
         a.create_date,
         a.modifier,
@@ -72,6 +74,7 @@
             sex,
             address,
             grade,
+            grade_name,
             school,
             wechat,
             city_id,
@@ -89,6 +92,7 @@
             #{sex},
             #{address},
             #{grade},
+             #{gradeName},
             #{school},
             #{wechat},
             #{cityId},
@@ -120,6 +124,9 @@
         </if>
         <if test="grade != null">
             grade = #{grade},
+        </if>
+        <if test="gradeName != null">
+            grade_name = #{gradeName},
         </if>
         <if test="school != null">
             school = #{school},

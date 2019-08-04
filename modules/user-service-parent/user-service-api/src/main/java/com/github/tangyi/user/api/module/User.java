@@ -113,4 +113,9 @@ public class User extends BaseEntity<User> {
      * 微信
      */
     private String wechat;
+
+    /**
+     * 家庭角色，参考UserStudentConstant
+     */
+    private Integer familyRole;
 }
