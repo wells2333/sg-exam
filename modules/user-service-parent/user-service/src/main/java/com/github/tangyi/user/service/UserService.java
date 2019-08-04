@@ -86,6 +86,9 @@ public class UserService extends CrudService<UserMapper, User> {
         BeanUtils.copyProperties(userDto, user);
         // 先保存用户基本信息
         user.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        // 保存父子账号关系
+        UserVo currentUser = this.findUserByIdentifier(userDto.getIdentityType(), SysUtil.getUser(), SysUtil.getTenantCode());
+        user.setParentUid(currentUser.getId());
         if ((update = this.insert(user)) > 0) {
             // 保存用户授权信息
             UserAuths userAuths = new UserAuths();
@@ -608,8 +611,8 @@ public class UserService extends CrudService<UserMapper, User> {
         // 返回默认密码
         if (StringUtils.isBlank(encoded))
             return CommonConstant.DEFAULT_PASSWORD;
-        // 微信注册不需要解密
-        if (IdentityType.WE_CHAT.getValue().equals(identityType))
+        // 微信、手机号注册不需要解密
+        if (IdentityType.WE_CHAT.getValue().equals(identityType) || IdentityType.PHONE_NUMBER.getValue().equals(identityType))
             return encoded;
         // 解密密码
         try {

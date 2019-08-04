@@ -24,7 +24,7 @@ public class SecurityConstant {
     /**
      * 默认短信验证码过期时间
      */
-    public static final int DEFAULT_SMS_EXPIRE = 5 * 60;
+    public static final int DEFAULT_SMS_EXPIRE = 15 * 60;
 
     /**
      * 正常状态

@@ -28,7 +28,7 @@ public class MobileAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         MobileAuthenticationToken mobileAuthenticationToken = (MobileAuthenticationToken) authentication;
         String principal = mobileAuthenticationToken.getPrincipal().toString();
-        UserDetails userDetails = customUserDetailsService.loadUserBySocialAndTenantCode(principal, TenantContextHolder.getTenantCode());
+        UserDetails userDetails = customUserDetailsService.loadUserBySocialAndTenantCode(principal, TenantContextHolder.getTenantCode(), mobileAuthenticationToken.getMobileUser());
         if (userDetails == null) {
             log.debug("Authentication failed: no credentials provided");
             throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.noopBindAccount", "Noop Bind Account"));

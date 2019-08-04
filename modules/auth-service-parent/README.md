@@ -63,9 +63,48 @@ export function loginByUsername (identifier, credential, code, randomStr) {
 
 #### 二 手机号+验证码登录
 
-接口URL：`/api/auth/mobile/token`
+发送短信接口：`/api/user/v1/mobile/sendSms/` + ${mobile}，其中mobile为手机号
 
-grant_type: mobile
+登录接口URL：`/api/auth/mobile/token`
+
+```
+/**
+ * 根据手机号登录
+ * @param social 手机号
+ * @param code 验证码
+ */
+export function loginBySocial (social, code) {
+  const grantType = 'mobile'
+  const scope = 'read'
+  return request({
+    url: '/api/auth/mobile/token',
+    headers: {
+      'Authorization': basicAuthorization
+    },
+    method: 'post',
+    params: {mobile: social, code, grant_type: grantType, scope},
+    data: {
+        name: userInfo.nickName,
+        sex: userInfo.gender,
+        avatarUrl: userInfo.avatarUrl
+    }
+  })
+}
+```
+
+响应体：
+```
+{
+    "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9",
+    "token_type": "bearer",
+    "refresh_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9",
+    "expires_in": 3599,
+    "scope": "read write",
+    "loginType": "SMS",
+    "tenantCode": "gitee",
+    "jti": "e446adad-df0a-490a-9cde-8ac69c846335"
+}
+```
 
 #### 三 微信小程序+code登录
 

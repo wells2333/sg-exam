@@ -13,7 +13,7 @@ import java.util.Date;
 @Data
 public class StudentDto implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2602249526687821147L;
 
     private String id;
 
@@ -74,8 +74,15 @@ public class StudentDto implements Serializable {
     /**
      * 就读年级
      */
-    @ApiModelProperty(value = "就读年级")
+    @ApiModelProperty(value = "就读年级ID")
     private String grade;
+
+
+    /**
+     * 就读年级
+     */
+    @ApiModelProperty(value = "就读年级名称")
+    private String gradeName;
 
     /**
      * 就读学校
@@ -84,14 +91,14 @@ public class StudentDto implements Serializable {
     private String school;
 
     /**
-     * 城市id
+     * 就读城市
      */
-    @ApiModelProperty(value = "就读学校")
+    @ApiModelProperty(value = "就读城市ID")
     private String cityId;
 
     /**
      * 县id
      */
-    @ApiModelProperty(value = "县id")
+    @ApiModelProperty(value = "就读区县ID")
     private String countyId;
 }
