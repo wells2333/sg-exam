@@ -38,4 +38,24 @@ public class SmsProperties {
      * domain
      */
     private String domain;
+
+    /**
+     * 签名
+     */
+    private String signName;
+
+    /**
+     * 模板code
+     */
+    private String templateCode;
+
+    /**
+     * 版本
+     */
+    private String version;
+
+    /**
+     * action
+     */
+    private String action;
 }

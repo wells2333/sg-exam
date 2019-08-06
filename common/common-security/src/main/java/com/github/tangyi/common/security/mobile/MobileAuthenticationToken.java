@@ -15,6 +15,8 @@ public class MobileAuthenticationToken extends AbstractAuthenticationToken {
 
     private final Object principal;
 
+    private MobileUser mobileUser;
+
     public MobileAuthenticationToken(String mobile) {
         super(null);
         this.principal = mobile;
@@ -48,5 +50,13 @@ public class MobileAuthenticationToken extends AbstractAuthenticationToken {
     @Override
     public void eraseCredentials() {
         super.eraseCredentials();
+    }
+
+    public MobileUser getMobileUser() {
+        return mobileUser;
+    }
+
+    public void setMobileUser(MobileUser mobileUser) {
+        this.mobileUser = mobileUser;
     }
 }

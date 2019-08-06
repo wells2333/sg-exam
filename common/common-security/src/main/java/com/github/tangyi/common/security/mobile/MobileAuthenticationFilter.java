@@ -1,8 +1,12 @@
 package com.github.tangyi.common.security.mobile;
 
 import com.github.tangyi.common.security.constant.SecurityConstant;
+import com.github.tangyi.common.security.utils.GsonHelper;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationEventPublisher;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -18,6 +22,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * 手机登录filter
@@ -25,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author tangyi
  * @date 2019/6/22 21:15
  */
+@Slf4j
 public class MobileAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     private static final String SPRING_SECURITY_FORM_MOBILE_KEY = "mobile";
@@ -61,6 +67,8 @@ public class MobileAuthenticationFilter extends AbstractAuthenticationProcessing
         mobile = mobile.trim();
         // 封装成token
         MobileAuthenticationToken mobileAuthenticationToken = new MobileAuthenticationToken(mobile);
+        // 封装其它基本信息
+        setMobileUserDetails(request, mobileAuthenticationToken);
         setDetails(request, mobileAuthenticationToken);
         Authentication authResult = null;
         try {
@@ -89,5 +97,23 @@ public class MobileAuthenticationFilter extends AbstractAuthenticationProcessing
 
     private void setDetails(HttpServletRequest request, MobileAuthenticationToken authRequest) {
         authRequest.setDetails(authenticationDetailsSource.buildDetails(request));
+    }
+
+    /**
+     * 设置姓名、性别、头像等信息
+     *
+     * @param request     request
+     * @param authRequest authRequest
+     */
+    private void setMobileUserDetails(HttpServletRequest request, MobileAuthenticationToken authRequest) {
+        try {
+            String result = IOUtils.toString(request.getReader());
+            if (StringUtils.isNotBlank(result)) {
+                MobileUser user = GsonHelper.getInstance().fromJson(result, MobileUser.class);
+                authRequest.setMobileUser(user);
+            }
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 }

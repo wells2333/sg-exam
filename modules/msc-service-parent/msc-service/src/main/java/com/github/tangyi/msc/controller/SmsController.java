@@ -3,6 +3,7 @@ package com.github.tangyi.msc.controller;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.msc.api.dto.SmsDto;
+import com.github.tangyi.msc.api.model.SmsResponse;
 import com.github.tangyi.msc.service.SmsService;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
@@ -36,11 +37,10 @@ public class SmsController extends BaseController {
      * @date 2019/06/22 13:12
      */
     @PostMapping("sendSms")
-    public ResponseBean<Object> sendSms(@RequestBody SmsDto smsDto) {
+    public ResponseBean<SmsResponse> sendSms(@RequestBody SmsDto smsDto) {
         log.info("发送短信给{}，发送内容：{}", smsDto.getReceiver(), smsDto.getContent());
-        // TODO 发送逻辑
-        String result = smsService.sendSms(smsDto);
-        log.info("发送短信成功，返回内容：{}", result);
-        return new ResponseBean<>(result);
+        SmsResponse smsResponse = smsService.sendSms(smsDto);
+        log.info("发送短信成功，返回内容：{}", smsResponse);
+        return new ResponseBean<>(smsResponse);
     }
 }

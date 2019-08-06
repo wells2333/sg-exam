@@ -196,4 +196,10 @@ public class UserDto implements Serializable {
      */
     @ApiModelProperty(value = "微信")
     private String wechat;
+
+    /**
+     * 家庭角色
+     */
+    @ApiModelProperty(value = "家庭角色，0：爸爸，1：妈妈，2：爷爷，3：奶奶，5：外公，6：外婆", example = "0")
+    private Integer familyRole;
 }

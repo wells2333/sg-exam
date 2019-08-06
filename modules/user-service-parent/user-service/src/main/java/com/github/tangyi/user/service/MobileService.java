@@ -43,23 +43,21 @@ public class MobileService {
      * @date 2019/07/02 09:36:52
      */
     public ResponseBean<Boolean> sendSms(String mobile, String tenantCode) {
-        Object codeObj = redisTemplate.opsForValue().get(CommonConstant.DEFAULT_CODE_KEY + mobile);
-        if (codeObj != null) {
-            log.info("手机号验证码未过期:{}，{}", mobile, codeObj);
-            return new ResponseBean<>(Boolean.FALSE, "手机号未注册.");
-        }
+        String key = tenantCode + ":" + CommonConstant.DEFAULT_CODE_KEY + LoginType.SMS.getType() + "@" + mobile;
+        // TODO 校验时间
         String code = RandomUtil.randomNumbers(Integer.parseInt(CommonConstant.CODE_SIZE));
         log.debug("手机号生成验证码成功:{},{}", mobile, code);
-        redisTemplate.opsForValue().set(tenantCode + ":" + CommonConstant.DEFAULT_CODE_KEY + LoginType.SMS.getType() + "@" + mobile
-                , code, SecurityConstant.DEFAULT_SMS_EXPIRE, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(key, code, SecurityConstant.DEFAULT_SMS_EXPIRE, TimeUnit.SECONDS);
         // 调用消息中心服务，发送短信验证码
         SmsDto smsDto = new SmsDto();
         smsDto.setReceiver(mobile);
         smsDto.setContent(String.format(SmsConstant.SMS_TEMPLATE, code));
-//        ResponseBean<?> result = mscServiceClient.sendSms(smsDto);
-//        if (result == null)
-//            throw new CommonException("发送失败.");
-//        log.info("发送验证码结果：{}", result.getData());
+        ResponseBean<?> result = mscServiceClient.sendSms(smsDto);
+        if (result == null)
+            throw new CommonException("发送短信失败.");
+        if (result.getCode() == ResponseBean.FAIL)
+            throw new CommonException(result.getMsg());
+        log.info("发送验证码结果：{}", result.getData());
         return new ResponseBean<>(Boolean.TRUE, code);
     }
 }

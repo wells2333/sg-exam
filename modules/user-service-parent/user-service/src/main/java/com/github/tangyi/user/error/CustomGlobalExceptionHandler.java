@@ -60,6 +60,6 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         responseBean.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         responseBean.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
         responseBean.setMsg(e.getMessage());
-        return new ResponseEntity<>(responseBean, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(responseBean, HttpStatus.OK);
     }
 }

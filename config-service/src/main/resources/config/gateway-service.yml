@@ -1,5 +1,14 @@
 server:
   port: 8000
+  # HTTPS
+  #  ssl:
+  #    enabled: false
+  #    key-alias: test
+  #    key-password: test
+  #    key-store: classpath:www.it99.club.jks
+  #    key-store-type: JKS
+  #    key-store-provider: SUN
+  #    key-store-password: test
 spring:
   datasource:
     url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/microservice-gateway?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8

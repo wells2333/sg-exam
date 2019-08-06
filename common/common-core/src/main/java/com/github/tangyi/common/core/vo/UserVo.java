@@ -125,5 +125,10 @@ public class UserVo extends BaseEntity<UserVo> {
      */
     private String wechat;
 
+    /**
+     * 家庭角色，参考UserStudentConstant
+     */
+    private Integer familyRole;
+
 }
 

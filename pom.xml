@@ -71,7 +71,7 @@
         <kaptcha.version>0.0.9</kaptcha.version>
         <json.version>20140107</json.version>
         <okhttp.version>3.8.1</okhttp.version>
-        <aliyun.version>4.1.0</aliyun.version>
+        <aliyun.version>4.0.3</aliyun.version>
         <weixin.version>3.4.0</weixin.version>
 
         <!-- docker -->
