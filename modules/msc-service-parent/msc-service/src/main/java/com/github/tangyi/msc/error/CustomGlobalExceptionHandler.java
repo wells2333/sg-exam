@@ -1,4 +1,4 @@
-package com.github.tangyi.exam.error;
+package com.github.tangyi.msc.error;
 
 import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.model.ResponseBean;
@@ -37,7 +37,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers,
                                                                   HttpStatus status, WebRequest request) {
-        // 获取所有异常信息
+        // 获取参数校验异常信息
         List<String> errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()

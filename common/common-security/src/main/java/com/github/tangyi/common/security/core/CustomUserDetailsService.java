@@ -1,5 +1,6 @@
 package com.github.tangyi.common.security.core;
 
+import com.github.tangyi.common.security.mobile.MobileUser;
 import com.github.tangyi.common.security.wx.WxUser;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,11 +29,12 @@ public interface CustomUserDetailsService {
      *
      * @param social     social
      * @param tenantCode tenantCode
+     * @param mobileUser mobileUser
      * @return UserDetails
      * @author tangyi
      * @date 2019/06/22 21:08
      */
-    UserDetails loadUserBySocialAndTenantCode(String social, String tenantCode) throws UsernameNotFoundException;
+    UserDetails loadUserBySocialAndTenantCode(String social, String tenantCode, MobileUser mobileUser) throws UsernameNotFoundException;
 
     /**
      * 根据微信openId和租户标识查询

@@ -4,6 +4,7 @@ import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.vo.UserVo;
+import com.github.tangyi.user.api.constant.UserStudentConstant;
 import com.github.tangyi.user.api.dto.StudentDto;
 import com.github.tangyi.user.api.module.Student;
 import com.github.tangyi.user.api.module.UserStudent;
@@ -54,8 +55,9 @@ public class StudentService extends CrudService<StudentMapper, Student> {
         userStudent.setCommonValue(currentUser, SysUtil.getSysCode(), tenantCode);
         userStudent.setUserId(userId);
         userStudent.setStudentId(student.getId());
-        // TODO
-        userStudent.setRelationshipType(0);
+        // 默认关系类型是爸爸
+        if (studentDto.getRelationshipType() == null)
+            userStudent.setRelationshipType(UserStudentConstant.RELATIONSHIP_TYPE_FATHER);
         userStudentService.insert(userStudent);
         // 保存学生
         return this.insert(student);

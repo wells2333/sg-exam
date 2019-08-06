@@ -14,6 +14,7 @@ import com.github.tangyi.common.core.vo.RoleVo;
 import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.security.core.CustomUserDetailsService;
 import com.github.tangyi.common.security.core.GrantedAuthorityImpl;
+import com.github.tangyi.common.security.mobile.MobileUser;
 import com.github.tangyi.common.security.wx.WxUser;
 import com.github.tangyi.user.api.constant.MenuConstant;
 import com.github.tangyi.user.api.dto.UserDto;
@@ -75,17 +76,39 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
      *
      * @param social     social
      * @param tenantCode tenantCode
+     * @param mobileUser mobileUser
      * @return UserDetails
      * @author tangyi
      * @date 2019/06/22 21:08
      */
     @Override
-    public UserDetails loadUserBySocialAndTenantCode(String social, String tenantCode) throws UsernameNotFoundException {
+    public UserDetails loadUserBySocialAndTenantCode(String social, String tenantCode, MobileUser mobileUser) throws UsernameNotFoundException {
         long start = System.currentTimeMillis();
         Tenant tenant = this.validateTenantCode(tenantCode);
-        UserVo userVo = userServiceClient.findUserBySocial(social, tenantCode);
-        if (userVo == null)
-            throw new UsernameNotFoundException("用户手机号未注册.");
+        UserVo userVo = userServiceClient.findUserByIdentifier(social, IdentityType.PHONE_NUMBER.getValue(), tenantCode);
+        // 第一次登录
+        if (userVo == null) {
+            UserDto userDto = new UserDto();
+            // 用户的基本信息
+            if (mobileUser != null)
+                BeanUtils.copyProperties(mobileUser, userDto);
+            userDto.setIdentifier(social);
+            userDto.setCredential(social);
+            userDto.setIdentityType(IdentityType.PHONE_NUMBER.getValue());
+            userDto.setLoginTime(DateUtils.asDate(LocalDateTime.now()));
+            // 注册账号
+            ResponseBean<Boolean> response = userServiceClient.registerUser(userDto);
+            if (response == null || !response.getData())
+                throw new CommonException("自动注册用户失败.");
+            // 重新获取用户信息
+            userVo = userServiceClient.findUserByIdentifier(social, IdentityType.PHONE_NUMBER.getValue(), tenantCode);
+        } else {
+            // TODO 记录登录时间，IP等信息
+            UserDto userDto = new UserDto();
+            BeanUtils.copyProperties(userVo, userDto);
+            userDto.setLoginTime(DateUtils.asDate(LocalDateTime.now()));
+            //userServiceClient.updateUser(userDto);
+        }
         return new CustomUserDetails(userVo.getIdentifier(), userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(), start, LoginType.SMS);
     }
 

@@ -50,6 +50,11 @@ public class Student extends BaseEntity<Student> {
     private String grade;
 
     /**
+     * 就读班级名称
+      */
+    private String gradeName;
+
+    /**
      * 就读学校
      */
     private String school;

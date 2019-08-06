@@ -30,7 +30,6 @@ public class RouteController extends BaseController {
 
     private final RouteService routeService;
 
-
     /**
      * 根据id获取路由
      *
