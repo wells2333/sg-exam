@@ -2,7 +2,7 @@ server:
   port: 8098
 spring:
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/microservice-exam?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/microservice-exam?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8
     username: ${MYSQL_USERNAME:root}
     password: ${MYSQL_PASSWORD:11}
     type: com.zaxxer.hikari.HikariDataSource
@@ -73,7 +73,16 @@ pagehelper:
   supportMethodsArguments: true
   params: count=countSql
 
+# 系统配置
+sys:
+  cacheExpire: 86400 # 缓存失效时间，单位秒，默认一天
+
+# feign相关配置
 feign:
+  httpclient:
+    enabled: false
+  okhttp:
+    enabled: true
   hystrix:
     enabled:  true
 
@@ -106,15 +115,18 @@ ignore:
     - /csrf
     - /actuator/**
     - /hystrix.sender
-    - /v1/user/findUserByUsername/**
+    - /v1/sms/**
+    - /v1/user/findUserByIdentifier/**
     - /v1/tenant/findTenantByTenantCode/**
     - /v1/menu/findMenuByRole/**
     - /v1/menu/findAllMenu
     - /v1/user/checkExist/**
+    - /v1/user/updatePassword
     - /v1/code/**
     - /v1/attachment/download
     - /v1/log/**
     - /authentication/**
+    - /v1/authentication/**
     - /**/*.css
     - /**/*.js
     - /social
@@ -124,7 +136,6 @@ ignore:
     - /health
     - /metrics/**
     - /loggers/**
-    - /mobile/token
 
 # 集群ID生成配置
 cluster:

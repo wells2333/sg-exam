@@ -9,29 +9,9 @@ package com.github.tangyi.common.core.constant;
 public class CommonConstant {
 
     /**
-     * 默认系统编号
-     */
-    public static final String SYS_CODE = "EXAM";
-
-    /**
-     * 默认租户编号
-     */
-    public static final String DEFAULT_TENANT_CODE = "gitee";
-
-    /**
-     * 租户编号
-     */
-    public static final String TENANT_CODE = "tenantCode";
-
-    /**
-     * JSON 资源
-     */
-    public static final String CONTENT_TYPE = "application/json; charset=utf-8";
-
-    /**
      * 正常
      */
-    public static final String STATUS_NORMAL = "0";
+    public static final Integer STATUS_NORMAL = 0;
 
     /**
      * 异常
@@ -146,7 +126,12 @@ public class CommonConstant {
     /**
      * 保存code的前缀
      */
-    public static final String DEFAULT_CODE_KEY = "DEFAULT_CODE_KEY";
+    public static final String DEFAULT_CODE_KEY = "DEFAULT_CODE_KEY_";
+
+    /**
+     * 验证码长度
+     */
+    public static final String CODE_SIZE = "6";
 
     /**
      * Bearer
@@ -157,6 +142,26 @@ public class CommonConstant {
      * 密码类型
      */
     public static final String GRANT_TYPE_PASSWORD = "password";
+
+    /**
+     * 手机号类型
+     */
+    public static final String GRANT_TYPE_MOBILE = "mobile";
+
+    /**
+     * 微信类型
+     */
+    public static final String GRANT_TYPE_WX = "wx";
+
+    /**
+     * 租户编号请求头
+     */
+    public static final String TENANT_CODE_HEADER = "Tenant-Code";
+
+    /**
+     * 默认超时时间
+     */
+    public static final String CACHE_EXPIRE = "CACHE_EXPIRE";
 
 }
 

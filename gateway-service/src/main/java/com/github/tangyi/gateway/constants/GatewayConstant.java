@@ -17,6 +17,11 @@ public class GatewayConstant {
     public static final String MOBILE_TOKEN_URL = "/mobile/token";
 
     /**
+     * 微信登录URL
+     */
+    public static final String WX_TOKEN_URL = "/wx/token";
+    
+    /**
      * 注册
      */
     public static final String REGISTER = "/user/register";
@@ -45,5 +50,15 @@ public class GatewayConstant {
      * 网关缓存的refresh_token的名称
      */
     public static final String GATEWAY_REFRESH_TOKENS = "gateway_refresh:";
+
+    /**
+     * 默认系统编号
+     */
+    public static final String SYS_CODE = "EXAM";
+
+    /**
+     * 默认租户编号
+     */
+    public static final String DEFAULT_TENANT_CODE = "gitee";
 
 }

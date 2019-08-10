@@ -1,7 +1,11 @@
 package com.github.tangyi.common.core.utils;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 /**
  * 日期工具类
@@ -33,5 +37,45 @@ public class DateUtils {
      */
     public static String localDateMillisToString(LocalDateTime date) {
         return date != null ? date.format(FORMATTER_MILLIS) : "";
+    }
+
+    /**
+     * LocalDate转Date
+     *
+     * @param localDate localDate
+     * @return Date
+     */
+    public static Date asDate(LocalDate localDate) {
+        return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    /**
+     * LocalDateTime转Date
+     *
+     * @param localDateTime localDateTime
+     * @return Date
+     */
+    public static Date asDate(LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    /**
+     * Date转LocalDate
+     *
+     * @param date date
+     * @return LocalDate
+     */
+    public static LocalDate asLocalDate(Date date) {
+        return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    /**
+     * Date转LocalDateTime
+     *
+     * @param date date
+     * @return LocalDateTime
+     */
+    public static LocalDateTime asLocalDateTime(Date date) {
+        return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 }

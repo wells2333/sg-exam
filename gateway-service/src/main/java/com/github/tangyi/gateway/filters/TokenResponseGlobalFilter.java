@@ -6,13 +6,11 @@ import com.github.tangyi.common.core.exceptions.InvalidAccessTokenException;
 import com.github.tangyi.gateway.constants.GatewayConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
@@ -27,12 +25,10 @@ import java.net.URI;
  * @date 2019/5/19 15:03
  */
 @Slf4j
-@Component
 public class TokenResponseGlobalFilter implements GlobalFilter, Ordered {
 
     private final RedisTemplate redisTemplate;
 
-    @Autowired
     public TokenResponseGlobalFilter(RedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
@@ -51,7 +47,7 @@ public class TokenResponseGlobalFilter implements GlobalFilter, Ordered {
         // 获取Authorization请求头
         String authorization = request.getHeaders().getFirst(CommonConstant.REQ_HEADER);
         // 先判断是否为刷新token请求
-        if (StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.OAUTH_TOKEN_URL, GatewayConstant.MOBILE_TOKEN_URL)) {
+        if (StrUtil.containsAnyIgnoreCase(uri.getPath(), GatewayConstant.OAUTH_TOKEN_URL, GatewayConstant.MOBILE_TOKEN_URL, GatewayConstant.WX_TOKEN_URL)) {
             String grantType = request.getQueryParams().getFirst(GatewayConstant.GRANT_TYPE);
             // 授权类型为refresh_token
             if (GatewayConstant.GRANT_TYPE_REFRESH_TOKEN.equals(grantType)) {
@@ -60,16 +56,13 @@ public class TokenResponseGlobalFilter implements GlobalFilter, Ordered {
                 // 根据jti从Redis里获取真正的refresh_token
                 Object object = redisTemplate.opsForValue().get(GatewayConstant.GATEWAY_REFRESH_TOKENS + refreshToken);
                 refreshToken = object == null ? refreshToken : object.toString();
-                log.trace("refreshToken:{}", refreshToken);
                 // 替换refresh_token参数
                 URI newUri = UriComponentsBuilder.fromUri(uri).replaceQueryParam(GatewayConstant.GRANT_TYPE_REFRESH_TOKEN, refreshToken).build(true).toUri();
-                log.trace("newUri: {}", newUri);
                 ServerHttpRequest newRequest = exchange.getRequest().mutate().uri(newUri).build();
                 return chain.filter(exchange.mutate().request(newRequest).build());
             }
         } else if (StringUtils.isNotBlank(authorization) && authorization.startsWith(CommonConstant.TOKEN_SPLIT)) {
             authorization = authorization.replace(CommonConstant.TOKEN_SPLIT, "");
-            log.trace("jti authorization: {}", authorization);
             // 从Redis里获取实际的access_token
             Object object = redisTemplate.opsForValue().get(GatewayConstant.GATEWAY_ACCESS_TOKENS + authorization);
             // 缓存里没有access_token，抛异常，统一异常处理会返回403，前端自动重新获取access_token
@@ -77,10 +70,8 @@ public class TokenResponseGlobalFilter implements GlobalFilter, Ordered {
                 throw new InvalidAccessTokenException("access_token已失效.");
             authorization = CommonConstant.TOKEN_SPLIT + object.toString();
             String realAuthorization = authorization;
-            log.trace("jti->token：{}", realAuthorization);
             // 更新请求头，参考源码:SetRequestHeaderGatewayFilterFactory
             ServerHttpRequest newRequest = request.mutate().headers(httpHeaders -> httpHeaders.set(CommonConstant.REQ_HEADER, realAuthorization)).build();
-            log.trace("newRequestHeader:{}", newRequest.getHeaders().getFirst(CommonConstant.REQ_HEADER));
             return chain.filter(exchange.mutate().request(newRequest).build());
         }
         return chain.filter(exchange);

@@ -8,7 +8,7 @@ spring:
       # 单次请求的文件的总大小
       max-request-size: 100MB
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/microservice-user?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/microservice-user?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8
     username: ${MYSQL_USERNAME:root}
     password: ${MYSQL_PASSWORD:11}
     type: com.zaxxer.hikari.HikariDataSource
@@ -93,11 +93,19 @@ fdfs:
 
 # 系统配置
 sys:
+  adminUser: ${ADMIN_USER:admin}  # 管理员账号，默认是admin
   fdfsHttpHost: ${ATTACHMENT_HOST:http://192.168.0.95}:${ATTACHMENT_PORT:8080}  # fastDfs的HTTP配置
   uploadUrl: api/user/v1/attachment/upload
   defaultAvatar: https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80
+  key: '1234567887654321'
+  cacheExpire: 86400 # 缓存失效时间，单位秒，默认一天
 
+# feign相关配置
 feign:
+  httpclient:
+    enabled: false
+  okhttp:
+    enabled: true
   hystrix:
     enabled:  true
 
@@ -130,16 +138,20 @@ ignore:
     - /csrf
     - /actuator/**
     - /hystrix.sender
-    - /v1/user/findUserByUsername/**
+    - /v1/sms/**
+    - /v1/mobile/**
+    - /v1/user/findUserByIdentifier/**
     - /v1/tenant/findTenantByTenantCode/**
     - /v1/menu/findMenuByRole/**
     - /v1/menu/findAllMenu
     - /v1/user/register
     - /v1/user/checkExist/**
+    - /v1/user/updatePassword
     - /v1/code/**
     - /v1/attachment/download
     - /v1/log/**
     - /authentication/**
+    - /v1/authentication/**
     - /**/*.css
     - /**/*.js
     - /social
@@ -149,7 +161,6 @@ ignore:
     - /health
     - /metrics/**
     - /loggers/**
-    - /mobile/token
     - /bus/refresh
 
 # 集群ID生成配置

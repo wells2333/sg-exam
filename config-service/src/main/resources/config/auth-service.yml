@@ -2,7 +2,7 @@ server:
   port: 8090
 spring:
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/microservice-auth?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/microservice-auth?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8
     username: ${MYSQL_USERNAME:root}
     password: ${MYSQL_PASSWORD:11}
     type: com.zaxxer.hikari.HikariDataSource
@@ -34,7 +34,12 @@ spring:
   zipkin:
     base-url: http://${ZIPKIN_HOST:localhost}:${ZIPKIN_PORT:9411}  # 指定了Zipkin服务器的地址
 
+# feign相关配置
 feign:
+  httpclient:
+    enabled: false
+  okhttp:
+    enabled: true
   hystrix:
     enabled:  true
 
@@ -82,15 +87,18 @@ ignore:
     - /csrf
     - /actuator/**
     - /hystrix.sender
-    - /v1/user/findUserByUsername/**
+    - /v1/sms/**
+    - /v1/user/findUserByIdentifier/**
     - /v1/tenant/findTenantByTenantCode/**
     - /v1/user/checkExist/**
+    - /v1/user/updatePassword
     - /v1/menu/findMenuByRole/**
     - /v1/menu/findAllMenu
     - /v1/code/**
     - /v1/attachment/download
     - /v1/log/**
     - /authentication/**
+    - /v1/authentication/**
     - /**/*.css
     - /**/*.js
     - /social
@@ -100,7 +108,6 @@ ignore:
     - /health
     - /metrics/**
     - /loggers/**
-    - /mobile/token
 
 # 集群ID生成配置
 cluster:
@@ -110,6 +117,17 @@ cluster:
 # 系统配置
 sys:
   adminUser: ${ADMIN_USER:admin}  # 管理员账号，默认是admin
+  fdfsHttpHost: ${ATTACHMENT_HOST:http://192.168.0.95}:${ATTACHMENT_PORT:8080}  # fastDfs的HTTP配置
+  uploadUrl: api/user/v1/attachment/upload
+  defaultAvatar: https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80
+  key: '1234567887654321'
+  cacheExpire: 86400 # 缓存失效时间，单位秒，默认一天
+
+# 微信配置
+wx:
+  appId: wx597d9f972f991a8c
+  appSecret: b5d44266271a08c6f75a347712a7334e
+  grantType: authorization_code
 
 logging:
   level:

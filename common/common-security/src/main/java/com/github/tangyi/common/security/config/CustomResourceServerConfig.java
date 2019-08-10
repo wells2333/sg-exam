@@ -1,6 +1,8 @@
 package com.github.tangyi.common.security.config;
 
+import com.github.tangyi.common.security.mobile.MobileSecurityConfigurer;
 import com.github.tangyi.common.security.properties.FilterIgnorePropertiesConfig;
+import com.github.tangyi.common.security.wx.WxSecurityConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,11 +23,26 @@ public class CustomResourceServerConfig extends ResourceServerConfigurerAdapter 
 
     private static final String RESOURCE_ID = "resource_id";
 
+    /**
+     * 开放权限的URL
+     */
     private final FilterIgnorePropertiesConfig filterIgnorePropertiesConfig;
 
+    /**
+     * 手机登录配置
+     */
+    private final MobileSecurityConfigurer mobileSecurityConfigurer;
+
+    /**
+     * 微信登录配置
+     */
+    private final WxSecurityConfigurer wxSecurityConfigurer;
+
     @Autowired
-    public CustomResourceServerConfig(FilterIgnorePropertiesConfig filterIgnorePropertiesConfig) {
+    public CustomResourceServerConfig(FilterIgnorePropertiesConfig filterIgnorePropertiesConfig, MobileSecurityConfigurer mobileSecurityConfigurer, WxSecurityConfigurer wxSecurityConfigurer) {
         this.filterIgnorePropertiesConfig = filterIgnorePropertiesConfig;
+        this.mobileSecurityConfigurer = mobileSecurityConfigurer;
+        this.wxSecurityConfigurer = wxSecurityConfigurer;
     }
 
     @Override
@@ -35,7 +52,6 @@ public class CustomResourceServerConfig extends ResourceServerConfigurerAdapter 
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        // 忽略的url要包含/actuator/**
         String[] ignores = new String[filterIgnorePropertiesConfig.getUrls().size()];
         http
                 .csrf().disable()
@@ -44,5 +60,9 @@ public class CustomResourceServerConfig extends ResourceServerConfigurerAdapter 
                 .antMatchers(filterIgnorePropertiesConfig.getUrls().toArray(ignores)).permitAll()
                 .anyRequest().authenticated()
                 .and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler());
+        // 手机号登录
+        http.apply(mobileSecurityConfigurer);
+        // 微信登录
+        http.apply(wxSecurityConfigurer);
     }
 }

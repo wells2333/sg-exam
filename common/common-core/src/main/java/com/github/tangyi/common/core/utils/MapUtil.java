@@ -8,6 +8,8 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -97,9 +99,9 @@ public class MapUtil {
      */
     public static <T> List<T> map2Java(Class<T> clazz, List<Map<String, Object>> mapList)
             throws InstantiationException, IllegalAccessException {
-        List<T> list = new ArrayList<T>();
+        List<T> list = new ArrayList<>();
         if (mapList != null && mapList.size() > 0) {
-            T bean = null;
+            T bean;
             for (Map<String, Object> map : mapList) {
                 bean = clazz.newInstance();
                 map2Java(bean, map);
@@ -107,7 +109,6 @@ public class MapUtil {
             }
         }
         return list;
-
     }
 
     /**
@@ -118,20 +119,43 @@ public class MapUtil {
      */
     public static <T> T map2Java(T javaBean, Map<String, Object> map) {
         try {
+            Map<String, Object> collectionObj = new HashMap<>();
             for (String key : map.keySet()) {
-                Field temFiels = null;
+                Field temFiels;
                 if (key.contains(".")) {
-                    //对象中属性类型是对象
+                    // 对象中属性类型是对象
                     String[] temp = StringUtils.split(key, ".");
                     temFiels = getDeclaredField(javaBean, temp[0]);
-                    Object o = null;
-                    if (temFiels.getType() == Object.class) {
+                    Object o;
+                    if (Objects.requireNonNull(temFiels).getType().equals(Object.class)) {
                         o = javaBean.getClass().newInstance();
+                        ReflectionUtil.setFieldValue(o, temp[1], map.get(key));
+                        BeanUtils.copyProperties(javaBean, o);
+                    } else if (Objects.requireNonNull(temFiels).getType().equals(List.class)) {
+                        if (!collectionObj.containsKey(temp[0])) {
+                            o = new ArrayList<>();
+                            collectionObj.put(temp[0], o);
+                        }
+                        o = collectionObj.get(temp[0]);
+                        // 获取f字段的通用类型
+                        Type fc = temFiels.getGenericType();
+                        // 如果不为空并且是泛型参数的类型
+                        if (fc instanceof ParameterizedType) {
+                            ParameterizedType pt = (ParameterizedType) fc;
+                            Type[] types = pt.getActualTypeArguments();
+                            // 只处理一个泛型参数
+                            if (types != null && types.length == 1) {
+                                Object tempObj = ((Class<?>) types[0]).newInstance();
+                                ReflectionUtil.setFieldValue(tempObj, temp[2], map.get(key));
+                                ((List) o).add(tempObj);
+                                BeanUtils.setProperty(javaBean, temp[0], o);
+                            }
+                        }
                     } else {
                         o = temFiels.getType().newInstance();
+                        ReflectionUtil.setFieldValue(o, temp[1], map.get(key));
+                        BeanUtils.setProperty(javaBean, temp[0], o);
                     }
-                    ReflectionUtil.setFieldValue(o, temp[1], map.get(key));
-                    BeanUtils.copyProperties(javaBean, o);
                 } else {
                     // 属性是普通的数据类型
                     BeanUtils.copyProperty(javaBean, key, map.get(key));
@@ -178,9 +202,8 @@ public class MapUtil {
         if (javaBeanList == null) {
             return null;
         }
-        List<Map<String, Object>> mapList = new ArrayList<Map<String, Object>>();
-        Map<String, Object> map = null;
-
+        List<Map<String, Object>> mapList = new ArrayList<>();
+        Map<String, Object> map;
         for (E javaBean : javaBeanList) {
             if (javaBean != null) {
                 map = java2Map(javaBean);
@@ -202,11 +225,12 @@ public class MapUtil {
         try {
             // 获取javaBean属性
             BeanInfo beanInfo = Introspector.getBeanInfo(javaBean.getClass());
-
             PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
             if (propertyDescriptors != null && propertyDescriptors.length > 0) {
-                String propertyName = null; // javaBean属性名
-                Object propertyValue = null; // javaBean属性值
+                // javaBean属性名
+                String propertyName;
+                // javaBean属性值
+                Object propertyValue;
                 for (PropertyDescriptor pd : propertyDescriptors) {
                     propertyName = pd.getName();
                     if (!propertyName.equals("class")) {

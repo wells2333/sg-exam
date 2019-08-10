@@ -87,8 +87,16 @@ public class ExcelToolUtil {
                     String[] temp = StringUtils.split(key, ".");
                     Object obj = dataMap.get(temp[0]);
                     if (obj != null) {
-                        //映射对象，取得对应的字段值
-                        obj = ReflectionUtil.getFieldValue(obj, temp[1]);
+                        // 映射list
+                        if (temp[1].contains("#")) {
+                            String listIndex = StringUtils.split(temp[1], "#")[1];
+                            obj = ((List) obj).get(Integer.parseInt(listIndex));
+                            // 取得对应的字段值
+                            obj = ReflectionUtil.getFieldValue(obj, temp[2]);
+                        } else {
+                            // 映射对象，取得对应的字段值
+                            obj = ReflectionUtil.getFieldValue(obj, temp[1]);
+                        }
                         if (obj != null) {
                             cell.setCellValue(obj.toString());
                         } else {

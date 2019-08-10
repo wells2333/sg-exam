@@ -85,7 +85,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
         int code = ResponseBean.FAIL;
         if (ex instanceof NotFoundException) {
             httpStatus = HttpStatus.NOT_FOUND;
-            msg = "没有服务提供者.";
+            msg = "SERVICE_UNAVAILABLE.";
         } else if (ex instanceof ResponseStatusException) {
             ResponseStatusException responseStatusException = (ResponseStatusException) ex;
             httpStatus = responseStatusException.getStatus();

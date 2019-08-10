@@ -1,6 +1,21 @@
 server:
   port: 8000
+  # HTTPS
+  #  ssl:
+  #    enabled: false
+  #    key-alias: test
+  #    key-password: test
+  #    key-store: classpath:www.it99.club.jks
+  #    key-store-type: JKS
+  #    key-store-provider: SUN
+  #    key-store-password: test
 spring:
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/microservice-gateway?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:11}
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.jdbc.Driver
   redis:
     host: ${REDIS_HOST:localhost}
     port: ${REDIS_PORT:6379}
@@ -28,11 +43,36 @@ spring:
   zipkin:
     base-url: http://${ZIPKIN_HOST:localhost}:${ZIPKIN_PORT:9411}  # 指定了Zipkin服务器的地址
 
-security:
-  encode:
-    key: '1234567887654321'
+# mybatis配置
+mybatis:
+  type-aliases-package: com.github.tangyi.gateway.module
+  configuration:
+    # 驼峰转换
+    map-underscore-to-camel-case: true
+    # 延迟加载
+    lazy-loading-enabled: true
+  mapper-locations: classpath:mapper/*.xml
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
 
+# 系统配置
+sys:
+  adminUser: ${ADMIN_USER:admin}  # 管理员账号，默认是admin
+  fdfsHttpHost: ${ATTACHMENT_HOST:http://192.168.0.95}:${ATTACHMENT_PORT:8080}  # fastDfs的HTTP配置
+  uploadUrl: api/user/v1/attachment/upload
+  defaultAvatar: https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80
+  key: '1234567887654321'
+  cacheExpire: 86400 # 缓存失效时间，单位秒，默认一天
+
+# feign相关配置
 feign:
+  httpclient:
+    enabled: false
+  okhttp:
+    enabled: true
   hystrix:
     enabled:  true
 
@@ -62,19 +102,26 @@ swagger:
     - user-service
     - exam-service
     - auth-service
+    - msc-service
 
 # 演示环境
 preview:
   enabled: ${PREVIEW_ENABLED:false}
   ignores:
-    - token
-    - start
-    - saveAndNext
+    - api/auth  # 授权服务
+    - resetPassword   # 重置密码
     - register
-    - submit
     - checkExist
     - updateInfo
     - attachment
+    - api/exam  # 考试服务
+    - api/msc
+
+# 开启网关token转换
+# 暂时关闭，此功能在微信端登录有问题
+gateway:
+  token-transfer:
+    enabled: ${GATEWAY_TOKEN_TRANSFER:false}
 
 # 集群ID生成配置
 cluster:

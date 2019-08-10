@@ -1,10 +1,12 @@
 package com.github.tangyi.common.security.utils;
 
 import com.github.tangyi.common.security.core.UserDetailsImpl;
+import org.bouncycastle.util.encoders.Base64;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.IOException;
 import java.security.Principal;
 
 /**
@@ -63,5 +65,27 @@ public class SecurityUtil {
      */
     public static Object getCurrentPrincipal() {
         return SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
+    /**
+     * 从header 请求中的clientId/clientsecect
+     *
+     * @param header header中的参数
+     * @throws RuntimeException if the Basic header is not present or is not valid
+     *                          Base64
+     */
+    public static String[] extractAndDecodeHeader(String header) throws IOException {
+        byte[] base64Token = header.substring(6).getBytes("UTF-8");
+        byte[] decoded;
+        try {
+            decoded = Base64.decode(base64Token);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Failed to decode basic authentication token");
+        }
+        String token = new String(decoded, "UTF8");
+        int delim = token.indexOf(":");
+        if (delim == -1)
+            throw new RuntimeException("Invalid basic authentication token");
+        return new String[]{token.substring(0, delim), token.substring(delim + 1)};
     }
 }

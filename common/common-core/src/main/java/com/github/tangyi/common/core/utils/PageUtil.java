@@ -57,4 +57,32 @@ public class PageUtil {
         PageHelper.orderBy(orderBy(sort, order));
         return page;
     }
+
+    /**
+     * 复制属性
+     *
+     * @param source source
+     * @param target target
+     * @author tangyi
+     * @date 2019/07/03 22:26:18
+     */
+    public static void copyProperties(PageInfo<?> source, PageInfo<?> target) {
+        target.setPageNum(source.getPageNum());
+        target.setPageSize(source.getPageSize());
+        target.setSize(source.getSize());
+        target.setStartRow(source.getStartRow());
+        target.setEndRow(source.getEndRow());
+        target.setPages(source.getPages());
+        target.setPrePage(source.getPrePage());
+        target.setNextPage(source.getNextPage());
+        target.setIsFirstPage(source.isIsFirstPage());
+        target.setIsLastPage(source.isIsLastPage());
+        target.setHasPreviousPage(source.isHasPreviousPage());
+        target.setHasNextPage(source.isHasNextPage());
+        target.setNavigatePages(source.getNavigatePages());
+        target.setNavigatepageNums(source.getNavigatepageNums());
+        target.setNavigateFirstPage(source.getNavigateFirstPage());
+        target.setNavigateLastPage(source.getNavigateLastPage());
+        target.setTotal(source.getTotal());
+    }
 }
