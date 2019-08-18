@@ -8,6 +8,10 @@ spring:
   profiles:
     #  指定为native,开启本地存储配置的方式，spring cloud微服务配置中心默认有3种方式：远程git仓库、远程SVN、本地方式（本地目录）
     active: ${SPRING_PROFILES_ACTIVE:native}
+  security:
+    user:
+      name: ${CONFIG_SERVER_USERNAME:admin}
+      password: ${CONFIG_SERVER_PASSWORD:11}
   # spring boot admin配置
   boot:
     admin:
@@ -17,6 +21,9 @@ spring:
         password: ${ADMIN_PASSWORD:11}
         instance:
           service-base-url: http://${CONFIG_SERVICE_HOST:localhost}:${server.port}
+          metadata:
+            tags:
+              environment: prd
   # 使用consul作为注册中心
   cloud:
     consul:

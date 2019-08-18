@@ -64,8 +64,8 @@ QQ群号：996208878
 
 |      名称      |   版本    |
 | --------- | -------- |
-| `Spring Boot`    | `2.1.3.RELEASE`  |
-| `Spring Cloud`   | `Greenwich.SR1`  |
+| `Spring Boot`    | `2.1.7.RELEASE`  |
+| `Spring Cloud`   | `Greenwich.SR2`  |
 
 ## 系统架构
 

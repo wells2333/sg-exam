@@ -100,6 +100,8 @@ public class LogController extends BaseController {
     public ResponseBean<Boolean> addLog(@RequestBody @Valid Log log) {
         if (StringUtils.isBlank(log.getId()))
             log.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        if (true)
+            return null;
         // 保存日志
         return new ResponseBean<>(logService.insert(log) > 0);
     }

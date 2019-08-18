@@ -32,6 +32,9 @@ spring:
         password: ${ADMIN_PASSWORD:11}
         instance:
           service-base-url: http://${GATEWAY_SERVICE_HOST:localhost}:${server.port}
+          metadata:
+            tags:
+              environment: prd
   # sleuth 配置
   sleuth:
     web:

@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.tangyi</groupId>
         <artifactId>spring-microservice-exam</artifactId>
-        <version>3.1.0</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>config-service</artifactId>
     <name>${project.artifactId}</name>
@@ -17,6 +17,12 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-config-server</artifactId>
+        </dependency>
+
+        <!-- security -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
         <!-- 管理中心插件 -->

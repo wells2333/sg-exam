@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.tangyi</groupId>
         <artifactId>user-service-parent</artifactId>
-        <version>3.1.0</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>user-service</artifactId>
     <name>${project.artifactId}</name>
