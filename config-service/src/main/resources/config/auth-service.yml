@@ -23,6 +23,9 @@ spring:
         password: ${ADMIN_PASSWORD:11}
         instance:
           service-base-url: http://${AUTH_SERVICE_HOST:localhost}:${server.port}
+          metadata:
+            tags:
+              environment: prd
   # sleuth 配置
   sleuth:
     web:
@@ -125,8 +128,8 @@ sys:
 
 # 微信配置
 wx:
-  appId: wx597d9f972f991a8c
-  appSecret: b5d44266271a08c6f75a347712a7334e
+  appId: test
+  appSecret: test
   grantType: authorization_code
 
 logging:

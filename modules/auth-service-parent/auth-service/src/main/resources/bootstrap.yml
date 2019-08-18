@@ -18,15 +18,11 @@ spring:
         enabled: true
         # 指向配置中心在consul注册的服务名称（即：spring.application.name）
         service-id: config-service
-
+      username: ${CONFIG_SERVER_USERNAME:admin}
+      password: ${CONFIG_SERVER_PASSWORD:11}
 # jwt加密配置
 encrypt:
   key-store:
     location: classpath:/jwt.jks
     alias: jwt
     password: abc123
-
-logging:
-  level:
-    root: info
-    com.github.tangyi: debug

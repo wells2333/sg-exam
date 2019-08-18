@@ -17,6 +17,9 @@ spring:
         password: ${ADMIN_PASSWORD:11}
         instance:
           service-base-url: http://${AUTH_SERVICE_HOST:localhost}:${server.port}
+          metadata:
+            tags:
+              environment: prd
   # sleuth 配置
   sleuth:
     web:
@@ -83,14 +86,14 @@ management:
 
 # 短信配置
 sms:
-  appKey: appKey
-  appSecret: appSecret
-  regionId: default
-  domain: dysmsapi.aliyuncs.com
-  signName: 在线考试系统演示
-  templateCode: SMS_171192294
-  version: 2017-05-25
-  action: SendSms
+  appKey: ${SMS_APP_KEY:test}
+  appSecret: ${SMS_APP_SECRET:test}
+  regionId: ${SMS_REGION_ID:default}
+  domain: ${SMS_DOMAIN:dysmsapi.aliyuncs.com}
+  signName: ${SMS_SIGN_NAME:test}
+  templateCode: ${SMS_TEMP_CODE:SMS_171192294}
+  version: ${SMS_VERSION:2017-05-25}
+  action: ${SMS_ACTION:SendSms}
 
 ignore:
   urls:
