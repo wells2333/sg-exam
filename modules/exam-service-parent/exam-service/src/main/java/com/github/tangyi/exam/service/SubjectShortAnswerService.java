@@ -22,7 +22,8 @@ import java.util.List;
  * @date 2019/6/16 14:58
  */
 @Service
-public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMapper, SubjectShortAnswer> implements BaseSubjectService {
+public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMapper, SubjectShortAnswer>
+        implements BaseSubjectService {
 
     /**
      * 查找题目
@@ -36,18 +37,6 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
     @Cacheable(value = "subjectShortAnswer#" + CommonConstant.CACHE_EXPIRE, key = "#subjectShortAnswer.id")
     public SubjectShortAnswer get(SubjectShortAnswer subjectShortAnswer) {
         return super.get(subjectShortAnswer);
-    }
-
-    /**
-     * 根据序号查找
-     *
-     * @param subjectShortAnswer subjectShortAnswer
-     * @return SubjectShortAnswer
-     * @author tangyi
-     * @date 2019/6/16 14:58
-     */
-    public SubjectShortAnswer getBySerialNumber(SubjectShortAnswer subjectShortAnswer) {
-        return this.dao.getBySerialNumber(subjectShortAnswer);
     }
 
     /**
@@ -119,7 +108,7 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
     @Override
     @Transactional
     @CacheEvict(value = "subjectChoices", allEntries = true)
-    public int deleteAll(String[] ids) {
+    public int deleteAll(Long[] ids) {
         return super.deleteAll(ids);
     }
 
@@ -133,7 +122,7 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
      */
     @Transactional
     @CacheEvict(value = "subjectChoices", allEntries = true)
-    public int physicalDeleteAll(String[] ids) {
+    public int physicalDeleteAll(Long[] ids) {
         return this.dao.physicalDeleteAll(ids);
     }
 
@@ -146,25 +135,25 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
      * @date 2019/06/16 17:36
      */
     @Override
-    public SubjectDto getSubject(String id) {
+    public SubjectDto getSubject(Long id) {
         SubjectShortAnswer subjectShortAnswer = new SubjectShortAnswer();
         subjectShortAnswer.setId(id);
         return SubjectUtil.subjectShortAnswerToDto(this.get(subjectShortAnswer));
     }
 
     /**
-     * 根据题目序号查询
+     * 根据上一题ID查询下一题
      *
-     * @param serialNumber serialNumber
+     * @param examinationId examinationId
+     * @param previousId    previousId
+     * @param nextType      0：下一题，1：上一题
      * @return SubjectDto
      * @author tangyi
-     * @date 2019/06/16 17:54
+     * @date 2019/09/14 17:05
      */
     @Override
-    public SubjectDto getSubjectBySerialNumber(Integer serialNumber) {
-        SubjectShortAnswer subjectShortAnswer = new SubjectShortAnswer();
-        subjectShortAnswer.setSerialNumber(serialNumber);
-        return SubjectUtil.subjectShortAnswerToDto(this.getBySerialNumber(subjectShortAnswer));
+    public SubjectDto getNextByCurrentIdAndType(Long examinationId, Long previousId, Integer nextType) {
+        return null;
     }
 
     /**
@@ -236,29 +225,29 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
     /**
      * 批量删除
      *
-     * @param subjectDto subjectDto
+     * @param ids ids
      * @return SubjectDto
      * @author tangyi
      * @date 2019/06/16 17:54
      */
     @Override
     @Transactional
-    public int deleteAllSubject(SubjectDto subjectDto) {
-        return this.deleteAll(subjectDto.getIds());
+    public int deleteAllSubject(Long[] ids) {
+        return this.deleteAll(ids);
     }
 
     /**
      * 物理删除
      *
-     * @param subjectDto subjectDto
+     * @param ids ids
      * @return SubjectDto
      * @author tangyi
      * @date 2019/06/16 22:59
      */
     @Override
     @Transactional
-    public int physicalDeleteAllSubject(SubjectDto subjectDto) {
-        return this.physicalDeleteAll(subjectDto.getIds());
+    public int physicalDeleteAllSubject(Long[] ids) {
+        return this.physicalDeleteAll(ids);
     }
 
     /**
@@ -290,7 +279,7 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
         SubjectShortAnswer subjectShortAnswer = new SubjectShortAnswer();
         BeanUtils.copyProperties(subjectDto, subjectShortAnswer);
         PageInfo subjectShortAnswerPageInfo = this.findPage(pageInfo, subjectShortAnswer);
-        List subjectDtos = SubjectUtil.subjectShortAnswerToDto(subjectShortAnswerPageInfo.getList());
+        List<SubjectDto> subjectDtos = SubjectUtil.subjectShortAnswerToDto(subjectShortAnswerPageInfo.getList());
         PageInfo<SubjectDto> subjectDtoPageInfo = new PageInfo<>();
         subjectDtoPageInfo.setList(subjectDtos);
 
@@ -303,15 +292,13 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
     /**
      * 根据ID查询列表
      *
-     * @param subjectDto subjectDto
+     * @param ids ids
      * @return List
      * @author tangyi
      * @date 2019/06/16 18:17
      */
     @Override
-    public List<SubjectDto> findSubjectListById(SubjectDto subjectDto) {
-        SubjectShortAnswer subjectShortAnswer = new SubjectShortAnswer();
-        BeanUtils.copyProperties(subjectDto, subjectShortAnswer);
-        return SubjectUtil.subjectShortAnswerToDto(this.findListById(subjectShortAnswer));
+    public List<SubjectDto> findSubjectListById(Long[] ids) {
+        return SubjectUtil.subjectShortAnswerToDto(this.findListById(ids));
     }
 }

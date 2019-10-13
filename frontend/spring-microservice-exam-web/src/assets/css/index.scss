@@ -1,0 +1,114 @@
+@import "common";
+#bg {
+  width: 100%;
+  margin: auto;
+}
+
+#home-msg {
+  font-size: 40px;
+  color: #3a3a3a !important;
+  position: absolute;
+  top: 120px;
+  text-align: center;
+  width: 100%;
+}
+/* 注册 */
+.register-now {
+  font-size: 20px;
+  background-color: #178dff;
+  color: #fff !important;
+  width: 180px;
+  height: 60px;
+  line-height: 55px;
+  position: absolute;
+  margin-left: -80px;
+  left: 50%;
+  top: 200px;
+  text-align: center;
+  text-decoration: none;
+}
+/* 产品特色 */
+.features-msg {
+  @extend %message-common;
+}
+
+/* 产品特色 */
+.features-img {
+  @extend %img-common;
+}
+
+.msg-text {
+  font-size: 18px;
+  color: #178dff;
+  margin-top: 29px;
+  margin-bottom: 21px;
+  text-align: center;
+}
+
+.msg-text-detail {
+  font-size: 14px;
+  color: #474747;
+  text-align: center;
+}
+
+/* 适用场景 */
+.scenes-msg {
+  @extend %message-common;
+}
+.scenes-img {
+  @extend %img-common;
+  background-color: #f6f6f6;
+}
+
+/* 产品功能 */
+.function-msg {
+  @extend %message-common;
+}
+.function-img {
+  @extend %img-common;
+  margin-bottom: 20px;
+}
+
+/* 返回顶部 */
+.go-top-box {
+  background-color: #fff;
+  position: fixed;
+  right: 100px;
+  bottom: 150px;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: .3s;
+  box-shadow: 0 0 6px rgba(0,0,0,.12);
+  z-index: 5;
+}
+.top-icon {
+  color: #409eff;
+  display: block !important;
+  line-height: 40px !important;
+  text-align: center;
+  font-size: 18px;
+}
+
+/* 联系我们 */
+.us-msg {
+  padding-top: 10px;
+  height: 120px;
+  color: #fff;
+  background-color: #fff;
+  text-align: center;
+}
+
+/* 个人中心 */
+.message-msg {
+  padding-top: 10px;
+  color: #fff;
+  background-color: #fff;
+  text-align: center;
+}
+
+/* 修改密码 */
+.password-msg {
+  @extend .message-msg;
+}

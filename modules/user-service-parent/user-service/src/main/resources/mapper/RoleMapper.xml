@@ -82,6 +82,13 @@
         </foreach>
     </select>
 
+    <select id="findByRoleCode" resultMap="roleResultMap">
+        SELECT
+        <include refid="roleColumns"/>
+        FROM sys_role a
+        WHERE a.role_code = #{roleCode} and a.del_flag = 0
+    </select>
+
     <insert id="insert">
         INSERT INTO sys_role (
         id,

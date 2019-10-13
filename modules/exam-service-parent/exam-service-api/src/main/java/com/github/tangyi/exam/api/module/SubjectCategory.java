@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.api.module;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
 
@@ -28,15 +29,16 @@ public class SubjectCategory extends BaseEntity<SubjectCategory> {
     /**
      * 父分类id
      */
-    private String parentId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long parentId;
 
     /**
      * 排序号
      */
-    private String sort;
+    private Integer sort;
 
     /**
      * 类型: 0-私共,1-公有
      */
-    private String type;
+    private Integer type;
 }

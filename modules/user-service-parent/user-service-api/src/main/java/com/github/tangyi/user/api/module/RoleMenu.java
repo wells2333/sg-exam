@@ -12,7 +12,7 @@ import lombok.Data;
 @Data
 public class RoleMenu extends BaseEntity<RoleMenu> {
 
-    private String roleId;
+    private Long roleId;
 
-    private String menuId;
+    private Long menuId;
 }

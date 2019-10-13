@@ -5,6 +5,7 @@ import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
+import com.github.tangyi.exam.api.dto.AnswerCartDto;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.Examination;
 import com.github.tangyi.exam.api.module.ExaminationSubject;
@@ -97,7 +98,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
     @Override
     @Transactional
     @CacheEvict(value = "examination", allEntries = true)
-    public int deleteAll(String[] ids) {
+    public int deleteAll(Long[] ids) {
         return super.deleteAll(ids);
     }
 
@@ -147,16 +148,14 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
     }
 
     /**
-     * 查询题目数量
+     * 根据考试ID查询题目id列表
      *
      * @param examination examination
-     * @return int
+     * @return ExaminationSubject
      * @author tangyi
      * @date 2019/06/18 14:34
      */
-    public int findSubjectCount(Examination examination) {
-        ExaminationSubject examinationSubject = new ExaminationSubject();
-        examinationSubject.setExaminationId(examination.getId());
-        return examinationSubjectService.findSubjectCount(examinationSubject);
+    public List<ExaminationSubject> findListByExaminationId(Examination examination) {
+        return examinationSubjectService.findListByExaminationId(examination.getId());
     }
 }

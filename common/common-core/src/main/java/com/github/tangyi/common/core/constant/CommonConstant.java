@@ -163,5 +163,18 @@ public class CommonConstant {
      */
     public static final String CACHE_EXPIRE = "CACHE_EXPIRE";
 
+    public static final String EMPTY_STRING = "";
+
+    /**
+     * 顶级菜单的parentId
+     */
+    public static final Long ROOT = -1L;
+
+    public static final String PARAM_IDS = "ids";
+
+	/**
+	 * baskPackage
+	 */
+	public static final String BASE_PACKAGE = "com.github.tangyi";
 }
 

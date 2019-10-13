@@ -25,7 +25,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 
 /**
  * 考试记录controller
@@ -72,8 +71,8 @@ public class ExamRecordController extends BaseController {
      */
     @GetMapping("/{id}")
     @ApiOperation(value = "获取考试记录信息", notes = "根据考试记录id获取考试记录详细信息")
-    @ApiImplicitParam(name = "id", value = "考试记录ID", required = true, dataType = "String", paramType = "path")
-    public ResponseBean<ExaminationRecord> examRecord(@PathVariable String id) {
+    @ApiImplicitParam(name = "id", value = "考试记录ID", required = true, dataType = "Long", paramType = "path")
+    public ResponseBean<ExaminationRecord> examRecord(@PathVariable Long id) {
         ExaminationRecord examRecord = new ExaminationRecord();
         examRecord.setId(id);
         return new ResponseBean<>(examRecordService.get(examRecord));
@@ -111,16 +110,10 @@ public class ExamRecordController extends BaseController {
         // 查询考试记录
         PageInfo<ExaminationRecord> examRecordPageInfo = examRecordService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), examRecord);
         if (CollectionUtils.isNotEmpty(examRecordPageInfo.getList())) {
-            Examination examination = new Examination();
-            // 获取考试ID集合，转成字符串数组
-            examination.setIds(examRecordPageInfo.getList().stream().map(ExaminationRecord::getExaminationId).distinct().toArray(String[]::new));
             // 查询考试信息
-            List<Examination> examinations = examinationService.findListById(examination);
+            List<Examination> examinations = examinationService.findListById(examRecordPageInfo.getList().stream().map(ExaminationRecord::getExaminationId).distinct().toArray(Long[]::new));
             // 查询用户信息
-            UserVo userVo = new UserVo();
-            // 获取用户ID集合，转成字符串数组
-            userVo.setIds(examRecordPageInfo.getList().stream().map(ExaminationRecord::getUserId).distinct().toArray(String[]::new));
-            ResponseBean<List<UserVo>> returnT = userServiceClient.findUserById(userVo);
+            ResponseBean<List<UserVo>> returnT = userServiceClient.findUserById(examRecordPageInfo.getList().stream().map(ExaminationRecord::getUserId).distinct().toArray(Long[]::new));
             if (returnT != null && CollectionUtils.isNotEmpty(returnT.getData())) {
                 examRecordPageInfo.getList().forEach(tempExamRecord -> {
                     // 找到考试记录所属的考试信息
@@ -146,10 +139,7 @@ public class ExamRecordController extends BaseController {
                     }
                 });
                 // 查询部门信息
-                DeptVo deptVo = new DeptVo();
-                // 获取部门ID集合，转成字符串数组
-                deptVo.setIds(returnT.getData().stream().map(UserVo::getDeptId).distinct().toArray(String[]::new));
-                ResponseBean<List<DeptVo>> deptResponseBean = userServiceClient.findDeptById(deptVo);
+                ResponseBean<List<DeptVo>> deptResponseBean = userServiceClient.findDeptById(returnT.getData().stream().map(UserVo::getDeptId).distinct().toArray(Long[]::new));
                 examRecordDtoList.forEach(tempExamRecordDto -> {
                     // 查询、设置用户信息
                     UserVo examRecordDtoUserVo = returnT.getData().stream()
@@ -232,7 +222,7 @@ public class ExamRecordController extends BaseController {
     @ApiOperation(value = "删除考试记录", notes = "根据ID删除考试记录")
     @ApiImplicitParam(name = "id", value = "考试记录ID", required = true, paramType = "path")
     @Log("删除考试记录")
-    public ResponseBean<Boolean> deleteExamRecord(@PathVariable String id) {
+    public ResponseBean<Boolean> deleteExamRecord(@PathVariable Long id) {
         boolean success = false;
         try {
             ExaminationRecord examRecord = examRecordService.get(id);
@@ -249,26 +239,24 @@ public class ExamRecordController extends BaseController {
     /**
      * 导出
      *
-     * @param examRecordDto examRecordDto
+     * @param ids ids
      * @author tangyi
      * @date 2018/12/31 22:28
      */
     @PostMapping("export")
     @PreAuthorize("hasAuthority('exam:examRecord:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "导出考试成绩", notes = "根据成绩id导出成绩")
-    @ApiImplicitParam(name = "examRecordDto", value = "成绩信息", required = true, dataType = "ExamRecordDto")
+    @ApiImplicitParam(name = "ids", value = "成绩ID", required = true, dataType = "Long")
     @Log("导出考试记录")
-    public void exportExamRecord(@RequestBody ExaminationRecordDto examRecordDto, HttpServletRequest request, HttpServletResponse response) {
+    public void exportExamRecord(@RequestBody Long[] ids, HttpServletRequest request, HttpServletResponse response) {
         try {
             // 配置response
             response.setCharacterEncoding("utf-8");
             response.setContentType("multipart/form-data");
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request, "考试成绩" + DateUtils.localDateMillisToString(LocalDateTime.now()) + ".xlsx"));
             List<ExaminationRecord> examRecordList;
-            if (StringUtils.isNotEmpty(examRecordDto.getIdString())) {
-                ExaminationRecord examRecord = new ExaminationRecord();
-                examRecord.setIds(Stream.of(examRecordDto.getIdString().split(",")).filter(StringUtils::isNotEmpty).distinct().toArray(String[]::new));
-                examRecordList = examRecordService.findListById(examRecord);
+            if (ArrayUtils.isNotEmpty(ids)) {
+                examRecordList = examRecordService.findListById(ids);
             } else {
                 // 导出全部
                 ExaminationRecord examRecord = new ExaminationRecord();
@@ -279,11 +267,9 @@ public class ExamRecordController extends BaseController {
             if (CollectionUtils.isNotEmpty(examRecordList)) {
                 List<ExaminationRecordDto> examRecordDtoList = new ArrayList<>();
                 // 查询考试信息
-                Examination examination = new Examination();
-                examination.setIds(examRecordList.stream().map(ExaminationRecord::getExaminationId).distinct().toArray(String[]::new));
-                List<Examination> examinations = examinationService.findListById(examination);
+                List<Examination> examinations = examinationService.findListById(examRecordList.stream().map(ExaminationRecord::getExaminationId).distinct().toArray(Long[]::new));
                 // 用户id
-                Set<String> userIdSet = new HashSet<>();
+                Set<Long> userIdSet = new HashSet<>();
                 examRecordList.forEach(tempExamRecord -> {
                     // 查找考试记录所属的考试信息
                     Examination examRecordExamination = examinations.stream()
@@ -304,15 +290,10 @@ public class ExamRecordController extends BaseController {
                     }
                 });
                 // 查询用户信息
-                UserVo userVo = new UserVo();
-                userVo.setIds(userIdSet.toArray(new String[0]));
-                ResponseBean<List<UserVo>> returnT = userServiceClient.findUserById(userVo);
+                ResponseBean<List<UserVo>> returnT = userServiceClient.findUserById(userIdSet.toArray(new Long[0]));
                 if (returnT != null && CollectionUtils.isNotEmpty(returnT.getData())) {
-                    // 查询部门信息
-                    DeptVo deptVo = new DeptVo();
-                    deptVo.setIds(returnT.getData().stream().map(UserVo::getDeptId).distinct().toArray(String[]::new));
                     // 获取部门信息
-                    ResponseBean<List<DeptVo>> deptResponseBean = userServiceClient.findDeptById(deptVo);
+                    ResponseBean<List<DeptVo>> deptResponseBean = userServiceClient.findDeptById(returnT.getData().stream().map(UserVo::getDeptId).distinct().toArray(Long[]::new));
                     examRecordDtoList.forEach(tempExamRecordDto -> {
                         // 查询用户信息
                         UserVo examRecordDtoUserVo = returnT.getData().stream().filter(tempUserVo -> tempExamRecordDto.getUserId().equals(tempUserVo.getId()))

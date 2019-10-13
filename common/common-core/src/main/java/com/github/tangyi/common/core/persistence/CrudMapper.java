@@ -1,5 +1,8 @@
 package com.github.tangyi.common.core.persistence;
 
+import com.github.tangyi.common.core.constant.CommonConstant;
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 /**
@@ -37,17 +40,10 @@ public interface CrudMapper<T> extends BaseMapper {
     /**
      * 根据id获取列表数据
      *
-     * @param entity entity
+     * @param ids ids
      * @return List
      */
-    List<T> findListById(T entity);
-
-    /**
-     * 获取所有数据
-     *
-     * @return List
-     */
-    List<T> findAllList();
+    List<T> findListById(@Param(CommonConstant.PARAM_IDS) Long[] ids);
 
     /**
      * 插入单条数据
@@ -79,6 +75,6 @@ public interface CrudMapper<T> extends BaseMapper {
      * @param ids ids
      * @return int
      */
-    int deleteAll(String[] ids);
+    int deleteAll(@Param(CommonConstant.PARAM_IDS) Long[] ids);
 }
 

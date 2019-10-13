@@ -1,5 +1,6 @@
 package com.github.tangyi.user.api.module;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
 
@@ -38,7 +39,8 @@ public class Menu extends BaseEntity<Menu> {
     /**
      * 父菜单ID
      */
-    private String parentId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long parentId;
 
     /**
      * 图标
@@ -53,7 +55,7 @@ public class Menu extends BaseEntity<Menu> {
     /**
      * 类型
      */
-    private String type;
+    private Integer type;
 
     /**
      * 模块

@@ -1,8 +1,10 @@
 package com.github.tangyi.exam.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @author tangyi
@@ -16,17 +18,20 @@ public class AnswerDto implements Serializable {
     /**
      * ID
      */
-    private String id;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long id;
 
     /**
      * 考试记录id
      */
-    private String examRecordId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long examRecordId;
 
     /**
      * 题目ID
      */
-    private String subjectId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long subjectId;
 
     /**
      * 题目类型
@@ -49,14 +54,10 @@ public class AnswerDto implements Serializable {
     private Integer score;
 
     /**
-     * 题目序号
-     */
-    private Integer serialNumber;
-
-    /**
      * 用户ID
      */
-    private String userId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long userId;
 
     /**
      * 题目详情
@@ -67,4 +68,14 @@ public class AnswerDto implements Serializable {
      * 批改状态
      */
     private Integer markStatus;
+
+    /**
+     * 开始时间
+     */
+    private Date startTime;
+
+    /**
+     * 结束时间
+     */
+    private Date endTime;
 }

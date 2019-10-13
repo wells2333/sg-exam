@@ -2,6 +2,7 @@ package com.github.tangyi.gateway.filters;
 
 import cn.hutool.core.util.StrUtil;
 import com.github.tangyi.gateway.config.PreviewConfig;
+import com.github.tangyi.gateway.constants.GatewayConstant;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -57,17 +58,23 @@ public class PreviewFilter implements GlobalFilter, Ordered {
         // enabled为false
         if (!previewConfig.isEnabled())
             return false;
-        String method = request.getMethodValue(), uri = request.getURI().getPath();
-        // GET请求、POST请求
-        if (StrUtil.equalsIgnoreCase(method, HttpMethod.GET.name()))
-            return false;
-        if (StrUtil.equalsIgnoreCase(method, HttpMethod.POST.name()) && !StrUtil.containsIgnoreCase(uri, "delete"))
-            return false;
-        // 拦截DELETE请求
-        if (StrUtil.equalsIgnoreCase(method, HttpMethod.DELETE.name()) && !StrUtil.containsIgnoreCase(uri, "attachment"))
-            return true;
-        // URL白名单
-        return !isIgnore(uri);
+        // 演示环境下，只拦截对默认租户的修改操作
+        if (GatewayConstant.DEFAULT_TENANT_CODE.equals(request.getHeaders().getFirst(GatewayConstant.TENANT_CODE_HEADER))) {
+            String method = request.getMethodValue(), uri = request.getURI().getPath();
+            // GET请求、POST请求
+            if (StrUtil.equalsIgnoreCase(method, HttpMethod.GET.name()))
+                return false;
+            if (StrUtil.equalsIgnoreCase(method, HttpMethod.POST.name())
+                    && !StrUtil.containsIgnoreCase(uri, "delete")
+                    && !StrUtil.containsIgnoreCase(uri, "menu"))
+                return false;
+            // 拦截DELETE请求
+            if (StrUtil.equalsIgnoreCase(method, HttpMethod.DELETE.name()) && !StrUtil.containsIgnoreCase(uri, "attachment"))
+                return true;
+            // URL白名单
+            return !isIgnore(uri);
+        }
+        return false;
     }
 
     /**

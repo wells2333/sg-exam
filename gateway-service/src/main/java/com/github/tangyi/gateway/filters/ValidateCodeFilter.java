@@ -64,8 +64,6 @@ public class ValidateCodeFilter implements GlobalFilter, Ordered {
      */
     private void checkCode(ServerHttpRequest serverHttpRequest, LoginType loginType) throws InvalidValidateCodeException {
         MultiValueMap<String, String> params = serverHttpRequest.getQueryParams();
-        // 租户标识
-        String tenantCode = serverHttpRequest.getHeaders().getFirst("Tenant-Code");
         // 验证码
         String code = params.getFirst("code");
         if (StrUtil.isBlank(code))
@@ -75,7 +73,7 @@ public class ValidateCodeFilter implements GlobalFilter, Ordered {
         // 随机数为空，则获取手机号
         if (StrUtil.isBlank(randomStr))
             randomStr = params.getFirst("mobile");
-        String key = tenantCode + ":" + CommonConstant.DEFAULT_CODE_KEY + loginType.getType() + "@" + randomStr;
+        String key = CommonConstant.DEFAULT_CODE_KEY + loginType.getType() + "@" + randomStr;
         // 验证码过期
         if (!redisTemplate.hasKey(key))
             throw new ValidateCodeExpiredException(GatewayConstant.EXPIRED_ERROR);

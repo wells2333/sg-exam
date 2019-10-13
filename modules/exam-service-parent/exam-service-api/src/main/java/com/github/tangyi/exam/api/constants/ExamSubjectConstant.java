@@ -6,23 +6,18 @@ package com.github.tangyi.exam.api.constants;
  */
 public class ExamSubjectConstant {
 
-    /**
-     * 默认的题目分类
-     */
-    public static final Integer DEFAULT_CATEGORY_ID = 0;
+	/**
+	 * 默认的题目分类
+	 */
+	public static final Long DEFAULT_CATEGORY_ID = 0L;
 
-    /**
-     * 默认的题目序号
-     */
-    public static final Integer DEFAULT_SERIAL_NUMBER = 1;
+	/**
+	 * 选择题
+	 */
+	public static final Integer SUBJECT_TYPE_CHOICE = 0;
 
-    /**
-     * 选择题
-     */
-    public static final Integer SUBJECT_TYPE_CHOICE = 0;
-
-    /**
-     * 简答题
-     */
-    public static final Integer SUBJECT_TYPE_QAS = 1;
+	/**
+	 * 简答题
+	 */
+	public static final Integer SUBJECT_TYPE_QAS = 1;
 }

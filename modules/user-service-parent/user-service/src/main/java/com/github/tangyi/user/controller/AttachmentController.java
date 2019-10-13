@@ -18,7 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
@@ -56,9 +56,9 @@ public class AttachmentController extends BaseController {
      * @date 2019/01/01 19:56
      */
     @ApiOperation(value = "获取附件信息", notes = "根据附件id获取附件详细信息")
-    @ApiImplicitParam(name = "id", value = "附件ID", required = true, dataType = "String", paramType = "path")
+    @ApiImplicitParam(name = "id", value = "附件ID", required = true, dataType = "Long", paramType = "path")
     @GetMapping("/{id}")
-    public ResponseBean<Attachment> attachment(@PathVariable String id) {
+    public ResponseBean<Attachment> attachment(@PathVariable Long id) {
         Attachment attachment = new Attachment();
         attachment.setId(id);
         return new ResponseBean<>(attachmentService.get(attachment));
@@ -126,8 +126,8 @@ public class AttachmentController extends BaseController {
      */
     @GetMapping("download")
     @ApiOperation(value = "下载附件", notes = "根据ID下载附件")
-    @ApiImplicitParam(name = "id", value = "附件ID", required = true, dataType = "String")
-    public void download(@NotBlank String id, HttpServletRequest request, HttpServletResponse response) {
+    @ApiImplicitParam(name = "id", value = "附件ID", required = true, dataType = "Long")
+    public void download(@NotBlank Long id, HttpServletRequest request, HttpServletResponse response) {
         Attachment attachment = new Attachment();
         attachment.setId(id);
         InputStream inputStream = null;
@@ -166,7 +166,7 @@ public class AttachmentController extends BaseController {
     @ApiOperation(value = "删除附件", notes = "根据ID删除附件")
     @ApiImplicitParam(name = "id", value = "附件ID", required = true, paramType = "path")
     @Log("删除附件")
-    public ResponseBean<Boolean> delete(@PathVariable String id) {
+    public ResponseBean<Boolean> delete(@PathVariable Long id) {
         Attachment attachment = new Attachment();
         attachment.setId(id);
         attachment = attachmentService.get(attachment);
@@ -179,20 +179,20 @@ public class AttachmentController extends BaseController {
     /**
      * 批量删除
      *
-     * @param attachment attachment
+     * @param ids ids
      * @return ResponseBean
      * @author tangyi
      * @date 2018/12/4 10:01
      */
     @PostMapping("deleteAll")
     @ApiOperation(value = "批量删除附件", notes = "根据附件id批量删除附件")
-    @ApiImplicitParam(name = "attachment", value = "附件信息", dataType = "Attachment")
+    @ApiImplicitParam(name = "ids", value = "附件ID", dataType = "Long")
     @Log("批量删除附件")
-    public ResponseBean<Boolean> deleteAllAttachments(@RequestBody Attachment attachment) {
+    public ResponseBean<Boolean> deleteAllAttachments(@RequestBody Long[] ids) {
         boolean success = false;
         try {
-            if (StringUtils.isNotEmpty(attachment.getIdString()))
-                success = attachmentService.deleteAll(attachment.getIdString().split(",")) > 0;
+            if (ArrayUtils.isNotEmpty(ids))
+                success = attachmentService.deleteAll(ids) > 0;
         } catch (Exception e) {
             log.error("删除附件失败！", e);
         }
@@ -202,19 +202,17 @@ public class AttachmentController extends BaseController {
     /**
      * 根据附件ID批量查询
      *
-     * @param attachmentVo attachmentVo
+     * @param ids ids
      * @return ResponseBean
      * @author tangyi
      * @date 2019/01/01 22:16
      */
     @PostMapping(value = "findById")
     @ApiOperation(value = "批量查询附件信息", notes = "根据附件ID批量查询附件信息")
-    @ApiImplicitParam(name = "attachmentVo", value = "附件信息", dataType = "AttachmentVo")
-    public ResponseBean<List<AttachmentVo>> findById(@RequestBody AttachmentVo attachmentVo) {
+    @ApiImplicitParam(name = "ids", value = "附件ID", dataType = "Long")
+    public ResponseBean<List<AttachmentVo>> findById(@RequestBody Long[] ids) {
         ResponseBean<List<AttachmentVo>> returnT = null;
-        Attachment attachment = new Attachment();
-        attachment.setIds(attachmentVo.getIds());
-        List<Attachment> attachmentList = attachmentService.findListById(attachment);
+        List<Attachment> attachmentList = attachmentService.findListById(ids);
         if (CollectionUtils.isNotEmpty(attachmentList)) {
             // 流处理转换成AttachmentVo
             List<AttachmentVo> attachmentVoList = attachmentList.stream().map(tempAttachment -> {
@@ -237,8 +235,8 @@ public class AttachmentController extends BaseController {
      */
     @GetMapping("/{id}/preview")
     @ApiOperation(value = "获取预览地址", notes = "根据附件ID获取预览地址")
-    @ApiImplicitParam(name = "id", value = "附件id", required = true, dataType = "String", paramType = "path")
-    public ResponseBean<String> getPreviewUrl(@PathVariable String id) {
+    @ApiImplicitParam(name = "id", value = "附件id", required = true, dataType = "Long", paramType = "path")
+    public ResponseBean<String> getPreviewUrl(@PathVariable Long id) {
         Attachment attachment = new Attachment();
         attachment.setId(id);
         return new ResponseBean<>(attachmentService.getPreviewUrl(attachment));
