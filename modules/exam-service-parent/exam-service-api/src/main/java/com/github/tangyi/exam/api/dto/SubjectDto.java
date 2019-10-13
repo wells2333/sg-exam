@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import com.github.tangyi.exam.api.module.Answer;
 import com.github.tangyi.exam.api.module.SubjectOption;
@@ -17,22 +18,20 @@ public class SubjectDto extends BaseEntity<SubjectDto> {
     /**
      * 考试ID
      */
-    private String examinationId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long examinationId;
 
     /**
      * 考试记录ID
      */
-    private String examinationRecordId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long examinationRecordId;
 
     /**
      * 题目分类ID
      */
-    private String categoryId;
-
-    /**
-     * 题目序号
-     */
-    private Integer serialNumber;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long categoryId;
 
     /**
      * 题目名称

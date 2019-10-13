@@ -1,5 +1,6 @@
 package com.github.tangyi.user.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
@@ -15,7 +16,8 @@ public class UserInfoDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String id;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long id;
 
     /**
      * 授权类型，1：用户名密码，2：手机号，3：邮箱，4：微信，5：QQ
@@ -46,7 +48,8 @@ public class UserInfoDto implements Serializable {
     /**
      * 头像对应的附件id
      */
-    private String avatarId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long avatarId;
 
     /**
      * 头像地址
@@ -76,7 +79,8 @@ public class UserInfoDto implements Serializable {
     /**
      * 部门ID
      */
-    private String deptId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long deptId;
 
     /**
      * 备注
@@ -111,27 +115,32 @@ public class UserInfoDto implements Serializable {
     /**
      * 引导注册人
      */
-    private String parentUid;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long parentUid;
 
     /**
      * 乡/镇
      */
-    private String streetId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long streetId;
 
     /**
      * 县
      */
-    private String countyId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long countyId;
 
     /**
      * 城市
      */
-    private String cityId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long cityId;
 
     /**
      * 省份
      */
-    private String provinceId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long provinceId;
 
     /**
      * 最近登录时间

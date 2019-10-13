@@ -53,5 +53,5 @@ public interface SubjectOptionMapper extends CrudMapper<SubjectOption> {
      * @author tangyi
      * @date 2019/06/16 22:40
      */
-    int physicalDeleteAll(String[] ids);
+    int physicalDeleteAll(Long[] ids);
 }

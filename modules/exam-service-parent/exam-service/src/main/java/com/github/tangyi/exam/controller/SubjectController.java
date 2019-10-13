@@ -17,7 +17,7 @@ import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -61,10 +61,9 @@ public class SubjectController extends BaseController {
     @GetMapping("/{id}")
     @ApiOperation(value = "获取题目信息", notes = "根据题目id获取题目详细信息")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "题目ID", required = true, dataType = "String", paramType = "path"),
-            @ApiImplicitParam(name = "type", value = "题目类型", required = true, dataType = "Integer")
-    })
-    public ResponseBean<SubjectDto> subject(@PathVariable String id, @RequestParam Integer type) {
+            @ApiImplicitParam(name = "id", value = "题目ID", required = true, dataType = "Long", paramType = "path"),
+            @ApiImplicitParam(name = "type", value = "题目类型", required = true, dataType = "Integer")})
+    public ResponseBean<SubjectDto> subject(@PathVariable Long id, @RequestParam Integer type) {
         return new ResponseBean<>(subjectService.get(id, type));
     }
 
@@ -87,15 +86,15 @@ public class SubjectController extends BaseController {
             @ApiImplicitParam(name = CommonConstant.PAGE_SIZE, value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
             @ApiImplicitParam(name = CommonConstant.SORT, value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
             @ApiImplicitParam(name = CommonConstant.ORDER, value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "subject", value = "题目信息", dataType = "Subject")
-    })
-    public PageInfo<SubjectDto> subjectList(@RequestParam(value = CommonConstant.PAGE_NUM, required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
-                                            @RequestParam(value = CommonConstant.PAGE_SIZE, required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
-                                            @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
-                                            @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
-                                            SubjectDto subject) {
+            @ApiImplicitParam(name = "subject", value = "题目信息", dataType = "Subject")})
+    public PageInfo<SubjectDto> subjectList(
+            @RequestParam(value = CommonConstant.PAGE_NUM, required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
+            @RequestParam(value = CommonConstant.PAGE_SIZE, required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
+            @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
+            @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
+            SubjectDto subject) {
         subject.setTenantCode(SysUtil.getTenantCode());
-        if (subject.getCategoryId().equals("-1"))
+        if (CommonConstant.ROOT.equals(subject.getCategoryId()))
             subject.setCategoryId(null);
         return subjectService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), subject);
     }
@@ -148,21 +147,15 @@ public class SubjectController extends BaseController {
     @PreAuthorize("hasAuthority('exam:exam:subject:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "删除题目", notes = "根据ID删除题目")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "题目ID", required = true, dataType = "String", paramType = "path"),
-            @ApiImplicitParam(name = "type", value = "题目类型", required = true, dataType = "Integer")
-    })
+            @ApiImplicitParam(name = "id", value = "题目ID", required = true, dataType = "Long", paramType = "path"),
+            @ApiImplicitParam(name = "type", value = "题目类型", required = true, dataType = "Integer")})
     @Log("删除题目")
-    public ResponseBean<Boolean> deleteSubject(@PathVariable String id, @RequestParam Integer type) {
+    public ResponseBean<Boolean> deleteSubject(@PathVariable Long id, @RequestParam Integer type) {
         boolean success = false;
-        try {
-            SubjectDto subject = subjectService.get(id, type);
-            if (subject != null) {
-                subject.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
-                success = subjectService.physicalDelete(subject) > 0;
-            }
-        } catch (Exception e) {
-            log.error("删除题目失败！", e);
-            throw new CommonException("删除题目失败！");
+        SubjectDto subject = subjectService.get(id, type);
+        if (subject != null) {
+            subject.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+            success = subjectService.physicalDelete(subject) > 0;
         }
         return new ResponseBean<>(success);
     }
@@ -170,40 +163,57 @@ public class SubjectController extends BaseController {
     /**
      * 导出题目
      *
-     * @param subjectDto subjectDto
+     * @param ids ids
      * @author tangyi
      * @date 2018/11/28 12:53
      */
     @PostMapping("export")
     @PreAuthorize("hasAuthority('exam:exam:subject:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "导出题目", notes = "根据分类id导出题目")
-    @ApiImplicitParam(name = "subjectDto", value = "题目信息", required = true, dataType = "SubjectDto")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", value = "题目ID", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "examinationId", value = "考试ID", dataType = "Long"),
+            @ApiImplicitParam(name = "categoryId", value = "分类ID", dataType = "Long"),
+            @ApiImplicitParam(name = "type", value = "题目类型", required = true, dataType = "Integer", example = "3")
+    })
     @Log("导出题目")
-    public void exportSubject(@RequestBody SubjectDto subjectDto, HttpServletRequest request, HttpServletResponse response) {
+    public void exportSubject(@RequestBody Long[] ids,
+                              @RequestParam Long examinationId,
+                              @RequestParam Long categoryId,
+                              @RequestParam Integer type,
+                              HttpServletRequest request,
+                              HttpServletResponse response) {
         try {
             // 配置response
             response.setCharacterEncoding("utf-8");
             response.setContentType("multipart/form-data");
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request, "题目信息" + DateUtils.localDateMillisToString(LocalDateTime.now()) + ".xlsx"));
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request,
+                    "题目信息" + DateUtils.localDateMillisToString(LocalDateTime.now()) + ".xlsx"));
             List<SubjectDto> subjects = new ArrayList<>();
             // 根据题目id导出
-            if (StringUtils.isNotEmpty(subjectDto.getIdString())) {
-                subjects = Stream.of(subjectDto.getIdString().split(","))
+            if (ArrayUtils.isNotEmpty(ids)) {
+                subjects = Stream.of(ids)
                         // 根据ID查找题目信息
                         .map(subjectService::get)
                         // 过滤收集
                         .filter(Objects::nonNull).collect(Collectors.toList());
-            } else if (StringUtils.isNotEmpty(subjectDto.getExaminationId())) {
+            } else if (examinationId != null) {
                 // 根据考试ID
+                SubjectDto subjectDto = new SubjectDto();
+                subjectDto.setExaminationId(examinationId);
                 subjects = subjectService.findList(subjectDto);
-            } else if (StringUtils.isNotEmpty(subjectDto.getCategoryId()) || subjectDto.getType() != null) {
+            } else if (categoryId != null || type != null) {
                 // 根据分类ID、类型导出
+                SubjectDto subjectDto = new SubjectDto();
+                subjectDto.setCategoryId(categoryId);
+                subjectDto.setType(type);
                 subjects = subjectService.findListByType(subjectDto);
             }
-            ExcelToolUtil.exportExcel(request.getInputStream(), response.getOutputStream(), MapUtil.java2Map(subjects), SubjectUtil.getSubjectMap());
+            ExcelToolUtil.exportExcel(request.getInputStream(), response.getOutputStream(), MapUtil.java2Map(subjects),
+                    SubjectUtil.getSubjectMap());
         } catch (Exception e) {
             log.error("导出题目数据失败！", e);
-            throw new CommonException("导出题目数据失败！");
+            throw new CommonException("导出题目数据失败, " + e.getMessage());
         }
     }
 
@@ -221,11 +231,11 @@ public class SubjectController extends BaseController {
     @PreAuthorize("hasAuthority('exam:exam:subject:import') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "导入题目", notes = "导入题目")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "examinationId", value = "考试ID", dataType = "String"),
-            @ApiImplicitParam(name = "categoryId", value = "分类ID", dataType = "String")
-    })
+            @ApiImplicitParam(name = "examinationId", value = "考试ID", dataType = "Long"),
+            @ApiImplicitParam(name = "categoryId", value = "分类ID", dataType = "Long")})
     @Log("导入题目")
-    public ResponseBean<Boolean> importSubject(String examinationId, String categoryId, @ApiParam(value = "要上传的文件", required = true) MultipartFile file) {
+    public ResponseBean<Boolean> importSubject(Long examinationId, Long categoryId,
+                                               @ApiParam(value = "要上传的文件", required = true) MultipartFile file) {
         try {
             log.debug("开始导入题目数据，考试ID：{}，分类ID：{}", examinationId, categoryId);
             List<SubjectDto> subjects = MapUtil.map2Java(SubjectDto.class,
@@ -244,7 +254,8 @@ public class SubjectController extends BaseController {
     /**
      * 批量删除
      *
-     * @param subjectDto subjectDto
+     * @param ids  ids
+     * @param type type
      * @return ResponseBean
      * @author tangyi
      * @date 2018/12/04 9:55
@@ -252,42 +263,42 @@ public class SubjectController extends BaseController {
     @PostMapping("deleteAll")
     @PreAuthorize("hasAuthority('exam:exam:subject:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "批量删除题目", notes = "根据题目id批量删除题目")
-    @ApiImplicitParam(name = "subjectDto", value = "题目信息", dataType = "SubjectDto")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", value = "题目ID", dataType = "Long"),
+            @ApiImplicitParam(name = "type", value = "题目类型", dataType = "Integer", example = "3")
+    })
     @Log("批量删除题目")
-    public ResponseBean<Boolean> deleteSubjects(@RequestBody SubjectDto subjectDto) {
-        boolean success;
-        Assert.notNull(subjectDto.getIdString(), CommonConstant.IllEGAL_ARGUMENT);
-        try {
-            String[] subjectIds = subjectDto.getIdString().split(",");
-            subjectDto.setIds(subjectIds);
-            success = subjectService.physicalDeleteAll(subjectDto) > 0;
-        } catch (Exception e) {
-            log.error("删除题目失败！", e);
-            throw new CommonException("删除题目失败！");
-        }
-        return new ResponseBean<>(success);
+    public ResponseBean<Boolean> deleteSubjects(@RequestBody Long[] ids, @RequestParam Integer type) {
+        return new ResponseBean<>(subjectService.physicalDeleteAll(type, ids) > 0);
     }
 
     /**
      * 查询题目和答题
      *
-     * @param serialNumber serialNumber
+     * @param subjectId    subjectId
      * @param examRecordId examRecordId
      * @param userId       userId
-     * @return ResponseBean
+     * @param nextType     0：下一题，1：上一题
+     * @param nextSubjectId nextSubjectId
+     * @param nextSubjectType 下一题的类型，选择题、判断题
+	 * @return ResponseBean
      * @author tangyi
      * @date 2019/01/16 22:25
      */
     @GetMapping("subjectAnswer")
     @ApiOperation(value = "查询题目和答题", notes = "根据题目id查询题目和答题")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "serialNumber", value = "题目序号", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "examRecordId", value = "考试记录ID", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "userId", value = "用户ID", dataType = "String")
-    })
-    public ResponseBean<SubjectDto> subjectAnswer(@RequestParam("serialNumber") @NotBlank Integer serialNumber,
-                                                  @RequestParam("examRecordId") @NotBlank String examRecordId,
-                                                  @RequestParam(value = "userId", required = false) String userId) {
-        return new ResponseBean<>(answerService.subjectAnswer(serialNumber, examRecordId, userId));
+    @ApiImplicitParams({@ApiImplicitParam(name = "subjectId", value = "题目ID", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "examRecordId", value = "考试记录ID", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "userId", value = "用户ID", dataType = "String"),
+            @ApiImplicitParam(name = "nextType", value = "0：下一题，1：上一题", dataType = "Integer")})
+    public ResponseBean<SubjectDto> subjectAnswer(@RequestParam("subjectId") @NotBlank Long subjectId,
+                                                  @RequestParam("examRecordId") @NotBlank Long examRecordId,
+                                                  @RequestParam(value = "userId", required = false) String userId,
+                                                  @RequestParam Integer nextType,
+                                                  @RequestParam(required = false) Long nextSubjectId,
+			@RequestParam(required = false) Integer nextSubjectType) {
+        return new ResponseBean<>(answerService
+                .subjectAnswer(subjectId, examRecordId, SysUtil.getUser(), SysUtil.getSysCode(),
+                        SysUtil.getTenantCode(), nextType, nextSubjectId, nextSubjectType));
     }
 }

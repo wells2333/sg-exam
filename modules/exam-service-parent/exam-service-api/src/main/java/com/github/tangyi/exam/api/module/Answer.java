@@ -1,7 +1,10 @@
 package com.github.tangyi.exam.api.module;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * 答题
@@ -15,12 +18,14 @@ public class Answer extends BaseEntity<Answer> {
     /**
      * 考试记录id
      */
-    private String examRecordId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long examRecordId;
 
     /**
      * 题目ID
      */
-    private String subjectId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long subjectId;
 
     /**
      * 题目类型
@@ -46,4 +51,14 @@ public class Answer extends BaseEntity<Answer> {
      * 批改状态
      */
     private Integer markStatus;
+
+    /**
+     * 开始时间
+     */
+    private Date startTime;
+
+    /**
+     * 结束时间
+     */
+    private Date endTime;
 }

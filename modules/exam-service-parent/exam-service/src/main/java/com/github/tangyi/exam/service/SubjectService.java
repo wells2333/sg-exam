@@ -1,6 +1,7 @@
 package com.github.tangyi.exam.service;
 
 import com.github.pagehelper.PageInfo;
+import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.exam.api.constants.ExamSubjectConstant;
 import com.github.tangyi.exam.api.dto.SubjectDto;
@@ -12,7 +13,6 @@ import com.github.tangyi.exam.utils.SubjectUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,7 +52,7 @@ public class SubjectService {
      * @author tangyi
      * @date 2019/06/16 17:24
      */
-    public SubjectDto get(String id, Integer type) {
+    public SubjectDto get(Long id, Integer type) {
         return subjectService(type).getSubject(id);
     }
 
@@ -64,7 +64,7 @@ public class SubjectService {
      * @author tangyi
      * @date 2019/06/16 17:26
      */
-    public SubjectDto get(String id) {
+    public SubjectDto get(Long id) {
         Integer type = SubjectTypeEnum.CHOICES.getValue();
         ExaminationSubject es = new ExaminationSubject();
         es.setSubjectId(id);
@@ -76,16 +76,19 @@ public class SubjectService {
     }
 
     /**
-     * 根据题目序号查找
+     * 根据上一题ID查找
      *
-     * @param serialNumber serialNumber
-     * @param type         type
+     * @param examinationId     examinationId
+     * @param previousSubjectId previousSubjectId
+     * @param type              type
+     * @param nextType          0：下一题，1：上一题
      * @return SubjectDto
      * @author tangyi
      * @date 2019/06/18 13:49
      */
-    public SubjectDto getBySerialNumber(Integer serialNumber, Integer type) {
-        return subjectService(type).getSubjectBySerialNumber(serialNumber);
+    @Transactional
+    public SubjectDto getNextByCurrentIdAndType(Long examinationId, Long previousSubjectId, Integer type, Integer nextType) {
+        return subjectService(type).getNextByCurrentIdAndType(examinationId, previousSubjectId, nextType);
     }
 
     /**
@@ -145,13 +148,14 @@ public class SubjectService {
     /**
      * 查询列表
      *
-     * @param subjectDto subjectDto
+     * @param type type
+     * @param ids  ids
      * @return SubjectDto
      * @author tangyi
      * @date 2019/06/16 18:14
      */
-    public List<SubjectDto> findListById(SubjectDto subjectDto) {
-        return subjectService(subjectDto.getType()).findSubjectListById(subjectDto);
+    public List<SubjectDto> findListById(Integer type, Long[] ids) {
+        return subjectService(type).findSubjectListById(ids);
     }
 
     /**
@@ -165,20 +169,19 @@ public class SubjectService {
     @Transactional
     public int insert(SubjectDto subjectDto) {
         // 保存与考试的关联关系
-        if (StringUtils.isNotBlank(subjectDto.getExaminationId())) {
-            ExaminationSubject examinationSubject = new ExaminationSubject();
-            examinationSubject.setCommonValue(subjectDto.getCreator(), subjectDto.getApplicationCode(), subjectDto.getTenantCode());
-            examinationSubject.setExaminationId(subjectDto.getExaminationId());
-            examinationSubject.setSubjectId(subjectDto.getId());
-            examinationSubject.setType(subjectDto.getType());
-            examinationSubject.setSerialNumber(subjectDto.getSerialNumber());
-            examinationSubjectService.insert(examinationSubject);
-        }
+        ExaminationSubject examinationSubject = new ExaminationSubject();
+        examinationSubject.setCommonValue(subjectDto.getCreator(), subjectDto.getApplicationCode(),
+                subjectDto.getTenantCode());
+        examinationSubject.setExaminationId(subjectDto.getExaminationId());
+        examinationSubject.setSubjectId(subjectDto.getId());
+        examinationSubject.setType(subjectDto.getType());
+        examinationSubjectService.insert(examinationSubject);
         // 保存选项
         if (CollectionUtils.isNotEmpty(subjectDto.getOptions())) {
             // 初始化基本属性
             subjectDto.getOptions().forEach(subjectOption -> {
-                subjectOption.setCommonValue(subjectDto.getCreator(), subjectDto.getApplicationCode(), subjectDto.getTenantCode());
+                subjectOption.setCommonValue(subjectDto.getCreator(), subjectDto.getApplicationCode(),
+                        subjectDto.getTenantCode());
                 subjectOption.setSubjectChoicesId(subjectDto.getId());
             });
             // 批量保存
@@ -229,27 +232,29 @@ public class SubjectService {
     /**
      * 批量删除
      *
-     * @param subjectDto subjectDto
+     * @param type type
+     * @param ids  ids
      * @return int
      * @author tangyi
      * @date 2019/06/16 18:04
      */
     @Transactional
-    public int deleteAll(SubjectDto subjectDto) {
-        return subjectService(subjectDto.getType()).deleteAllSubject(subjectDto);
+    public int deleteAll(Integer type, Long[] ids) {
+        return subjectService(type).deleteAllSubject(ids);
     }
 
     /**
      * 物理批量删除
      *
-     * @param subjectDto subjectDto
+     * @param type type
+     * @param ids  ids
      * @return int
      * @author tangyi
      * @date 2019/06/16 22:52
      */
     @Transactional
-    public int physicalDeleteAll(SubjectDto subjectDto) {
-        return subjectService(subjectDto.getType()).physicalDeleteAllSubject(subjectDto);
+    public int physicalDeleteAll(Integer type, Long[] ids) {
+        return subjectService(type).physicalDeleteAllSubject(ids);
     }
 
     /**
@@ -292,17 +297,17 @@ public class SubjectService {
      * @date 2019/06/17 14:39
      */
     @Transactional
-    public int importSubject(List<SubjectDto> subjects, String examinationId, String categoryId) {
+    public int importSubject(List<SubjectDto> subjects, Long examinationId, Long categoryId) {
         int updated = 0;
         String creator = SysUtil.getUser(), sysCode = SysUtil.getSysCode(), tenantCode = SysUtil.getTenantCode();
         // 暂时循环遍历保存
         for (SubjectDto subject : subjects) {
-            if (StringUtils.isNotBlank(examinationId))
+            if (examinationId != null)
                 subject.setExaminationId(examinationId);
-            if (StringUtils.isBlank(categoryId))
-                categoryId = ExamSubjectConstant.DEFAULT_CATEGORY_ID.toString();
+            if (categoryId == null)
+                categoryId = ExamSubjectConstant.DEFAULT_CATEGORY_ID;
             subject.setCategoryId(categoryId);
-            if (StringUtils.isBlank(subject.getId())) {
+            if (subject.getId() == null) {
                 subject.setCommonValue(creator, sysCode, tenantCode);
                 updated += this.insert(subject);
             } else {
@@ -321,20 +326,23 @@ public class SubjectService {
      * @author tangyi
      * @date 2019/06/17 10:43
      */
-    public Map<String, String[]> getSubjectIdByType(List<ExaminationSubject> examinationSubjects) {
-        Map<String, String[]> idMap = new HashMap<>();
-        examinationSubjects.stream()
-                .collect(Collectors.groupingBy(ExaminationSubject::getType, Collectors.toList()))
+    public Map<String, Long[]> getSubjectIdByType(List<ExaminationSubject> examinationSubjects) {
+        Map<String, Long[]> idMap = new HashMap<>();
+        examinationSubjects.stream().collect(Collectors.groupingBy(ExaminationSubject::getType, Collectors.toList()))
                 .forEach((type, temp) -> {
                     // 匹配类型
                     SubjectTypeEnum subjectType = SubjectTypeEnum.match(type);
                     if (subjectType != null) {
                         switch (subjectType) {
                             case CHOICES:
-                                idMap.put(SubjectTypeEnum.CHOICES.name(), temp.stream().map(ExaminationSubject::getSubjectId).distinct().toArray(String[]::new));
+                                idMap.put(SubjectTypeEnum.CHOICES.name(),
+                                        temp.stream().map(ExaminationSubject::getSubjectId).distinct()
+                                                .toArray(Long[]::new));
                                 break;
                             case SHORT_ANSWER:
-                                idMap.put(SubjectTypeEnum.SHORT_ANSWER.name(), temp.stream().map(ExaminationSubject::getSubjectId).distinct().toArray(String[]::new));
+                                idMap.put(SubjectTypeEnum.SHORT_ANSWER.name(),
+                                        temp.stream().map(ExaminationSubject::getSubjectId).distinct()
+                                                .toArray(Long[]::new));
                                 break;
                         }
                     }
@@ -363,29 +371,48 @@ public class SubjectService {
      * @date 2019/06/17 11:54
      */
     public List<SubjectDto> findSubjectDtoList(List<ExaminationSubject> examinationSubjects, boolean findOptions) {
-        Map<String, String[]> idMap = this.getSubjectIdByType(examinationSubjects);
+        Map<String, Long[]> idMap = this.getSubjectIdByType(examinationSubjects);
         // 查询题目信息，聚合
         List<SubjectDto> subjectDtoList = new ArrayList<>();
         if (idMap.containsKey(SubjectTypeEnum.CHOICES.name())) {
-            SubjectChoices subjectChoices = new SubjectChoices();
-            subjectChoices.setIds(idMap.get(SubjectTypeEnum.CHOICES.name()));
-            List<SubjectChoices> subjectChoicesList = subjectChoicesService.findListById(subjectChoices);
+            List<SubjectChoices> subjectChoicesList = subjectChoicesService.findListById(idMap.get(SubjectTypeEnum.CHOICES.name()));
             if (CollectionUtils.isNotEmpty(subjectChoicesList)) {
                 // 查找选项信息
                 if (findOptions) {
-                    subjectChoicesList = subjectChoicesList.stream().map(subjectChoicesService::get).collect(Collectors.toList());
+                    subjectChoicesList = subjectChoicesList.stream().map(subjectChoicesService::get)
+                            .collect(Collectors.toList());
                 }
                 subjectDtoList.addAll(SubjectUtil.subjectChoicesToDto(subjectChoicesList));
             }
         }
         if (idMap.containsKey(SubjectTypeEnum.SHORT_ANSWER.name())) {
-            SubjectShortAnswer subjectShortAnswer = new SubjectShortAnswer();
-            subjectShortAnswer.setIds(idMap.get(SubjectTypeEnum.SHORT_ANSWER.name()));
-            List<SubjectShortAnswer> subjectShortAnswers = subjectShortAnswerService.findListById(subjectShortAnswer);
+            List<SubjectShortAnswer> subjectShortAnswers = subjectShortAnswerService.findListById(idMap.get(SubjectTypeEnum.SHORT_ANSWER.name()));
             if (CollectionUtils.isNotEmpty(subjectShortAnswers)) {
                 subjectDtoList.addAll(SubjectUtil.subjectShortAnswerToDto(subjectShortAnswers));
             }
         }
         return subjectDtoList;
+    }
+
+    /**
+     * 查询第一题
+     *
+     * @param examinationId examinationId
+     * @return SubjectDto
+     * @author tangyi
+     * @date 2019/10/13 18:36:58
+     */
+    public SubjectDto findFirstSubjectByExaminationId(Long examinationId) {
+        // 第一题
+        ExaminationSubject examinationSubject = new ExaminationSubject();
+        examinationSubject.setExaminationId(examinationId);
+        // 根据考试ID查询考试题目管理关系，题目ID递增
+        List<ExaminationSubject> examinationSubjects = examinationSubjectService.findList(examinationSubject);
+        if (CollectionUtils.isEmpty(examinationSubjects))
+            throw new CommonException("该考试未录入题目");
+        // 第一题的ID
+        examinationSubject = examinationSubjects.get(0);
+        // 根据题目ID，类型获取题目的详细信息
+        return this.get(examinationSubject.getSubjectId(), examinationSubject.getType());
     }
 }

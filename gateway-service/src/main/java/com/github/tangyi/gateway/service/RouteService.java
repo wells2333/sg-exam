@@ -90,7 +90,7 @@ public class RouteService extends CrudService<RouteMapper, Route> {
      * @return Mono
      */
     @Transactional
-    public int delete(String id) {
+    public int delete(Long id) {
         Route route = new Route();
         route.setId(id);
         route.setNewRecord(false);

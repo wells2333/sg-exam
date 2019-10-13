@@ -88,6 +88,7 @@
                 <configuration>
                     <repository>${docker.registry}/${docker.namespace}/${project.artifactId}</repository>
                     <tag>${project.version}</tag>
+                    <tag>latest</tag>
                     <!-- 构建参数，指定jar包名称 -->
                     <buildArgs>
                         <JAR_FILE>${project.name}.jar</JAR_FILE>

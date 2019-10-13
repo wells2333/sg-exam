@@ -2,9 +2,14 @@ package com.github.tangyi.user.service;
 
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.service.CrudService;
-import com.github.tangyi.user.api.module.Tenant;
+import com.github.tangyi.common.core.utils.SysUtil;
+import com.github.tangyi.common.security.constant.SecurityConstant;
+import com.github.tangyi.user.api.constant.TenantConstant;
+import com.github.tangyi.user.api.enums.IdentityType;
+import com.github.tangyi.user.api.module.*;
 import com.github.tangyi.user.mapper.TenantMapper;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -16,9 +21,20 @@ import org.springframework.transaction.annotation.Transactional;
  * @author tangyi
  * @date 2019/5/22 22:51
  */
+@Slf4j
 @AllArgsConstructor
 @Service
 public class TenantService extends CrudService<TenantMapper, Tenant> {
+
+    private final UserService userService;
+
+    private final UserAuthsService userAuthsService;
+
+    private final UserRoleService userRoleService;
+
+    private final RoleService roleService;
+
+    private final MenuService menuService;
 
     /**
      * 根据租户标识获取
@@ -34,6 +50,20 @@ public class TenantService extends CrudService<TenantMapper, Tenant> {
     }
 
     /**
+     * 新增租户，自动初始化租户管理员账号
+     *
+     * @param tenant tenant
+     * @return int
+     * @author tangyi
+     * @date 2019-09-02 11:41
+     */
+    @Transactional
+    @CacheEvict(value = "tenant", key = "#tenant.tenantCode")
+    public int add(Tenant tenant) {
+        return this.insert(tenant);
+    }
+
+    /**
      * 更新
      *
      * @param tenant tenant
@@ -45,6 +75,35 @@ public class TenantService extends CrudService<TenantMapper, Tenant> {
     @CacheEvict(value = "tenant", key = "#tenant.tenantCode")
     @Override
     public int update(Tenant tenant) {
+        Integer status = tenant.getStatus();
+        Tenant currentTenant = this.get(tenant);
+        // 待审核 -> 审核通过
+        if (currentTenant != null && currentTenant.getStatus().equals(TenantConstant.PENDING_AUDIT) && status.equals(TenantConstant.APPROVAL)) {
+            log.info("待审核 -> 审核通过：{}", tenant.getTenantCode());
+            // 用户基本信息
+            User user = new User();
+            user.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), tenant.getTenantCode());
+            user.setStatus(CommonConstant.STATUS_NORMAL);
+            user.setName(tenant.getTenantName());
+            userService.insert(user);
+            // 用户账号
+            UserAuths userAuths = new UserAuths();
+            userAuths.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), tenant.getTenantCode());
+            userAuths.setUserId(user.getId());
+            userAuths.setIdentifier(tenant.getTenantCode());
+            userAuths.setIdentityType(IdentityType.PASSWORD.getValue());
+            userAuths.setCredential(userService.encodeCredential(CommonConstant.DEFAULT_PASSWORD));
+            userAuthsService.insert(userAuths);
+            // 绑定角色
+            Role role = new Role();
+            role.setRoleCode(SecurityConstant.ROLE_TENANT_ADMIN);
+            role = roleService.findByRoleCode(role);
+            UserRole userRole = new UserRole();
+            userRole.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), tenant.getTenantCode());
+            userRole.setUserId(user.getId());
+            userRole.setRoleId(role.getId());
+            userRoleService.insert(userRole);
+        }
         return super.update(tenant);
     }
 
@@ -60,6 +119,13 @@ public class TenantService extends CrudService<TenantMapper, Tenant> {
     @CacheEvict(value = "tenant", key = "#tenant.tenantCode")
     @Override
     public int delete(Tenant tenant) {
+        // 删除菜单
+        Menu menu = new Menu();
+        menu.setTenantCode(tenant.getTenantCode());
+        menuService.deleteByTenantCode(menu);
+        // TODO 删除用户
+
+        // TODO 删除权限
         return super.delete(tenant);
     }
 
@@ -74,7 +140,7 @@ public class TenantService extends CrudService<TenantMapper, Tenant> {
     @Transactional
     @CacheEvict(value = "tenant", allEntries = true)
     @Override
-    public int deleteAll(String[] ids) {
+    public int deleteAll(Long[] ids) {
         return super.deleteAll(ids);
     }
 }

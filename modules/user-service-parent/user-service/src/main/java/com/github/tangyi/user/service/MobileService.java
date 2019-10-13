@@ -3,8 +3,9 @@ package com.github.tangyi.user.service;
 import cn.hutool.core.util.RandomUtil;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.enums.LoginType;
-import com.github.tangyi.common.core.exceptions.CommonException;
+import com.github.tangyi.common.core.exceptions.ServiceException;
 import com.github.tangyi.common.core.model.ResponseBean;
+import com.github.tangyi.common.core.utils.ResponseUtil;
 import com.github.tangyi.common.security.constant.SecurityConstant;
 import com.github.tangyi.msc.api.constant.SmsConstant;
 import com.github.tangyi.msc.api.dto.SmsDto;
@@ -37,13 +38,12 @@ public class MobileService {
      * 发送短信
      *
      * @param mobile     mobile
-     * @param tenantCode tenantCode
      * @return ResponseBean
      * @author tangyi
      * @date 2019/07/02 09:36:52
      */
-    public ResponseBean<Boolean> sendSms(String mobile, String tenantCode) {
-        String key = tenantCode + ":" + CommonConstant.DEFAULT_CODE_KEY + LoginType.SMS.getType() + "@" + mobile;
+    public ResponseBean<Boolean> sendSms(String mobile) {
+        String key = CommonConstant.DEFAULT_CODE_KEY + LoginType.SMS.getType() + "@" + mobile;
         // TODO 校验时间
         String code = RandomUtil.randomNumbers(Integer.parseInt(CommonConstant.CODE_SIZE));
         log.debug("手机号生成验证码成功:{},{}", mobile, code);
@@ -53,10 +53,8 @@ public class MobileService {
         smsDto.setReceiver(mobile);
         smsDto.setContent(String.format(SmsConstant.SMS_TEMPLATE, code));
         ResponseBean<?> result = mscServiceClient.sendSms(smsDto);
-        if (result == null)
-            throw new CommonException("发送短信失败.");
-        if (result.getCode() == ResponseBean.FAIL)
-            throw new CommonException(result.getMsg());
+        if (!ResponseUtil.isSuccess(result))
+            throw new ServiceException("发送短信失败: " + result.getMsg());
         log.info("发送验证码结果：{}", result.getData());
         return new ResponseBean<>(Boolean.TRUE, code);
     }

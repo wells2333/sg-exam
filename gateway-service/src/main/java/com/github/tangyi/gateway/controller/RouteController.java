@@ -10,7 +10,7 @@ import com.github.tangyi.gateway.module.Route;
 import com.github.tangyi.gateway.service.RouteService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -39,7 +39,7 @@ public class RouteController extends BaseController {
      * @date 2019/4/2 15:09
      */
     @GetMapping("/{id}")
-    public Route get(@PathVariable String id) {
+    public Route get(@PathVariable Long id) {
         try {
             Route route = new Route();
             route.setId(id);
@@ -118,7 +118,7 @@ public class RouteController extends BaseController {
      * @date 2019/4/2 15:09
      */
     @DeleteMapping("/{id}")
-    public ResponseBean<Boolean> delete(@PathVariable String id) {
+    public ResponseBean<Boolean> delete(@PathVariable Long id) {
         try {
             return new ResponseBean<>(routeService.delete(id) > 0);
         } catch (Exception e) {
@@ -130,17 +130,17 @@ public class RouteController extends BaseController {
     /**
      * 批量删除
      *
-     * @param route route
+     * @param ids ids
      * @return ResponseBean
      * @author tangyi
      * @date 2019/4/2 15:09
      */
     @PostMapping("deleteAll")
-    public ResponseBean<Boolean> deleteAll(@RequestBody Route route) {
+    public ResponseBean<Boolean> deleteAll(@RequestBody Long[] ids) {
         boolean success = false;
         try {
-            if (StringUtils.isNotEmpty(route.getIdString()))
-                success = routeService.deleteAll(route.getIdString().split(",")) > 0;
+            if (ArrayUtils.isNotEmpty(ids))
+                success = routeService.deleteAll(ids) > 0;
             return new ResponseBean<>(success);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

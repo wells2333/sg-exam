@@ -1,5 +1,6 @@
 package com.github.tangyi.user.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -15,19 +16,22 @@ public class StudentDto implements Serializable {
 
     private static final long serialVersionUID = 2602249526687821147L;
 
-    private String id;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long id;
 
     /**
      * 用户id
      */
     @ApiModelProperty(value = "用户id")
-    private String userId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long userId;
 
     /**
      * 学生id
      */
     @ApiModelProperty(value = "学生id")
-    private String studentId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long studentId;
 
     /**
      * 关系类型
@@ -94,11 +98,13 @@ public class StudentDto implements Serializable {
      * 就读城市
      */
     @ApiModelProperty(value = "就读城市ID")
-    private String cityId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long cityId;
 
     /**
      * 县id
      */
     @ApiModelProperty(value = "就读区县ID")
-    private String countyId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long countyId;
 }

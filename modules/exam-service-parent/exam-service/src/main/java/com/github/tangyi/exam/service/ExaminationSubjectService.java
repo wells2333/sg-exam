@@ -51,26 +51,50 @@ public class ExaminationSubjectService extends CrudService<ExaminationSubjectMap
     }
 
     /**
-     * 查询考试的题目数量
+     * 根据考试id查询题目id列表
      *
-     * @param examinationSubject examinationSubject
+     * @param examinationId examinationId
      * @return int
      * @author tangyi
      * @date 2019/06/18 14:35
      */
-    public int findSubjectCount(ExaminationSubject examinationSubject) {
-        return this.dao.findSubjectCount(examinationSubject);
+    public List<ExaminationSubject> findListByExaminationId(Long examinationId) {
+        return this.dao.findListByExaminationId(examinationId);
     }
 
     /**
-     * 根据考试ID和题目序号查询
+     * 根据考试ID和题目ID查询
      *
      * @param examinationSubject examinationSubject
      * @return ExaminationSubject
      * @author tangyi
      * @date 2019/06/18 23:17
      */
-    public ExaminationSubject findByExaminationIdAndSerialNumber(ExaminationSubject examinationSubject) {
-        return this.dao.findByExaminationIdAndSerialNumber(examinationSubject);
+    public ExaminationSubject findByExaminationIdAndSubjectId(ExaminationSubject examinationSubject) {
+        return this.dao.findByExaminationIdAndSubjectId(examinationSubject);
+    }
+
+    /**
+     * 根据上一题ID查询下一题
+     *
+     * @param examinationSubject examinationSubject
+     * @return ExaminationSubject
+     * @author tangyi
+     * @date 2019/10/07 20:59:43
+     */
+    public ExaminationSubject getByPreviousId(ExaminationSubject examinationSubject) {
+        return this.dao.getByPreviousId(examinationSubject);
+    }
+
+    /**
+     * 根据当前题目ID查询上一题
+     *
+     * @param examinationSubject examinationSubject
+     * @return ExaminationSubject
+     * @author tangyi
+     * @date 2019/10/07 20:59:43
+     */
+    public ExaminationSubject getPreviousByCurrentId(ExaminationSubject examinationSubject) {
+        return this.dao.getPreviousByCurrentId(examinationSubject);
     }
 }

@@ -36,14 +36,14 @@ public interface ExaminationSubjectMapper extends CrudMapper<ExaminationSubject>
     List<ExaminationSubject> findListBySubjectId(ExaminationSubject examinationSubject);
 
     /**
-     * 查询考试的题目数量
+     * 根据考试id查询题目id列表
      *
-     * @param examinationSubject examinationSubject
-     * @return int
+     * @param examinationId examinationId
+     * @return List
      * @author tangyi
      * @date 2019/06/18 14:37
      */
-    int findSubjectCount(ExaminationSubject examinationSubject);
+    List<ExaminationSubject> findListByExaminationId(Long examinationId);
 
     /**
      * 根据考试ID和题目序号查询
@@ -53,5 +53,25 @@ public interface ExaminationSubjectMapper extends CrudMapper<ExaminationSubject>
      * @author tangyi
      * @date 2019/06/18 23:17
      */
-    ExaminationSubject findByExaminationIdAndSerialNumber(ExaminationSubject examinationSubject);
+    ExaminationSubject findByExaminationIdAndSubjectId(ExaminationSubject examinationSubject);
+
+    /**
+     * 根据上一题ID查询下一题
+     *
+     * @param examinationSubject examinationSubject
+     * @return ExaminationSubject
+     * @author tangyi
+     * @date 2019-09-14 16:41
+     */
+    ExaminationSubject getByPreviousId(ExaminationSubject examinationSubject);
+
+    /**
+     * 根据当前题目ID查询上一题
+     *
+     * @param examinationSubject examinationSubject
+     * @return ExaminationSubject
+     * @author tangyi
+     * @date 2019/10/07 20:40:16
+     */
+    ExaminationSubject getPreviousByCurrentId(ExaminationSubject examinationSubject);
 }

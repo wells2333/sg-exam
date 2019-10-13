@@ -3,6 +3,7 @@ package com.github.tangyi.exam.service;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.service.CrudService;
+import com.github.tangyi.exam.api.constants.AnswerConstant;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.ExaminationSubject;
 import com.github.tangyi.exam.api.module.SubjectChoices;
@@ -27,7 +28,8 @@ import java.util.List;
  */
 @AllArgsConstructor
 @Service
-public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, SubjectChoices> implements BaseSubjectService {
+public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, SubjectChoices>
+        implements BaseSubjectService {
 
     private final SubjectOptionService subjectOptionService;
 
@@ -53,18 +55,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
             subject.setOptions(options);
         }
         return subject;
-    }
-
-    /**
-     * 根据序号查找
-     *
-     * @param subjectChoices subjectChoices
-     * @return SubjectChoices
-     * @author tangyi
-     * @date 2019/01/20 12:22
-     */
-    public SubjectChoices getBySerialNumber(SubjectChoices subjectChoices) {
-        return this.dao.getBySerialNumber(subjectChoices);
     }
 
     /**
@@ -113,13 +103,54 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
             subjectOptionService.deleteBySubjectChoicesId(subjectOption);
             // 初始化
             options.forEach(option -> {
-                option.setCommonValue(subjectChoices.getCreator(), subjectChoices.getApplicationCode(), subjectChoices.getTenantCode());
+                option.setCommonValue(subjectChoices.getCreator(), subjectChoices.getApplicationCode(),
+                        subjectChoices.getTenantCode());
                 option.setSubjectChoicesId(subjectChoices.getId());
             });
             // 批量插入
             subjectOptionService.insertBatch(options);
         }
         return super.update(subjectChoices);
+    }
+
+    /**
+     * 根据上一题ID查询下一题
+     *
+     * @param examinationId  examinationId
+     * @param subjectChoices subjectChoices
+     * @return SubjectChoices
+     * @author tangyi
+     * @date 2019-09-14 16:47
+     */
+    @Transactional
+    public SubjectChoices getByPreviousId(Long examinationId, SubjectChoices subjectChoices) {
+        ExaminationSubject examinationSubject = new ExaminationSubject();
+        examinationSubject.setExaminationId(examinationId);
+        examinationSubject.setSubjectId(subjectChoices.getId());
+        examinationSubject = examinationSubjectService.getByPreviousId(examinationSubject);
+        if (examinationSubject == null)
+            return null;
+        return this.getSubjectChoicesById(examinationSubject.getSubjectId());
+    }
+
+    /**
+     * 根据当前题目ID查询上一题
+     *
+     * @param examinationId  examinationId
+     * @param subjectChoices subjectChoices
+     * @return SubjectChoices
+     * @author tangyi
+     * @date 2019/10/07 20:40:16
+     */
+    @Transactional
+    public SubjectChoices getPreviousByCurrentId(Long examinationId, SubjectChoices subjectChoices) {
+        ExaminationSubject examinationSubject = new ExaminationSubject();
+        examinationSubject.setExaminationId(examinationId);
+        examinationSubject.setSubjectId(subjectChoices.getId());
+        examinationSubject = examinationSubjectService.getPreviousByCurrentId(examinationSubject);
+        if (examinationSubject == null)
+            return null;
+        return this.getSubjectChoicesById(examinationSubject.getSubjectId());
     }
 
     /**
@@ -168,10 +199,10 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
     @Override
     @Transactional
     @CacheEvict(value = "subjectChoices", allEntries = true)
-    public int deleteAll(String[] ids) {
+    public int deleteAll(Long[] ids) {
         int update;
         if ((update = super.deleteAll(ids)) > 0) {
-            for (String id : ids)
+            for (Long id : ids)
                 this.deleteOptionAndRelation(id);
         }
         return update;
@@ -187,10 +218,10 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
      */
     @Transactional
     @CacheEvict(value = "subjectChoices", allEntries = true)
-    public int physicalDeleteAll(String[] ids) {
+    public int physicalDeleteAll(Long[] ids) {
         int update;
         if ((update = this.dao.physicalDeleteAll(ids)) > 0) {
-            for (String id : ids)
+            for (Long id : ids)
                 this.deleteOptionAndRelation(id);
         }
         return update;
@@ -204,7 +235,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
      * @date 2019/06/16 22:09
      */
     @Transactional
-    public void deleteOptionAndRelation(String subjectId) {
+    public void deleteOptionAndRelation(Long subjectId) {
         // 删除选项
         SubjectOption option = new SubjectOption();
         option.setSubjectChoicesId(subjectId);
@@ -224,25 +255,33 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
      * @date 2019/06/16 17:36
      */
     @Override
-    public SubjectDto getSubject(String id) {
+    public SubjectDto getSubject(Long id) {
         SubjectChoices subjectChoices = new SubjectChoices();
         subjectChoices.setId(id);
         return SubjectUtil.subjectChoicesToDto(this.get(subjectChoices));
     }
 
     /**
-     * 根据题目序号查询
+     * 根据上一题ID查询下一题
      *
-     * @param serialNumber serialNumber
+     * @param examinationId examinationId
+     * @param previousId    previousId
+     * @param nextType      0：下一题，1：上一题
      * @return SubjectDto
      * @author tangyi
-     * @date 2019/06/16 17:50
+     * @date 2019/09/14 16:35
      */
     @Override
-    public SubjectDto getSubjectBySerialNumber(Integer serialNumber) {
+    @Transactional
+    public SubjectDto getNextByCurrentIdAndType(Long examinationId, Long previousId, Integer nextType) {
         SubjectChoices subjectChoices = new SubjectChoices();
-        subjectChoices.setSerialNumber(serialNumber);
-        return SubjectUtil.subjectChoicesToDto(this.getBySerialNumber(subjectChoices));
+        subjectChoices.setId(previousId);
+        if (AnswerConstant.NEXT.equals(nextType)) {
+            subjectChoices = this.getByPreviousId(examinationId, subjectChoices);
+        } else {
+            subjectChoices = this.getPreviousByCurrentId(examinationId, subjectChoices);
+        }
+        return SubjectUtil.subjectChoicesToDto(subjectChoices);
     }
 
     /**
@@ -315,29 +354,29 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
     /**
      * 批量删除
      *
-     * @param subjectDto subjectDto
+     * @param ids ids
      * @return int
      * @author tangyi
      * @date 2019/06/16 17:50
      */
     @Override
     @Transactional
-    public int deleteAllSubject(SubjectDto subjectDto) {
-        return this.deleteAll(subjectDto.getIds());
+    public int deleteAllSubject(Long[] ids) {
+        return this.deleteAll(ids);
     }
 
     /**
      * 物理删除
      *
-     * @param subjectDto subjectDto
+     * @param ids ids
      * @return int
      * @author tangyi
      * @date 2019/06/16 22:51
      */
     @Override
     @Transactional
-    public int physicalDeleteAllSubject(SubjectDto subjectDto) {
-        return this.physicalDeleteAll(subjectDto.getIds());
+    public int physicalDeleteAllSubject(Long[] ids) {
+        return this.physicalDeleteAll(ids);
     }
 
     /**
@@ -371,8 +410,8 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
         // 选择题类型：单选或多选
         if (subjectDto.getType() != null)
             subjectChoices.setChoicesType(subjectDto.getType());
-        PageInfo subjectChoicesPageInfo = this.findPage(pageInfo, subjectChoices);
-        List subjectDtos = SubjectUtil.subjectChoicesToDto(subjectChoicesPageInfo.getList());
+        PageInfo<SubjectChoices> subjectChoicesPageInfo = this.findPage(pageInfo, subjectChoices);
+        List<SubjectDto> subjectDtos = SubjectUtil.subjectChoicesToDto(subjectChoicesPageInfo.getList());
         PageInfo<SubjectDto> subjectDtoPageInfo = new PageInfo<>();
         subjectDtoPageInfo.setList(subjectDtos);
         subjectDtoPageInfo.setTotal(subjectChoicesPageInfo.getTotal());
@@ -384,15 +423,32 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
     /**
      * 根据ID批量查询
      *
-     * @param subjectDto subjectDto
+     * @param ids ids
      * @return List
      * @author tangyi
      * @date 2019/06/16 18:16
      */
     @Override
-    public List<SubjectDto> findSubjectListById(SubjectDto subjectDto) {
+    public List<SubjectDto> findSubjectListById(Long[] ids) {
+        return SubjectUtil.subjectChoicesToDto(this.findListById(ids));
+    }
+
+    /**
+     * 根据题目ID查询题目信息和选项
+     *
+     * @param subjectId subjectId
+     * @return SubjectChoices
+     * @author tangyi
+     * @date 2019/10/07 21:03:43
+     */
+    private SubjectChoices getSubjectChoicesById(Long subjectId) {
         SubjectChoices subjectChoices = new SubjectChoices();
-        BeanUtils.copyProperties(subjectDto, subjectChoices);
-        return SubjectUtil.subjectChoicesToDto(this.findListById(subjectChoices));
+        subjectChoices.setId(subjectId);
+        subjectChoices = this.get(subjectChoices);
+        SubjectOption subjectOption = new SubjectOption();
+        subjectOption.setSubjectChoicesId(subjectChoices.getId());
+        List<SubjectOption> options = subjectOptionService.getBySubjectChoicesId(subjectOption);
+        subjectChoices.setOptions(options);
+        return subjectChoices;
     }
 }

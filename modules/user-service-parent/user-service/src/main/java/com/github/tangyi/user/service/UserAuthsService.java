@@ -43,7 +43,7 @@ public class UserAuthsService extends CrudService<UserAuthsMapper, UserAuths> {
      * @date 2019/07/03 21:58:31
      */
     public List<UserAuths> getListByUsers(List<User> userList) {
-        return this.dao.getListByUserIds(userList.stream().map(User::getId).distinct().toArray(String[]::new));
+        return this.dao.getListByUserIds(userList.stream().map(User::getId).distinct().toArray(Long[]::new));
     }
 
     /**
@@ -70,5 +70,18 @@ public class UserAuthsService extends CrudService<UserAuthsMapper, UserAuths> {
     @Transactional
     public int deleteByUserId(UserAuths userAuths) {
         return this.dao.deleteByUserId(userAuths);
+    }
+
+    /**
+     * 批量插入
+     *
+     * @param userAuths userAuths
+     * @return int
+     * @author tangyi
+     * @date 2019-09-03 13:07
+     */
+    @Transactional
+    public int insertBatch(List<UserAuths> userAuths) {
+        return dao.insertBatch(userAuths);
     }
 }

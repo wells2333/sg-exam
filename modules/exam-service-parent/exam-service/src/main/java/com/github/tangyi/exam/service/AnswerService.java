@@ -9,7 +9,6 @@ import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.exam.api.constants.AnswerConstant;
 import com.github.tangyi.exam.api.constants.ExamExaminationRecordConstant;
-import com.github.tangyi.exam.api.constants.ExamSubjectConstant;
 import com.github.tangyi.exam.api.dto.AnswerDto;
 import com.github.tangyi.exam.api.dto.StartExamDto;
 import com.github.tangyi.exam.api.dto.SubjectDto;
@@ -22,7 +21,6 @@ import com.github.tangyi.exam.mapper.AnswerMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
@@ -124,7 +122,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
     @Override
     @Transactional
     @CacheEvict(value = "answer", allEntries = true)
-    public int deleteAll(String[] ids) {
+    public int deleteAll(Long[] ids) {
         return super.deleteAll(ids);
     }
 
@@ -145,27 +143,39 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
     /**
      * 保存答题，返回下一题信息
      *
-     * @param answerDto answerDto
+     * @param answerDto       answerDto
+     * @param type            0：下一题，1：上一题
+     * @param nextSubjectId   nextSubjectId
+     * @param nextSubjectType 下一题的类型，选择题、判断题
      * @return SubjectDto
      * @author tangyi
      * @date 2019/05/01 11:42
      */
     @Transactional
-    public SubjectDto saveAndNext(AnswerDto answerDto) {
+    public SubjectDto saveAndNext(AnswerDto answerDto, Integer type, Long nextSubjectId, Integer nextSubjectType) {
+        String userCode = SysUtil.getUser();
+        String sysCode = SysUtil.getSysCode();
+        String tenantCode = SysUtil.getTenantCode();
         Answer answer = new Answer();
         BeanUtils.copyProperties(answerDto, answer);
         Answer tempAnswer = this.getAnswer(answer);
         if (tempAnswer != null) {
-            tempAnswer.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+            tempAnswer.setCommonValue(userCode, sysCode, tenantCode);
             tempAnswer.setAnswer(answer.getAnswer());
             tempAnswer.setType(answer.getType());
+            tempAnswer.setEndTime(tempAnswer.getModifyDate());
             this.update(tempAnswer);
         } else {
-            answer.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+            answer.setCommonValue(userCode, sysCode, tenantCode);
             answer.setMarkStatus(AnswerConstant.TO_BE_MARKED);
+            answer.setAnswerType(AnswerConstant.WRONG);
+            answer.setEndTime(answer.getModifyDate());
             this.insert(answer);
         }
-        return this.subjectAnswer(answerDto.getSerialNumber(), answer.getExamRecordId(), answerDto.getUserId());
+
+        // 查询下一题
+        return this.subjectAnswer(answerDto.getSubjectId(), answer.getExamRecordId(),
+                userCode, sysCode, tenantCode, type, nextSubjectId, nextSubjectType);
     }
 
     /**
@@ -200,7 +210,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
         record.setId(answer.getExamRecordId());
         record.setEndTime(record.getCreateDate());
         examRecordService.update(record);
-        log.debug("提交答卷，用户名：{}，考试ID：{}，耗时：{}ms", currentUsername, System.currentTimeMillis() - start);
+        log.debug("提交答卷，用户名：{}，耗时：{}ms", currentUsername, System.currentTimeMillis() - start);
     }
 
 
@@ -218,7 +228,9 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
     @Transactional
     public boolean submitAsync(Answer answer) {
         long start = System.currentTimeMillis();
-        String currentUsername = SysUtil.getUser(), applicationCode = SysUtil.getSysCode(), tenantCode = SysUtil.getTenantCode();
+        String currentUsername = SysUtil.getUser();
+        String applicationCode = SysUtil.getSysCode();
+        String tenantCode = SysUtil.getTenantCode();
         answer.setModifier(currentUsername);
         answer.setApplicationCode(applicationCode);
         answer.setTenantCode(tenantCode);
@@ -233,7 +245,8 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
         amqpTemplate.convertAndSend(MqConstant.SUBMIT_EXAMINATION_QUEUE, answer);
         // 2. 更新考试状态
         boolean success = examRecordService.update(examRecord) > 0;
-        log.debug("异步提交答卷成功，提交人：{}，考试ID：{}，耗时：{}ms", currentUsername, examRecord.getExaminationId(), System.currentTimeMillis() - start);
+        log.debug("异步提交答卷成功，提交人：{}，考试ID：{}，耗时：{}ms", currentUsername, examRecord.getExaminationId(),
+                System.currentTimeMillis() - start);
         return success;
     }
 
@@ -248,11 +261,13 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
     @Transactional
     public StartExamDto start(ExaminationRecord examRecord) {
         StartExamDto startExamDto = new StartExamDto();
-        String currentUsername = SysUtil.getUser(), applicationCode = SysUtil.getSysCode(), tenantCode = SysUtil.getTenantCode();
+        String currentUsername = SysUtil.getUser();
+        String applicationCode = SysUtil.getSysCode();
+        String tenantCode = SysUtil.getTenantCode();
         // 创建考试记录
-        if (StringUtils.isEmpty(examRecord.getExaminationId()))
+        if (examRecord.getExaminationId() == null)
             throw new CommonException("参数校验失败，考试id为空！");
-        if (StringUtils.isEmpty(examRecord.getUserId()))
+        if (examRecord.getUserId() == null)
             throw new CommonException("参数校验失败，用户id为空！");
         Examination examination = new Examination();
         examination.setId(examRecord.getExaminationId());
@@ -266,18 +281,8 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
         if (examRecordService.insert(examRecord) > 0) {
             startExamDto.setExamination(examination);
             startExamDto.setExamRecord(examRecord);
-
-            // 查找第一题
-            ExaminationSubject examinationSubject = new ExaminationSubject();
-            examinationSubject.setExaminationId(examRecord.getExaminationId());
-            examinationSubject.setSerialNumber(ExamSubjectConstant.DEFAULT_SERIAL_NUMBER);
-            List<ExaminationSubject> examinationSubjects = examinationSubjectService.findList(examinationSubject);
-            if (CollectionUtils.isEmpty(examinationSubjects))
-                throw new CommonException("序号为1的题目不存在.");
-            examinationSubject = examinationSubjects.get(0);
-            // 根据题目ID，类型获取题目的详细信息
-            SubjectDto subjectDto = subjectService.get(examinationSubject.getSubjectId(), examinationSubject.getType());
-            // 绑定到dto
+            // 根据题目ID，类型获取第一题的详细信息
+            SubjectDto subjectDto = subjectService.findFirstSubjectByExaminationId(examRecord.getExaminationId());
             startExamDto.setSubjectDto(subjectDto);
             // 创建第一题的答题
             Answer answer = new Answer();
@@ -286,6 +291,8 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
             answer.setSubjectId(subjectDto.getId());
             // 默认待批改状态
             answer.setMarkStatus(AnswerConstant.TO_BE_MARKED);
+            answer.setAnswerType(AnswerConstant.WRONG);
+            answer.setStartTime(answer.getCreateDate());
             // 保存答题
             this.save(answer);
             subjectDto.setAnswer(answer);
@@ -296,32 +303,50 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
     /**
      * 查询题目和答题
      *
-     * @param serialNumber serialNumber
-     * @param examRecordId examRecordId
-     * @param userId       userId
+     * @param subjectId       subjectId
+     * @param examRecordId    examRecordId
+     * @param userCode        userCode
+     * @param sysCode         sysCode
+     * @param tenantCode      tenantCode
+     * @param nextType        0：下一题，1：上一题
+     * @param nextSubjectId   nextSubjectId
+     * @param nextSubjectType 下一题的类型，选择题、判断题
      * @return SubjectDto
      * @author tangyi
      * @date 2019/04/30 17:10
      */
     @Transactional
-    public SubjectDto subjectAnswer(Integer serialNumber, String examRecordId, String userId) {
+    public SubjectDto subjectAnswer(Long subjectId, Long examRecordId, String userCode, String sysCode,
+                                    String tenantCode, Integer nextType, Long nextSubjectId, Integer nextSubjectType) {
         ExaminationRecord examRecord = new ExaminationRecord();
         examRecord.setId(examRecordId);
         // 查找考试记录
         examRecord = examRecordService.get(examRecord);
         if (examRecord == null)
             throw new CommonException("考试记录不存在.");
-        // 考试ID，题目序号查找关联关系
+
+        // 考试ID，题目ID查找关联关系
         ExaminationSubject examinationSubject = new ExaminationSubject();
         examinationSubject.setExaminationId(examRecord.getExaminationId());
-        examinationSubject.setSerialNumber(serialNumber);
-        PageInfo<ExaminationSubject> examinationSubjectPageInfo = examinationSubjectService.findPage(PageUtil.pageInfo(CommonConstant.PAGE_NUM_DEFAULT, CommonConstant.PAGE_SIZE_DEFAULT, "id", CommonConstant.PAGE_ORDER_DEFAULT), examinationSubject);
+        examinationSubject.setSubjectId(subjectId);
+        PageInfo<ExaminationSubject> examinationSubjectPageInfo = examinationSubjectService.findPage(
+                PageUtil.pageInfo(CommonConstant.PAGE_NUM_DEFAULT, CommonConstant.PAGE_SIZE_DEFAULT, "id",
+                        CommonConstant.PAGE_ORDER_DEFAULT), examinationSubject);
         if (CollectionUtils.isEmpty(examinationSubjectPageInfo.getList()))
-            throw new CommonException("序号为" + serialNumber + "的题目不存在.");
-        examinationSubject = examinationSubjectPageInfo.getList().get(0);
-        SubjectDto subject = subjectService.get(examinationSubject.getSubjectId(), examinationSubject.getType());
-        if (subject == null)
-            throw new CommonException("序号为" + serialNumber + "的题目不存在.");
+            throw new CommonException("序号为" + subjectId + "的题目不存在.");
+
+        // 查询下一题
+        SubjectDto subject;
+        if (nextSubjectId != null) {
+            subject = subjectService.get(nextSubjectId, nextSubjectType);
+        } else {
+            subject = subjectService.getNextByCurrentIdAndType(examRecord.getExaminationId(), subjectId, examinationSubjectPageInfo.getList().get(0).getType(), nextType);
+        }
+        if (subject == null) {
+            log.error("ID为{}的题目下一题不存在.", subjectId);
+            return null;
+        }
+
         // 查找答题
         Answer answer = new Answer();
         answer.setSubjectId(subject.getId());
@@ -344,22 +369,20 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
      */
     private Map<String, List<Answer>> distinctAnswer(List<Answer> answers) {
         Map<String, List<Answer>> distinctMap = new HashMap<>();
-        answers.stream()
-                .collect(Collectors.groupingBy(Answer::getType, Collectors.toList()))
-                .forEach((type, temp) -> {
-                    // 匹配类型
-                    SubjectTypeEnum subjectType = SubjectTypeEnum.match(type);
-                    if (subjectType != null) {
-                        switch (subjectType) {
-                            case CHOICES:
-                                distinctMap.put(SubjectTypeEnum.CHOICES.name(), temp);
-                                break;
-                            case SHORT_ANSWER:
-                                distinctMap.put(SubjectTypeEnum.SHORT_ANSWER.name(), temp);
-                                break;
-                        }
-                    }
-                });
+        answers.stream().collect(Collectors.groupingBy(Answer::getType, Collectors.toList())).forEach((type, temp) -> {
+            // 匹配类型
+            SubjectTypeEnum subjectType = SubjectTypeEnum.match(type);
+            if (subjectType != null) {
+                switch (subjectType) {
+                    case CHOICES:
+                        distinctMap.put(SubjectTypeEnum.CHOICES.name(), temp);
+                        break;
+                    case SHORT_ANSWER:
+                        distinctMap.put(SubjectTypeEnum.SHORT_ANSWER.name(), temp);
+                        break;
+                }
+            }
+        });
         return distinctMap;
     }
 
@@ -373,17 +396,15 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
      */
     private void submitChoicesAnswer(List<Answer> choicesAnswer, ExaminationRecord record) {
         // 查找题目信息
-        SubjectDto subjectDto = new SubjectDto();
-        subjectDto.setType(SubjectTypeEnum.CHOICES.getValue());
-        subjectDto.setIds(choicesAnswer.stream().map(Answer::getSubjectId).distinct().toArray(String[]::new));
-        List<SubjectDto> subjects = subjectService.findListById(subjectDto);
+        List<SubjectDto> subjects = subjectService.findListById(SubjectTypeEnum.CHOICES.getValue(), choicesAnswer.stream().map(Answer::getSubjectId).distinct().toArray(Long[]::new));
         // 保存答题正确的题目分数
         List<Integer> rightScore = new ArrayList<>();
         choicesAnswer.forEach(tempAnswer -> {
             // 题目集合
             subjects.stream()
                     // 题目ID、题目答案匹配
-                    .filter(tempSubject -> tempSubject.getId().equals(tempAnswer.getSubjectId()) && tempSubject.getAnswer().getAnswer().equalsIgnoreCase(tempAnswer.getAnswer()))
+                    .filter(tempSubject -> tempSubject.getId().equals(tempAnswer.getSubjectId()) && tempSubject
+                            .getAnswer().getAnswer().equalsIgnoreCase(tempAnswer.getAnswer()))
                     // 记录答题正确的成绩
                     .findFirst().ifPresent(right -> {
                 rightScore.add(right.getScore());
@@ -397,14 +418,14 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
             // 题目集合
             subjects.stream()
                     // 题目ID、题目答案匹配
-                    .filter(tempSubject -> tempSubject.getId().equals(tempAnswer.getSubjectId()) && !tempSubject.getAnswer().getAnswer().equalsIgnoreCase(tempAnswer.getAnswer()))
+                    .filter(tempSubject -> tempSubject.getId().equals(tempAnswer.getSubjectId()) && !tempSubject
+                            .getAnswer().getAnswer().equalsIgnoreCase(tempAnswer.getAnswer()))
                     // 错题
-                    .findFirst()
-                    .ifPresent(tempSubject -> {
-                        tempAnswer.setAnswerType(AnswerConstant.WRONG);
-                        tempAnswer.setScore(0);
-                        tempAnswer.setMarkStatus(AnswerConstant.MARKED);
-                    });
+                    .findFirst().ifPresent(tempSubject -> {
+                tempAnswer.setAnswerType(AnswerConstant.WRONG);
+                tempAnswer.setScore(0);
+                tempAnswer.setMarkStatus(AnswerConstant.MARKED);
+            });
         });
         // 记录总分、正确题目数、错误题目数
         record.setScore(rightScore.stream().mapToInt(Integer::valueOf).sum());
@@ -417,28 +438,43 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
     /**
      * 答题详情
      *
-     * @param recordId  recordId
-     * @param answerDto answerDto
+     * @param recordId         recordId
+     * @param currentSubjectId currentSubjectId
+     * @param nextSubjectType  nextSubjectType
+     * @param nextType         nextType
      * @return AnswerDto
      * @author tangyi
      * @date 2019/06/18 23:05
      */
-    public AnswerDto findBySerialNumber(String recordId, AnswerDto answerDto) {
-        // 默认序号为1
-        if (answerDto.getSerialNumber() == null)
-            answerDto.setSerialNumber(ExamSubjectConstant.DEFAULT_SERIAL_NUMBER);
+    public AnswerDto answerInfo(Long recordId, Long currentSubjectId, Integer nextSubjectType, Integer nextType) {
         ExaminationRecord record = new ExaminationRecord();
         record.setId(recordId);
         record = examRecordService.get(record);
-        // 查询该考试和指定序号的题目的关联信息
-        ExaminationSubject examinationSubject = new ExaminationSubject();
-        examinationSubject.setExaminationId(record.getExaminationId());
-        examinationSubject.setSerialNumber(answerDto.getSerialNumber());
-        examinationSubject = examinationSubjectService.findByExaminationIdAndSerialNumber(examinationSubject);
-        if (examinationSubject == null)
-            throw new CommonException("序号为" + answerDto.getSerialNumber() + "的题目不存在.");
-        // 查询题目的详细信息
-        SubjectDto subjectDto = subjectService.get(examinationSubject.getSubjectId(), examinationSubject.getType());
+        SubjectDto subjectDto;
+        // 题目为空，则加载第一题
+        if (currentSubjectId == null) {
+            subjectDto = subjectService.findFirstSubjectByExaminationId(record.getExaminationId());
+        } else {
+            ExaminationSubject examinationSubject = new ExaminationSubject();
+            examinationSubject.setExaminationId(record.getExaminationId());
+            examinationSubject.setSubjectId(currentSubjectId);
+
+            // 查询该考试和指定序号的题目的关联信息
+            // 下一题
+            if (AnswerConstant.NEXT.equals(nextType)) {
+                examinationSubject = examinationSubjectService.getByPreviousId(examinationSubject);
+            } else if (AnswerConstant.PREVIOUS.equals(nextType)) {
+                // 上一题
+                examinationSubject = examinationSubjectService.getPreviousByCurrentId(examinationSubject);
+            } else {
+                examinationSubject = examinationSubjectService.findByExaminationIdAndSubjectId(examinationSubject);
+            }
+            if (examinationSubject == null)
+                throw new CommonException("ID为" + currentSubjectId + "的题目不存在");
+            // 查询题目的详细信息
+            subjectDto = subjectService.get(examinationSubject.getSubjectId(), examinationSubject.getType());
+        }
+        AnswerDto answerDto = new AnswerDto();
         answerDto.setSubject(subjectDto);
         // 查询答题
         Answer answer = new Answer();
@@ -453,11 +489,11 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
      * 完成批改
      *
      * @param examRecord examRecord
-     * @return boolean
+     * @return Boolean
      * @author tangyi
      * @date 2019/06/19 14:44
      */
-    public boolean completeMarking(ExaminationRecord examRecord) {
+    public Boolean completeMarking(ExaminationRecord examRecord) {
         long start = System.currentTimeMillis();
         examRecord = examRecordService.get(examRecord);
         if (examRecord == null)
@@ -466,7 +502,8 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
         answer.setExamRecordId(examRecord.getId());
         List<Answer> answers = this.findList(answer);
         if (CollectionUtils.isNotEmpty(answers)) {
-            long correctNumber = answers.stream().filter(tempAnswer -> tempAnswer.getAnswerType().equals(AnswerConstant.RIGHT)).count();
+            long correctNumber = answers.stream()
+                    .filter(tempAnswer -> tempAnswer.getAnswerType().equals(AnswerConstant.RIGHT)).count();
             // 总分
             Integer score = answers.stream().mapToInt(Answer::getScore).sum();
             examRecord.setScore(score);
@@ -474,8 +511,9 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
             examRecord.setCorrectNumber((int) correctNumber);
             examRecord.setInCorrectNumber(answers.size() - examRecord.getCorrectNumber());
             examRecordService.update(examRecord);
-            log.debug("批改完成，用户名：{}，考试ID：{}，总分：{}，耗时：{}ms", examRecord.getCreator(), examRecord.getExaminationId(), score, System.currentTimeMillis() - start);
+            log.debug("批改完成，用户名：{}，考试ID：{}，总分：{}，耗时：{}ms", examRecord.getCreator(), examRecord.getExaminationId(),
+                    score, System.currentTimeMillis() - start);
         }
-        return true;
+        return Boolean.TRUE;
     }
 }

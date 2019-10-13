@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
 
@@ -17,12 +18,14 @@ public class ExaminationRecordDto extends BaseEntity<ExaminationRecordDto> {
     /**
      * 考生ID
      */
-    private String userId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long userId;
 
     /**
      * 考试ID
      */
-    private String examinationId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long examinationId;
 
     /**
      * 考试名称
@@ -32,7 +35,7 @@ public class ExaminationRecordDto extends BaseEntity<ExaminationRecordDto> {
     /**
      * 考试类型
      */
-    private String type;
+    private Integer type;
 
     /**
      * 考试注意事项
@@ -62,7 +65,7 @@ public class ExaminationRecordDto extends BaseEntity<ExaminationRecordDto> {
     /**
      * 总分
      */
-    private String totalScore;
+    private Integer totalScore;
 
     /**
      * 分数
@@ -82,17 +85,20 @@ public class ExaminationRecordDto extends BaseEntity<ExaminationRecordDto> {
     /**
      * 学院
      */
-    private String collegeId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long collegeId;
 
     /**
      * 专业
      */
-    private String majorId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long majorId;
 
     /**
      * 课程
      */
-    private String courseId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long courseId;
 
     /**
      * 备注

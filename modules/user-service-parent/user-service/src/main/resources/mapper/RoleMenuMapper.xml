@@ -13,6 +13,30 @@
         a.menu_id
     </sql>
 
+    <select id="getByRoleId" resultMap="roleMenuResultMap">
+        SELECT
+        <include refid="roleMenuColumns"/>
+        FROM sys_role_menu a
+        WHERE a.role_id = #{roleId}
+    </select>
+
+    <select id="getByMenuId" resultMap="roleMenuResultMap">
+        SELECT
+        <include refid="roleMenuColumns"/>
+        FROM sys_role_menu a
+        WHERE a.menu_id = #{menuId}
+    </select>
+
+    <select id="getByMenuIds" resultMap="roleMenuResultMap">
+        SELECT
+        <include refid="roleMenuColumns"/>
+        FROM sys_role_menu a
+        WHERE a.menu_id IN
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item.menuId}
+        </foreach>
+    </select>
+
     <insert id="insert">
         INSERT  INTO sys_role_menu (
             id,

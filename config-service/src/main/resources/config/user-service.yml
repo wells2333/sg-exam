@@ -1,5 +1,5 @@
 server:
-  port: 8095
+  port: 9183
 spring:
   servlet:
     multipart:
@@ -8,7 +8,7 @@ spring:
       # 单次请求的文件的总大小
       max-request-size: 100MB
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/microservice-user?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${DB_USER:microservice-user}?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8
     username: ${MYSQL_USERNAME:root}
     password: ${MYSQL_PASSWORD:11}
     type: com.zaxxer.hikari.HikariDataSource
@@ -24,7 +24,7 @@ spring:
   boot:
     admin:
       client:
-        url: http://${ADMIN_HOST:localhost}:${ADMIN_PORT:8085}/admin
+        url: http://${ADMIN_HOST:localhost}:${ADMIN_PORT:9186}/admin
         username: ${ADMIN_USERNAME:admin}
         password: ${ADMIN_PASSWORD:11}
         instance:
@@ -47,15 +47,15 @@ security:
     client:
       client-id: web_app
       client-secret: $2a$10$S84wOzmAw4wqYBzAqNtmPOx1ZRWdDl9omm/W8T1hhW8S9EK2u57xG
-      access-token-uri: http://${AUTH_SERVICE_HOST:localhost}:${AUTH_SERVICE_PORT:8000}/api/auth/oauth/token
-      user-authorization-uri: http://${AUTH_SERVICE_HOST:localhost}:${AUTH_SERVICE_PORT:8000}/api/auth/oauth/authorize
+      access-token-uri: http://${AUTH_SERVICE_HOST:localhost}:${AUTH_SERVICE_PORT:9180}/api/auth/oauth/token
+      user-authorization-uri: http://${AUTH_SERVICE_HOST:localhost}:${AUTH_SERVICE_PORT:9180}/api/auth/oauth/authorize
       grant-type: password
       scope: read
     resource:
-      user-info-uri: http://${AUTH_SERVICE_HOST:localhost}:${AUTH_SERVICE_PORT:8000}/api/user/v1/user/info
+      user-info-uri: http://${AUTH_SERVICE_HOST:localhost}:${AUTH_SERVICE_PORT:9180}/api/user/v1/user/info
       prefer-token-info: false
       jwt:
-        key-uri: http://${AUTH_SERVICE_HOST:localhost}:${AUTH_SERVICE_PORT:8000}/api/auth/oauth/token_key
+        key-uri: http://${AUTH_SERVICE_HOST:localhost}:${AUTH_SERVICE_PORT:9180}/api/auth/oauth/token_key
         key-value: |
           -----BEGIN PUBLIC KEY-----
           MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjxSawA+NUNmhB2ctiVnt
@@ -171,7 +171,3 @@ cluster:
   workId: ${CLUSTER_WORKID:1}
   dataCenterId: ${CLUSTER_DATA_CENTER_ID:1}
 
-logging:
-  level:
-    root: info
-    com.github.tangyi: debug

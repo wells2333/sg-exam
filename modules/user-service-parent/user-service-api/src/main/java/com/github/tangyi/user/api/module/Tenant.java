@@ -34,5 +34,5 @@ public class Tenant extends BaseEntity<Tenant> {
     /**
      * 状态，0-待审核，1-正常，2-审核不通过
      */
-    private String status;
+    private Integer status;
 }

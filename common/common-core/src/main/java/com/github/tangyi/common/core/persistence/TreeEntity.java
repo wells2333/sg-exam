@@ -29,7 +29,7 @@ public abstract class TreeEntity<T> extends BaseEntity<T> {
     /**
      * 父节点id
      */
-    protected String parentId;
+    protected Long parentId;
 
     /**
      * 排序号

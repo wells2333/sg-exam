@@ -87,7 +87,7 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
     @Override
     @Transactional
     @CacheEvict(value = "record", allEntries = true)
-    public int deleteAll(String[] ids) {
+    public int deleteAll(Long[] ids) {
         return super.deleteAll(ids);
     }
 }
