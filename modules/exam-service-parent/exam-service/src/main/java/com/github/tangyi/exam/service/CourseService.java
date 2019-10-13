@@ -73,7 +73,7 @@ public class CourseService extends CrudService<CourseMapper, Course> {
     @Override
     @Transactional
     @CacheEvict(value = "course", allEntries = true)
-    public int deleteAll(String[] ids) {
+    public int deleteAll(Long[] ids) {
         return super.deleteAll(ids);
     }
 }

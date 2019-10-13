@@ -4,7 +4,6 @@
     <resultMap id="subjectChoicesResultMap" type="com.github.tangyi.exam.api.module.SubjectChoices">
         <id column="id" property="id"/>
         <result column="category_id" property="categoryId"/>
-        <result column="serial_number" property="serialNumber"/>
         <result column="subject_name" property="subjectName"/>
         <result column="choices_type" property="choicesType"/>
         <result column="answer" property="answer"/>
@@ -23,7 +22,6 @@
     <sql id="subjectChoicesColumns">
         a.id,
         a.category_id,
-        a.serial_number,
         a.subject_name,
         a.choices_type,
         a.answer,
@@ -42,16 +40,13 @@
     <!-- where 条件 -->
     <sql id="whereColumnList">
         <choose>
-            <when test="categoryId == null or categoryId == ''">
+            <when test="categoryId == null">
                 and a.category_id != 0
             </when>
             <otherwise>
                 and a.category_id = #{categoryId}
             </otherwise>
         </choose>
-        <if test="serialNumber != null and serialNumber != ''">
-            and a.serial_number = #{serialNumber}
-        </if>
         <if test="subjectName != null and subjectName != ''">
             and a.subject_name like CONCAT('%',#{subjectName},'%')
         </if>
@@ -69,14 +64,6 @@
         FROM exam_subject_choices a WHERE a.id = #{id} and a.del_flag = 0
     </select>
 
-    <!-- 根据题目序号查询 -->
-    <select id="getBySerialNumber" resultMap="subjectChoicesResultMap">
-        SELECT
-        <include refid="subjectChoicesColumns"/>
-        FROM exam_subject_choices a
-        WHERE a.serial_number = #{serialNumber} and a.del_flag = 0
-    </select>
-
     <select id="findList" resultMap="subjectChoicesResultMap">
         SELECT
         <include refid="subjectChoicesColumns"/>
@@ -91,14 +78,13 @@
         <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
-        ORDER BY serial_number ASC
+        ORDER BY id ASC
     </select>
 
     <insert id="insert">
         insert into exam_subject_choices (
             id,
             category_id,
-            serial_number,
             subject_name,
             choices_type,
             answer,
@@ -115,7 +101,6 @@
         ) values (
             #{id},
             #{categoryId},
-            #{serialNumber},
             #{subjectName},
             #{choicesType},
             #{answer},
@@ -136,9 +121,6 @@
         UPDATE exam_subject_choices SET
         <if test="categoryId != null">
             category_id = #{categoryId},
-        </if>
-        <if test="serialNumber != null">
-            serial_number = #{serialNumber},
         </if>
         <if test="subjectName != null">
             subject_name = #{subjectName},

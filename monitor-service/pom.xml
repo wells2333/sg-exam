@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.tangyi</groupId>
         <artifactId>spring-microservice-exam</artifactId>
-        <version>3.1.0</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>monitor-service</artifactId>
     <name>${project.artifactId}</name>
@@ -87,6 +87,7 @@
                 <configuration>
                     <repository>${docker.registry}/${docker.namespace}/${project.artifactId}</repository>
                     <tag>${project.version}</tag>
+                    <tag>latest</tag>
                     <!-- 构建参数，指定jar包名称 -->
                     <buildArgs>
                         <JAR_FILE>${project.name}.jar</JAR_FILE>

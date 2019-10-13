@@ -40,12 +40,10 @@ public class MultitenantCacheManager extends RedisCacheManager {
     @Override
     protected RedisCache createRedisCache(String name, RedisCacheConfiguration cacheConfig) {
         if (StringUtils.isBlank(name) || !name.contains(SPLIT_FLAG)) {
-            log.debug("create cache name[{}]", name);
             return super.createRedisCache(name, cacheConfig);
         }
         String[] cacheArray = name.split(SPLIT_FLAG);
         if (cacheArray.length < CACHE_LENGTH) {
-            log.debug("create cache name[{}]", name);
             return super.createRedisCache(name, cacheConfig);
         }
         String cacheName = cacheArray[0];
@@ -54,7 +52,6 @@ public class MultitenantCacheManager extends RedisCacheManager {
             long cacheAge = Long.getLong(cacheArray[1], -1);
             cacheConfig = cacheConfig.entryTtl(Duration.ofSeconds(cacheAge));
         }
-        log.debug("create cache[{}]", cacheName);
         return super.createRedisCache(cacheName, cacheConfig);
     }
 
@@ -66,8 +63,6 @@ public class MultitenantCacheManager extends RedisCacheManager {
      */
     @Override
     public Cache getCache(String name) {
-        name = SysUtil.getTenantCode() + ":" + name;
-        log.info("get cache[{}]", name);
-        return super.getCache(name);
+        return super.getCache(SysUtil.getTenantCode() + ":" + name);
     }
 }

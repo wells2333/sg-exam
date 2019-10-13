@@ -34,7 +34,7 @@ public interface UserAuthsMapper extends CrudMapper<UserAuths> {
      * @author tangyi
      * @date 2019/07/03 22:02:13
      */
-    List<UserAuths> getListByUserIds(@Param("userIds") String[] userIds);
+    List<UserAuths> getListByUserIds(@Param("userIds") Long[] userIds);
 
     /**
      * 根据唯一标识删除
@@ -56,4 +56,14 @@ public interface UserAuthsMapper extends CrudMapper<UserAuths> {
      * @date 2019/07/04 11:43:50
      */
     int deleteByUserId(UserAuths userAuths);
+
+    /**
+     * 批量插入
+     *
+     * @param userAuths userAuths
+     * @return int
+     * @author tangyi
+     * @date 2019-09-03 13:07
+     */
+    int insertBatch(List<UserAuths> userAuths);
 }

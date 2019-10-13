@@ -20,12 +20,12 @@
         <result column="login_time" property="loginTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="lock_time" property="lockTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="wechat" property="wechat"/>
-        <result column="family_role" property="familyRole"/>
+        <result column="family_role" property="familyRole" />
         <result column="creator" property="creator"/>
         <result column="create_date" property="createDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="modifier" property="modifier"/>
         <result column="modify_date" property="modifyDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
-        <result column="del_flag" property="delFlag"/>
+        <result column="del_flag" property="delFlag" />
         <result column="application_code" property="applicationCode"/>
         <result column="tenant_code" property="tenantCode"/>
     </resultMap>
@@ -77,7 +77,7 @@
             and a.email = #{email}
         </if>
         <if test="status != null and status != ''">
-            and a.status = #{status}
+            and a.status = #{status, jdbcType=INTEGER}
         </if>
         <if test="tenantCode != null and tenantCode != ''">
             and a.tenant_code = #{tenantCode}
@@ -149,11 +149,11 @@
             #{phone},
             #{avatarId},
             #{email},
-            #{sex},
+            #{sex, jdbcType=INTEGER},
             #{born, jdbcType=DATE, javaType=java.util.Date},
             #{userDesc},
             #{deptId},
-            #{status},
+            #{status, jdbcType=INTEGER},
             #{parentUid},
             #{streetId},
             #{countyId},
@@ -162,12 +162,12 @@
             #{loginTime, jdbcType=TIMESTAMP, javaType=java.util.Date},
             #{lockTime, jdbcType=TIMESTAMP, javaType=java.util.Date},
             #{wechat},
-            #{familyRole},
+            #{familyRole, jdbcType=INTEGER},
             #{creator},
             #{createDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
             #{modifier},
             #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
-            #{delFlag},
+            #{delFlag, jdbcType=INTEGER},
             #{applicationCode},
             #{tenantCode}
         );
@@ -189,7 +189,7 @@
             email = #{email} ,
         </if>
         <if test="sex != null">
-            sex = #{sex} ,
+            sex = #{sex, jdbcType=INTEGER} ,
         </if>
         <if test="born != null">
             born = #{born} ,
@@ -201,7 +201,7 @@
             dept_id = #{deptId} ,
         </if>
         <if test="status != null">
-            status = #{status} ,
+            status = #{status, jdbcType=INTEGER} ,
         </if>
         <if test="parentUid != null">
             parent_uid = #{parentUid} ,
@@ -228,16 +228,16 @@
             wechat = #{wechat} ,
         </if>
         <if test="familyRole != null">
-            family_role = #{familyRole} ,
+            family_role = #{familyRole, jdbcType=INTEGER} ,
         </if>
         <if test="creator != null">
             creator = #{creator} ,
         </if>
         <if test="createDate != null">
-            create_date = #{createDate} ,
+            create_date = #{createDate, jdbcType=TIMESTAMP} ,
         </if>
         <if test="delFlag != null">
-            del_flag = #{delFlag} ,
+            del_flag = #{delFlag, jdbcType=INTEGER} ,
         </if>
         <if test="applicationCode != null">
             application_code = #{applicationCode} ,

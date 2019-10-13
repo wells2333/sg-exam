@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.github.tangyi</groupId>
         <artifactId>spring-microservice-exam</artifactId>
-        <version>3.1.0</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>common</artifactId>
     <packaging>pom</packaging>
@@ -17,5 +17,6 @@
         <module>common-security</module>
         <module>common-feign</module>
         <module>common-log</module>
+        <module>common-config</module>
     </modules>
 </project>

@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.tangyi</groupId>
         <artifactId>spring-microservice-exam</artifactId>
-        <version>3.1.0</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>modules</artifactId>
     <packaging>pom</packaging>

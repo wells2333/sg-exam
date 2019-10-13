@@ -130,7 +130,7 @@ public class AttachmentService extends CrudService<AttachmentMapper, Attachment>
     @Override
     @Transactional
     @CacheEvict(value = "attachment", allEntries = true)
-    public int deleteAll(String[] ids) {
+    public int deleteAll(Long[] ids) {
         return super.deleteAll(ids);
     }
 

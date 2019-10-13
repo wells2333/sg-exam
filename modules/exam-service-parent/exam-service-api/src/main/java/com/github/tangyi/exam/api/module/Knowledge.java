@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.api.module;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
 
@@ -28,7 +29,8 @@ public class Knowledge extends BaseEntity<Knowledge> {
     /**
      * 附件ID
      */
-    private String attachmentId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long attachmentId;
 
     /**
      * 状态

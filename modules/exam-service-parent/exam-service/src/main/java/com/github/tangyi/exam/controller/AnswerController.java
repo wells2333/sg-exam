@@ -54,8 +54,8 @@ public class AnswerController extends BaseController {
      */
     @GetMapping("/{id}")
     @ApiOperation(value = "获取答题信息", notes = "根据答题id获取答题详细信息")
-    @ApiImplicitParam(name = "id", value = "答题ID", required = true, dataType = "String", paramType = "path")
-    public ResponseBean<Answer> answer(@PathVariable String id) {
+    @ApiImplicitParam(name = "id", value = "答题ID", required = true, dataType = "Long", paramType = "path")
+    public ResponseBean<Answer> answer(@PathVariable Long id) {
         Answer answer = new Answer();
         answer.setId(id);
         return new ResponseBean<>(answerService.get(answer));
@@ -137,7 +137,7 @@ public class AnswerController extends BaseController {
     @ApiOperation(value = "删除答题", notes = "根据ID删除答题")
     @ApiImplicitParam(name = "id", value = "答题ID", required = true, paramType = "path")
     @Log("删除答题")
-    public ResponseBean<Boolean> deleteAnswer(@PathVariable String id) {
+    public ResponseBean<Boolean> deleteAnswer(@PathVariable Long id) {
         boolean success = false;
         try {
             Answer answer = answerService.get(id);
@@ -170,7 +170,10 @@ public class AnswerController extends BaseController {
     /**
      * 保存答题，返回下一题信息
      *
-     * @param answer answer
+     * @param answer          answer
+     * @param nextType        0：下一题，1：上一题，2：提交
+     * @param nextSubjectId   nextSubjectId
+     * @param nextSubjectType 下一题的类型，选择题、判断题
      * @return ResponseBean
      * @author tangyi
      * @date 2019/04/30 18:06
@@ -178,8 +181,11 @@ public class AnswerController extends BaseController {
     @PostMapping("saveAndNext")
     @ApiOperation(value = "保存答题", notes = "保存答题")
     @ApiImplicitParam(name = "answer", value = "答题信息", dataType = "Answer")
-    public ResponseBean<SubjectDto> saveAndNext(@RequestBody AnswerDto answer) {
-        return new ResponseBean<>(answerService.saveAndNext(answer));
+    public ResponseBean<SubjectDto> saveAndNext(@RequestBody AnswerDto answer,
+                                                @RequestParam Integer nextType,
+                                                @RequestParam(required = false) Long nextSubjectId,
+                                                @RequestParam(required = false) Integer nextSubjectType) {
+        return new ResponseBean<>(answerService.saveAndNext(answer, nextType, nextSubjectId, nextSubjectType));
     }
 
     /**
@@ -215,7 +221,7 @@ public class AnswerController extends BaseController {
             @ApiImplicitParam(name = CommonConstant.PAGE_SIZE, value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
             @ApiImplicitParam(name = CommonConstant.SORT, value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
             @ApiImplicitParam(name = CommonConstant.ORDER, value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "recordId", value = "考试记录ID", required = true, dataType = "String", paramType = "path"),
+            @ApiImplicitParam(name = "recordId", value = "考试记录ID", required = true, dataType = "Long", paramType = "path"),
             @ApiImplicitParam(name = "answer", value = "答题信息", dataType = "Answer")
     })
     public PageInfo<AnswerDto> answerListInfo(
@@ -223,7 +229,7 @@ public class AnswerController extends BaseController {
             @RequestParam(value = CommonConstant.PAGE_SIZE, required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
             @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
             @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
-            @PathVariable String recordId, Answer answer) {
+            @PathVariable Long recordId, Answer answer) {
         List<AnswerDto> answerDtos = new ArrayList<>();
         answer.setExamRecordId(recordId);
         PageInfo<Answer> answerPageInfo = answerService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), answer);
@@ -247,16 +253,21 @@ public class AnswerController extends BaseController {
     /**
      * 答题详情
      *
-     * @param recordId recordId
-     * @param answer   answer
+     * @param recordId        recordId
+     * @param currentSubjectId   currentSubjectId
+     * @param nextSubjectType nextSubjectType
+     * @param nextType        0：下一题，1：上一题
      * @return ResponseBean
      * @author tangyi
      * @date 2019/06/18 22:50
      */
     @GetMapping("record/{recordId}/answerInfo")
-    @ApiOperation(value = "保存答题", notes = "保存答题")
-    @ApiImplicitParam(name = "answer", value = "答题信息", dataType = "Answer")
-    public ResponseBean<AnswerDto> findBySerialNumber(@PathVariable String recordId, AnswerDto answer) {
-        return new ResponseBean<>(answerService.findBySerialNumber(recordId, answer));
+    @ApiOperation(value = "答题详情", notes = "答题详情")
+    @ApiImplicitParam(name = "recordId", value = "考试记录id", dataType = "Long")
+    public ResponseBean<AnswerDto> answerInfo(@PathVariable Long recordId,
+                                              @RequestParam(required = false) Long currentSubjectId,
+                                              @RequestParam(required = false) Integer nextSubjectType,
+                                              @RequestParam(required = false) Integer nextType) {
+        return new ResponseBean<>(answerService.answerInfo(recordId, currentSubjectId, nextSubjectType, nextType));
     }
 }

@@ -10,7 +10,6 @@ import com.github.tangyi.user.api.module.Student;
 import com.github.tangyi.user.api.module.UserStudent;
 import com.github.tangyi.user.mapper.StudentMapper;
 import lombok.AllArgsConstructor;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,8 +38,9 @@ public class StudentService extends CrudService<StudentMapper, Student> {
      */
     @Transactional
     public int add(StudentDto studentDto) {
-        String currentUser = SysUtil.getUser(), tenantCode = SysUtil.getTenantCode(), userId = studentDto.getUserId();
-        if (StringUtils.isBlank(userId)) {
+        String currentUser = SysUtil.getUser(), tenantCode = SysUtil.getTenantCode();
+        Long userId = studentDto.getUserId();
+        if (userId != null) {
             // 查询当前用户
             UserVo userVo = userService.findUserByIdentifier(currentUser, tenantCode);
             if (userVo == null)

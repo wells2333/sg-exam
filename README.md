@@ -1,4 +1,4 @@
-## 简介
+# 1 简介
 
 - 重写[spring-cloud-online-exam](https://gitee.com/wells2333/spring-cloud-online-exam)
 
@@ -8,7 +8,7 @@
 
 - 后端基于`spring boot`、`spring cloud`、`MySQL`等技术实现权限管理、考试管理等功能。
 
-### 在线体验
+# 2 在线体验
 
 - 前台：[http://it99.club](http://it99.club)
 
@@ -22,25 +22,7 @@
 2. 学生：student/123456
 3. 教师：teacher/123456
 
-交流QQ群：<a target="_blank" href="https://jq.qq.com/?_wv=1027&k=5RKZNF2"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="Spring Cloud考试系统学习" title="Spring Cloud考试系统学习"></a>
-
-QQ群号：996208878
-
-如果您觉得有帮助，请点右上角 "Star" 或者项目底部的“捐助”支持一下，谢谢！
-
-### 部署文档
-
-- [在线考试系统部署文档](docs/在线考试系统V3.0_部署文档.md)
-
-- [基于docker-compose部署](docs/在线考试系统V3.0_部署文档(docker版).md)
-
-### 源码地址
-
-- 前台ui：[spring-microservice-exam-web](https://gitee.com/wells2333/spring-microservice-exam-web.git)
-- 后台ui：[spring-microservice-exam-ui](https://gitee.com/wells2333/spring-microservice-exam-ui.git)
-- 后端：[spring-microservice-exam](https://gitee.com/wells2333/spring-microservice-exam.git)
-
-## 技术选型
+# 3 技术选型
 
 - 服务注册与发现：`Consul`
 - 熔断器：`Hystrix` + `Turbine`
@@ -60,18 +42,18 @@ QQ群号：996208878
 - 缓存：`Redis`
 - 前端：`vue`
 
-## 核心依赖
+# 4 核心依赖
 
 |      名称      |   版本    |
 | --------- | -------- |
-| `Spring Boot`    | `2.1.3.RELEASE`  |
-| `Spring Cloud`   | `Greenwich.SR1`  |
+| `Spring Boot`    | `2.1.8.RELEASE`  |
+| `Spring Cloud`   | `Greenwich.SR3`  |
 
-## 系统架构
+# 5 系统架构
 
-![image](docs/产品设计/系统架构图v3.0.jpg)
+![image](docs/images/系统架构图v3.0.jpg)
 
-## 功能概述
+# 6 功能概述
 
 项目分前台网站和后台管理两部分，前台主要提供考试功能，后台提供基础管理、考试管理功能。
 
@@ -79,33 +61,46 @@ QQ群号：996208878
 
 后台管理分为：系统管理、系统监控、考务管理、附件管理、个人管理
 
-![image](docs/产品设计/系统功能.jpg)
+系统管理：提供用户、部门、角色、权限等基础管理
+- 用户管理：用户信息增删改查、导入导出
+- 部门管理：部门信息增删改查
+- 角色管理：角色信息增删改查、分配权限
+- 菜单管理：菜单信息增删改查、导入导出
+- 终端管理：管理OAuth2.0的客户端，如client_id、client_secret、access_token有效时间等
+- 路由管理：网关路由管理，包括路由的增删改查、刷新路由等
 
-- [在线考试系统V3.0功能概述](docs/在线考试系统V3.0_功能概述.md)
+系统监控：监控服务、日志等
+- 日志监控：查看系统日志
+- `consul`监控：`consul`服务监控
+- `zipkin`监控：监控服务的调用链路
+- 服务监控：`spring boot admin`服务监控
+- 接口文档：`swagger api`文档
 
-## 功能演示
+考务管理：提供课程、考试、题库、成绩等管理
+- 课程管理：课程信息增删改查
+- 考试管理：考试信息增删改查、题目管理、发布回收，题目管理支持简单文本、富文本输入、从题库添加等
+- 题库管理：题目分类增删改查、题目信息增删改查
+- 成绩管理：查看成绩、导出成绩
+- 知识库：知识库增删改查、上传附件
 
-### 前台功能
+附件管理：项目的所有附件存储在`fastDfs`里，提供统一的管理入口
+- 附件列表：管理所有附件，如用户头像、考试附件、知识库附件等。
 
-1. 登录
+个人管理：管理个人资料和修改密码
+- 个人资料：姓名、头像等基本信息的修改
+- 修改密码：修改密码
 
-![image](docs/images/image_web_login.png)
+# 7 功能演示
 
-2. 考试
+## 7.1 前台功能
+
+1. 考试
 ![image](docs/images/image_web_exam.png)
 
-![image](docs/images/image_web_text_subject.png)
-
-3. 答题卡
-![image](docs/images/image_web_exam_card.png)
-
-4. 查看成绩
-![image](docs/images/image_web_exam_score.png)
-
-5. 查看错题
+2. 查看错题
 ![image](docs/images/image_web_incorrect_answer.png)
 
-### 后台功能
+## 7.2 后台功能
 
 1. 总体功能
 ![image](docs/images/image_ui_menu.png)
@@ -114,42 +109,24 @@ QQ群号：996208878
 ![image](docs/images/image_ui_exam.png)
 
 3. 题目管理
-![image](docs/images/image_ui_exam_subject.png)
-
 ![image](docs/images/image_ui_subjects_rich_edit.png)
 
-4. 题库管理
-![image](docs/images/image_ui_subject.png)
-
-5. 个人资料
+4. 个人资料
 ![image](docs/images/image_ui_msg.png)
 
-## 后续
-
-- [ ] 作业、考试、知识点管理、考试成绩排名、图表展示
-- [ ] 学生签到、请假
-- [x] 短信验证码，第三方登录
-- [ ] 简答题，题库完善，智能组卷，在线学习，成绩排名
-
-## 问题反馈
+# 8 问题反馈
 
 欢迎提交 issue，请写清楚遇到问题的原因、浏览器、操作系统环境、重现的流程和报错日志等。 
 
 如果有开发能力，建议在本地调试出出错的代码。
 
-## 参考资料
+# 9 参考资料
 
-- [在线考试系统V3.0系统架构图](https://www.processon.com/view/link/5cf88937e4b0a64c88aaa3e4)
+- [在线考试系统-部署文档](https://www.kancloud.cn/tangyi/spring-microservice-exam/1322870)
 
-- [在线考试系统V3.0使用文档](docs/在线考试系统V3.0_使用文档.md)
+- [在线考试系统-部署文档(docker版)](https://www.kancloud.cn/tangyi/spring-microservice-exam/1322869)
 
-- [在线考试系统V3.0设计文档-数据库设计](docs/在线考试系统V3.0_数据库设计.md)
-
-- [在线考试系统V3.0部署文档](docs/在线考试系统V3.0_部署文档.md)
-
-- [在线考试系统V3.0部署文档(docker版)](docs/在线考试系统V3.0_部署文档(docker版).md)
-
-- [在线考试系统V3.0项目结构说明文档](docs/在线考试系统V3.0_项目结构说明.md)
+- [在线考试系统-数据库设计](https://www.kancloud.cn/tangyi/spring-microservice-exam/1322868)
 
 - [微服务架构下的安全设计方案](http://ehedgehog.net/2019/03/23/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E4%B8%8B%E7%9A%84%E5%AE%89%E5%85%A8%E8%AE%BE%E8%AE%A1%E6%96%B9%E6%A1%88/)
 
@@ -157,6 +134,10 @@ QQ群号：996208878
 
 ***
 
-## 关于
+# 10 关于
 
-作者：1633736729@qq.com
+交流QQ群：<a target="_blank" href="https://jq.qq.com/?_wv=1027&k=5RKZNF2"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="Spring Cloud考试系统学习" title="Spring Cloud考试系统学习"></a>
+
+QQ群号：996208878
+
+如果您觉得有帮助，请点右上角 "Star" 或者项目底部的“捐助”支持一下，谢谢！

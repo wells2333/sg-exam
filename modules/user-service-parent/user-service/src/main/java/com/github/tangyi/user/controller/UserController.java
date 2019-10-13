@@ -22,6 +22,7 @@ import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
@@ -37,7 +38,6 @@ import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author tangyi
@@ -66,8 +66,8 @@ public class UserController extends BaseController {
      */
     @GetMapping("/{id}")
     @ApiOperation(value = "获取用户信息", notes = "根据用户id获取用户详细信息")
-    @ApiImplicitParam(name = "id", value = "用户ID", required = true, dataType = "String", paramType = "path")
-    public ResponseBean<User> user(@PathVariable String id) {
+    @ApiImplicitParam(name = "id", value = "用户ID", required = true, dataType = "Long", paramType = "path")
+    public ResponseBean<User> user(@PathVariable Long id) {
         User user = new User();
         user.setId(id);
         return new ResponseBean<>(userService.get(user));
@@ -101,7 +101,7 @@ public class UserController extends BaseController {
      * @param identifier   identifier
      * @param identityType identityType
      * @param tenantCode   tenantCode
-     * @return UserVo
+     * @return ResponseBean
      */
     @GetMapping("/findUserByIdentifier/{identifier}")
     @ApiOperation(value = "获取用户信息", notes = "根据用户name获取用户详细信息")
@@ -110,8 +110,8 @@ public class UserController extends BaseController {
             @ApiImplicitParam(name = "identityType", value = "用户授权类型", dataType = "Integer"),
             @ApiImplicitParam(name = "tenantCode", value = "租户标识", required = true, dataType = "String"),
     })
-    public UserVo findUserByIdentifier(@PathVariable String identifier, @RequestParam(required = false) Integer identityType, @RequestParam @NotBlank String tenantCode) {
-        return userService.findUserByIdentifier(identityType, identifier, tenantCode);
+    public ResponseBean<UserVo> findUserByIdentifier(@PathVariable String identifier, @RequestParam(required = false) Integer identityType, @RequestParam @NotBlank String tenantCode) {
+        return new ResponseBean<>(userService.findUserByIdentifier(identityType, identifier, tenantCode));
     }
 
     /**
@@ -186,19 +186,20 @@ public class UserController extends BaseController {
     /**
      * 更新用户
      *
+     * @param id      id
      * @param userDto userDto
      * @return ResponseBean
      * @author tangyi
      * @date 2018/8/26 15:06
      */
-    @PutMapping
+    @PutMapping("/{id:[a-zA-Z0-9,]+}")
     @PreAuthorize("hasAuthority('sys:user:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "更新用户信息", notes = "根据用户id更新用户的基本信息、角色信息")
     @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
     @Log("修改用户")
-    public ResponseBean<Boolean> updateUser(@RequestBody UserDto userDto) {
+    public ResponseBean<Boolean> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
         try {
-            return new ResponseBean<>(userService.updateUser(userDto));
+            return new ResponseBean<>(userService.updateUser(id, userDto));
         } catch (Exception e) {
             log.error("更新用户信息失败！", e);
             throw new CommonException("更新用户信息失败！");
@@ -269,7 +270,7 @@ public class UserController extends BaseController {
     @ApiOperation(value = "删除用户", notes = "根据ID删除用户")
     @ApiImplicitParam(name = "id", value = "用户ID", required = true, paramType = "path")
     @Log("删除用户")
-    public ResponseBean<Boolean> deleteUser(@PathVariable String id) {
+    public ResponseBean<Boolean> deleteUser(@PathVariable Long id) {
         try {
             User user = new User();
             user.setId(id);
@@ -285,7 +286,7 @@ public class UserController extends BaseController {
     /**
      * 导出
      *
-     * @param userVo userVo
+     * @param ids ids
      * @author tangyi
      * @date 2018/11/26 22:11
      */
@@ -294,17 +295,15 @@ public class UserController extends BaseController {
     @ApiOperation(value = "导出用户", notes = "根据用户id导出用户")
     @ApiImplicitParam(name = "userVo", value = "用户信息", required = true, dataType = "UserVo")
     @Log("导出用户")
-    public void exportUser(@RequestBody UserVo userVo, HttpServletRequest request, HttpServletResponse response) {
+    public void exportUser(@RequestBody Long[] ids, HttpServletRequest request, HttpServletResponse response) {
         try {
             // 配置response
             response.setCharacterEncoding("utf-8");
             response.setContentType("multipart/form-data");
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request, "用户信息" + DateUtils.localDateMillisToString(LocalDateTime.now()) + ".xlsx"));
             List<User> users;
-            if (StringUtils.isNotEmpty(userVo.getIdString())) {
-                User user = new User();
-                user.setIds(Stream.of(userVo.getIdString().split(",")).filter(StringUtils::isNotBlank).distinct().toArray(String[]::new));
-                users = userService.findListById(user);
+            if (ArrayUtils.isNotEmpty(ids)) {
+                users = userService.findListById(ids);
             } else {
                 // 导出本租户下的全部用户
                 User user = new User();
@@ -360,7 +359,7 @@ public class UserController extends BaseController {
     /**
      * 批量删除
      *
-     * @param user user
+     * @param ids ids
      * @return ResponseBean
      * @author tangyi
      * @date 2018/12/4 9:58
@@ -368,13 +367,13 @@ public class UserController extends BaseController {
     @PostMapping("deleteAll")
     @PreAuthorize("hasAuthority('sys:user:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "批量删除用户", notes = "根据用户id批量删除用户")
-    @ApiImplicitParam(name = "user", value = "用户信息", dataType = "User")
+    @ApiImplicitParam(name = "ids", value = "用户信息", dataType = "Long")
     @Log("批量删除用户")
-    public ResponseBean<Boolean> deleteAllUsers(@RequestBody User user) {
+    public ResponseBean<Boolean> deleteAllUsers(@RequestBody Long[] ids) {
         try {
             boolean success = Boolean.FALSE;
-            if (StringUtils.isNotEmpty(user.getIdString()))
-                success = userService.deleteAll(user.getIdString().split(",")) > 0;
+            if (ArrayUtils.isNotEmpty(ids))
+                success = userService.deleteAll(ids) > 0;
             return new ResponseBean<>(success);
         } catch (Exception e) {
             log.error("删除用户失败！", e);
@@ -385,16 +384,16 @@ public class UserController extends BaseController {
     /**
      * 根据ID查询
      *
-     * @param userVo userVo
+     * @param ids ids
      * @return ResponseBean
      * @author tangyi
      * @date 2018/12/31 21:16
      */
     @PostMapping(value = "findById")
     @ApiOperation(value = "根据ID查询用户", notes = "根据ID查询用户")
-    @ApiImplicitParam(name = "userVo", value = "用户信息", required = true, paramType = "UserVo")
-    public ResponseBean<List<UserVo>> findById(@RequestBody UserVo userVo) {
-        return new ResponseBean<>(userService.findUserVoListById(userVo));
+    @ApiImplicitParam(name = "ids", value = "用户ID", required = true, paramType = "Long")
+    public ResponseBean<List<UserVo>> findById(@RequestBody Long[] ids) {
+        return new ResponseBean<>(userService.findUserVoListById(ids));
     }
 
     /**

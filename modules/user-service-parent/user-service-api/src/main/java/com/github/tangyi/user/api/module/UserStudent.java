@@ -15,12 +15,12 @@ public class UserStudent extends BaseEntity<UserStudent> {
     /**
      * 用户id
      */
-    private String userId;
+    private Long userId;
 
     /**
      * 学生id
      */
-    private String studentId;
+    private Long studentId;
 
     /**
      * 关系类型

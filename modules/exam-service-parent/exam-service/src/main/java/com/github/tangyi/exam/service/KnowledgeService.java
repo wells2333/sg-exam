@@ -73,7 +73,7 @@ public class KnowledgeService extends CrudService<KnowledgeMapper, Knowledge> {
     @Override
     @Transactional
     @CacheEvict(value = "knowledge", allEntries = true)
-    public int deleteAll(String[] ids) {
+    public int deleteAll(Long[] ids) {
         return super.deleteAll(ids);
     }
 }

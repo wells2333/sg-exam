@@ -1,12 +1,12 @@
 package com.github.tangyi.common.core.persistence;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.utils.DateUtils;
 import com.github.tangyi.common.core.utils.IdGen;
 import com.github.tangyi.common.core.utils.SysUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -24,7 +24,8 @@ public class BaseEntity<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    protected String id;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    protected Long id;
 
     /**
      * 创建者
@@ -66,17 +67,7 @@ public class BaseEntity<T> implements Serializable {
      */
     protected boolean isNewRecord;
 
-    /**
-     * ID数组
-     */
-    protected String[] ids;
-
-    /**
-     * ID字符串，多个用逗号隔开
-     */
-    protected String idString;
-
-    public BaseEntity(String id) {
+    public BaseEntity(Long id) {
         this();
         this.id = id;
     }
@@ -87,7 +78,7 @@ public class BaseEntity<T> implements Serializable {
      * @return boolean
      */
     public boolean isNewRecord() {
-        return this.isNewRecord || StringUtils.isBlank(this.getId());
+        return this.isNewRecord || this.getId() == null;
     }
 
     /**

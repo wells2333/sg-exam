@@ -1,5 +1,6 @@
 package com.github.tangyi.user.api.module;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
 
@@ -31,7 +32,7 @@ public class User extends BaseEntity<User> {
     /**
      * 头像id
      */
-    private String avatarId;
+    private Long avatarId;
 
     /**
      * 邮箱
@@ -62,7 +63,8 @@ public class User extends BaseEntity<User> {
     /**
      * 部门id
      */
-    private String deptId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long deptId;
 
     /**
      * 角色列表
@@ -72,32 +74,38 @@ public class User extends BaseEntity<User> {
     /**
      * 角色
      */
-    private List<String> role;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private List<Long> role;
 
     /**
      * 引导注册人
      */
-    private String parentUid;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long parentUid;
 
     /**
      * 乡/镇
      */
-    private String streetId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long streetId;
 
     /**
      * 县
      */
-    private String countyId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long countyId;
 
     /**
      * 城市
      */
-    private String cityId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long cityId;
 
     /**
      * 省份
      */
-    private String provinceId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long provinceId;
 
     /**
      * 最近登录时间

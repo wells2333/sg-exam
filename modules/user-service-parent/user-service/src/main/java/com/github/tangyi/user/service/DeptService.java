@@ -40,8 +40,6 @@ public class DeptService extends CrudService<DeptMapper, Dept> {
      * @date 2019/07/03 22:06:50
      */
     public List<Dept> getListByUsers(List<User> userList) {
-        Dept dept = new Dept();
-        dept.setIds(userList.stream().filter(tempUser -> tempUser.getDeptId() != null).map(User::getDeptId).distinct().toArray(String[]::new));
-        return this.findListById(dept);
+        return this.findListById(userList.stream().filter(tempUser -> tempUser.getDeptId() != null).map(User::getDeptId).distinct().toArray(Long[]::new));
     }
 }

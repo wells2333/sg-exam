@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
 
@@ -23,7 +24,8 @@ public class KnowledgeDto extends BaseEntity<KnowledgeDto> {
     /**
      * 附件ID
      */
-    private String attachmentId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long attachmentId;
 
     /**
      * 状态

@@ -150,6 +150,7 @@ public class UserService extends CrudService<UserMapper, User> {
         if (userVo.getIdentityType() != null)
             userAuths.setIdentityType(userVo.getIdentityType());
         userAuths.setIdentifier(userVo.getIdentifier());
+        userAuths.setTenantCode(tenantCode);
         userAuths = userAuthsService.getByIdentifier(userAuths);
         if (userAuths == null)
             throw new CommonException("账号" + identifier + "不存在.");
@@ -232,13 +233,11 @@ public class UserService extends CrudService<UserMapper, User> {
      * @author tangyi
      * @date 2019/07/03 12:03:17
      */
-    public List<Role> getUserRoles(User user) {
+    private List<Role> getUserRoles(User user) {
         List<Role> roles = Lists.newArrayList();
         List<UserRole> userRoles = userRoleMapper.getByUserId(user.getId());
         if (CollectionUtils.isNotEmpty(userRoles)) {
-            Role role = new Role();
-            role.setIds(userRoles.stream().map(UserRole::getRoleId).distinct().toArray(String[]::new));
-            roles = roleMapper.findListById(role);
+            roles = roleMapper.findListById(userRoles.stream().map(UserRole::getRoleId).distinct().toArray(Long[]::new));
         }
         return roles;
     }
@@ -256,28 +255,26 @@ public class UserService extends CrudService<UserMapper, User> {
         List<UserRole> userRoles = userRoleMapper.getByUserIds(users.stream().map(User::getId).collect(Collectors.toList()));
         List<Role> roleList = Lists.newArrayList();
         if (CollectionUtils.isNotEmpty(userRoles)) {
-            Role role = new Role();
-            // 获取角色ID集合，转成字节数组
-            role.setIds(userRoles.stream().map(UserRole::getRoleId).distinct().toArray(String[]::new));
             // 批量查找角色
-            roleList = roleMapper.findListById(role);
+            roleList = roleMapper.findListById(userRoles.stream().map(UserRole::getRoleId).distinct().toArray(Long[]::new));
         }
         return roleList;
     }
 
     /**
      * 更新用户
-     *
+     * @param id id
      * @param userDto userDto
      * @return int
      * @author tangyi
      * @date 2018/8/26 15:15
      */
     @Transactional
-    @CacheEvict(value = "user", key = "#userDto.id")
-    public boolean updateUser(UserDto userDto) {
+    @CacheEvict(value = "user", key = "#id")
+    public boolean updateUser(Long id, UserDto userDto) {
         User user = new User();
         BeanUtils.copyProperties(userDto, user);
+        user.setId(id);
         user.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         // 更新用户信息
         super.update(user);
@@ -360,7 +357,7 @@ public class UserService extends CrudService<UserMapper, User> {
         if (user == null)
             throw new CommonException("用户不存在.");
         // 先删除旧头像
-        if (StringUtils.isNotBlank(user.getAvatarId())) {
+        if (user.getAvatarId() != null) {
             Attachment attachment = new Attachment();
             attachment.setId(user.getAvatarId());
             attachment = attachmentService.get(attachment);
@@ -440,14 +437,13 @@ public class UserService extends CrudService<UserMapper, User> {
     /**
      * 保存验证码
      *
-     * @param tenantCode tenantCode
-     * @param random     random
-     * @param imageCode  imageCode
+     * @param random    random
+     * @param imageCode imageCode
      * @author tangyi
      * @date 2018/9/14 20:12
      */
-    public void saveImageCode(String tenantCode, String random, String imageCode) {
-        redisTemplate.opsForValue().set(tenantCode + ":" + CommonConstant.DEFAULT_CODE_KEY + LoginType.PWD.getType() + "@" + random, imageCode, SecurityConstant.DEFAULT_IMAGE_EXPIRE, TimeUnit.SECONDS);
+    public void saveImageCode(String random, String imageCode) {
+        redisTemplate.opsForValue().set(CommonConstant.DEFAULT_CODE_KEY + LoginType.PWD.getType() + "@" + random, imageCode, SecurityConstant.DEFAULT_IMAGE_EXPIRE, TimeUnit.SECONDS);
     }
 
     /**
@@ -480,9 +476,9 @@ public class UserService extends CrudService<UserMapper, User> {
     @Transactional
     @Override
     @CacheEvict(value = "user", allEntries = true)
-    public int deleteAll(String[] ids) {
+    public int deleteAll(Long[] ids) {
         String currentUser = SysUtil.getUser(), applicationCode = SysUtil.getSysCode(), tenantCode = SysUtil.getTenantCode();
-        for (String id : ids) {
+        for (Long id : ids) {
             // 删除用户角色关系
             userRoleMapper.deleteByUserId(id);
             // 删除用户授权信息
@@ -518,7 +514,7 @@ public class UserService extends CrudService<UserMapper, User> {
     private void initUserAvatar(UserInfoDto userInfoDto, User user) {
         try {
             // 附件id不为空，获取对应的预览地址，否则获取配置默认头像地址
-            if (StringUtils.isNotBlank(user.getAvatarId())) {
+            if (user.getAvatarId() != null) {
                 Attachment attachment = new Attachment();
                 attachment.setId(user.getAvatarId());
                 userInfoDto.setAvatarUrl(attachmentService.getPreviewUrl(attachment));
@@ -620,7 +616,7 @@ public class UserService extends CrudService<UserMapper, User> {
             log.info("密码解密结果：{}", encoded);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new CommonException("注册失败，密码非法.");
+            throw new CommonException("解密失败: " + e.getMessage());
         }
         return encoded;
     }
@@ -629,8 +625,9 @@ public class UserService extends CrudService<UserMapper, User> {
      * 分配默认角色
      *
      * @param user user
-     * @param user user
-     * @return
+     * @param tenantCode tenantCode
+     * @param identifier identifier
+	 * @return boolean
      * @author tangyi
      * @date 2019/07/04 11:30:27
      */
@@ -658,16 +655,14 @@ public class UserService extends CrudService<UserMapper, User> {
     /**
      * 根据用户id批量查询UserVo
      *
-     * @param userVo userVo
+     * @param ids ids
      * @return List
      * @author tangyi
      * @date 2019/07/03 13:59:32
      */
-    public List<UserVo> findUserVoListById(UserVo userVo) {
+    public List<UserVo> findUserVoListById(Long[] ids) {
         List<UserVo> userVos = Lists.newArrayList();
-        User user = new User();
-        user.setIds(userVo.getIds());
-        Stream<User> userStream = this.findListById(user).stream();
+        Stream<User> userStream = this.findListById(ids).stream();
         if (Optional.ofNullable(userStream).isPresent()) {
             userVos = userStream.map(tempUser -> {
                 UserVo tempUserVo = new UserVo();
@@ -751,7 +746,7 @@ public class UserService extends CrudService<UserMapper, User> {
             userAuths.setIdentifier(userInfoDto.getIdentifier());
             // 默认密码
             if (StringUtils.isBlank(userInfoDto.getCredential())) {
-                userInfoDto.setCredential(encoder.encode(CommonConstant.DEFAULT_PASSWORD));
+                userInfoDto.setCredential(encodeCredential(CommonConstant.DEFAULT_PASSWORD));
             }
             userAuths.setCredential(userInfoDto.getCredential());
             userAuths.setModifier(currentUser);
@@ -765,5 +760,15 @@ public class UserService extends CrudService<UserMapper, User> {
             userAuthsService.insert(userAuths);
         }
         return true;
+    }
+
+    /**
+     * 加密
+     *
+     * @param credential 明文
+     * @return 密文
+     */
+    public String encodeCredential(String credential) {
+        return encoder.encode(credential);
     }
 }

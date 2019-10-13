@@ -1,5 +1,5 @@
 server:
-  port: 8085
+  port: 9186
 
 turbine:
   appConfig: consul,auth-service,exam-service,user-service,gateway-service,msc-service
@@ -25,7 +25,9 @@ spring:
         instance:
           service-base-url: http://${MONITOR_HOST:localhost}:${server.port}
       discovery:
-        ignored-services: consul  # 或略consul服务
+        ignored-services: consul  # 忽略consul服务
+      ui:
+        title: monitor-service
   # sleuth 配置
   sleuth:
     web:

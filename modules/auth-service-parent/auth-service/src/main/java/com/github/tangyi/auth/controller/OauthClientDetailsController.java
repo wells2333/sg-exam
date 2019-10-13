@@ -16,7 +16,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -49,11 +49,11 @@ public class OauthClientDetailsController extends BaseController {
      * @date 2019/03/30 16:53
      */
     @ApiOperation(value = "获取客户端信息", notes = "根据客户端id获取客户端详细信息")
-    @ApiImplicitParam(name = "id", value = "客户端ID", required = true, dataType = "String", paramType = "path")
+    @ApiImplicitParam(name = "id", value = "客户端ID", required = true, dataType = "Long", paramType = "path")
     @GetMapping("/{id}")
-    public ResponseBean<OauthClientDetails> oauthClient(@PathVariable String id) {
+    public ResponseBean<OauthClientDetails> oauthClient(@PathVariable Long id) {
         OauthClientDetails oauthClientDetails = new OauthClientDetails();
-        if (StringUtils.isNotBlank(id)) {
+        if (id != null) {
             oauthClientDetails.setId(id);
             oauthClientDetails = oauthClientDetailsService.get(oauthClientDetails);
         }
@@ -159,7 +159,7 @@ public class OauthClientDetailsController extends BaseController {
     @ApiOperation(value = "删除客户端", notes = "根据ID删除客户端")
     @ApiImplicitParam(name = "id", value = "客户端ID", required = true, paramType = "path")
     @Log("删除客户端")
-    public ResponseBean<Boolean> deleteOauthClient(@PathVariable String id) {
+    public ResponseBean<Boolean> deleteOauthClient(@PathVariable Long id) {
         OauthClientDetails oauthClientDetails = new OauthClientDetails();
         oauthClientDetails.setId(id);
         oauthClientDetails.setNewRecord(false);
@@ -170,7 +170,7 @@ public class OauthClientDetailsController extends BaseController {
     /**
      * 批量删除
      *
-     * @param oauthClientDetails oauthClientDetails
+     * @param ids ids
      * @return ResponseBean
      * @author tangyi
      * @date 2019/03/30 17:01
@@ -180,11 +180,11 @@ public class OauthClientDetailsController extends BaseController {
     @ApiOperation(value = "批量删除客户端", notes = "根据客户端id批量删除客户端")
     @ApiImplicitParam(name = "oauthClientDetails", value = "客户端信息", dataType = "OauthClientDetails")
     @Log("批量删除客户端")
-    public ResponseBean<Boolean> deleteAllOauthClient(@RequestBody OauthClientDetails oauthClientDetails) {
+    public ResponseBean<Boolean> deleteAllOauthClient(@RequestBody Long[] ids) {
         boolean success = false;
         try {
-            if (StringUtils.isNotEmpty(oauthClientDetails.getIdString()))
-                success = oauthClientDetailsService.deleteAll(oauthClientDetails.getIdString().split(",")) > 0;
+            if (ArrayUtils.isNotEmpty(ids))
+                success = oauthClientDetailsService.deleteAll(ids) > 0;
         } catch (Exception e) {
             log.error("删除客户端失败！", e);
         }

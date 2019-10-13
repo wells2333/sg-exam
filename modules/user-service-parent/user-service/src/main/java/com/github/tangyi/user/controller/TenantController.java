@@ -16,7 +16,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -47,9 +47,9 @@ public class TenantController extends BaseController {
      * @date 2019/05/22 22:53
      */
     @ApiOperation(value = "获取租户信息", notes = "根据租户id获取租户详细信息")
-    @ApiImplicitParam(name = "id", value = "租户ID", required = true, dataType = "String", paramType = "path")
+    @ApiImplicitParam(name = "id", value = "租户ID", required = true, dataType = "Long", paramType = "path")
     @GetMapping("/{id}")
-    public ResponseBean<Tenant> tenant(@PathVariable String id) {
+    public ResponseBean<Tenant> tenant(@PathVariable Long id) {
         Tenant tenant = new Tenant();
         tenant.setId(id);
         return new ResponseBean<>(tenantService.get(tenant));
@@ -114,7 +114,7 @@ public class TenantController extends BaseController {
         // 初始化状态为待审核
         tenant.setStatus(TenantConstant.PENDING_AUDIT);
         // 保存租户
-        return new ResponseBean<>(tenantService.insert(tenant) > 0);
+        return new ResponseBean<>(tenantService.add(tenant) > 0);
     }
 
     /**
@@ -150,7 +150,7 @@ public class TenantController extends BaseController {
     @ApiOperation(value = "删除租户", notes = "根据ID删除租户")
     @ApiImplicitParam(name = "id", value = "租户ID", required = true, paramType = "path")
     @Log("删除租户")
-    public ResponseBean<Boolean> delete(@PathVariable String id) {
+    public ResponseBean<Boolean> delete(@PathVariable Long id) {
         try {
             Tenant tenant = new Tenant();
             tenant.setId(id);
@@ -166,20 +166,20 @@ public class TenantController extends BaseController {
     /**
      * 批量删除
      *
-     * @param tenant tenant
+     * @param ids ids
      * @return ResponseBean
      * @author tangyi
      * @date 2019/05/22 23:37
      */
     @PostMapping("deleteAll")
     @ApiOperation(value = "批量删除租户", notes = "根据租户id批量删除租户")
-    @ApiImplicitParam(name = "tenant", value = "租户信息", dataType = "Tenant")
+    @ApiImplicitParam(name = "ids", value = "租户ID", dataType = "Long")
     @Log("批量删除租户")
-    public ResponseBean<Boolean> deleteAll(@RequestBody Tenant tenant) {
+    public ResponseBean<Boolean> deleteAll(@RequestBody Long[] ids) {
         boolean success = false;
         try {
-            if (StringUtils.isNotEmpty(tenant.getIdString()))
-                success = tenantService.deleteAll(tenant.getIdString().split(",")) > 0;
+            if (ArrayUtils.isNotEmpty(ids))
+                success = tenantService.deleteAll(ids) > 0;
         } catch (Exception e) {
             log.error("删除租户失败！", e);
         }
@@ -189,16 +189,16 @@ public class TenantController extends BaseController {
     /**
      * 根据ID查询
      *
-     * @param tenant tenant
+     * @param ids ids
      * @return ResponseBean
      * @author tangyi
      * @date 2019/05/22 23:38
      */
     @RequestMapping(value = "findById", method = RequestMethod.POST)
     @ApiOperation(value = "根据ID查询租户", notes = "根据ID查询租户")
-    @ApiImplicitParam(name = "tenant", value = "租户信息", required = true, paramType = "Tenant")
-    public ResponseBean<List<Tenant>> findById(@RequestBody Tenant tenant) {
-        List<Tenant> tenantList = tenantService.findListById(tenant);
+    @ApiImplicitParam(name = "ids", value = "租户ID", required = true, paramType = "Long")
+    public ResponseBean<List<Tenant>> findById(@RequestBody Long[] ids) {
+        List<Tenant> tenantList = tenantService.findListById(ids);
         return Optional.ofNullable(tenantList).isPresent() ? new ResponseBean<>(tenantList) : null;
     }
 }

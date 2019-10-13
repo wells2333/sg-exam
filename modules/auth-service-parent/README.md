@@ -153,7 +153,7 @@ wx.login({
   success: res => {
     // 发送 res.code 到后台换取 openId, sessionKey, unionId
     wx.request({
-      url: 'http://localhost:8000/api/auth/wx/token?grant_type=wx&scope=read&code=' + res.code,
+      url: 'http://localhost:9180/api/auth/wx/token?grant_type=wx&scope=read&code=' + res.code,
       header: {
         'Authorization': 'Basic d2ViX2FwcDpzcHJpbmctbWljcm9zZXJ2aWNlLWV4YW0tc2VjcmV0',
         'Tenant-Code': 'gitee'

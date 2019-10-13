@@ -6,13 +6,19 @@
     <parent>
         <groupId>com.github.tangyi</groupId>
         <artifactId>msc-service-parent</artifactId>
-        <version>3.1.0</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>msc-service</artifactId>
     <name>${project.artifactId}</name>
     <description>消息中心服务</description>
 
     <dependencies>
+        <!-- common-config -->
+        <dependency>
+            <groupId>com.github.tangyi</groupId>
+            <artifactId>common-config</artifactId>
+        </dependency>
+
         <!-- common-security -->
         <dependency>
             <groupId>com.github.tangyi</groupId>
@@ -95,6 +101,7 @@
                 <configuration>
                     <repository>${docker.registry}/${docker.namespace}/${project.artifactId}</repository>
                     <tag>${project.version}</tag>
+                    <tag>latest</tag>
                     <!-- 构建参数，指定jar包名称 -->
                     <buildArgs>
                         <JAR_FILE>${project.name}.jar</JAR_FILE>

@@ -7,6 +7,7 @@ import com.github.tangyi.user.mapper.RoleMapper;
 import com.github.tangyi.user.mapper.RoleMenuMapper;
 import com.github.tangyi.user.mapper.UserRoleMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +43,19 @@ public class RoleService extends CrudService<RoleMapper, Role> {
     }
 
     /**
+     * 根据角色code查询
+     *
+     * @param role role
+     * @return Role
+     * @author tangyi
+     * @date 2019/09/21 12:07:47
+     */
+    @Cacheable(value = "role#" + CommonConstant.CACHE_EXPIRE, key = "#role.roleCode")
+    public Role findByRoleCode(Role role) {
+        return this.dao.findByRoleCode(role);
+    }
+
+    /**
      * 新增
      *
      * @param role
@@ -49,6 +63,7 @@ public class RoleService extends CrudService<RoleMapper, Role> {
      */
     @Override
     @Transactional
+    @CacheEvict(value = "role", key = "#role.roleCode")
     public int insert(Role role) {
         return super.insert(role);
     }
@@ -61,6 +76,7 @@ public class RoleService extends CrudService<RoleMapper, Role> {
      */
     @Override
     @Transactional
+    @CacheEvict(value = "role", key = "#role.roleCode")
     public int update(Role role) {
         return super.update(role);
     }
@@ -73,6 +89,7 @@ public class RoleService extends CrudService<RoleMapper, Role> {
      */
     @Override
     @Transactional
+    @CacheEvict(value = "role", key = "#role.roleCode")
     public int delete(Role role) {
         // 删除角色菜单关系
         roleMenuMapper.deleteByRoleId(role.getId());

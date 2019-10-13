@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.tangyi</groupId>
         <artifactId>exam-service-parent</artifactId>
-        <version>3.1.0</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>exam-service</artifactId>
     <name>${project.artifactId}</name>
@@ -17,6 +17,12 @@
         <dependency>
             <groupId>com.github.tangyi</groupId>
             <artifactId>common-core</artifactId>
+        </dependency>
+
+        <!-- common-config -->
+        <dependency>
+            <groupId>com.github.tangyi</groupId>
+            <artifactId>common-config</artifactId>
         </dependency>
 
         <!-- common-security -->
@@ -118,6 +124,7 @@
                 <configuration>
                     <repository>${docker.registry}/${docker.namespace}/${project.artifactId}</repository>
                     <tag>${project.version}</tag>
+                    <tag>latest</tag>
                     <!-- 构建参数，指定jar包名称 -->
                     <buildArgs>
                         <JAR_FILE>${project.name}.jar</JAR_FILE>

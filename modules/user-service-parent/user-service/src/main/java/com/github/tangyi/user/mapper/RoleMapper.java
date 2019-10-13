@@ -12,4 +12,14 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface RoleMapper extends CrudMapper<Role> {
+
+    /**
+     * 根据角色code查询
+     *
+     * @param role role
+     * @return Role
+     * @author tangyi
+     * @date 2019/09/21 12:08:29
+     */
+    Role findByRoleCode(Role role);
 }

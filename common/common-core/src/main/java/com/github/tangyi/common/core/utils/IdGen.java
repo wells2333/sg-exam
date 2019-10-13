@@ -24,7 +24,7 @@ public class IdGen {
      * @author tangyi
      * @date 2019/04/26 11:24
      */
-    public static String snowflakeId() {
-        return Long.toString(SpringContextHolder.getApplicationContext().getBean(SnowflakeIdWorker.class).nextId());
+    public static long snowflakeId() {
+        return SpringContextHolder.getApplicationContext().getBean(SnowflakeIdWorker.class).nextId();
     }
 }

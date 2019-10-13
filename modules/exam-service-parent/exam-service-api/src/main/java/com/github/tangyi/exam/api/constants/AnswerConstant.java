@@ -27,4 +27,14 @@ public class AnswerConstant {
      * 已经批改
      */
     public static final Integer MARKED = 1;
+
+    /**
+     * 下一题
+     */
+    public static final Integer NEXT = 0;
+
+    /**
+     * 上一题
+     */
+    public static final Integer PREVIOUS = 1;
 }

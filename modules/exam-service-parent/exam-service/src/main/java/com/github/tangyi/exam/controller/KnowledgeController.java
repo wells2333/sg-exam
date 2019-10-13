@@ -19,7 +19,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,8 +56,8 @@ public class KnowledgeController extends BaseController {
      */
     @GetMapping("/{id}")
     @ApiOperation(value = "获取知识信息", notes = "根据知识id获取知识详细信息")
-    @ApiImplicitParam(name = "id", value = "知识ID", required = true, dataType = "String", paramType = "path")
-    public ResponseBean<Knowledge> knowledge(@PathVariable String id) {
+    @ApiImplicitParam(name = "id", value = "知识ID", required = true, dataType = "Long", paramType = "path")
+    public ResponseBean<Knowledge> knowledge(@PathVariable Long id) {
         Knowledge knowledge = new Knowledge();
         knowledge.setId(id);
         return new ResponseBean<>(knowledgeService.get(knowledge));
@@ -95,14 +95,12 @@ public class KnowledgeController extends BaseController {
         PageInfo<KnowledgeDto> knowledgeDtoPageInfo = new PageInfo<>();
         List<KnowledgeDto> knowledgeDtoList = new ArrayList<>();
         // 查询附件
-        Set<String> attachmentIdSet = new HashSet<>();
+        Set<Long> attachmentIdSet = new HashSet<>();
         knowledgePageInfo.getList().forEach(tempKnowledge -> {
             attachmentIdSet.add(tempKnowledge.getAttachmentId());
         });
-        AttachmentVo attachmentVo = new AttachmentVo();
-        attachmentVo.setIds(attachmentIdSet.toArray(new String[0]));
         // 根据附件ID查询附件
-        ResponseBean<List<AttachmentVo>> returnT = userServiceClient.findAttachmentById(attachmentVo);
+        ResponseBean<List<AttachmentVo>> returnT = userServiceClient.findAttachmentById(attachmentIdSet.toArray(new Long[0]));
         knowledgePageInfo.getList().stream()
                 // 转成Dto
                 .map(tempKnowledge -> {
@@ -179,45 +177,37 @@ public class KnowledgeController extends BaseController {
     @ApiOperation(value = "删除知识", notes = "根据ID删除知识")
     @ApiImplicitParam(name = "id", value = "知识ID", required = true, paramType = "path")
     @Log("删除知识")
-    public ResponseBean<Boolean> deleteKnowledge(@PathVariable String id) {
+    public ResponseBean<Boolean> deleteKnowledge(@PathVariable Long id) {
         boolean success = false;
-        try {
-            Knowledge knowledge = new Knowledge();
-            knowledge.setId(id);
-            knowledge = knowledgeService.get(knowledge);
-            if (knowledge != null) {
-                knowledge.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
-                success = knowledgeService.delete(knowledge) > 0;
-            }
-            // 删除附件
-            if (knowledge != null && StringUtils.isNotBlank(knowledge.getAttachmentId()))
-                success = userServiceClient.deleteAttachment(knowledge.getAttachmentId()).getData();
-        } catch (Exception e) {
-            log.error("删除知识失败！", e);
-        }
+		Knowledge knowledge = new Knowledge();
+		knowledge.setId(id);
+		knowledge = knowledgeService.get(knowledge);
+		if (knowledge != null) {
+			knowledge.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+			success = knowledgeService.delete(knowledge) > 0;
+		}
+		// 删除附件
+		if (knowledge != null && knowledge.getAttachmentId() != null)
+			success = userServiceClient.deleteAttachment(knowledge.getAttachmentId()).getData();
         return new ResponseBean<>(success);
     }
 
     /**
      * 批量删除
      *
-     * @param knowledge knowledge
+     * @param ids ids
      * @return ResponseBean
      * @author tangyi
      * @date 2019/1/1 15:15
      */
     @PostMapping("deleteAll")
     @ApiOperation(value = "批量删除知识", notes = "根据知识id批量删除知识")
-    @ApiImplicitParam(name = "knowledge", value = "知识信息", dataType = "Knowledge")
+    @ApiImplicitParam(name = "ids", value = "知识ID", dataType = "Long")
     @Log("批量删除知识")
-    public ResponseBean<Boolean> deleteAllKnowledge(@RequestBody Knowledge knowledge) {
+    public ResponseBean<Boolean> deleteAllKnowledge(@RequestBody Long[] ids) {
         boolean success = false;
-        try {
-            if (StringUtils.isNotEmpty(knowledge.getIdString()))
-                success = knowledgeService.deleteAll(knowledge.getIdString().split(",")) > 0;
-        } catch (Exception e) {
-            log.error("删除知识失败！", e);
-        }
+		if (ArrayUtils.isNotEmpty(ids))
+			success = knowledgeService.deleteAll(ids) > 0;
         return new ResponseBean<>(success);
     }
 }

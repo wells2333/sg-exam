@@ -9,12 +9,12 @@ public class MenuConstant {
     /**
      * 菜单
      */
-    public static final String MENU_TYPE_MENU = "0";
+    public static final Integer MENU_TYPE_MENU = 0;
 
     /**
      * 权限
      */
-    public static final String MENU_TYPE_PERMISSION = "1";
+    public static final Integer MENU_TYPE_PERMISSION = 1;
 
     /**
      * 新增

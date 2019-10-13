@@ -59,7 +59,6 @@ public class SubjectUtil {
             return null;
         SubjectDto subjectDto = new SubjectDto();
         subjectDto.setId(subjectChoice.getId());
-        subjectDto.setSerialNumber(subjectChoice.getSerialNumber());
         subjectDto.setSubjectName(subjectChoice.getSubjectName());
         subjectDto.setScore(subjectChoice.getScore());
         subjectDto.setAnalysis(subjectChoice.getAnalysis());
@@ -107,7 +106,6 @@ public class SubjectUtil {
             return null;
         SubjectDto subjectDto = new SubjectDto();
         subjectDto.setId(subjectShortAnswer.getId());
-        subjectDto.setSerialNumber(subjectShortAnswer.getSerialNumber());
         subjectDto.setSubjectName(subjectShortAnswer.getSubjectName());
         subjectDto.setScore(subjectShortAnswer.getScore());
         subjectDto.setAnalysis(subjectShortAnswer.getAnalysis());

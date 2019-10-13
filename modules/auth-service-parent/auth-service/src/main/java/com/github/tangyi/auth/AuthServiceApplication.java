@@ -1,19 +1,18 @@
 package com.github.tangyi.auth;
 
+import com.github.tangyi.common.core.constant.CommonConstant;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {CommonConstant.BASE_PACKAGE})
 @EnableDiscoveryClient
 @EnableAuthorizationServer
 // 扫描api包里的FeignClient
-@EnableFeignClients(basePackages = {"com.github.tangyi"})
-@ComponentScan(basePackages = {"com.github.tangyi"})
+@EnableFeignClients(basePackages = {CommonConstant.BASE_PACKAGE})
 @EnableCircuitBreaker
 public class AuthServiceApplication {
 

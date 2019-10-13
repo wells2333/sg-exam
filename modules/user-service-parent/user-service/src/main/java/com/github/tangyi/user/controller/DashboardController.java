@@ -1,6 +1,8 @@
 package com.github.tangyi.user.controller;
 
+import com.github.tangyi.common.core.exceptions.ServiceException;
 import com.github.tangyi.common.core.model.ResponseBean;
+import com.github.tangyi.common.core.utils.ResponseUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.core.web.BaseController;
@@ -47,7 +49,10 @@ public class DashboardController extends BaseController {
         userVo.setTenantCode(tenantCode);
         dashboardDto.setOnlineUserNumber(userService.userCount(userVo).toString());
         // 查询考试数量
-        dashboardDto.setExaminationNumber(examinationService.findExaminationCount(tenantCode).getData().toString());
+		ResponseBean<Integer> examinationCountResponseBean = examinationService.findExaminationCount(tenantCode);
+		if (!ResponseUtil.isSuccess(examinationCountResponseBean))
+			throw new ServiceException("查询考试数量失败: " + examinationCountResponseBean.getMsg());
+        dashboardDto.setExaminationNumber(examinationCountResponseBean.getData().toString());
         return new ResponseBean<>(dashboardDto);
     }
 }
