@@ -82,7 +82,7 @@
     </select>
 
     <insert id="insert">
-        INSERT  INTO sys_attachment (
+        INSERT INTO sys_attachment (
             id,
             attach_name,
             attach_size,

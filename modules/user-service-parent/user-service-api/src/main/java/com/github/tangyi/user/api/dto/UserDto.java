@@ -1,13 +1,19 @@
 package com.github.tangyi.user.api.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.tangyi.user.api.module.Role;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +24,10 @@ import java.util.List;
  * @date 2018/8/26 14:36
  */
 @Data
+@ToString
+@EqualsAndHashCode
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@ApiModel(value = "UserDto", description = "用户返回结果")
 public class UserDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -25,7 +35,8 @@ public class UserDto implements Serializable {
     /**
      * id
      */
-    private String id;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long id;
 
     /**
      * 授权类型，1：用户名密码，2：手机号，3：邮箱，4：微信，5：QQ
@@ -49,13 +60,15 @@ public class UserDto implements Serializable {
      * 角色
      */
     @ApiModelProperty(value = "角色", hidden = true)
-    private List<String> role;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private List<Long> role = new ArrayList<>();
 
     /**
      * 部门ID
      */
     @ApiModelProperty(value = "部门ID")
-    private String deptId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long deptId;
 
     /**
      * 部门名称
@@ -92,7 +105,8 @@ public class UserDto implements Serializable {
      * 头像id
      */
     @ApiModelProperty(value = "头像id", hidden = true)
-    private String avatarId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long avatarId;
 
     /**
      * 头像URL
@@ -135,7 +149,7 @@ public class UserDto implements Serializable {
      * 角色列表
      */
     @ApiModelProperty(value = "角色列表", hidden = true)
-    private List<Role> roleList;
+    private List<Role> roleList = new ArrayList<>();
 
     /**
      * 系统编号
@@ -153,31 +167,36 @@ public class UserDto implements Serializable {
      * 引导注册人
      */
     @ApiModelProperty(value = "引导注册人")
-    private String parentUid;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long parentUid;
 
     /**
      * 乡/镇
      */
     @ApiModelProperty(value = "乡/镇")
-    private String streetId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long streetId;
 
     /**
      * 县
      */
     @ApiModelProperty(value = "县")
-    private String countyId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long countyId;
 
     /**
      * 城市
      */
     @ApiModelProperty(value = "城市")
-    private String cityId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long cityId;
 
     /**
      * 省份
      */
     @ApiModelProperty(value = "省份")
-    private String provinceId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long provinceId;
 
     /**
      * 最近登录时间

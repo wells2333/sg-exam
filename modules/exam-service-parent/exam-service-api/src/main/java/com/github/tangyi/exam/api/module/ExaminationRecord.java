@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.api.module;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
 
@@ -19,13 +20,15 @@ public class ExaminationRecord extends BaseEntity<ExaminationRecord> {
      * 考生ID
      */
     @NotBlank(message = "用户ID不能为空")
-    private String userId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long userId;
 
     /**
      * 考试ID
      */
     @NotBlank(message = "考试ID不能为空")
-    private String examinationId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long examinationId;
 
     /**
      * 开始时间

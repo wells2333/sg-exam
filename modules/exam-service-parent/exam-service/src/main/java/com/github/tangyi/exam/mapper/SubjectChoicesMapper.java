@@ -14,16 +14,6 @@ import org.apache.ibatis.annotations.Mapper;
 public interface SubjectChoicesMapper extends CrudMapper<SubjectChoices> {
 
     /**
-     * 根据序号查找
-     *
-     * @param subjectChoices subjectChoices
-     * @return SubjectChoices
-     * @author tangyi
-     * @date 2019/01/20 12:19
-     */
-    SubjectChoices getBySerialNumber(SubjectChoices subjectChoices);
-
-    /**
      * 物理删除
      *
      * @param subjectChoices subjectChoices
@@ -41,5 +31,5 @@ public interface SubjectChoicesMapper extends CrudMapper<SubjectChoices> {
      * @author tangyi
      * @date 2019/06/16 22:44
      */
-    int physicalDeleteAll(String[] ids);
+    int physicalDeleteAll(Long[] ids);
 }

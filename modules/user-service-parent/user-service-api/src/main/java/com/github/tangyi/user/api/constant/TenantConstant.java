@@ -9,15 +9,15 @@ public class TenantConstant {
     /**
      * 待审核
      */
-    public static final String PENDING_AUDIT = "0";
+    public static final Integer PENDING_AUDIT = 0;
 
     /**
      * 审核通过
      */
-    public static final String APPROVAL = "1";
+    public static final Integer APPROVAL = 1;
 
     /**
      * 审核不通过
      */
-    public static final String AUDIT_FAIL = "2";
+    public static final Integer AUDIT_FAIL = 2;
 }

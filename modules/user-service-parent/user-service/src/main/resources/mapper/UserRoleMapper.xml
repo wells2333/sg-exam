@@ -31,8 +31,22 @@
     </select>
 
     <insert id="insert">
-        insert  into sys_user_role (id, user_id, role_id)
-        values (#{id}, #{userId}, #{roleId});
+        INSERT INTO sys_user_role (id, user_id, role_id)
+        VALUES (#{id}, #{userId}, #{roleId});
+    </insert>
+
+    <!-- 批量插入 -->
+    <insert id="insertBatch">
+        INSERT INTO sys_user_role (
+        id, user_id, role_id
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},
+            #{item.userId},
+            #{item.roleId}
+            )
+        </foreach>
     </insert>
 
     <delete id="delete">

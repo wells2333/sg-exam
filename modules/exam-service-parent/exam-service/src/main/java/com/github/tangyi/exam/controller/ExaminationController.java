@@ -8,10 +8,12 @@ import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.constant.SecurityConstant;
+import com.github.tangyi.exam.api.dto.AnswerCartDto;
 import com.github.tangyi.exam.api.dto.ExaminationDto;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.Course;
 import com.github.tangyi.exam.api.module.Examination;
+import com.github.tangyi.exam.api.module.ExaminationSubject;
 import com.github.tangyi.exam.service.CourseService;
 import com.github.tangyi.exam.service.ExaminationService;
 import io.swagger.annotations.Api;
@@ -21,7 +23,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -59,7 +61,7 @@ public class ExaminationController extends BaseController {
     @GetMapping("/{id}")
     @ApiOperation(value = "获取考试信息", notes = "根据考试id获取考试详细信息")
     @ApiImplicitParam(name = "id", value = "考试ID", required = true, dataType = "String", paramType = "path")
-    public ResponseBean<Examination> examination(@PathVariable String id) {
+    public ResponseBean<Examination> examination(@PathVariable Long id) {
         Examination examination = new Examination();
         examination.setId(id);
         return new ResponseBean<>(examinationService.get(examination));
@@ -96,11 +98,7 @@ public class ExaminationController extends BaseController {
         PageInfo<ExaminationDto> examinationDtoPageInfo = new PageInfo<>();
         BeanUtils.copyProperties(page, examinationDtoPageInfo);
         if (CollectionUtils.isNotEmpty(page.getList())) {
-            Course course = new Course();
-            // 流处理获取课程ID集合，转成字符串数组
-            course.setIds(page.getList().stream().map(Examination::getCourseId).distinct().toArray(String[]::new));
-            List<Course> courses = courseService.findListById(course);
-            // 流处理转成Dto集合
+            List<Course> courses = courseService.findListById(page.getList().stream().map(Examination::getCourseId).distinct().toArray(Long[]::new));
             List<ExaminationDto> examinationDtos = page.getList().stream().map(exam -> {
                 ExaminationDto examinationDto = new ExaminationDto();
                 BeanUtils.copyProperties(exam, examinationDto);
@@ -132,14 +130,14 @@ public class ExaminationController extends BaseController {
             @ApiImplicitParam(name = CommonConstant.PAGE_SIZE, value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
             @ApiImplicitParam(name = CommonConstant.SORT, value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
             @ApiImplicitParam(name = CommonConstant.ORDER, value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "examinationId", value = "考试ID", required = true, dataType = "String", paramType = "path"),
+            @ApiImplicitParam(name = "examinationId", value = "考试ID", required = true, dataType = "Long", paramType = "path"),
             @ApiImplicitParam(name = "subjectDto", value = "题目信息", dataType = "SubjectDto")
     })
     public PageInfo<SubjectDto> subjectList(@RequestParam(value = CommonConstant.PAGE_NUM, required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
                                             @RequestParam(value = CommonConstant.PAGE_SIZE, required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
                                             @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
                                             @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
-                                            @PathVariable String examinationId, SubjectDto subjectDto) {
+                                            @PathVariable Long examinationId, SubjectDto subjectDto) {
         subjectDto.setExaminationId(examinationId);
         return examinationService.findSubjectPageById(subjectDto, pageNum, pageSize, sort, order);
     }
@@ -201,7 +199,7 @@ public class ExaminationController extends BaseController {
     @ApiOperation(value = "删除考试", notes = "根据ID删除考试")
     @ApiImplicitParam(name = "id", value = "考试ID", required = true, paramType = "path")
     @Log("删除考试")
-    public ResponseBean<Boolean> deleteExamination(@PathVariable String id) {
+    public ResponseBean<Boolean> deleteExamination(@PathVariable Long id) {
         boolean success = false;
         try {
             Examination examination = new Examination();
@@ -220,7 +218,7 @@ public class ExaminationController extends BaseController {
     /**
      * 批量删除
      *
-     * @param examinationDto examinationDto
+     * @param ids ids
      * @return ResponseBean
      * @author tangyi
      * @date 2018/12/03 22:03
@@ -228,13 +226,13 @@ public class ExaminationController extends BaseController {
     @PostMapping("deleteAll")
     @PreAuthorize("hasAuthority('exam:exam:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "批量删除考试", notes = "根据考试id批量删除考试")
-    @ApiImplicitParam(name = "examinationDto", value = "考试信息", dataType = "ExaminationDto")
+    @ApiImplicitParam(name = "ids", value = "考试ID", dataType = "Long")
     @Log("批量删除考试")
-    public ResponseBean<Boolean> deleteAllExaminations(@RequestBody ExaminationDto examinationDto) {
+    public ResponseBean<Boolean> deleteAllExaminations(@RequestBody Long[] ids) {
         boolean success = false;
         try {
-            if (StringUtils.isNotEmpty(examinationDto.getIdString()))
-                success = examinationService.deleteAll(examinationDto.getIdString().split(",")) > 0;
+            if (ArrayUtils.isNotEmpty(ids))
+                success = examinationService.deleteAll(ids) > 0;
         } catch (Exception e) {
             log.error("删除考试失败！", e);
         }
@@ -257,7 +255,7 @@ public class ExaminationController extends BaseController {
     }
 
     /**
-     * 根据考试ID查询题目数量
+     * 根据考试ID查询题目id列表
      *
      * @param examinationId examinationId
      * @return ResponseBean
@@ -265,10 +263,10 @@ public class ExaminationController extends BaseController {
      * @date 2019/06/18 14:31
      */
     @ApiImplicitParam(name = "examinationId", value = "考试ID", required = true, paramType = "path")
-    @GetMapping("/{examinationId}/subjectCount")
-    public ResponseBean<Integer> findExaminationSubjectCount(@PathVariable String examinationId) {
+    @GetMapping("/{examinationId}/subjectIds")
+    public ResponseBean<List<ExaminationSubject>> findExaminationSubjectIds(@PathVariable Long examinationId) {
         Examination examination = new Examination();
         examination.setId(examinationId);
-        return new ResponseBean<>(examinationService.findSubjectCount(examination));
+        return new ResponseBean<>(examinationService.findListByExaminationId(examination));
     }
 }

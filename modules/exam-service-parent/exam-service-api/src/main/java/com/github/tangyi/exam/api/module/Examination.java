@@ -1,9 +1,11 @@
 package com.github.tangyi.exam.api.module;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -24,8 +26,8 @@ public class Examination extends BaseEntity<Examination> {
     /**
      * 考试类型
      */
-    @NotBlank(message = "考试类型不能为空")
-    private String type;
+    @NotNull(message = "考试类型不能为空")
+    private Integer type;
 
     /**
      * 考试注意事项
@@ -45,23 +47,25 @@ public class Examination extends BaseEntity<Examination> {
     /**
      * 总分
      */
-    @NotBlank(message = "总分不能为空")
-    private String totalScore;
+    @NotNull(message = "总分不能为空")
+    private Integer totalScore;
 
     /**
      * 考试状态
      */
-    private String status;
+    private Integer status;
 
     /**
      * 封面对应的图片id
      */
-    private String avatarId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long avatarId;
 
     /**
      * 课程
      */
-    private String courseId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long courseId;
 
     /**
      * 备注

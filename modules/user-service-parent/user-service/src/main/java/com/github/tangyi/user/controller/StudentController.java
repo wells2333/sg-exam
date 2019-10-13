@@ -16,7 +16,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,9 +48,9 @@ public class StudentController extends BaseController {
      * @date 2019/07/09 15:30
      */
     @ApiOperation(value = "获取学生信息", notes = "根据学生id获取学生详细信息")
-    @ApiImplicitParam(name = "id", value = "学生ID", required = true, dataType = "String", paramType = "path")
+    @ApiImplicitParam(name = "id", value = "学生ID", required = true, dataType = "Long", paramType = "path")
     @GetMapping("/{id}")
-    public ResponseBean<Student> student(@PathVariable String id) {
+    public ResponseBean<Student> student(@PathVariable Long id) {
         Student student = new Student();
         student.setId(id);
         return new ResponseBean<>(studentService.get(student));
@@ -141,7 +141,7 @@ public class StudentController extends BaseController {
     @ApiOperation(value = "删除学生", notes = "根据ID删除学生")
     @ApiImplicitParam(name = "id", value = "学生ID", required = true, paramType = "path")
     @Log("删除学生")
-    public ResponseBean<Boolean> delete(@PathVariable String id) {
+    public ResponseBean<Boolean> delete(@PathVariable Long id) {
         try {
             Student student = new Student();
             student.setId(id);
@@ -157,20 +157,20 @@ public class StudentController extends BaseController {
     /**
      * 批量删除
      *
-     * @param student student
+     * @param ids ids
      * @return ResponseBean
      * @author tangyi
      * @date 2019/07/09 15:34
      */
     @PostMapping("deleteAll")
     @ApiOperation(value = "批量删除学生", notes = "根据学生id批量删除学生")
-    @ApiImplicitParam(name = "student", value = "学生信息", dataType = "Student")
+    @ApiImplicitParam(name = "ids", value = "学生ID", dataType = "Long")
     @Log("批量删除学生")
-    public ResponseBean<Boolean> deleteAll(@RequestBody Student student) {
+    public ResponseBean<Boolean> deleteAll(@RequestBody Long[] ids) {
         boolean success = false;
         try {
-            if (StringUtils.isNotEmpty(student.getIdString()))
-                success = studentService.deleteAll(student.getIdString().split(",")) > 0;
+            if (ArrayUtils.isNotEmpty(ids))
+                success = studentService.deleteAll(ids) > 0;
         } catch (Exception e) {
             log.error("删除学生失败！", e);
         }
@@ -180,18 +180,16 @@ public class StudentController extends BaseController {
     /**
      * 根据ID查询
      *
-     * @param studentDto studentDto
+     * @param ids ids
      * @return ResponseBean
      * @author tangyi
      * @date 2019/07/09 15:34
      */
     @RequestMapping(value = "findById", method = RequestMethod.POST)
     @ApiOperation(value = "根据ID查询学生", notes = "根据ID查询学生")
-    @ApiImplicitParam(name = "studentDto", value = "学生信息", required = true, paramType = "StudentDto")
-    public ResponseBean<List<Student>> findById(@RequestBody StudentDto studentDto) {
-        Student student = new Student();
-        BeanUtils.copyProperties(studentDto, student);
-        List<Student> studentList = studentService.findListById(student);
+    @ApiImplicitParam(name = "ids", value = "学生ID", required = true, paramType = "Long")
+    public ResponseBean<List<Student>> findById(@RequestBody Long[] ids) {
+        List<Student> studentList = studentService.findListById(ids);
         return Optional.ofNullable(studentList).isPresent() ? new ResponseBean<>(studentList) : null;
     }
 }

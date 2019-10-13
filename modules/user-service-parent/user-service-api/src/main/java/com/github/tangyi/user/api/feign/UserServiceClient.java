@@ -31,12 +31,12 @@ public interface UserServiceClient {
      *
      * @param identifier identifier
      * @param tenantCode 租户标识
-     * @return UserVo
+     * @return ResponseBean
      * @author tangyi
      * @date 2019/03/17 12:14
      */
     @GetMapping("/v1/user/findUserByIdentifier/{identifier}")
-    UserVo findUserByIdentifier(@PathVariable("identifier") String identifier, @RequestParam("tenantCode") String tenantCode);
+    ResponseBean<UserVo> findUserByIdentifier(@PathVariable("identifier") String identifier, @RequestParam("tenantCode") String tenantCode);
 
     /**
      * 根据用户名获取用户详细信息
@@ -44,12 +44,12 @@ public interface UserServiceClient {
      * @param identifier   identifier
      * @param identityType identityType
      * @param tenantCode   租户标识
-     * @return UserVo
+     * @return ResponseBean
      * @author tangyi
      * @date 2019/07/06 14:14:11
      */
     @GetMapping("/v1/user/findUserByIdentifier/{identifier}")
-    UserVo findUserByIdentifier(@PathVariable("identifier") String identifier, @RequestParam(value = "identityType", required = false) Integer identityType, @RequestParam("tenantCode") String tenantCode);
+	ResponseBean<UserVo> findUserByIdentifier(@PathVariable("identifier") String identifier, @RequestParam(value = "identityType", required = false) Integer identityType, @RequestParam("tenantCode") String tenantCode);
 
 
     /**
@@ -65,11 +65,11 @@ public interface UserServiceClient {
     /**
      * 根据用户id获取用户
      *
-     * @param userVo userVo
+     * @param ids ids
      * @return UserVo
      */
     @RequestMapping(value = "/v1/user/findById", method = RequestMethod.POST)
-    ResponseBean<List<UserVo>> findUserById(@RequestBody UserVo userVo);
+    ResponseBean<List<UserVo>> findUserById(@RequestBody Long[] ids);
 
     /**
      * 查询用户数量
@@ -85,11 +85,11 @@ public interface UserServiceClient {
     /**
      * 根据部门id获取部门
      *
-     * @param deptVo deptVo
+     * @param ids ids
      * @return ResponseBean
      */
     @RequestMapping(value = "/v1/dept/findById", method = RequestMethod.POST)
-    ResponseBean<List<DeptVo>> findDeptById(@RequestBody DeptVo deptVo);
+    ResponseBean<List<DeptVo>> findDeptById(@RequestBody Long[] ids);
 
     /**
      * 根据ID删除附件
@@ -100,16 +100,16 @@ public interface UserServiceClient {
      * @date 2019/01/01 20:44
      */
     @DeleteMapping("/v1/attachment/{id}")
-    ResponseBean<Boolean> deleteAttachment(@PathVariable(value = "id") String id);
+    ResponseBean<Boolean> deleteAttachment(@PathVariable(value = "id") Long id);
 
     /**
      * 根据附件id获取附件
      *
-     * @param attachmentVo attachmentVo
+     * @param ids ids
      * @return ResponseBean
      */
     @RequestMapping(value = "/v1/attachment/findById", method = RequestMethod.POST)
-    ResponseBean<List<AttachmentVo>> findAttachmentById(@RequestBody AttachmentVo attachmentVo);
+    ResponseBean<List<AttachmentVo>> findAttachmentById(@RequestBody Long[] ids);
 
     /**
      * 保存日志
@@ -127,46 +127,46 @@ public interface UserServiceClient {
      *
      * @param role       角色
      * @param tenantCode 租户标识
-     * @return List
+     * @return ResponseBean
      * @author tangyi
      * @date 2019/04/08 20:42
      */
     @GetMapping("/v1/menu/findMenuByRole/{role}")
-    List<Menu> findMenuByRole(@PathVariable("role") String role, @RequestParam("tenantCode") String tenantCode);
+    ResponseBean<List<Menu>> findMenuByRole(@PathVariable("role") String role, @RequestParam("tenantCode") String tenantCode);
 
     /**
      * 查询所有菜单
      *
      * @param tenantCode 租户标识
-     * @return List
+     * @return ResponseBean
      * @author tangyi
      * @date 2019/04/26 11:48
      */
     @GetMapping("/v1/menu/findAllMenu")
-    List<Menu> findAllMenu(@RequestParam("tenantCode") String tenantCode);
+	ResponseBean<List<Menu>> findAllMenu(@RequestParam("tenantCode") String tenantCode);
 
     /**
      * 根据租户code获取租户的详细信息
      *
      * @param tenantCode 租户标识
-     * @return UserVo
+     * @return ResponseBean
      * @author tangyi
      * @date 2019/05/26 10:21
      */
     @GetMapping("/v1/tenant/findTenantByTenantCode/{tenantCode}")
-    Tenant findTenantByTenantCode(@PathVariable("tenantCode") String tenantCode);
+    ResponseBean<Tenant> findTenantByTenantCode(@PathVariable("tenantCode") String tenantCode);
 
     /**
      * 根据社交账号获取用户详细信息
      *
      * @param social     social
      * @param tenantCode 租户标识
-     * @return UserVo
+     * @return ResponseBean
      * @author tangyi
      * @date 2019/06/22 21:10
      */
     @GetMapping("/v1/user/findUserBySocial/{social}")
-    UserVo findUserBySocial(@PathVariable("social") String social, @RequestParam("tenantCode") String tenantCode);
+    ResponseBean<UserVo> findUserBySocial(@PathVariable("social") String social, @RequestParam("tenantCode") String tenantCode);
 
     /**
      * 注册用户

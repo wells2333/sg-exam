@@ -1,5 +1,6 @@
 package com.github.tangyi.user.api.module;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
 
@@ -33,10 +34,11 @@ public class Dept extends BaseEntity<Dept> {
     /**
      * 父部门ID
      */
-    private String parentId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long parentId;
 
     /**
      * 排序
      */
-    private String sort;
+    private Integer sort;
 }

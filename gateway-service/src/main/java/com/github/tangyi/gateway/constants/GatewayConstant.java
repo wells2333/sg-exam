@@ -61,4 +61,6 @@ public class GatewayConstant {
      */
     public static final String DEFAULT_TENANT_CODE = "gitee";
 
+    public static final String TENANT_CODE_HEADER = "Tenant-Code";
+
 }

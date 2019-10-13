@@ -19,7 +19,7 @@ public interface UserRoleMapper extends CrudMapper<UserRole> {
      * @param userId 用户ID
      * @return List
      */
-    List<UserRole> getByUserId(String userId);
+    List<UserRole> getByUserId(Long userId);
 
     /**
      * 根据用户ID批量查询
@@ -27,7 +27,7 @@ public interface UserRoleMapper extends CrudMapper<UserRole> {
      * @param userIds 用户ID集合
      * @return List
      */
-    List<UserRole> getByUserIds(List<String> userIds);
+    List<UserRole> getByUserIds(List<Long> userIds);
 
 
     /**
@@ -36,7 +36,7 @@ public interface UserRoleMapper extends CrudMapper<UserRole> {
      * @param userId 用户ID
      * @return int
      */
-    int deleteByUserId(String userId);
+    int deleteByUserId(Long userId);
 
     /**
      * 根据角色ID删除
@@ -44,5 +44,15 @@ public interface UserRoleMapper extends CrudMapper<UserRole> {
      * @param roleId 角色ID
      * @return int
      */
-    int deleteByRoleId(String roleId);
+    int deleteByRoleId(Long roleId);
+
+    /**
+     * 批量插入
+     *
+     * @param userRoles userRoles
+     * @return int
+     * @author tangyi
+     * @date 2019-09-03 13:14
+     */
+    int insertBatch(List<UserRole> userRoles);
 }

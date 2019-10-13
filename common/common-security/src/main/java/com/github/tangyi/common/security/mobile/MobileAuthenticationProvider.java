@@ -1,7 +1,7 @@
 package com.github.tangyi.common.security.mobile;
 
-import com.github.tangyi.common.security.tenant.TenantContextHolder;
 import com.github.tangyi.common.security.core.CustomUserDetailsService;
+import com.github.tangyi.common.security.tenant.TenantContextHolder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.MessageSourceAccessor;

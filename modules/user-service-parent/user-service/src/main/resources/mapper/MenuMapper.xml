@@ -56,6 +56,9 @@
         <if test="permission != null and permission != ''">
             and a.permission like #{permission}
         </if>
+        <if test="parentId != null and parentId != ''">
+            and a.parent_id = #{parentId}
+        </if>
         <if test="tenantCode != null and tenantCode != ''">
             and a.tenant_code = #{tenantCode}
         </if>
@@ -69,7 +72,7 @@
     </select>
 
     <insert id="insert">
-        INSERT  INTO sys_menu (
+        INSERT INTO sys_menu (
             id,
             name,
             permission,
@@ -110,6 +113,54 @@
             #{applicationCode},
             #{tenantCode}
         )
+    </insert>
+
+    <!-- 批量插入 -->
+    <insert id="insertBatch">
+        INSERT INTO sys_menu (
+            id,
+            name,
+            permission,
+            url,
+            redirect,
+            parent_id,
+            icon,
+            sort,
+            type,
+            component,
+            path,
+            remark,
+            creator,
+            create_date,
+            modifier,
+            modify_date,
+            del_flag,
+            application_code,
+            tenant_code
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},
+            #{item.name},
+            #{item.permission},
+            #{item.url},
+            #{item.redirect},
+            #{item.parentId},
+            #{item.icon},
+            #{item.sort},
+            #{item.type},
+            #{item.component},
+            #{item.path},
+            #{item.remark},
+            #{item.creator},
+            #{item.createDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
+            #{item.modifier},
+            #{item.modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
+            #{item.delFlag},
+            #{item.applicationCode},
+            #{item.tenantCode}
+            )
+        </foreach>
     </insert>
 
     <select id="findList" resultMap="menuResultMap">
@@ -205,5 +256,13 @@
         modifier = #{modifier} ,
         modify_date = #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date}
 		WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByTenantCode">
+        UPDATE sys_menu SET
+        del_flag = 1,
+        modifier = #{modifier} ,
+        modify_date = #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date}
+		WHERE tenant_code = #{tenantCode}
     </delete>
 </mapper>

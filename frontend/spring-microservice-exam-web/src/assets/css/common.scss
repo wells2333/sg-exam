@@ -1,0 +1,85 @@
+
+body {
+  margin: 0;
+  position: relative;
+  overflow-x: hidden;
+  font-family: "Roboto Slab","Helvetica Neue",Helvetica,Arial,sans-serif;
+  line-height: 1.8;
+}
+
+a {
+  text-decoration: none;
+  outline: none;
+  color: #555;
+}
+
+.header-w {
+  width: 1220px;
+  margin: 0 auto;
+}
+
+.pr {
+  position: relative;
+}
+
+.pa {
+  position: absolute;
+}
+
+.active {
+  color: #c81623;
+}
+
+.clearfix:after {
+  content: '';
+  display: block;
+  clear: both;
+  line-height: 0;
+  visibility: hidden;
+}
+
+.clearfix {
+  *zoom: 1
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.layout-container {
+  min-height: 400px;
+  background: #E6E6E6;
+}
+
+.gray-box {
+  overflow: hidden;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #dcdcdc;
+  border-color: rgba(0, 0, 0, .14);
+  box-shadow: 0 3px 8px -6px rgba(0, 0, 0, .1);
+}
+
+%message-common {
+  padding-top: 10px;
+  height: 120px;
+  color: #fff;
+  background-color: #fff;
+  text-align: center;
+}
+
+%img-common {
+  color: #fff;
+  background-color: #fff;
+  text-align: center;
+  align-items: center;
+}
+
+.app-container {
+  padding: 20px;
+}
+.pagination-container {
+  margin-top: 30px;
+}

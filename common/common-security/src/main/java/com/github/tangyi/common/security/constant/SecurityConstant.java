@@ -17,6 +17,11 @@ public class SecurityConstant {
     public static final String ROLE_ADMIN = "role_admin";
 
     /**
+     * 租户管理员角色
+     */
+    public static final String ROLE_TENANT_ADMIN = "role_tenant_admin";
+
+    /**
      * 默认生成图形验证码过期时间
      */
     public static final int DEFAULT_IMAGE_EXPIRE = 60;

@@ -1,9 +1,8 @@
 package com.github.tangyi.exam.api.module;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
-
-import javax.validation.constraints.NotBlank;
 
 /**
  * 选择题的选项
@@ -17,7 +16,8 @@ public class SubjectOption extends BaseEntity<SubjectOption> {
     /**
      * 选择题ID
      */
-    private String subjectChoicesId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long subjectChoicesId;
 
     /**
      * 选项名称

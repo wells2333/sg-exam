@@ -1,6 +1,7 @@
 package com.github.tangyi.exam.controller;
 
 import cn.hutool.core.collection.CollUtil;
+import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.utils.TreeUtil;
@@ -56,7 +57,7 @@ public class SubjectCategoryController extends BaseController {
             // 转成dto
             List<SubjectCategoryDto> subjectCategorySetTreeList = subjectCategoryList.stream().map(SubjectCategoryDto::new).distinct().collect(Collectors.toList());
             // 排序、组装树形结构
-            return TreeUtil.buildTree(CollUtil.sort(subjectCategorySetTreeList, Comparator.comparingInt(SubjectCategoryDto::getSort)), "-1");
+            return TreeUtil.buildTree(CollUtil.sort(subjectCategorySetTreeList, Comparator.comparingInt(SubjectCategoryDto::getSort)), CommonConstant.ROOT);
         }
         return new ArrayList<>();
     }
@@ -71,8 +72,8 @@ public class SubjectCategoryController extends BaseController {
      */
     @GetMapping("/{id}")
     @ApiOperation(value = "获取分类信息", notes = "根据分类id获取分类详细信息")
-    @ApiImplicitParam(name = "id", value = "分类ID", required = true, dataType = "String", paramType = "path")
-    public ResponseBean<SubjectCategory> subjectCategory(@PathVariable String id) {
+    @ApiImplicitParam(name = "id", value = "分类ID", required = true, dataType = "Long", paramType = "path")
+    public ResponseBean<SubjectCategory> subjectCategory(@PathVariable Long id) {
         SubjectCategory subjectCategory = new SubjectCategory();
         subjectCategory.setId(id);
         return new ResponseBean<>(categoryService.get(subjectCategory));
@@ -127,7 +128,7 @@ public class SubjectCategoryController extends BaseController {
     @ApiOperation(value = "删除分类", notes = "根据ID删除分类")
     @ApiImplicitParam(name = "id", value = "分类ID", required = true, paramType = "path")
     @Log("删除题目分类")
-    public ResponseBean<Boolean> deleteSubjectCategory(@PathVariable String id) {
+    public ResponseBean<Boolean> deleteSubjectCategory(@PathVariable Long id) {
         SubjectCategory subjectCategory = new SubjectCategory();
         subjectCategory.setId(id);
         return new ResponseBean<>(categoryService.delete(subjectCategory) > 0);

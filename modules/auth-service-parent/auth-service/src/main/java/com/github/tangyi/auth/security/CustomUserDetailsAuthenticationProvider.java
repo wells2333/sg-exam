@@ -1,8 +1,8 @@
 package com.github.tangyi.auth.security;
 
 import com.github.tangyi.common.core.exceptions.TenantNotFoundException;
-import com.github.tangyi.common.security.tenant.TenantContextHolder;
 import com.github.tangyi.common.security.core.CustomUserDetailsService;
+import com.github.tangyi.common.security.tenant.TenantContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;

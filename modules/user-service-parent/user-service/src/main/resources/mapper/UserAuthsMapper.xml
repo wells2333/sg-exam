@@ -84,7 +84,7 @@
         </foreach>
     </select>
 
-    <!-- 新增用户 -->
+    <!-- 新增 -->
     <insert id="insert">
         insert into sys_user_auths (
             id,
@@ -113,6 +113,40 @@
             #{applicationCode},
             #{tenantCode}
         );
+    </insert>
+
+    <!-- 批量新增 -->
+    <insert id="insertBatch">
+        insert into sys_user_auths (
+            id,
+            user_id,
+            identity_type,
+            identifier,
+            credential,
+            creator,
+            create_date,
+            modifier,
+            modify_date,
+            del_flag,
+            application_code,
+            tenant_code
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},
+            #{item.userId},
+            #{item.identityType, jdbcType=INTEGER},
+            #{item.identifier},
+            #{item.credential},
+            #{item.creator},
+            #{item.createDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
+            #{item.modifier},
+            #{item.modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
+            #{item.delFlag},
+            #{item.applicationCode},
+            #{item.tenantCode}
+            )
+        </foreach>
     </insert>
 
     <!-- 更新用户 -->

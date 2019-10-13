@@ -4,7 +4,6 @@
     <resultMap id="subjectJudgementResultMap" type="com.github.tangyi.exam.api.module.SubjectJudgement">
         <id column="id" property="id"/>
         <result column="category_id" property="categoryId"/>
-        <result column="serial_number" property="serialNumber"/>
         <result column="subject_name" property="subjectName"/>
         <result column="answer" property="answer"/>
         <result column="score" property="score"/>
@@ -22,7 +21,6 @@
     <sql id="subjectJudgementColumns">
         a.id,
         a.category_id,
-        a.serial_number,
         a.subject_name,
         a.answer,
         a.score,
@@ -42,9 +40,6 @@
         <if test="categoryId != null and categoryId != ''">
             and a.category_id = #{categoryId}
         </if>
-        <if test="serialNumber != null and serialNumber != ''">
-            and a.serial_number = #{serialNumber}
-        </if>
         <if test="subjectName != null and subjectName != ''">
             and a.subject_name like CONCAT('%',#{subjectName},'%')
         </if>
@@ -58,13 +53,6 @@
         <include refid="subjectJudgementColumns"/>
         FROM exam_subject_judgement a
         WHERE a.id = #{id} and a.del_flag = 0
-    </select>
-
-    <!-- 根据题目序号查询 -->
-    <select id="getBySerialNumber" resultMap="subjectJudgementResultMap">
-        SELECT
-        <include refid="subjectJudgementColumns"/>
-        FROM exam_subject_judgement a WHERE a.serial_number = #{serialNumber} and a.del_flag = 0
     </select>
 
     <select id="findList" resultMap="subjectJudgementResultMap">
@@ -81,14 +69,13 @@
         <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
-        ORDER BY serial_number ASC
+        ORDER BY id ASC
     </select>
 
     <insert id="insert">
         insert into exam_subject_judgement (
             id,
             category_id,
-            serial_number,
             subject_name,
             answer,
             score,
@@ -104,7 +91,6 @@
         ) values (
             #{id},
             #{categoryId},
-            #{serialNumber},
             #{subjectName},
             #{answer},
             #{score},
@@ -124,9 +110,6 @@
         UPDATE exam_subject_judgement SET
         <if test="categoryId != null">
             category_id = #{categoryId},
-        </if>
-        <if test="serialNumber != null">
-            serial_number = #{serialNumber},
         </if>
         <if test="subjectName != null">
             subject_name = #{subjectName},

@@ -1,7 +1,7 @@
 # bootstrap.yml文件中的内容不能放到application.yml中，否则config部分无法被加载
 # 因为config部分的配置先于application.yml被加载，而bootstrap.yml中的配置会先于application.yml加载
 server:
-  port: 8769
+  port: 9181
 spring:
   application:
     name: config-service
@@ -16,7 +16,7 @@ spring:
   boot:
     admin:
       client:
-        url: http://${ADMIN_HOST:localhost}:${ADMIN_PORT:8085}/admin
+        url: http://${ADMIN_HOST:localhost}:${ADMIN_PORT:9186}/admin
         username: ${ADMIN_USERNAME:admin}
         password: ${ADMIN_PASSWORD:11}
         instance:

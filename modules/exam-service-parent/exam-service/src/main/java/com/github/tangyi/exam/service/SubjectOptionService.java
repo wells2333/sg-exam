@@ -120,7 +120,7 @@ public class SubjectOptionService extends CrudService<SubjectOptionMapper, Subje
      */
     @Override
     @Transactional
-    public int deleteAll(String[] ids) {
+    public int deleteAll(Long[] ids) {
         return super.deleteAll(ids);
     }
 
@@ -133,7 +133,7 @@ public class SubjectOptionService extends CrudService<SubjectOptionMapper, Subje
      * @date 2019/06/16 22:40
      */
     @Transactional
-    public int physicalDeleteAll(String[] ids) {
+    public int physicalDeleteAll(Long[] ids) {
         return this.dao.physicalDeleteAll(ids);
     }
 }
