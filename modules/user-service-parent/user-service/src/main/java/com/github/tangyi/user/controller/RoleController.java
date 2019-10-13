@@ -17,6 +17,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -53,8 +54,8 @@ public class RoleController extends BaseController {
      */
     @GetMapping("/{id}")
     @ApiOperation(value = "获取角色信息", notes = "根据角色id获取角色详细信息")
-    @ApiImplicitParam(name = "id", value = "角色ID", required = true, dataType = "String", paramType = "path")
-    public Role role(@PathVariable String id) {
+    @ApiImplicitParam(name = "id", value = "角色ID", required = true, dataType = "Long", paramType = "path")
+    public Role role(@PathVariable Long id) {
         try {
             return roleService.get(id);
         } catch (Exception e) {
@@ -143,11 +144,11 @@ public class RoleController extends BaseController {
     public ResponseBean<Boolean> updateRoleMenu(@RequestBody Role role) {
         boolean success = false;
         String menuIds = role.getMenuIds();
-        if (StringUtils.isNotBlank(role.getId())) {
+        if (role.getId() != null) {
             role = roleService.get(role);
             // 保存角色菜单关系
             if (role != null && StringUtils.isNotBlank(menuIds))
-                success = roleMenuService.saveRoleMenus(role.getId(), Stream.of(menuIds.split(",")).collect(Collectors.toList())) > 0;
+                success = roleMenuService.saveRoleMenus(role.getId(), Stream.of(menuIds.split(",")).map(Long::parseLong).collect(Collectors.toList())) > 0;
         }
         return new ResponseBean<>(success);
     }
@@ -183,18 +184,18 @@ public class RoleController extends BaseController {
     @ApiOperation(value = "删除角色", notes = "根据ID删除角色")
     @ApiImplicitParam(name = "id", value = "角色ID", required = true, paramType = "path")
     @Log("删除角色")
-    public ResponseBean<Boolean> deleteRole(@PathVariable String id) {
+    public ResponseBean<Boolean> deleteRole(@PathVariable Long id) {
         Role role = new Role();
         role.setId(id);
         role.setNewRecord(false);
         role.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
-        return new ResponseBean<>(roleService.delete(role) > 0);
+        return new ResponseBean<>(roleService.delete(roleService.get(role)) > 0);
     }
 
     /**
      * 批量删除
      *
-     * @param role role
+     * @param ids ids
      * @return ResponseBean
      * @author tangyi
      * @date 2018/12/4 10:00
@@ -202,13 +203,13 @@ public class RoleController extends BaseController {
     @PostMapping("deleteAll")
     @PreAuthorize("hasAuthority('sys:role:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "批量删除角色", notes = "根据角色id批量删除角色")
-    @ApiImplicitParam(name = "role", value = "角色信息", dataType = "RoleVo")
+    @ApiImplicitParam(name = "ids", value = "角色ID", dataType = "Long")
     @Log("批量删除角色")
-    public ResponseBean<Boolean> deleteAllRoles(@RequestBody Role role) {
+    public ResponseBean<Boolean> deleteAllRoles(@RequestBody Long[] ids) {
         boolean success = false;
         try {
-            if (StringUtils.isNotEmpty(role.getIdString()))
-                success = roleService.deleteAll(role.getIdString().split(",")) > 0;
+            if (ArrayUtils.isNotEmpty(ids))
+                success = roleService.deleteAll(ids) > 0;
         } catch (Exception e) {
             log.error("删除角色失败！", e);
         }

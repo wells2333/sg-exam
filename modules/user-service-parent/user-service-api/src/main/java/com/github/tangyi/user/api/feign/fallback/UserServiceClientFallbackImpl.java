@@ -35,10 +35,10 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      * @param identifier identifier
      * @param tenantCode 租户标识
      * @param tenantCode 租户标识
-     * @return UserVo
+     * @return ResponseBean
      */
     @Override
-    public UserVo findUserByIdentifier(String identifier, String tenantCode) {
+    public ResponseBean<UserVo> findUserByIdentifier(String identifier, String tenantCode) {
         log.error("feign 查询用户信息失败:{}, {}, {}", tenantCode, identifier, throwable);
         return null;
     }
@@ -49,10 +49,10 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      * @param identifier   identifier
      * @param identityType identityType
      * @param tenantCode   租户标识
-     * @return UserVo
+     * @return ResponseBean
      */
     @Override
-    public UserVo findUserByIdentifier(String identifier, Integer identityType, String tenantCode) {
+    public ResponseBean<UserVo> findUserByIdentifier(String identifier, Integer identityType, String tenantCode) {
         log.error("feign 查询用户信息失败:{}, {}, {}, {}", tenantCode, identityType, identifier, throwable);
         return null;
     }
@@ -71,12 +71,12 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
     /**
      * 根据用户ID批量查询用户信息
      *
-     * @param userVo userVo
+     * @param ids ids
      * @return ResponseBean
      */
     @Override
-    public ResponseBean<List<UserVo>> findUserById(@RequestBody UserVo userVo) {
-        log.error("调用{}异常:{},{}", "findById", userVo, throwable);
+    public ResponseBean<List<UserVo>> findUserById(@RequestBody Long[] ids) {
+        log.error("调用{}异常:{},{}", "findById", ids, throwable);
         return null;
     }
 
@@ -95,12 +95,12 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
     /**
      * 根据部门ID批量查询部门信息
      *
-     * @param deptVo deptVo
+     * @param ids ids
      * @return ResponseBean
      */
     @Override
-    public ResponseBean<List<DeptVo>> findDeptById(@RequestBody DeptVo deptVo) {
-        log.error("调用{}异常:{},{}", "findById", deptVo, throwable);
+    public ResponseBean<List<DeptVo>> findDeptById(@RequestBody Long[] ids) {
+        log.error("调用{}异常:{},{}", "findById", ids, throwable);
         return null;
     }
 
@@ -111,7 +111,7 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      * @return ResponseBean
      */
     @Override
-    public ResponseBean<Boolean> deleteAttachment(String id) {
+    public ResponseBean<Boolean> deleteAttachment(Long id) {
         log.error("调用{}异常:{},{}", "delete", id, throwable);
         return new ResponseBean<>(Boolean.FALSE);
     }
@@ -119,12 +119,12 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
     /**
      * 根据附件ID批量查询附件信息
      *
-     * @param attachmentVo attachmentVo
+     * @param ids ids
      * @return ResponseBean
      */
     @Override
-    public ResponseBean<List<AttachmentVo>> findAttachmentById(AttachmentVo attachmentVo) {
-        log.error("调用{}异常:{},{}", "findById", attachmentVo, throwable);
+    public ResponseBean<List<AttachmentVo>> findAttachmentById(Long[] ids) {
+        log.error("调用{}异常:{},{}", "findById", ids, throwable);
         return new ResponseBean<>(new ArrayList<>());
     }
 
@@ -145,34 +145,34 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      *
      * @param tenantCode 租户标识
      * @param role       角色
-     * @return List
+     * @return ResponseBean
      */
     @Override
-    public List<Menu> findMenuByRole(String role, String tenantCode) {
+    public ResponseBean<List<Menu>> findMenuByRole(String role, String tenantCode) {
         log.error("feign 获取角色菜单失败, {}, {}", tenantCode, throwable);
-        return new ArrayList<>();
+        return new ResponseBean<>(new ArrayList<>());
     }
 
     /**
      * 查询所有菜单
      *
      * @param tenantCode 租户标识
-     * @return List
+     * @return ResponseBean
      */
     @Override
-    public List<Menu> findAllMenu(String tenantCode) {
+    public ResponseBean<List<Menu>> findAllMenu(String tenantCode) {
         log.error("feign 获取所有菜单失败, {}, {}", tenantCode, throwable);
-        return new ArrayList<>();
+        return new ResponseBean<>(new ArrayList<>());
     }
 
     /**
      * 根据租户标识查询租户详细信息
      *
      * @param tenantCode 租户标识
-     * @return Tenant
+     * @return ResponseBean
      */
     @Override
-    public Tenant findTenantByTenantCode(String tenantCode) {
+    public ResponseBean<Tenant> findTenantByTenantCode(String tenantCode) {
         log.error("feign 获取租户详细信息失败, {}, {}", tenantCode, throwable);
         return null;
     }
@@ -182,10 +182,10 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      *
      * @param social     social
      * @param tenantCode 租户标识
-     * @return UserVo
+     * @return ResponseBean
      */
     @Override
-    public UserVo findUserBySocial(String social, String tenantCode) {
+    public ResponseBean<UserVo> findUserBySocial(String social, String tenantCode) {
         log.error("feign 根据社交账号获取用户详细信息失败, {}, {}, {}", social, tenantCode, throwable);
         return null;
     }

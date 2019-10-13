@@ -73,7 +73,7 @@ public class SubjectCategoryService extends CrudService<SubjectCategoryMapper, S
     @Override
     @Transactional
     @CacheEvict(value = "category", allEntries = true)
-    public int deleteAll(String[] ids) {
+    public int deleteAll(Long[] ids) {
         return super.deleteAll(ids);
     }
 }

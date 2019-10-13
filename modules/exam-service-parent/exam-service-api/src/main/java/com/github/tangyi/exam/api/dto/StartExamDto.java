@@ -1,7 +1,7 @@
 package com.github.tangyi.exam.api.dto;
 
-import com.github.tangyi.exam.api.module.ExaminationRecord;
 import com.github.tangyi.exam.api.module.Examination;
+import com.github.tangyi.exam.api.module.ExaminationRecord;
 import lombok.Data;
 
 import java.io.Serializable;

@@ -1,7 +1,6 @@
 package com.github.tangyi.exam.mapper;
 
 import com.github.tangyi.common.core.persistence.CrudMapper;
-import com.github.tangyi.exam.api.module.SubjectChoices;
 import com.github.tangyi.exam.api.module.SubjectShortAnswer;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -13,16 +12,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface SubjectShortAnswerMapper extends CrudMapper<SubjectShortAnswer> {
-
-    /**
-     * 根据序号查找
-     *
-     * @param subjectShortAnswer subjectShortAnswer
-     * @return SubjectShortAnswer
-     * @author tangyi
-     * @date 2016/6/16 14:52
-     */
-    SubjectShortAnswer getBySerialNumber(SubjectShortAnswer subjectShortAnswer);
 
     /**
      * 物理删除
@@ -42,5 +31,5 @@ public interface SubjectShortAnswerMapper extends CrudMapper<SubjectShortAnswer>
      * @author tangyi
      * @date 2019/06/16 22:54
      */
-    int physicalDeleteAll(String[] ids);
+    int physicalDeleteAll(Long[] ids);
 }

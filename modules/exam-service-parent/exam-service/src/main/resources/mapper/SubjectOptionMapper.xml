@@ -32,7 +32,7 @@
     <!-- where 条件 -->
     <sql id="whereColumnList">
         <if test="subject_choices_id != null and subject_choices_id != ''">
-            and a.subject_choices_id = #{serialNumber}
+            and a.subject_choices_id = #{subjectChoicesId}
         </if>
     </sql>
 

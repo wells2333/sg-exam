@@ -16,7 +16,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,8 +47,8 @@ public class CourseController extends BaseController {
      */
     @GetMapping("/{id}")
     @ApiOperation(value = "获取课程信息", notes = "根据课程id获取课程详细信息")
-    @ApiImplicitParam(name = "id", value = "课程ID", required = true, dataType = "String", paramType = "path")
-    public ResponseBean<Course> course(@PathVariable String id) {
+    @ApiImplicitParam(name = "id", value = "课程ID", required = true, dataType = "Long", paramType = "path")
+    public ResponseBean<Course> course(@PathVariable Long id) {
         Course course = new Course();
         course.setId(id);
         return new ResponseBean<>(courseService.get(course));
@@ -133,7 +133,7 @@ public class CourseController extends BaseController {
     @ApiOperation(value = "删除课程", notes = "根据ID删除课程")
     @ApiImplicitParam(name = "id", value = "课程ID", required = true, paramType = "path")
     @Log("删除课程")
-    public ResponseBean<Boolean> deleteCourse(@PathVariable String id) {
+    public ResponseBean<Boolean> deleteCourse(@PathVariable Long id) {
         boolean success = false;
         try {
             Course course = new Course();
@@ -152,7 +152,7 @@ public class CourseController extends BaseController {
     /**
      * 批量删除
      *
-     * @param course course
+     * @param ids ids
      * @return ResponseBean
      * @author tangyi
      * @date 2018/12/4 11:26
@@ -160,13 +160,13 @@ public class CourseController extends BaseController {
     @PostMapping("deleteAll")
     @PreAuthorize("hasAuthority('exam:course:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "批量删除课程", notes = "根据课程id批量删除课程")
-    @ApiImplicitParam(name = "course", value = "课程信息", dataType = "Course")
+    @ApiImplicitParam(name = "ids", value = "课程ID", dataType = "Long")
     @Log("批量删除课程")
-    public ResponseBean<Boolean> deleteAllCourses(@RequestBody Course course) {
+    public ResponseBean<Boolean> deleteAllCourses(@RequestBody Long[] ids) {
         boolean success = false;
         try {
-            if (StringUtils.isNotEmpty(course.getIdString()))
-                success = courseService.deleteAll(course.getIdString().split(",")) > 0;
+            if (ArrayUtils.isNotEmpty(ids))
+                success = courseService.deleteAll(ids) > 0;
         } catch (Exception e) {
             log.error("删除课程失败！", e);
         }

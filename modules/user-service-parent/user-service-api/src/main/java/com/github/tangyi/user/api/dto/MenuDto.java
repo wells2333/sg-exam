@@ -1,5 +1,6 @@
 package com.github.tangyi.user.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.tangyi.common.core.persistence.TreeEntity;
 import com.github.tangyi.user.api.module.Menu;
 import lombok.Data;
@@ -16,7 +17,8 @@ public class MenuDto extends TreeEntity<MenuDto> {
     /**
      * 父菜单ID
      */
-    private String parentId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long parentId;
 
     private String icon;
 
@@ -36,7 +38,7 @@ public class MenuDto extends TreeEntity<MenuDto> {
 
     private String code;
 
-    private String type;
+    private Integer type;
 
     private String label;
 

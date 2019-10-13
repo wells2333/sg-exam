@@ -1,8 +1,8 @@
 server:
-  port: 8090
+  port: 9182
 spring:
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/microservice-auth?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${DB_AUTH:microservice-auth}?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8
     username: ${MYSQL_USERNAME:root}
     password: ${MYSQL_PASSWORD:11}
     type: com.zaxxer.hikari.HikariDataSource
@@ -18,7 +18,7 @@ spring:
   boot:
     admin:
       client:
-        url: http://${ADMIN_HOST:localhost}:${ADMIN_PORT:8085}/admin
+        url: http://${ADMIN_HOST:localhost}:${ADMIN_PORT:9186}/admin
         username: ${ADMIN_USERNAME:admin}
         password: ${ADMIN_PASSWORD:11}
         instance:
@@ -131,8 +131,3 @@ wx:
   appId: test
   appSecret: test
   grantType: authorization_code
-
-logging:
-  level:
-    root: info
-    com.github.tangyi: debug

@@ -28,9 +28,9 @@ public abstract class CrudService<D extends CrudMapper<T>, T extends BaseEntity<
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
-    public T get(String id) throws Exception {
+    public T get(Long id) throws Exception {
         Class<T> entityClass = ReflectionUtil.getClassGenricType(getClass(), 1);
-        T entity = entityClass.getConstructor(String.class).newInstance("0");
+        T entity = entityClass.getConstructor(Long.class).newInstance("0");
         entity.setId(id);
         return dao.get(entity);
     }
@@ -68,13 +68,13 @@ public abstract class CrudService<D extends CrudMapper<T>, T extends BaseEntity<
     /**
      * 查询列表
      *
-     * @param entity entity
+     * @param ids ids
      * @return List
      */
-    public List<T> findListById(T entity) {
-        if (entity.getIds() == null || entity.getIds().length == 0)
+    public List<T> findListById(Long[] ids) {
+        if (ids == null || ids.length == 0)
             return new ArrayList<>();
-        return dao.findListById(entity);
+        return dao.findListById(ids);
     }
 
     /**
@@ -86,7 +86,7 @@ public abstract class CrudService<D extends CrudMapper<T>, T extends BaseEntity<
      */
     public PageInfo<T> findPage(PageInfo<T> page, T entity) {
         PageHelper.startPage(page.getPageNum(), page.getPageSize());
-        return new PageInfo<T>(dao.findList(entity));
+        return new PageInfo<>(dao.findList(entity));
     }
 
     /**
@@ -122,7 +122,7 @@ public abstract class CrudService<D extends CrudMapper<T>, T extends BaseEntity<
      * @return int
      */
     @Transactional
-    public int deleteAll(String[] ids) {
+    public int deleteAll(Long[] ids) {
         return this.dao.deleteAll(ids);
     }
 

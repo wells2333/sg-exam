@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.api.module;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
 
@@ -15,17 +16,14 @@ public class ExaminationSubject extends BaseEntity<ExaminationSubject> {
     /**
      * 考试ID
      */
-    private String examinationId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long examinationId;
 
     /**
      * 题目ID
      */
-    private String subjectId;
-
-    /**
-     * 题目序号
-     */
-    private Integer serialNumber;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long subjectId;
 
     /**
      * 题目类型，0：选择题，1：简答题，2：判断题，3：多选题

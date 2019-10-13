@@ -58,7 +58,6 @@ public class DecodePasswordFilter implements GlobalFilter, Ordered {
                         // 开始解密
                         credential = SysUtil.decryptAES(credential, sysProperties.getKey());
                         credential = credential.trim();
-                        log.debug("credential decrypt success:{}", credential);
                     } catch (Exception e) {
                         log.error("credential decrypt fail:{}", credential);
                     }

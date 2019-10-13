@@ -1,8 +1,10 @@
 package com.github.tangyi.auth.config;
 
+import com.github.tangyi.auth.filter.CustomTokenEndpointAuthenticationFilter;
 import com.github.tangyi.auth.security.CustomTokenConverter;
 import com.github.tangyi.common.security.core.ClientDetailsServiceImpl;
 import com.github.tangyi.common.security.exceptions.CustomOauthException;
+import com.github.tangyi.user.api.feign.UserServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.bootstrap.encrypt.KeyProperties;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +19,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
@@ -53,12 +56,21 @@ public class CustomAuthorizationServerConfigurer extends AuthorizationServerConf
      */
     private final KeyProperties keyProperties;
 
+    private final UserServiceClient userServiceClient;
+
+	private OAuth2RequestFactory oAuth2RequestFactory;
+
     @Autowired
-    public CustomAuthorizationServerConfigurer(AuthenticationManager authenticationManager, RedisConnectionFactory redisConnectionFactory, DataSource dataSource, KeyProperties keyProperties) {
+    public CustomAuthorizationServerConfigurer(AuthenticationManager authenticationManager,
+			RedisConnectionFactory redisConnectionFactory,
+			DataSource dataSource,
+			KeyProperties keyProperties,
+			UserServiceClient userServiceClient) {
         this.authenticationManager = authenticationManager;
         this.redisConnectionFactory = redisConnectionFactory;
         this.dataSource = dataSource;
         this.keyProperties = keyProperties;
+        this.userServiceClient = userServiceClient;
     }
 
     /**
@@ -111,7 +123,8 @@ public class CustomAuthorizationServerConfigurer extends AuthorizationServerConf
      */
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
-        endpoints
+		oAuth2RequestFactory = endpoints.getOAuth2RequestFactory();
+		endpoints
                 // 将token存储到redis
                 .tokenStore(tokenStore())
                 // token增强
@@ -145,6 +158,7 @@ public class CustomAuthorizationServerConfigurer extends AuthorizationServerConf
                 // 开启/oauth/check_token验证端口认证权限访问
                 .checkTokenAccess("isAuthenticated()")
                 .allowFormAuthenticationForClients();
+				//.addTokenEndpointAuthenticationFilter(new CustomTokenEndpointAuthenticationFilter(authenticationManager, oAuth2RequestFactory, userServiceClient));
     }
 }
 

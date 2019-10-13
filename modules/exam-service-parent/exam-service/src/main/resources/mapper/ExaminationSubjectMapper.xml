@@ -5,7 +5,6 @@
         <id column="id" property="id"/>
         <result column="examination_id" property="examinationId"/>
         <result column="subject_id" property="subjectId"/>
-        <result column="serial_number" property="serialNumber"/>
         <result column="type" property="type"/>
         <result column="application_code" property="applicationCode"/>
         <result column="tenant_code" property="tenantCode"/>
@@ -15,7 +14,6 @@
         a.id,
         a.examination_id,
         a.subject_id,
-        a.serial_number,
         a.type,
         a.application_code,
         a.tenant_code
@@ -25,9 +23,6 @@
     <sql id="whereColumnList">
         <if test="subjectId != null and subjectId != ''">
             and a.subject_id = #{subjectId}
-        </if>
-        <if test="serialNumber != null and serialNumber != ''">
-            and a.serial_number = #{serialNumber}
         </if>
         <if test="type != null and type != ''">
             and a.type = #{type}
@@ -43,14 +38,14 @@
         FROM exam_examination_subject a WHERE a.id = #{id}
     </select>
 
-    <select id="findSubjectCount" resultType="java.lang.Integer">
-        SELECT COUNT(*) FROM exam_examination_subject a WHERE a.examination_id = #{examinationId}
+    <select id="findListByExaminationId" resultMap="examinationSubjectResultMap">
+        SELECT a.subject_id, a.type FROM exam_examination_subject a WHERE a.examination_id = #{examinationId} order by subject_id ASC
     </select>
 
-    <select id="findByExaminationIdAndSerialNumber" resultMap="examinationSubjectResultMap">
+    <select id="findByExaminationIdAndSubjectId" resultMap="examinationSubjectResultMap">
         SELECT
         <include refid="examinationSubjectColumns"/>
-        FROM exam_examination_subject a WHERE a.examination_id = #{examinationId} and a.serial_number = #{serialNumber}
+        FROM exam_examination_subject a WHERE a.examination_id = #{examinationId} and a.subject_id = #{subjectId}
     </select>
 
     <select id="findList" resultMap="examinationSubjectResultMap">
@@ -58,6 +53,7 @@
         <include refid="examinationSubjectColumns"/>
         FROM exam_examination_subject a WHERE a.examination_id = #{examinationId}
         <include refid="whereColumnList"/>
+        ORDER BY a.subject_id ASC
     </select>
 
     <select id="findListBySubjectId" resultMap="examinationSubjectResultMap">
@@ -75,12 +71,27 @@
         </foreach>
     </select>
 
+    <!-- 根据上一题ID查询下一题 -->
+    <select id="getByPreviousId" resultMap="examinationSubjectResultMap">
+        SELECT
+        <include refid="examinationSubjectColumns"/>
+        FROM exam_examination_subject a
+        WHERE a.subject_id > #{subjectId} AND a.examination_id = #{examinationId} ORDER BY subject_id ASC LIMIT 1
+    </select>
+
+    <!-- 根据当前题目ID查询上一题 -->
+    <select id="getPreviousByCurrentId" resultMap="examinationSubjectResultMap">
+        SELECT
+        <include refid="examinationSubjectColumns"/>
+        FROM exam_examination_subject a
+        WHERE a.subject_id <![CDATA[<]]> #{subjectId} AND a.examination_id = #{examinationId} ORDER BY subject_id DESC LIMIT 1
+    </select>
+
     <insert id="insert">
         insert into exam_examination_subject (
             id,
             examination_id,
             subject_id,
-            serial_number,
             type,
             application_code,
             tenant_code
@@ -88,7 +99,6 @@
             #{id},
             #{examinationId},
             #{subjectId},
-            #{serialNumber},
             #{type},
             #{applicationCode},
             #{tenantCode}
@@ -102,9 +112,6 @@
         </if>
         <if test="subjectId != null">
             subject_id = #{subjectId},
-        </if>
-        <if test="serialNumber != null">
-            serial_number = #{serialNumber},
         </if>
         <if test="type != null">
             type = #{type},

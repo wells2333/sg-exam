@@ -43,7 +43,7 @@ public class UserVo extends BaseEntity<UserVo> {
     /**
      * 头像对应的附件id
      */
-    private String avatarId;
+    private Long avatarId;
 
     /**
      * 邮箱
@@ -68,7 +68,7 @@ public class UserVo extends BaseEntity<UserVo> {
     /**
      * 部门ID
      */
-    private String deptId;
+    private Long deptId;
 
     /**
      * 角色列表
@@ -88,27 +88,27 @@ public class UserVo extends BaseEntity<UserVo> {
     /**
      * 引导注册人
      */
-    private String parentUid;
+    private Long parentUid;
 
     /**
      * 乡/镇
      */
-    private String streetId;
+    private Long streetId;
 
     /**
      * 县
      */
-    private String countyId;
+    private Long countyId;
 
     /**
      * 城市
      */
-    private String cityId;
+    private Long cityId;
 
     /**
      * 省份
      */
-    private String provinceId;
+    private Long provinceId;
 
     /**
      * 最近登录时间

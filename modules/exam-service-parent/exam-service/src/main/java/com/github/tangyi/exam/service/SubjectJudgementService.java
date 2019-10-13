@@ -20,7 +20,8 @@ import java.util.List;
 @AllArgsConstructor
 @Slf4j
 @Service
-public class SubjectJudgementService extends CrudService<SubjectJudgementMapper, SubjectJudgement> implements BaseSubjectService {
+public class SubjectJudgementService extends CrudService<SubjectJudgementMapper, SubjectJudgement>
+        implements BaseSubjectService {
 
     /**
      * 根据ID查询
@@ -31,20 +32,22 @@ public class SubjectJudgementService extends CrudService<SubjectJudgementMapper,
      * @date 2019-07-16 13:06
      */
     @Override
-    public SubjectDto getSubject(String id) {
+    public SubjectDto getSubject(Long id) {
         return null;
     }
 
     /**
-     * 根据题目序号查询
+     * 根据上一题ID查询下一题
      *
-     * @param serialNumber serialNumber
+     * @param examinationId examinationId
+     * @param previousId    previousId
+     * @param nextType      0：下一题，1：上一题
      * @return SubjectDto
      * @author tangyi
-     * @date 2019-07-16 13:07
+     * @date 2019-09-14 17:03
      */
     @Override
-    public SubjectDto getSubjectBySerialNumber(Integer serialNumber) {
+    public SubjectDto getNextByCurrentIdAndType(Long examinationId, Long previousId, Integer nextType) {
         return null;
     }
 
@@ -78,13 +81,13 @@ public class SubjectJudgementService extends CrudService<SubjectJudgementMapper,
     /**
      * 根据ID批量查询
      *
-     * @param subjectDto subjectDto
+     * @param ids ids
      * @return List<SubjectDto>
      * @author tangyi
      * @date 2019-07-16 13:09
      */
     @Override
-    public List<SubjectDto> findSubjectListById(SubjectDto subjectDto) {
+    public List<SubjectDto> findSubjectListById(Long[] ids) {
         return null;
     }
 
@@ -130,13 +133,13 @@ public class SubjectJudgementService extends CrudService<SubjectJudgementMapper,
     /**
      * 批量删除
      *
-     * @param subjectDto subjectDto
+     * @param ids ids
      * @return int
      * @author tangyi
      * @date 2019-07-16 13:10
      */
     @Override
-    public int deleteAllSubject(SubjectDto subjectDto) {
+    public int deleteAllSubject(Long[] ids) {
         return 0;
     }
 
@@ -156,13 +159,13 @@ public class SubjectJudgementService extends CrudService<SubjectJudgementMapper,
     /**
      * 批量物理删除
      *
-     * @param subjectDto subjectDto
+     * @param ids ids
      * @return int
      * @author tangyi
      * @date 2019-07-16 13:11
      */
     @Override
-    public int physicalDeleteAllSubject(SubjectDto subjectDto) {
+    public int physicalDeleteAllSubject(Long[] ids) {
         return 0;
     }
 }

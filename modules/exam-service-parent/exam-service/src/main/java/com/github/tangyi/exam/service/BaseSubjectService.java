@@ -21,17 +21,19 @@ public interface BaseSubjectService {
      * @author tangyi
      * @date 2019/06/16 17:35
      */
-    SubjectDto getSubject(String id);
+    SubjectDto getSubject(Long id);
 
     /**
-     * 根据题目序号查找
+     * 根据ID查询上一题、下一题
      *
-     * @param serialNumber serialNumber
+     * @param examinationId examinationId
+     * @param previousId    previousId
+     * @param nextType      0：下一题，1：上一题
      * @return SubjectDto
      * @author tangyi
-     * @date 2019/06/16 17:46
+     * @date 2019-09-14 16:33
      */
-    SubjectDto getSubjectBySerialNumber(Integer serialNumber);
+    SubjectDto getNextByCurrentIdAndType(Long examinationId, Long previousId, Integer nextType);
 
     /**
      * 查询题目列表
@@ -57,12 +59,12 @@ public interface BaseSubjectService {
     /**
      * 根据ID批量查询
      *
-     * @param subjectDto subjectDto
+     * @param ids ids
      * @return List
      * @author tangyi
      * @date 2019/06/16 18:10
      */
-    List<SubjectDto> findSubjectListById(SubjectDto subjectDto);
+    List<SubjectDto> findSubjectListById(Long[] ids);
 
     /**
      * 保存
@@ -97,12 +99,12 @@ public interface BaseSubjectService {
     /**
      * 批量删除
      *
-     * @param subjectDto subjectDto
+     * @param ids ids
      * @return int
      * @author tangyi
      * @date 2019/06/16 17:49
      */
-    int deleteAllSubject(SubjectDto subjectDto);
+    int deleteAllSubject(Long[] ids);
 
     /**
      * 物理删除
@@ -117,10 +119,10 @@ public interface BaseSubjectService {
     /**
      * 物理批量删除
      *
-     * @param subjectDto subjectDto
+     * @param ids ids
      * @return int
      * @author tangyi
      * @date 2019/06/16 22:49
      */
-    int physicalDeleteAllSubject(SubjectDto subjectDto);
+    int physicalDeleteAllSubject(Long[] ids);
 }

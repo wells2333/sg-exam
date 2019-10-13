@@ -1,7 +1,7 @@
 package com.github.tangyi.gateway.mapper;
 
-import com.github.tangyi.gateway.module.Route;
 import com.github.tangyi.common.core.persistence.CrudMapper;
+import com.github.tangyi.gateway.module.Route;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

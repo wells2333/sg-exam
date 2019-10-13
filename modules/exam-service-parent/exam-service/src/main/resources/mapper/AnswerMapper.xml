@@ -10,6 +10,8 @@
         <result column="answer_type" property="answerType"/>
         <result column="score" property="score"/>
         <result column="mark_status" property="markStatus"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
         <result column="creator" property="creator"/>
         <result column="create_date" property="createDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="modifier" property="modifier"/>
@@ -28,6 +30,8 @@
         a.answer_type,
         a.score,
         a.mark_status,
+        a.start_time,
+        a.end_time,
         a.creator,
         a.create_date,
         a.modifier,
@@ -92,6 +96,8 @@
             answer_type,
             score,
             mark_status,
+            start_time,
+            end_time,
             creator,
             create_date,
             modifier,
@@ -108,6 +114,8 @@
             #{answerType},
             #{score},
             #{markStatus},
+            #{startTime},
+            #{endTime},
             #{creator},
             #{createDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
             #{modifier},
@@ -140,6 +148,12 @@
         </if>
         <if test="markStatus != null">
             mark_status = #{markStatus},
+        </if>
+        <if test="startTime != null">
+            start_time = #{startTime},
+        </if>
+        <if test="endTime != null">
+            end_time = #{endTime},
         </if>
         <if test="delFlag != null">
             del_flag = #{delFlag},
