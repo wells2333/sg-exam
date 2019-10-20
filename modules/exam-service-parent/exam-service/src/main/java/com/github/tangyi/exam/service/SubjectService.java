@@ -2,6 +2,7 @@ package com.github.tangyi.exam.service;
 
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.exceptions.CommonException;
+import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.exam.api.constants.ExamSubjectConstant;
 import com.github.tangyi.exam.api.dto.SubjectDto;
@@ -13,6 +14,7 @@ import com.github.tangyi.exam.utils.SubjectUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -142,7 +144,22 @@ public class SubjectService {
      * @date 2019/06/16 18:12
      */
     public PageInfo<SubjectDto> findPage(PageInfo pageInfo, SubjectDto subjectDto) {
-        return subjectService(subjectDto.getType()).findSubjectPage(pageInfo, subjectDto);
+        ExaminationSubject examinationSubject = new ExaminationSubject();
+        examinationSubject.setCategoryId(subjectDto.getCategoryId());
+        examinationSubject.setExaminationId(subjectDto.getExaminationId());
+        PageInfo<ExaminationSubject> examinationSubjectPageInfo = examinationSubjectService.findPage(pageInfo, examinationSubject);
+        List<SubjectDto> subjectDtos = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(examinationSubjectPageInfo.getList())) {
+            examinationSubjectPageInfo.getList().forEach(tempExaminationSubject -> {
+                SubjectDto tempSubjectDto = subjectService(tempExaminationSubject.getType()).getSubject(tempExaminationSubject.getSubjectId());
+                if (tempSubjectDto != null)
+                    subjectDtos.add(tempSubjectDto);
+            });
+        }
+        PageInfo<SubjectDto> subjectDtoPageInfo = new PageInfo<>();
+        PageUtil.copyProperties(examinationSubjectPageInfo, subjectDtoPageInfo);
+        subjectDtoPageInfo.setList(subjectDtos);
+        return subjectDtoPageInfo;
     }
 
     /**
@@ -173,6 +190,7 @@ public class SubjectService {
         examinationSubject.setCommonValue(subjectDto.getCreator(), subjectDto.getApplicationCode(),
                 subjectDto.getTenantCode());
         examinationSubject.setExaminationId(subjectDto.getExaminationId());
+        examinationSubject.setCategoryId(subjectDto.getCategoryId());
         examinationSubject.setSubjectId(subjectDto.getId());
         examinationSubject.setType(subjectDto.getType());
         examinationSubjectService.insert(examinationSubject);
@@ -246,15 +264,29 @@ public class SubjectService {
     /**
      * 物理批量删除
      *
-     * @param type type
      * @param ids  ids
      * @return int
      * @author tangyi
      * @date 2019/06/16 22:52
      */
     @Transactional
-    public int physicalDeleteAll(Integer type, Long[] ids) {
-        return subjectService(type).physicalDeleteAllSubject(ids);
+    public int physicalDeleteAll(Long[] ids) {
+        if (ArrayUtils.isNotEmpty(ids)) {
+            ExaminationSubject examinationSubject = new ExaminationSubject();
+            SubjectDto subjectDto = new SubjectDto();
+            for (Long id : ids) {
+                examinationSubject.setSubjectId(id);
+                List<ExaminationSubject> examinationSubjects = examinationSubjectService.findListBySubjectId(examinationSubject);
+                if (CollectionUtils.isNotEmpty(examinationSubjects)) {
+                    examinationSubjects.forEach(tempExaminationSubject -> {
+                        subjectDto.setId(tempExaminationSubject.getSubjectId());
+                        subjectService(tempExaminationSubject.getType()).physicalDeleteSubject(subjectDto);
+                        examinationSubjectService.delete(tempExaminationSubject);
+                    });
+                }
+            }
+        }
+        return 1;
     }
 
     /**

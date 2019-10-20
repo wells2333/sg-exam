@@ -160,7 +160,7 @@
     <!-- 物理删除 -->
     <delete id="physicalDeleteAll">
         DELETE FROM exam_subject_choices WHERE id in
-        <foreach item="item" index="index" collection="array" open="("
+        <foreach item="item" index="index" collection="ids" open="("
                  separator="," close=")">#{item}
         </foreach>
     </delete>

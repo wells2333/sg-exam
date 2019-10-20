@@ -4,6 +4,7 @@
     <resultMap id="examinationSubjectResultMap" type="com.github.tangyi.exam.api.module.ExaminationSubject">
         <id column="id" property="id"/>
         <result column="examination_id" property="examinationId"/>
+        <result column="category_id" property="categoryId"/>
         <result column="subject_id" property="subjectId"/>
         <result column="type" property="type"/>
         <result column="application_code" property="applicationCode"/>
@@ -13,6 +14,7 @@
     <sql id="examinationSubjectColumns">
         a.id,
         a.examination_id,
+        a.category_id,
         a.subject_id,
         a.type,
         a.application_code,
@@ -21,14 +23,22 @@
 
     <!-- where 条件 -->
     <sql id="whereColumnList">
+        <if test="examinationId != null and examinationId != ''">
+            and a.examination_id = #{examinationId}
+        </if>
         <if test="subjectId != null and subjectId != ''">
             and a.subject_id = #{subjectId}
         </if>
+        <choose>
+            <when test="categoryId == -1">
+                and a.category_id != ''
+            </when>
+            <when test="categoryId != '' and categoryId != null">
+                and a.category_id = #{categoryId}
+            </when>
+        </choose>
         <if test="type != null and type != ''">
             and a.type = #{type}
-        </if>
-        <if test="tenantCode != null and tenantCode != ''">
-            and a.tenant_code = #{tenantCode}
         </if>
     </sql>
 
@@ -51,7 +61,7 @@
     <select id="findList" resultMap="examinationSubjectResultMap">
         SELECT
         <include refid="examinationSubjectColumns"/>
-        FROM exam_examination_subject a WHERE a.examination_id = #{examinationId}
+        FROM exam_examination_subject a WHERE 1=1
         <include refid="whereColumnList"/>
         ORDER BY a.subject_id ASC
     </select>
@@ -91,6 +101,7 @@
         insert into exam_examination_subject (
             id,
             examination_id,
+            category_id,
             subject_id,
             type,
             application_code,
@@ -98,6 +109,7 @@
         ) values (
             #{id},
             #{examinationId},
+            #{categoryId},
             #{subjectId},
             #{type},
             #{applicationCode},
@@ -109,6 +121,9 @@
         UPDATE exam_examination_subject SET
         <if test="examinationId != null">
             examination_id = #{examinationId},
+        </if>
+        <if test="categoryId != null">
+            category_id = #{categoryId},
         </if>
         <if test="subjectId != null">
             subject_id = #{subjectId},
@@ -132,7 +147,7 @@
     <!-- 物理删除 -->
     <delete id="deleteAll">
         DELETE FROM exam_examination_subject WHERE id in
-        <foreach item="item" index="index" collection="array" open="("
+        <foreach item="item" index="index" collection="ids" open="("
                  separator="," close=")">#{item}
         </foreach>
     </delete>

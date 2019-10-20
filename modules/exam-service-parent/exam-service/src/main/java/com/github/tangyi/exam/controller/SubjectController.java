@@ -94,8 +94,6 @@ public class SubjectController extends BaseController {
             @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
             SubjectDto subject) {
         subject.setTenantCode(SysUtil.getTenantCode());
-        if (CommonConstant.ROOT.equals(subject.getCategoryId()))
-            subject.setCategoryId(null);
         return subjectService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), subject);
     }
 
@@ -255,7 +253,6 @@ public class SubjectController extends BaseController {
      * 批量删除
      *
      * @param ids  ids
-     * @param type type
      * @return ResponseBean
      * @author tangyi
      * @date 2018/12/04 9:55
@@ -263,13 +260,10 @@ public class SubjectController extends BaseController {
     @PostMapping("deleteAll")
     @PreAuthorize("hasAuthority('exam:exam:subject:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "批量删除题目", notes = "根据题目id批量删除题目")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "题目ID", dataType = "Long"),
-            @ApiImplicitParam(name = "type", value = "题目类型", dataType = "Integer", example = "3")
-    })
+    @ApiImplicitParam(name = "ids", value = "题目ID", dataType = "Long")
     @Log("批量删除题目")
-    public ResponseBean<Boolean> deleteSubjects(@RequestBody Long[] ids, @RequestParam Integer type) {
-        return new ResponseBean<>(subjectService.physicalDeleteAll(type, ids) > 0);
+    public ResponseBean<Boolean> deleteSubjects(@RequestBody Long[] ids) {
+        return new ResponseBean<>(subjectService.physicalDeleteAll(ids) > 0);
     }
 
     /**

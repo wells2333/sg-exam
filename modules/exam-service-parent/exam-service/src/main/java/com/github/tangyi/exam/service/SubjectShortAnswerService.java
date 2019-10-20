@@ -169,6 +169,7 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
     public int insertSubject(SubjectDto subjectDto) {
         SubjectShortAnswer subjectShortAnswer = new SubjectShortAnswer();
         BeanUtils.copyProperties(subjectDto, subjectShortAnswer);
+        subjectShortAnswer.setAnswer(subjectDto.getAnswer().getAnswer());
         return this.insert(subjectShortAnswer);
     }
 

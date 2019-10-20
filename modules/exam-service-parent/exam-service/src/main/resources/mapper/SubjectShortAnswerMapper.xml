@@ -140,7 +140,7 @@
 
     <delete id="deleteAll">
         UPDATE exam_subject_short_answer SET del_flag = 1 WHERE id in
-        <foreach item="item" index="index" collection="array" open="("
+        <foreach item="item" index="index" collection="ids" open="("
                  separator="," close=")">#{item}
         </foreach>
     </delete>
@@ -153,7 +153,7 @@
     <!-- 物理删除 -->
     <delete id="physicalDeleteAll">
         DELETE FROM exam_subject_short_answer WHERE id in
-        <foreach item="item" index="index" collection="array" open="("
+        <foreach item="item" index="index" collection="ids" open="("
                  separator="," close=")">#{item}
         </foreach>
     </delete>
