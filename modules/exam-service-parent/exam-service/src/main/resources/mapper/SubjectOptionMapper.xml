@@ -155,7 +155,7 @@
 
     <delete id="deleteAll">
         UPDATE exam_subject_option SET del_flag = 1 WHERE id in
-        <foreach item="item" index="index" collection="array" open="("
+        <foreach item="item" index="index" collection="ids" open="("
                  separator="," close=")">#{item}
         </foreach>
     </delete>
@@ -163,7 +163,7 @@
     <!-- 物理批量删除 -->
     <delete id="physicalDeleteAll">
         DELETE FROM exam_subject_option WHERE id in
-        <foreach item="item" index="index" collection="array" open="("
+        <foreach item="item" index="index" collection="ids" open="("
                  separator="," close=")">#{item}
         </foreach>
     </delete>

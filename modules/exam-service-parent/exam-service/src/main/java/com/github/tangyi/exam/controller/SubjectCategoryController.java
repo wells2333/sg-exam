@@ -8,6 +8,7 @@ import com.github.tangyi.common.core.utils.TreeUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.constant.SecurityConstant;
+import com.github.tangyi.exam.api.constants.ExamSubjectConstant;
 import com.github.tangyi.exam.api.dto.SubjectCategoryDto;
 import com.github.tangyi.exam.api.module.SubjectCategory;
 import com.github.tangyi.exam.service.SubjectCategoryService;
@@ -94,6 +95,7 @@ public class SubjectCategoryController extends BaseController {
     @Log("新增题目分类")
     public ResponseBean<Boolean> addSubjectCategory(@RequestBody @Valid SubjectCategory subjectCategory) {
         subjectCategory.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        subjectCategory.setType(ExamSubjectConstant.PUBLIC_CATEGORY);
         return new ResponseBean<>(categoryService.insert(subjectCategory) > 0);
     }
 

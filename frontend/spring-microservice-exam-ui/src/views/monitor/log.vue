@@ -281,16 +281,16 @@ export default {
     },
     handleDeletes () {
       if (checkMultipleSelect(this.multipleSelection, this)) {
-        let ids = ''
+        let ids = []
         for (let i = 0; i < this.multipleSelection.length; i++) {
-          ids += this.multipleSelection[i].id + ','
+          ids.push(this.multipleSelection[i].id)
         }
         this.$confirm('确定要删除吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          delAllObj({ idString: ids }).then(() => {
+          delAllObj(ids).then(() => {
             this.dialogFormVisible = false
             this.getList()
             this.$notify({

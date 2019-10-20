@@ -70,7 +70,6 @@ public class SysUtil {
             tenantCode = getCurrentUserTenantCode();
         if (StringUtils.isBlank(tenantCode))
             tenantCode = SecurityConstant.DEFAULT_TENANT_CODE;
-        log.debug("租户code：{}", tenantCode);
         return tenantCode;
     }
 
