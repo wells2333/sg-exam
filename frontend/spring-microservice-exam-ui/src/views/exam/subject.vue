@@ -35,9 +35,6 @@
           </div>
           <div class="filter-container">
             <el-input v-model="listQuery.subjectName" placeholder="题目名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
-            <el-select v-model="listQuery.type" :placeholder="$t('table.type')" style="width: 140px" class="filter-item" @change="handleFilter">
-              <el-option v-for="item in tempSubjectTypeList" :key="item.type" :label="item.name" :value="item.type"/>
-            </el-select>
             <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.search') }}</el-button>
             <el-button v-if="subject_bank_btn_add" class="filter-item" style="margin-left: 10px;" icon="el-icon-check" plain @click="handleCreateSubject">{{ $t('table.add') }}</el-button>
             <el-button v-if="subject_bank_btn_del" class="filter-item" icon="el-icon-delete" plain @click="handleDeletesSubject">{{ $t('table.del') }}</el-button>
@@ -56,11 +53,6 @@
             <el-table-column :label="$t('table.subjectName')" min-width="120">
               <template slot-scope="scope">
                 <span>{{ scope.row.subjectName | subjectNameFilter }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column :label="$t('table.subject.category')" min-width="60">
-              <template slot-scope="scope">
-                <span>{{ scope.row.categoryName}}</span>
               </template>
             </el-table-column>
             <el-table-column :label="$t('table.subject.type')" width="120">
@@ -231,8 +223,7 @@ export default {
         subjectName: undefined,
         categoryId: -1,
         sort: 'id',
-        order: 'ascending',
-        type: 0
+        order: 'ascending'
       },
       treeData: [],
       oExpandedKey: {
@@ -283,11 +274,6 @@ export default {
         analysis: '',
         level: 2
       },
-      tempSubjectTypeList: [
-        { name: '单选题', type: 0 },
-        { name: '简答题', type: 1 },
-        { name: '多选题', type: 3 }
-      ],
       // 选择题类型
       tempChoiceType: [
         { type: 0, name: '单选题' },
@@ -567,40 +553,9 @@ export default {
       }
     },
     resetTempSubject (serialNumber, score) {
-      // 新增上一次增加的题型
-      const type = this.tempSubject.type
-      this.tempSubject = {
-        id: '',
-        serialNumber: 1,
-        examinationId: '',
-        categoryId: 0,
-        subjectName: '',
-        type: type,
-        choicesType: 0,
-        options: [
-          { subjectChoicesId: '', optionName: 'A', optionContent: '' },
-          { subjectChoicesId: '', optionName: 'B', optionContent: '' },
-          { subjectChoicesId: '', optionName: 'C', optionContent: '' },
-          { subjectChoicesId: '', optionName: 'D', optionContent: '' }
-        ],
-        answer: {
-          subjectId: '',
-          answer: '',
-          answerType: '',
-          score: ''
-        },
-        score: 5,
-        analysis: '',
-        level: 2
-      }
-      // 默认序号
-      if (isNotEmpty(serialNumber)) {
-        this.tempSubject.serialNumber = serialNumber
-      }
-
-      // 默认分数
-      if (isNotEmpty(score)) {
-        this.tempSubject.score = score
+      const ref = this.getSubjectRef()
+      if (isNotEmpty(ref)) {
+        ref.resetTempSubject(serialNumber, score)
       }
     },
     // 加载题目
@@ -640,6 +595,7 @@ export default {
         const subjectInfo = response.data.data
         this.subjectFormStatus = 'update'
         this.dialogSubjectFormVisible = true
+        this.tempSubject = subjectInfo
         // 切换到对应的题型选项卡
         this.updateCurrentTag(subjectInfo.type)
         setTimeout(() => {
@@ -670,81 +626,73 @@ export default {
     },
     // 保存题目
     createSubjectData () {
-      this.$refs['dataSubjectForm'].validate((valid) => {
-        if (valid) {
-          // 绑定分类ID
-          this.tempSubject.categoryId = this.currentCategoryId
-          addSubject(this.tempSubject).then(() => {
-            this.dialogSubjectFormVisible = false
-            this.handleSubjectManagement()
-            notifySuccess(this, '创建成功')
-          })
-        }
-      })
+      const ref = this.getSubjectRef()
+      if (ref.validate()) {
+        let subjectInfo = ref.getSubjectInfo()
+        subjectInfo.categoryId = this.currentCategoryId
+        addSubject(subjectInfo).then(() => {
+          this.dialogSubjectFormVisible = false
+          this.handleSubjectManagement()
+          notifySuccess(this, '创建成功')
+        })
+      }
     },
     // 更新题目
     updateSubjectData () {
-      this.$refs['dataSubjectForm'].validate((valid) => {
-        if (valid) {
-          const tempData = Object.assign({}, this.tempSubject)
-          putSubject(tempData).then(() => {
-            this.dialogSubjectFormVisible = false
+      const ref = this.getSubjectRef()
+      if (ref.validate()) {
+        const subjectInfo = ref.getSubjectInfo()
+        putSubject(subjectInfo).then(() => {
+          this.dialogSubjectFormVisible = false
+          this.handleSubjectManagement()
+          notifySuccess(this, '更新成功')
+        })
+      }
+    },
+    // 更新并添加题目
+    updateAndAddSubjectData () {
+      const ref = this.getSubjectRef()
+      if (ref.validate()) {
+        const subjectInfo = ref.getSubjectInfo()
+        if (isNotEmpty(this.currentCategoryId)) {
+          subjectInfo.categoryId = this.currentCategoryId
+        }
+        // 创建
+        if (this.subjectFormStatus === 'create') {
+          addSubject(subjectInfo).then(() => {
+            this.resetTempSubject(parseInt(subjectInfo.serialNumber) + 1, subjectInfo.score)
+            this.subjectFormStatus = 'create'
+            ref.clearValidate()
+            this.handleSubjectManagement()
+            notifySuccess(this, '创建成功')
+          })
+        } else {
+          // 更新
+          putSubject(subjectInfo).then(() => {
+            this.resetTempSubject(parseInt(subjectInfo.serialNumber) + 1, subjectInfo.score)
+            this.subjectFormStatus = 'create'
+            // 绑定分类ID
+            this.tempSubject.categoryId = this.currentCategoryId
+            ref.clearValidate()
             this.handleSubjectManagement()
             notifySuccess(this, '更新成功')
           })
         }
-      })
-    },
-    // 更新并添加题目
-    updateAndAddSubjectData () {
-      this.$refs['dataSubjectForm'].validate((valid) => {
-        if (valid) {
-          if (isNotEmpty(this.currentCategoryId)) {
-            // 绑定分类ID
-            this.tempSubject.categoryId = this.currentCategoryId
-          }
-          const tempData = Object.assign({}, this.tempSubject)
-          // 创建
-          if (this.subjectFormStatus === 'create') {
-            addSubject(tempData).then(() => {
-              this.resetTempSubject(parseInt(tempData.serialNumber) + 1, tempData.score)
-              this.subjectFormStatus = 'create'
-              this.$nextTick(() => {
-                this.$refs['dataSubjectForm'].clearValidate()
-              })
-              this.handleSubjectManagement()
-              notifySuccess(this, '创建成功')
-            })
-          } else {
-            // 更新
-            putSubject(tempData).then(() => {
-              this.resetTempSubject(parseInt(tempData.serialNumber) + 1, tempData.score)
-              this.subjectFormStatus = 'create'
-              // 绑定分类ID
-              this.tempSubject.categoryId = this.currentCategoryId
-              this.$nextTick(() => {
-                this.$refs['dataSubjectForm'].clearValidate()
-              })
-              this.handleSubjectManagement()
-              notifySuccess(this, '更新成功')
-            })
-          }
-        }
-      })
+      }
     },
     // 批量删除
     handleDeletesSubject () {
       if (checkMultipleSelect(this.multipleSubjectSelection, this)) {
-        let ids = ''
+        let ids = []
         for (let i = 0; i < this.multipleSubjectSelection.length; i++) {
-          ids += this.multipleSubjectSelection[i].id + ','
+          ids.push(this.multipleSubjectSelection[i].id)
         }
         this.$confirm('确定要删除吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          delAllSubject({ idString: ids, type: this.listQuery.type }).then(() => {
+          delAllSubject(ids).then(() => {
             this.handleSubjectManagement()
             notifySuccess(this, '删除成功')
           })
@@ -780,11 +728,11 @@ export default {
           cancelButtonText: '取消',
           type: 'success'
         }).then(() => {
-          let ids = ''
-          for (let i = 0; i < this.multipleSubjectSelection.length; i++) {
-            ids += this.multipleSubjectSelection[i].id + ','
+          let ids = []
+          for (let i = 0; i < this.multipleSelection.length; i++) {
+            ids.push(this.multipleSelection[i].id)
           }
-          exportSubject({ idString: ids, categoryId: '' }).then(response => {
+          exportSubject({ ids: ids, categoryId: '' }).then(response => {
             // 导出Excel
             exportExcel(response)
           })
@@ -876,10 +824,5 @@ export default {
     margin: 5px;
     padding: 6px 13px;
   }
-  .subject-info {
-    padding-right: 12px;
-  }
-  .subject-tinymce {
-    padding-left: 12px;
-  }
+
 </style>

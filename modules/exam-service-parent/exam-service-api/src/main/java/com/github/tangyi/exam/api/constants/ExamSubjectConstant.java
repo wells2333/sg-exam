@@ -20,4 +20,9 @@ public class ExamSubjectConstant {
 	 * 简答题
 	 */
 	public static final Integer SUBJECT_TYPE_QAS = 1;
+
+	/**
+	 * 公共分类
+	 */
+	public static final Integer PUBLIC_CATEGORY = 0;
 }

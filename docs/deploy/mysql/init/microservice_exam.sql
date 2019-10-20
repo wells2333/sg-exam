@@ -20,7 +20,7 @@ CREATE TABLE `exam_answer`  (
   `creator` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '创建人',
   `create_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   `modifier` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改人',
-  `modify_date` timestamp(0) NULL DEFAULT NULL COMMENT '修改时间',
+  `modify_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
   `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标记 0:正常;1:删除',
   `application_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '系统编号',
   `tenant_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
@@ -41,7 +41,7 @@ CREATE TABLE `exam_course`  (
   `creator` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '创建人',
   `create_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   `modifier` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改人',
-  `modify_date` timestamp(0) NULL DEFAULT NULL COMMENT '修改时间',
+  `modify_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
   `del_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除标记 0:正常;1:删除',
   `application_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '系统编号',
   `tenant_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '租户编号',
@@ -73,9 +73,9 @@ CREATE TABLE `exam_examination`  (
   `course_id` bigint(20) NULL DEFAULT NULL COMMENT '课程',
   `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
   `creator` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '创建人',
-  `create_date` timestamp(0) NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+  `create_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `modifier` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改人',
-  `modify_date` timestamp(0) NULL DEFAULT NULL COMMENT '修改时间',
+  `modify_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
   `del_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除标记 0:正常;1:删除',
   `application_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '系统编号',
   `tenant_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '租户编号',
@@ -107,7 +107,7 @@ CREATE TABLE `exam_examination_record`  (
   `creator` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '创建人',
   `create_date` timestamp(0) NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
   `modifier` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改人',
-  `modify_date` timestamp(0) NULL DEFAULT NULL COMMENT '修改时间',
+  `modify_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
   `del_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除标记 0:正常;1:删除',
   `application_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '系统编号',
   `tenant_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '租户编号',
@@ -120,7 +120,8 @@ CREATE TABLE `exam_examination_record`  (
 DROP TABLE IF EXISTS `exam_examination_subject`;
 CREATE TABLE `exam_examination_subject`  (
   `id` bigint(20) NOT NULL COMMENT '主键',
-  `examination_id` bigint(20) NOT NULL COMMENT '考试ID',
+  `examination_id` bigint(20) NULL DEFAULT NULL COMMENT '考试ID',
+  `category_id` bigint(20) NULL DEFAULT NULL COMMENT '分类',
   `subject_id` bigint(20) NOT NULL COMMENT '题目ID',
   `type` tinyint(4) NOT NULL DEFAULT 0 COMMENT '类型 0-选择题，1-简答题',
   `application_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '系统编号',
@@ -131,35 +132,36 @@ CREATE TABLE `exam_examination_subject`  (
 -- ----------------------------
 -- Records of exam_examination_subject
 -- ----------------------------
-INSERT INTO `exam_examination_subject` VALUES (590970743886581760, 590969316204220416, 590970743878193152, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (590970887440830464, 590969316204220416, 590970887432441856, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (590971026888855552, 590969316204220416, 590971026880466944, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (590971151145111552, 590969316204220416, 590971151128334336, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (590971273547485184, 590969316204220416, 590971273539096576, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (590971402648162304, 590969316204220416, 590971402639773696, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (590971508113936384, 590969316204220416, 590971508109742080, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (590971613944614913, 590969316204220416, 590971613944614912, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (590971750154637312, 590969316204220416, 590971750146248704, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (590971860049596416, 590969316204220416, 590971860041207808, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (590972141151850496, 590969514372501504, 590972141118296064, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (590972250216337408, 590969514372501504, 590972250212143104, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (590972363114418176, 590969514372501504, 590972363110223872, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (590972473890181120, 590969514372501504, 590972473877598208, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (590972590185648128, 590969514372501504, 590972590177259520, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (590972723384160257, 590969514372501504, 590972723384160256, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (590972834742931456, 590969514372501504, 590972834734542848, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (590972929701974016, 590969514372501504, 590972929693585408, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (590973027999682560, 590969514372501504, 590973027995488256, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (590973115165708288, 590969514372501504, 590973115157319680, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (590973253548380160, 590969514372501504, 590973253544185856, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (590973360670904320, 590969514372501504, 590973360662515712, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (630856319682875392, 625826218704506880, 630856319242473472, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (630856451711176704, 625826218704506880, 630856451555987456, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (630856496523120640, 625826218704506880, 630856496279851008, 3, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (630856557130813440, 625826218704506880, 630856556883349504, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (630880822823620608, 630880779513237504, 630880822542602240, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (630880853144244224, 630880779513237504, 630880852892585984, 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination_subject` VALUES (630880881971695616, 630880779513237504, 630880881720037376, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (590970743886581760, 590969316204220416, NULL, 590970743878193152, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (590970887440830464, 590969316204220416, NULL, 590970887432441856, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (590971026888855552, 590969316204220416, NULL, 590971026880466944, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (590971151145111552, 590969316204220416, NULL, 590971151128334336, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (590971273547485184, 590969316204220416, NULL, 590971273539096576, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (590971402648162304, 590969316204220416, NULL, 590971402639773696, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (590971508113936384, 590969316204220416, NULL, 590971508109742080, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (590971613944614913, 590969316204220416, NULL, 590971613944614912, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (590971750154637312, 590969316204220416, NULL, 590971750146248704, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (590971860049596416, 590969316204220416, NULL, 590971860041207808, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (590972141151850496, 590969514372501504, NULL, 590972141118296064, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (590972250216337408, 590969514372501504, NULL, 590972250212143104, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (590972363114418176, 590969514372501504, NULL, 590972363110223872, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (590972473890181120, 590969514372501504, NULL, 590972473877598208, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (590972590185648128, 590969514372501504, NULL, 590972590177259520, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (590972723384160257, 590969514372501504, NULL, 590972723384160256, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (590972834742931456, 590969514372501504, NULL, 590972834734542848, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (590972929701974016, 590969514372501504, NULL, 590972929693585408, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (590973027999682560, 590969514372501504, NULL, 590973027995488256, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (590973115165708288, 590969514372501504, NULL, 590973115157319680, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (590973253548380160, 590969514372501504, NULL, 590973253544185856, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (590973360670904320, 590969514372501504, NULL, 590973360662515712, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (630856319682875392, 625826218704506880, NULL, 630856319242473472, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (630856451711176704, 625826218704506880, NULL, 630856451555987456, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (630856496523120640, 625826218704506880, NULL, 630856496279851008, 3, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (630856557130813440, 625826218704506880, NULL, 630856556883349504, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (630880822823620608, 630880779513237504, NULL, 630880822542602240, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (630880853144244224, 630880779513237504, NULL, 630880852892585984, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (630880881971695616, 630880779513237504, NULL, 630880881720037376, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (635557908003819520, NULL, 635555845517742080, 635557907726995456, 1, 'EXAM', 'gitee');
 
 -- ----------------------------
 -- Table structure for exam_knowledge
@@ -174,7 +176,7 @@ CREATE TABLE `exam_knowledge`  (
   `creator` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '创建人',
   `create_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   `modifier` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改人',
-  `modify_date` timestamp(0) NULL DEFAULT NULL COMMENT '修改时间',
+  `modify_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
   `del_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除标记 0:正常;1:删除',
   `application_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '系统编号',
   `tenant_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '租户编号',
@@ -197,7 +199,7 @@ CREATE TABLE `exam_pictures`  (
   `creator` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '创建人',
   `create_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   `modifier` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改人',
-  `modify_date` timestamp(0) NULL DEFAULT NULL COMMENT '修改时间',
+  `modify_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
   `del_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除标记 0:正常;1:删除',
   `application_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '系统编号',
   `tenant_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '租户编号',
@@ -218,7 +220,7 @@ CREATE TABLE `exam_subject_category`  (
   `creator` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '创建人',
   `create_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   `modifier` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '修改人',
-  `modify_date` timestamp(0) NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修改时间',
+  `modify_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
   `del_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除标记 0:正常;1:删除',
   `application_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '系统编号',
   `tenant_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '租户编号',
@@ -235,6 +237,8 @@ INSERT INTO `exam_subject_category` VALUES (590976142211682304, '数据结构', 
 INSERT INTO `exam_subject_category` VALUES (590976191398285312, '地理', NULL, -1, 31, 0, 'admin', '2019-09-21 16:20:27', 'admin', '2019-06-19 18:48:23', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_category` VALUES (590976335996915712, '计算机基础', NULL, 590975991732637696, 34, 0, 'admin', '2019-09-21 16:20:28', 'admin', '2019-06-19 18:48:58', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_category` VALUES (602231546270846976, '多选测试', NULL, -1, 30, 0, 'admin', '2019-09-21 16:20:29', 'admin', '2019-07-20 20:13:10', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_category` VALUES (634501836186980352, '测试', NULL, -1, 30, 0, 'admin', '2019-10-17 21:32:29', 'admin', '2019-10-17 21:23:46', 1, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_category` VALUES (635555845517742080, '测试', '测试', -1, 30, 0, 'admin', '2019-10-20 20:25:33', 'admin', '2019-10-20 19:12:02', 1, 'EXAM', 'gitee');
 
 -- ----------------------------
 -- Table structure for exam_subject_choices
@@ -252,7 +256,7 @@ CREATE TABLE `exam_subject_choices`  (
   `creator` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '创建人',
   `create_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   `modifier` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '修改人',
-  `modify_date` timestamp(0) NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修改时间',
+  `modify_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
   `del_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除标记 0:正常;1:删除',
   `application_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '系统编号',
   `tenant_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
@@ -272,7 +276,7 @@ INSERT INTO `exam_subject_choices` VALUES (590971508109742080, 0, '电子计算�
 INSERT INTO `exam_subject_choices` VALUES (590971613944614912, 0, '将计算机分为通用计算机、专用计算机两类的分类标准是_', 0, 'B', 5, '无', 2, 'admin', '2019-06-19 18:30:12', 'admin', '2019-06-19 18:30:12', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_choices` VALUES (590971750146248704, 0, '既可以接收、处理和输出模拟量，也可以接收、处理和输出数字量的计算机是_', 0, 'C', 5, '无', 2, 'admin', '2019-06-19 18:30:44', 'admin', '2019-06-19 18:30:44', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_choices` VALUES (590971860041207808, 0, '至今日，计算机仍采用存储程序原理，原理的提出者是_', 0, 'C', 5, '无', 2, 'admin', '2019-06-19 18:31:11', 'admin', '2019-06-19 18:31:11', 0, 'EXAM', 'gitee');
-INSERT INTO `exam_subject_choices` VALUES (590972141118296064, 0, '《小雅·鹿鸣》本是西周贵族宣扬宴飨之仪的乐歌，后扩散到民间，在乡人宴会上也可传唱。这表明西周时期', 0, 'B', 5, '无', 2, 'admin', '2019-09-23 22:30:04', 'admin', '2019-09-23 22:21:54', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_choices` VALUES (590972141118296064, 0, '《小雅·鹿鸣》本是西周贵族宣扬宴飨之仪的乐歌，后扩散到民间，在乡人宴会上也可传唱。这表明西周时期', 0, 'B', 5, '无', 2, 'admin', '2019-10-20 20:06:09', 'admin', '2019-10-20 19:57:27', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_choices` VALUES (590972250212143104, 0, '公元前 212 年，秦始皇坑杀“术士”，长子扶苏劝谏说：“远方黔首未集，诸生皆诵法孔子，今上皆重法绳之，臣恐天下不安，唯上察之”。这反映当时', 0, 'D', 5, '', 2, 'admin', '2019-06-19 18:32:44', 'admin', '2019-06-19 18:32:44', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_choices` VALUES (590972363110223872, 0, '唐前期的政治人物多为北方人，北宋时政治人物多出生于江西、福建、苏南等地。这一变化主要反映了', 0, 'C', 5, '', 2, 'admin', '2019-06-19 18:33:11', 'admin', '2019-06-19 18:33:11', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_choices` VALUES (590972473877598208, 0, '李鸿章凭淮军实力日渐强盛。一次，他在游孔林时说道：“孔子不会打洋枪，今不足贵也。”李鸿章这样评价孔子，其背景最可能是', 0, 'B', 5, '', 2, 'admin', '2019-06-19 18:33:37', 'admin', '2019-06-19 18:33:37', 0, 'EXAM', 'gitee');
@@ -313,7 +317,7 @@ CREATE TABLE `exam_subject_judgement`  (
   `creator` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '创建人',
   `create_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   `modifier` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '修改人',
-  `modify_date` timestamp(0) NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修改时间',
+  `modify_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
   `del_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除标记 0:正常;1:删除',
   `application_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '系统编号',
   `tenant_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '租户编号',
@@ -332,7 +336,7 @@ CREATE TABLE `exam_subject_option`  (
   `creator` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '创建人',
   `create_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   `modifier` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '修改人',
-  `modify_date` timestamp(0) NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修改时间',
+  `modify_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
   `del_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除标记 0:正常;1:删除',
   `application_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '系统编号',
   `tenant_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '租户编号',
@@ -382,10 +386,10 @@ INSERT INTO `exam_subject_option` VALUES (590971860062179328, 590971860041207808
 INSERT INTO `exam_subject_option` VALUES (590971860062179329, 590971860041207808, 'B', '<p>比尔&middot;盖次</p>', 'admin', '2019-06-19 18:31:11', 'admin', '2019-06-19 18:31:11', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_option` VALUES (590971860062179330, 590971860041207808, 'C', '<p>冯&middot;诺依曼</p>', 'admin', '2019-06-19 18:31:11', 'admin', '2019-06-19 18:31:11', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_option` VALUES (590971860062179331, 590971860041207808, 'D', '科得', 'admin', '2019-06-19 18:31:11', 'admin', '2019-06-19 18:31:11', 0, 'EXAM', 'gitee');
-INSERT INTO `exam_subject_option` VALUES (590972141156044800, 590972141118296064, 'A', '<p>周人生活较为富足</p>', 'admin', '2019-06-19 18:32:18', 'admin', '2019-09-23 22:21:54', 0, 'EXAM', 'gitee');
-INSERT INTO `exam_subject_option` VALUES (590972141156044801, 590972141118296064, 'B', '<p>礼乐文明得到广泛认同</p>', 'admin', '2019-06-19 18:32:18', 'admin', '2019-09-23 22:21:54', 0, 'EXAM', 'gitee');
-INSERT INTO `exam_subject_option` VALUES (590972141156044802, 590972141118296064, 'C', '<p>乡人社会地位提高</p>', 'admin', '2019-06-19 18:32:18', 'admin', '2019-09-23 22:21:54', 0, 'EXAM', 'gitee');
-INSERT INTO `exam_subject_option` VALUES (590972141156044803, 590972141118296064, 'D', '<p>贵族奢靡之风波及民间</p>', 'admin', '2019-06-19 18:32:18', 'admin', '2019-09-23 22:21:54', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (590972141156044800, 590972141118296064, 'A', '<p>周人生活较为富足</p>', 'admin', '2019-06-19 18:32:18', 'admin', '2019-10-20 19:57:27', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (590972141156044801, 590972141118296064, 'B', '<p>礼乐文明得到广泛认同</p>', 'admin', '2019-06-19 18:32:18', 'admin', '2019-10-20 19:57:27', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (590972141156044802, 590972141118296064, 'C', '<p>乡人社会地位提高</p>', 'admin', '2019-06-19 18:32:18', 'admin', '2019-10-20 19:57:27', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (590972141156044803, 590972141118296064, 'D', '<p>贵族奢靡之风波及民间</p>', 'admin', '2019-06-19 18:32:18', 'admin', '2019-10-20 19:57:27', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_option` VALUES (590972250224726016, 590972250212143104, 'A', '<p>统一进程曲折</p>', 'admin', '2019-06-19 18:32:44', 'admin', '2019-06-19 18:32:44', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_option` VALUES (590972250224726017, 590972250212143104, 'B', '<p>地方治理不畅</p>', 'admin', '2019-06-19 18:32:44', 'admin', '2019-06-19 18:32:44', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_option` VALUES (590972250224726018, 590972250212143104, 'C', '<p>始皇灭儒崇法</p>', 'admin', '2019-06-19 18:32:44', 'admin', '2019-06-19 18:32:44', 0, 'EXAM', 'gitee');
@@ -502,6 +506,10 @@ INSERT INTO `exam_subject_option` VALUES (630880882231742464, 630880881720037376
 INSERT INTO `exam_subject_option` VALUES (630880882231742465, 630880881720037376, 'B', '3', 'admin', '2019-10-07 21:35:24', 'admin', '2019-10-07 21:35:24', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_option` VALUES (630880882231742466, 630880881720037376, 'C', '3', 'admin', '2019-10-07 21:35:24', 'admin', '2019-10-07 21:35:24', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_option` VALUES (630880882231742467, 630880881720037376, 'D', '3', 'admin', '2019-10-07 21:35:24', 'admin', '2019-10-07 21:35:24', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (635557908268060672, 635557907726995456, 'A', '434', 'admin', '2019-10-20 19:20:13', 'admin', '2019-10-20 19:20:13', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (635557908268060673, 635557907726995456, 'B', '43', 'admin', '2019-10-20 19:20:13', 'admin', '2019-10-20 19:20:13', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (635557908268060674, 635557907726995456, 'C', '4', 'admin', '2019-10-20 19:20:13', 'admin', '2019-10-20 19:20:13', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (635557908276449280, 635557907726995456, 'D', '3434', 'admin', '2019-10-20 19:20:13', 'admin', '2019-10-20 19:20:13', 0, 'EXAM', 'gitee');
 
 -- ----------------------------
 -- Table structure for exam_subject_short_answer
@@ -518,7 +526,7 @@ CREATE TABLE `exam_subject_short_answer`  (
   `creator` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '创建人',
   `create_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   `modifier` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '修改人',
-  `modify_date` timestamp(0) NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修改时间',
+  `modify_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
   `del_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除标记 0:正常;1:删除',
   `application_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '系统编号',
   `tenant_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '租户编号',

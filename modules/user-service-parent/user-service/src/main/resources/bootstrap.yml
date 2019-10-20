@@ -3,6 +3,8 @@
 spring:
   application:
     name: user-service
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:native}
   cloud:
     # 使用consul作为注册中心
     consul:

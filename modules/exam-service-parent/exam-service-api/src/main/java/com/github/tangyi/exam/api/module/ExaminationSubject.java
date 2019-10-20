@@ -20,6 +20,12 @@ public class ExaminationSubject extends BaseEntity<ExaminationSubject> {
     private Long examinationId;
 
     /**
+     * 分类ID
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long categoryId;
+
+    /**
      * 题目ID
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING)

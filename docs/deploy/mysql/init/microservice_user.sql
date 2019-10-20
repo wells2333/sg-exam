@@ -19,7 +19,7 @@ CREATE TABLE `sys_attachment`  (
   `creator` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '创建人',
   `create_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   `modifier` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '修改人',
-  `modify_date` timestamp(0) NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修改时间',
+  `modify_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
   `del_flag` tinyint(4) NULL DEFAULT NULL COMMENT '删除标记',
   `application_code` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '系统编号',
   `tenant_code` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户编号',
@@ -121,9 +121,9 @@ CREATE TABLE `sys_menu`  (
   `type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '类型',
   `data_level` int(11) NULL DEFAULT NULL,
   `creator` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `create_date` timestamp(0) NULL DEFAULT NULL,
+  `create_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modifier` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `modify_date` timestamp(0) NULL DEFAULT NULL,
+  `modify_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `del_flag` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `application_code` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `component` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '模块',
@@ -1183,7 +1183,7 @@ CREATE TABLE `sys_tenant`  (
   `creator` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
   `create_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
   `modifier` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '',
-  `modify_date` timestamp(0) NULL DEFAULT NULL,
+  `modify_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
   `del_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除标记',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '租户信息表' ROW_FORMAT = Compact;
@@ -1234,8 +1234,6 @@ CREATE TABLE `sys_user`  (
 INSERT INTO `sys_user` VALUES (596078038307966976, '管理员', '15521089185', '596094244884713472', '1633736729@qq.com', '2019-07-01', 0, 0, 571347099191480320, '管理员', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2019-09-08 20:57:57', 'admin', '2019-07-04 13:51:35', 0, 'EXAM', 'gitee');
 INSERT INTO `sys_user` VALUES (596307222997372928, '梁同学', '15521089185', NULL, '1633736729@qq.com', '2019-07-01', 0, 1, NULL, '梁同学', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2019-09-08 20:57:57', 'admin', '2019-07-05 21:53:17', 0, 'EXAM', 'gitee');
 INSERT INTO `sys_user` VALUES (596332387600830464, '林老师', '15521089185', NULL, '1633736729@qq.com', '2019-07-03', 0, 1, NULL, '林老师', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2019-09-21 22:33:16', 'admin', '2019-09-21 22:25:04', 0, 'EXAM', 'gitee');
-INSERT INTO `sys_user` VALUES (627482273154994176, 'test1', '15521089185', NULL, '2232@11.com', '2019-10-01', 0, 0, 596290673729212416, 'test', 596329627606192128, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2019-10-07 14:59:17', 'admin', '2019-10-07 14:50:50', 0, 'EXAM', 'gitee');
-INSERT INTO `sys_user` VALUES (630779163304923136, 'test2', '15521089185', NULL, NULL, NULL, 0, 0, NULL, '', 596329627606192128, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2019-10-08 21:55:30', 'admin', '2019-10-08 21:47:04', 0, 'EXAM', 'gitee');
 
 -- ----------------------------
 -- Table structure for sys_user_auths
@@ -1263,8 +1261,6 @@ CREATE TABLE `sys_user_auths`  (
 INSERT INTO `sys_user_auths` VALUES (596329627606192128, 596078038307966976, 1, 'admin', '$2a$10$Lp3nTbBcPPcVCRNiRuqRteAzQfyjPzFWshT4ZyeTNeKMtPjzmPDHa', 'admin', '2019-07-04 13:21:02', 'admin', '2019-07-04 13:21:02', 0, 'EXAM', 'gitee');
 INSERT INTO `sys_user_auths` VALUES (596329627648135168, 596307222997372928, 1, 'student', '$2a$10$czmVw4WF7Qt7RpwDJ4V4W.jkDKheEev63HlIsP31QnWHVOpSJz3au', 'admin', '2019-07-04 13:21:03', 'admin', '2019-07-04 13:21:03', 0, 'EXAM', 'gitee');
 INSERT INTO `sys_user_auths` VALUES (596332387693105152, 596332387600830464, 1, 'teacher', '$2a$10$rRuYK1s8xKeGdRPefO1nMuE9rMH6yjmszznXySqcfuuXM/QSssZXW', 'admin', '2019-07-04 13:32:01', 'admin', '2019-07-04 13:32:01', 0, 'EXAM', 'gitee');
-INSERT INTO `sys_user_auths` VALUES (627482274002243584, 627482273154994176, 1, 'test', '$2a$10$ekScY5JQjDByL./CUcHrjuM3HLagshRqZ.nBh6GYvYAIPzNNF0Uh2', 'admin', '2019-09-28 12:30:32', 'admin', '2019-09-28 12:30:32', 0, 'EXAM', 'gitee');
-INSERT INTO `sys_user_auths` VALUES (630779164261224448, 630779163304923136, 1, 'test2', '$2a$10$9knBg6uoDSZiZi4DYGWuMuIfojpVYH1LGEmfBArDrTGzDYouVSteG', 'admin', '2019-10-07 14:51:12', 'admin', '2019-10-07 14:51:12', 0, 'EXAM', 'gitee');
 
 -- ----------------------------
 -- Table structure for sys_user_role
@@ -1287,8 +1283,6 @@ INSERT INTO `sys_user_role` VALUES (624983494547869696, 624983493071474688, 6249
 INSERT INTO `sys_user_role` VALUES (625079311711473664, 596332387600830500, 596330074307956700);
 INSERT INTO `sys_user_role` VALUES (625079323929481216, 596078038307967000, 596117256346406900);
 INSERT INTO `sys_user_role` VALUES (627482325994835968, 627482273154994200, 596116511031169000);
-INSERT INTO `sys_user_role` VALUES (630779074050134016, 627482273154994176, 596116511031169024);
-INSERT INTO `sys_user_role` VALUES (631246209843073024, 630779163304923136, 596116511031169024);
 
 -- ----------------------------
 -- Table structure for sys_user_student

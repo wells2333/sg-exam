@@ -298,6 +298,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
         SubjectChoices subjectChoices = new SubjectChoices();
         BeanUtils.copyProperties(subjectDto, subjectChoices);
         subjectChoices.setAnswer(subjectDto.getAnswer().getAnswer());
+        subjectChoices.setChoicesType(subjectDto.getType());
         return this.insert(subjectChoices);
     }
 

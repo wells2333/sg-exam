@@ -32,6 +32,24 @@ services:
     networks:
       - net
 
+  # ---------------------------
+  # example
+  # ---------------------------
+  spring-microservice-exam-web-Spencer:
+    image: registry.cn-hangzhou.aliyuncs.com/spring-microservice-exam/spring-microservice-exam-web:latest
+    volumes:
+      # 挂载nginx的配置文件
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    container_name: web-service-example
+    environment:
+      - TENANT_CODE=example
+      - GATEWAY_SERVICE_HOST=gateway-service
+    restart: always
+    ports:
+      - "88:80"
+    networks:
+      - net
+
 networks:
   net:
     driver: bridge
