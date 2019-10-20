@@ -160,7 +160,7 @@
         update sys_student SET
         del_flag = 1
         where id in
-        <foreach item="item" index="index" collection="array" open="("
+        <foreach item="item" index="index" collection="ids" open="("
                  separator="," close=")">#{item}
         </foreach>
     </delete>

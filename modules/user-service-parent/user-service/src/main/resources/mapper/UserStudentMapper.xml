@@ -80,7 +80,7 @@
 
     <delete id="deleteAll">
         DELETE FROM sys_user_student ID in
-        <foreach item="item" index="index" collection="array" open="("
+        <foreach item="item" index="index" collection="ids" open="("
                  separator="," close=")">#{item}
         </foreach>
     </delete>

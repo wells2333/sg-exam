@@ -160,7 +160,7 @@ export default {
       formAdd: true,
       formStatus: '',
       showElement: false,
-      typeOptions: ['0', '1'],
+      typeOptions: [0, 1],
       listQuery: {
         name: undefined
       },
@@ -183,7 +183,7 @@ export default {
         icon: '',
         sort: 30,
         component: undefined,
-        type: '0',
+        type: 0,
         path: undefined,
         remark: undefined
       },
