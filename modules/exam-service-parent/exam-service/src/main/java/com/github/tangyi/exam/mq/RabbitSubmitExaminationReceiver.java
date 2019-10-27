@@ -2,7 +2,7 @@ package com.github.tangyi.exam.mq;
 
 import com.github.tangyi.common.core.constant.MqConstant;
 import com.github.tangyi.common.security.tenant.TenantContextHolder;
-import com.github.tangyi.exam.api.constants.ExamExaminationRecordConstant;
+import com.github.tangyi.exam.api.enums.SubmitStatusEnum;
 import com.github.tangyi.exam.api.module.Answer;
 import com.github.tangyi.exam.api.module.ExaminationRecord;
 import com.github.tangyi.exam.service.AnswerService;
@@ -47,12 +47,12 @@ public class RabbitSubmitExaminationReceiver {
             examRecord = examRecordService.get(examRecord);
             if (examRecord == null)
                 return;
-            if (ExamExaminationRecordConstant.STATUS_NOT_SUBMITTED.equals(examRecord.getSubmitStatus()))
+            if (SubmitStatusEnum.NOT_SUBMITTED.getValue().equals(examRecord.getSubmitStatus()))
                 log.warn("考试：{}未提交", examRecord.getId());
-            if (ExamExaminationRecordConstant.STATUS_CALCULATE.equals(examRecord.getSubmitStatus()))
+            if (SubmitStatusEnum.CALCULATE.getValue().equals(examRecord.getSubmitStatus()))
                 log.warn("考试：{}正在统计成绩，请勿重复提交", examRecord.getId());
             // 更新状态为正在统计
-            examRecord.setSubmitStatus(ExamExaminationRecordConstant.STATUS_CALCULATE);
+            examRecord.setSubmitStatus(SubmitStatusEnum.CALCULATE.getValue());
             // 更新成功
             if (examRecordService.update(examRecord) > 0) {
                 log.debug("考试：{}更新状态为正在统计成功", examRecord.getId());

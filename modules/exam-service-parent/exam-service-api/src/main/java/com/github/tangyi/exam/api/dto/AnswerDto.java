@@ -78,4 +78,9 @@ public class AnswerDto implements Serializable {
      * 结束时间
      */
     private Date endTime;
+
+	/**
+	 * 耗时
+	 */
+	private String duration;
 }

@@ -24,6 +24,12 @@ public class ExaminationServiceClientFallbackImpl implements ExaminationServiceC
         return new ResponseBean<>(0);
     }
 
+    @Override
+    public ResponseBean<Integer> findExamUserCount(String tenantCode) {
+        log.error("调用{}异常, {}， {}", "findExamUserCount", tenantCode, throwable);
+        return null;
+    }
+
     public Throwable getThrowable() {
         return throwable;
     }

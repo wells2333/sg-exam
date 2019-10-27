@@ -115,6 +115,18 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
     }
 
     /**
+     * 查询参与考试人数
+     *
+     * @param examination examination
+     * @return int
+     * @author tangyi
+     * @date 2019/10/27 20:07:38
+     */
+    public int findExamUserCount(Examination examination) {
+        return this.dao.findExamUserCount(examination);
+    }
+
+    /**
      * 根据考试ID获取题目分页数据
      *
      * @param subjectDto subjectDto

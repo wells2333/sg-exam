@@ -188,7 +188,7 @@
     </el-dialog>
 
     <!--题目管理列表-->
-    <el-dialog :visible.sync="dialogSubjectVisible" :title="$t('table.subjectManagement')" width="80%" top="10vh">
+    <el-dialog :visible.sync="dialogSubjectVisible" :title="$t('table.subjectManagement')" width="80%" top="5vh">
       <div class="filter-container">
         <el-input :placeholder="$t('table.subjectName')" v-model="subject.listQuery.subjectName" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilterSubject"/>
         <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilterSubject">{{ $t('table.search') }}</el-button>
@@ -1080,7 +1080,7 @@ export default {
           cancelButtonText: '取消',
           type: 'success'
         }).then(() => {
-          exportSubject({ idString: '', examinationId: this.subject.examinationId }).then(response => {
+          exportSubject([], this.subject.examinationId).then(response => {
             // 导出Excel
             exportExcel(response)
           })
@@ -1096,7 +1096,7 @@ export default {
           for (let i = 0; i < this.multipleSubjectSelection.length; i++) {
             ids.push(this.multipleSubjectSelection[i].id)
           }
-          exportSubject({ ids: ids, examinationId: '' }).then(response => {
+          exportSubject(ids, '').then(response => {
             // 导出Excel
             exportExcel(response)
           })
