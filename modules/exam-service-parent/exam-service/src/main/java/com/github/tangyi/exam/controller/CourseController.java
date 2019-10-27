@@ -80,7 +80,7 @@ public class CourseController extends BaseController {
                                        @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
                                        @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                        Course course) {
-        course.setTeacher(SysUtil.getTenantCode());
+        course.setTenantCode(SysUtil.getTenantCode());
         return courseService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), course);
     }
 

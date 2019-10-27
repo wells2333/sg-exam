@@ -714,7 +714,7 @@ export default {
           cancelButtonText: '取消',
           type: 'success'
         }).then(() => {
-          exportSubject({ idString: '', categoryId: this.currentCategoryId, type: this.listQuery.type }).then(response => {
+          exportSubject([], '', this.currentCategoryId).then(response => {
             // 导出Excel
             exportExcel(response)
           })
@@ -722,6 +722,7 @@ export default {
 
         })
       } else {
+        debugger
         // 导出选中
         this.$confirm('是否导出选中的题目?', '提示', {
           confirmButtonText: '确定',
@@ -729,10 +730,10 @@ export default {
           type: 'success'
         }).then(() => {
           let ids = []
-          for (let i = 0; i < this.multipleSelection.length; i++) {
-            ids.push(this.multipleSelection[i].id)
+          for (let i = 0; i < this.multipleSubjectSelection.length; i++) {
+            ids.push(this.multipleSubjectSelection[i].id)
           }
-          exportSubject({ ids: ids, categoryId: '' }).then(response => {
+          exportSubject(ids, '', '').then(response => {
             // 导出Excel
             exportExcel(response)
           })

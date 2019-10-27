@@ -97,6 +97,12 @@
         WHERE a.subject_id <![CDATA[<]]> #{subjectId} AND a.examination_id = #{examinationId} ORDER BY subject_id DESC LIMIT 1
     </select>
 
+    <select id="findListByCategoryId" resultMap="examinationSubjectResultMap">
+        SELECT
+        <include refid="examinationSubjectColumns"/>
+        FROM exam_examination_subject a WHERE a.category_id = #{categoryId}
+    </select>
+
     <insert id="insert">
         insert into exam_examination_subject (
             id,
