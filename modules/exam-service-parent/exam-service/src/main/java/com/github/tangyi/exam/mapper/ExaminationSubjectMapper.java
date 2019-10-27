@@ -74,4 +74,14 @@ public interface ExaminationSubjectMapper extends CrudMapper<ExaminationSubject>
      * @date 2019/10/07 20:40:16
      */
     ExaminationSubject getPreviousByCurrentId(ExaminationSubject examinationSubject);
+
+    /**
+     * 根据分类id查询
+     *
+     * @param examinationSubject examinationSubject
+     * @return List
+     * @author tangyi
+     * @date 2019/10/24 21:47:24
+     */
+    List<ExaminationSubject> findListByCategoryId(ExaminationSubject examinationSubject);
 }

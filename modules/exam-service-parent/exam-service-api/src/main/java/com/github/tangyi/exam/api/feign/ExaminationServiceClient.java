@@ -27,4 +27,12 @@ public interface ExaminationServiceClient {
      */
     @GetMapping("/v1/examination/examinationCount")
     ResponseBean<Integer> findExaminationCount(@RequestParam("tenantCode") String tenantCode);
+
+    /**
+     * 查询参与人数
+     * @param tenantCode tenantCode
+     * @return ResponseBean
+     */
+    @GetMapping("/v1/examination/examUserCount")
+    ResponseBean<Integer> findExamUserCount(@RequestParam("tenantCode") String tenantCode);
 }

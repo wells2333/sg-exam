@@ -8,16 +8,17 @@ import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.exam.api.constants.AnswerConstant;
-import com.github.tangyi.exam.api.constants.ExamExaminationRecordConstant;
 import com.github.tangyi.exam.api.dto.AnswerDto;
 import com.github.tangyi.exam.api.dto.StartExamDto;
 import com.github.tangyi.exam.api.dto.SubjectDto;
+import com.github.tangyi.exam.api.enums.SubmitStatusEnum;
 import com.github.tangyi.exam.api.module.Answer;
 import com.github.tangyi.exam.api.module.Examination;
 import com.github.tangyi.exam.api.module.ExaminationRecord;
 import com.github.tangyi.exam.api.module.ExaminationSubject;
 import com.github.tangyi.exam.enums.SubjectTypeEnum;
 import com.github.tangyi.exam.mapper.AnswerMapper;
+import com.github.tangyi.exam.utils.ExamRecordUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -204,7 +205,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
         }
         // 如果全部为选择题，则更新状态为统计完成，否则需要阅卷完成后才更改统计状态
         if (!distinctAnswer.containsKey(SubjectTypeEnum.SHORT_ANSWER.name()))
-            record.setSubmitStatus(ExamExaminationRecordConstant.STATUS_CALCULATED);
+            record.setSubmitStatus(SubmitStatusEnum.CALCULATED.getValue());
         // 保存成绩
         record.setCommonValue(currentUsername, SysUtil.getSysCode());
         record.setId(answer.getExamRecordId());
@@ -240,7 +241,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
         examRecord.setId(answer.getExamRecordId());
         // 提交时间
         examRecord.setEndTime(examRecord.getCreateDate());
-        examRecord.setSubmitStatus(ExamExaminationRecordConstant.STATUS_SUBMITTED);
+        examRecord.setSubmitStatus(SubmitStatusEnum.SUBMITTED.getValue());
         // 1. 发送消息
         amqpTemplate.convertAndSend(MqConstant.SUBMIT_EXAMINATION_QUEUE, answer);
         // 2. 更新考试状态
@@ -276,7 +277,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
         examRecord.setCommonValue(currentUsername, applicationCode, tenantCode);
         examRecord.setStartTime(examRecord.getCreateDate());
         // 默认未提交状态
-        examRecord.setSubmitStatus(ExamExaminationRecordConstant.STATUS_NOT_SUBMITTED);
+        examRecord.setSubmitStatus(SubmitStatusEnum.NOT_SUBMITTED.getValue());
         // 保存考试记录
         if (examRecordService.insert(examRecord) > 0) {
             startExamDto.setExamination(examination);
@@ -482,6 +483,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
         answer.setExamRecordId(recordId);
         Answer userAnswer = this.getAnswer(answer);
         BeanUtils.copyProperties(userAnswer, answerDto);
+        answerDto.setDuration(ExamRecordUtil.getExamDuration(userAnswer.getStartTime(), userAnswer.getEndTime()));
         return answerDto;
     }
 
@@ -507,7 +509,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
             // 总分
             Integer score = answers.stream().mapToInt(Answer::getScore).sum();
             examRecord.setScore(score);
-            examRecord.setSubmitStatus(ExamExaminationRecordConstant.STATUS_CALCULATED);
+            examRecord.setSubmitStatus(SubmitStatusEnum.CALCULATED.getValue());
             examRecord.setCorrectNumber((int) correctNumber);
             examRecord.setInCorrectNumber(answers.size() - examRecord.getCorrectNumber());
             examRecordService.update(examRecord);

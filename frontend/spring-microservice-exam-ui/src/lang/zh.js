@@ -210,7 +210,7 @@ export default {
       score: '成绩',
       examTime: '考试时间',
       submitStatus: '状态',
-      details: '成绩详情',
+      details: '详情',
       marking: '批改'
     },
     knowledge: {
