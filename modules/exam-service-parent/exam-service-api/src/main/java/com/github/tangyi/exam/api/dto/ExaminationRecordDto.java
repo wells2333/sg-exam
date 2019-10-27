@@ -134,4 +134,6 @@ public class ExaminationRecordDto extends BaseEntity<ExaminationRecordDto> {
      * 提交状态 1-已提交 0-未提交
      */
     private Integer submitStatus;
+
+    private String submitStatusName;
 }

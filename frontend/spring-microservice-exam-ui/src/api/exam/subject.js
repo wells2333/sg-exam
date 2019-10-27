@@ -58,12 +58,19 @@ export function delAllSubject (obj) {
 }
 
 // 导出
-export function exportSubject (obj) {
+export function exportSubject (ids, examinationId, categoryId) {
+  let url = baseSubjectUrl + 'export?'
+  if (examinationId !== null && examinationId !== '') {
+    url = url + 'examinationId=' + examinationId
+  }
+  if (categoryId !== null && categoryId !== '') {
+    url = url + '&categoryId=' + categoryId
+  }
   return request({
-    url: baseSubjectUrl + 'export',
+    url: url,
     method: 'post',
     responseType: 'arraybuffer',
     headers: { 'filename': 'utf-8' },
-    data: obj
+    data: ids
   })
 }

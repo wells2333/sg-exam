@@ -24,4 +24,9 @@ public class DashboardDto implements Serializable {
      * 考试数量
      */
     private String examinationNumber;
+
+    /**
+     * 参与人数
+     */
+    private String examUserNumber;
 }

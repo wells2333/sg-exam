@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 题目service
@@ -264,7 +265,7 @@ public class SubjectService {
     /**
      * 物理批量删除
      *
-     * @param ids  ids
+     * @param ids ids
      * @return int
      * @author tangyi
      * @date 2019/06/16 22:52
@@ -446,5 +447,38 @@ public class SubjectService {
         examinationSubject = examinationSubjects.get(0);
         // 根据题目ID，类型获取题目的详细信息
         return this.get(examinationSubject.getSubjectId(), examinationSubject.getType());
+    }
+
+    /**
+     * 导出
+     *
+     * @param ids           ids
+     * @param examinationId examinationId
+     * @param categoryId    categoryId
+     * @return List
+     */
+    public List<SubjectDto> export(Long[] ids, Long examinationId, Long categoryId) {
+        List<SubjectDto> subjects = new ArrayList<>();
+        ExaminationSubject examinationSubject = new ExaminationSubject();
+        List<ExaminationSubject> examinationSubjects = new ArrayList<>();
+        // 根据题目id导出
+        if (ArrayUtils.isNotEmpty(ids)) {
+            for (Long id : ids) {
+                examinationSubject.setSubjectId(id);
+                examinationSubjects.addAll(examinationSubjectService.findListBySubjectId(examinationSubject));
+            }
+        } else if (examinationId != null) {
+            // 根据考试ID
+            examinationSubjects = examinationSubjectService.findListByExaminationId(examinationId);
+        } else if (categoryId != null) {
+            // 根据分类ID、类型导出
+            examinationSubject.setCategoryId(categoryId);
+            examinationSubjects = examinationSubjectService.findListByCategoryId(examinationSubject);
+        }
+        if (CollectionUtils.isNotEmpty(examinationSubjects)) {
+            for (ExaminationSubject es : examinationSubjects)
+                subjects.add(this.get(es.getSubjectId(), es.getType()));
+        }
+        return subjects;
     }
 }

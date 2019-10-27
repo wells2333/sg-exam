@@ -1,5 +1,7 @@
 package com.github.tangyi.common.core.utils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,6 +15,7 @@ import java.util.Date;
  * @author tangyi
  * @date 2019/4/28 16:03
  */
+@Slf4j
 public class DateUtils {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -77,5 +80,55 @@ public class DateUtils {
      */
     public static LocalDateTime asLocalDateTime(Date date) {
         return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+    }
+
+    /**
+     * 两个时间之差
+     *
+     * @param startDate startDate
+     * @param endDate   endDate
+     * @return 分钟
+     */
+    public static Integer getBetweenMinutes(Date startDate, Date endDate) {
+        int minutes = 0;
+        try {
+            if (startDate != null && endDate != null) {
+                long ss;
+                if (startDate.before(endDate)) {
+                    ss = endDate.getTime() - startDate.getTime();
+                } else {
+                    ss = startDate.getTime() - endDate.getTime();
+                }
+                minutes = (int) (ss / (60 * 1000));
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return minutes;
+    }
+
+    /**
+     * 两个时间只差
+     *
+     * @param startDate startDate
+     * @param endDate   endDate
+     * @return 秒数
+     */
+    public static Integer getBetweenSecond(Date startDate, Date endDate) {
+        int seconds = 0;
+        try {
+            if (startDate != null && endDate != null) {
+                long ss;
+                if (startDate.before(endDate)) {
+                    ss = endDate.getTime() - startDate.getTime();
+                } else {
+                    ss = startDate.getTime() - endDate.getTime();
+                }
+                seconds = (int) (ss / (1000));
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return seconds;
     }
 }

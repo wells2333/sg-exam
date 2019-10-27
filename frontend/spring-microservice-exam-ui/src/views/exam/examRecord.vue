@@ -81,7 +81,7 @@
     </el-dialog>
 
     <!-- 批改 -->
-    <el-dialog :visible.sync="dialogMarkingVisible" :title="$t('table.examRecord.marking')" width="80%" top="10vh">
+    <el-dialog :visible.sync="dialogMarkingVisible" :title="$t('table.examRecord.marking')" width="80%" top="5vh">
       <el-row :gutter="20">
         <el-col :span="20"  class="subject-box-card" v-loading="markLoading">
           <el-form ref="dataAnswerForm" :model="tempAnswer" :label-position="labelPosition" label-width="100px">
@@ -104,7 +104,7 @@
                 </el-col>
                 <el-col :span="6">
                   <el-form-item label="耗时：">
-                    <span>{{tempAnswer | consumingFilter }}</span>
+                    <span>{{ tempAnswer.duration }}</span>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -222,9 +222,6 @@ export default {
     },
     timeFilter (time) {
       return formatDate(new Date(time), 'yyyy-MM-dd hh:mm')
-    },
-    consumingFilter(answer) {
-      return (answer.endTime - answer.startTime) / 1000 + 'ms'
     }
   },
   data () {
@@ -361,17 +358,17 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            exportObj({ idString: '' }).then(response => {
+            exportObj([]).then(response => {
               // 导出Excel
               exportExcel(response)
             })
           }).catch(() => {})
         } else {
-          let ids = ''
+          let ids = []
           for (let i = 0; i < this.multipleSelection.length; i++) {
-            ids += this.multipleSelection[i].id + ','
+            ids.push(this.multipleSelection[i].id)
           }
-          exportObj({ idString: ids }).then(response => {
+          exportObj(ids).then(response => {
             // 导出Excel
             exportExcel(response)
           })
@@ -470,6 +467,12 @@ export default {
           })
         } else {
           this.tempAnswer = response.data.data
+          // 题号
+          if (nextType === 1) {
+            this.currentIndex--
+          } else if (nextType === 0) {
+            this.currentIndex++
+          }
         }
         setTimeout(() => {
           this.markLoading = false

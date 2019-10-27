@@ -49,10 +49,15 @@ public class DashboardController extends BaseController {
         userVo.setTenantCode(tenantCode);
         dashboardDto.setOnlineUserNumber(userService.userCount(userVo).toString());
         // 查询考试数量
-		ResponseBean<Integer> examinationCountResponseBean = examinationService.findExaminationCount(tenantCode);
-		if (!ResponseUtil.isSuccess(examinationCountResponseBean))
-			throw new ServiceException("查询考试数量失败: " + examinationCountResponseBean.getMsg());
+        ResponseBean<Integer> examinationCountResponseBean = examinationService.findExaminationCount(tenantCode);
+        if (!ResponseUtil.isSuccess(examinationCountResponseBean))
+            throw new ServiceException("查询考试数量失败: " + examinationCountResponseBean.getMsg());
         dashboardDto.setExaminationNumber(examinationCountResponseBean.getData().toString());
+        // 查询参与人数
+        ResponseBean<Integer> examUserCountResponseBean = examinationService.findExamUserCount(tenantCode);
+        if (!ResponseUtil.isSuccess(examUserCountResponseBean))
+            throw new ServiceException("查询参与人数失败: " + examUserCountResponseBean.getMsg());
+        dashboardDto.setExamUserNumber(examUserCountResponseBean.getData().toString());
         return new ResponseBean<>(dashboardDto);
     }
 }

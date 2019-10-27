@@ -89,6 +89,10 @@
         <include refid="whereColumnList"/>
     </select>
 
+    <select id="findExamUserCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM (SELECT * FROM exam_examination_record WHERE tenant_code = #{tenantCode} GROUP BY user_id) a
+    </select>
+
     <insert id="insert">
         insert into exam_examination (
             id,
