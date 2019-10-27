@@ -160,7 +160,7 @@ export default {
       formAdd: true,
       formStatus: '',
       showElement: false,
-      typeOptions: ['0', '1'],
+      typeOptions: [0, 1],
       listQuery: {
         name: undefined
       },
@@ -183,7 +183,7 @@ export default {
         icon: '',
         sort: 30,
         component: undefined,
-        type: '0',
+        type: 0,
         path: undefined,
         remark: undefined
       },
@@ -369,14 +369,14 @@ export default {
     handleExportMenu () {
       // 获取选中节点
       const keys = this.$refs.menuTree.getCheckedKeys(true).concat(this.$refs.menuTree.getHalfCheckedKeys())
-      let menus = ''
+      let ids = []
       if (keys.length === 0) {
         this.$confirm('是否导出所有菜单?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'success'
         }).then(() => {
-          exportObj({ idString: menus }).then(response => {
+          exportObj(ids).then(response => {
             // 导出Excel
             exportExcel(response)
           })
@@ -388,9 +388,9 @@ export default {
           type: 'success'
         }).then(() => {
           for (let i = 0; i < keys.length; i++) {
-            menus = menus + keys[i] + ','
+            ids.push(keys[i])
           }
-          exportObj({ idString: menus }).then(response => {
+          exportObj(ids).then(response => {
             // 导出Excel
             exportExcel(response)
           })

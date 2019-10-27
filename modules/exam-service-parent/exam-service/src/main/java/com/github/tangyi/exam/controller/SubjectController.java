@@ -17,7 +17,6 @@ import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,11 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * 题目controller
@@ -94,8 +89,6 @@ public class SubjectController extends BaseController {
             @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
             SubjectDto subject) {
         subject.setTenantCode(SysUtil.getTenantCode());
-        if (CommonConstant.ROOT.equals(subject.getCategoryId()))
-            subject.setCategoryId(null);
         return subjectService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), subject);
     }
 
@@ -173,14 +166,12 @@ public class SubjectController extends BaseController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "ids", value = "题目ID", required = true, dataType = "Long"),
             @ApiImplicitParam(name = "examinationId", value = "考试ID", dataType = "Long"),
-            @ApiImplicitParam(name = "categoryId", value = "分类ID", dataType = "Long"),
-            @ApiImplicitParam(name = "type", value = "题目类型", required = true, dataType = "Integer", example = "3")
+            @ApiImplicitParam(name = "categoryId", value = "分类ID", dataType = "Long")
     })
     @Log("导出题目")
     public void exportSubject(@RequestBody Long[] ids,
-                              @RequestParam Long examinationId,
-                              @RequestParam Long categoryId,
-                              @RequestParam Integer type,
+                              @RequestParam(required = false) Long examinationId,
+                              @RequestParam(required = false) Long categoryId,
                               HttpServletRequest request,
                               HttpServletResponse response) {
         try {
@@ -189,26 +180,7 @@ public class SubjectController extends BaseController {
             response.setContentType("multipart/form-data");
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request,
                     "题目信息" + DateUtils.localDateMillisToString(LocalDateTime.now()) + ".xlsx"));
-            List<SubjectDto> subjects = new ArrayList<>();
-            // 根据题目id导出
-            if (ArrayUtils.isNotEmpty(ids)) {
-                subjects = Stream.of(ids)
-                        // 根据ID查找题目信息
-                        .map(subjectService::get)
-                        // 过滤收集
-                        .filter(Objects::nonNull).collect(Collectors.toList());
-            } else if (examinationId != null) {
-                // 根据考试ID
-                SubjectDto subjectDto = new SubjectDto();
-                subjectDto.setExaminationId(examinationId);
-                subjects = subjectService.findList(subjectDto);
-            } else if (categoryId != null || type != null) {
-                // 根据分类ID、类型导出
-                SubjectDto subjectDto = new SubjectDto();
-                subjectDto.setCategoryId(categoryId);
-                subjectDto.setType(type);
-                subjects = subjectService.findListByType(subjectDto);
-            }
+            List<SubjectDto> subjects = subjectService.export(ids, examinationId, categoryId);
             ExcelToolUtil.exportExcel(request.getInputStream(), response.getOutputStream(), MapUtil.java2Map(subjects),
                     SubjectUtil.getSubjectMap());
         } catch (Exception e) {
@@ -255,7 +227,6 @@ public class SubjectController extends BaseController {
      * 批量删除
      *
      * @param ids  ids
-     * @param type type
      * @return ResponseBean
      * @author tangyi
      * @date 2018/12/04 9:55
@@ -263,13 +234,10 @@ public class SubjectController extends BaseController {
     @PostMapping("deleteAll")
     @PreAuthorize("hasAuthority('exam:exam:subject:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
     @ApiOperation(value = "批量删除题目", notes = "根据题目id批量删除题目")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "题目ID", dataType = "Long"),
-            @ApiImplicitParam(name = "type", value = "题目类型", dataType = "Integer", example = "3")
-    })
+    @ApiImplicitParam(name = "ids", value = "题目ID", dataType = "Long")
     @Log("批量删除题目")
-    public ResponseBean<Boolean> deleteSubjects(@RequestBody Long[] ids, @RequestParam Integer type) {
-        return new ResponseBean<>(subjectService.physicalDeleteAll(type, ids) > 0);
+    public ResponseBean<Boolean> deleteSubjects(@RequestBody Long[] ids) {
+        return new ResponseBean<>(subjectService.physicalDeleteAll(ids) > 0);
     }
 
     /**

@@ -97,4 +97,16 @@ public class ExaminationSubjectService extends CrudService<ExaminationSubjectMap
     public ExaminationSubject getPreviousByCurrentId(ExaminationSubject examinationSubject) {
         return this.dao.getPreviousByCurrentId(examinationSubject);
     }
+
+    /**
+     * 根据分类id查询
+     *
+     * @param examinationSubject examinationSubject
+     * @return List
+     * @author tangyi
+     * @date 2019/10/24 21:47:24
+     */
+    public List<ExaminationSubject> findListByCategoryId(ExaminationSubject examinationSubject) {
+        return this.dao.findListByCategoryId(examinationSubject);
+    }
 }

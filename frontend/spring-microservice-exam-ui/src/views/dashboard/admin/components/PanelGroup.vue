@@ -29,7 +29,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">参加人数</div>
-          <count-to :start-val="0" :end-val="9280" :duration="2400" class="card-panel-num"/>
+          <count-to :start-val="0" :end-val="examUserNumber" :duration="2400" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
@@ -59,7 +59,8 @@ export default {
   data () {
     return {
       onlineUserNumber: 0,
-      examinationNumber: 0
+      examinationNumber: 0,
+      examUserNumber: 0
     }
   },
   created () {
@@ -79,6 +80,9 @@ export default {
           }
           if (isNotEmpty(data.examinationNumber)) {
             this.examinationNumber = parseInt(data.examinationNumber)
+          }
+          if (isNotEmpty(data.examUserNumber)) {
+            this.examUserNumber = parseInt(data.examUserNumber)
           }
         }
       }).catch(error => {

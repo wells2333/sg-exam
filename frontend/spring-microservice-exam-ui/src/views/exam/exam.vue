@@ -188,7 +188,7 @@
     </el-dialog>
 
     <!--题目管理列表-->
-    <el-dialog :visible.sync="dialogSubjectVisible" :title="$t('table.subjectManagement')" width="80%" top="10vh">
+    <el-dialog :visible.sync="dialogSubjectVisible" :title="$t('table.subjectManagement')" width="80%" top="5vh">
       <div class="filter-container">
         <el-input :placeholder="$t('table.subjectName')" v-model="subject.listQuery.subjectName" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilterSubject"/>
         <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilterSubject">{{ $t('table.search') }}</el-button>
@@ -587,10 +587,9 @@ export default {
         // 题目列表查询参数
         listQuery: {
           subjectName: undefined,
-          categoryId: 0,
+          categoryId: '',
           sort: 'id',
-          order: 'ascending',
-          type: 0
+          order: 'ascending'
         },
         // 题目列表数据
         list: [],
@@ -1056,16 +1055,16 @@ export default {
     // 批量删除
     handleDeletesSubject () {
       if (checkMultipleSelect(this.multipleSubjectSelection, this)) {
-        let ids = ''
+        let ids = []
         for (let i = 0; i < this.multipleSubjectSelection.length; i++) {
-          ids += this.multipleSubjectSelection[i].id + ','
+          ids.push(this.multipleSubjectSelection[i].id)
         }
         this.$confirm('确定要删除吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          delAllSubject({ idString: ids }).then(() => {
+          delAllSubject(ids).then(() => {
             this.handleSubjectManagement()
             notifySuccess(this, '删除成功')
           })
@@ -1081,7 +1080,7 @@ export default {
           cancelButtonText: '取消',
           type: 'success'
         }).then(() => {
-          exportSubject({ idString: '', examinationId: this.subject.examinationId }).then(response => {
+          exportSubject([], this.subject.examinationId).then(response => {
             // 导出Excel
             exportExcel(response)
           })
@@ -1093,11 +1092,11 @@ export default {
           cancelButtonText: '取消',
           type: 'success'
         }).then(() => {
-          let ids = ''
+          let ids = []
           for (let i = 0; i < this.multipleSubjectSelection.length; i++) {
-            ids += this.multipleSubjectSelection[i].id + ','
+            ids.push(this.multipleSubjectSelection[i].id)
           }
-          exportSubject({ idString: ids, examinationId: '' }).then(response => {
+          exportSubject(ids, '').then(response => {
             // 导出Excel
             exportExcel(response)
           })

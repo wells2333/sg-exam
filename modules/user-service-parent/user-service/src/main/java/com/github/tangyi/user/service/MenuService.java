@@ -298,7 +298,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
         // 租户菜单
         tenantMenus.forEach(tenantMenu -> {
             Optional<Menu> exist = userMenus.stream()
-                    .filter(userMenu -> userMenu.getName().equals(tenantMenu.getName())).findFirst();
+                    .filter(userMenu -> userMenu.getName().equals(tenantMenu.getName()) && userMenu.getParentId().equals(tenantMenu.getParentId())).findFirst();
             if (!exist.isPresent()) {
                 userMenus.add(tenantMenu);
             }

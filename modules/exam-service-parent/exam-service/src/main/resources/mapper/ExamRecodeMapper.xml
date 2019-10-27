@@ -78,7 +78,7 @@
     <select id="findListById" resultMap="examRecordResultMap">
         SELECT
         <include refid="examRecordColumns"/>
-        FROM exam_record a
+        FROM exam_examination_record a
         WHERE a.id IN
         <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
             #{item}

@@ -89,6 +89,10 @@
         <include refid="whereColumnList"/>
     </select>
 
+    <select id="findExamUserCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM (SELECT * FROM exam_examination_record WHERE tenant_code = #{tenantCode} GROUP BY user_id) a
+    </select>
+
     <insert id="insert">
         insert into exam_examination (
             id,
@@ -177,7 +181,7 @@
 
     <delete id="deleteAll">
         UPDATE exam_examination SET del_flag = 1 WHERE id in
-        <foreach item="item" index="index" collection="array" open="("
+        <foreach item="item" index="index" collection="ids" open="("
                  separator="," close=")">#{item}
         </foreach>
     </delete>

@@ -269,4 +269,19 @@ public class ExaminationController extends BaseController {
         examination.setId(examinationId);
         return new ResponseBean<>(examinationService.findListByExaminationId(examination));
     }
+
+    /**
+     * 查询参与考试人数
+     *
+     * @param tenantCode tenantCode
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/10/27 20:07:38
+     */
+    @GetMapping("examUserCount")
+    public ResponseBean<Integer> findExamUserCount(@RequestParam @NotBlank String tenantCode) {
+        Examination examination = new Examination();
+        examination.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), tenantCode);
+        return new ResponseBean<>(examinationService.findExamUserCount(examination));
+    }
 }

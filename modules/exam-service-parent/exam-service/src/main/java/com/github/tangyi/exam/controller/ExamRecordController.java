@@ -11,6 +11,7 @@ import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.constant.SecurityConstant;
 import com.github.tangyi.exam.api.dto.ExaminationRecordDto;
 import com.github.tangyi.exam.api.dto.StartExamDto;
+import com.github.tangyi.exam.api.enums.SubmitStatusEnum;
 import com.github.tangyi.exam.api.module.Examination;
 import com.github.tangyi.exam.api.module.ExaminationRecord;
 import com.github.tangyi.exam.service.AnswerService;
@@ -279,12 +280,14 @@ public class ExamRecordController extends BaseController {
                         ExaminationRecordDto recordDto = new ExaminationRecordDto();
                         recordDto.setId(tempExamRecord.getId());
                         recordDto.setExaminationName(examRecordExamination.getExaminationName());
-                        //recordDto.setExamTime(tempExamRecord.getCreateDate());
+                        recordDto.setStartTime(tempExamRecord.getStartTime());
+                        recordDto.setEndTime(tempExamRecord.getEndTime());
+                        recordDto.setDuration(ExamRecordUtil.getExamDuration(tempExamRecord.getStartTime(), tempExamRecord.getEndTime()));
                         recordDto.setScore(tempExamRecord.getScore());
                         recordDto.setUserId(tempExamRecord.getUserId());
                         recordDto.setCorrectNumber(tempExamRecord.getCorrectNumber());
                         recordDto.setInCorrectNumber(tempExamRecord.getInCorrectNumber());
-                        recordDto.setSubmitStatus(tempExamRecord.getSubmitStatus());
+                        recordDto.setSubmitStatusName(SubmitStatusEnum.match(tempExamRecord.getSubmitStatus(), SubmitStatusEnum.NOT_SUBMITTED).getName());
                         userIdSet.add(tempExamRecord.getUserId());
                         examRecordDtoList.add(recordDto);
                     }
