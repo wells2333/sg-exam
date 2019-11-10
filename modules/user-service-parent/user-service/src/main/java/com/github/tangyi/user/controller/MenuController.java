@@ -7,7 +7,7 @@ import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.*;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
-import com.github.tangyi.common.security.constant.SecurityConstant;
+import com.github.tangyi.common.security.annotations.AdminTenantTeacherAuthorization;
 import com.github.tangyi.user.api.dto.MenuDto;
 import com.github.tangyi.user.api.module.Menu;
 import com.github.tangyi.user.service.MenuService;
@@ -17,7 +17,6 @@ import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -90,7 +89,7 @@ public class MenuController extends BaseController {
      * @date 2018/8/27 16:12
      */
     @PostMapping
-    @PreAuthorize("hasAuthority('sys:menu:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "创建菜单", notes = "创建菜单")
     @ApiImplicitParam(name = "menu", value = "角色实体menu", required = true, dataType = "Menu")
     @Log("新增菜单")
@@ -108,7 +107,7 @@ public class MenuController extends BaseController {
      * @date 2018/10/24 16:34
      */
     @PutMapping
-    @PreAuthorize("hasAuthority('sys:menu:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "更新菜单信息", notes = "根据菜单id更新菜单的基本信息")
     @ApiImplicitParam(name = "menu", value = "角色实体menu", required = true, dataType = "Menu")
     @Log("更新菜单")
@@ -126,7 +125,7 @@ public class MenuController extends BaseController {
      * @date 2018/8/27 16:19
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('sys:menu:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "删除菜单", notes = "根据ID删除菜单")
     @ApiImplicitParam(name = "id", value = "菜单ID", required = true, paramType = "path")
     @Log("删除菜单")
@@ -243,7 +242,7 @@ public class MenuController extends BaseController {
      * @date 2018/11/28 12:46
      */
     @PostMapping("export")
-    @PreAuthorize("hasAuthority('sys:menu:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "导出菜单", notes = "根据菜单id导出菜单")
     @ApiImplicitParam(name = "ids", value = "菜单ID", required = true, dataType = "Long")
     @Log("导出菜单")
@@ -280,7 +279,7 @@ public class MenuController extends BaseController {
      * @date 2018/11/28 12:51
      */
     @PostMapping("import")
-    @PreAuthorize("hasAuthority('sys:menu:import') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "导入菜单", notes = "导入菜单")
     @Log("导入菜单")
     public ResponseBean<Boolean> importMenu(@ApiParam(value = "要上传的文件", required = true) MultipartFile file) {

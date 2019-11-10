@@ -7,7 +7,7 @@ import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
-import com.github.tangyi.common.security.constant.SecurityConstant;
+import com.github.tangyi.common.security.annotations.AdminAuthorization;
 import com.github.tangyi.user.service.LogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -16,7 +16,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.ArrayUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -115,7 +114,7 @@ public class LogController extends BaseController {
      * @date 2018/10/31 21:27
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('monitor:log:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminAuthorization
     @ApiOperation(value = "删除日志", notes = "根据ID删除日志")
     @ApiImplicitParam(name = "id", value = "日志ID", required = true, paramType = "path")
     public ResponseBean<Boolean> delete(@PathVariable Long id) {
@@ -133,7 +132,7 @@ public class LogController extends BaseController {
      * @date 2018/12/4 10:12
      */
     @PostMapping("deleteAll")
-    @PreAuthorize("hasAuthority('monitor:log:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminAuthorization
     @ApiOperation(value = "批量删除日志", notes = "根据日志ids批量删除日志")
     @ApiImplicitParam(name = "ids", value = "日志ID", dataType = "Long")
     public ResponseBean<Boolean> deleteAllLog(@RequestBody Long[] ids) {

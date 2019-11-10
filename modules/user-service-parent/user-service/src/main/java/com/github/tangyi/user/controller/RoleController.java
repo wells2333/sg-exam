@@ -7,7 +7,7 @@ import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
-import com.github.tangyi.common.security.constant.SecurityConstant;
+import com.github.tangyi.common.security.annotations.AdminTenantTeacherAuthorization;
 import com.github.tangyi.user.api.module.Role;
 import com.github.tangyi.user.service.RoleMenuService;
 import com.github.tangyi.user.service.RoleService;
@@ -19,7 +19,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -120,7 +119,7 @@ public class RoleController extends BaseController {
      * @date 2018/9/14 18:22
      */
     @PutMapping
-    @PreAuthorize("hasAuthority('sys:role:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "更新角色信息", notes = "根据角色id更新角色的基本信息")
     @ApiImplicitParam(name = "role", value = "角色实体role", required = true, dataType = "RoleVo")
     @Log("修改角色")
@@ -162,7 +161,7 @@ public class RoleController extends BaseController {
      * @date 2018/9/14 18:23
      */
     @PostMapping
-    @PreAuthorize("hasAuthority('sys:role:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "创建角色", notes = "创建角色")
     @ApiImplicitParam(name = "role", value = "角色实体role", required = true, dataType = "RoleVo")
     @Log("新增角色")
@@ -180,7 +179,7 @@ public class RoleController extends BaseController {
      * @date 2018/9/14 18:24
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('sys:role:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "删除角色", notes = "根据ID删除角色")
     @ApiImplicitParam(name = "id", value = "角色ID", required = true, paramType = "path")
     @Log("删除角色")
@@ -201,7 +200,7 @@ public class RoleController extends BaseController {
      * @date 2018/12/4 10:00
      */
     @PostMapping("deleteAll")
-    @PreAuthorize("hasAuthority('sys:role:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "批量删除角色", notes = "根据角色id批量删除角色")
     @ApiImplicitParam(name = "ids", value = "角色ID", dataType = "Long")
     @Log("批量删除角色")

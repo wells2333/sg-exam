@@ -7,7 +7,7 @@ import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.*;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
-import com.github.tangyi.common.security.constant.SecurityConstant;
+import com.github.tangyi.common.security.annotations.AdminTenantTeacherAuthorization;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.service.AnswerService;
 import com.github.tangyi.exam.service.SubjectService;
@@ -17,7 +17,6 @@ import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -101,7 +100,7 @@ public class SubjectController extends BaseController {
      * @date 2018/11/10 21:43
      */
     @PostMapping
-    @PreAuthorize("hasAuthority('exam:exam:subject:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "创建题目", notes = "创建题目")
     @ApiImplicitParam(name = "subject", value = "题目信息", required = true, dataType = "SubjectDto")
     @Log("新增题目")
@@ -119,7 +118,7 @@ public class SubjectController extends BaseController {
      * @date 2018/11/10 21:43
      */
     @PutMapping
-    @PreAuthorize("hasAuthority('exam:exam:subject:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "更新题目信息", notes = "根据题目id更新题目的基本信息")
     @ApiImplicitParam(name = "subject", value = "角色实体subject", required = true, dataType = "Subject")
     @Log("更新题目")
@@ -137,7 +136,7 @@ public class SubjectController extends BaseController {
      * @date 2018/11/10 21:43
      */
     @DeleteMapping("{id}")
-    @PreAuthorize("hasAuthority('exam:exam:subject:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "删除题目", notes = "根据ID删除题目")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "题目ID", required = true, dataType = "Long", paramType = "path"),
@@ -161,7 +160,7 @@ public class SubjectController extends BaseController {
      * @date 2018/11/28 12:53
      */
     @PostMapping("export")
-    @PreAuthorize("hasAuthority('exam:exam:subject:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "导出题目", notes = "根据分类id导出题目")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "ids", value = "题目ID", required = true, dataType = "Long"),
@@ -200,7 +199,7 @@ public class SubjectController extends BaseController {
      * @date 2018/11/28 12:59
      */
     @RequestMapping("import")
-    @PreAuthorize("hasAuthority('exam:exam:subject:import') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "导入题目", notes = "导入题目")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "examinationId", value = "考试ID", dataType = "Long"),
@@ -232,7 +231,7 @@ public class SubjectController extends BaseController {
      * @date 2018/12/04 9:55
      */
     @PostMapping("deleteAll")
-    @PreAuthorize("hasAuthority('exam:exam:subject:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "批量删除题目", notes = "根据题目id批量删除题目")
     @ApiImplicitParam(name = "ids", value = "题目ID", dataType = "Long")
     @Log("批量删除题目")

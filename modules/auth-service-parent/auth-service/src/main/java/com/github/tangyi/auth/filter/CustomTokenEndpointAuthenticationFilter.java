@@ -8,7 +8,6 @@ import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.user.api.feign.UserServiceClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;

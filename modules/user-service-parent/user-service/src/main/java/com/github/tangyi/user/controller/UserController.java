@@ -8,6 +8,7 @@ import com.github.tangyi.common.core.utils.*;
 import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
+import com.github.tangyi.common.security.annotations.AdminTenantTeacherAuthorization;
 import com.github.tangyi.common.security.constant.SecurityConstant;
 import com.github.tangyi.user.api.dto.UserDto;
 import com.github.tangyi.user.api.dto.UserInfoDto;
@@ -26,7 +27,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -175,7 +175,7 @@ public class UserController extends BaseController {
      * @date 2018/8/26 14:34
      */
     @PostMapping
-    @PreAuthorize("hasAuthority('sys:user:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "创建用户", notes = "创建用户")
     @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
     @Log("新增用户")
@@ -193,7 +193,7 @@ public class UserController extends BaseController {
      * @date 2018/8/26 15:06
      */
     @PutMapping("/{id:[a-zA-Z0-9,]+}")
-    @PreAuthorize("hasAuthority('sys:user:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "更新用户信息", notes = "根据用户id更新用户的基本信息、角色信息")
     @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
     @Log("修改用户")
@@ -266,7 +266,7 @@ public class UserController extends BaseController {
      * @date 2018/8/26 15:28
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('sys:user:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "删除用户", notes = "根据ID删除用户")
     @ApiImplicitParam(name = "id", value = "用户ID", required = true, paramType = "path")
     @Log("删除用户")
@@ -291,7 +291,7 @@ public class UserController extends BaseController {
      * @date 2018/11/26 22:11
      */
     @PostMapping("export")
-    @PreAuthorize("hasAuthority('sys:user:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "导出用户", notes = "根据用户id导出用户")
     @ApiImplicitParam(name = "userVo", value = "用户信息", required = true, dataType = "UserVo")
     @Log("导出用户")
@@ -339,7 +339,7 @@ public class UserController extends BaseController {
      * @date 2018/11/28 12:44
      */
     @PostMapping("import")
-    @PreAuthorize("hasAuthority('sys:user:import') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "导入数据", notes = "导入数据")
     @Log("导入用户")
     public ResponseBean<Boolean> importUser(@ApiParam(value = "要上传的文件", required = true) MultipartFile file, HttpServletRequest request) {
@@ -365,7 +365,7 @@ public class UserController extends BaseController {
      * @date 2018/12/4 9:58
      */
     @PostMapping("deleteAll")
-    @PreAuthorize("hasAuthority('sys:user:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "批量删除用户", notes = "根据用户id批量删除用户")
     @ApiImplicitParam(name = "ids", value = "用户信息", dataType = "Long")
     @Log("批量删除用户")
@@ -460,7 +460,7 @@ public class UserController extends BaseController {
      * @date 2019/6/7 12:00
      */
     @PutMapping("/resetPassword")
-    @PreAuthorize("hasAuthority('sys:user:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "重置密码", notes = "根据用户id重置密码")
     @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
     @Log("重置密码")

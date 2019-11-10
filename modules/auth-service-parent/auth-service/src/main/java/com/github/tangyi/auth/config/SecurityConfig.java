@@ -12,7 +12,9 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerEndpointsConfiguration;
 
 /**
  * Spring Security配置
@@ -28,6 +30,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+    @Autowired
+    private AuthorizationServerEndpointsConfiguration endpoints;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -35,6 +40,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .anyRequest().authenticated();
+        if (!endpoints.getEndpointsConfigurer().isUserDetailsServiceOverride()) {
+            UserDetailsService userDetailsService = http.getSharedObject(UserDetailsService.class);
+            endpoints.getEndpointsConfigurer().userDetailsService(userDetailsService);
+        }
+        // 认证管理器
+        endpoints.getEndpointsConfigurer().authenticationManager(authenticationManager());
     }
 
     @Bean
