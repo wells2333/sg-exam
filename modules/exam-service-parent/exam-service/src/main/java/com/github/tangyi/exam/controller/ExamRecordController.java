@@ -4,11 +4,9 @@ import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.*;
-import com.github.tangyi.common.core.vo.DeptVo;
-import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
-import com.github.tangyi.common.security.constant.SecurityConstant;
+import com.github.tangyi.common.security.annotations.AdminTenantTeacherAuthorization;
 import com.github.tangyi.exam.api.dto.ExaminationRecordDto;
 import com.github.tangyi.exam.api.dto.StartExamDto;
 import com.github.tangyi.exam.api.enums.SubmitStatusEnum;
@@ -18,7 +16,6 @@ import com.github.tangyi.exam.service.AnswerService;
 import com.github.tangyi.exam.service.ExamRecordService;
 import com.github.tangyi.exam.service.ExaminationService;
 import com.github.tangyi.exam.utils.ExamRecordUtil;
-import com.github.tangyi.user.api.feign.UserServiceClient;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -29,7 +26,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -57,8 +53,6 @@ public class ExamRecordController extends BaseController {
     private final ExamRecordService examRecordService;
 
     private final ExaminationService examinationService;
-
-    private final UserServiceClient userServiceClient;
 
     private final AnswerService answerService;
 
@@ -113,55 +107,30 @@ public class ExamRecordController extends BaseController {
         if (CollectionUtils.isNotEmpty(examRecordPageInfo.getList())) {
             // 查询考试信息
             List<Examination> examinations = examinationService.findListById(examRecordPageInfo.getList().stream().map(ExaminationRecord::getExaminationId).distinct().toArray(Long[]::new));
-            // 查询用户信息
-            ResponseBean<List<UserVo>> returnT = userServiceClient.findUserById(examRecordPageInfo.getList().stream().map(ExaminationRecord::getUserId).distinct().toArray(Long[]::new));
-            if (returnT != null && CollectionUtils.isNotEmpty(returnT.getData())) {
-                examRecordPageInfo.getList().forEach(tempExamRecord -> {
-                    // 找到考试记录所属的考试信息
-                    Examination examinationRecordExamination = examinations.stream()
-                            .filter(tempExamination -> tempExamRecord.getExaminationId().equals(tempExamination.getId()))
-                            .findFirst().orElse(null);
-                    // 转换成ExamRecordDto
-                    if (examinationRecordExamination != null) {
-                        ExaminationRecordDto examRecordDto = new ExaminationRecordDto();
-                        BeanUtils.copyProperties(examinationRecordExamination, examRecordDto);
-                        examRecordDto.setId(tempExamRecord.getId());
-                        examRecordDto.setStartTime(tempExamRecord.getStartTime());
-                        examRecordDto.setEndTime(tempExamRecord.getEndTime());
-                        examRecordDto.setScore(tempExamRecord.getScore());
-                        examRecordDto.setUserId(tempExamRecord.getUserId());
-                        examRecordDto.setExaminationId(tempExamRecord.getExaminationId());
-                        // 正确题目数
-                        examRecordDto.setCorrectNumber(tempExamRecord.getCorrectNumber());
-                        examRecordDto.setInCorrectNumber(tempExamRecord.getInCorrectNumber());
-                        // 提交状态
-                        examRecordDto.setSubmitStatus(tempExamRecord.getSubmitStatus());
-                        examRecordDtoList.add(examRecordDto);
-                    }
-                });
-                // 查询部门信息
-                ResponseBean<List<DeptVo>> deptResponseBean = userServiceClient.findDeptById(returnT.getData().stream().map(UserVo::getDeptId).distinct().toArray(Long[]::new));
-                examRecordDtoList.forEach(tempExamRecordDto -> {
-                    // 查询、设置用户信息
-                    UserVo examRecordDtoUserVo = returnT.getData().stream()
-                            .filter(tempUserVo -> tempExamRecordDto.getUserId().equals(tempUserVo.getId()))
-                            .findFirst().orElse(null);
-                    if (examRecordDtoUserVo != null) {
-                        // 设置用户名
-                        tempExamRecordDto.setUserName(examRecordDtoUserVo.getName());
-                        // 查询、设置部门信息
-                        if (deptResponseBean != null && CollectionUtils.isNotEmpty(deptResponseBean.getData())) {
-                            DeptVo examRecordDtoDeptVo = deptResponseBean.getData().stream()
-                                    // 根据部门ID过滤
-                                    .filter(tempDept -> tempDept.getId().equals(examRecordDtoUserVo.getDeptId()))
-                                    .findFirst().orElse(null);
-                            // 设置部门名称
-                            if (examRecordDtoDeptVo != null)
-                                tempExamRecordDto.setDeptName(examRecordDtoDeptVo.getDeptName());
-                        }
-                    }
-                });
-            }
+			examRecordPageInfo.getList().forEach(tempExamRecord -> {
+				// 找到考试记录所属的考试信息
+				Examination examinationRecordExamination = examinations.stream()
+						.filter(tempExamination -> tempExamRecord.getExaminationId().equals(tempExamination.getId()))
+						.findFirst().orElse(null);
+				// 转换成ExamRecordDto
+				if (examinationRecordExamination != null) {
+					ExaminationRecordDto examRecordDto = new ExaminationRecordDto();
+					BeanUtils.copyProperties(examinationRecordExamination, examRecordDto);
+					examRecordDto.setId(tempExamRecord.getId());
+					examRecordDto.setStartTime(tempExamRecord.getStartTime());
+					examRecordDto.setEndTime(tempExamRecord.getEndTime());
+					examRecordDto.setScore(tempExamRecord.getScore());
+					examRecordDto.setUserId(tempExamRecord.getUserId());
+					examRecordDto.setExaminationId(tempExamRecord.getExaminationId());
+					// 正确题目数
+					examRecordDto.setCorrectNumber(tempExamRecord.getCorrectNumber());
+					examRecordDto.setInCorrectNumber(tempExamRecord.getInCorrectNumber());
+					// 提交状态
+					examRecordDto.setSubmitStatus(tempExamRecord.getSubmitStatus());
+					examRecordDtoList.add(examRecordDto);
+				}
+			});
+			examRecordService.fillExamUserInfo(examRecordDtoList, examRecordPageInfo.getList().stream().map(ExaminationRecord::getUserId).distinct().toArray(Long[]::new));
         }
         examRecordDtoPageInfo.setTotal(examRecordPageInfo.getTotal());
         examRecordDtoPageInfo.setPages(examRecordPageInfo.getPages());
@@ -184,10 +153,6 @@ public class ExamRecordController extends BaseController {
     @ApiImplicitParam(name = "examRecord", value = "考试记录实体examRecord", required = true, dataType = "ExamRecord")
     @Log("新增考试记录")
     public ResponseBean<ExaminationRecord> addExamRecord(@RequestBody @Valid ExaminationRecord examRecord) {
-        Examination examination = new Examination();
-        examination.setId(examRecord.getExaminationId());
-        // 查找考试信息
-        examination = examinationService.get(examination);
         examRecord.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         examRecord.setStartTime(examRecord.getCreateDate());
         examRecordService.insert(examRecord);
@@ -245,7 +210,7 @@ public class ExamRecordController extends BaseController {
      * @date 2018/12/31 22:28
      */
     @PostMapping("export")
-    @PreAuthorize("hasAuthority('exam:examRecord:export') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "导出考试成绩", notes = "根据成绩id导出成绩")
     @ApiImplicitParam(name = "ids", value = "成绩ID", required = true, dataType = "Long")
     @Log("导出考试记录")
@@ -292,30 +257,7 @@ public class ExamRecordController extends BaseController {
                         examRecordDtoList.add(recordDto);
                     }
                 });
-                // 查询用户信息
-                ResponseBean<List<UserVo>> returnT = userServiceClient.findUserById(userIdSet.toArray(new Long[0]));
-                if (returnT != null && CollectionUtils.isNotEmpty(returnT.getData())) {
-                    // 获取部门信息
-                    ResponseBean<List<DeptVo>> deptResponseBean = userServiceClient.findDeptById(returnT.getData().stream().map(UserVo::getDeptId).distinct().toArray(Long[]::new));
-                    examRecordDtoList.forEach(tempExamRecordDto -> {
-                        // 查询用户信息
-                        UserVo examRecordDtoUserVo = returnT.getData().stream().filter(tempUserVo -> tempExamRecordDto.getUserId().equals(tempUserVo.getId()))
-                                .findFirst().orElse(null);
-                        if (examRecordDtoUserVo != null) {
-                            tempExamRecordDto.setUserName(examRecordDtoUserVo.getName());
-                            // 查询部门信息
-                            if (deptResponseBean != null && CollectionUtils.isNotEmpty(deptResponseBean.getData())) {
-                                // 查找用户所属部门
-                                DeptVo examRecordDtoDeptVo = deptResponseBean.getData().stream()
-                                        .filter(tempDept -> tempDept.getId().equals(examRecordDtoUserVo.getDeptId()))
-                                        .findFirst().orElse(null);
-                                // 设置所属部门名称
-                                if (examRecordDtoDeptVo != null)
-                                    tempExamRecordDto.setDeptName(examRecordDtoDeptVo.getDeptName());
-                            }
-                        }
-                    });
-                }
+                examRecordService.fillExamUserInfo(examRecordDtoList, userIdSet.toArray(new Long[0]));
                 // 导出
                 ExcelToolUtil.exportExcel(request.getInputStream(), response.getOutputStream(), MapUtil.java2Map(examRecordDtoList), ExamRecordUtil.getExamRecordDtoMap());
             }
