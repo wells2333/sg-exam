@@ -45,5 +45,28 @@ public class MenuConstant {
      * 修改
      */
     public static final String PERMISSION_SUFFIX_MODIFY = ":edit";
+
+    public static final String MENU_SYS = "sys";
+
+	/**
+	 * 终端管理
+	 */
+	public static final String MENU_CLIENT = "sys:client";
+
+	/**
+	 * 路由管理
+	 */
+	public static final String MENU_ROUTE = "sys:route";
+
+	/**
+	 * 租户中心
+	 */
+	public static final String MENU_TENANT = "tenant";
+
+	/**
+	 * 系统监控
+	 */
+	public static final String MENU_MONITOR = "monitor";
+
 }
 

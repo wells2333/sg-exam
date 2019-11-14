@@ -1,9 +1,12 @@
 package com.github.tangyi.auth.security;
 
+import com.github.tangyi.common.security.event.CustomAuthenticationFailureEvent;
+import com.github.tangyi.common.security.event.CustomAuthenticationSuccessEvent;
 import com.github.tangyi.common.core.exceptions.TenantNotFoundException;
 import com.github.tangyi.common.security.core.CustomUserDetailsService;
 import com.github.tangyi.common.security.tenant.TenantContextHolder;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,9 +33,12 @@ public class CustomUserDetailsAuthenticationProvider extends AbstractUserDetails
 
     private String userNotFoundEncodedPassword;
 
-    public CustomUserDetailsAuthenticationProvider(PasswordEncoder passwordEncoder, CustomUserDetailsService userDetailsService) {
+	private ApplicationEventPublisher publisher;
+
+    public CustomUserDetailsAuthenticationProvider(PasswordEncoder passwordEncoder, CustomUserDetailsService userDetailsService, ApplicationEventPublisher publisher) {
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
+        this.publisher = publisher;
     }
 
     @Override
@@ -46,9 +52,11 @@ public class CustomUserDetailsAuthenticationProvider extends AbstractUserDetails
         // 匹配密码
         if (!passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
             log.debug("认证失败: 密码错误.");
-            throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "密码错误."));
+			publisher.publishEvent(new CustomAuthenticationFailureEvent(authentication, userDetails));
+			throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "密码错误."));
         }
-    }
+		publisher.publishEvent(new CustomAuthenticationSuccessEvent(authentication, userDetails));
+	}
 
     @Override
     protected void doAfterPropertiesSet() throws Exception {
@@ -70,9 +78,9 @@ public class CustomUserDetailsAuthenticationProvider extends AbstractUserDetails
         UserDetails loadedUser;
         try {
             // 加载用户信息
-            loadedUser = this.userDetailsService.loadUserByIdentifierAndTenantCode(authentication.getPrincipal().toString(), TenantContextHolder.getTenantCode());
+            loadedUser = this.userDetailsService.loadUserByIdentifierAndTenantCode(TenantContextHolder.getTenantCode(), authentication.getPrincipal().toString());
         } catch (TenantNotFoundException tenantNotFound) {
-            throw tenantNotFound;
+			throw new InternalAuthenticationServiceException(tenantNotFound.getMessage(), tenantNotFound);
         } catch (UsernameNotFoundException notFound) {
             if (authentication.getCredentials() != null) {
                 String presentedPassword = authentication.getCredentials().toString();
