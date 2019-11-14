@@ -8,7 +8,7 @@ import com.github.tangyi.common.core.utils.TreeUtil;
 import com.github.tangyi.common.core.vo.DeptVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
-import com.github.tangyi.common.security.constant.SecurityConstant;
+import com.github.tangyi.common.security.annotations.AdminTenantTeacherAuthorization;
 import com.github.tangyi.user.api.dto.DeptDto;
 import com.github.tangyi.user.api.module.Dept;
 import com.github.tangyi.user.service.DeptService;
@@ -17,7 +17,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -91,7 +90,7 @@ public class DeptController extends BaseController {
      * @date 2018/8/28 10:15
      */
     @PostMapping
-    @PreAuthorize("hasAuthority('sys:dept:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "创建部门", notes = "创建部门")
     @ApiImplicitParam(name = "dept", value = "部门实体", required = true, dataType = "Dept")
     @Log("新增部门")
@@ -109,7 +108,7 @@ public class DeptController extends BaseController {
      * @date 2018/8/28 10:16
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('sys:dept:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "删除部门", notes = "根据ID删除部门")
     @ApiImplicitParam(name = "id", value = "部门ID", required = true, paramType = "path")
     @Log("删除部门")
@@ -129,7 +128,7 @@ public class DeptController extends BaseController {
      * @date 2018/8/28 10:22
      */
     @PutMapping
-    @PreAuthorize("hasAuthority('sys:dept:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "更新部门信息", notes = "根据部门id更新部门的基本信息")
     @ApiImplicitParam(name = "dept", value = "部门实体", required = true, dataType = "Dept")
     @Log("更新部门")

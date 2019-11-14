@@ -15,36 +15,36 @@ public interface CustomUserDetailsService {
 
     /**
      * 根据用户名和租户标识查询
-     *
+	 *
+	 * @param tenantCode tenantCode
      * @param username   username
-     * @param tenantCode tenantCode
      * @return UserDetails
      * @author tangyi
      * @date 2019/05/28 21:06
      */
-    UserDetails loadUserByIdentifierAndTenantCode(String username, String tenantCode) throws UsernameNotFoundException;
+    UserDetails loadUserByIdentifierAndTenantCode(String tenantCode, String username) throws UsernameNotFoundException;
 
     /**
      * 根据社交账号和租户标识查询
      *
-     * @param social     social
      * @param tenantCode tenantCode
-     * @param mobileUser mobileUser
+     * @param social     social
+	 * @param mobileUser mobileUser
      * @return UserDetails
      * @author tangyi
      * @date 2019/06/22 21:08
      */
-    UserDetails loadUserBySocialAndTenantCode(String social, String tenantCode, MobileUser mobileUser) throws UsernameNotFoundException;
+    UserDetails loadUserBySocialAndTenantCode(String tenantCode, String social, MobileUser mobileUser) throws UsernameNotFoundException;
 
     /**
      * 根据微信openId和租户标识查询
-     *
+	 *
+	 * @param tenantCode tenantCode
      * @param code       code
-     * @param tenantCode tenantCode
      * @param wxUser     wxUser
      * @return UserDetails
      * @author tangyi
      * @date 2019/07/05 20:04:59
      */
-    UserDetails loadUserByWxCodeAndTenantCode(String code, String tenantCode, WxUser wxUser) throws UsernameNotFoundException;
+    UserDetails loadUserByWxCodeAndTenantCode(String tenantCode, String code, WxUser wxUser) throws UsernameNotFoundException;
 }

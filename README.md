@@ -46,7 +46,7 @@
 
 |      名称      |   版本    |
 | --------- | -------- |
-| `Spring Boot`    | `2.1.8.RELEASE`  |
+| `Spring Boot`    | `2.1.9.RELEASE`  |
 | `Spring Cloud`   | `Greenwich.SR3`  |
 
 # 5 系统架构
