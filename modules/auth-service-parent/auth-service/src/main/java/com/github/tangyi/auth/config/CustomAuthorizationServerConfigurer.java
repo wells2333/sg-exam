@@ -2,16 +2,12 @@ package com.github.tangyi.auth.config;
 
 import com.github.tangyi.auth.security.CustomTokenConverter;
 import com.github.tangyi.common.security.core.ClientDetailsServiceImpl;
-import com.github.tangyi.common.security.exceptions.CustomOauthException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.bootstrap.encrypt.KeyProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
@@ -111,18 +107,7 @@ public class CustomAuthorizationServerConfigurer extends AuthorizationServerConf
                 // 将token存储到redis
                 .tokenStore(tokenStore())
                 // token增强
-                .tokenEnhancer(jwtTokenEnhancer())
-                // 异常处理
-                .exceptionTranslator(e -> {
-                    if (e instanceof OAuth2Exception) {
-                        OAuth2Exception oAuth2Exception = (OAuth2Exception) e;
-                        return ResponseEntity
-                                .status(oAuth2Exception.getHttpErrorCode())
-                                .body(new CustomOauthException(oAuth2Exception.getMessage(), oAuth2Exception.getHttpErrorCode()));
-                    } else {
-                        throw e;
-                    }
-                });
+                .tokenEnhancer(jwtTokenEnhancer());
     }
 
     /**
@@ -140,7 +125,5 @@ public class CustomAuthorizationServerConfigurer extends AuthorizationServerConf
                 .checkTokenAccess("isAuthenticated()")
                 .allowFormAuthenticationForClients();
     }
-
-
 }
 

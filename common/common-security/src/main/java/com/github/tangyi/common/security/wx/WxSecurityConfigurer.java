@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tangyi.common.security.core.CustomUserDetailsService;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
@@ -27,6 +28,9 @@ public class WxSecurityConfigurer extends SecurityConfigurerAdapter<DefaultSecur
     @Autowired
     private AuthenticationEventPublisher defaultAuthenticationEventPublisher;
 
+	@Autowired
+	private ApplicationEventPublisher applicationEventPublisher;
+
     private AuthenticationSuccessHandler wxLoginSuccessHandler;
 
     private CustomUserDetailsService userDetailsService;
@@ -40,6 +44,7 @@ public class WxSecurityConfigurer extends SecurityConfigurerAdapter<DefaultSecur
         wxAuthenticationFilter.setEventPublisher(defaultAuthenticationEventPublisher);
         WxAuthenticationProvider wxAuthenticationProvider = new WxAuthenticationProvider();
         wxAuthenticationProvider.setCustomUserDetailsService(userDetailsService);
+		wxAuthenticationProvider.setPublisher(applicationEventPublisher);
         // 增加微信登录的过滤器
         http.authenticationProvider(wxAuthenticationProvider).addFilterAfter(wxAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }

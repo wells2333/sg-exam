@@ -49,14 +49,14 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
     /**
      * 加载用户信息
      *
+	 * @param tenantCode 租户标识
      * @param username 用户名
      * @return UserDetails
      * @throws UsernameNotFoundException,TenantNotFoundException
      */
     @Override
-    public UserDetails loadUserByIdentifierAndTenantCode(String username, String tenantCode) throws UsernameNotFoundException, TenantNotFoundException {
+    public UserDetails loadUserByIdentifierAndTenantCode(String tenantCode, String username) throws UsernameNotFoundException, TenantNotFoundException {
         long start = System.currentTimeMillis();
-        Tenant tenant = this.validateTenantCode(tenantCode);
         ResponseBean<UserVo> userVoResponseBean = userServiceClient.findUserByIdentifier(username, tenantCode);
         if (!ResponseUtil.isSuccess(userVoResponseBean))
             throw new ServiceException("查询用户信息失败: " + userVoResponseBean.getMsg());
@@ -68,18 +68,17 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 
     /**
      * 根据社交账号查询
-     *
+	 *
+	 * @param tenantCode tenantCode
      * @param social     social
-     * @param tenantCode tenantCode
      * @param mobileUser mobileUser
      * @return UserDetails
      * @author tangyi
      * @date 2019/06/22 21:08
      */
     @Override
-    public UserDetails loadUserBySocialAndTenantCode(String social, String tenantCode, MobileUser mobileUser) throws UsernameNotFoundException {
+    public UserDetails loadUserBySocialAndTenantCode(String tenantCode, String social, MobileUser mobileUser) throws UsernameNotFoundException {
         long start = System.currentTimeMillis();
-        Tenant tenant = this.validateTenantCode(tenantCode);
         ResponseBean<UserVo> userVoResponseBean = userServiceClient.findUserByIdentifier(social, IdentityType.PHONE_NUMBER.getValue(), tenantCode);
         if (!ResponseUtil.isSuccess(userVoResponseBean))
             throw new ServiceException("查询用户信息失败: " + userVoResponseBean.getMsg());
@@ -103,12 +102,6 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
             if (!ResponseUtil.isSuccess(userVoResponseBean))
                 throw new ServiceException("查询用户信息失败: " + userVoResponseBean.getMsg());
             userVo = userVoResponseBean.getData();
-        } else {
-            // TODO 记录登录时间，IP等信息
-            UserDto userDto = new UserDto();
-            BeanUtils.copyProperties(userVo, userDto);
-            userDto.setLoginTime(DateUtils.asDate(LocalDateTime.now()));
-            //userServiceClient.updateUser(userDto);
         }
         return new CustomUserDetails(userVo.getIdentifier(), userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(), start, LoginType.SMS);
     }
@@ -117,17 +110,16 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
      * 根据微信code和租户标识查询
      * 将code换成openId和sessionKey
      *
+	 * @param tenantCode tenantCode
      * @param code       code
-     * @param tenantCode tenantCode
      * @param wxUser     wxUser
      * @return UserDetails
      * @author tangyi
      * @date 2019/07/05 20:05:36
      */
     @Override
-    public UserDetails loadUserByWxCodeAndTenantCode(String code, String tenantCode, WxUser wxUser) throws UsernameNotFoundException {
+    public UserDetails loadUserByWxCodeAndTenantCode(String tenantCode, String code, WxUser wxUser) throws UsernameNotFoundException {
         long start = System.currentTimeMillis();
-        Tenant tenant = this.validateTenantCode(tenantCode);
         // 根据code获取openId和sessionKey
         WxSession wxSession = wxService.code2Session(code);
         if (wxSession == null)
@@ -156,34 +148,8 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
             if (!ResponseUtil.isSuccess(userVoResponseBean))
                 throw new ServiceException("查询用户信息失败: " + userVoResponseBean.getMsg());
             userVo = userVoResponseBean.getData();
-        } else {
-            // TODO 更新sessionKey，记录登录时间，IP等信息
-            UserDto userDto = new UserDto();
-            BeanUtils.copyProperties(userVo, userDto);
-            //userDto.setCredential(wxSession.getSessionKey());
-            userDto.setLoginTime(DateUtils.asDate(LocalDateTime.now()));
-            //userServiceClient.updateUser(userDto);
         }
         return new CustomUserDetails(userVo.getIdentifier(), userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(), start, LoginType.WECHAT);
-    }
-
-    /**
-     * 校验租户标识
-     *
-     * @param tenantCode tenantCode
-     * @return Tenant
-     */
-    private Tenant validateTenantCode(String tenantCode) throws TenantNotFoundException {
-        if (StringUtils.isBlank(tenantCode))
-            throw new TenantNotFoundException("租户code不能为空.");
-        // 先获取租户信息
-        ResponseBean<Tenant> tenantResponseBean = userServiceClient.findTenantByTenantCode(tenantCode);
-        if (!ResponseUtil.isSuccess(tenantResponseBean))
-            throw new ServiceException("查询租户信息失败: " + tenantResponseBean.getMsg());
-        Tenant tenant = tenantResponseBean.getData();
-        if (tenant == null)
-            throw new TenantNotFoundException("租户不存在.");
-        return tenant;
     }
 
     /**
