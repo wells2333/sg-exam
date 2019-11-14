@@ -72,6 +72,7 @@
         <okhttp.version>3.8.1</okhttp.version>
         <aliyun.version>4.0.3</aliyun.version>
         <weixin.version>3.4.0</weixin.version>
+        <jjwt.version>0.9.0</jjwt.version>
 
         <!-- docker -->
         <docker.maven.verion>1.4.3</docker.maven.verion>
@@ -300,6 +301,13 @@
                 <groupId>com.github.binarywang</groupId>
                 <artifactId>weixin-java-pay</artifactId>
                 <version>${weixin.version}</version>
+            </dependency>
+
+            <!-- jjwt -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>${jjwt.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

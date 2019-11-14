@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tangyi.common.security.core.CustomUserDetailsService;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
@@ -27,6 +28,9 @@ public class MobileSecurityConfigurer extends SecurityConfigurerAdapter<DefaultS
     @Autowired
     private AuthenticationEventPublisher defaultAuthenticationEventPublisher;
 
+	@Autowired
+	private ApplicationEventPublisher applicationEventPublisher;
+
     private AuthenticationSuccessHandler mobileLoginSuccessHandler;
 
     private CustomUserDetailsService userDetailsService;
@@ -40,6 +44,7 @@ public class MobileSecurityConfigurer extends SecurityConfigurerAdapter<DefaultS
         mobileAuthenticationFilter.setEventPublisher(defaultAuthenticationEventPublisher);
         MobileAuthenticationProvider mobileAuthenticationProvider = new MobileAuthenticationProvider();
         mobileAuthenticationProvider.setCustomUserDetailsService(userDetailsService);
+		mobileAuthenticationProvider.setPublisher(applicationEventPublisher);
         // 增加手机登录的过滤器
         http.authenticationProvider(mobileAuthenticationProvider).addFilterAfter(mobileAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }

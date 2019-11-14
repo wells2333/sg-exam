@@ -7,16 +7,6 @@ package com.github.tangyi.common.security.constant;
 public class SecurityConstant {
 
     /**
-     * 基础角色
-     */
-    public static final String BASE_ROLE = "role_user";
-
-    /**
-     * 超级管理员角色
-     */
-    public static final String ROLE_ADMIN = "role_admin";
-
-    /**
      * 租户管理员角色
      */
     public static final String ROLE_TENANT_ADMIN = "role_tenant_admin";
@@ -35,11 +25,6 @@ public class SecurityConstant {
      * 正常状态
      */
     public static final String NORMAL = "0";
-
-    /**
-     * 异常状态
-     */
-    public static final String ABNORMAL = "1";
 
     /**
      * 手机登录URL

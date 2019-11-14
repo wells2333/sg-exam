@@ -97,10 +97,6 @@ public class LogController extends BaseController {
     @ApiOperation(value = "新增日志", notes = "新增日志")
     @ApiImplicitParam(name = "log", value = "日志实体Log", required = true, dataType = "Log")
     public ResponseBean<Boolean> addLog(@RequestBody @Valid Log log) {
-        if (log.getId() != null)
-            log.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
-        if (true)
-            return null;
         // 保存日志
         return new ResponseBean<>(logService.insert(log) > 0);
     }
