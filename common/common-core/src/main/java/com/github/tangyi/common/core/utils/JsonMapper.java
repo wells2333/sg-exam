@@ -29,7 +29,7 @@ public class JsonMapper extends ObjectMapper {
         try {
             return this.writeValueAsString(object);
         } catch (IOException e) {
-            log.warn("将解析JSON为字符串失败:" + object, e);
+            log.warn("Object to json failed: " + object, e);
             return null;
         }
     }
@@ -41,7 +41,7 @@ public class JsonMapper extends ObjectMapper {
         try {
             return this.readValue(jsonString, clazz);
         } catch (IOException e) {
-            log.warn("将解析JSON为对象失败:" + jsonString, e);
+            log.warn("Json to object failed: " + jsonString, e);
             return null;
         }
     }
@@ -53,7 +53,7 @@ public class JsonMapper extends ObjectMapper {
         try {
             return (T) this.readValue(jsonString, javaType);
         } catch (IOException e) {
-            log.warn("将解析JSON为对象失败:" + jsonString, e);
+            log.warn("Json to object failed: " + jsonString, e);
             return null;
         }
     }

@@ -48,9 +48,7 @@ public class CourseController extends BaseController {
     @ApiOperation(value = "获取课程信息", notes = "根据课程id获取课程详细信息")
     @ApiImplicitParam(name = "id", value = "课程ID", required = true, dataType = "Long", paramType = "path")
     public ResponseBean<Course> course(@PathVariable Long id) {
-        Course course = new Course();
-        course.setId(id);
-        return new ResponseBean<>(courseService.get(course));
+        return new ResponseBean<>(courseService.get(id));
     }
 
     /**
@@ -135,15 +133,13 @@ public class CourseController extends BaseController {
     public ResponseBean<Boolean> deleteCourse(@PathVariable Long id) {
         boolean success = false;
         try {
-            Course course = new Course();
-            course.setId(id);
-            course = courseService.get(course);
+            Course course = courseService.get(id);
             if (course != null) {
                 course.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
                 success = courseService.delete(course) > 0;
             }
         } catch (Exception e) {
-            log.error("删除课程失败！", e);
+            log.error("Delete course failed", e);
         }
         return new ResponseBean<>(success);
     }
@@ -167,7 +163,7 @@ public class CourseController extends BaseController {
             if (ArrayUtils.isNotEmpty(ids))
                 success = courseService.deleteAll(ids) > 0;
         } catch (Exception e) {
-            log.error("删除课程失败！", e);
+            log.error("Delete course failed", e);
         }
         return new ResponseBean<>(success);
     }

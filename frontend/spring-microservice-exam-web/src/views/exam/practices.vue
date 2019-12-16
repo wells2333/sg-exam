@@ -1,10 +1,5 @@
 <template>
   <div>
-    <el-row class="practice-msg">
-      <el-col :span="24" style="color: black;">
-        <h1>在线学习</h1>
-      </el-col>
-    </el-row>
     <div class="courses" v-loading="listLoading">
       <el-row v-for="practice in practices" :key="practice.id">
         <el-col :offset="8">

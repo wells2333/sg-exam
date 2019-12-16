@@ -1,14 +1,16 @@
 package com.github.tangyi.common.core.utils;
 
+import com.github.tangyi.common.core.constant.ApiMsg;
 import com.github.tangyi.common.core.model.ResponseBean;
 
 /**
- *
- *
  * @author tangyi
  * @date 2019-10-08 12:03
  */
 public class ResponseUtil {
+
+	private ResponseUtil() {
+	}
 
 	/**
 	 * 是否成功
@@ -16,6 +18,6 @@ public class ResponseUtil {
 	 * @return boolean
 	 */
 	public static boolean isSuccess(ResponseBean<?> responseBean) {
-		return responseBean != null && responseBean.getStatus() == ResponseBean.SUCCESS;
+		return responseBean != null && responseBean.getCode() == ApiMsg.KEY_SUCCESS;
 	}
 }

@@ -1,14 +1,12 @@
 import axios from 'axios'
 import store from '../store'
 import { getToken, setToken, getRefreshToken, getTenantCode } from '@/utils/auth'
-import { isNotEmpty } from '@/utils/util'
+import { isNotEmpty, isSuccess } from '@/utils/util'
 import { refreshToken } from '@/api/admin/login'
 import { Message } from 'element-ui'
 import errorCode from '@/const/errorCode'
 import NProgress from 'nprogress' // progress bar
-import 'nprogress/nprogress.css'
-// progress bar style
-
+import 'nprogress/nprogress.css'// progress bar style
 const whiteList = ['/auth/authentication/removeToken']// 白名单
 
 // 超时时间
@@ -16,7 +14,8 @@ axios.defaults.timeout = 30000
 // 跨域请求，允许保存cookie
 axios.defaults.withCredentials = true
 NProgress.configure({ showSpinner: false })// NProgress Configuration
-// HTTPrequest拦截
+
+// HTTP request拦截
 axios.interceptors.request.use(config => {
   NProgress.start() // start progress bar
   if (store.getters.access_token && whiteList.indexOf(config.url) === -1) {
@@ -35,18 +34,20 @@ axios.interceptors.request.use(config => {
   return Promise.reject(error)
 })
 
-// HTTPresponse拦截
+// HTTP response拦截
 axios.interceptors.response.use(data => {
   NProgress.done()
+  // 请求失败，弹出提示信息
+  if (!isSuccess(data.data)) {
+    Message({ message: data.data.msg, type: 'error' })
+  }
   return data
 }, error => {
   NProgress.done()
   if (error.response) {
     const originalRequest = error.config
     const currentRefreshToken = getRefreshToken()
-    // 接口返回401
-    // 已经重试过
-    // 自动刷新token
+    // 接口返回401并且已经重试过，自动刷新token
     if ((error.response.status === 401 || error.response.status === 403) && !originalRequest._retry && isNotEmpty(currentRefreshToken)) {
       // 退出请求
       if (originalRequest.url.indexOf('removeToken') !== -1) {
@@ -62,7 +63,7 @@ axios.interceptors.response.use(data => {
         return axios(originalRequest)
       }).catch(() => {
         // 刷新失败，执行退出
-        store.dispatch('LogOut').then(() => { location.reload() })
+        store.dispatch('LogOut').then(() => location.reload())
       })
     } else if (error.response.status === 423) {
       Message({ message: '演示环境不能操作', type: 'warning' })

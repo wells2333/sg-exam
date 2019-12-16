@@ -38,27 +38,25 @@ public class RabbitSubmitExaminationReceiver {
      */
     @RabbitListener(queues = {MqConstant.SUBMIT_EXAMINATION_QUEUE})
     public void submitExamination(Answer answer) {
-        log.debug("处理考试提交ID：{}, 提交人：{}", answer.getExamRecordId(), answer.getModifier());
+        log.debug("examRecordId: {}, modifier: {}", answer.getExamRecordId(), answer.getModifier());
         try {
             // 异步提交会丢失tenantCode，需要手动设置
             TenantContextHolder.setTenantCode(answer.getTenantCode());
-            ExaminationRecord examRecord = new ExaminationRecord();
-            examRecord.setId(answer.getExamRecordId());
-            examRecord = examRecordService.get(examRecord);
+            ExaminationRecord examRecord = examRecordService.get(answer.getExamRecordId());
             if (examRecord == null)
                 return;
             if (SubmitStatusEnum.NOT_SUBMITTED.getValue().equals(examRecord.getSubmitStatus()))
-                log.warn("考试：{}未提交", examRecord.getId());
+                log.warn("Examination: {} not submitted", examRecord.getId());
             if (SubmitStatusEnum.CALCULATE.getValue().equals(examRecord.getSubmitStatus()))
-                log.warn("考试：{}正在统计成绩，请勿重复提交", examRecord.getId());
+                log.warn("Examination: {} is counting, please do not submit again", examRecord.getId());
             // 更新状态为正在统计
             examRecord.setSubmitStatus(SubmitStatusEnum.CALCULATE.getValue());
             // 更新成功
             if (examRecordService.update(examRecord) > 0) {
-                log.debug("考试：{}更新状态为正在统计成功", examRecord.getId());
+                log.debug("Examination: {} count success", examRecord.getId());
                 answerService.submit(answer);
             } else {
-                log.warn("考试：{}更新状态为正在统计失败", examRecord.getId());
+                log.warn("Examination: {} count failed", examRecord.getId());
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);

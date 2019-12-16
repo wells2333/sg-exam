@@ -137,7 +137,7 @@ public class LogController extends BaseController {
             if (ArrayUtils.isNotEmpty(ids))
                 success = logService.deleteAll(ids) > 0;
         } catch (Exception e) {
-            log.error("删除附件失败！", e);
+            log.error("Delete attachment failed", e);
         }
         return new ResponseBean<>(success);
     }

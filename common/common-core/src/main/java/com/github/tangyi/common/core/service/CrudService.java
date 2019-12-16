@@ -4,7 +4,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import com.github.tangyi.common.core.persistence.CrudMapper;
-import com.github.tangyi.common.core.utils.ReflectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,14 +24,9 @@ public abstract class CrudService<D extends CrudMapper<T>, T extends BaseEntity<
      *
      * @param id id
      * @return T
-     * @throws Exception
      */
-    @SuppressWarnings("unchecked")
-    public T get(Long id) throws Exception {
-        Class<T> entityClass = ReflectionUtil.getClassGenricType(getClass(), 1);
-        T entity = entityClass.getConstructor(Long.class).newInstance("0");
-        entity.setId(id);
-        return dao.get(entity);
+    public T get(Long id) {
+        return dao.getById(id);
     }
 
     /**

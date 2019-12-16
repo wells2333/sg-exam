@@ -1,23 +1,27 @@
 <template>
   <div>
-    <o-header></o-header>
-    <o-main></o-main>
-    <o-footer></o-footer>
+    <o-header @handleSubmitExam="handleSubmitExam"></o-header>
+    <o-main ref="mainRef"></o-main>
   </div>
 </template>
 
 <script>
 import OHeader from './common/header'
 import OMain from './common/main'
-import OFooter from './common/footer'
 export default {
   data () {
     return {}
   },
   components: {
     OHeader,
-    OMain,
-    OFooter
+    OMain
+  },
+  methods: {
+    // 提交考试
+    handleSubmitExam() {
+      debugger
+      this.$refs.mainRef.handleSubmitExam()
+    }
   }
 }
 </script>

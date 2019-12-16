@@ -58,6 +58,12 @@
         </if>
     </sql>
 
+    <select id="getById" resultMap="subjectChoicesResultMap">
+        SELECT
+        <include refid="subjectChoicesColumns"/>
+        FROM exam_subject_choices a WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
     <select id="get" resultMap="subjectChoicesResultMap">
         SELECT
         <include refid="subjectChoicesColumns"/>

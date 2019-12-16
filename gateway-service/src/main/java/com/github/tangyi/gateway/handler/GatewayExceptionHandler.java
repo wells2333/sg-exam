@@ -1,5 +1,6 @@
 package com.github.tangyi.gateway.handler;
 
+import com.github.tangyi.common.core.constant.ApiMsg;
 import com.github.tangyi.common.core.exceptions.InvalidAccessTokenException;
 import com.github.tangyi.common.core.exceptions.InvalidValidateCodeException;
 import com.github.tangyi.common.core.exceptions.ValidateCodeExpiredException;
@@ -78,44 +79,40 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
      */
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
-        // 按照异常类型进行处理
-        HttpStatus httpStatus;
-        String msg;
-        // 返回给前端用的状态码，默认服务器内部错误
-        int code = ResponseBean.FAIL;
+        String msg = "服务器内部错误.";
+        // 返回给前端用的状态码
+        int keyCode = ApiMsg.KEY_UNKNOWN;
+        int msgCode = ApiMsg.ERROR;
         if (ex instanceof NotFoundException) {
-            httpStatus = HttpStatus.NOT_FOUND;
-            msg = "SERVICE_UNAVAILABLE.";
+        	// 服务不可用
+			keyCode = ApiMsg.KEY_SERVICE;
+			msgCode = ApiMsg.UNAVAILABLE;
         } else if (ex instanceof ResponseStatusException) {
             ResponseStatusException responseStatusException = (ResponseStatusException) ex;
-            httpStatus = responseStatusException.getStatus();
             msg = responseStatusException.getMessage();
+			// 服务响应错误
+			keyCode = ApiMsg.KEY_SERVICE;
+			msgCode = ApiMsg.ERROR;
         } else if (ex instanceof InvalidValidateCodeException) {
-            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
             msg = ex.getMessage();
             // 验证码错误
-            code = ResponseBean.INVALID_VALIDATE_CODE_ERROR;
-        } else if (ex instanceof ValidateCodeExpiredException) {
-            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+			keyCode = ApiMsg.KEY_VALIDATE_CODE;
+		} else if (ex instanceof ValidateCodeExpiredException) {
             msg = ex.getMessage();
             // 验证码过期
-            code = ResponseBean.VALIDATE_CODE_EXPIRED_ERROR;
+			keyCode = ApiMsg.KEY_VALIDATE_CODE;
+			msgCode = ApiMsg.EXPIRED;
         } else if (ex instanceof InvalidAccessTokenException) {
-            httpStatus = HttpStatus.FORBIDDEN;
             msg = ex.getMessage();
-            // token非法，返回403
-            code = HttpStatus.FORBIDDEN.value();
-        } else {
-            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-            msg = "服务器内部错误.";
+            // token非法
+			keyCode = ApiMsg.KEY_TOKEN;
+			msgCode = ApiMsg.INVALID;
         }
         // 封装响应体
-        ResponseBean<String> responseBean = new ResponseBean<>(msg, msg);
-        responseBean.setStatus(httpStatus.value());
-        responseBean.setCode(code);
+        ResponseBean<String> responseBean = new ResponseBean<>(msg, keyCode, msgCode);
         // 错误记录
         ServerHttpRequest request = exchange.getRequest();
-        log.error("[全局异常处理]异常请求路径:{},记录异常信息:{}", request.getPath(), ex.getMessage());
+        log.error("[全局异常处理]异常请求路径:{}, 异常信息:{}", request.getPath(), ex.getMessage());
         if (exchange.getResponse().isCommitted())
             return Mono.error(ex);
         exceptionHandlerResult.set(responseBean);
@@ -128,7 +125,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
 
     private Mono<ServerResponse> renderErrorResponse(ServerRequest request) {
         ResponseBean<?> responseBean = exceptionHandlerResult.get();
-        return ServerResponse.status(responseBean.getStatus())
+        return ServerResponse.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .body(BodyInserters.fromObject(responseBean));
     }

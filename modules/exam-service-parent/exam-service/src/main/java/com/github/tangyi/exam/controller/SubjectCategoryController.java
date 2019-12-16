@@ -1,10 +1,7 @@
 package com.github.tangyi.exam.controller;
 
-import cn.hutool.core.collection.CollUtil;
-import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.SysUtil;
-import com.github.tangyi.common.core.utils.TreeUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.annotations.AdminTenantTeacherAuthorization;
@@ -16,14 +13,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 题目分类controller
@@ -49,17 +42,7 @@ public class SubjectCategoryController extends BaseController {
     @GetMapping(value = "categories")
     @ApiOperation(value = "获取分类列表")
     public List<SubjectCategoryDto> menus() {
-        SubjectCategory subjectCategory = new SubjectCategory();
-        subjectCategory.setTenantCode(SysUtil.getTenantCode());
-        // 查询所有分类
-        List<SubjectCategory> subjectCategoryList = categoryService.findList(subjectCategory);
-        if (CollectionUtils.isNotEmpty(subjectCategoryList)) {
-            // 转成dto
-            List<SubjectCategoryDto> subjectCategorySetTreeList = subjectCategoryList.stream().map(SubjectCategoryDto::new).distinct().collect(Collectors.toList());
-            // 排序、组装树形结构
-            return TreeUtil.buildTree(CollUtil.sort(subjectCategorySetTreeList, Comparator.comparingInt(SubjectCategoryDto::getSort)), CommonConstant.ROOT);
-        }
-        return new ArrayList<>();
+       return categoryService.menus();
     }
 
     /**
@@ -74,9 +57,7 @@ public class SubjectCategoryController extends BaseController {
     @ApiOperation(value = "获取分类信息", notes = "根据分类id获取分类详细信息")
     @ApiImplicitParam(name = "id", value = "分类ID", required = true, dataType = "Long", paramType = "path")
     public ResponseBean<SubjectCategory> subjectCategory(@PathVariable Long id) {
-        SubjectCategory subjectCategory = new SubjectCategory();
-        subjectCategory.setId(id);
-        return new ResponseBean<>(categoryService.get(subjectCategory));
+        return new ResponseBean<>(categoryService.get(id));
     }
 
     /**

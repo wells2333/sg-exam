@@ -79,7 +79,7 @@ public class TenantService extends CrudService<TenantMapper, Tenant> {
         Tenant currentTenant = this.get(tenant);
         // 待审核 -> 审核通过
         if (currentTenant != null && currentTenant.getStatus().equals(TenantConstant.PENDING_AUDIT) && status.equals(TenantConstant.APPROVAL)) {
-            log.info("待审核 -> 审核通过：{}", tenant.getTenantCode());
+            log.info("Pending review -> review passed：{}", tenant.getTenantCode());
             // 用户基本信息
             User user = new User();
             user.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), tenant.getTenantCode());

@@ -1,7 +1,7 @@
 package com.github.tangyi.user.service;
 
 import com.github.tangyi.common.core.constant.CommonConstant;
-import com.github.tangyi.common.core.enums.LoginType;
+import com.github.tangyi.common.core.enums.LoginTypeEnum;
 import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.properties.SysProperties;
 import com.github.tangyi.common.core.service.CrudService;
@@ -153,13 +153,11 @@ public class UserService extends CrudService<UserMapper, User> {
         userAuths.setTenantCode(tenantCode);
         userAuths = userAuthsService.getByIdentifier(userAuths);
         if (userAuths == null)
-            throw new CommonException("账号" + identifier + "不存在.");
+            throw new CommonException("Identifier " + identifier + "does not exist");
         // 根据用户id查询用户详细信息
-        User user = new User();
-        user.setId(userAuths.getUserId());
-        user = this.get(user);
+        User user = this.get(userAuths.getUserId());
         if (user == null)
-            throw new CommonException("查询用户信息失败.");
+            throw new CommonException("Get user info failed");
         // 查询用户的角色信息
         List<Role> roles = this.getUserRoles(user);
         // 根据角色查询权限
@@ -351,16 +349,12 @@ public class UserService extends CrudService<UserMapper, User> {
     @Transactional
     @CacheEvict(value = "user", key = "#userDto.identifier")
     public int updateAvatar(UserDto userDto) {
-        User user = new User();
-        user.setId(userDto.getId());
-        user = this.get(user);
+        User user = this.get(userDto.getId());
         if (user == null)
             throw new CommonException("用户不存在.");
         // 先删除旧头像
         if (user.getAvatarId() != null) {
-            Attachment attachment = new Attachment();
-            attachment.setId(user.getAvatarId());
-            attachment = attachmentService.get(attachment);
+            Attachment attachment = attachmentService.get(user.getAvatarId());
             if (attachment != null)
                 attachmentService.delete(attachment);
         }
@@ -383,15 +377,13 @@ public class UserService extends CrudService<UserMapper, User> {
         UserAuths userAuths = new UserAuths();
         userAuths.setIdentifier(identifier);
         if (identityType != null)
-            userAuths.setIdentityType(IdentityType.match(identityType).getValue());
+            userAuths.setIdentityType(IdentityType.matchByType(identityType).getValue());
         userAuths.setTenantCode(tenantCode);
         userAuths = userAuthsService.getByIdentifier(userAuths);
         if (userAuths == null)
             return null;
         // 查询用户信息
-        User user = new User();
-        user.setId(userAuths.getUserId());
-        user = this.get(user);
+        User user = this.get(userAuths.getUserId());
         if (user == null)
             return null;
         // 查询用户角色
@@ -443,7 +435,7 @@ public class UserService extends CrudService<UserMapper, User> {
      * @date 2018/9/14 20:12
      */
     public void saveImageCode(String random, String imageCode) {
-        redisTemplate.opsForValue().set(CommonConstant.DEFAULT_CODE_KEY + LoginType.PWD.getType() + "@" + random, imageCode, SecurityConstant.DEFAULT_IMAGE_EXPIRE, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(CommonConstant.DEFAULT_CODE_KEY + LoginTypeEnum.PWD.getType() + "@" + random, imageCode, SecurityConstant.DEFAULT_IMAGE_EXPIRE, TimeUnit.SECONDS);
     }
 
     /**
@@ -613,10 +605,10 @@ public class UserService extends CrudService<UserMapper, User> {
         // 解密密码
         try {
             encoded = SysUtil.decryptAES(encoded, sysProperties.getKey()).trim();
-            log.info("密码解密结果：{}", encoded);
+            log.info("Decrypt result: {}", encoded);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new CommonException("解密失败: " + e.getMessage());
+            throw new CommonException("Decrypt failed: " + e.getMessage());
         }
         return encoded;
     }
@@ -664,9 +656,12 @@ public class UserService extends CrudService<UserMapper, User> {
         List<UserVo> userVos = Lists.newArrayList();
         Stream<User> userStream = this.findListById(ids).stream();
         if (Optional.ofNullable(userStream).isPresent()) {
+			Attachment attachment = new Attachment();
             userVos = userStream.map(tempUser -> {
                 UserVo tempUserVo = new UserVo();
                 BeanUtils.copyProperties(tempUser, tempUserVo);
+				attachment.setId(tempUser.getAvatarId());
+				tempUserVo.setAvatarUrl(attachmentService.getPreviewUrl(attachment));
                 return tempUserVo;
             }).collect(Collectors.toList());
         }
@@ -697,7 +692,6 @@ public class UserService extends CrudService<UserMapper, User> {
         if (CollectionUtils.isNotEmpty(deptList)) {
             // 用户所属部门
             deptList.stream()
-                    // 按部门ID找到部门信息
                     .filter(tempDept -> tempDept.getId().equals(tempUser.getDeptId()))
                     .findFirst().ifPresent(userDept -> {
                 userDto.setDeptId(userDept.getId());
@@ -708,7 +702,6 @@ public class UserService extends CrudService<UserMapper, User> {
         if (CollectionUtils.isNotEmpty(userRoles)) {
             List<Role> userRoleList = new ArrayList<>();
             userRoles.stream()
-                    // 过滤
                     .filter(tempUserRole -> tempUser.getId().equals(tempUserRole.getUserId()))
                     .forEach(tempUserRole -> finalRoleList.stream()
                             .filter(role -> role.getId().equals(tempUserRole.getRoleId()))

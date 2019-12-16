@@ -4,7 +4,10 @@ import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.model.ResponseBean;
-import com.github.tangyi.common.core.utils.*;
+import com.github.tangyi.common.core.utils.DateUtils;
+import com.github.tangyi.common.core.utils.PageUtil;
+import com.github.tangyi.common.core.utils.SysUtil;
+import com.github.tangyi.common.core.utils.excel.ExcelToolUtil;
 import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
@@ -13,6 +16,8 @@ import com.github.tangyi.common.security.constant.SecurityConstant;
 import com.github.tangyi.user.api.dto.UserDto;
 import com.github.tangyi.user.api.dto.UserInfoDto;
 import com.github.tangyi.user.api.module.*;
+import com.github.tangyi.user.excel.listener.UserImportListener;
+import com.github.tangyi.user.excel.model.UserExcelModel;
 import com.github.tangyi.user.service.DeptService;
 import com.github.tangyi.user.service.UserAuthsService;
 import com.github.tangyi.user.service.UserRoleService;
@@ -26,7 +31,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -68,9 +72,7 @@ public class UserController extends BaseController {
     @ApiOperation(value = "获取用户信息", notes = "根据用户id获取用户详细信息")
     @ApiImplicitParam(name = "id", value = "用户ID", required = true, dataType = "Long", paramType = "path")
     public ResponseBean<User> user(@PathVariable Long id) {
-        User user = new User();
-        user.setId(id);
-        return new ResponseBean<>(userService.get(user));
+        return new ResponseBean<>(userService.get(id));
     }
 
     /**
@@ -201,8 +203,8 @@ public class UserController extends BaseController {
         try {
             return new ResponseBean<>(userService.updateUser(id, userDto));
         } catch (Exception e) {
-            log.error("更新用户信息失败！", e);
-            throw new CommonException("更新用户信息失败！");
+            log.error("Update user failed", e);
+            throw new CommonException("Update user failed");
         }
     }
 
@@ -272,14 +274,12 @@ public class UserController extends BaseController {
     @Log("删除用户")
     public ResponseBean<Boolean> deleteUser(@PathVariable Long id) {
         try {
-            User user = new User();
-            user.setId(id);
-            user = userService.get(user);
+            User user = userService.get(id);
             user.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
             return new ResponseBean<>(userService.delete(user) > 0);
         } catch (Exception e) {
-            log.error("删除用户信息失败！", e);
-            throw new CommonException("删除用户信息失败！");
+            log.error("Delete user failed: {}", e.getMessage(), e);
+            throw new CommonException("Delete user failed");
         }
     }
 
@@ -297,10 +297,6 @@ public class UserController extends BaseController {
     @Log("导出用户")
     public void exportUser(@RequestBody Long[] ids, HttpServletRequest request, HttpServletResponse response) {
         try {
-            // 配置response
-            response.setCharacterEncoding("utf-8");
-            response.setContentType("multipart/form-data");
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request, "用户信息" + DateUtils.localDateMillisToString(LocalDateTime.now()) + ".xlsx"));
             List<User> users;
             if (ArrayUtils.isNotEmpty(ids)) {
                 users = userService.findListById(ids);
@@ -323,10 +319,11 @@ public class UserController extends BaseController {
                         .ifPresent(userAuth -> UserUtils.toUserInfoDto(userDto, tempUser, userAuth));
                 return userDto;
             }).collect(Collectors.toList());
-            ExcelToolUtil.exportExcel(request.getInputStream(), response.getOutputStream(), MapUtil.java2Map(userInfoDtos), UserUtils.getUserMap());
+			String fileName = "用户信息" + DateUtils.localDateMillisToString(LocalDateTime.now());
+			ExcelToolUtil.writeExcel(request, response, UserUtils.convertToExcelModel(userInfoDtos), fileName,"sheet1", UserExcelModel.class);
         } catch (Exception e) {
-            log.error("导出用户数据失败！", e);
-            throw new CommonException("导出用户数据失败！");
+            log.error("Export user data failed", e);
+            throw new CommonException("Export user data failed");
         }
     }
 
@@ -344,15 +341,10 @@ public class UserController extends BaseController {
     @Log("导入用户")
     public ResponseBean<Boolean> importUser(@ApiParam(value = "要上传的文件", required = true) MultipartFile file, HttpServletRequest request) {
         try {
-            log.debug("开始导入用户数据");
-            List<UserInfoDto> userInfoDtos = MapUtil.map2Java(UserInfoDto.class,
-                    ExcelToolUtil.importExcel(file.getInputStream(), UserUtils.getUserMap()));
-            if (CollectionUtils.isEmpty(userInfoDtos))
-                throw new CommonException("无用户数据导入.");
-            return new ResponseBean<>(userService.importUsers(userInfoDtos));
+            return new ResponseBean<>(ExcelToolUtil.readExcel(file.getInputStream(), UserExcelModel.class, new UserImportListener(userService)));
         } catch (Exception e) {
-            log.error("导入用户数据失败！", e);
-            throw new CommonException("导入用户数据失败！");
+            log.error("Import user failed", e);
+            throw new CommonException("Import user failed");
         }
     }
 
@@ -376,8 +368,8 @@ public class UserController extends BaseController {
                 success = userService.deleteAll(ids) > 0;
             return new ResponseBean<>(success);
         } catch (Exception e) {
-            log.error("删除用户失败！", e);
-            throw new CommonException("删除用户失败！");
+            log.error("Delete user failed", e);
+            throw new CommonException("Delete user failed");
         }
     }
 

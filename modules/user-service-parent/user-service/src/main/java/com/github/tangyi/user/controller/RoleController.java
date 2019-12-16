@@ -55,12 +55,7 @@ public class RoleController extends BaseController {
     @ApiOperation(value = "获取角色信息", notes = "根据角色id获取角色详细信息")
     @ApiImplicitParam(name = "id", value = "角色ID", required = true, dataType = "Long", paramType = "path")
     public Role role(@PathVariable Long id) {
-        try {
-            return roleService.get(id);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        return new Role();
+       return roleService.get(id);
     }
 
     /**
@@ -210,7 +205,7 @@ public class RoleController extends BaseController {
             if (ArrayUtils.isNotEmpty(ids))
                 success = roleService.deleteAll(ids) > 0;
         } catch (Exception e) {
-            log.error("删除角色失败！", e);
+            log.error("Delete role failed", e);
         }
         return new ResponseBean<>(success);
     }

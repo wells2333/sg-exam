@@ -46,8 +46,8 @@
 
 |      名称      |   版本    |
 | --------- | -------- |
-| `Spring Boot`    | `2.1.9.RELEASE`  |
-| `Spring Cloud`   | `Greenwich.SR3`  |
+| `Spring Boot`    | `2.1.11.RELEASE`  |
+| `Spring Cloud`   | `Greenwich.SR4`  |
 
 # 5 系统架构
 
@@ -94,10 +94,13 @@
 
 ## 7.1 前台功能
 
-1. 考试
+1. 首页
+![image](docs/images/image_web.png)
+
+2. 考试
 ![image](docs/images/image_web_exam.png)
 
-2. 查看错题
+3. 查看错题
 ![image](docs/images/image_web_incorrect_answer.png)
 
 ## 7.2 后台功能

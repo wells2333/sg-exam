@@ -81,7 +81,7 @@ export default {
     lock: '锁屏'
   },
   login: {
-    title: '欢迎使用考试管理系统',
+    title: '硕果云教育管理系统',
     logIn: '登录',
     tenantCode: '单位ID',
     identifier: '账号',

@@ -41,6 +41,13 @@
         </if>
     </sql>
 
+    <select id="getById" resultMap="knowledgeResultMap">
+        SELECT
+        <include refid="knowledgeColumns"/>
+        FROM exam_knowledge a
+        WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
     <select id="get" resultMap="knowledgeResultMap">
         SELECT
         <include refid="knowledgeColumns"/>

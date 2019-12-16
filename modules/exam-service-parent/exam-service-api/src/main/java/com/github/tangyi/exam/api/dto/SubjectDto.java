@@ -51,7 +51,7 @@ public class SubjectDto extends BaseEntity<SubjectDto> {
     /**
      * 分值
      */
-    private Integer score;
+    private Double score;
 
 
     /**

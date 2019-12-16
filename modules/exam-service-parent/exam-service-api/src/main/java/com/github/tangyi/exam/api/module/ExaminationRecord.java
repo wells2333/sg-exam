@@ -43,7 +43,7 @@ public class ExaminationRecord extends BaseEntity<ExaminationRecord> {
     /**
      * 成绩
      */
-    private Integer score;
+    private Double score;
 
     /**
      * 错误题目数量

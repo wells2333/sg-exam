@@ -55,6 +55,13 @@
         </if>
     </sql>
 
+    <select id="getById" resultMap="attachmentResultMap">
+        SELECT
+        <include refid="attachmentColumns"/>
+        FROM sys_attachment a
+        WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
     <select id="get" resultMap="attachmentResultMap">
         SELECT
         <include refid="attachmentColumns"/>

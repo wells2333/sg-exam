@@ -1,9 +1,9 @@
 package com.github.tangyi.auth.security;
 
-import com.github.tangyi.common.security.event.CustomAuthenticationFailureEvent;
-import com.github.tangyi.common.security.event.CustomAuthenticationSuccessEvent;
 import com.github.tangyi.common.core.exceptions.TenantNotFoundException;
 import com.github.tangyi.common.security.core.CustomUserDetailsService;
+import com.github.tangyi.common.security.event.CustomAuthenticationFailureEvent;
+import com.github.tangyi.common.security.event.CustomAuthenticationSuccessEvent;
 import com.github.tangyi.common.security.tenant.TenantContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -25,8 +25,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Slf4j
 public class CustomUserDetailsAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
-    private static final String USER_NOT_FOUND_PASSWORD = "userNotFoundPassword";
-
     private PasswordEncoder passwordEncoder;
 
     private CustomUserDetailsService userDetailsService;
@@ -44,14 +42,14 @@ public class CustomUserDetailsAuthenticationProvider extends AbstractUserDetails
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
         if (authentication.getCredentials() == null) {
-            log.debug("认证失败: 密码为空.");
+            log.debug("Authentication failed: password is blank");
             throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "密码为空."));
         }
         // 获取密码
         String presentedPassword = authentication.getCredentials().toString();
         // 匹配密码
         if (!passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
-            log.debug("认证失败: 密码错误.");
+            log.debug("Authentication failed: invalid password");
 			publisher.publishEvent(new CustomAuthenticationFailureEvent(authentication, userDetails));
 			throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "密码错误."));
         }
@@ -61,8 +59,8 @@ public class CustomUserDetailsAuthenticationProvider extends AbstractUserDetails
     @Override
     protected void doAfterPropertiesSet() throws Exception {
         if (this.userDetailsService == null)
-            throw new IllegalArgumentException("UserDetailsService不能为空.");
-        this.userNotFoundEncodedPassword = this.passwordEncoder.encode(USER_NOT_FOUND_PASSWORD);
+            throw new IllegalArgumentException("UserDetailsService can not be null");
+        this.userNotFoundEncodedPassword = this.passwordEncoder.encode("userNotFoundPassword");
     }
 
     /**
@@ -91,7 +89,7 @@ public class CustomUserDetailsAuthenticationProvider extends AbstractUserDetails
             throw new InternalAuthenticationServiceException(repositoryProblem.getMessage(), repositoryProblem);
         }
         if (loadedUser == null) {
-            throw new InternalAuthenticationServiceException("获取用户信息失败.");
+            throw new InternalAuthenticationServiceException("get user information failed");
         }
         return loadedUser;
     }

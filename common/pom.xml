@@ -18,5 +18,6 @@
         <module>common-feign</module>
         <module>common-log</module>
         <module>common-config</module>
+        <module>common-oss</module>
     </modules>
 </project>

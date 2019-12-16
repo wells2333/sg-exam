@@ -572,6 +572,8 @@ export default {
         this.list = response.data.list
         this.total = parseInt(response.data.total)
         this.listLoading = false
+      }).catch(() => {
+        this.listLoading = false
       })
     },
     // 点击新建题目

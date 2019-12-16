@@ -1,5 +1,6 @@
 package com.github.tangyi.auth.error;
 
+import com.github.tangyi.common.core.constant.ApiMsg;
 import com.github.tangyi.common.core.model.ResponseBean;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
@@ -49,8 +50,7 @@ public class CustomOAuth2ExceptionRenderer {
 		Object body = responseEntity.getBody();
 		if (body != null) {
 			// 返回ResponseBean
-			ResponseBean<?> responseBean = new ResponseBean<>(body);
-			responseBean.setStatus(responseEntity.getStatusCode().value());
+			ResponseBean<?> responseBean = new ResponseBean<>(body, ApiMsg.KEY_ACCESS, ApiMsg.DENIED);
 			writeWithMessageConverters(responseBean, inputMessage, outputMessage);
 		} else {
 			// flush headers
