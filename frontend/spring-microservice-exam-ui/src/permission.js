@@ -40,12 +40,6 @@ router.beforeEach((to, from, next) => {
             next({ path: '/' })
           })
         })
-        // 获取附件配置信息
-        if (store.getters.sysConfig.fdfsHttpHost === undefined) {
-          store.dispatch('GetSysConfig').then(res => {}).catch(() => {
-            console.log('获取系统配置失败！')
-          })
-        }
       } else {
         // 没有动态改变权限的需求可直接next() 删除下方权限判断 ↓
         if (hasPermission(store.getters.roles, to.meta.roles)) {

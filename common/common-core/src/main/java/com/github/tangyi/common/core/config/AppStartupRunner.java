@@ -24,7 +24,6 @@ public class AppStartupRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         log.info("================ start command line ================ ");
-        log.info("set system properties...");
         // 设置系统属性
         if (StringUtils.isNotBlank(sysProperties.getCacheExpire()))
             System.setProperty(CommonConstant.CACHE_EXPIRE, sysProperties.getCacheExpire());

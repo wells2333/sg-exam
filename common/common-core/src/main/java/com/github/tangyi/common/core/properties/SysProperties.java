@@ -14,16 +14,6 @@ import org.springframework.context.annotation.Configuration;
 public class SysProperties {
 
     /**
-     * fastDfs服务器的HTTP地址
-     */
-    private String fdfsHttpHost;
-
-    /**
-     * 上传地址
-     */
-    private String uploadUrl;
-
-    /**
      * 默认头像
      */
     private String defaultAvatar;
@@ -42,4 +32,6 @@ public class SysProperties {
      * 缓存超时时间
      */
     private String cacheExpire;
+
+    private String gatewaySecret;
 }

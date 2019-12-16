@@ -1,7 +1,12 @@
 <template>
   <div class="menu-wrapper">
+    <div style="background-color: rgb(48, 65, 86);">
+      <div class="ams-block-component ams-block" style="color: rgb(255, 255, 255); font-size: 30px; text-align: center; margin-bottom: 8px; font-family: Roboto; padding-top: 10px;">
+        硕果云<div class="ams-operations el-form--inline"></div>
+      </div>
+    </div>
     <template v-for="(item, index) in menu">
-      <el-menu-item v-if="item.children.length===0 " :index="filterPath(item.path,index)" :key="item.label" @click="open(item)">
+      <el-menu-item v-if="item.children.length === 0 " :index="filterPath(item.path,index)" :key="item.label" @click="open(item)">
         <svg-icon :icon-class="item.icon" />
         <span slot="title">{{ item.label }}</span>
       </el-menu-item>
@@ -12,7 +17,7 @@
           <span slot="title" :class="{'el-menu--display':isCollapse}">{{ item.label }}</span>
         </template>
         <template v-for="(child,cindex) in item.children">
-          <el-menu-item v-if="child.children.length==0" :index="filterPath(child.path,cindex)" :key="cindex" @click="open(child)">
+          <el-menu-item v-if="child.children.length === 0" :index="filterPath(child.path,cindex)" :key="cindex" @click="open(child)">
             <span slot="title">{{ child.label }}</span>
           </el-menu-item>
           <sidebar-item v-else :menu="[child]" :key="cindex" :is-collapse="isCollapse"/>

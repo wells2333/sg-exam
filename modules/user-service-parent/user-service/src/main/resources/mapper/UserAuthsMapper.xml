@@ -41,6 +41,13 @@
         </if>
     </sql>
 
+    <select id="getById" resultMap="userAuthResultMap">
+        SELECT
+        <include refid="userAuthColumns"/>
+        FROM sys_user_auths a
+        WHERE a.id = #{id}
+    </select>
+
     <select id="get" resultMap="userAuthResultMap">
         SELECT
         <include refid="userAuthColumns"/>

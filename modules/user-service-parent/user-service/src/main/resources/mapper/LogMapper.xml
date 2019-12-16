@@ -43,6 +43,13 @@
         a.tenant_code
     </sql>
 
+    <select id="getById" resultMap="logResultMap">
+        SELECT
+        <include refid="logColumns"/>
+        FROM sys_log a
+        WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
     <select id="get" resultMap="logResultMap">
         SELECT
         <include refid="logColumns"/>

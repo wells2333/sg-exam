@@ -30,13 +30,13 @@ public class ValidateTenantAspect {
 	public void validateTenantCode(String tenantCode) throws TenantNotFoundException {
 		// 获取tenantCode
 		if (StringUtils.isBlank(tenantCode))
-			throw new TenantNotFoundException("租户code不能为空.");
+			throw new TenantNotFoundException("tenantCode cant not be null");
 		// 先获取租户信息
 		ResponseBean<Tenant> tenantResponseBean = userServiceClient.findTenantByTenantCode(tenantCode);
 		if (!ResponseUtil.isSuccess(tenantResponseBean))
-			throw new ServiceException("查询租户信息失败: " + tenantResponseBean.getMsg());
+			throw new ServiceException("get tenant info failed: " + tenantResponseBean.getMsg());
 		Tenant tenant = tenantResponseBean.getData();
 		if (tenant == null)
-			throw new TenantNotFoundException("租户不存在.");
+			throw new TenantNotFoundException("tenant does not exist");
 	}
 }

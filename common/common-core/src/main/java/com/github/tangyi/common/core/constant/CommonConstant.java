@@ -176,5 +176,15 @@ public class CommonConstant {
 	 * baskPackage
 	 */
 	public static final String BASE_PACKAGE = "com.github.tangyi";
+
+	/**
+	 * 男
+	 */
+	public static final Integer GENDER_MAN = 0;
+
+	/**
+	 * 女
+	 */
+	public static final Integer GENDER_WOMEN = 1;
 }
 

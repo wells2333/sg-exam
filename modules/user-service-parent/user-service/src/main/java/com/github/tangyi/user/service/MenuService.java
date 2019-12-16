@@ -7,7 +7,6 @@ import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.utils.TreeUtil;
 import com.github.tangyi.common.security.constant.SecurityConstant;
-import com.github.tangyi.common.security.enums.Roles;
 import com.github.tangyi.common.security.utils.SecurityUtil;
 import com.github.tangyi.user.api.constant.MenuConstant;
 import com.github.tangyi.user.api.dto.MenuDto;
@@ -28,6 +27,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 菜单service
@@ -380,5 +380,25 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 			});
 		}
 		return tenantMenus;
+	}
+
+	/**
+	 * 返回树形菜单集合
+	 *
+	 * @return 树形菜单集合
+	 */
+	public List<MenuDto> menus() {
+		// 查询所有菜单
+		Menu condition = new Menu();
+		condition.setApplicationCode(SysUtil.getSysCode());
+		condition.setTenantCode(SysUtil.getTenantCode());
+		Stream<Menu> menuStream = findAllList(condition).stream();
+		if (Optional.ofNullable(menuStream).isPresent()) {
+			// 转成MenuDto
+			List<MenuDto> menuDtoList = menuStream.map(MenuDto::new).collect(Collectors.toList());
+			// 排序、构建树形关系
+			return TreeUtil.buildTree(CollUtil.sort(menuDtoList, Comparator.comparingInt(MenuDto::getSort)), CommonConstant.ROOT);
+		}
+		return new ArrayList<>();
 	}
 }

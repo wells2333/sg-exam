@@ -8,7 +8,6 @@ import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.Examination;
 import com.github.tangyi.exam.api.module.ExaminationSubject;
-import com.github.tangyi.exam.api.module.SubjectChoices;
 import com.github.tangyi.exam.mapper.ExaminationMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,10 +63,6 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
     @Transactional
     @CacheEvict(value = "examination", key = "#examination.id")
     public int update(Examination examination) {
-        // 更新题目数量
-        SubjectChoices subject = new SubjectChoices();
-        int totalSubject = subjectChoicesService.getExaminationTotalSubject(subject);
-        log.debug("totalSubject:{}", totalSubject);
         return super.update(examination);
     }
 
@@ -161,12 +156,12 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
     /**
      * 根据考试ID查询题目id列表
      *
-     * @param examination examination
+     * @param examinationId examinationId
      * @return ExaminationSubject
      * @author tangyi
      * @date 2019/06/18 14:34
      */
-    public List<ExaminationSubject> findListByExaminationId(Examination examination) {
-        return examinationSubjectService.findListByExaminationId(examination.getId());
+    public List<ExaminationSubject> findListByExaminationId(Long examinationId) {
+        return examinationSubjectService.findListByExaminationId(examinationId);
     }
 }

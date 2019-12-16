@@ -1,10 +1,5 @@
 <template>
   <div class="app-container">
-    <el-row class="incorrect-msg">
-      <el-col :span="24" style="color: black;">
-        <h1>错题</h1>
-      </el-col>
-    </el-row>
     <el-row>
       <el-col :span="20" :offset="2">
         <div class="subject-content" v-for="(tempIncorrectAnswer, index) in list" :key="tempIncorrectAnswer.id">
@@ -54,6 +49,8 @@
 <script>
 import { mapState } from 'vuex'
 import { getAnswerListInfo } from '@/api/exam/answer'
+import { isNotEmpty, notifyFail, notifyWarn, getAttachmentPreviewUrl, formatDate } from '@/utils/util'
+
 
 export default {
   data () {
@@ -88,12 +85,7 @@ export default {
         this.total = response.data.total
         this.listLoading = false
       }).catch(() => {
-        this.$notify({
-          title: '失败',
-          message: '加载错题失败',
-          type: 'error',
-          duration: 2000
-        })
+        notifyFail(this, '加载错题失败')
       })
     },
     handleSizeChange (val) {
@@ -121,8 +113,8 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/css/common.scss";
-  .incorrect-msg {
-    @extend %message-common;
+  .app-container {
+    @extend .common-container;
   }
 
   .incorrect-answer-gray-box {

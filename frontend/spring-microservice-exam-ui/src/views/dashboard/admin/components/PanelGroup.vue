@@ -39,7 +39,7 @@
           <svg-icon icon-class="tab" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">及格率</div>
+          <div class="card-panel-text">课程数</div>
           <count-to :start-val="0" :end-val="13600" :duration="2600" class="card-panel-num"/>
         </div>
       </div>
@@ -50,7 +50,7 @@
 <script>
 import CountTo from 'vue-count-to'
 import { getDashboard } from '@/api/admin/sys'
-import { isNotEmpty } from '@/utils/util'
+import { isNotEmpty, isSuccess, messageFail } from '@/utils/util'
 
 export default {
   components: {
@@ -73,7 +73,7 @@ export default {
     },
     getDashboardData () {
       getDashboard().then(response => {
-        if (isNotEmpty(response.data) && isNotEmpty(response.data.data)) {
+        if (isSuccess(response)) {
           const data = response.data.data
           if (isNotEmpty(data.onlineUserNumber)) {
             this.onlineUserNumber = parseInt(data.onlineUserNumber)
@@ -95,7 +95,6 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 .panel-group {
-  margin-top: 18px;
   .card-panel-col{
     margin-bottom: 32px;
   }
@@ -107,8 +106,10 @@ export default {
     overflow: hidden;
     color: #666;
     background: #fff;
-    box-shadow: 4px 4px 40px rgba(0, 0, 0, .05);
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
     border-color: rgba(0, 0, 0, .05);
+    border-radius: 6px;
+    border-top: 3px solid #40c9c6;
     &:hover {
       .card-panel-icon-wrapper {
         color: #fff;
@@ -116,13 +117,13 @@ export default {
       .icon-people {
          background: #40c9c6;
       }
-      .icon-message {
+      .icon-form {
         background: #36a3f7;
       }
-      .icon-money {
+      .icon-chart {
         background: #f4516c;
       }
-      .icon-shoppingCard {
+      .icon-tab {
         background: #34bfa3
       }
     }

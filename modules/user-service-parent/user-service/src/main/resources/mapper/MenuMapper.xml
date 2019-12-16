@@ -64,6 +64,13 @@
         </if>
     </sql>
 
+    <select id="getById" resultMap="menuResultMap">
+        SELECT
+        <include refid="menuColumns"/>
+        FROM sys_menu a
+        WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
     <select id="get" resultMap="menuResultMap">
         SELECT
         <include refid="menuColumns"/>

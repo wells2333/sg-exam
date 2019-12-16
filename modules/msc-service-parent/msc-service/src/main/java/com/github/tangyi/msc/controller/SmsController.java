@@ -38,9 +38,9 @@ public class SmsController extends BaseController {
      */
     @PostMapping("sendSms")
     public ResponseBean<SmsResponse> sendSms(@RequestBody SmsDto smsDto) {
-        log.info("发送短信给{}，发送内容：{}", smsDto.getReceiver(), smsDto.getContent());
+        log.info("Send message to {}, content: {}", smsDto.getReceiver(), smsDto.getContent());
         SmsResponse smsResponse = smsService.sendSms(smsDto);
-        log.info("发送短信成功，返回内容：{}", smsResponse);
+        log.info("Send message success, response: {}", smsResponse);
         return new ResponseBean<>(smsResponse);
     }
 }

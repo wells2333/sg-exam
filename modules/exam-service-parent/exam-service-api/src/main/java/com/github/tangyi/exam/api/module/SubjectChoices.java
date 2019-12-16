@@ -37,7 +37,7 @@ public class SubjectChoices extends BaseEntity<SubjectChoices> {
 	 * 分值
 	 */
 	@NotBlank(message = "题目分值不能为空")
-	private Integer score;
+	private Double score;
 
 	/**
 	 * 解析

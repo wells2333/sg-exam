@@ -1,6 +1,6 @@
 package com.github.tangyi.auth.model;
 
-import com.github.tangyi.common.core.enums.LoginType;
+import com.github.tangyi.common.core.enums.LoginTypeEnum;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -31,7 +31,7 @@ public class CustomUserDetails extends User {
     /**
      * 登录类型
      */
-    private LoginType loginType;
+    private LoginTypeEnum loginType;
 
     /**
      * 构造方法
@@ -44,7 +44,7 @@ public class CustomUserDetails extends User {
      * @param start       start
      * @param loginType   loginType
      */
-    public CustomUserDetails(String username, String password, boolean enabled, Collection<? extends GrantedAuthority> authorities, String tenantCode, long start, LoginType loginType) {
+    public CustomUserDetails(String username, String password, boolean enabled, Collection<? extends GrantedAuthority> authorities, String tenantCode, long start, LoginTypeEnum loginType) {
         super(username, password, enabled, true, true, true, authorities);
         this.tenantCode = tenantCode;
         this.start = start;

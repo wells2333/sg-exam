@@ -70,7 +70,7 @@ public class MobileLoginSuccessHandler implements AuthenticationSuccessHandler {
             OAuth2Request oAuth2Request = tokenRequest.createOAuth2Request(clientDetails);
             OAuth2Authentication oAuth2Authentication = new OAuth2Authentication(oAuth2Request, authentication);
             OAuth2AccessToken oAuth2AccessToken = defaultAuthorizationServerTokenServices.createAccessToken(oAuth2Authentication);
-            log.info("获取token 成功：{}", oAuth2AccessToken.getValue());
+            log.info("Get token success: {}", oAuth2AccessToken.getValue());
             response.setCharacterEncoding("utf-8");
             response.setContentType(SecurityConstant.CONTENT_TYPE);
             PrintWriter printWriter = response.getWriter();

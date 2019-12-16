@@ -47,8 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .anyRequest().authenticated();
         if (!endpoints.getEndpointsConfigurer().isUserDetailsServiceOverride()) {
-            UserDetailsService userDetailsService = http.getSharedObject(UserDetailsService.class);
-            endpoints.getEndpointsConfigurer().userDetailsService(userDetailsService);
+            endpoints.getEndpointsConfigurer().userDetailsService(http.getSharedObject(UserDetailsService.class));
         }
         // 认证管理器
         endpoints.getEndpointsConfigurer().authenticationManager(authenticationManager());

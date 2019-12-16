@@ -15,6 +15,13 @@
         a.relationship_type
     </sql>
 
+    <select id="getById" resultMap="userStudentResultMap">
+        SELECT
+        <include refid="userStudentColumns"/>
+        FROM sys_user_student a
+        WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
     <select id="get" resultMap="userStudentResultMap">
         SELECT
         <include refid="userStudentColumns"/>

@@ -4,68 +4,70 @@
       <header class="header-w">
         <div class="header-w-box">
           <div class="nav-logo">
-            <h1>
-              <router-link to="/" title="在线考试">在线考试</router-link>
-            </h1>
-          </div>
-          <div class="nav-bar">
-            <el-menu
-              :show-timeout="200"
-              :default-active="$route.path"
-              class="el-menu-header"
-              mode="horizontal">
-              <el-menu-item index="/home" @click="open('/home')">首页</el-menu-item>
-              <el-menu-item index="/functions" @click="open('/functions')">功能</el-menu-item>
-              <el-menu-item index="/us" @click="open('/us')">关于我们</el-menu-item>
-            </el-menu>
-          </div>
-          <div class="line"></div>
-          <div class="right-box">
-            <div class="nav-list">
-              <el-autocomplete
-                placeholder="请输入考试信息"
-                v-model="input"
-                suffix-icon="search"
-                :minlength=1
-                :maxlength=100
-                :fetch-suggestions="querySearchAsync"
-                :trigger-on-focus="false"
-                :on-icon-click="handleIconClick"
-                @keydown.enter.native="handleIconClick"
-                @select="handleSelect">
-              </el-autocomplete>
-            </div>
-            <el-button v-if="!login" type="primary" plain size="medium" class="login-button" @click="handleRegister">注册</el-button>
-            <el-button v-if="!login" size="medium" plain class="login-button" @click="handleLogin">登录</el-button>
-            <div v-if="login">
-              <div>
-                <img class="avatar" :src="userInfo.avatarUrl">
-              </div>
-            </div>
-            <div class="username" v-if="login">
-              <a href="javascript:void(-1);">
-                {{userInfo.identifier}}
+            <div style="color: rgb(255, 255, 255); font-size: 30px; text-align: center; margin-bottom: 20px; font-family: Roboto; padding-top: 10px;"><div></div>
+              <a href="/" class="home-link router-link-exact-active router-link-active">
+                <span class="site-name">硕果云</span>
               </a>
-              <i class="el-icon-caret-bottom"></i>
-              <div class="nav-user-wrapper">
-                <div class="nav-user-list">
-                  <ul>
-                    <li>
-                      <router-link to="/account">个人中心</router-link>
-                    </li>
-                    <li>
-                      <router-link to="/password">修改密码</router-link>
-                    </li>
-                    <li>
-                      <a href="javascript:void(-1);" @click="logOut">退出</a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
+              硕果云
+            </div>
+          </div>
+          <div class="nav-bar" style="max-width: 1331px">
+            <div class="search-box">
+              <input v-model="query" aria-label="Search" autocomplete="off" spellcheck="false" value="" class="" placeholder="搜索看" @keyup.enter="search()">
+            </div>
+            <div class="nav-links">
+              <el-menu :default-active="activeIndex"
+                       mode="horizontal"
+                       text-color="#FFFFFF"
+                       active-text-color="#46bd87"
+                       background-color="#3f3955"
+                       :unique-opened=true
+                       @select="handleSelect">
+                <el-menu-item index="/index" @click="open('/home')">首页</el-menu-item>
+                <el-submenu index="/functions">
+                  <template slot="title">功能</template>
+                  <el-menu-item index="exams" @click="open('/exams')">在线考试</el-menu-item>
+                  <el-menu-item index="practices" @click="open('/practices')">在线学习</el-menu-item>
+                  <el-menu-item index="incorrect" @click="open('/incorrect')">错题本</el-menu-item>
+                </el-submenu>
+                <el-submenu index="/u">
+                  <template slot="title">用户指南</template>
+                  <el-menu-item index="u-source">
+                    <a href="https://gitee.com/wells2333/spring-microservice-exam" target="_blank">源码地址</a>
+                  </el-menu-item>
+                  <el-menu-item index="u-deploy">
+                    <a href="https://www.kancloud.cn/tangyi/spring-microservice-exam/1322870" target="_blank">部署文档</a>
+                  </el-menu-item>
+                  <el-menu-item index="u-admin">
+                    <a href="http://it99.club:81" target="_blank">管理后台</a>
+                  </el-menu-item>
+                </el-submenu>
+                <el-submenu index="/c">
+                  <template slot="title">版本更新</template>
+                  <el-menu-item index="c-log">
+                    <a href="https://gitee.com/wells2333/spring-microservice-exam/blob/master/CHANGELOG.md" target="_blank">更新日志</a>
+                  </el-menu-item>
+                  <el-menu-item index="c-overview">
+                    <a href="https://www.kancloud.cn/tangyi/spring-microservice-exam/1322864#6__112" target="_blank">规划总览</a>
+                  </el-menu-item>
+                </el-submenu>
+                <el-menu-item v-if="!login" index="/login" @click="open('/login')">登录</el-menu-item>
+                <el-menu-item v-if="!login" index="/register" @click="open('/register')">注册</el-menu-item>
+                <el-submenu v-if="login" index="/user-info">
+                  <template slot="title">
+                    <img :src="userInfo.avatarUrl" style="height: 30px;border-radius: 50%;"/>
+                    {{userInfo.identifier}}
+                  </template>
+                  <el-menu-item index="account" @click="open('/account')">个人中心</el-menu-item>
+                  <el-menu-item index="password" @click="open('/password')">修改密码</el-menu-item>
+                  <el-menu-item index="logOut" @click="logOut">退出</el-menu-item>
+                </el-submenu>
+              </el-menu>
             </div>
           </div>
         </div>
       </header>
+      <div class="sidebar-mask"></div>
     </div>
   </div>
 </template>
@@ -73,10 +75,16 @@
 <script>
 import { mapState } from 'vuex'
 import { fetchList } from '@/api/exam/exam'
+import { isNotEmpty } from '@/utils/util'
+
 export default {
   mounted () {
-    // 监听滚动
-    // window.addEventListener('scroll', this.handleScroll)
+    // handleScroll为页面滚动的监听回调
+    window.addEventListener("scroll", this.handleScroll);
+  },
+  destroyed() {
+    //同时在destroyed回调中移除监听：
+    window.removeEventListener("scroll", this.handleScroll);
   },
   computed: {
     // 获取用户信息
@@ -95,17 +103,36 @@ export default {
   },
   data () {
     return {
+      activeIndex: '/index',
       login: false,
-      input: ''
+      input: '',
+      query: ''
     }
   },
   methods: {
     // 导航栏切换
     open (path) {
-      this.$router.push({
-        path: path,
-        query: {}
-      })
+      if (path !== this.$route.fullPath) {
+        if ('/start' === this.$route.fullPath) {
+          this.$confirm('是否要结束当前考试?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            // TODO 提交当前考试
+            this.$emit('handleSubmitExam')
+            this.$router.push({
+              path: path,
+              query: {}
+            })
+          }).catch(() => {})
+        } else {
+          this.$router.push({
+            path: path,
+            query: {}
+          })
+        }
+      }
     },
     handleScroll () {
       let nav = document.getElementById('header-box')
@@ -115,31 +142,11 @@ export default {
         nav.style.top = '0'
         nav.style.zIndex = '99999'
       } else {
-        // nav.style.position = 'relative'
+        nav.style.position = 'relative'
       }
-    },
-    querySearchAsync (queryString, callback) {
-      const query = {
-        examinationName: queryString
-      }
-      fetchList(query).then(response => {
-        this.list = response.data.list
-        if (this.list.length > 0) {
-          let exams = []
-          for (let i = 0; i < this.list.length; i++) {
-            exams.push({ name: this.list[i].examinationName, value: this.list[i].examinationName })
-          }
-          callback(exams)
-        }
-      })
     },
     // 选择事件
     handleSelect (item) {
-      console.log(item)
-    },
-    // 点击搜索图标
-    handleIconClick (item) {
-      console.log(item)
     },
     // 注册
     handleRegister () {
@@ -157,7 +164,6 @@ export default {
         this.login = false
         this.$router.push('/home')
       }).catch(error => {
-        console.error(error)
         this.login = false
         this.$router.push('/home')
       })
@@ -166,6 +172,11 @@ export default {
     checkLogin () {
       if (this.userInfo.id !== undefined) {
         this.login = true
+      }
+    },
+    search() {
+      if (isNotEmpty(this.query)) {
+        this.$router.push({name: 'exams', query: {query: this.query}})
       }
     }
   }
@@ -176,29 +187,79 @@ export default {
 <style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/css/mixin.scss";
   header {
-    height: 80px;
-    z-index: 30;
-    position: relative;
+    height: 70px;
+    padding: 0;
+    line-height: 70px;
+    background: #3f3955;
+    color: #fff;
+    border-bottom: 0;
+    box-sizing: border-box;
   }
   .header-box {
     width: 100%;
-    background-color: #ffffff;
+    background-color: #3f3955;
   }
   .header-w-box {
     display: flex;
     justify-content: space-between;
     align-items: center;
     height: 100%;
-    h1 {
-      height: 100%;
-      display: flex;
-      align-items: center;
-      > a {
-        background-size: cover;
-        display: block;
-        @include wh(213px, 54px);
-        text-indent: -9999px;
-        background: url(/static/images/home/logoko.png) no-repeat 0 0;
+    .nav-logo {
+      vertical-align: top;
+      cursor: pointer;
+      .home-link {
+        margin-right: -30px;
+      }
+      .site-name {
+        display: inline-block;
+        font-size: 0;
+        width: 104px;
+        height: 32px;
+        background-size: 100%;
+        margin: 17px 0 0 33px;
+        background-image: url("../../../static/images/home/scloud-logo.png");
+      }
+    }
+    .nav-bar {
+      background-color: transparent;
+      top: 17px;
+      line-height: 36px;
+      margin-right: 10px;
+      .search-box {
+        margin-top: 13px;
+        display: inline-block;
+        position: relative;
+        margin-right: 1rem;
+        -webkit-box-flex: 0;
+        flex: 0 0 auto;
+        vertical-align: top;
+        input {
+          cursor: text;
+          width: 10rem;
+          height: 2rem;
+          display: inline-block;
+          border-radius: 2rem;
+          font-size: .9rem;
+          line-height: 2rem;
+          padding: 0 .5rem 0 2rem;
+          outline: none;
+          -webkit-transition: all .2s ease;
+          transition: all .2s ease;
+          color: #877fa3;
+          border: 1px solid #42e2c3;
+          background: transparent url("../../../static/images/home/search.png") no-repeat .6rem .5rem;
+          background-size: 20px;
+        }
+      }
+      .nav-links {
+        display: inline-block;
+      }
+    }
+    .el-menu.el-menu--horizontal {
+      border-bottom: 0;
+      .el-menu-item {
+        position: relative;
+        display: inline-block;
       }
     }
     .nav-list {
@@ -251,20 +312,14 @@ export default {
   .nav-bar {
     display: flex;
   }
-  .el-menu-header {
-    color: #666666;
-    text-transform: uppercase;
-    font-size: 14px;
-    font-weight: 700;
-    padding: 12px 20px 0px 19px;
-    border: 1px solid transparent;
-    bottom: -1px;
-    -moz-transition: none;
-    -o-transition: none;
-    transition: none;
-    background-color: transparent;
-    border-radius: 0;
-    margin: 12px 0 5px;
+  .sidebar-mask {
+    z-index: 9;
+    width: 100vw;
+    height: 100vh;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
   }
 
   /* 注册登录按钮 */

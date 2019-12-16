@@ -56,6 +56,13 @@
         </if>
     </sql>
 
+    <select id="getById" resultMap="oauthClientResultMap">
+        SELECT
+        <include refid="oauthClientColumns"/>
+        FROM oauth_client_details a
+        WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
     <select id="get" resultMap="oauthClientResultMap">
         SELECT
         <include refid="oauthClientColumns"/>

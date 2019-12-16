@@ -31,6 +31,12 @@
             <artifactId>common-log</artifactId>
         </dependency>
 
+        <!-- common-oss -->
+        <dependency>
+            <groupId>com.github.tangyi</groupId>
+            <artifactId>common-oss</artifactId>
+        </dependency>
+
         <!-- user-service-api -->
         <dependency>
             <groupId>com.github.tangyi</groupId>
