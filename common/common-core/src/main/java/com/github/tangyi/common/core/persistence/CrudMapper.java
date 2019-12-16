@@ -13,6 +13,14 @@ import java.util.List;
  */
 public interface CrudMapper<T> extends BaseMapper {
 
+	/**
+	 * 根据ID查询，统一类型为Long
+	 *
+	 * @param id id
+	 * @return T
+	 */
+	T getById(Long id);
+
     /**
      * 获取单条数据
      *

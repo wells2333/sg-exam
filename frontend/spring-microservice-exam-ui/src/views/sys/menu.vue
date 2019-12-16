@@ -8,7 +8,7 @@
       <el-button v-if="menu_btn_export" icon="el-icon-download" plain @click="handleExport">{{ $t('table.export') }}</el-button>
 
       <el-row>
-        <el-col :span="5" style ="margin-top:10px;">
+        <el-col :span="4" style ="margin-top:10px;">
           <el-tree
             ref="tree"
             :data="treeData"
@@ -23,7 +23,7 @@
             @node-collapse="nodeCollapse"
           />
         </el-col>
-        <el-col :span="19" style="margin-top:10px;">
+        <el-col :span="20" style="margin-top:10px;">
           <el-card class="box-card">
             <el-form ref="form" :rules="rules" :label-position="labelPosition" :model="form" label-width="100px" style="width: 90%;">
               <el-row>

@@ -69,25 +69,12 @@
 </template>
 
 <script>
-import { fetchList, addObj, putObj, delAttachment } from '@/api/admin/attachment'
+import { fetchList, addObj, putObj, delAttachment, getDownloadUrl } from '@/api/admin/attachment'
 import waves from '@/directive/waves'
 import { getToken } from '@/utils/auth' // getToken from cookie
-import { notifySuccess, messageSuccess } from '@/utils/util'
+import { notifySuccess, messageSuccess, isNotEmpty } from '@/utils/util'
 import { mapState } from 'vuex'
 import SpinnerLoading from '@/components/SpinnerLoading'
-
-const calendarTypeOptions = [
-  { key: 'CN', display_name: 'China' },
-  { key: 'US', display_name: 'USA' },
-  { key: 'JP', display_name: 'Japan' },
-  { key: 'EU', display_name: 'Eurozone' }
-]
-
-// arr to obj ,such as { CN : "China", US : "USA" }
-const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-  acc[cur.key] = cur.display_name
-  return acc
-}, {})
 
 export default {
   name: 'AttachmentManagement',
@@ -107,9 +94,6 @@ export default {
     },
     statusFilter (status) {
       return status === '0' ? '启用' : '禁用'
-    },
-    typeFilter (type) {
-      return calendarTypeKeyValue[type]
     },
     attachmentTypeFilter (type) {
       let attachType
@@ -229,7 +213,11 @@ export default {
       })
     },
     handleDownload (row) {
-      window.location.href = '/api/user/v1/attachment/download?id=' + row.id
+      getDownloadUrl(row.id).then(response => {
+        if (isNotEmpty(response.data)) {
+          window.open('http://' + response.data.data, '_blank')
+        }
+      })
     },
     updateData () {
       this.$refs['dataForm'].validate((valid) => {

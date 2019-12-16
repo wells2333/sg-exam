@@ -4,7 +4,7 @@ import com.github.tangyi.auth.api.module.WxSession;
 import com.github.tangyi.auth.model.CustomUserDetails;
 import com.github.tangyi.auth.service.WxSessionService;
 import com.github.tangyi.common.core.constant.CommonConstant;
-import com.github.tangyi.common.core.enums.LoginType;
+import com.github.tangyi.common.core.enums.LoginTypeEnum;
 import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.exceptions.ServiceException;
 import com.github.tangyi.common.core.exceptions.TenantNotFoundException;
@@ -19,9 +19,7 @@ import com.github.tangyi.common.security.wx.WxUser;
 import com.github.tangyi.user.api.dto.UserDto;
 import com.github.tangyi.user.api.enums.IdentityType;
 import com.github.tangyi.user.api.feign.UserServiceClient;
-import com.github.tangyi.user.api.module.Tenant;
 import lombok.AllArgsConstructor;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -42,6 +40,8 @@ import java.util.stream.Collectors;
 @Service("userDetailsService")
 public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 
+	private static final String GET_USER_INFO_FAIL = "get user information failed: ";
+
     private final UserServiceClient userServiceClient;
 
     private final WxSessionService wxService;
@@ -59,11 +59,11 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
         long start = System.currentTimeMillis();
         ResponseBean<UserVo> userVoResponseBean = userServiceClient.findUserByIdentifier(username, tenantCode);
         if (!ResponseUtil.isSuccess(userVoResponseBean))
-            throw new ServiceException("查询用户信息失败: " + userVoResponseBean.getMsg());
+            throw new ServiceException(GET_USER_INFO_FAIL + userVoResponseBean.getMsg());
         UserVo userVo = userVoResponseBean.getData();
         if (userVo == null)
-            throw new UsernameNotFoundException("用户不存在.");
-        return new CustomUserDetails(username, userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(), start, LoginType.PWD);
+            throw new UsernameNotFoundException("user does not exist");
+        return new CustomUserDetails(username, userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(), start, LoginTypeEnum.PWD);
     }
 
     /**
@@ -81,7 +81,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
         long start = System.currentTimeMillis();
         ResponseBean<UserVo> userVoResponseBean = userServiceClient.findUserByIdentifier(social, IdentityType.PHONE_NUMBER.getValue(), tenantCode);
         if (!ResponseUtil.isSuccess(userVoResponseBean))
-            throw new ServiceException("查询用户信息失败: " + userVoResponseBean.getMsg());
+            throw new ServiceException(GET_USER_INFO_FAIL + userVoResponseBean.getMsg());
         UserVo userVo = userVoResponseBean.getData();
         // 第一次登录
         if (userVo == null) {
@@ -96,14 +96,14 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
             // 注册账号
             ResponseBean<Boolean> response = userServiceClient.registerUser(userDto);
             if (!ResponseUtil.isSuccess(response))
-                throw new ServiceException("自动注册用户失败: " + response.getMsg());
+                throw new ServiceException("register failed: " + response.getMsg());
             // 重新获取用户信息
             userVoResponseBean = userServiceClient.findUserByIdentifier(social, IdentityType.PHONE_NUMBER.getValue(), tenantCode);
             if (!ResponseUtil.isSuccess(userVoResponseBean))
-                throw new ServiceException("查询用户信息失败: " + userVoResponseBean.getMsg());
+                throw new ServiceException(GET_USER_INFO_FAIL + userVoResponseBean.getMsg());
             userVo = userVoResponseBean.getData();
         }
-        return new CustomUserDetails(userVo.getIdentifier(), userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(), start, LoginType.SMS);
+        return new CustomUserDetails(userVo.getIdentifier(), userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(), start, LoginTypeEnum.SMS);
     }
 
     /**
@@ -123,11 +123,11 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
         // 根据code获取openId和sessionKey
         WxSession wxSession = wxService.code2Session(code);
         if (wxSession == null)
-            throw new CommonException("获取openId失败.");
+            throw new CommonException("get openId failed");
         // 获取用户信息
         ResponseBean<UserVo> userVoResponseBean = userServiceClient.findUserByIdentifier(wxSession.getOpenId(), IdentityType.WE_CHAT.getValue(), tenantCode);
         if (!ResponseUtil.isSuccess(userVoResponseBean))
-            throw new ServiceException("查询用户信息失败: " + userVoResponseBean.getMsg());
+            throw new ServiceException(GET_USER_INFO_FAIL + userVoResponseBean.getMsg());
         UserVo userVo = userVoResponseBean.getData();
         // 为空说明是第一次登录，需要将用户信息增加到数据库里
         if (userVo == null) {
@@ -142,14 +142,14 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
             // 注册账号
             ResponseBean<Boolean> response = userServiceClient.registerUser(userDto);
             if (!ResponseUtil.isSuccess(response))
-                throw new ServiceException("自动注册用户失败: " + response.getMsg());
+                throw new ServiceException("register failed: " + response.getMsg());
             // 重新获取用户信息
             userVoResponseBean = userServiceClient.findUserByIdentifier(wxSession.getOpenId(), IdentityType.WE_CHAT.getValue(), tenantCode);
             if (!ResponseUtil.isSuccess(userVoResponseBean))
-                throw new ServiceException("查询用户信息失败: " + userVoResponseBean.getMsg());
+                throw new ServiceException(GET_USER_INFO_FAIL + userVoResponseBean.getMsg());
             userVo = userVoResponseBean.getData();
         }
-        return new CustomUserDetails(userVo.getIdentifier(), userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(), start, LoginType.WECHAT);
+        return new CustomUserDetails(userVo.getIdentifier(), userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(), start, LoginTypeEnum.WECHAT);
     }
 
     /**

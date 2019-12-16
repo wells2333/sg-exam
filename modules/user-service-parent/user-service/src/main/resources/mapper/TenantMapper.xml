@@ -27,6 +27,13 @@
         a.del_flag
     </sql>
 
+    <select id="getById" resultMap="tenantResultMap">
+        SELECT
+        <include refid="tenantColumns"/>
+        FROM sys_tenant a
+        WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
     <select id="get" resultMap="tenantResultMap">
         SELECT
         <include refid="tenantColumns"/>

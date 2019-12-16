@@ -127,5 +127,11 @@
             <artifactId>json</artifactId>
             <version>${json.version}</version>
         </dependency>
+
+        <!-- easyexcel -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+        </dependency>
     </dependencies>
 </project>

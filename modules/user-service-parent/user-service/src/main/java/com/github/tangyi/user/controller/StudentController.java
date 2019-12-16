@@ -51,9 +51,7 @@ public class StudentController extends BaseController {
     @ApiImplicitParam(name = "id", value = "学生ID", required = true, dataType = "Long", paramType = "path")
     @GetMapping("/{id}")
     public ResponseBean<Student> student(@PathVariable Long id) {
-        Student student = new Student();
-        student.setId(id);
-        return new ResponseBean<>(studentService.get(student));
+        return new ResponseBean<>(studentService.get(id));
     }
 
     /**
@@ -124,7 +122,7 @@ public class StudentController extends BaseController {
             student.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
             return new ResponseBean<>(studentService.update(student) > 0);
         } catch (Exception e) {
-            log.error("更新学生信息失败！", e);
+            log.error("Update student info failed", e);
         }
         return new ResponseBean<>(Boolean.FALSE);
     }
@@ -143,13 +141,11 @@ public class StudentController extends BaseController {
     @Log("删除学生")
     public ResponseBean<Boolean> delete(@PathVariable Long id) {
         try {
-            Student student = new Student();
-            student.setId(id);
-            student = studentService.get(student);
+            Student student = studentService.get(id);
             student.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
             studentService.delete(student);
         } catch (Exception e) {
-            log.error("删除学生信息失败！", e);
+            log.error("Delete student info failed", e);
         }
         return new ResponseBean<>(Boolean.FALSE);
     }
@@ -172,7 +168,7 @@ public class StudentController extends BaseController {
             if (ArrayUtils.isNotEmpty(ids))
                 success = studentService.deleteAll(ids) > 0;
         } catch (Exception e) {
-            log.error("删除学生失败！", e);
+            log.error("Delete student info failed", e);
         }
         return new ResponseBean<>(success);
     }

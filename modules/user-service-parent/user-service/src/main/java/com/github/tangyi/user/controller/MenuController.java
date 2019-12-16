@@ -1,18 +1,20 @@
 package com.github.tangyi.user.controller;
 
-import cn.hutool.core.collection.CollUtil;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.model.ResponseBean;
-import com.github.tangyi.common.core.utils.*;
+import com.github.tangyi.common.core.utils.PageUtil;
+import com.github.tangyi.common.core.utils.SysUtil;
+import com.github.tangyi.common.core.utils.excel.ExcelToolUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.annotations.AdminTenantTeacherAuthorization;
 import com.github.tangyi.user.api.dto.MenuDto;
 import com.github.tangyi.user.api.module.Menu;
+import com.github.tangyi.user.excel.listener.MenuImportListener;
+import com.github.tangyi.user.excel.model.MenuExcelModel;
 import com.github.tangyi.user.service.MenuService;
 import com.github.tangyi.user.utils.MenuUtil;
-import com.google.common.net.HttpHeaders;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -66,18 +66,7 @@ public class MenuController extends BaseController {
     @GetMapping(value = "menus")
     @ApiOperation(value = "获取树形菜单列表")
     public List<MenuDto> menus() {
-        // 查询所有菜单
-        Menu condition = new Menu();
-        condition.setApplicationCode(SysUtil.getSysCode());
-        condition.setTenantCode(SysUtil.getTenantCode());
-        Stream<Menu> menuStream = menuService.findAllList(condition).stream();
-        if (Optional.ofNullable(menuStream).isPresent()) {
-            // 转成MenuDto
-            List<MenuDto> menuDtoList = menuStream.map(MenuDto::new).collect(Collectors.toList());
-            // 排序、构建树形关系
-            return TreeUtil.buildTree(CollUtil.sort(menuDtoList, Comparator.comparingInt(MenuDto::getSort)), CommonConstant.ROOT);
-        }
-        return new ArrayList<>();
+        return menuService.menus();
     }
 
     /**
@@ -147,9 +136,7 @@ public class MenuController extends BaseController {
     @ApiOperation(value = "获取菜单信息", notes = "根据菜单id获取菜单详细信息")
     @ApiImplicitParam(name = "id", value = "菜单ID", required = true, dataType = "Long", paramType = "path")
     public Menu menu(@PathVariable Long id) {
-        Menu menu = new Menu();
-        menu.setId(id);
-        return menuService.get(menu);
+        return menuService.get(id);
     }
 
     /**
@@ -249,11 +236,6 @@ public class MenuController extends BaseController {
     public void exportMenu(@RequestBody Long[] ids, HttpServletRequest request, HttpServletResponse response) {
         String tenantCode = SysUtil.getTenantCode();
         try {
-            // 配置response
-            response.setCharacterEncoding("utf-8");
-            response.setContentType("multipart/form-data");
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request,
-                    "菜单信息" + DateUtils.localDateMillisToString(LocalDateTime.now()) + ".xlsx"));
             List<Menu> menus;
             // 导出当前租户下的所有菜单
             if (ArrayUtils.isEmpty(ids)) {
@@ -263,10 +245,9 @@ public class MenuController extends BaseController {
             } else {    // 导出选中
                 menus = menuService.findListById(ids);
             }
-            ExcelToolUtil.exportExcel(request.getInputStream(), response.getOutputStream(), MapUtil.java2Map(menus),
-                    MenuUtil.getMenuMap());
+			ExcelToolUtil.writeExcel(request, response, MenuUtil.convertToExcelModel(menus), MenuExcelModel.class);
         } catch (Exception e) {
-            log.error("导出菜单数据失败！", e);
+            log.error("Export menu data failed", e);
         }
     }
 
@@ -284,19 +265,10 @@ public class MenuController extends BaseController {
     @Log("导入菜单")
     public ResponseBean<Boolean> importMenu(@ApiParam(value = "要上传的文件", required = true) MultipartFile file) {
         try {
-            log.debug("开始导入菜单数据");
-            Stream<Menu> menuStream = MapUtil
-                    .map2Java(Menu.class, ExcelToolUtil.importExcel(file.getInputStream(), MenuUtil.getMenuMap()))
-                    .stream();
-            if (Optional.ofNullable(menuStream).isPresent()) {
-                menuStream.forEach(menu -> {
-                    if (menuService.update(menu) < 1)
-                        menuService.insert(menu);
-                });
-            }
-            return new ResponseBean<>(Boolean.TRUE);
+            log.debug("Start import menu data");
+            return new ResponseBean<>(ExcelToolUtil.readExcel(file.getInputStream(), MenuExcelModel.class, new MenuImportListener(menuService)));
         } catch (Exception e) {
-            log.error("导入菜单数据失败！", e);
+            log.error("Import menu data failed", e);
         }
         return new ResponseBean<>(Boolean.FALSE);
     }

@@ -41,9 +41,7 @@ public class RouteController extends BaseController {
     @GetMapping("/{id}")
     public Route get(@PathVariable Long id) {
         try {
-            Route route = new Route();
-            route.setId(id);
-            return routeService.get(route);
+            return routeService.get(id);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new CommonException(e.getMessage());

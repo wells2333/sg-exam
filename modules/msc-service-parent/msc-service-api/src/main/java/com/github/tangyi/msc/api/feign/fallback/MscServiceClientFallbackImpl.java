@@ -20,7 +20,7 @@ public class MscServiceClientFallbackImpl implements MscServiceClient {
 
     @Override
     public ResponseBean<?> sendSms(SmsDto smsDto) {
-        log.error("feign 发送短信失败:{}, {}, {}", smsDto.getReceiver(), smsDto.getContent(), throwable);
+        log.error("Feign send message failed: {}, {}, {}", smsDto.getReceiver(), smsDto.getContent(), throwable);
         return null;
     }
 

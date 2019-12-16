@@ -27,11 +27,6 @@ public class GatewayConstant {
     public static final String REGISTER = "/user/register";
 
     /**
-     * 刷新token类型
-     */
-    public static final String GRANT_TYPE_REFRESH_TOKEN = "refresh_token";
-
-    /**
      * 授权类型
      */
     public static final String GRANT_TYPE = "grant_type";
@@ -40,16 +35,6 @@ public class GatewayConstant {
      * 验证码已过期，请重新获取
      */
     public static final String EXPIRED_ERROR = "验证码已过期，请重新获取";
-
-    /**
-     * 网关缓存的access_token的名称
-     */
-    public static final String GATEWAY_ACCESS_TOKENS = "gateway_access:";
-
-    /**
-     * 网关缓存的refresh_token的名称
-     */
-    public static final String GATEWAY_REFRESH_TOKENS = "gateway_refresh:";
 
     /**
      * 默认系统编号

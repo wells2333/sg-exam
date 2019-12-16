@@ -49,18 +49,18 @@ public class SmsService {
         request.setAction(smsProperties.getAction());
         try {
             CommonResponse response = client.getCommonResponse(request);
-            log.info("发送结果：{}", response.getData());
+            log.info("response: {}", response.getData());
             if (response.getHttpStatus() != 200)
                 throw new CommonException(response.getData());
             SmsResponse smsResponse = JsonMapper.getInstance().fromJson(response.getData(), SmsResponse.class);
             if (smsResponse == null)
-                throw new CommonException("解析短信返回结果失败");
+                throw new CommonException("Parse response error");
             if (!"OK".equals(smsResponse.getCode()))
                 throw new CommonException(smsResponse.getMessage());
             return smsResponse;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new CommonException("发送短信失败：" + e.getMessage());
+            throw new CommonException("Send message failed: " + e.getMessage());
         }
     }
 }

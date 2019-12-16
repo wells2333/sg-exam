@@ -2,7 +2,7 @@ package com.github.tangyi.gateway.filters;
 
 import cn.hutool.core.util.StrUtil;
 import com.github.tangyi.common.core.constant.CommonConstant;
-import com.github.tangyi.common.core.enums.LoginType;
+import com.github.tangyi.common.core.enums.LoginTypeEnum;
 import com.github.tangyi.common.core.exceptions.InvalidValidateCodeException;
 import com.github.tangyi.common.core.exceptions.ValidateCodeExpiredException;
 import com.github.tangyi.gateway.constants.GatewayConstant;
@@ -62,7 +62,7 @@ public class ValidateCodeFilter implements GlobalFilter, Ordered {
      * @param loginType         loginType
      * @throws InvalidValidateCodeException
      */
-    private void checkCode(ServerHttpRequest serverHttpRequest, LoginType loginType) throws InvalidValidateCodeException {
+    private void checkCode(ServerHttpRequest serverHttpRequest, LoginTypeEnum loginType) throws InvalidValidateCodeException {
         MultiValueMap<String, String> params = serverHttpRequest.getQueryParams();
         // 验证码
         String code = params.getFirst("code");
@@ -98,11 +98,11 @@ public class ValidateCodeFilter implements GlobalFilter, Ordered {
      * @param grantType grantType
      * @return LoginType
      */
-    private LoginType getLoginType(String grantType) {
+    private LoginTypeEnum getLoginType(String grantType) {
         if (CommonConstant.GRANT_TYPE_PASSWORD.equals(grantType))
-            return LoginType.PWD;
+            return LoginTypeEnum.PWD;
         if (CommonConstant.GRANT_TYPE_MOBILE.equals(grantType))
-            return LoginType.SMS;
-        return LoginType.PWD;
+            return LoginTypeEnum.SMS;
+        return LoginTypeEnum.PWD;
     }
 }

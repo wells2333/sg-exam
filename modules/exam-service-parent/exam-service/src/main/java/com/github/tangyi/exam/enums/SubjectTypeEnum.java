@@ -1,59 +1,63 @@
 package com.github.tangyi.exam.enums;
 
+import com.github.tangyi.exam.service.BaseSubjectService;
+import com.github.tangyi.exam.service.SubjectChoicesService;
+import com.github.tangyi.exam.service.SubjectJudgementService;
+import com.github.tangyi.exam.service.SubjectShortAnswerService;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * 题目类型枚举
  *
  * @author tangyi
  * @date 2019/6/16 16:22
  */
+@Getter
+@AllArgsConstructor
 public enum SubjectTypeEnum {
 
-    /**
-     * 选择题
-     */
-    CHOICES(0),
+	CHOICES("选择题", 0, SubjectChoicesService.class),
 
-    /**
-     * 简答题
-     */
-    SHORT_ANSWER(1),
+	SHORT_ANSWER("简答题", 1, SubjectShortAnswerService.class),
 
-    /**
-     * 判断题
-     */
-    JUDGEMENT(2),
+	JUDGEMENT("判断题", 2, SubjectJudgementService.class),
 
-    /**
-     * 多选题
-     */
-    MULTIPLE_CHOICES(3);
+	MULTIPLE_CHOICES("多选题", 3, SubjectChoicesService.class);
 
-    SubjectTypeEnum(Integer value) {
-        this.value = value;
-    }
+	private String name;
 
-    private Integer value;
+	private Integer value;
 
-    /**
-     * 根据类型返回具体的SubjectType
-     *
-     * @param type type
-     * @return SubjectType
-     */
-    public static SubjectTypeEnum match(Integer type) {
-        for (SubjectTypeEnum item : SubjectTypeEnum.values()) {
-            if (item.value.equals(type)) {
-                return item;
-            }
-        }
-        return null;
-    }
+	private Class<? extends BaseSubjectService> service;
 
-    public Integer getValue() {
-        return value;
-    }
+	/**
+	 * 根据类型返回具体的SubjectType
+	 *
+	 * @param value value
+	 * @return SubjectType
+	 */
+	public static SubjectTypeEnum matchByValue(Integer value) {
+		for (SubjectTypeEnum item : SubjectTypeEnum.values()) {
+			if (item.value.equals(value)) {
+				return item;
+			}
+		}
+		return CHOICES;
+	}
 
-    public void setValue(Integer value) {
-        this.value = value;
-    }
+	/**
+	 * 根据描述返回具体的SubjectType
+	 *
+	 * @param name name
+	 * @return SubjectType
+	 */
+	public static SubjectTypeEnum matchByName(String name) {
+		for (SubjectTypeEnum item : SubjectTypeEnum.values()) {
+			if (item.name.equals(name)) {
+				return item;
+			}
+		}
+		return CHOICES;
+	}
 }

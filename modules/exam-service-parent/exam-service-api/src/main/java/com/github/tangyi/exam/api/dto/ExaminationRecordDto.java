@@ -70,7 +70,7 @@ public class ExaminationRecordDto extends BaseEntity<ExaminationRecordDto> {
     /**
      * 分数
      */
-    private Integer score;
+    private Double score;
 
     /**
      * 考试状态

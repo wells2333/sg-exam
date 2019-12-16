@@ -256,9 +256,15 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
      */
     @Override
     public SubjectDto getSubject(Long id) {
-        SubjectChoices subjectChoices = new SubjectChoices();
-        subjectChoices.setId(id);
-        return SubjectUtil.subjectChoicesToDto(this.get(subjectChoices));
+        SubjectChoices subject = this.get(id);
+        // 查找选项信息
+        if (subject != null) {
+            SubjectOption subjectOption = new SubjectOption();
+            subjectOption.setSubjectChoicesId(subject.getId());
+            List<SubjectOption> options = subjectOptionService.getBySubjectChoicesId(subjectOption);
+            subject.setOptions(options);
+        }
+        return SubjectUtil.subjectChoicesToDto(subject);
     }
 
     /**

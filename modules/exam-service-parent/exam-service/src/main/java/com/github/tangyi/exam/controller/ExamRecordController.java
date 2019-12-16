@@ -3,7 +3,10 @@ package com.github.tangyi.exam.controller;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.model.ResponseBean;
-import com.github.tangyi.common.core.utils.*;
+import com.github.tangyi.common.core.utils.DateUtils;
+import com.github.tangyi.common.core.utils.PageUtil;
+import com.github.tangyi.common.core.utils.SysUtil;
+import com.github.tangyi.common.core.utils.excel.ExcelToolUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.annotations.AdminTenantTeacherAuthorization;
@@ -12,6 +15,7 @@ import com.github.tangyi.exam.api.dto.StartExamDto;
 import com.github.tangyi.exam.api.enums.SubmitStatusEnum;
 import com.github.tangyi.exam.api.module.Examination;
 import com.github.tangyi.exam.api.module.ExaminationRecord;
+import com.github.tangyi.exam.excel.model.ExamRecordExcelModel;
 import com.github.tangyi.exam.service.AnswerService;
 import com.github.tangyi.exam.service.ExamRecordService;
 import com.github.tangyi.exam.service.ExaminationService;
@@ -25,7 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,9 +71,7 @@ public class ExamRecordController extends BaseController {
     @ApiOperation(value = "获取考试记录信息", notes = "根据考试记录id获取考试记录详细信息")
     @ApiImplicitParam(name = "id", value = "考试记录ID", required = true, dataType = "Long", paramType = "path")
     public ResponseBean<ExaminationRecord> examRecord(@PathVariable Long id) {
-        ExaminationRecord examRecord = new ExaminationRecord();
-        examRecord.setId(id);
-        return new ResponseBean<>(examRecordService.get(examRecord));
+        return new ResponseBean<>(examRecordService.get(id));
     }
 
     /**
@@ -197,7 +198,7 @@ public class ExamRecordController extends BaseController {
                 success = examRecordService.delete(examRecord) > 0;
             }
         } catch (Exception e) {
-            log.error("删除考试记录失败！", e);
+            log.error("Delete examRecord failed", e);
         }
         return new ResponseBean<>(success);
     }
@@ -216,10 +217,6 @@ public class ExamRecordController extends BaseController {
     @Log("导出考试记录")
     public void exportExamRecord(@RequestBody Long[] ids, HttpServletRequest request, HttpServletResponse response) {
         try {
-            // 配置response
-            response.setCharacterEncoding("utf-8");
-            response.setContentType("multipart/form-data");
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request, "考试成绩" + DateUtils.localDateMillisToString(LocalDateTime.now()) + ".xlsx"));
             List<ExaminationRecord> examRecordList;
             if (ArrayUtils.isNotEmpty(ids)) {
                 examRecordList = examRecordService.findListById(ids);
@@ -258,11 +255,10 @@ public class ExamRecordController extends BaseController {
                     }
                 });
                 examRecordService.fillExamUserInfo(examRecordDtoList, userIdSet.toArray(new Long[0]));
-                // 导出
-                ExcelToolUtil.exportExcel(request.getInputStream(), response.getOutputStream(), MapUtil.java2Map(examRecordDtoList), ExamRecordUtil.getExamRecordDtoMap());
+				ExcelToolUtil.writeExcel(request, response, ExamRecordUtil.convertToExcelModel(examRecordDtoList), ExamRecordExcelModel.class);
             }
         } catch (Exception e) {
-            log.error("导出成绩数据失败！", e);
+            log.error("Export examRecord failed", e);
         }
     }
 

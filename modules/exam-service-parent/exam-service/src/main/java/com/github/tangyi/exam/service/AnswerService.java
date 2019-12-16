@@ -4,11 +4,16 @@ import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.constant.MqConstant;
 import com.github.tangyi.common.core.exceptions.CommonException;
+import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.service.CrudService;
+import com.github.tangyi.common.core.utils.JsonMapper;
 import com.github.tangyi.common.core.utils.PageUtil;
+import com.github.tangyi.common.core.utils.ResponseUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
+import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.exam.api.constants.AnswerConstant;
 import com.github.tangyi.exam.api.dto.AnswerDto;
+import com.github.tangyi.exam.api.dto.RankInfoDto;
 import com.github.tangyi.exam.api.dto.StartExamDto;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.enums.SubmitStatusEnum;
@@ -17,8 +22,13 @@ import com.github.tangyi.exam.api.module.Examination;
 import com.github.tangyi.exam.api.module.ExaminationRecord;
 import com.github.tangyi.exam.api.module.ExaminationSubject;
 import com.github.tangyi.exam.enums.SubjectTypeEnum;
+import com.github.tangyi.exam.handler.HandleResult;
+import com.github.tangyi.exam.handler.impl.ChoicesHandler;
+import com.github.tangyi.exam.handler.impl.JudgementHandler;
 import com.github.tangyi.exam.mapper.AnswerMapper;
 import com.github.tangyi.exam.utils.ExamRecordUtil;
+import com.github.tangyi.exam.utils.HandlerUtil;
+import com.github.tangyi.user.api.feign.UserServiceClient;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -26,13 +36,12 @@ import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -46,6 +55,8 @@ import java.util.stream.Collectors;
 @Service
 public class AnswerService extends CrudService<AnswerMapper, Answer> {
 
+	private final UserServiceClient userServiceClient;
+
     private final AmqpTemplate amqpTemplate;
 
     private final SubjectService subjectService;
@@ -56,7 +67,13 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
 
     private final ExaminationSubjectService examinationSubjectService;
 
-    /**
+    private final ChoicesHandler choicesHandler;
+
+	private final JudgementHandler judgementHandler;
+
+	private final RedisTemplate<String, String> redisTemplate;
+
+	/**
      * 查找答题
      *
      * @param answer answer
@@ -199,10 +216,17 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
         ExaminationRecord record = new ExaminationRecord();
         // 分类题目
         Map<String, List<Answer>> distinctAnswer = this.distinctAnswer(answerList);
-        // TODO 暂时只自动统计选择题，简答题由老师阅卷批改
-        if (distinctAnswer.containsKey(SubjectTypeEnum.CHOICES.name())) {
-            this.submitChoicesAnswer(distinctAnswer.get(SubjectTypeEnum.CHOICES.name()), record);
-        }
+        // 暂时只自动统计单选题、多选题、判断题，简答题由老师阅卷批改
+		HandleResult choiceResult = choicesHandler.handle(distinctAnswer.get(SubjectTypeEnum.CHOICES.name()));
+		HandleResult multipleResult = choicesHandler.handle(distinctAnswer.get(SubjectTypeEnum.MULTIPLE_CHOICES.name()));
+		HandleResult judgementResult = judgementHandler.handle(distinctAnswer.get(SubjectTypeEnum.JUDGEMENT.name()));
+		HandleResult result = HandlerUtil.addAll(Arrays.asList(choiceResult, multipleResult, judgementResult));
+		// 记录总分、正确题目数、错误题目数
+		record.setScore(result.getScore());
+		record.setCorrectNumber(result.getCorrectNum());
+		record.setInCorrectNumber(result.getInCorrectNum());
+		// 更新答题状态
+		distinctAnswer.values().forEach(answers -> update(answer));
         // 如果全部为选择题，则更新状态为统计完成，否则需要阅卷完成后才更改统计状态
         if (!distinctAnswer.containsKey(SubjectTypeEnum.SHORT_ANSWER.name()))
             record.setSubmitStatus(SubmitStatusEnum.CALCULATED.getValue());
@@ -211,9 +235,21 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
         record.setId(answer.getExamRecordId());
         record.setEndTime(record.getCreateDate());
         examRecordService.update(record);
-        log.debug("提交答卷，用户名：{}，耗时：{}ms", currentUsername, System.currentTimeMillis() - start);
+        // 更新排名数据
+		updateRank(record);
+        log.debug("Submit examination, username: {}，time consuming: {}ms", currentUsername, System.currentTimeMillis() - start);
     }
 
+    /**
+     * 更新排名信息
+	 * 基于Redis的sort set数据结构
+     * @param record record
+     * @author tangyi
+     * @date 2019/12/8 23:21
+     */
+    private void updateRank(ExaminationRecord record) {
+		redisTemplate.opsForZSet().add(AnswerConstant.CACHE_PREFIX_RANK + record.getExaminationId(), JsonMapper.getInstance().toJson(record), record.getScore());
+	}
 
     /**
      * 通过mq异步处理
@@ -246,9 +282,8 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
         amqpTemplate.convertAndSend(MqConstant.SUBMIT_EXAMINATION_QUEUE, answer);
         // 2. 更新考试状态
         boolean success = examRecordService.update(examRecord) > 0;
-        log.debug("异步提交答卷成功，提交人：{}，考试ID：{}，耗时：{}ms", currentUsername, examRecord.getExaminationId(),
-                System.currentTimeMillis() - start);
-        return success;
+		log.debug("Submit examination, username: {}，time consuming: {}ms", currentUsername, System.currentTimeMillis() - start);
+		return success;
     }
 
     /**
@@ -270,10 +305,8 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
             throw new CommonException("参数校验失败，考试id为空！");
         if (examRecord.getUserId() == null)
             throw new CommonException("参数校验失败，用户id为空！");
-        Examination examination = new Examination();
-        examination.setId(examRecord.getExaminationId());
-        // 查找考试信息
-        examination = examinationService.get(examination);
+		// 查找考试信息
+        Examination examination = examinationService.get(examRecord.getExaminationId());
         examRecord.setCommonValue(currentUsername, applicationCode, tenantCode);
         examRecord.setStartTime(examRecord.getCreateDate());
         // 默认未提交状态
@@ -319,10 +352,8 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
     @Transactional
     public SubjectDto subjectAnswer(Long subjectId, Long examRecordId, String userCode, String sysCode,
                                     String tenantCode, Integer nextType, Long nextSubjectId, Integer nextSubjectType) {
-        ExaminationRecord examRecord = new ExaminationRecord();
-        examRecord.setId(examRecordId);
-        // 查找考试记录
-        examRecord = examRecordService.get(examRecord);
+		// 查找考试记录
+    	ExaminationRecord examRecord = examRecordService.get(examRecordId);
         if (examRecord == null)
             throw new CommonException("考试记录不存在.");
 
@@ -344,7 +375,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
             subject = subjectService.getNextByCurrentIdAndType(examRecord.getExaminationId(), subjectId, examinationSubjectPageInfo.getList().get(0).getType(), nextType);
         }
         if (subject == null) {
-            log.error("ID为{}的题目下一题不存在.", subjectId);
+            log.error("Subject does not exist: {}", subjectId);
             return null;
         }
 
@@ -372,68 +403,27 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
         Map<String, List<Answer>> distinctMap = new HashMap<>();
         answers.stream().collect(Collectors.groupingBy(Answer::getType, Collectors.toList())).forEach((type, temp) -> {
             // 匹配类型
-            SubjectTypeEnum subjectType = SubjectTypeEnum.match(type);
+            SubjectTypeEnum subjectType = SubjectTypeEnum.matchByValue(type);
             if (subjectType != null) {
                 switch (subjectType) {
                     case CHOICES:
                         distinctMap.put(SubjectTypeEnum.CHOICES.name(), temp);
                         break;
+					case MULTIPLE_CHOICES:
+						distinctMap.put(SubjectTypeEnum.MULTIPLE_CHOICES.name(), temp);
+						break;
                     case SHORT_ANSWER:
                         distinctMap.put(SubjectTypeEnum.SHORT_ANSWER.name(), temp);
                         break;
+					case JUDGEMENT:
+						distinctMap.put(SubjectTypeEnum.JUDGEMENT.name(), temp);
+						break;
+					default:
+						break;
                 }
             }
         });
         return distinctMap;
-    }
-
-    /**
-     * 统计选择题
-     *
-     * @param choicesAnswer choicesAnswer
-     * @param record        record
-     * @author tangyi
-     * @date 2019/06/18 16:39
-     */
-    private void submitChoicesAnswer(List<Answer> choicesAnswer, ExaminationRecord record) {
-        // 查找题目信息
-        List<SubjectDto> subjects = subjectService.findListById(SubjectTypeEnum.CHOICES.getValue(), choicesAnswer.stream().map(Answer::getSubjectId).distinct().toArray(Long[]::new));
-        // 保存答题正确的题目分数
-        List<Integer> rightScore = new ArrayList<>();
-        choicesAnswer.forEach(tempAnswer -> {
-            // 题目集合
-            subjects.stream()
-                    // 题目ID、题目答案匹配
-                    .filter(tempSubject -> tempSubject.getId().equals(tempAnswer.getSubjectId()) && tempSubject
-                            .getAnswer().getAnswer().equalsIgnoreCase(tempAnswer.getAnswer()))
-                    // 记录答题正确的成绩
-                    .findFirst().ifPresent(right -> {
-                rightScore.add(right.getScore());
-                tempAnswer.setAnswerType(AnswerConstant.RIGHT);
-                tempAnswer.setScore(right.getScore());
-                tempAnswer.setMarkStatus(AnswerConstant.MARKED);
-            });
-        });
-        // 统计错题
-        choicesAnswer.forEach(tempAnswer -> {
-            // 题目集合
-            subjects.stream()
-                    // 题目ID、题目答案匹配
-                    .filter(tempSubject -> tempSubject.getId().equals(tempAnswer.getSubjectId()) && !tempSubject
-                            .getAnswer().getAnswer().equalsIgnoreCase(tempAnswer.getAnswer()))
-                    // 错题
-                    .findFirst().ifPresent(tempSubject -> {
-                tempAnswer.setAnswerType(AnswerConstant.WRONG);
-                tempAnswer.setScore(0);
-                tempAnswer.setMarkStatus(AnswerConstant.MARKED);
-            });
-        });
-        // 记录总分、正确题目数、错误题目数
-        record.setScore(rightScore.stream().mapToInt(Integer::valueOf).sum());
-        record.setCorrectNumber(rightScore.size());
-        record.setInCorrectNumber(choicesAnswer.size() - rightScore.size());
-        // 循环更新答题的状态
-        choicesAnswer.forEach(this::update);
     }
 
     /**
@@ -448,9 +438,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
      * @date 2019/06/18 23:05
      */
     public AnswerDto answerInfo(Long recordId, Long currentSubjectId, Integer nextSubjectType, Integer nextType) {
-        ExaminationRecord record = new ExaminationRecord();
-        record.setId(recordId);
-        record = examRecordService.get(record);
+        ExaminationRecord record = examRecordService.get(recordId);
         SubjectDto subjectDto;
         // 题目为空，则加载第一题
         if (currentSubjectId == null) {
@@ -507,15 +495,58 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
             long correctNumber = answers.stream()
                     .filter(tempAnswer -> tempAnswer.getAnswerType().equals(AnswerConstant.RIGHT)).count();
             // 总分
-            Integer score = answers.stream().mapToInt(Answer::getScore).sum();
+            Double score = answers.stream().mapToDouble(Answer::getScore).sum();
             examRecord.setScore(score);
             examRecord.setSubmitStatus(SubmitStatusEnum.CALCULATED.getValue());
             examRecord.setCorrectNumber((int) correctNumber);
             examRecord.setInCorrectNumber(answers.size() - examRecord.getCorrectNumber());
             examRecordService.update(examRecord);
-            log.debug("批改完成，用户名：{}，考试ID：{}，总分：{}，耗时：{}ms", examRecord.getCreator(), examRecord.getExaminationId(),
+            log.debug("Submit done, username: {}, examinationId: {}, score: {}, time consuming: {}ms", examRecord.getCreator(), examRecord.getExaminationId(),
                     score, System.currentTimeMillis() - start);
         }
         return Boolean.TRUE;
     }
+
+    /**
+     * 获取排名数据
+     * @param recordId recordId
+     * @return List
+     * @author tangyi
+     * @date 2019/12/8 23:36
+     */
+	public List<RankInfoDto> getRankInfo(Long recordId) {
+		List<RankInfoDto> rankInfos = new ArrayList<>();
+		// 查询缓存
+		Set<ZSetOperations.TypedTuple<String>> typedTuples = redisTemplate.opsForZSet()
+				.reverseRangeByScoreWithScores(AnswerConstant.CACHE_PREFIX_RANK + recordId, 0, Integer.MAX_VALUE);
+		if (typedTuples != null) {
+			// 用户ID列表
+			Set<Long> userIds = new HashSet<>();
+			typedTuples.forEach(typedTuple -> {
+				ExaminationRecord record = JsonMapper.getInstance()
+						.fromJson(typedTuple.getValue(), ExaminationRecord.class);
+				if (record != null) {
+					RankInfoDto rankInfo = new RankInfoDto();
+					rankInfo.setUserId(record.getUserId());
+					userIds.add(record.getUserId());
+					rankInfo.setScore(typedTuple.getScore());
+					rankInfos.add(rankInfo);
+				}
+			});
+			if (!userIds.isEmpty()) {
+				ResponseBean<List<UserVo>> userResponse = userServiceClient.findUserById(userIds.toArray(new Long[0]));
+				if (ResponseUtil.isSuccess(userResponse)) {
+					rankInfos.forEach(rankInfo -> {
+						userResponse.getData().stream().filter(user -> user.getId().equals(rankInfo.getUserId()))
+								.findFirst().ifPresent(user -> {
+							// 设置考生信息
+							rankInfo.setName(user.getName());
+							rankInfo.setAvatarUrl(user.getAvatarUrl());
+						});
+					});
+				}
+			}
+		}
+		return rankInfos;
+	}
 }
