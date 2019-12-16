@@ -33,7 +33,7 @@ public class WxSessionService {
         try {
             WxMaJscode2SessionResult result = wxMaService.getUserService().getSessionInfo(code);
             session = new WxSession(result.getOpenid(), result.getSessionKey());
-            log.info("获取wx session成功，openId: {}, sessionKey: {}", session.getOpenId(), session.getSessionKey());
+            log.info("Get wx session success，openId: {}, sessionKey: {}", session.getOpenId(), session.getSessionKey());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -53,7 +53,7 @@ public class WxSessionService {
         try {
             WxMaJscode2SessionResult result = wxMaService.jsCode2SessionInfo(code);
             session = new WxSession(result.getOpenid(), result.getSessionKey());
-            log.info("获取wx session成功，openId: {}, sessionKey: {}", session.getOpenId(), session.getSessionKey());
+            log.info("Get wx session success，openId: {}, sessionKey: {}", session.getOpenId(), session.getSessionKey());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

@@ -2,7 +2,7 @@ package com.github.tangyi.user.service;
 
 import cn.hutool.core.util.RandomUtil;
 import com.github.tangyi.common.core.constant.CommonConstant;
-import com.github.tangyi.common.core.enums.LoginType;
+import com.github.tangyi.common.core.enums.LoginTypeEnum;
 import com.github.tangyi.common.core.exceptions.ServiceException;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.ResponseUtil;
@@ -28,8 +28,6 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class MobileService {
 
-    private final UserService userService;
-
     private final RedisTemplate redisTemplate;
 
     private final MscServiceClient mscServiceClient;
@@ -43,10 +41,10 @@ public class MobileService {
      * @date 2019/07/02 09:36:52
      */
     public ResponseBean<Boolean> sendSms(String mobile) {
-        String key = CommonConstant.DEFAULT_CODE_KEY + LoginType.SMS.getType() + "@" + mobile;
+        String key = CommonConstant.DEFAULT_CODE_KEY + LoginTypeEnum.SMS.getType() + "@" + mobile;
         // TODO 校验时间
         String code = RandomUtil.randomNumbers(Integer.parseInt(CommonConstant.CODE_SIZE));
-        log.debug("手机号生成验证码成功:{},{}", mobile, code);
+        log.debug("Generate validate code success: {}, {}", mobile, code);
         redisTemplate.opsForValue().set(key, code, SecurityConstant.DEFAULT_SMS_EXPIRE, TimeUnit.SECONDS);
         // 调用消息中心服务，发送短信验证码
         SmsDto smsDto = new SmsDto();
@@ -54,8 +52,8 @@ public class MobileService {
         smsDto.setContent(String.format(SmsConstant.SMS_TEMPLATE, code));
         ResponseBean<?> result = mscServiceClient.sendSms(smsDto);
         if (!ResponseUtil.isSuccess(result))
-            throw new ServiceException("发送短信失败: " + result.getMsg());
-        log.info("发送验证码结果：{}", result.getData());
+            throw new ServiceException("Send validate code error: " + result.getMsg());
+        log.info("Send validate result: {}", result.getData());
         return new ResponseBean<>(Boolean.TRUE, code);
     }
 }

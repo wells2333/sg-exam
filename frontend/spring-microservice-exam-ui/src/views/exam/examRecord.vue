@@ -168,7 +168,7 @@
             </div>
           </el-form>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="4" style="text-align: center;">
           <span>选择题目</span>
           <div class="answer-number">
             <el-button class="number-btn" circle v-for="(value, index) in subjectIds" :key="index" @click="toSubject(index, value.subjectId, value.type)" >&nbsp;{{index + 1}}&nbsp;</el-button>
@@ -318,6 +318,8 @@ export default {
         setTimeout(() => {
           this.listLoading = false
         }, 500)
+      }).catch(() => {
+        this.listLoading = false
       })
     },
     handleFilter () {
@@ -499,7 +501,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" rel="stylesheet/scss" scoped>
-  /* 题目 */
   .subject-title {
     color: #333333;
     font-size: 18px;
@@ -517,7 +518,6 @@ export default {
       text-align: right;
     }
   }
-  /* 题目选项 */
   .subject-option {
     padding-bottom: 10px;
     padding-left: 10px;
@@ -526,13 +526,14 @@ export default {
     margin: 20px;
   }
   .subject-content {
-    background: #F6F7FA;
+    height: 300px;
     border-radius: 4px;
-    margin-bottom: 21px;
     padding: 12px 0 12px 22px;
+    margin-bottom: 12px;
     position: relative;
     color: #666666;
     text-align: left;
+    box-shadow: 0 2px 8px 0 rgba(0,0,0,.1);
   }
   .correct {
     color: #F56C6C;
@@ -572,5 +573,11 @@ export default {
         display: inline-block
       }
     }
+  }
+  .user-info {
+
+  }
+  .answer {
+    padding: 6px;
   }
 </style>

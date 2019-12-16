@@ -1,10 +1,7 @@
 package com.github.tangyi.user.controller;
 
-import cn.hutool.core.collection.CollUtil;
-import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.SysUtil;
-import com.github.tangyi.common.core.utils.TreeUtil;
 import com.github.tangyi.common.core.vo.DeptVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
@@ -20,8 +17,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -51,17 +46,7 @@ public class DeptController extends BaseController {
     @GetMapping(value = "depts")
     @ApiOperation(value = "获取部门列表")
     public List<DeptDto> depts() {
-        Dept dept = new Dept();
-        dept.setApplicationCode(SysUtil.getSysCode());
-        dept.setTenantCode(SysUtil.getTenantCode());
-        // 查询部门集合
-        Stream<Dept> deptStream = deptService.findList(dept).stream();
-        if (Optional.ofNullable(deptStream).isPresent()) {
-            List<DeptDto> deptTreeList = deptStream.map(DeptDto::new).collect(Collectors.toList());
-            // 排序、构建树形结构
-            return TreeUtil.buildTree(CollUtil.sort(deptTreeList, Comparator.comparingInt(DeptDto::getSort)), CommonConstant.ROOT);
-        }
-        return new ArrayList<>();
+        return  deptService.depts();
     }
 
     /**
@@ -76,9 +61,7 @@ public class DeptController extends BaseController {
     @ApiOperation(value = "获取部门信息", notes = "根据部门id获取部门详细信息")
     @ApiImplicitParam(name = "id", value = "部门ID", required = true, dataType = "Long", paramType = "path")
     public Dept get(@PathVariable Long id) {
-        Dept dept = new Dept();
-        dept.setId(id);
-        return deptService.get(dept);
+        return deptService.get(id);
     }
 
     /**

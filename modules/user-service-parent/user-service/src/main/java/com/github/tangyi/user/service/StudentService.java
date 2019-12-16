@@ -44,7 +44,7 @@ public class StudentService extends CrudService<StudentMapper, Student> {
             // 查询当前用户
             UserVo userVo = userService.findUserByIdentifier(currentUser, tenantCode);
             if (userVo == null)
-                throw new CommonException("获取当前用户详细信息失败");
+                throw new CommonException("Get user info failed");
             userId = userVo.getId();
         }
         Student student = new Student();

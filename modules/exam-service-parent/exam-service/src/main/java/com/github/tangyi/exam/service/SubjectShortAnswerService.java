@@ -3,6 +3,7 @@ package com.github.tangyi.exam.service;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.service.CrudService;
+import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.SubjectShortAnswer;
 import com.github.tangyi.exam.mapper.SubjectShortAnswerMapper;
@@ -136,9 +137,7 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
      */
     @Override
     public SubjectDto getSubject(Long id) {
-        SubjectShortAnswer subjectShortAnswer = new SubjectShortAnswer();
-        subjectShortAnswer.setId(id);
-        return SubjectUtil.subjectShortAnswerToDto(this.get(subjectShortAnswer));
+        return SubjectUtil.subjectShortAnswerToDto(this.get(id));
     }
 
     /**
@@ -280,13 +279,9 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
         SubjectShortAnswer subjectShortAnswer = new SubjectShortAnswer();
         BeanUtils.copyProperties(subjectDto, subjectShortAnswer);
         PageInfo subjectShortAnswerPageInfo = this.findPage(pageInfo, subjectShortAnswer);
-        List<SubjectDto> subjectDtos = SubjectUtil.subjectShortAnswerToDto(subjectShortAnswerPageInfo.getList());
         PageInfo<SubjectDto> subjectDtoPageInfo = new PageInfo<>();
-        subjectDtoPageInfo.setList(subjectDtos);
-
-        subjectDtoPageInfo.setTotal(subjectShortAnswerPageInfo.getTotal());
-        subjectDtoPageInfo.setPageSize(subjectShortAnswerPageInfo.getPageSize());
-        subjectDtoPageInfo.setPageNum(subjectShortAnswerPageInfo.getPageNum());
+		PageUtil.copyProperties(subjectShortAnswerPageInfo, subjectDtoPageInfo);
+        subjectDtoPageInfo.setList(SubjectUtil.subjectShortAnswerToDto(subjectShortAnswerPageInfo.getList()));
         return subjectDtoPageInfo;
     }
 

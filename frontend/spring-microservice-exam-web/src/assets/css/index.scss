@@ -1,17 +1,5 @@
 @import "common";
-#bg {
-  width: 100%;
-  margin: auto;
-}
 
-#home-msg {
-  font-size: 40px;
-  color: #3a3a3a !important;
-  position: absolute;
-  top: 120px;
-  text-align: center;
-  width: 100%;
-}
 /* 注册 */
 .register-now {
   font-size: 20px;
@@ -27,6 +15,15 @@
   text-align: center;
   text-decoration: none;
 }
+
+.features {
+  @extend %home-common;
+}
+
+.scenes {
+  @extend %home-common;
+}
+
 /* 产品特色 */
 .features-msg {
   @extend %message-common;
@@ -35,20 +32,6 @@
 /* 产品特色 */
 .features-img {
   @extend %img-common;
-}
-
-.msg-text {
-  font-size: 18px;
-  color: #178dff;
-  margin-top: 29px;
-  margin-bottom: 21px;
-  text-align: center;
-}
-
-.msg-text-detail {
-  font-size: 14px;
-  color: #474747;
-  text-align: center;
 }
 
 /* 适用场景 */
@@ -66,14 +49,13 @@
 }
 .function-img {
   @extend %img-common;
-  margin-bottom: 20px;
 }
 
 /* 返回顶部 */
 .go-top-box {
   background-color: #fff;
   position: fixed;
-  right: 100px;
+  right: 50px;
   bottom: 150px;
   width: 40px;
   height: 40px;

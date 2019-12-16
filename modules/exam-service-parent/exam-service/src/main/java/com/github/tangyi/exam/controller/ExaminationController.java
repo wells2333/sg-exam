@@ -60,9 +60,7 @@ public class ExaminationController extends BaseController {
     @ApiOperation(value = "获取考试信息", notes = "根据考试id获取考试详细信息")
     @ApiImplicitParam(name = "id", value = "考试ID", required = true, dataType = "String", paramType = "path")
     public ResponseBean<Examination> examination(@PathVariable Long id) {
-        Examination examination = new Examination();
-        examination.setId(id);
-        return new ResponseBean<>(examinationService.get(examination));
+        return new ResponseBean<>(examinationService.get(id));
     }
 
     /**
@@ -200,15 +198,13 @@ public class ExaminationController extends BaseController {
     public ResponseBean<Boolean> deleteExamination(@PathVariable Long id) {
         boolean success = false;
         try {
-            Examination examination = new Examination();
-            examination.setId(id);
-            examination = examinationService.get(examination);
+            Examination examination = examinationService.get(id);
             if (examination != null) {
                 examination.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
                 success = examinationService.delete(examination) > 0;
             }
         } catch (Exception e) {
-            log.error("删除考试失败！", e);
+            log.error("Delete examination failed", e);
         }
         return new ResponseBean<>(success);
     }
@@ -232,7 +228,7 @@ public class ExaminationController extends BaseController {
             if (ArrayUtils.isNotEmpty(ids))
                 success = examinationService.deleteAll(ids) > 0;
         } catch (Exception e) {
-            log.error("删除考试失败！", e);
+            log.error("Delete examination failed", e);
         }
         return new ResponseBean<>(success);
     }
@@ -263,9 +259,7 @@ public class ExaminationController extends BaseController {
     @ApiImplicitParam(name = "examinationId", value = "考试ID", required = true, paramType = "path")
     @GetMapping("/{examinationId}/subjectIds")
     public ResponseBean<List<ExaminationSubject>> findExaminationSubjectIds(@PathVariable Long examinationId) {
-        Examination examination = new Examination();
-        examination.setId(examinationId);
-        return new ResponseBean<>(examinationService.findListByExaminationId(examination));
+        return new ResponseBean<>(examinationService.findListByExaminationId(examinationId));
     }
 
     /**

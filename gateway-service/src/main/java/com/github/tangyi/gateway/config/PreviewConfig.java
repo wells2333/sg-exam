@@ -22,8 +22,6 @@ import java.util.List;
 @ConfigurationProperties(prefix = "preview")
 public class PreviewConfig {
 
-    private boolean enabled;
-
     private List<String> ignores = new ArrayList<>();
 
 }

@@ -149,7 +149,7 @@ export const isNotEmpty = (obj) => {
  * @param duration
  */
 export const notify = (obj, title, msg, type, duration) => {
-  obj.$notify({ title: title, message: msg, type: type, duration: duration })
+  obj.$notify({ title: title, message: msg, type: type, duration: duration, offset: 70})
 }
 
 /**
@@ -159,6 +159,15 @@ export const notify = (obj, title, msg, type, duration) => {
  */
 export const notifySuccess = (obj, msg) => {
   notify(obj, '成功', msg, 'success', 2000)
+}
+
+/**
+ * 警告提示
+ * @param obj
+ * @param msg
+ */
+export const notifyWarn = (obj, msg) => {
+  notify(obj, '警告', msg, 'warn', 2000)
 }
 
 /**
@@ -208,4 +217,33 @@ export const formatDate = (date, fmt) => {
 
 export const padLeftZero = (str) => {
   return ('00' + str).substr(str.length)
+}
+
+/**
+ * 判断响应是否成功
+ * @param obj
+ * @returns {boolean}
+ */
+export const isSuccess = (response) => {
+  let success = true
+  if (!isNotEmpty(response) || (response.code !== undefined && response.code !== 200)) {
+    success = false
+  }
+  return success
+}
+
+/**
+ * 按指定长度截取字符串，超出部分显示...
+ * @param str
+ * @param len
+ * @returns {string}
+ */
+export const cropStr = (str, len) => {
+  let result = ''
+  if (isNotEmpty(str)) {
+    if (str.length > len) {
+      result = str.substring(0, len) + '...'
+    }
+  }
+  return result
 }

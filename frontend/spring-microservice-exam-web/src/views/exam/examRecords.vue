@@ -1,10 +1,5 @@
 <template>
   <div class="app-container">
-    <el-row class="exam-recode-msg">
-      <el-col :span="24" style="color: black;">
-        <h1>考试记录</h1>
-      </el-col>
-    </el-row>
     <el-row>
       <el-col :span="20" :offset="2">
         <el-table
@@ -17,7 +12,7 @@
           style="width: 100%;">
           <el-table-column label="考试名称" align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.examinationName }}</span>
+              <span :title="scope.row.examinationName">{{ scope.row.examinationName | examinationNameFilter }}</span>
             </template>
           </el-table-column>
           <el-table-column label="考试类型" min-width="90" align="center">
@@ -81,7 +76,7 @@
 import { mapState } from 'vuex'
 import { fetchList } from '@/api/exam/examRecord'
 import store from '@/store'
-import { formatDate } from '@/utils/util'
+import { formatDate, cropStr } from '@/utils/util'
 
 export default {
   filters: {
@@ -113,6 +108,9 @@ export default {
     },
     timeFilter (time) {
       return formatDate(new Date(time), 'yyyy-MM-dd hh:mm')
+    },
+    examinationNameFilter(name) {
+      return cropStr(name, 8)
     }
   },
   data () {
@@ -192,8 +190,8 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/css/common.scss";
-  .exam-recode-msg {
-    @extend %message-common;
+  .app-container {
+    @extend .common-container;
   }
 
   .incorrect-answer-gray-box {

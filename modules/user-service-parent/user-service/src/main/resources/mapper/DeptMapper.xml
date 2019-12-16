@@ -43,6 +43,13 @@
         </if>
     </sql>
 
+    <select id="getById" resultMap="deptResultMap">
+        SELECT
+        <include refid="deptColumns"/>
+        FROM sys_dept a
+        WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
     <select id="get" resultMap="deptResultMap">
         SELECT
         <include refid="deptColumns"/>

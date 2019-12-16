@@ -58,9 +58,7 @@ public class KnowledgeController extends BaseController {
     @ApiOperation(value = "获取知识信息", notes = "根据知识id获取知识详细信息")
     @ApiImplicitParam(name = "id", value = "知识ID", required = true, dataType = "Long", paramType = "path")
     public ResponseBean<Knowledge> knowledge(@PathVariable Long id) {
-        Knowledge knowledge = new Knowledge();
-        knowledge.setId(id);
-        return new ResponseBean<>(knowledgeService.get(knowledge));
+        return new ResponseBean<>(knowledgeService.get(id));
     }
 
     /**
@@ -96,9 +94,7 @@ public class KnowledgeController extends BaseController {
         List<KnowledgeDto> knowledgeDtoList = new ArrayList<>();
         // 查询附件
         Set<Long> attachmentIdSet = new HashSet<>();
-        knowledgePageInfo.getList().forEach(tempKnowledge -> {
-            attachmentIdSet.add(tempKnowledge.getAttachmentId());
-        });
+        knowledgePageInfo.getList().forEach(tempKnowledge -> attachmentIdSet.add(tempKnowledge.getAttachmentId()));
         // 根据附件ID查询附件
         ResponseBean<List<AttachmentVo>> returnT = userServiceClient.findAttachmentById(attachmentIdSet.toArray(new Long[0]));
         knowledgePageInfo.getList().stream()
@@ -179,9 +175,7 @@ public class KnowledgeController extends BaseController {
     @Log("删除知识")
     public ResponseBean<Boolean> deleteKnowledge(@PathVariable Long id) {
         boolean success = false;
-		Knowledge knowledge = new Knowledge();
-		knowledge.setId(id);
-		knowledge = knowledgeService.get(knowledge);
+		Knowledge knowledge = knowledgeService.get(id);
 		if (knowledge != null) {
 			knowledge.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
 			success = knowledgeService.delete(knowledge) > 0;

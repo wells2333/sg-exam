@@ -36,6 +36,12 @@
         </if>
     </sql>
 
+    <select id="getById" resultMap="subjectOptionResultMap">
+        SELECT
+        <include refid="subjectOptionColumns"/>
+        FROM exam_subject_option a WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
     <select id="get" resultMap="subjectOptionResultMap">
         SELECT
         <include refid="subjectOptionColumns"/>

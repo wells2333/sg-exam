@@ -45,7 +45,7 @@ public class Answer extends BaseEntity<Answer> {
     /**
      * 得分
      */
-    private Integer score;
+    private Double score;
 
     /**
      * 批改状态

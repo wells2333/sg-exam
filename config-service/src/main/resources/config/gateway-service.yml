@@ -64,11 +64,10 @@ pagehelper:
 # 系统配置
 sys:
   adminUser: ${ADMIN_USER:admin}  # 管理员账号，默认是admin
-  fdfsHttpHost: ${ATTACHMENT_HOST:http://192.168.0.95}:${ATTACHMENT_PORT:8080}  # fastDfs的HTTP配置
-  uploadUrl: api/user/v1/attachment/upload
   defaultAvatar: https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80
   key: '1234567887654321'
   cacheExpire: 86400 # 缓存失效时间，单位秒，默认一天
+  gatewaySecret: ${GATEWAY_SECRET:test}
 
 # feign相关配置
 feign:
@@ -119,12 +118,6 @@ preview:
     - attachment
     - api/exam  # 考试服务
     - api/msc
-
-# 开启网关token转换
-# 暂时关闭，此功能在微信端登录有问题
-gateway:
-  token-transfer:
-    enabled: ${GATEWAY_TOKEN_TRANSFER:false}
 
 # 集群ID生成配置
 cluster:

@@ -51,10 +51,9 @@ public class OauthClientDetailsController extends BaseController {
     @ApiImplicitParam(name = "id", value = "客户端ID", required = true, dataType = "Long", paramType = "path")
     @GetMapping("/{id}")
     public ResponseBean<OauthClientDetails> oauthClient(@PathVariable Long id) {
-        OauthClientDetails oauthClientDetails = new OauthClientDetails();
+        OauthClientDetails oauthClientDetails = null;
         if (id != null) {
-            oauthClientDetails.setId(id);
-            oauthClientDetails = oauthClientDetailsService.get(oauthClientDetails);
+            oauthClientDetails = oauthClientDetailsService.get(id);
         }
         return new ResponseBean<>(oauthClientDetails);
     }
@@ -185,7 +184,7 @@ public class OauthClientDetailsController extends BaseController {
             if (ArrayUtils.isNotEmpty(ids))
                 success = oauthClientDetailsService.deleteAll(ids) > 0;
         } catch (Exception e) {
-            log.error("删除客户端失败！", e);
+            log.error("Delete client failed", e);
         }
         return new ResponseBean<>(success);
     }

@@ -13,7 +13,7 @@
       ref="multipleTable"
       :key="tableKey"
       :data="list"
-      highlight-current-row
+      highligidStringht-current-row
       style="width: 100%;"
       @cell-dblclick="handleUpdate"
       @selection-change="handleSelectionChange"
@@ -44,16 +44,6 @@
           <span v-for="role in scope.row.roleList" :key="role.id">{{ role.roleName }} </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.phone')">
-        <template slot-scope="scope">
-          <span>{{ scope.row.phone }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('table.email')">
-        <template slot-scope="scope">
-          <span>{{ scope.row.email }}</span>
-        </template>
-       </el-table-column>
       <el-table-column :label="$t('table.status')">
         <template slot-scope="scope">
           <el-tag :type="scope.row.status | statusTypeFilter">{{ scope.row.status | statusFilter }}</el-tag>
@@ -399,6 +389,8 @@ export default {
         setTimeout(() => {
           this.listLoading = false
         }, 500)
+      }).catch(() => {
+        this.listLoading = false
       })
     },
     handleFilter () {
@@ -550,7 +542,7 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          exportObj({ idString: '' }).then(response => {
+          exportObj([]).then(response => {
             // 导出Excel
             exportExcel(response)
           })

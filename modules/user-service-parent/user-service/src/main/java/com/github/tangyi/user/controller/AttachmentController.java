@@ -5,30 +5,22 @@ import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.PageUtil;
-import com.github.tangyi.common.core.utils.Servlets;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.vo.AttachmentVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.user.api.module.Attachment;
 import com.github.tangyi.user.service.AttachmentService;
-import com.google.common.net.HttpHeaders;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -127,32 +119,20 @@ public class AttachmentController extends BaseController {
     @GetMapping("download")
     @ApiOperation(value = "下载附件", notes = "根据ID下载附件")
     @ApiImplicitParam(name = "id", value = "附件ID", required = true, dataType = "Long")
-    public void download(@NotBlank Long id, HttpServletRequest request, HttpServletResponse response) {
-        Attachment attachment = new Attachment();
-        attachment.setId(id);
-        InputStream inputStream = null;
-        OutputStream outputStream = null;
+    public ResponseBean<String> download(@NotBlank Long id) {
+        String downloadUrl = "";
         try {
-            attachment = attachmentService.get(attachment);
-            if (attachment == null)
-                throw new CommonException("附件不存在！");
-            inputStream = attachmentService.download(attachment);
-            // 输出流
-            outputStream = response.getOutputStream();
-            response.setContentType("application/zip");
-            response.setHeader(HttpHeaders.CACHE_CONTROL, "max-age=10");
-            // IE之外的浏览器使用编码输出名称
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(request, attachment.getAttachName()));
-            response.setContentLength(inputStream.available());
-            // 下载文件
-            FileCopyUtils.copy(inputStream, outputStream);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        } finally {
-            IOUtils.closeQuietly(outputStream);
-            IOUtils.closeQuietly(inputStream);
-        }
-    }
+			Attachment attachment = new Attachment();
+			attachment.setId(id);
+			attachment = attachmentService.get(attachment);
+			if (attachment == null)
+				throw new CommonException("Attachment does not exist");
+			downloadUrl = attachmentService.download(attachment);
+		} catch (Exception e) {
+        	log.error("Download attachment failed: {}", e.getMessage(), e);
+		}
+		return new ResponseBean<>(downloadUrl);
+	}
 
     /**
      * 删除附件
@@ -194,7 +174,7 @@ public class AttachmentController extends BaseController {
             if (ArrayUtils.isNotEmpty(ids))
                 success = attachmentService.deleteAll(ids) > 0;
         } catch (Exception e) {
-            log.error("删除附件失败！", e);
+            log.error("Delete attachment failed", e);
         }
         return new ResponseBean<>(success);
     }
@@ -214,7 +194,6 @@ public class AttachmentController extends BaseController {
         ResponseBean<List<AttachmentVo>> returnT = null;
         List<Attachment> attachmentList = attachmentService.findListById(ids);
         if (CollectionUtils.isNotEmpty(attachmentList)) {
-            // 流处理转换成AttachmentVo
             List<AttachmentVo> attachmentVoList = attachmentList.stream().map(tempAttachment -> {
                 AttachmentVo tempAttachmentVo = new AttachmentVo();
                 BeanUtils.copyProperties(tempAttachment, tempAttachmentVo);

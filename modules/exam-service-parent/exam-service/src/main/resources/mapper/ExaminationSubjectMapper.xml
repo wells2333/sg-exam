@@ -42,6 +42,12 @@
         </if>
     </sql>
 
+    <select id="getById" resultMap="examinationSubjectResultMap">
+        SELECT
+        <include refid="examinationSubjectColumns"/>
+        FROM exam_examination_subject a WHERE a.id = #{id}
+    </select>
+
     <select id="get" resultMap="examinationSubjectResultMap">
         SELECT
         <include refid="examinationSubjectColumns"/>
