@@ -51,12 +51,12 @@ public class DashboardController extends BaseController {
         // 查询考试数量
         ResponseBean<Integer> examinationCountResponseBean = examinationService.findExaminationCount(tenantCode);
         if (!ResponseUtil.isSuccess(examinationCountResponseBean))
-            throw new ServiceException("查询考试数量失败: " + examinationCountResponseBean.getMsg());
+            throw new ServiceException("Get examination count failed: " + examinationCountResponseBean.getMsg());
         dashboardDto.setExaminationNumber(examinationCountResponseBean.getData().toString());
         // 查询参与人数
         ResponseBean<Integer> examUserCountResponseBean = examinationService.findExamUserCount(tenantCode);
         if (!ResponseUtil.isSuccess(examUserCountResponseBean))
-            throw new ServiceException("查询参与人数失败: " + examUserCountResponseBean.getMsg());
+            throw new ServiceException("Get user count failed");
         dashboardDto.setExamUserNumber(examUserCountResponseBean.getData().toString());
         return new ResponseBean<>(dashboardDto);
     }

@@ -257,20 +257,6 @@ export const exportExcel = function (response) {
 }
 
 /**
- * 返回附件的预览地址
- * @param sysConfig
- * @param fastFileId
- * @returns {string}
- */
-export const getAttachmentPreviewUrl = function (sysConfig, fastFileId) {
-  let url = ''
-  if (isNotEmpty(sysConfig.fdfsHttpHost)) {
-    url = sysConfig.fdfsHttpHost + '/' + fastFileId
-  }
-  return url
-}
-
-/**
  * 判断对象是否为空
  * @param obj
  * @returns {boolean}
@@ -369,4 +355,17 @@ export const formatDate = (date, fmt) => {
 
 export const padLeftZero = (str) => {
   return ('00' + str).substr(str.length)
+}
+
+/**
+ * 判断响应是否成功
+ * @param obj
+ * @returns {boolean}
+ */
+export const isSuccess = (response) => {
+  let success = true
+  if (!isNotEmpty(response) || (response.code !== undefined && response.code !== 200)) {
+    success = false
+  }
+  return success
 }

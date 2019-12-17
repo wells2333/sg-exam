@@ -336,12 +336,14 @@ export default {
 <style rel="stylesheet/scss" lang="scss">
   #bg_svg {
     position: fixed;
-    top: -10px;
     left: 0;
+    top: 10px;
     width: 100%;
+    height: 600px;
     z-index: -1;
   }
   .bg {
+    margin-top: 30px;
     height: 100%;
     display: flex;
     justify-content: center;

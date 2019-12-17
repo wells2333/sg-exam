@@ -7,7 +7,7 @@ import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
-import com.github.tangyi.common.security.constant.SecurityConstant;
+import com.github.tangyi.common.security.annotations.AdminAuthorization;
 import com.github.tangyi.user.service.LogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -16,7 +16,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.ArrayUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -98,10 +97,6 @@ public class LogController extends BaseController {
     @ApiOperation(value = "新增日志", notes = "新增日志")
     @ApiImplicitParam(name = "log", value = "日志实体Log", required = true, dataType = "Log")
     public ResponseBean<Boolean> addLog(@RequestBody @Valid Log log) {
-        if (log.getId() != null)
-            log.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
-        if (true)
-            return null;
         // 保存日志
         return new ResponseBean<>(logService.insert(log) > 0);
     }
@@ -115,7 +110,7 @@ public class LogController extends BaseController {
      * @date 2018/10/31 21:27
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('monitor:log:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminAuthorization
     @ApiOperation(value = "删除日志", notes = "根据ID删除日志")
     @ApiImplicitParam(name = "id", value = "日志ID", required = true, paramType = "path")
     public ResponseBean<Boolean> delete(@PathVariable Long id) {
@@ -133,7 +128,7 @@ public class LogController extends BaseController {
      * @date 2018/12/4 10:12
      */
     @PostMapping("deleteAll")
-    @PreAuthorize("hasAuthority('monitor:log:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminAuthorization
     @ApiOperation(value = "批量删除日志", notes = "根据日志ids批量删除日志")
     @ApiImplicitParam(name = "ids", value = "日志ID", dataType = "Long")
     public ResponseBean<Boolean> deleteAllLog(@RequestBody Long[] ids) {
@@ -142,7 +137,7 @@ public class LogController extends BaseController {
             if (ArrayUtils.isNotEmpty(ids))
                 success = logService.deleteAll(ids) > 0;
         } catch (Exception e) {
-            log.error("删除附件失败！", e);
+            log.error("Delete attachment failed", e);
         }
         return new ResponseBean<>(success);
     }

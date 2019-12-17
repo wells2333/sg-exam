@@ -3,19 +3,14 @@ body {
   margin: 0;
   position: relative;
   overflow-x: hidden;
-  font-family: "Roboto Slab","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-family: FZLTHJW--GB1-0,FZLTHJW--GB1;
   line-height: 1.8;
 }
 
 a {
   text-decoration: none;
   outline: none;
-  color: #555;
-}
-
-.header-w {
-  width: 1220px;
-  margin: 0 auto;
+  color: #FFFFFF;
 }
 
 .pr {
@@ -62,24 +57,48 @@ a {
   box-shadow: 0 3px 8px -6px rgba(0, 0, 0, .1);
 }
 
-%message-common {
-  padding-top: 10px;
-  height: 120px;
-  color: #fff;
-  background-color: #fff;
+%home-common {
+  max-width: 1220px;
+  margin: auto auto 30px;
+  font-family: FZLTHJW--GB1-0,FZLTHJW--GB1;
   text-align: center;
 }
 
-%img-common {
-  color: #fff;
-  background-color: #fff;
+%message-common {
+  font-size: 48px;
   text-align: center;
-  align-items: center;
+  font-weight: 400;
+  color: #4f403b;
+  line-height: 55px;
+  background-size: 236px;
+  background-repeat: no-repeat;
+  background-position: bottom;
+  padding-bottom: 25px;
+  margin-bottom: 50px;
+}
+
+%img-common {
+  -webkit-box-flex: 1;
+  flex: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .app-container {
   padding: 20px;
 }
+
+.common-container {
+  margin-top: 30px;
+}
 .pagination-container {
   margin-top: 30px;
+}
+
+%content-container {
+  margin-top: 70px;
+}
+
+.el-button {
+  margin: 2px;
 }

@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <div class="subject-box">
     <el-row :gutter="30">
       <el-col :span="18" :offset="2">
         <el-card class="subject-box-card" v-loading="loading">
           <div class="subject-exam-title" v-if="!loading && tempSubject.id !== ''">{{exam.examinationName}}（共{{subjectIds.length}}题，合计{{exam.totalScore}}分）</div>
           <div class="subject-content" v-if="!loading && tempSubject.id !== ''">
             <div class="subject-title">
-              <span class="subject-title-content" v-html="tempSubject.subjectName"></span>
+              <span class="subject-title-content" v-html="tempSubject.subjectName"/>
               <span class="subject-title-content">&nbsp;({{tempSubject.score}})分</span>
             </div>
             <ul v-if="tempSubject.type === 0" class="subject-options">
@@ -47,7 +47,7 @@
           </div>
         </div>
         <div class="current-progress">
-          当前进度: {{subjectIds.length}}/{{subjectIds.length}}
+          当前进度: {{subjectIndex}}/{{subjectIds.length}}
         </div>
         <div class="answer-card">
           <el-button type="text" icon="el-icon-date" @click="answerCard">答题卡</el-button>
@@ -59,7 +59,7 @@
       <div class="answer-card-title" >{{exam.examinationName}}（共{{subjectIds.length}}题，合计{{exam.totalScore}}分）</div>
       <div class="answer-card-split"></div>
       <el-row class="answer-card-content">
-        <el-button circle v-for="(value, index) in subjectIds" :key="index" @click="toSubject(value.subjectId, value.type)" >&nbsp;{{index + 1}}&nbsp;</el-button>
+        <el-button circle v-for="(value, index) in subjectIds" :key="index" @click="toSubject(value.subjectId, value.type, index)" >&nbsp;{{index + 1}}&nbsp;</el-button>
       </el-row>
     </el-dialog>
   </div>
@@ -72,7 +72,7 @@ import { getSubjectIds } from '@/api/exam/exam'
 import { getCurrentTime } from '@/api/exam/examRecord'
 import store from '@/store'
 import moment from 'moment'
-import { notifySuccess, notifyFail, isNotEmpty } from '@/utils/util'
+import { notifySuccess, notifyFail, notifyWarn, isNotEmpty } from '@/utils/util'
 import Tinymce from '@/components/Tinymce'
 
 export default {
@@ -87,6 +87,7 @@ export default {
       startTime: 0,
       endTime: 0,
       disableSubmit: true,
+      subjectIndex: 1,
       tempSubject: {
         id: null,
         examinationId: null,
@@ -128,7 +129,7 @@ export default {
         type: 0
       },
       subjectIds: [],
-      subjectStartTime: undefined
+      subjectStartTime: undefined,
     }
   },
   computed: {
@@ -153,12 +154,7 @@ export default {
   },
   methods: {
     countDownS_cb: function (x) {
-      this.$notify({
-        title: '提示',
-        message: '考试开始',
-        type: 'warn',
-        duration: 2000
-      })
+      notifyWarn(this, '考试开始')
     },
     // 开始考试
     startExam () {
@@ -166,25 +162,19 @@ export default {
       getCurrentTime().then(response => {
         const currentTime = moment(response.data.data)
         if (currentTime.isAfter(this.exam.endTime)) {
-          this.$notify({
-            title: '提示',
-            message: '考试已结束',
-            type: 'warn',
-            duration: 2000
-          })
+          notifyWarn(this, '考试已结束')
         } else if (currentTime.isBefore(this.exam.startTime)) {
           // 考试未开始
-          this.$notify({
-            title: '提示',
-            message: '考试未开始',
-            type: 'warn',
-            duration: 2000
-          })
+          notifyWarn(this, '考试未开始')
         } else {
           // 获取考试的题目数量
-          getSubjectIds(this.exam.id).then(response => {
+          getSubjectIds(this.exam.id).then(subjectResponse => {
             // 题目数
-            this.subjectIds = response.data.data
+            for (let i = 0; i < subjectResponse.data.data.length; i++) {
+              let { subjectId, type } = subjectResponse.data.data[i];
+              this.subjectIds.push({subjectId, type, index: i + 1})
+            }
+            this.updateSubjectIndex()
           })
           // 获取服务器的当前时间
           this.currentTime = currentTime.valueOf()
@@ -207,12 +197,7 @@ export default {
     },
     // 考试结束
     countDownE_cb: function (x) {
-      this.$notify({
-        title: '提示',
-        message: '考试结束',
-        type: 'warn',
-        duration: 2000
-      })
+      notifyWarn(this, '考试结束')
       this.disableSubmit = true
       this.loading = false
     },
@@ -237,7 +222,7 @@ export default {
         if (response.data.data === null) {
           if (nextType === 0) {
             notifySuccess(this, '已经是最后一题了')
-          } else {
+          } else if (nextType === 1) {
             notifySuccess(this, '已经是第一题了')
           }
         } else {
@@ -248,7 +233,9 @@ export default {
           this.answer = isNotEmpty(this.tempAnswer) ? this.tempAnswer.answer : ''
           // 保存题目答案到sessionStorage
           this.subject.answer = this.tempAnswer
+          this.tempAnswer.index  = this.subjectIndex
           store.dispatch('SetSubjectInfo', this.tempSubject).then(() => {})
+          this.updateSubjectIndex()
         }
         this.loading = false
         this.subjectStartTime = new Date()
@@ -262,9 +249,10 @@ export default {
       this.dialogVisible = true
     },
     // 跳转题目
-    toSubject (subjectId, subjectType) {
+    toSubject (subjectId, subjectType, index) {
       // 保存当前题目，同时加载下一题
       this.saveCurrentSubjectAndGetNextSubject(2, subjectId, subjectType)
+      this.subjectIndex = index + 1
       this.dialogVisible = false
     },
     // 提交
@@ -274,22 +262,27 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        let answerId = isNotEmpty(this.tempAnswer) ? this.tempAnswer.id : ''
-        // 构造答案
-        let answer = this.getAnswer(answerId)
-        saveAndNext(answer, 0).then(response => {
-          // 提交到后台
-          store.dispatch('SubmitExam', { examinationId: this.exam.id, examRecordId: this.examRecord.id, userId: this.userInfo.id }).then(() => {
-            notifySuccess(this, '提交成功')
-            // 禁用提交按钮
-            this.disableSubmit = true
+        this.doSubmitExam(this.tempAnswer, this.exam, this.examRecord, this.userInfo, true)
+      })
+    },
+    doSubmitExam(submitAnswer, submitExam, submitExamRecord, userInfo, toExamRecord) {
+      let answerId = isNotEmpty(submitAnswer) ? submitAnswer.id : ''
+      // 构造答案
+      let answer = this.getAnswer(answerId)
+      saveAndNext(answer, 0).then(response => {
+        // 提交到后台
+        store.dispatch('SubmitExam', { examinationId: submitExam.id, examRecordId: submitExamRecord.id, userId: userInfo.id }).then(() => {
+          notifySuccess(this, '提交成功')
+          // 禁用提交按钮
+          this.disableSubmit = true
+          if (toExamRecord) {
             this.$router.push({name: 'exam-record'})
-          }).catch(() => {
-            notifyFail(this, '提交失败')
-          })
+          }
         }).catch(() => {
-          notifyFail(this, '提交题目失败')
+          notifyFail(this, '提交失败')
         })
+      }).catch(() => {
+        notifyFail(this, '提交题目失败')
       })
     },
     // 选中选项
@@ -308,6 +301,20 @@ export default {
         type: this.tempSubject.type,
         startTime: this.subjectStartTime
       }
+    },
+    // 获取题目索引
+    getSubjectIndex(targetId) {
+      for (let subject of this.subjectIds) {
+        let { subjectId, index } = subject;
+        if (subjectId === targetId) {
+          return index
+        }
+      }
+      return 1
+    },
+    // 更新题目索引
+    updateSubjectIndex() {
+      this.subjectIndex = this.getSubjectIndex(this.tempSubject.id)
     }
   }
 }
@@ -318,6 +325,9 @@ export default {
   @import "../../assets/css/common.scss";
   .start-exam-msg {
     @extend %message-common;
+  }
+  .subject-box {
+    margin-top: 50px;
   }
   .subject-box-card {
     margin-bottom: 30px;

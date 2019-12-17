@@ -53,7 +53,7 @@
         <!--<appender-ref ref="logstash"/>-->
     </root>
 
-    <logger name="com.github.tangyi" level="debug">
+    <logger name="com.github.tangyi" level="debug" additivity="false">
         <appender-ref ref="console"/>
         <appender-ref ref="debug"/>
         <appender-ref ref="error"/>

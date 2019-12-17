@@ -7,8 +7,7 @@ import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
-import com.github.tangyi.common.security.constant.SecurityConstant;
-import com.github.tangyi.exam.api.dto.AnswerCartDto;
+import com.github.tangyi.common.security.annotations.AdminTenantTeacherAuthorization;
 import com.github.tangyi.exam.api.dto.ExaminationDto;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.Course;
@@ -25,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -62,9 +60,7 @@ public class ExaminationController extends BaseController {
     @ApiOperation(value = "获取考试信息", notes = "根据考试id获取考试详细信息")
     @ApiImplicitParam(name = "id", value = "考试ID", required = true, dataType = "String", paramType = "path")
     public ResponseBean<Examination> examination(@PathVariable Long id) {
-        Examination examination = new Examination();
-        examination.setId(id);
-        return new ResponseBean<>(examinationService.get(examination));
+        return new ResponseBean<>(examinationService.get(id));
     }
 
     /**
@@ -152,7 +148,7 @@ public class ExaminationController extends BaseController {
      * @date 2018/11/10 21:14
      */
     @PostMapping
-    @PreAuthorize("hasAuthority('exam:exam:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "创建考试", notes = "创建考试")
     @ApiImplicitParam(name = "examinationDto", value = "考试实体examinationDto", required = true, dataType = "ExaminationDto")
     @Log("新增考试")
@@ -173,7 +169,7 @@ public class ExaminationController extends BaseController {
      * @date 2018/11/10 21:15
      */
     @PutMapping
-    @PreAuthorize("hasAuthority('exam:exam:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "更新考试信息", notes = "根据考试id更新考试的基本信息")
     @ApiImplicitParam(name = "examinationDto", value = "考试实体answer", required = true, dataType = "ExaminationDto")
     @Log("更新考试")
@@ -195,22 +191,20 @@ public class ExaminationController extends BaseController {
      * @date 2018/11/10 21:20
      */
     @DeleteMapping("{id}")
-    @PreAuthorize("hasAuthority('exam:exam:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "删除考试", notes = "根据ID删除考试")
     @ApiImplicitParam(name = "id", value = "考试ID", required = true, paramType = "path")
     @Log("删除考试")
     public ResponseBean<Boolean> deleteExamination(@PathVariable Long id) {
         boolean success = false;
         try {
-            Examination examination = new Examination();
-            examination.setId(id);
-            examination = examinationService.get(examination);
+            Examination examination = examinationService.get(id);
             if (examination != null) {
                 examination.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
                 success = examinationService.delete(examination) > 0;
             }
         } catch (Exception e) {
-            log.error("删除考试失败！", e);
+            log.error("Delete examination failed", e);
         }
         return new ResponseBean<>(success);
     }
@@ -224,7 +218,7 @@ public class ExaminationController extends BaseController {
      * @date 2018/12/03 22:03
      */
     @PostMapping("deleteAll")
-    @PreAuthorize("hasAuthority('exam:exam:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "批量删除考试", notes = "根据考试id批量删除考试")
     @ApiImplicitParam(name = "ids", value = "考试ID", dataType = "Long")
     @Log("批量删除考试")
@@ -234,7 +228,7 @@ public class ExaminationController extends BaseController {
             if (ArrayUtils.isNotEmpty(ids))
                 success = examinationService.deleteAll(ids) > 0;
         } catch (Exception e) {
-            log.error("删除考试失败！", e);
+            log.error("Delete examination failed", e);
         }
         return new ResponseBean<>(success);
     }
@@ -265,9 +259,7 @@ public class ExaminationController extends BaseController {
     @ApiImplicitParam(name = "examinationId", value = "考试ID", required = true, paramType = "path")
     @GetMapping("/{examinationId}/subjectIds")
     public ResponseBean<List<ExaminationSubject>> findExaminationSubjectIds(@PathVariable Long examinationId) {
-        Examination examination = new Examination();
-        examination.setId(examinationId);
-        return new ResponseBean<>(examinationService.findListByExaminationId(examination));
+        return new ResponseBean<>(examinationService.findListByExaminationId(examinationId));
     }
 
     /**

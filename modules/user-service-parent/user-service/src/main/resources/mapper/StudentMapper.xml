@@ -41,6 +41,13 @@
         a.del_flag
     </sql>
 
+    <select id="getById" resultMap="studentResultMap">
+        SELECT
+        <include refid="studentColumns"/>
+        FROM sys_student a
+        WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
     <select id="get" resultMap="studentResultMap">
         SELECT
         <include refid="studentColumns"/>

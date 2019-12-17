@@ -3,24 +3,44 @@
 
     <panel-group @handleSetLineChartData="handleSetLineChartData"/>
 
-    <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <line-chart :chart-data="lineChartData"/>
+    <el-row class="chart-wrapper" style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
+      <div class="chart-wrapper-header">
+        <div>趋势</div>
+      </div>
+      <div class="chart-wrapper-body">
+        <line-chart :chart-data="lineChartData"/>
+      </div>
     </el-row>
 
     <el-row :gutter="32">
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <raddar-chart/>
+          <div class="chart-wrapper-header">
+            <div>趋势</div>
+          </div>
+          <div class="chart-wrapper-body">
+            <raddar-chart/>
+          </div>
         </div>
       </el-col>
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <pie-chart/>
+          <div class="chart-wrapper-header">
+            <div>趋势</div>
+          </div>
+          <div class="chart-wrapper-body">
+            <pie-chart/>
+          </div>
         </div>
       </el-col>
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <bar-chart/>
+          <div class="chart-wrapper-header">
+            <div>趋势</div>
+          </div>
+          <div class="chart-wrapper-body">
+            <bar-chart/>
+          </div>
         </div>
       </el-col>
     </el-row>
@@ -78,12 +98,21 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
   .dashboard-editor-container {
-    padding: 32px;
-    background-color: rgb(240, 242, 245);
+    padding: 20px;
     .chart-wrapper {
       background: #fff;
       padding: 16px 16px 0;
       margin-bottom: 32px;
+      box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+    }
+    .chart-wrapper-header {
+      padding: 8px 12px;
+      border-bottom: 1px solid #EBEEF5;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+    .chart-wrapper-body {
+      padding-top: 20px;
     }
   }
 </style>

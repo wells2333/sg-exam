@@ -84,6 +84,13 @@
         </if>
     </sql>
 
+    <select id="getById" resultMap="userResultMap">
+        SELECT
+        <include refid="userColumns"/>
+        FROM sys_user a
+        WHERE a.id = #{id}
+    </select>
+
     <select id="get" resultMap="userResultMap">
         SELECT
         <include refid="userColumns"/>

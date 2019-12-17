@@ -3,6 +3,7 @@ package com.github.tangyi.exam.service;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.utils.PageUtil;
+import com.github.tangyi.common.core.utils.SpringContextHolder;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.exam.api.constants.ExamSubjectConstant;
 import com.github.tangyi.exam.api.dto.SubjectDto;
@@ -23,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * 题目service
@@ -121,16 +121,11 @@ public class SubjectService {
     public List<SubjectDto> findListByType(SubjectDto subjectDto) {
         List<SubjectDto> subjectDtos = subjectService(subjectDto.getType()).findSubjectList(subjectDto);
         // 选择题则查找具体的选项
-        if (SubjectTypeEnum.CHOICES.getValue().equals(subjectDto.getType())) {
-            if (CollectionUtils.isNotEmpty(subjectDtos)) {
-                // 查找选项信息
-                subjectDtos = subjectDtos.stream().map(dto -> {
-                    SubjectChoices subjectChoices = new SubjectChoices();
-                    subjectChoices.setId(dto.getId());
-                    subjectChoices = subjectChoicesService.get(subjectChoices);
-                    return SubjectUtil.subjectChoicesToDto(subjectChoices);
-                }).collect(Collectors.toList());
-            }
+        if (SubjectTypeEnum.CHOICES.getValue().equals(subjectDto.getType()) && CollectionUtils.isNotEmpty(subjectDtos)) {
+			// 查找选项信息
+			subjectDtos = subjectDtos.stream()
+					.map(dto -> SubjectUtil.subjectChoicesToDto(subjectChoicesService.get(dto.getId())))
+					.collect(Collectors.toList());
         }
         return subjectDtos;
     }
@@ -298,26 +293,9 @@ public class SubjectService {
      * @author tangyi
      * @date 2019/06/16 17:34
      */
-    private BaseSubjectService subjectService(Integer type) {
-        BaseSubjectService baseSubjectService = this.subjectChoicesService;
-        // 匹配类型
-        SubjectTypeEnum subjectType = SubjectTypeEnum.match(type);
-        if (subjectType != null) {
-            switch (subjectType) {
-                case CHOICES:
-                case MULTIPLE_CHOICES:
-                    baseSubjectService = this.subjectChoicesService;
-                    break;
-                case SHORT_ANSWER:
-                    baseSubjectService = this.subjectShortAnswerService;
-                    break;
-                case JUDGEMENT:
-                    baseSubjectService = this.subjectJudgementService;
-                    break;
-            }
-        }
-        return baseSubjectService;
-    }
+	private BaseSubjectService subjectService(Integer type) {
+		return SpringContextHolder.getApplicationContext().getBean(SubjectTypeEnum.matchByValue(type).getService());
+	}
 
     /**
      * 导入题目
@@ -364,7 +342,7 @@ public class SubjectService {
         examinationSubjects.stream().collect(Collectors.groupingBy(ExaminationSubject::getType, Collectors.toList()))
                 .forEach((type, temp) -> {
                     // 匹配类型
-                    SubjectTypeEnum subjectType = SubjectTypeEnum.match(type);
+                    SubjectTypeEnum subjectType = SubjectTypeEnum.matchByValue(type);
                     if (subjectType != null) {
                         switch (subjectType) {
                             case CHOICES:

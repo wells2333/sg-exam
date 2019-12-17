@@ -7,7 +7,7 @@ import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
-import com.github.tangyi.common.security.constant.SecurityConstant;
+import com.github.tangyi.common.security.annotations.AdminTenantTeacherAuthorization;
 import com.github.tangyi.exam.api.module.Course;
 import com.github.tangyi.exam.service.CourseService;
 import io.swagger.annotations.Api;
@@ -17,7 +17,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.ArrayUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -49,9 +48,7 @@ public class CourseController extends BaseController {
     @ApiOperation(value = "获取课程信息", notes = "根据课程id获取课程详细信息")
     @ApiImplicitParam(name = "id", value = "课程ID", required = true, dataType = "Long", paramType = "path")
     public ResponseBean<Course> course(@PathVariable Long id) {
-        Course course = new Course();
-        course.setId(id);
-        return new ResponseBean<>(courseService.get(course));
+        return new ResponseBean<>(courseService.get(id));
     }
 
     /**
@@ -93,7 +90,7 @@ public class CourseController extends BaseController {
      * @date 2018/11/10 21:31
      */
     @PostMapping
-    @PreAuthorize("hasAuthority('exam:course:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "创建课程", notes = "创建课程")
     @ApiImplicitParam(name = "course", value = "课程实体course", required = true, dataType = "Course")
     @Log("新增课程")
@@ -111,7 +108,7 @@ public class CourseController extends BaseController {
      * @date 2018/11/10 21:31
      */
     @PutMapping
-    @PreAuthorize("hasAuthority('exam:course:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "更新课程信息", notes = "根据课程id更新课程的基本信息")
     @ApiImplicitParam(name = "course", value = "课程实体course", required = true, dataType = "Course")
     @Log("更新课程")
@@ -129,22 +126,20 @@ public class CourseController extends BaseController {
      * @date 2018/11/10 21:32
      */
     @DeleteMapping("{id}")
-    @PreAuthorize("hasAuthority('exam:course:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "删除课程", notes = "根据ID删除课程")
     @ApiImplicitParam(name = "id", value = "课程ID", required = true, paramType = "path")
     @Log("删除课程")
     public ResponseBean<Boolean> deleteCourse(@PathVariable Long id) {
         boolean success = false;
         try {
-            Course course = new Course();
-            course.setId(id);
-            course = courseService.get(course);
+            Course course = courseService.get(id);
             if (course != null) {
                 course.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
                 success = courseService.delete(course) > 0;
             }
         } catch (Exception e) {
-            log.error("删除课程失败！", e);
+            log.error("Delete course failed", e);
         }
         return new ResponseBean<>(success);
     }
@@ -158,7 +153,7 @@ public class CourseController extends BaseController {
      * @date 2018/12/4 11:26
      */
     @PostMapping("deleteAll")
-    @PreAuthorize("hasAuthority('exam:course:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "批量删除课程", notes = "根据课程id批量删除课程")
     @ApiImplicitParam(name = "ids", value = "课程ID", dataType = "Long")
     @Log("批量删除课程")
@@ -168,7 +163,7 @@ public class CourseController extends BaseController {
             if (ArrayUtils.isNotEmpty(ids))
                 success = courseService.deleteAll(ids) > 0;
         } catch (Exception e) {
-            log.error("删除课程失败！", e);
+            log.error("Delete course failed", e);
         }
         return new ResponseBean<>(success);
     }

@@ -37,4 +37,9 @@ public class AnswerConstant {
      * 上一题
      */
     public static final Integer PREVIOUS = 1;
+
+	/**
+	 * 排名缓存前缀
+	 */
+	public static final String CACHE_PREFIX_RANK = "rank:";
 }

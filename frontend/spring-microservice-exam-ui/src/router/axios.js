@@ -1,7 +1,7 @@
 import axios from 'axios'
 import store from '../store'
 import { getToken, setToken, getRefreshToken, getTenantCode } from '@/utils/auth'
-import { isNotEmpty } from '@/utils/util'
+import { isNotEmpty, isSuccess } from '@/utils/util'
 import { refreshToken } from '@/api/admin/login'
 import { Message } from 'element-ui'
 import errorCode from '@/const/errorCode'
@@ -37,6 +37,10 @@ axios.interceptors.request.use(config => {
 // HTTP response拦截
 axios.interceptors.response.use(data => {
   NProgress.done()
+  // 请求失败，弹出提示信息
+  if (!isSuccess(data.data)) {
+    Message({ message: data.data.msg, type: 'error' })
+  }
   return data
 }, error => {
   NProgress.done()

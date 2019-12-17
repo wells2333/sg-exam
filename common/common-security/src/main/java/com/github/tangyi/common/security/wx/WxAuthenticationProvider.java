@@ -1,9 +1,12 @@
 package com.github.tangyi.common.security.wx;
 
 import com.github.tangyi.common.security.core.CustomUserDetailsService;
+import com.github.tangyi.common.security.event.CustomAuthenticationFailureEvent;
+import com.github.tangyi.common.security.event.CustomAuthenticationSuccessEvent;
 import com.github.tangyi.common.security.tenant.TenantContextHolder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -24,6 +27,8 @@ public class WxAuthenticationProvider implements AuthenticationProvider {
 
     private CustomUserDetailsService customUserDetailsService;
 
+	private ApplicationEventPublisher publisher;
+
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         WxAuthenticationToken wxAuthenticationToken = (WxAuthenticationToken) authentication;
@@ -32,11 +37,13 @@ public class WxAuthenticationProvider implements AuthenticationProvider {
         UserDetails userDetails = customUserDetailsService.loadUserByWxCodeAndTenantCode(principal, TenantContextHolder.getTenantCode(), wxAuthenticationToken.getWxUser());
         if (userDetails == null) {
             log.debug("Authentication failed: no credentials provided");
-            throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.noopBindAccount", "Noop Bind Account"));
+			publisher.publishEvent(new CustomAuthenticationFailureEvent(authentication, userDetails));
+			throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.noopBindAccount", "Noop Bind Account"));
         }
         WxAuthenticationToken authenticationToken = new WxAuthenticationToken(userDetails, userDetails.getAuthorities());
         authenticationToken.setDetails(wxAuthenticationToken.getDetails());
-        return authenticationToken;
+		publisher.publishEvent(new CustomAuthenticationSuccessEvent(authentication, userDetails));
+		return authenticationToken;
     }
 
     @Override

@@ -1,13 +1,10 @@
 package com.github.tangyi.exam.controller;
 
-import cn.hutool.core.collection.CollUtil;
-import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.SysUtil;
-import com.github.tangyi.common.core.utils.TreeUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
-import com.github.tangyi.common.security.constant.SecurityConstant;
+import com.github.tangyi.common.security.annotations.AdminTenantTeacherAuthorization;
 import com.github.tangyi.exam.api.constants.ExamSubjectConstant;
 import com.github.tangyi.exam.api.dto.SubjectCategoryDto;
 import com.github.tangyi.exam.api.module.SubjectCategory;
@@ -16,15 +13,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 题目分类controller
@@ -50,17 +42,7 @@ public class SubjectCategoryController extends BaseController {
     @GetMapping(value = "categories")
     @ApiOperation(value = "获取分类列表")
     public List<SubjectCategoryDto> menus() {
-        SubjectCategory subjectCategory = new SubjectCategory();
-        subjectCategory.setTenantCode(SysUtil.getTenantCode());
-        // 查询所有分类
-        List<SubjectCategory> subjectCategoryList = categoryService.findList(subjectCategory);
-        if (CollectionUtils.isNotEmpty(subjectCategoryList)) {
-            // 转成dto
-            List<SubjectCategoryDto> subjectCategorySetTreeList = subjectCategoryList.stream().map(SubjectCategoryDto::new).distinct().collect(Collectors.toList());
-            // 排序、组装树形结构
-            return TreeUtil.buildTree(CollUtil.sort(subjectCategorySetTreeList, Comparator.comparingInt(SubjectCategoryDto::getSort)), CommonConstant.ROOT);
-        }
-        return new ArrayList<>();
+       return categoryService.menus();
     }
 
     /**
@@ -75,9 +57,7 @@ public class SubjectCategoryController extends BaseController {
     @ApiOperation(value = "获取分类信息", notes = "根据分类id获取分类详细信息")
     @ApiImplicitParam(name = "id", value = "分类ID", required = true, dataType = "Long", paramType = "path")
     public ResponseBean<SubjectCategory> subjectCategory(@PathVariable Long id) {
-        SubjectCategory subjectCategory = new SubjectCategory();
-        subjectCategory.setId(id);
-        return new ResponseBean<>(categoryService.get(subjectCategory));
+        return new ResponseBean<>(categoryService.get(id));
     }
 
     /**
@@ -89,7 +69,7 @@ public class SubjectCategoryController extends BaseController {
      * @date 2018/12/04 22:00
      */
     @PostMapping
-    @PreAuthorize("hasAuthority('exam:subject:category:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "创建分类", notes = "创建分类")
     @ApiImplicitParam(name = "subjectCategory", value = "分类实体subjectCategory", required = true, dataType = "SubjectCategory")
     @Log("新增题目分类")
@@ -108,7 +88,7 @@ public class SubjectCategoryController extends BaseController {
      * @date 2018/12/04 22:01
      */
     @PutMapping
-    @PreAuthorize("hasAuthority('exam:subject:category:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "更新分类信息", notes = "根据分类id更新分类的基本信息")
     @ApiImplicitParam(name = "subjectCategory", value = "分类实体subjectCategory", required = true, dataType = "SubjectCategory")
     @Log("更新题目分类")
@@ -126,7 +106,7 @@ public class SubjectCategoryController extends BaseController {
      * @date 2018/12/04 22:02
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('exam:subject:category:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "删除分类", notes = "根据ID删除分类")
     @ApiImplicitParam(name = "id", value = "分类ID", required = true, paramType = "path")
     @Log("删除题目分类")

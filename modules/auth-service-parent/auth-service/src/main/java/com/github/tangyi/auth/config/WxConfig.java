@@ -38,5 +38,4 @@ public class WxConfig {
         service.setWxMaConfig(maConfig);
         return service;
     }
-
 }

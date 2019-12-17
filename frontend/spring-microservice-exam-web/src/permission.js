@@ -39,7 +39,6 @@ router.beforeEach((to, from, next) => {
     if (whiteList.indexOf(to.path) !== -1) { // 在免登录白名单，直接进入
       next()
     } else {
-      alert('请先登录')
       next('/login') // 重定向到登录页
       NProgress.done()
     }

@@ -212,6 +212,8 @@ export default {
         setTimeout(() => {
           this.listLoading = false
         }, 500)
+      }).catch(() => {
+        this.listLoading = false
       })
     },
     handleFilter () {

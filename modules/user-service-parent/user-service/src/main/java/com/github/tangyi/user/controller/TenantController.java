@@ -50,9 +50,7 @@ public class TenantController extends BaseController {
     @ApiImplicitParam(name = "id", value = "租户ID", required = true, dataType = "Long", paramType = "path")
     @GetMapping("/{id}")
     public ResponseBean<Tenant> tenant(@PathVariable Long id) {
-        Tenant tenant = new Tenant();
-        tenant.setId(id);
-        return new ResponseBean<>(tenantService.get(tenant));
+        return new ResponseBean<>(tenantService.get(id));
     }
 
     /**
@@ -133,7 +131,7 @@ public class TenantController extends BaseController {
         try {
             return new ResponseBean<>(tenantService.update(tenant) > 0);
         } catch (Exception e) {
-            log.error("更新租户信息失败！", e);
+            log.error("Update tenant failed", e);
         }
         return new ResponseBean<>(Boolean.FALSE);
     }
@@ -152,13 +150,11 @@ public class TenantController extends BaseController {
     @Log("删除租户")
     public ResponseBean<Boolean> delete(@PathVariable Long id) {
         try {
-            Tenant tenant = new Tenant();
-            tenant.setId(id);
-            tenant = tenantService.get(tenant);
+            Tenant tenant = tenantService.get(id);
             tenant.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
             tenantService.delete(tenant);
         } catch (Exception e) {
-            log.error("删除租户信息失败！", e);
+            log.error("Delete tenant failed", e);
         }
         return new ResponseBean<>(Boolean.FALSE);
     }
@@ -181,7 +177,7 @@ public class TenantController extends BaseController {
             if (ArrayUtils.isNotEmpty(ids))
                 success = tenantService.deleteAll(ids) > 0;
         } catch (Exception e) {
-            log.error("删除租户失败！", e);
+            log.error("Delete tenant failed", e);
         }
         return new ResponseBean<>(success);
     }

@@ -39,7 +39,7 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      */
     @Override
     public ResponseBean<UserVo> findUserByIdentifier(String identifier, String tenantCode) {
-        log.error("feign 查询用户信息失败:{}, {}, {}", tenantCode, identifier, throwable);
+        log.error("Feign findUserByIdentifier failed: {}, {}, {}", tenantCode, identifier, throwable);
         return null;
     }
 
@@ -53,7 +53,7 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      */
     @Override
     public ResponseBean<UserVo> findUserByIdentifier(String identifier, Integer identityType, String tenantCode) {
-        log.error("feign 查询用户信息失败:{}, {}, {}, {}", tenantCode, identityType, identifier, throwable);
+        log.error("Feign findUserByIdentifier failed: {}, {}, {}, {}", tenantCode, identityType, identifier, throwable);
         return null;
     }
 
@@ -64,7 +64,7 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      */
     @Override
     public ResponseBean<UserInfoDto> info() {
-        log.error("feign 查询用户信息失败:{},{}", throwable);
+        log.error("Feign get user info failed", throwable);
         return null;
     }
 
@@ -76,7 +76,7 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      */
     @Override
     public ResponseBean<List<UserVo>> findUserById(@RequestBody Long[] ids) {
-        log.error("调用{}异常:{},{}", "findById", ids, throwable);
+        log.error("Call findUserById error: {}", ids, throwable);
         return null;
     }
 
@@ -88,7 +88,7 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      */
     @Override
     public ResponseBean<Integer> findUserCount(UserVo userVo) {
-        log.error("调用{}异常:{},{}", "findUserCount", userVo, throwable);
+        log.error("Call findUserCount error: {}", userVo, throwable);
         return new ResponseBean<>(0);
     }
 
@@ -100,7 +100,7 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      */
     @Override
     public ResponseBean<List<DeptVo>> findDeptById(@RequestBody Long[] ids) {
-        log.error("调用{}异常:{},{}", "findById", ids, throwable);
+        log.error("Call findDeptById error: {}", ids, throwable);
         return null;
     }
 
@@ -112,7 +112,7 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      */
     @Override
     public ResponseBean<Boolean> deleteAttachment(Long id) {
-        log.error("调用{}异常:{},{}", "delete", id, throwable);
+        log.error("Call deleteAttachment error: {}", id, throwable);
         return new ResponseBean<>(Boolean.FALSE);
     }
 
@@ -124,7 +124,7 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      */
     @Override
     public ResponseBean<List<AttachmentVo>> findAttachmentById(Long[] ids) {
-        log.error("调用{}异常:{},{}", "findById", ids, throwable);
+        log.error("Call findAttachmentById error: {}", ids, throwable);
         return new ResponseBean<>(new ArrayList<>());
     }
 
@@ -136,7 +136,7 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      */
     @Override
     public ResponseBean<Boolean> saveLog(Log logInfo) {
-        log.error("feign 插入日志失败,{}", throwable);
+        log.error("Feign save log error", throwable);
         return null;
     }
 
@@ -149,7 +149,7 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      */
     @Override
     public ResponseBean<List<Menu>> findMenuByRole(String role, String tenantCode) {
-        log.error("feign 获取角色菜单失败, {}, {}", tenantCode, throwable);
+        log.error("Feign findMenuByRole failed, {}, {}", tenantCode, throwable);
         return new ResponseBean<>(new ArrayList<>());
     }
 
@@ -161,7 +161,7 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      */
     @Override
     public ResponseBean<List<Menu>> findAllMenu(String tenantCode) {
-        log.error("feign 获取所有菜单失败, {}, {}", tenantCode, throwable);
+        log.error("Feign findAllMenu failed, {}, {}", tenantCode, throwable);
         return new ResponseBean<>(new ArrayList<>());
     }
 
@@ -173,7 +173,7 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      */
     @Override
     public ResponseBean<Tenant> findTenantByTenantCode(String tenantCode) {
-        log.error("feign 获取租户详细信息失败, {}, {}", tenantCode, throwable);
+        log.error("Feign findTenantByTenantCode failed, {}, {}", tenantCode, throwable);
         return null;
     }
 
@@ -186,7 +186,7 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      */
     @Override
     public ResponseBean<UserVo> findUserBySocial(String social, String tenantCode) {
-        log.error("feign 根据社交账号获取用户详细信息失败, {}, {}, {}", social, tenantCode, throwable);
+        log.error("Feign findUserBySocial failed, {}, {}, {}", social, tenantCode, throwable);
         return null;
     }
 
@@ -198,7 +198,7 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      */
     @Override
     public ResponseBean<Boolean> registerUser(UserDto userDto) {
-        log.error("feign 注册用户失败, {}, {}, {}", userDto.getIdentityType(), userDto.getIdentifier(), throwable);
+        log.error("Feign registerUser failed, {}, {}, {}", userDto.getIdentityType(), userDto.getIdentifier(), throwable);
         return null;
     }
 
@@ -210,7 +210,7 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
      */
     @Override
     public ResponseBean<Boolean> updateUser(UserDto userDto) {
-        log.error("feign 更新用户失败, {}, {}, {}", userDto.getIdentityType(), userDto.getIdentifier(), throwable);
+        log.error("Feign updateUser failed, {}, {}, {}", userDto.getIdentityType(), userDto.getIdentifier(), throwable);
         return null;
     }
 

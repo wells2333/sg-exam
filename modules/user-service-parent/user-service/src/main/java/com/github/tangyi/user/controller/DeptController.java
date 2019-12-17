@@ -1,14 +1,11 @@
 package com.github.tangyi.user.controller;
 
-import cn.hutool.core.collection.CollUtil;
-import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.SysUtil;
-import com.github.tangyi.common.core.utils.TreeUtil;
 import com.github.tangyi.common.core.vo.DeptVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
-import com.github.tangyi.common.security.constant.SecurityConstant;
+import com.github.tangyi.common.security.annotations.AdminTenantTeacherAuthorization;
 import com.github.tangyi.user.api.dto.DeptDto;
 import com.github.tangyi.user.api.module.Dept;
 import com.github.tangyi.user.service.DeptService;
@@ -17,12 +14,9 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,17 +46,7 @@ public class DeptController extends BaseController {
     @GetMapping(value = "depts")
     @ApiOperation(value = "获取部门列表")
     public List<DeptDto> depts() {
-        Dept dept = new Dept();
-        dept.setApplicationCode(SysUtil.getSysCode());
-        dept.setTenantCode(SysUtil.getTenantCode());
-        // 查询部门集合
-        Stream<Dept> deptStream = deptService.findList(dept).stream();
-        if (Optional.ofNullable(deptStream).isPresent()) {
-            List<DeptDto> deptTreeList = deptStream.map(DeptDto::new).collect(Collectors.toList());
-            // 排序、构建树形结构
-            return TreeUtil.buildTree(CollUtil.sort(deptTreeList, Comparator.comparingInt(DeptDto::getSort)), CommonConstant.ROOT);
-        }
-        return new ArrayList<>();
+        return  deptService.depts();
     }
 
     /**
@@ -77,9 +61,7 @@ public class DeptController extends BaseController {
     @ApiOperation(value = "获取部门信息", notes = "根据部门id获取部门详细信息")
     @ApiImplicitParam(name = "id", value = "部门ID", required = true, dataType = "Long", paramType = "path")
     public Dept get(@PathVariable Long id) {
-        Dept dept = new Dept();
-        dept.setId(id);
-        return deptService.get(dept);
+        return deptService.get(id);
     }
 
     /**
@@ -91,7 +73,7 @@ public class DeptController extends BaseController {
      * @date 2018/8/28 10:15
      */
     @PostMapping
-    @PreAuthorize("hasAuthority('sys:dept:add') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "创建部门", notes = "创建部门")
     @ApiImplicitParam(name = "dept", value = "部门实体", required = true, dataType = "Dept")
     @Log("新增部门")
@@ -109,7 +91,7 @@ public class DeptController extends BaseController {
      * @date 2018/8/28 10:16
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('sys:dept:del') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "删除部门", notes = "根据ID删除部门")
     @ApiImplicitParam(name = "id", value = "部门ID", required = true, paramType = "path")
     @Log("删除部门")
@@ -129,7 +111,7 @@ public class DeptController extends BaseController {
      * @date 2018/8/28 10:22
      */
     @PutMapping
-    @PreAuthorize("hasAuthority('sys:dept:edit') or hasAnyRole('" + SecurityConstant.ROLE_ADMIN + "')")
+    @AdminTenantTeacherAuthorization
     @ApiOperation(value = "更新部门信息", notes = "根据部门id更新部门的基本信息")
     @ApiImplicitParam(name = "dept", value = "部门实体", required = true, dataType = "Dept")
     @Log("更新部门")

@@ -1,5 +1,6 @@
 package com.github.tangyi.common.config.handler;
 
+import com.github.tangyi.common.core.constant.ApiMsg;
 import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.model.ResponseBean;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -43,8 +44,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
-        ResponseBean<List<String>> responseBean = new ResponseBean<>(errors);
-        responseBean.setStatus(status.value());
+        ResponseBean<List<String>> responseBean = new ResponseBean<>(errors, ApiMsg.KEY_SERVICE, ApiMsg.ERROR);
         return new ResponseEntity<>(responseBean, headers, status);
     }
 
@@ -56,10 +56,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
      */
     @ExceptionHandler(CommonException.class)
     public ResponseEntity<ResponseBean<String>> handleCommonException(Exception e) {
-        ResponseBean<String> responseBean = new ResponseBean<>();
-        responseBean.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        responseBean.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        responseBean.setMsg(e.getMessage());
+        ResponseBean<String> responseBean = new ResponseBean<>(e.getMessage(), ApiMsg.KEY_SERVICE, ApiMsg.ERROR);
         return new ResponseEntity<>(responseBean, HttpStatus.OK);
     }
 }

@@ -55,8 +55,8 @@ public class ValidateCodeController extends BaseController {
         // 生成图片验证码
         BufferedImage image = producer.createImage(text);
         userService.saveImageCode(random, text);
-        ServletOutputStream out = response.getOutputStream();
-        ImageIO.write(image, "JPEG", out);
-        IOUtils.closeQuietly(out);
+        try (ServletOutputStream out = response.getOutputStream()) {
+			ImageIO.write(image, "JPEG", out);
+		}
     }
 }

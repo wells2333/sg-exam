@@ -30,13 +30,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.9.RELEASE</version>
+        <version>2.1.11.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <properties>
         <!-- 版本号 -->
-        <revision>3.4.0</revision>
+        <revision>3.5.0</revision>
         <!-- 编译 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -45,33 +45,34 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <!-- spring boot、spring cloud -->
-        <spring-boot.version>2.1.9.RELEASE</spring-boot.version>
-        <spring-cloud.version>Greenwich.SR3</spring-cloud.version>
-        <security.auth.version>2.3.5.RELEASE</security.auth.version>
-        <spring-boot-admin.version>2.1.6</spring-boot-admin.version>
-        <spring-cloud-sleuth.version>2.1.0.RELEASE</spring-cloud-sleuth.version>
+        <spring-boot.version>2.1.11.RELEASE</spring-boot.version>
+        <spring-cloud.version>Greenwich.SR4</spring-cloud.version>
+        <spring-boot-admin.version>2.2.0-SNAPSHOT</spring-boot-admin.version>
         <zipkin.version>2.11.3</zipkin.version>
         <swagger.version>2.9.2</swagger.version>
         <fastdfs-client.version>1.26.7</fastdfs-client.version>
         <mysql.connector.version>8.0.13</mysql.connector.version>
         <!-- common -->
         <commons-io.version>2.6</commons-io.version>
-        <commons-collections4.version>4.0</commons-collections4.version>
+        <commons-collections4.version>4.1</commons-collections4.version>
         <commons-beanutils.version>1.9.2</commons-beanutils.version>
 
         <!-- 其它依赖 -->
         <hibernate-validator.version>6.0.14.Final</hibernate-validator.version>
         <mybatis.version>2.1.0</mybatis.version>
         <pagehelper.version>1.2.10</pagehelper.version>
-        <poi.version>3.9</poi.version>
+        <poi.version>3.17</poi.version>
         <xmlbeans.version>2.3.0</xmlbeans.version>
         <hutool.version>4.5.0</hutool.version>
         <jasypt.version>1.18</jasypt.version>
         <kaptcha.version>0.0.9</kaptcha.version>
         <json.version>20140107</json.version>
-        <okhttp.version>3.8.1</okhttp.version>
+        <okhttp.version>3.14.2</okhttp.version>
         <aliyun.version>4.0.3</aliyun.version>
         <weixin.version>3.4.0</weixin.version>
+        <jjwt.version>0.9.0</jjwt.version>
+        <qiniu.version>[7.2.0, 7.2.99]</qiniu.version>
+        <easyexcel.version>2.1.4</easyexcel.version>
 
         <!-- docker -->
         <docker.maven.verion>1.4.3</docker.maven.verion>
@@ -205,6 +206,13 @@
                 <version>${revision}</version>
             </dependency>
 
+            <!-- common-oss -->
+            <dependency>
+                <groupId>com.github.tangyi</groupId>
+                <artifactId>common-oss</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
             <!-- user-service-api -->
             <dependency>
                 <groupId>com.github.tangyi</groupId>
@@ -274,13 +282,6 @@
                 <version>${mybatis.version}</version>
             </dependency>
 
-            <!--fastDfs-->
-            <dependency>
-                <groupId>com.github.tobato</groupId>
-                <artifactId>fastdfs-client</artifactId>
-                <version>${fastdfs-client.version}</version>
-            </dependency>
-
             <!-- 验证码 -->
             <dependency>
                 <groupId>com.github.axet</groupId>
@@ -300,6 +301,34 @@
                 <groupId>com.github.binarywang</groupId>
                 <artifactId>weixin-java-pay</artifactId>
                 <version>${weixin.version}</version>
+            </dependency>
+
+            <!-- jjwt -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+
+            <!-- 七牛云 -->
+            <dependency>
+                <groupId>com.qiniu</groupId>
+                <artifactId>qiniu-java-sdk</artifactId>
+                <version>${qiniu.version}</version>
+            </dependency>
+
+            <!--fastDfs-->
+            <dependency>
+                <groupId>com.github.tobato</groupId>
+                <artifactId>fastdfs-client</artifactId>
+                <version>${fastdfs-client.version}</version>
+            </dependency>
+
+            <!-- easyexcel -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>easyexcel</artifactId>
+                <version>${easyexcel.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -345,7 +374,28 @@
         <repository>
             <id>spring-milestones</id>
             <name>Spring Milestones</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
             <url>https://repo.spring.io/milestone</url>
+        </repository>
+        <repository>
+            <id>spring-snapshot</id>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <url>http://repo.spring.io/snapshot</url>
+        </repository>
+        <repository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
         </repository>
     </repositories>
 

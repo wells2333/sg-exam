@@ -34,6 +34,12 @@
         </if>
     </sql>
 
+    <select id="getById" resultMap="picturesResultMap">
+        SELECT
+        <include refid="answerColumns"/>
+        FROM exam_pictures a WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
     <select id="get" resultMap="picturesResultMap">
         SELECT
         <include refid="answerColumns"/>

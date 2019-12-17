@@ -8,6 +8,7 @@ import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.exam.api.dto.AnswerDto;
+import com.github.tangyi.exam.api.dto.RankInfoDto;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.Answer;
 import com.github.tangyi.exam.service.AnswerService;
@@ -56,9 +57,7 @@ public class AnswerController extends BaseController {
     @ApiOperation(value = "获取答题信息", notes = "根据答题id获取答题详细信息")
     @ApiImplicitParam(name = "id", value = "答题ID", required = true, dataType = "Long", paramType = "path")
     public ResponseBean<Answer> answer(@PathVariable Long id) {
-        Answer answer = new Answer();
-        answer.setId(id);
-        return new ResponseBean<>(answerService.get(answer));
+        return new ResponseBean<>(answerService.get(id));
     }
 
     /**
@@ -146,7 +145,7 @@ public class AnswerController extends BaseController {
                 success = answerService.delete(answer) > 0;
             }
         } catch (Exception e) {
-            log.error("删除答题失败！", e);
+            log.error("Delete answer failed", e);
         }
         return new ResponseBean<>(success);
     }
@@ -270,4 +269,18 @@ public class AnswerController extends BaseController {
                                               @RequestParam(required = false) Integer nextType) {
         return new ResponseBean<>(answerService.answerInfo(recordId, currentSubjectId, nextSubjectType, nextType));
     }
+
+    /**
+     * 获取排名数据，成绩由高到底排序，返回姓名、头像、分数信息
+     * @param recordId recordId
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/12/8 23:32
+     */
+	@GetMapping("record/{recordId}/rankInfo")
+	@ApiOperation(value = "排名列表", notes = "排名列表")
+	@ApiImplicitParam(name = "recordId", value = "考试记录id", dataType = "Long")
+    public ResponseBean<List<RankInfoDto>> rankInfo(@PathVariable Long recordId) {
+		return new ResponseBean<>(answerService.getRankInfo(recordId));
+	}
 }

@@ -2,7 +2,7 @@ package com.github.tangyi.common.core.config;
 
 import com.github.tangyi.common.core.properties.SnowflakeProperties;
 import com.github.tangyi.common.core.utils.SnowflakeIdWorker;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,13 +13,14 @@ import org.springframework.context.annotation.Configuration;
  * @date 2019/4/26 11:17
  */
 @Configuration
+@AllArgsConstructor
 public class SnowFlake {
 
-    @Autowired
-    private SnowflakeProperties snowflakeProperties;
+	private final SnowflakeProperties snowflakeProperties;
 
-    @Bean
-    public SnowflakeIdWorker initTokenWorker() {
-        return new SnowflakeIdWorker(Integer.parseInt(snowflakeProperties.getWorkId()), Integer.parseInt(snowflakeProperties.getDataCenterId()));
-    }
+	@Bean
+	public SnowflakeIdWorker initTokenWorker() {
+		return new SnowflakeIdWorker(Integer.parseInt(snowflakeProperties.getWorkId()),
+				Integer.parseInt(snowflakeProperties.getDataCenterId()));
+	}
 }
