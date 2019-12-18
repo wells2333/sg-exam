@@ -144,7 +144,7 @@
               :show-file-list="false"
               :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload"
-              :action="sysConfig.uploadUrl"
+              action="api/user/v1/attachment/upload"
               :headers="headers"
               :data="params"
               class="avatar-uploader">

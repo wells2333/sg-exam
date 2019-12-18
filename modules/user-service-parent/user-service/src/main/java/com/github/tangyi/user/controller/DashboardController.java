@@ -8,6 +8,7 @@ import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.exam.api.feign.ExaminationServiceClient;
 import com.github.tangyi.user.api.dto.DashboardDto;
+import com.github.tangyi.user.service.TenantService;
 import com.github.tangyi.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,6 +33,8 @@ public class DashboardController extends BaseController {
 
     private final UserService userService;
 
+    private final TenantService tenantService;
+
     /**
      * 获取管控台首页数据
      *
@@ -48,6 +51,8 @@ public class DashboardController extends BaseController {
         UserVo userVo = new UserVo();
         userVo.setTenantCode(tenantCode);
         dashboardDto.setOnlineUserNumber(userService.userCount(userVo).toString());
+        // 租户数量
+		dashboardDto.setTenantCount(tenantService.tenantCount().toString());
         // 查询考试数量
         ResponseBean<Integer> examinationCountResponseBean = examinationService.findExaminationCount(tenantCode);
         if (!ResponseUtil.isSuccess(examinationCountResponseBean))

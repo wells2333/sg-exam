@@ -39,7 +39,7 @@
                     <a href="https://www.kancloud.cn/tangyi/spring-microservice-exam/1322870" target="_blank">部署文档</a>
                   </el-menu-item>
                   <el-menu-item index="u-admin">
-                    <a href="http://it99.club:81" target="_blank">管理后台</a>
+                    <a href="http://118.25.138.130:81" target="_blank">管理后台</a>
                   </el-menu-item>
                 </el-submenu>
                 <el-submenu index="/c">
