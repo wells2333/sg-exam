@@ -22,4 +22,11 @@ public interface TenantMapper extends CrudMapper<Tenant> {
      * @date 2019/05/26 10:29
      */
     Tenant getByTenantCode(String tenantCode);
+
+	/**
+	 * 查询租户数量
+	 *
+	 * @return Integer
+	 */
+	Integer tenantCount();
 }

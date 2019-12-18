@@ -7,7 +7,7 @@
             <h4>链接</h4>
             <a target="_blank" href="https://gitee.com/wells2333/spring-microservice-exam">码云</a>
             <a target="_blank" href="https://github.com/">GITHUB</a>
-            <a target="_blank" href="http://it99.club:81">管理后台</a>
+            <a target="_blank" href="http://118.25.138.130:81">管理后台</a>
             <a target="_blank" href="https://gitee.com/wells2333/spring-microservice-exam/blob/master/CHANGELOG.md">更新日志</a>
           </el-col>
           <el-col :span="4" class="footer-col">

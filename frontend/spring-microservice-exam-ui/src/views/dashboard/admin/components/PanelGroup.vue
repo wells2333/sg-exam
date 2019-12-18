@@ -1,6 +1,17 @@
 <template>
   <el-row :gutter="40" class="panel-group">
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="handleSetLineChartData('purchases')">
+        <div class="card-panel-icon-wrapper icon-tab">
+          <svg-icon icon-class="tab" class-name="card-panel-icon" />
+        </div>
+        <div class="card-panel-description">
+          <div class="card-panel-text">单位数</div>
+          <count-to :start-val="0" :end-val="tenantNumber" :duration="2400" class="card-panel-num"/>
+        </div>
+      </div>
+    </el-col>
+    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
         <div class="card-panel-icon-wrapper icon-people">
           <svg-icon icon-class="peoples" class-name="card-panel-icon" />
@@ -23,20 +34,9 @@
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('purchases')">
+      <div class="card-panel" @click="handleSetLineChartData('shoppings')">
         <div class="card-panel-icon-wrapper icon-chart">
           <svg-icon icon-class="chart" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">参加人数</div>
-          <count-to :start-val="0" :end-val="examUserNumber" :duration="2400" class="card-panel-num"/>
-        </div>
-      </div>
-    </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('shoppings')">
-        <div class="card-panel-icon-wrapper icon-tab">
-          <svg-icon icon-class="tab" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">课程数</div>
@@ -60,7 +60,8 @@ export default {
     return {
       onlineUserNumber: 0,
       examinationNumber: 0,
-      examUserNumber: 0
+      examUserNumber: 0,
+      tenantNumber: 0
     }
   },
   created () {
@@ -83,6 +84,9 @@ export default {
           }
           if (isNotEmpty(data.examUserNumber)) {
             this.examUserNumber = parseInt(data.examUserNumber)
+          }
+          if (isNotEmpty(data.tenantCount)) {
+            this.tenantNumber = parseInt(data.tenantCount)
           }
         }
       }).catch(error => {

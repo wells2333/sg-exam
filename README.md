@@ -1,12 +1,6 @@
 # 1 简介
 
-- 重写[spring-cloud-online-exam](https://gitee.com/wells2333/spring-cloud-online-exam)
-
-- 采用前后端分离技术
-
-- 前端采用`vue2.0`，通过`jwt`和后端交互
-
-- 后端基于`spring boot`、`spring cloud`、`MySQL`等技术实现权限管理、考试管理等功能。
+硕果云，基于Spring Cloud搭建的新一代微服务教学管理平台，提供多租户、权限管理、考试、练习等功能。
 
 # 2 在线体验
 
@@ -14,13 +8,13 @@
 
 - 后台：[http://118.25.138.130:81](http://118.25.138.130:81)
 
-默认账号：
+账号：
 
-单位ID：gitee
-
-1. 管理员：admin/123456
-2. 学生：student/123456
-3. 教师：teacher/123456
+|   单位ID   |      账号      |   密码   |   角色    |
+| --------- | -------- | -------- | -------- |
+|  gitee  |  admin    | 123456  |  管理员  |
+|  gitee  |  student  | 123456  |  学生  |
+|  gitee  |  teacher  | 123456  |  老师  |
 
 # 3 技术选型
 
@@ -141,6 +135,8 @@
 
 交流QQ群：<a target="_blank" href="https://jq.qq.com/?_wv=1027&k=5RKZNF2"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="Spring Cloud考试系统学习" title="Spring Cloud考试系统学习"></a>
 
-QQ群号：996208878
+QQ群号：996208878，二维码：
+
+<img src="http://118.25.138.130/static/img/WechatIMG4.c775d3e.png" alt="Spring Cloud考试系统学习" title="Spring Cloud考试系统学习">
 
 如果您觉得有帮助，请点右上角 "Star" 或者项目底部的“捐助”支持一下，谢谢！
