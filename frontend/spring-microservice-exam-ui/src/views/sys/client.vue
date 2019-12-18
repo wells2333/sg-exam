@@ -17,12 +17,12 @@
       @selection-change="handleSelectionChange"
       @sort-change="sortChange">
       <el-table-column type="selection" width="55"/>
-      <el-table-column :label="$t('table.client.clientId')" sortable prop="client_id">
+      <el-table-column :label="$t('table.client.clientId')" prop="client_id">
         <template slot-scope="scope">
           <span>{{ scope.row.clientId }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.client.clientSecretPlainText')">
+      <el-table-column :label="$t('table.client.clientSecretPlainText')" min-width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.clientSecretPlainText }}</span>
         </template>

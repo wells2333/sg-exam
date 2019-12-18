@@ -13,7 +13,6 @@
             :props="defaultProps"
             class="filter-tree"
             node-key="id"
-            default-expand-all
             highlight-current
             @node-click="getNodeData"
             @node-expand="nodeExpand"

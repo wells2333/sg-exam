@@ -64,7 +64,7 @@
                       :show-file-list="false"
                       :on-success="handleAvatarSuccess"
                       :before-upload="beforeAvatarUpload"
-                      :action="sysConfig.uploadUrl"
+                      action="api/user/v1/attachment/upload"
                       :headers="headers"
                       :data="params"
                       class="avatar-uploader">
@@ -127,8 +127,7 @@ export default {
   },
   computed: {
     ...mapState({
-      userInfo: state => state.user.userInfo,
-      sysConfig: state => state.sysConfig.sysConfig
+      userInfo: state => state.user.userInfo
     })
   },
   methods: {
