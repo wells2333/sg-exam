@@ -143,4 +143,14 @@ public class TenantService extends CrudService<TenantMapper, Tenant> {
     public int deleteAll(Long[] ids) {
         return super.deleteAll(ids);
     }
+
+    /**
+     * 查询单位数量
+     * @return Integer
+     * @author tangyi
+     * @date 2019/12/18 5:09 下午
+     */
+	public Integer tenantCount() {
+		return this.dao.tenantCount();
+	}
 }

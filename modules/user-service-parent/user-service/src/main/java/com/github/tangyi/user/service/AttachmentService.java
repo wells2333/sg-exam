@@ -111,7 +111,6 @@ public class AttachmentService extends CrudService<AttachmentMapper, Attachment>
 	@Transactional
 	@CacheEvict(value = {"attachment", "attachment_preview"}, key = "#attachment.id")
 	public int delete(Attachment attachment) {
-		qiNiuService.delete(attachment.getAttachName());
 		return super.delete(attachment);
 	}
 
