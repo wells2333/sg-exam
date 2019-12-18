@@ -18,22 +18,22 @@
       @selection-change="handleSelectionChange"
       @sort-change="sortChange">
       <el-table-column type="selection" width="55"/>
-      <el-table-column :label="$t('table.courseName')" sortable prop="course_name">
+      <el-table-column :label="$t('table.courseName')" prop="course_name">
         <template slot-scope="scope">
           <span>{{ scope.row.courseName }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.college')" sortable prop="college">
+      <el-table-column :label="$t('table.college')" prop="college">
         <template slot-scope="scope">
           <span>{{ scope.row.college }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.major')" sortable prop="major">
+      <el-table-column :label="$t('table.major')" prop="major">
         <template slot-scope="scope">
           <span>{{ scope.row.major }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.teacher')" sortable prop="teacher">
+      <el-table-column :label="$t('table.teacher')" prop="teacher">
         <template slot-scope="scope">
           <span>{{ scope.row.teacher }}</span>
         </template>

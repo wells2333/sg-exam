@@ -108,13 +108,13 @@ swagger:
 
 # 演示环境
 preview:
-  enabled: ${PREVIEW_ENABLED:false}
   ignores:
     - api/auth  # 授权服务
     - resetPassword   # 重置密码
     - register
     - checkExist
     - updateInfo
+    - updateAvatar
     - attachment
     - api/exam  # 考试服务
     - api/msc

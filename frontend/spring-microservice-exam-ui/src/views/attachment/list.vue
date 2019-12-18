@@ -10,7 +10,7 @@
         :show-file-list="showFileList"
         :on-success="handleUploadSuccess"
         :on-progress="handleUploadProgress"
-        :action="sysConfig.uploadUrl"
+        action="api/user/v1/attachment/upload"
         :headers="headers"
         :data="params"
         class="upload-demo"
@@ -28,17 +28,17 @@
       style="width: 100%;"
       @sort-change="sortChange">
       <el-table-column type="selection" width="55"/>
-      <el-table-column sortable prop="id" label="流水号" min-width="100">
+      <el-table-column prop="id" label="流水号" min-width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.attachName')" sortable prop="attach_name" min-width="90">
+      <el-table-column :label="$t('table.attachName')" prop="attach_name" min-width="120">
         <template slot-scope="scope">
           <span>{{ scope.row.attachName }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.uploader')" min-width="90">
+      <el-table-column :label="$t('table.uploader')" min-width="50">
         <template slot-scope="scope">
           <span>{{ scope.row.creator }}</span>
         </template>
@@ -48,9 +48,9 @@
           <span>{{ scope.row.busiType | attachmentTypeFilter }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.uploadDate')" min-width="90">
+      <el-table-column :label="$t('table.uploadDate')" min-width="70">
         <template slot-scope="scope">
-          <span>{{ scope.row.createDate }}</span>
+          <span>{{ scope.row.createDate | timeFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.actions')" class-name="status-col" width="300px">
@@ -72,7 +72,7 @@
 import { fetchList, addObj, putObj, delAttachment, getDownloadUrl } from '@/api/admin/attachment'
 import waves from '@/directive/waves'
 import { getToken } from '@/utils/auth' // getToken from cookie
-import { notifySuccess, messageSuccess, isNotEmpty } from '@/utils/util'
+import { notifySuccess, messageSuccess, isNotEmpty, formatDate } from '@/utils/util'
 import { mapState } from 'vuex'
 import SpinnerLoading from '@/components/SpinnerLoading'
 
@@ -105,6 +105,9 @@ export default {
         attachType = '普通附件'
       }
       return attachType
+    },
+    timeFilter (time) {
+      return formatDate(new Date(time), 'yyyy-MM-dd hh:mm')
     }
   },
   data () {
@@ -154,11 +157,6 @@ export default {
   },
   created () {
     this.getList()
-  },
-  computed: {
-    ...mapState({
-      sysConfig: state => state.sysConfig.sysConfig
-    })
   },
   methods: {
     getList () {

@@ -70,7 +70,7 @@
               :on-success="handleUploadSuccess"
               :on-exceed="handleExceed"
               :on-remove="handleRemove"
-              :action="sysConfig.uploadUrl"
+              action="api/user/v1/attachment/upload"
               :headers="headers"
               :data="params"
               :limit="1"
@@ -95,7 +95,7 @@
 import { fetchKnowledgeList, addObj, putObj, delObj, delAllObj } from '@/api/exam/knowledge'
 import waves from '@/directive/waves'
 import { mapGetters, mapState } from 'vuex'
-import { checkMultipleSelect, notifySuccess, notifyFail, messageSuccess } from '@/utils/util'
+import { isNotEmpty, checkMultipleSelect, notifySuccess, notifyFail, messageSuccess } from '@/utils/util'
 import { getToken } from '@/utils/auth' // getToken from cookie
 import { getObj, delAttachment } from '@/api/admin/attachment'
 import SpinnerLoading from '@/components/SpinnerLoading'
@@ -317,7 +317,8 @@ export default {
     },
     // 查询附件列表
     getFileList (attachmentId) {
-      if (attachmentId !== '') {
+      this.fileList = []
+      if (isNotEmpty(attachmentId)) {
         getObj(attachmentId).then(response => {
           const data = response.data.data
           const attachment = {
