@@ -139,8 +139,10 @@ QQ群号：
 
 996208878(已满)
 
+<img src="http://118.25.138.130/static/img/WechatIMG4.c775d3e.png" alt="Spring Cloud考试系统学习" title="Spring Cloud考试系统学习">
+
 346164822（新群）
 
-<img src="http://118.25.138.130/static/img/WechatIMG4.c775d3e.png" alt="Spring Cloud考试系统学习" title="Spring Cloud考试系统学习">
+<img src="http://q2at6vru5.bkt.clouddn.com/WechatIMG2.png" alt="Spring Cloud考试系统学习" title="Spring Cloud考试系统学习">
 
 如果您觉得有帮助，请点右上角 "Star" 或者项目底部的“捐助”支持一下，谢谢！
