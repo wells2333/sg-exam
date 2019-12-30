@@ -135,7 +135,11 @@
 
 交流QQ群：<a target="_blank" href="https://jq.qq.com/?_wv=1027&k=5RKZNF2"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="Spring Cloud考试系统学习" title="Spring Cloud考试系统学习"></a>
 
-QQ群号：996208878，二维码：
+QQ群号：
+
+996208878(已满)
+
+346164822（新群）
 
 <img src="http://118.25.138.130/static/img/WechatIMG4.c775d3e.png" alt="Spring Cloud考试系统学习" title="Spring Cloud考试系统学习">
 
