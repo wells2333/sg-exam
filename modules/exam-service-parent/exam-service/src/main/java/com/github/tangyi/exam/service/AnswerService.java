@@ -22,12 +22,13 @@ import com.github.tangyi.exam.api.module.Examination;
 import com.github.tangyi.exam.api.module.ExaminationRecord;
 import com.github.tangyi.exam.api.module.ExaminationSubject;
 import com.github.tangyi.exam.enums.SubjectTypeEnum;
-import com.github.tangyi.exam.handler.HandleResult;
-import com.github.tangyi.exam.handler.impl.ChoicesHandler;
-import com.github.tangyi.exam.handler.impl.JudgementHandler;
+import com.github.tangyi.exam.handler.AnswerHandleResult;
+import com.github.tangyi.exam.handler.impl.ChoicesAnswerHandler;
+import com.github.tangyi.exam.handler.impl.JudgementAnswerHandler;
+import com.github.tangyi.exam.handler.impl.MultipleChoicesAnswerHandler;
 import com.github.tangyi.exam.mapper.AnswerMapper;
 import com.github.tangyi.exam.utils.ExamRecordUtil;
-import com.github.tangyi.exam.utils.HandlerUtil;
+import com.github.tangyi.exam.utils.AnswerHandlerUtil;
 import com.github.tangyi.user.api.feign.UserServiceClient;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,9 +68,11 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
 
     private final ExaminationSubjectService examinationSubjectService;
 
-    private final ChoicesHandler choicesHandler;
+    private final ChoicesAnswerHandler choicesHandler;
 
-	private final JudgementHandler judgementHandler;
+	private final MultipleChoicesAnswerHandler multipleChoicesHandler;
+
+	private final JudgementAnswerHandler judgementHandler;
 
 	private final RedisTemplate<String, String> redisTemplate;
 
@@ -200,7 +203,6 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
      * 提交答卷，自动统计选择题得分
      *
      * @param answer answer
-     * @return boolean
      * @author tangyi
      * @date 2018/12/26 14:09
      */
@@ -217,10 +219,10 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
         // 分类题目
         Map<String, List<Answer>> distinctAnswer = this.distinctAnswer(answerList);
         // 暂时只自动统计单选题、多选题、判断题，简答题由老师阅卷批改
-		HandleResult choiceResult = choicesHandler.handle(distinctAnswer.get(SubjectTypeEnum.CHOICES.name()));
-		HandleResult multipleResult = choicesHandler.handle(distinctAnswer.get(SubjectTypeEnum.MULTIPLE_CHOICES.name()));
-		HandleResult judgementResult = judgementHandler.handle(distinctAnswer.get(SubjectTypeEnum.JUDGEMENT.name()));
-		HandleResult result = HandlerUtil.addAll(Arrays.asList(choiceResult, multipleResult, judgementResult));
+		AnswerHandleResult choiceResult = choicesHandler.handle(distinctAnswer.get(SubjectTypeEnum.CHOICES.name()));
+		AnswerHandleResult multipleResult = multipleChoicesHandler.handle(distinctAnswer.get(SubjectTypeEnum.MULTIPLE_CHOICES.name()));
+		AnswerHandleResult judgementResult = judgementHandler.handle(distinctAnswer.get(SubjectTypeEnum.JUDGEMENT.name()));
+		AnswerHandleResult result = AnswerHandlerUtil.addAll(Arrays.asList(choiceResult, multipleResult, judgementResult));
 		// 记录总分、正确题目数、错误题目数
 		record.setScore(result.getScore());
 		record.setCorrectNumber(result.getCorrectNum());

@@ -11,7 +11,7 @@ import java.util.List;
  * @author tangyi
  * @date 2019/6/16 17:30
  */
-public interface BaseSubjectService {
+public interface ISubjectService {
 
     /**
      * 根据ID查询

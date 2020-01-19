@@ -175,15 +175,13 @@ export default {
         analysis: '',
         level: 2
       }
-      // 默认序号
-      if (isNotEmpty(serialNumber)) {
-        this.subjectInfo.serialNumber = serialNumber
-      }
-
       // 默认分数
       if (isNotEmpty(score)) {
         this.subjectInfo.score = score
       }
+    },
+    initDefaultOptions() {
+
     }
   }
 }

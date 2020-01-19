@@ -15,7 +15,7 @@ import lombok.Data;
  */
 @Data
 @ExcelModel("菜单信息")
-@ContentRowHeight(10)
+@ContentRowHeight(18)
 @HeadRowHeight(20)
 @ColumnWidth(25)
 public class MenuExcelModel {

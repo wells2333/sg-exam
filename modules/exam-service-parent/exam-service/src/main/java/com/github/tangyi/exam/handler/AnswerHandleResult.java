@@ -8,7 +8,7 @@ import lombok.Data;
  * @date 2019/12/8 9:56 下午
  */
 @Data
-public class HandleResult {
+public class AnswerHandleResult {
 
 	/**
 	 * 总分
