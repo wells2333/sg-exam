@@ -20,7 +20,7 @@ import java.util.Date;
  */
 @Data
 @ExcelModel("考试记录")
-@ContentRowHeight(10)
+@ContentRowHeight(18)
 @HeadRowHeight(20)
 @ColumnWidth(25)
 public class ExamRecordExcelModel {

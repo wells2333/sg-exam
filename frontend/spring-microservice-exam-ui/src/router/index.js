@@ -108,8 +108,37 @@ export const constantRouterMap = [
   }
 ]
 
+export const constantExamRouterMap = [
+  {
+    path: '',
+    component: Layout,
+    children: [
+      {
+        path: '/exam/exam/subjects/:id',
+        component: () => import('@/views/exam/examSubjects'),
+        name: '题目管理',
+        title: '题目管理',
+        noCache: true
+      }
+    ]
+  },
+  {
+    path: '',
+    component: Layout,
+    children: [
+      {
+        path: '/exam/:examinationId/subjects/:id/:type',
+        component: () => import('@/views/exam/subjectDetails'),
+        name: '题目详情',
+        title: '题目详情',
+        noCache: true
+      }
+    ]
+  }
+]
+
 export default new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: [].concat(...formatRoutes(store.state.user.menu), constantRouterMap)
+  routes: [].concat(...formatRoutes(store.state.user.menu), constantRouterMap, constantExamRouterMap)
 })

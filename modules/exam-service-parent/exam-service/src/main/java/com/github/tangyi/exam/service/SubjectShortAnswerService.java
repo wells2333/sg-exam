@@ -24,7 +24,7 @@ import java.util.List;
  */
 @Service
 public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMapper, SubjectShortAnswer>
-        implements BaseSubjectService {
+        implements ISubjectService {
 
     /**
      * 查找题目

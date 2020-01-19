@@ -190,17 +190,6 @@ public class SubjectService {
         examinationSubject.setSubjectId(subjectDto.getId());
         examinationSubject.setType(subjectDto.getType());
         examinationSubjectService.insert(examinationSubject);
-        // 保存选项
-        if (CollectionUtils.isNotEmpty(subjectDto.getOptions())) {
-            // 初始化基本属性
-            subjectDto.getOptions().forEach(subjectOption -> {
-                subjectOption.setCommonValue(subjectDto.getCreator(), subjectDto.getApplicationCode(),
-                        subjectDto.getTenantCode());
-                subjectOption.setSubjectChoicesId(subjectDto.getId());
-            });
-            // 批量保存
-            subjectOptionService.insertBatch(subjectDto.getOptions());
-        }
         return subjectService(subjectDto.getType()).insertSubject(subjectDto);
     }
 
@@ -214,7 +203,10 @@ public class SubjectService {
      */
     @Transactional
     public int update(SubjectDto subjectDto) {
-        return subjectService(subjectDto.getType()).updateSubject(subjectDto);
+        int update;
+        if ((update = subjectService(subjectDto.getType()).updateSubject(subjectDto)) == 0)
+            update = this.insert(subjectDto);
+        return update;
     }
 
     /**
@@ -293,7 +285,7 @@ public class SubjectService {
      * @author tangyi
      * @date 2019/06/16 17:34
      */
-	private BaseSubjectService subjectService(Integer type) {
+	private ISubjectService subjectService(Integer type) {
 		return SpringContextHolder.getApplicationContext().getBean(SubjectTypeEnum.matchByValue(type).getService());
 	}
 
@@ -337,7 +329,7 @@ public class SubjectService {
      * @author tangyi
      * @date 2019/06/17 10:43
      */
-    public Map<String, Long[]> getSubjectIdByType(List<ExaminationSubject> examinationSubjects) {
+    private Map<String, Long[]> getSubjectIdByType(List<ExaminationSubject> examinationSubjects) {
         Map<String, Long[]> idMap = new HashMap<>();
         examinationSubjects.stream().collect(Collectors.groupingBy(ExaminationSubject::getType, Collectors.toList()))
                 .forEach((type, temp) -> {
@@ -347,6 +339,11 @@ public class SubjectService {
                         switch (subjectType) {
                             case CHOICES:
                                 idMap.put(SubjectTypeEnum.CHOICES.name(),
+                                        temp.stream().map(ExaminationSubject::getSubjectId).distinct()
+                                                .toArray(Long[]::new));
+                                break;
+                            case MULTIPLE_CHOICES:
+                                idMap.put(SubjectTypeEnum.MULTIPLE_CHOICES.name(),
                                         temp.stream().map(ExaminationSubject::getSubjectId).distinct()
                                                 .toArray(Long[]::new));
                                 break;
@@ -387,6 +384,18 @@ public class SubjectService {
         List<SubjectDto> subjectDtoList = new ArrayList<>();
         if (idMap.containsKey(SubjectTypeEnum.CHOICES.name())) {
             List<SubjectChoices> subjectChoicesList = subjectChoicesService.findListById(idMap.get(SubjectTypeEnum.CHOICES.name()));
+            if (CollectionUtils.isNotEmpty(subjectChoicesList)) {
+                // 查找选项信息
+                if (findOptions) {
+                    subjectChoicesList = subjectChoicesList.stream().map(subjectChoicesService::get)
+                            .collect(Collectors.toList());
+                }
+                subjectDtoList.addAll(SubjectUtil.subjectChoicesToDto(subjectChoicesList));
+            }
+        }
+
+        if (idMap.containsKey(SubjectTypeEnum.MULTIPLE_CHOICES.name())) {
+            List<SubjectChoices> subjectChoicesList = subjectChoicesService.findListById(idMap.get(SubjectTypeEnum.MULTIPLE_CHOICES.name()));
             if (CollectionUtils.isNotEmpty(subjectChoicesList)) {
                 // 查找选项信息
                 if (findOptions) {
