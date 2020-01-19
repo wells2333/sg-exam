@@ -57,10 +57,11 @@ public class PreviewFilter implements GlobalFilter, Ordered {
 	private boolean shouldFilter(ServerHttpRequest request) {
 		// enabled不为true
 		Map<String, String> previewConfigMap = LoadingCacheHelper.getInstance().get(PreviewConfigLoader.class, PreviewConfigLoader.PREVIEW_ENABLE);
-		if (previewConfigMap == null || previewConfigMap.isEmpty() || !"true".equals(previewConfigMap.get(PreviewConfigLoader.PREVIEW_ENABLE)))
-			return false;
+		if (previewConfigMap == null || previewConfigMap.isEmpty() || !previewConfigMap.containsKey(PreviewConfigLoader.PREVIEW_ENABLE)) {
+			return true;
+		}
 		// 演示环境下，只拦截对默认租户的修改操作
-		if (GatewayConstant.DEFAULT_TENANT_CODE
+		if ("true".equals(previewConfigMap.get(PreviewConfigLoader.PREVIEW_ENABLE)) && GatewayConstant.DEFAULT_TENANT_CODE
 				.equals(request.getHeaders().getFirst(GatewayConstant.TENANT_CODE_HEADER))) {
 			String method = request.getMethodValue(), uri = request.getURI().getPath();
 			// GET请求、POST请求
