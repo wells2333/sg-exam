@@ -3,6 +3,7 @@ package com.github.tangyi.exam.service;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.service.CrudService;
+import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.exam.api.constants.AnswerConstant;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.ExaminationSubject;
@@ -29,7 +30,7 @@ import java.util.List;
 @AllArgsConstructor
 @Service
 public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, SubjectChoices>
-        implements BaseSubjectService {
+        implements ISubjectService {
 
     private final SubjectOptionService subjectOptionService;
 
@@ -96,20 +97,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
     @CacheEvict(value = "subjectChoices", key = "#subjectChoices.id")
     public int update(SubjectChoices subjectChoices) {
         // 更新选项
-        List<SubjectOption> options = subjectChoices.getOptions();
-        if (CollectionUtils.isNotEmpty(options)) {
-            SubjectOption subjectOption = new SubjectOption();
-            subjectOption.setSubjectChoicesId(subjectChoices.getId());
-            subjectOptionService.deleteBySubjectChoicesId(subjectOption);
-            // 初始化
-            options.forEach(option -> {
-                option.setCommonValue(subjectChoices.getCreator(), subjectChoices.getApplicationCode(),
-                        subjectChoices.getTenantCode());
-                option.setSubjectChoicesId(subjectChoices.getId());
-            });
-            // 批量插入
-            subjectOptionService.insertBatch(options);
-        }
+        this.insertOptions(subjectChoices);
         return super.update(subjectChoices);
     }
 
@@ -305,7 +293,31 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
         BeanUtils.copyProperties(subjectDto, subjectChoices);
         subjectChoices.setAnswer(subjectDto.getAnswer().getAnswer());
         subjectChoices.setChoicesType(subjectDto.getType());
+        insertOptions(subjectChoices);
         return this.insert(subjectChoices);
+    }
+
+    /**
+     * 保存选项
+     * @param subjectChoices subjectChoices
+     * @author tangyi
+     * @date 2020/01/17 22:30:48
+     */
+    @Transactional
+    public void insertOptions(SubjectChoices subjectChoices) {
+        if (CollectionUtils.isNotEmpty(subjectChoices.getOptions())) {
+            SubjectOption subjectOption = new SubjectOption();
+            subjectOption.setSubjectChoicesId(subjectChoices.getId());
+            subjectOptionService.deleteBySubjectChoicesId(subjectOption);
+            // 初始化
+            subjectChoices.getOptions().forEach(option -> {
+                option.setCommonValue(subjectChoices.getCreator(), subjectChoices.getApplicationCode(),
+                        subjectChoices.getTenantCode());
+                option.setSubjectChoicesId(subjectChoices.getId());
+            });
+            // 批量插入
+            subjectOptionService.insertBatch(subjectChoices.getOptions());
+        }
     }
 
     /**
@@ -321,6 +333,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
     public int updateSubject(SubjectDto subjectDto) {
         SubjectChoices subjectChoices = new SubjectChoices();
         BeanUtils.copyProperties(subjectDto, subjectChoices);
+        subjectChoices.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         // 参考答案
         subjectChoices.setAnswer(subjectDto.getAnswer().getAnswer());
         return this.update(subjectChoices);

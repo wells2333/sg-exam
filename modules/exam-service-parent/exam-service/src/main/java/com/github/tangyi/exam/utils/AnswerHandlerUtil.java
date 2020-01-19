@@ -1,6 +1,6 @@
 package com.github.tangyi.exam.utils;
 
-import com.github.tangyi.exam.handler.HandleResult;
+import com.github.tangyi.exam.handler.AnswerHandleResult;
 
 import java.util.List;
 
@@ -9,14 +9,14 @@ import java.util.List;
  * @author tangyi
  * @date 2019/12/8 22:42
  */
-public class HandlerUtil {
+public class AnswerHandlerUtil {
 
-	public static HandleResult addAll(List<HandleResult> results) {
-		HandleResult result = new HandleResult();
+	public static AnswerHandleResult addAll(List<AnswerHandleResult> results) {
+		AnswerHandleResult result = new AnswerHandleResult();
 		int score = 0;
 		int correctNum = 0;
 		int inCorrectNum = 0;
-		for (HandleResult tempResult : results) {
+		for (AnswerHandleResult tempResult : results) {
 			if (tempResult != null) {
 				score += tempResult.getScore();
 				correctNum += tempResult.getCorrectNum();

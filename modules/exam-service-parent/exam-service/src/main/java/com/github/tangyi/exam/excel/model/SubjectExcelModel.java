@@ -18,7 +18,7 @@ import lombok.Data;
  */
 @Data
 @ExcelModel("题目信息")
-@ContentRowHeight(10)
+@ContentRowHeight(18)
 @HeadRowHeight(20)
 @ColumnWidth(25)
 public class SubjectExcelModel {
@@ -45,9 +45,15 @@ public class SubjectExcelModel {
 	@NumberFormat("#.##")
 	private Double score;
 
+	@ExcelProperty("答案")
+	private String answer;
+
 	@ExcelProperty("解析")
 	private String analysis;
 
 	@ExcelProperty(value = "难度等级", converter = SubjectLevelConverter.class)
 	private Integer level;
+
+	@ExcelProperty("选项")
+	private String options;
 }

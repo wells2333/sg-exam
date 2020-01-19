@@ -60,10 +60,10 @@ export function delAllSubject (obj) {
 // 导出
 export function exportSubject (ids, examinationId, categoryId) {
   let url = baseSubjectUrl + 'export?'
-  if (examinationId !== null && examinationId !== '') {
+  if (examinationId !== undefined && examinationId !== null && examinationId !== '') {
     url = url + 'examinationId=' + examinationId
   }
-  if (categoryId !== null && categoryId !== '') {
+  if (categoryId !== undefined && categoryId !== null && categoryId !== '') {
     url = url + '&categoryId=' + categoryId
   }
   return request({
