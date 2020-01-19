@@ -24,57 +24,55 @@
           </el-row>
           <el-row>
             <el-col :span="24">
-              <el-form-item :label="$t('table.subject.optionA')">
-                <el-input v-model="subjectInfo.options[0].optionContent" @focus="updateTinymceContent(subjectInfo.options[0].optionContent, tinymceEdit.optionA)"/>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
-              <el-form-item :label="$t('table.subject.optionB')">
-                <el-input v-model="subjectInfo.options[1].optionContent" @focus="updateTinymceContent(subjectInfo.options[1].optionContent, tinymceEdit.optionB)"/>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
-              <el-form-item :label="$t('table.subject.optionC')">
-                <el-input v-model="subjectInfo.options[2].optionContent" @focus="updateTinymceContent(subjectInfo.options[2].optionContent, tinymceEdit.optionC)"/>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
-              <el-form-item :label="$t('table.subject.optionD')">
-                <el-input v-model="subjectInfo.options[3].optionContent" @focus="updateTinymceContent(subjectInfo.options[3].optionContent, tinymceEdit.optionD)"/>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
               <el-form-item :label="$t('table.subject.answer')" prop="answer">
-                <!-- 选择题 -->
                 <el-radio-group v-model="subjectInfo.answer.answer">
-                  <el-radio :label="'A'">A</el-radio>
-                  <el-radio :label="'B'">B</el-radio>
-                  <el-radio :label="'C'">C</el-radio>
-                  <el-radio :label="'D'">D</el-radio>
+                  <el-radio v-for="(option) in options" :label="option.optionName" :key="option.optionName">{{ option.optionName }}</el-radio>
                 </el-radio-group>
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
-            <el-col :span="24">
-              <el-form-item :label="$t('table.subject.analysis')" prop="analysis">
-                <el-input v-model="subjectInfo.analysis" @focus="updateTinymceContent(subjectInfo.analysis, tinymceEdit.analysis)"/>
-              </el-form-item>
-            </el-col>
-          </el-row>
+          <el-collapse v-model="optionCollapseActives">
+            <el-collapse-item title="选项列表" name="1">
+              <el-row class="collapse-top">
+                <el-col :span="24">
+                  <el-form-item v-for="(option, index) in options" :label="option.optionName" :key="option.optionName"
+                                :prop="'options.' + index + '.optionContent'">
+                    <el-row :gutter="5">
+                      <el-col :span="2">
+                        <el-input v-model="option.optionName"></el-input>
+                      </el-col>
+                      <el-col :span="20">
+                        <el-input v-model="option.optionContent" @input="updateTinymceContent(option.optionContent, index, '1')">
+                          <el-button slot="append" @click.prevent="removeOption(option)">删除</el-button>
+                        </el-input>
+                      </el-col>
+                    </el-row>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="24">
+                  <el-button @click.prevent="addOption()" style="display:block;margin:0 auto">新增选项</el-button>
+                </el-col>
+              </el-row>
+            </el-collapse-item>
+          </el-collapse>
+          <el-collapse v-model="analysisCollapseActives">
+            <el-collapse-item title="解析" name="2">
+              <el-row>
+                <el-col :span="24">
+                  <el-form-item :label="$t('table.subject.analysis')" prop="analysis">
+                    <el-input v-model="subjectInfo.analysis" @input="updateTinymceContent(subjectInfo.analysis, tinymceEdit.analysis)"/>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </el-collapse-item>
+          </el-collapse>
         </div>
       </el-col>
       <el-col :span="14">
         <div class="subject-tinymce">
-          <tinymce ref="choicesEditor" :height="350" v-model="choicesContent"/>
+          <tinymce ref="choicesEditor" :height="350" v-model="choicesContent" @hasClick="hasClick"/>
         </div>
       </el-col>
     </el-row>
@@ -84,7 +82,7 @@
 <script>
 
 import Tinymce from '@/components/Tinymce'
-import { isNotEmpty } from '@/utils/util'
+import { isNotEmpty, message } from '@/utils/util'
 
 export default {
   name: 'Choices',
@@ -97,7 +95,6 @@ export default {
       default: function () {
         return {
           id: '',
-          serialNumber: 1,
           examinationId: '',
           categoryId: 0,
           subjectName: '',
@@ -117,7 +114,8 @@ export default {
           },
           score: 5,
           analysis: '',
-          level: 2
+          level: 2,
+          editType: 0 // 0: 输入框，1：富文本
         }
       }
     },
@@ -138,37 +136,54 @@ export default {
         answer: [{ required: true, message: '请输入答案', trigger: 'change' }]
       },
       tinymce: {
-        type: 1, // 类型 0：题目名称，1：选项A，2：选择B，3：选项C，4：选项D
+        type: 1, // 类型 0：题目名称，1：选项
         dialogTinymceVisible: false,
         tempValue: '',
-        currentEdit: -1
+        currentEdit: -1,
       },
       // 编辑对象
       tinymceEdit: {
         subjectName: -1,
-        optionA: 0,
-        optionB: 1,
-        optionC: 2,
-        optionD: 3,
         answer: 4,
         analysis: 5
-      }
+      },
+      options: [],
+      optionCollapseActives: ['1'],
+      analysisCollapseActives: ['2']
     }
   },
   watch: {
     // 监听富文本编辑器的输入
     choicesContent: {
       handler: function (choicesContent) {
-        this.saveTinymceContent(choicesContent)
+        if (isNotEmpty(this.$refs.choicesEditor)) {
+          if (this.editType === 1 && this.$refs.choicesEditor.getHasClick()) {
+            this.saveTinymceContent(choicesContent)
+          }
+        }
       },
       immediate: true
     }
   },
   methods: {
+    initDefaultOptions () {
+      this.options = [
+        {subjectChoicesId: '', optionName: 'A', optionContent: ''},
+        {subjectChoicesId: '', optionName: 'B', optionContent: ''},
+        {subjectChoicesId: '', optionName: 'C', optionContent: ''},
+        {subjectChoicesId: '', optionName: 'D', optionContent: ''}
+      ]
+    },
     setSubjectInfo (subject) {
       this.subjectInfo = subject
+      if (this.subjectInfo.options.length > 0) {
+        this.options = this.subjectInfo.options
+      } else {
+        this.initDefaultOptions()
+      }
     },
     getSubjectInfo () {
+      this.subjectInfo.options = this.options
       return this.subjectInfo
     },
     setChoicesContent (choicesContent) {
@@ -178,38 +193,33 @@ export default {
       return this.choicesContent
     },
     // 绑定富文本的内容
-    updateTinymceContent (content, currentEdit) {
+    updateTinymceContent (content, currentEdit, type) {
       // 重置富文本
       this.choicesContent = ''
       // 绑定当前编辑的对象
       this.tinymce.currentEdit = currentEdit
+      this.tinymce.type = type
       // 选择题
       this.$refs.choicesEditor.setContent(content || '')
+      this.editType = 0
+      this.$refs.choicesEditor.setHashClick(false)
     },
     // 保存题目时绑定富文本的内容到subjectInfo
     saveTinymceContent (content) {
-      switch (this.tinymce.currentEdit) {
-        case this.tinymceEdit.subjectName:
-          this.subjectInfo.subjectName = content
-          break
-        case this.tinymceEdit.optionA:
-          this.subjectInfo.options[0].optionContent = content
-          break
-        case this.tinymceEdit.optionB:
-          this.subjectInfo.options[1].optionContent = content
-          break
-        case this.tinymceEdit.optionC:
-          this.subjectInfo.options[2].optionContent = content
-          break
-        case this.tinymceEdit.optionD:
-          this.subjectInfo.options[3].optionContent = content
-          break
-        case this.tinymceEdit.answer:
-          this.subjectInfo.answer.answer = content
-          break
-        case this.tinymceEdit.analysis:
-          this.subjectInfo.analysis = content
-          break
+      if (this.tinymce.type !== '1') {
+        switch (this.tinymce.currentEdit) {
+          case this.tinymceEdit.subjectName:
+            this.subjectInfo.subjectName = content
+            break
+          case this.tinymceEdit.answer:
+            this.subjectInfo.answer.answer = content
+            break
+          case this.tinymceEdit.analysis:
+            this.subjectInfo.analysis = content
+            break
+        }
+      } else {
+        this.options[this.tinymce.currentEdit].optionContent = content
       }
     },
     // 表单校验
@@ -223,10 +233,9 @@ export default {
     clearValidate () {
       this.$refs['dataSubjectForm'].clearValidate()
     },
-    resetTempSubject (serialNumber, score) {
+    resetTempSubject (score) {
       this.subjectInfo = {
         id: '',
-        serialNumber: 1,
         examinationId: '',
         categoryId: 0,
         subjectName: '',
@@ -248,20 +257,44 @@ export default {
         analysis: '',
         level: 2
       }
-      // 默认序号
-      if (isNotEmpty(serialNumber)) {
-        this.subjectInfo.serialNumber = serialNumber
-      }
-
       // 默认分数
       if (isNotEmpty(score)) {
         this.subjectInfo.score = score
       }
+      this.initDefaultOptions()
+    },
+    addOption() {
+      // 校验
+      if (this.options.length > 0) {
+        let option = this.options[this.options.length - 1]
+        if (!isNotEmpty(option.optionName)) {
+          message(this, '请先输入选项再添加', 'warning')
+          return
+        }
+        this.options.push({ subjectChoicesId: '', optionName: '', optionContent: '' });
+      } else {
+        this.options.push({ subjectChoicesId: '', optionName: '', optionContent: '' });
+      }
+    },
+    removeOption(item) {
+      let index = this.options.indexOf(item)
+      if (index !== -1) {
+        this.options.splice(index, 1)
+      }
+    },
+    // 点击事件回调
+    hasClick(hasClick) {
+      this.editType = 1
     }
   }
 }
+
+
 </script>
 
 <style lang="scss" scoped>
   @import "../../../styles/subject.scss";
+  .el-rate {
+    margin-top: 8px;
+  }
 </style>

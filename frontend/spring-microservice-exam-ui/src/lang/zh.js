@@ -138,6 +138,7 @@ export default {
     isDefault: '是否默认',
     actions: '操作',
     edit: '修改',
+    view: '查看',
     publish: '发布',
     draft: '草稿',
     delete: '删除',
@@ -196,7 +197,9 @@ export default {
       optionE: '选项E',
       optionF: '选项F',
       answer: '参考答案',
-      analysis: '解析'
+      analysis: '解析',
+      modifyDate: '修改时间',
+      modifier: '修改人'
     },
     public: '发布',
     retrieve: '回收',

@@ -369,3 +369,23 @@ export const isSuccess = (response) => {
   }
   return success
 }
+
+/**
+ * 截取指定长度
+ * @param str
+ * @param length
+ * @returns {string}
+ */
+export const commonFilter = (str, length) => {
+  if (str.length > length) {
+    return str.substring(0, length) + '...'
+  }
+  return str
+}
+
+/**
+ * 新建状态
+ */
+export const isCreate = (status) => {
+  return status === 'create'
+}

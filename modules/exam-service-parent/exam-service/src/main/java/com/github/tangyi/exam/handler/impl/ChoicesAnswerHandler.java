@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.handler.impl;
 
+import com.github.tangyi.exam.api.constants.AnswerConstant;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.Answer;
 import com.github.tangyi.exam.enums.SubjectTypeEnum;
@@ -11,27 +12,31 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * 简答题
+ * 选择题
  * @author tangyi
- * @date 2019/12/8 22:00
+ * @date 2019/12/8 21:57
  */
 @Slf4j
 @AllArgsConstructor
 @Component
-public class ShortAnswerHandler extends AbstractAnswerHandler {
+public class ChoicesAnswerHandler extends AbstractAnswerHandler {
 
 	@Override
 	public SubjectTypeEnum getSubjectType() {
-		return SubjectTypeEnum.SHORT_ANSWER;
-	}
-
-	@Override
-	public List<SubjectDto> getSubjects(List<Answer> answers) {
-		return null;
+		return SubjectTypeEnum.CHOICES;
 	}
 
 	@Override
 	public void judge(Answer answer, SubjectDto subject, List<Double> rightScore) {
-		// TODO
+		if (subject.getAnswer().getAnswer().equalsIgnoreCase(answer.getAnswer())) {
+			rightScore.add(subject.getScore());
+			answer.setAnswerType(AnswerConstant.RIGHT);
+			answer.setScore(subject.getScore());
+			answer.setMarkStatus(AnswerConstant.MARKED);
+		} else {
+			answer.setAnswerType(AnswerConstant.WRONG);
+			answer.setScore(0.0);
+			answer.setMarkStatus(AnswerConstant.MARKED);
+		}
 	}
 }

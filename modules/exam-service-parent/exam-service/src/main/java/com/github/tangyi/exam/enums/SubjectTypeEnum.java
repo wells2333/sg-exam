@@ -1,6 +1,6 @@
 package com.github.tangyi.exam.enums;
 
-import com.github.tangyi.exam.service.BaseSubjectService;
+import com.github.tangyi.exam.service.ISubjectService;
 import com.github.tangyi.exam.service.SubjectChoicesService;
 import com.github.tangyi.exam.service.SubjectJudgementService;
 import com.github.tangyi.exam.service.SubjectShortAnswerService;
@@ -29,7 +29,7 @@ public enum SubjectTypeEnum {
 
 	private Integer value;
 
-	private Class<? extends BaseSubjectService> service;
+	private Class<? extends ISubjectService> service;
 
 	/**
 	 * 根据类型返回具体的SubjectType

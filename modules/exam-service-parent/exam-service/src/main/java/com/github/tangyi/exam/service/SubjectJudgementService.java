@@ -21,7 +21,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class SubjectJudgementService extends CrudService<SubjectJudgementMapper, SubjectJudgement>
-        implements BaseSubjectService {
+        implements ISubjectService {
 
     /**
      * 根据ID查询
