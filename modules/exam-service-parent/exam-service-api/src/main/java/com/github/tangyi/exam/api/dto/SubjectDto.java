@@ -1,10 +1,12 @@
 package com.github.tangyi.exam.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import com.github.tangyi.exam.api.module.Answer;
 import com.github.tangyi.exam.api.module.SubjectOption;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -13,6 +15,8 @@ import java.util.List;
  * @date 2019/1/9 20:58
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SubjectDto extends BaseEntity<SubjectDto> {
 
     /**

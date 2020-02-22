@@ -237,7 +237,7 @@ export const checkMultipleSelect = (multipleSelection, obj) => {
  * 设置浏览器头部标题
  */
 export const setTitle = function (title) {
-  title = title ? `${title}——系统演示` : '系统演示'
+  title = title ? `${title}——硕果云` : '硕果云'
   window.document.title = title
 }
 
@@ -319,6 +319,15 @@ export const messageSuccess = (obj, message) => {
 }
 
 /**
+ * 警告消息提示
+ * @param obj
+ * @param message
+ */
+export const messageWarn = (obj, message) => {
+  obj.$message({ message: message, type: 'warning' })
+}
+
+/**
  * 失败消息提示
  * @param obj
  * @param message
@@ -388,4 +397,8 @@ export const commonFilter = (str, length) => {
  */
 export const isCreate = (status) => {
   return status === 'create'
+}
+
+export const trimComma = (str) => {
+  return str.replace(new RegExp('^,*|,*$', 'gm'), '')
 }

@@ -1,6 +1,7 @@
 package com.github.tangyi.exam.utils;
 
 import com.github.tangyi.exam.handler.AnswerHandleResult;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
 
@@ -10,6 +11,8 @@ import java.util.List;
  * @date 2019/12/8 22:42
  */
 public class AnswerHandlerUtil {
+
+	private static final String REGEX_COMMA = "^,*|,*$";
 
 	public static AnswerHandleResult addAll(List<AnswerHandleResult> results) {
 		AnswerHandleResult result = new AnswerHandleResult();
@@ -27,5 +30,17 @@ public class AnswerHandlerUtil {
 		result.setCorrectNum(correctNum);
 		result.setInCorrectNum(inCorrectNum);
 		return result;
+	}
+
+	/**
+	 * 替换收尾的逗号
+	 * @param str str
+	 * @return String
+	 */
+	public static String replaceComma(String str) {
+		if (StringUtils.isNotBlank(str)) {
+			str = str.replaceAll(REGEX_COMMA, "");
+		}
+		return str;
 	}
 }

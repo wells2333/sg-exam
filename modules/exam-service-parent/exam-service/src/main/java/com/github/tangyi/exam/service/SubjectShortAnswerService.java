@@ -108,7 +108,7 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
      */
     @Override
     @Transactional
-    @CacheEvict(value = "subjectChoices", allEntries = true)
+    @CacheEvict(value = "subjectShortAnswer", allEntries = true)
     public int deleteAll(Long[] ids) {
         return super.deleteAll(ids);
     }
@@ -122,7 +122,7 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
      * @date 2019/6/16 22:58
      */
     @Transactional
-    @CacheEvict(value = "subjectChoices", allEntries = true)
+    @CacheEvict(value = "subjectShortAnswer", allEntries = true)
     public int physicalDeleteAll(Long[] ids) {
         return this.dao.physicalDeleteAll(ids);
     }
@@ -165,7 +165,8 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
      */
     @Override
     @Transactional
-    public int insertSubject(SubjectDto subjectDto) {
+	@CacheEvict(value = "subjectShortAnswer", key = "#subjectDto.id")
+	public int insertSubject(SubjectDto subjectDto) {
         SubjectShortAnswer subjectShortAnswer = new SubjectShortAnswer();
         BeanUtils.copyProperties(subjectDto, subjectShortAnswer);
         subjectShortAnswer.setAnswer(subjectDto.getAnswer().getAnswer());
@@ -182,7 +183,8 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
      */
     @Override
     @Transactional
-    public int updateSubject(SubjectDto subjectDto) {
+	@CacheEvict(value = "subjectShortAnswer", key = "#subjectDto.id")
+	public int updateSubject(SubjectDto subjectDto) {
         SubjectShortAnswer subjectShortAnswer = new SubjectShortAnswer();
         BeanUtils.copyProperties(subjectDto, subjectShortAnswer);
         // 参考答案
@@ -200,7 +202,8 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
      */
     @Override
     @Transactional
-    public int deleteSubject(SubjectDto subjectDto) {
+	@CacheEvict(value = "subjectShortAnswer", key = "#subjectDto.id")
+	public int deleteSubject(SubjectDto subjectDto) {
         SubjectShortAnswer subjectShortAnswer = new SubjectShortAnswer();
         BeanUtils.copyProperties(subjectDto, subjectShortAnswer);
         return this.delete(subjectShortAnswer);
@@ -216,7 +219,8 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
      */
     @Override
     @Transactional
-    public int physicalDeleteSubject(SubjectDto subjectDto) {
+	@CacheEvict(value = "subjectShortAnswer", key = "#subjectDto.id")
+	public int physicalDeleteSubject(SubjectDto subjectDto) {
         SubjectShortAnswer subjectShortAnswer = new SubjectShortAnswer();
         BeanUtils.copyProperties(subjectDto, subjectShortAnswer);
         return this.physicalDelete(subjectShortAnswer);
@@ -232,7 +236,8 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
      */
     @Override
     @Transactional
-    public int deleteAllSubject(Long[] ids) {
+	@CacheEvict(value = "subjectShortAnswer", allEntries = true)
+	public int deleteAllSubject(Long[] ids) {
         return this.deleteAll(ids);
     }
 
@@ -246,7 +251,8 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
      */
     @Override
     @Transactional
-    public int physicalDeleteAllSubject(Long[] ids) {
+	@CacheEvict(value = "subjectShortAnswer", allEntries = true)
+	public int physicalDeleteAllSubject(Long[] ids) {
         return this.physicalDeleteAll(ids);
     }
 

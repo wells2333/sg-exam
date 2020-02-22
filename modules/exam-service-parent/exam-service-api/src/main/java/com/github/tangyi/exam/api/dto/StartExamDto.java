@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.tangyi.exam.api.module.Examination;
 import com.github.tangyi.exam.api.module.ExaminationRecord;
 import lombok.Data;
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * @date 2019/4/30 16:54
  */
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class StartExamDto implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -91,6 +91,19 @@
         </foreach>
     </select>
 
+    <select id="findExaminationRecordCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM exam_examination_record a WHERE a.del_flag = 0
+        <include refid="whereColumnList"/>
+    </select>
+
+    <select id="findExaminationRecordCountByDate" resultMap="examRecordResultMap">
+        SELECT
+        <include refid="examRecordColumns"/>
+        FROM exam_examination_record a
+        WHERE a.del_flag = 0
+        AND <![CDATA[ DATE_FORMAT(a.create_date, '%Y-%m-%d') >=  DATE_FORMAT(#{start}, '%Y-%m-%d') ]]>
+    </select>
+
     <insert id="insert">
         insert into exam_examination_record (
             id,

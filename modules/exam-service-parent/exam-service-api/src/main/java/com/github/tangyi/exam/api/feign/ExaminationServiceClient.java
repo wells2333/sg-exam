@@ -3,6 +3,7 @@ package com.github.tangyi.exam.api.feign;
 import com.github.tangyi.common.core.constant.ServiceConstant;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.feign.config.CustomFeignConfig;
+import com.github.tangyi.exam.api.dto.ExaminationDashboardDto;
 import com.github.tangyi.exam.api.feign.fallback.ExaminationServiceClientFallbackImpl;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,20 +20,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = ServiceConstant.EXAM_SERVICE, configuration = CustomFeignConfig.class, fallback = ExaminationServiceClientFallbackImpl.class)
 public interface ExaminationServiceClient {
 
-    /**
-     * 查询考试数量
-     *
-     * @param tenantCode 租户标识
-     * @return ResponseBean
-     */
-    @GetMapping("/v1/examination/examinationCount")
-    ResponseBean<Integer> findExaminationCount(@RequestParam("tenantCode") String tenantCode);
+	/**
+	 * 查询考试监控数据
+	 *
+	 * @param tenantCode 租户标识
+	 * @return ResponseBean
+	 */
+	@GetMapping("/v1/examRecord/dashboard")
+	ResponseBean<ExaminationDashboardDto> findExaminationDashboardData(@RequestParam("tenantCode") String tenantCode);
 
-    /**
-     * 查询参与人数
-     * @param tenantCode tenantCode
-     * @return ResponseBean
-     */
-    @GetMapping("/v1/examination/examUserCount")
-    ResponseBean<Integer> findExamUserCount(@RequestParam("tenantCode") String tenantCode);
+	/**
+	 * 查询考试记录监控数据
+	 *
+	 * @param tenantCode 租户标识
+	 * @param pastDays pastDays
+	 * @return ResponseBean
+	 */
+	@GetMapping("/v1/examRecord/dashboard/examRecordTendency")
+	ResponseBean<ExaminationDashboardDto> findExamRecordTendencyData(@RequestParam("tenantCode") String tenantCode, @RequestParam("pastDays") Integer pastDays);
+
 }

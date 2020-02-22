@@ -10,9 +10,11 @@ import com.github.tangyi.exam.api.module.ExaminationSubject;
 import com.github.tangyi.exam.api.module.SubjectChoices;
 import com.github.tangyi.exam.api.module.SubjectOption;
 import com.github.tangyi.exam.mapper.SubjectChoicesMapper;
+import com.github.tangyi.exam.utils.AnswerHandlerUtil;
 import com.github.tangyi.exam.utils.SubjectUtil;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -102,6 +104,25 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
     }
 
     /**
+     * 根据ID查询
+     *
+     * @param examinationId  examinationId
+     * @param subjectChoices subjectChoices
+     * @return SubjectChoices
+     * @author tangyi
+     * @date 2019-09-14 16:47
+     */
+    public SubjectChoices getByCurrentId(Long examinationId, SubjectChoices subjectChoices) {
+        ExaminationSubject examinationSubject = new ExaminationSubject();
+        examinationSubject.setExaminationId(examinationId);
+        examinationSubject.setSubjectId(subjectChoices.getId());
+        examinationSubject = examinationSubjectService.findByExaminationIdAndSubjectId(examinationSubject);
+        if (examinationSubject == null)
+            return null;
+        return this.getSubjectChoicesById(examinationSubject.getSubjectId());
+    }
+
+    /**
      * 根据上一题ID查询下一题
      *
      * @param examinationId  examinationId
@@ -110,7 +131,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
      * @author tangyi
      * @date 2019-09-14 16:47
      */
-    @Transactional
     public SubjectChoices getByPreviousId(Long examinationId, SubjectChoices subjectChoices) {
         ExaminationSubject examinationSubject = new ExaminationSubject();
         examinationSubject.setExaminationId(examinationId);
@@ -130,7 +150,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
      * @author tangyi
      * @date 2019/10/07 20:40:16
      */
-    @Transactional
     public SubjectChoices getPreviousByCurrentId(Long examinationId, SubjectChoices subjectChoices) {
         ExaminationSubject examinationSubject = new ExaminationSubject();
         examinationSubject.setExaminationId(examinationId);
@@ -270,7 +289,9 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
     public SubjectDto getNextByCurrentIdAndType(Long examinationId, Long previousId, Integer nextType) {
         SubjectChoices subjectChoices = new SubjectChoices();
         subjectChoices.setId(previousId);
-        if (AnswerConstant.NEXT.equals(nextType)) {
+        if (AnswerConstant.CURRENT.equals(nextType)) {
+            subjectChoices = this.getByCurrentId(examinationId, subjectChoices);
+        } else if (AnswerConstant.NEXT.equals(nextType)) {
             subjectChoices = this.getByPreviousId(examinationId, subjectChoices);
         } else {
             subjectChoices = this.getPreviousByCurrentId(examinationId, subjectChoices);
@@ -288,7 +309,8 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
      */
     @Override
     @Transactional
-    public int insertSubject(SubjectDto subjectDto) {
+	@CacheEvict(value = "subjectChoices", key = "#subjectDto.id")
+	public int insertSubject(SubjectDto subjectDto) {
         SubjectChoices subjectChoices = new SubjectChoices();
         BeanUtils.copyProperties(subjectDto, subjectChoices);
         subjectChoices.setAnswer(subjectDto.getAnswer().getAnswer());
@@ -330,12 +352,13 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
      */
     @Override
     @Transactional
-    public int updateSubject(SubjectDto subjectDto) {
+	@CacheEvict(value = "subjectChoices", key = "#subjectDto.id")
+	public int updateSubject(SubjectDto subjectDto) {
         SubjectChoices subjectChoices = new SubjectChoices();
         BeanUtils.copyProperties(subjectDto, subjectChoices);
         subjectChoices.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         // 参考答案
-        subjectChoices.setAnswer(subjectDto.getAnswer().getAnswer());
+        subjectChoices.setAnswer(AnswerHandlerUtil.replaceComma(subjectDto.getAnswer().getAnswer()));
         return this.update(subjectChoices);
     }
 
@@ -349,7 +372,8 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
      */
     @Override
     @Transactional
-    public int deleteSubject(SubjectDto subjectDto) {
+	@CacheEvict(value = "subjectChoices", key = "#subjectDto.id")
+	public int deleteSubject(SubjectDto subjectDto) {
         SubjectChoices subjectChoices = new SubjectChoices();
         BeanUtils.copyProperties(subjectDto, subjectChoices);
         return this.delete(subjectChoices);
@@ -365,7 +389,8 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
      */
     @Override
     @Transactional
-    public int physicalDeleteSubject(SubjectDto subjectDto) {
+	@CacheEvict(value = "subjectChoices", key = "#subjectDto.id")
+	public int physicalDeleteSubject(SubjectDto subjectDto) {
         SubjectChoices subjectChoices = new SubjectChoices();
         BeanUtils.copyProperties(subjectDto, subjectChoices);
         return this.physicalDelete(subjectChoices);
@@ -381,7 +406,8 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
      */
     @Override
     @Transactional
-    public int deleteAllSubject(Long[] ids) {
+	@CacheEvict(value = "subjectChoices", allEntries = true)
+	public int deleteAllSubject(Long[] ids) {
         return this.deleteAll(ids);
     }
 
@@ -395,7 +421,8 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
      */
     @Override
     @Transactional
-    public int physicalDeleteAllSubject(Long[] ids) {
+	@CacheEvict(value = "subjectChoices", allEntries = true)
+	public int physicalDeleteAllSubject(Long[] ids) {
         return this.physicalDeleteAll(ids);
     }
 

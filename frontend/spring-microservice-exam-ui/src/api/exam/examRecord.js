@@ -73,3 +73,11 @@ export function exportObj (obj) {
     data: obj
   })
 }
+
+// 查询成绩详情
+export function examRecordDetails (id) {
+  return request({
+    url: baseExamRecordUrl + id + '/details',
+    method: 'get'
+  })
+}

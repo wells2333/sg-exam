@@ -3,8 +3,8 @@
     <div class="filter-container">
       <el-input :placeholder="$t('table.roleName')" v-model="listQuery.roleName" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.search') }}</el-button>
-      <el-button v-if="role_btn_add" class="filter-item" style="margin-left: 10px;" icon="el-icon-check" plain @click="handleCreate">{{ $t('table.add') }}</el-button>
-      <el-button v-if="role_btn_del" class="filter-item" icon="el-icon-delete" plain @click="handleDeletes">{{ $t('table.del') }}</el-button>
+      <el-button v-if="role_btn_add" class="filter-item" style="margin-left: 10px;" icon="el-icon-check" type="primary" @click="handleCreate">{{ $t('table.add') }}</el-button>
+      <el-button v-if="role_btn_del" class="filter-item" icon="el-icon-delete" type="danger" @click="handleDeletes">{{ $t('table.del') }}</el-button>
     </div>
 
     <el-table
@@ -40,14 +40,14 @@
       </el-table-column>
       <el-table-column :label="$t('table.status')" width="80">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusTypeFilter">{{ scope.row.status | statusFilter }}</el-tag>
+          <el-tag :type="scope.row.status | statusTypeFilter" effect="dark" size="small">{{ scope.row.status | statusFilter }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.actions')" class-name="status-col" width="300px">
         <template slot-scope="scope">
-          <el-button v-if="role_btn_edit" type="text" @click="handleUpdate(scope.row)" icon="el-icon-edit">{{ $t('table.edit') }}</el-button>
-          <el-button v-if="role_btn_del" type="text" @click="handleDelete(scope.row)" icon="el-icon-delete">{{ $t('table.delete') }}</el-button>
-          <el-button v-if="role_btn_auth" type="text" @click="handlePermission(scope.row)" icon="el-icon-circle-plus-outline">{{ $t('table.permission') }}</el-button>
+          <el-button v-if="role_btn_edit" type="primary" size="mini" @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
+          <el-button v-if="role_btn_auth" type="success" size="mini" @click="handlePermission(scope.row)">{{ $t('table.permission') }}</el-button>
+          <el-button v-if="role_btn_del" type="danger" size="mini" @click="handleDelete(scope.row)">{{ $t('table.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -301,8 +301,6 @@ export default {
           this.getList()
           notifySuccess(this, '删除成功')
         })
-        const index = this.list.indexOf(row)
-        this.list.splice(index, 1)
       }).catch(() => {})
     },
     // 批量删除

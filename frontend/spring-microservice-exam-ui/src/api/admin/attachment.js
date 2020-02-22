@@ -35,7 +35,7 @@ export function getDownloadUrl (id) {
   return request({
     url: baseAttachmentUrl + '/download',
     method: 'get',
-    params: {id: id}
+    params: { id: id }
   })
 }
 

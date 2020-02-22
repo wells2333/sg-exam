@@ -32,43 +32,43 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-collapse v-model="optionCollapseActives">
-            <el-collapse-item title="选项列表" name="1">
-              <el-row class="collapse-top">
-                <el-col :span="24">
-                  <el-form-item v-for="(option, index) in options" :label="option.optionName" :key="option.optionName"
-                                :prop="'options.' + index + '.optionContent'">
-                    <el-row :gutter="5">
-                      <el-col :span="2">
-                        <el-input v-model="option.optionName"></el-input>
-                      </el-col>
-                      <el-col :span="20">
-                        <el-input v-model="option.optionContent" @input="updateTinymceContent(option.optionContent, index, '1')">
-                          <el-button slot="append" @click.prevent="removeOption(option)">删除</el-button>
-                        </el-input>
-                      </el-col>
-                    </el-row>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="24">
-                  <el-button @click.prevent="addOption()" style="display:block;margin:0 auto">新增选项</el-button>
-                </el-col>
-              </el-row>
-            </el-collapse-item>
-          </el-collapse>
-          <el-collapse v-model="analysisCollapseActives">
-            <el-collapse-item title="解析" name="2">
-              <el-row>
-                <el-col :span="24">
-                  <el-form-item :label="$t('table.subject.analysis')" prop="analysis">
-                    <el-input v-model="subjectInfo.analysis" @input="updateTinymceContent(subjectInfo.analysis, tinymceEdit.analysis)"/>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-collapse-item>
-          </el-collapse>
+          <el-row>
+            <el-col :span="24">
+              <el-collapse v-model="optionCollapseActives">
+                <el-collapse-item title="选项列表" name="1">
+                  <el-row class="collapse-top">
+                    <el-col :span="24">
+                      <el-form-item v-for="(option, index) in options" :label="option.optionName" :key="option.optionName"
+                                    :prop="'options.' + index + '.optionContent'">
+                        <el-row :gutter="5">
+                          <el-col :span="4">
+                            <el-input v-model="option.optionName"/>
+                          </el-col>
+                          <el-col :span="18">
+                            <el-input v-model="option.optionContent" @input="updateTinymceContent(option.optionContent, index, '1')">
+                              <el-button slot="append" @click.prevent="removeOption(option)">删除</el-button>
+                            </el-input>
+                          </el-col>
+                        </el-row>
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                  <el-row>
+                    <el-col :span="24">
+                      <el-button type="success" @click.prevent="addOption()" style="display:block;margin:0 auto">新增选项</el-button>
+                    </el-col>
+                  </el-row>
+                </el-collapse-item>
+              </el-collapse>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="24">
+              <el-form-item :label="$t('table.subject.analysis')" prop="analysis" class="analysis-form-item">
+                <el-input v-model="subjectInfo.analysis" @input="updateTinymceContent(subjectInfo.analysis, tinymceEdit.analysis)"/>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </div>
       </el-col>
       <el-col :span="14">
@@ -82,7 +82,7 @@
 
 <script>
 import Tinymce from '@/components/Tinymce'
-import { isNotEmpty } from '@/utils/util'
+import { isNotEmpty, message } from '@/utils/util'
 
 export default {
   name: 'MultipleChoices',
@@ -95,8 +95,8 @@ export default {
       default: function () {
         return {
           id: '',
-          examinationId: '',
-          categoryId: 0,
+          examinationId: undefined,
+          categoryId: undefined,
           subjectName: '',
           choicesContent: this.choices,
           answer: {
@@ -131,7 +131,7 @@ export default {
         type: 1, // 类型 0：题目名称，1：选项
         dialogTinymceVisible: false,
         tempValue: '',
-        currentEdit: -1,
+        currentEdit: -1
       },
       // 编辑对象
       tinymceEdit: {
@@ -161,10 +161,10 @@ export default {
   methods: {
     initDefaultOptions () {
       this.options = [
-        {subjectChoicesId: '', optionName: 'A', optionContent: ''},
-        {subjectChoicesId: '', optionName: 'B', optionContent: ''},
-        {subjectChoicesId: '', optionName: 'C', optionContent: ''},
-        {subjectChoicesId: '', optionName: 'D', optionContent: ''}
+        { subjectChoicesId: '', optionName: 'A', optionContent: '' },
+        { subjectChoicesId: '', optionName: 'B', optionContent: '' },
+        { subjectChoicesId: '', optionName: 'C', optionContent: '' },
+        { subjectChoicesId: '', optionName: 'D', optionContent: '' }
       ]
     },
     setSubjectInfo (subject) {
@@ -231,8 +231,8 @@ export default {
     resetTempSubject (serialNumber, score) {
       this.subjectInfo = {
         id: '',
-        examinationId: '',
-        categoryId: 0,
+        examinationId: undefined,
+        categoryId: undefined,
         subjectName: '',
         type: 0,
         choicesType: 0,
@@ -258,7 +258,7 @@ export default {
       }
       this.initDefaultOptions()
     },
-    addOption() {
+    addOption () {
       // 校验
       if (this.options.length > 0) {
         let option = this.options[this.options.length - 1]
@@ -266,27 +266,27 @@ export default {
           message(this, '请先输入选项再添加', 'warning')
           return
         }
-        this.options.push({ subjectChoicesId: '', optionName: '', optionContent: '' });
+        this.options.push({ subjectChoicesId: '', optionName: '', optionContent: '' })
       } else {
-        this.options.push({ subjectChoicesId: '', optionName: '', optionContent: '' });
+        this.options.push({ subjectChoicesId: '', optionName: '', optionContent: '' })
       }
     },
-    removeOption(item) {
+    removeOption (item) {
       let index = this.options.indexOf(item)
       if (index !== -1) {
         this.options.splice(index, 1)
       }
     },
     // 点击事件回调
-    hasClick(hasClick) {
+    hasClick (hasClick) {
       this.editType = 1
     },
-    initMultipleAnswers() {
+    initMultipleAnswers () {
       if (isNotEmpty(this.subjectInfo.answer)) {
         this.multipleAnswers = this.subjectInfo.answer.answer.split(',')
       }
     },
-    getMultipleAnswers() {
+    getMultipleAnswers () {
       if (this.multipleAnswers.length > 0) {
         return this.multipleAnswers.join(',')
       }
@@ -297,26 +297,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .avatar-uploader-icon {
-    font-size: 28px;
-    color: #8c939d;
-    width: 178px;
-    height: 178px;
-    line-height: 178px;
-    text-align: center;
-  }
-  .avatar {
-    width: 178px;
-    height: 178px;
-    display: block;
-  }
-  .editor-content{
-    margin-top: 20px;
-  }
   .subject-info {
     padding-right: 12px;
   }
   .subject-tinymce {
     padding-left: 12px;
+  }
+  .analysis-form-item {
+    margin-top: 20px;
   }
 </style>

@@ -6,6 +6,7 @@ import com.github.tangyi.common.core.utils.ResponseUtil;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.core.web.BaseController;
+import com.github.tangyi.exam.api.dto.ExaminationDashboardDto;
 import com.github.tangyi.exam.api.feign.ExaminationServiceClient;
 import com.github.tangyi.user.api.dto.DashboardDto;
 import com.github.tangyi.user.service.TenantService;
@@ -15,6 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -54,15 +56,30 @@ public class DashboardController extends BaseController {
         // 租户数量
 		dashboardDto.setTenantCount(tenantService.tenantCount().toString());
         // 查询考试数量
-        ResponseBean<Integer> examinationCountResponseBean = examinationService.findExaminationCount(tenantCode);
-        if (!ResponseUtil.isSuccess(examinationCountResponseBean))
-            throw new ServiceException("Get examination count failed: " + examinationCountResponseBean.getMsg());
-        dashboardDto.setExaminationNumber(examinationCountResponseBean.getData().toString());
-        // 查询参与人数
-        ResponseBean<Integer> examUserCountResponseBean = examinationService.findExamUserCount(tenantCode);
-        if (!ResponseUtil.isSuccess(examUserCountResponseBean))
-            throw new ServiceException("Get user count failed");
-        dashboardDto.setExamUserNumber(examUserCountResponseBean.getData().toString());
+        ResponseBean<ExaminationDashboardDto> dashboardData = examinationService.findExaminationDashboardData(tenantCode);
+        if (!ResponseUtil.isSuccess(dashboardData))
+            throw new ServiceException("Get examination dashboard data failed: " + dashboardData.getMsg());
+        dashboardDto.setExaminationNumber(dashboardData.getData().getExaminationCount().toString());
+		dashboardDto.setExamUserNumber(dashboardData.getData().getExamUserCount().toString());
+		dashboardDto.setExaminationRecordNumber(dashboardData.getData().getExaminationRecordCount().toString());
         return new ResponseBean<>(dashboardDto);
     }
+
+    /**
+     * 过去一周考试记录数
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2020/1/31 6:08 下午
+     */
+    @GetMapping("examRecordTendency")
+	@ApiOperation(value = "过去一周考试记录数", notes = "过去一周考试记录数")
+	public ResponseBean<DashboardDto> examRecordTendency(@RequestParam Integer pastDays) {
+		DashboardDto dashboardDto = new DashboardDto();
+		ResponseBean<ExaminationDashboardDto> examRecordTendencyData = examinationService.findExamRecordTendencyData(SysUtil.getTenantCode(), pastDays);
+		if (!ResponseUtil.isSuccess(examRecordTendencyData))
+			throw new ServiceException("Get examination record tendency data failed: " + examRecordTendencyData.getMsg());
+		dashboardDto.setExamRecordDate(examRecordTendencyData.getData().getExamRecordDate());
+		dashboardDto.setExamRecordData(examRecordTendencyData.getData().getExamRecordData());
+		return new ResponseBean<>(dashboardDto);
+	}
 }

@@ -55,7 +55,9 @@
     </select>
 
     <select id="findListByExaminationId" resultMap="examinationSubjectResultMap">
-        SELECT a.subject_id, a.type FROM exam_examination_subject a WHERE a.examination_id = #{examinationId} order by subject_id ASC
+        SELECT
+        <include refid="examinationSubjectColumns"/>
+        FROM exam_examination_subject a WHERE a.examination_id = #{examinationId} order by subject_id ASC
     </select>
 
     <select id="findByExaminationIdAndSubjectId" resultMap="examinationSubjectResultMap">

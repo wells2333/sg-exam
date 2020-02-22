@@ -9,19 +9,10 @@
               {{tempIncorrectAnswer.subject.subjectName}}（{{tempIncorrectAnswer.subject.score}}分）
             </div>
             <!-- 选择题 -->
-            <div v-if="tempIncorrectAnswer.subject.type === 0">
-              <ul class="subject-options">
-                <li class="subject-option" :class="getClass(tempIncorrectAnswer.subject.answer.answer, tempIncorrectAnswer.answer, 'A')">
-                  <label><span class="subject-option-prefix">A.&nbsp;</span><span v-html="tempIncorrectAnswer.subject.options[0].optionContent" class="subject-option-prefix"></span></label>
-                </li>
-                <li class="subject-option" :class="getClass(tempIncorrectAnswer.subject.answer.answer, tempIncorrectAnswer.answer, 'B')">
-                  <label><span class="subject-option-prefix">B.&nbsp;</span><span v-html="tempIncorrectAnswer.subject.options[1].optionContent" class="subject-option-prefix"></span></label>
-                </li>
-                <li class="subject-option" :class="getClass(tempIncorrectAnswer.subject.answer.answer, tempIncorrectAnswer.answer, 'C')">
-                  <label><span class="subject-option-prefix">C.&nbsp;</span><span v-html="tempIncorrectAnswer.subject.options[2].optionContent" class="subject-option-prefix"></span></label>
-                </li>
-                <li class="subject-option" :class="getClass(tempIncorrectAnswer.subject.answer.answer, tempIncorrectAnswer.answer, 'D')">
-                  <label><span class="subject-option-prefix">D.&nbsp;</span><span v-html="tempIncorrectAnswer.subject.options[3].optionContent" class="subject-option-prefix"></span></label>
+            <div>
+              <ul class="subject-options" v-for="option in tempIncorrectAnswer.subject.options" :key="option.id">
+                <li class="subject-option" :class="getClass(option.right)">
+                  <label><span class="subject-option-prefix">{{ option.optionName }}&nbsp;</span><span v-html="option.optionContent" class="subject-option-prefix"></span></label>
                 </li>
               </ul>
             </div>
@@ -49,8 +40,8 @@
 <script>
 import { mapState } from 'vuex'
 import { getAnswerListInfo } from '@/api/exam/answer'
-import { isNotEmpty, notifyFail, notifyWarn, getAttachmentPreviewUrl, formatDate } from '@/utils/util'
-
+import { notifyFail } from '@/utils/util'
+import { answerType } from '@/const/constant'
 
 export default {
   data () {
@@ -96,15 +87,8 @@ export default {
       this.listQuery.pageNum = val
       this.getList()
     },
-    getClass (answer, incorrectAnswer, option) {
-      // 和参考答案一样
-      if (answer === incorrectAnswer && incorrectAnswer === option) {
-        return 'right'
-      } else if (answer !== incorrectAnswer && incorrectAnswer === option) {
-        return 'correct'
-      } else {
-        return ''
-      }
+    getClass (right) {
+      return answerType[right]
     }
   }
 }
@@ -162,7 +146,7 @@ export default {
     color: #666666;
     text-align: left;
   }
-  .correct {
+  .incorrect {
     color: #F56C6C;
   }
   .right {
