@@ -3,8 +3,8 @@
     <div class="filter-container">
       <el-input v-model="listQuery.knowledgeName" placeholder="知识名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.search') }}</el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" icon="el-icon-check" plain @click="handleCreate">{{ $t('table.add') }}</el-button>
-      <el-button class="filter-item" icon="el-icon-delete" plain @click="handleDeletes">{{ $t('table.del') }}</el-button>
+      <el-button class="filter-item" type="primary" style="margin-left: 10px;" icon="el-icon-check" @click="handleCreate">{{ $t('table.add') }}</el-button>
+      <el-button class="filter-item" type="danger" icon="el-icon-delete" @click="handleDeletes">{{ $t('table.del') }}</el-button>
     </div>
     <spinner-loading v-if="listLoading"/>
     <el-table
@@ -30,15 +30,15 @@
       </el-table-column>
       <el-table-column :label="$t('table.knowledge.status')" min-width="90">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusTypeFilter">{{ scope.row.status | statusFilter }}</el-tag>
+          <el-tag :type="scope.row.status | statusTypeFilter" effect="dark" size="small">{{ scope.row.status | publicStatusFilter }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.actions')" class-name="status-col" width="300px">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.status == 1" type="text" @click="handlePublic(scope.row, 0)" icon="el-icon-check">{{ $t('table.public') }}</el-button>
-          <el-button v-if="scope.row.status == 0" type="text" @click="handlePublic(scope.row, 1)" icon="el-icon-remove-outline">{{ $t('table.retrieve') }}</el-button>
-          <el-button type="text" @click="handleUpdate(scope.row)" icon="el-icon-edit">{{ $t('table.edit') }}</el-button>
-          <el-button type="text" @click="handleDelete(scope.row)" icon="el-icon-delete">{{ $t('table.delete') }}</el-button>
+          <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
+          <el-button v-if="scope.row.status == 1" type="success" size="mini" @click="handlePublic(scope.row, 0)">{{ $t('table.public') }}</el-button>
+          <el-button v-if="scope.row.status == 0" type="info" size="mini" @click="handlePublic(scope.row, 1)">{{ $t('table.withdraw') }}</el-button>
+          <el-button type="danger" size="mini" @click="handleDelete(scope.row)">{{ $t('table.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -66,6 +66,7 @@
         <el-row>
           <el-col :span="24">
             <el-upload
+              v-show="temp.id !== undefined"
               :show-file-list="showFileList"
               :on-success="handleUploadSuccess"
               :on-exceed="handleExceed"
@@ -134,7 +135,7 @@ export default {
         order: 'descending'
       },
       temp: {
-        id: '',
+        id: undefined,
         knowledgeName: '',
         knowledgeDesc: '',
         attachmentId: '',
@@ -223,7 +224,7 @@ export default {
     },
     resetTemp () {
       this.temp = {
-        id: '',
+        id: undefined,
         knowledgeName: '',
         knowledgeDesc: '',
         attachmentId: '',
@@ -285,8 +286,6 @@ export default {
           this.getList()
           notifySuccess(this, '删除成功')
         })
-        const index = this.list.indexOf(row)
-        this.list.splice(index, 1)
       }).catch(() => {})
     },
     // 批量删除

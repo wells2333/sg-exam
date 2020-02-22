@@ -163,10 +163,10 @@ export default {
       margin-left: 5px;
       margin-top: 4px;
       &:first-of-type {
-        margin-left: 15px;
+        margin-left: 12px;
       }
       &:last-of-type {
-        margin-right: 15px;
+        margin-right: 12px;
       }
       &.active {
         background-color: #42b983;

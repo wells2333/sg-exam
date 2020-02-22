@@ -1,6 +1,5 @@
 import { formatDate, commonFilter, isNotEmpty } from '../utils/util'
-import { statusType, examType, subjectType } from '../utils/constant'
-
+import { statusType, examType, subjectType, subjectTypeTag } from '../utils/constant'
 
 /**
  * 日期格式化
@@ -31,6 +30,9 @@ export function statusTypeFilter (status) {
  * @returns {string}
  */
 export function simpleStrFilter (str, length) {
+  if (length === undefined) {
+    length = 20
+  }
   return commonFilter(str, length)
 }
 
@@ -48,8 +50,8 @@ export function examTypeFilter (type) {
  * @param status
  * @returns {string}
  */
-export function examStatusFilter (status) {
-  return status === 0 ? '已发布' : '未发布'
+export function publicStatusFilter (status) {
+  return parseInt(status) === 0 ? '已发布' : '草稿'
 }
 
 /**
@@ -61,3 +63,36 @@ export function subjectTypeFilter (type) {
   return subjectType[type]
 }
 
+/**
+ * 题目标签
+ * @param type
+ * @returns {*}
+ */
+export function subjectTypeTagFilter (type) {
+  return subjectTypeTag[type]
+}
+
+/**
+ * 考试提交状态
+ * @param type
+ * @returns {*}
+ */
+export function submitStatusFilter (type) {
+  const typeMap = {
+    0: '待批改',
+    1: '已批改',
+    2: '待批改',
+    3: '统计完成'
+  }
+  return typeMap[type]
+}
+
+/**
+ * success状态
+ * @param status, 自动传入
+ * @param expectStatus
+ * @returns {string}
+ */
+export function simpleTagStatusFilter (status, expectStatus) {
+  return status === expectStatus ? 'success' : 'warning'
+}

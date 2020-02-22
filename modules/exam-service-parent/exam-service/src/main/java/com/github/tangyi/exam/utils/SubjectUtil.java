@@ -3,6 +3,7 @@ package com.github.tangyi.exam.utils;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.Answer;
 import com.github.tangyi.exam.api.module.SubjectChoices;
+import com.github.tangyi.exam.api.module.SubjectJudgement;
 import com.github.tangyi.exam.api.module.SubjectShortAnswer;
 import com.github.tangyi.exam.enums.SubjectTypeEnum;
 import com.github.tangyi.exam.excel.model.SubjectExcelModel;
@@ -11,7 +12,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,6 +66,7 @@ public class SubjectUtil {
         subjectDto.setScore(subjectChoice.getScore());
         subjectDto.setAnalysis(subjectChoice.getAnalysis());
         subjectDto.setLevel(subjectChoice.getLevel());
+		subjectDto.setCategoryId(subjectChoice.getCategoryId());
         // 选择题类型匹配
         SubjectTypeEnum subjectTypeEnum = SubjectTypeEnum.matchByValue(subjectChoice.getChoicesType());
         if (subjectTypeEnum != null)
@@ -117,8 +118,10 @@ public class SubjectUtil {
         subjectDto.setLevel(subjectShortAnswer.getLevel());
         subjectDto.setType(SubjectTypeEnum.SHORT_ANSWER.getValue());
         subjectDto.setCreator(subjectShortAnswer.getCreator());
-        subjectDto.setModifyDate(subjectShortAnswer.getModifyDate());
-        // 题目类型
+		subjectDto.setModifier(subjectShortAnswer.getModifier());
+		subjectDto.setModifyDate(subjectShortAnswer.getModifyDate());
+		subjectDto.setCategoryId(subjectShortAnswer.getCategoryId());
+		// 题目类型
         subjectDto.setType(SubjectTypeEnum.SHORT_ANSWER.getValue());
 
         // 参考答案
@@ -140,6 +143,55 @@ public class SubjectUtil {
         List<SubjectDto> subjectDtoList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(subjectShortAnswers)) {
             subjectDtoList = subjectShortAnswers.stream().map(SubjectUtil::subjectShortAnswerToDto)
+                    .collect(Collectors.toList());
+        }
+        return subjectDtoList;
+    }
+
+    /**
+     * SubjectJudgement转SubjectDto
+     *
+     * @param subjectJudgement subjectJudgement
+     * @return List
+     * @author tangyi
+     * @date 2020/02/22 12:23
+     */
+    public static SubjectDto subjectJudgementToDto(SubjectJudgement subjectJudgement) {
+        if (subjectJudgement == null)
+            return null;
+        SubjectDto subjectDto = new SubjectDto();
+        subjectDto.setId(subjectJudgement.getId());
+        subjectDto.setSubjectName(subjectJudgement.getSubjectName());
+        subjectDto.setScore(subjectJudgement.getScore());
+        subjectDto.setAnalysis(subjectJudgement.getAnalysis());
+        subjectDto.setLevel(subjectJudgement.getLevel());
+        subjectDto.setType(SubjectTypeEnum.JUDGEMENT.getValue());
+        subjectDto.setCreator(subjectJudgement.getCreator());
+        subjectDto.setModifier(subjectJudgement.getModifier());
+        subjectDto.setModifyDate(subjectJudgement.getModifyDate());
+        subjectDto.setCategoryId(subjectJudgement.getCategoryId());
+        // 题目类型
+        subjectDto.setType(SubjectTypeEnum.JUDGEMENT.getValue());
+
+        // 参考答案
+        Answer answer = new Answer();
+        answer.setAnswer(subjectJudgement.getAnswer());
+        subjectDto.setAnswer(answer);
+        return subjectDto;
+    }
+
+    /**
+     * SubjectJudgement转SubjectDto
+     *
+     * @param subjectJudgements subjectJudgements
+     * @return List
+     * @author tangyi
+     * @date 2020/02/22 12:24
+     */
+    public static List<SubjectDto> subjectJudgementToDto(List<SubjectJudgement> subjectJudgements) {
+        List<SubjectDto> subjectDtoList = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(subjectJudgements)) {
+            subjectDtoList = subjectJudgements.stream().map(SubjectUtil::subjectJudgementToDto)
                     .collect(Collectors.toList());
         }
         return subjectDtoList;

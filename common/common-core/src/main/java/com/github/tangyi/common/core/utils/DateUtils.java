@@ -2,11 +2,9 @@ package com.github.tangyi.common.core.utils;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 
 /**
@@ -18,9 +16,11 @@ import java.util.Date;
 @Slf4j
 public class DateUtils {
 
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    private static final DateTimeFormatter FORMATTER_MILLIS = DateTimeFormatter.ofPattern("yyyyMMddhhmmssSSS");
+	public static final DateTimeFormatter FORMATTER_DAY = DateTimeFormatter.ofPattern("MM-dd");
+
+	public static final DateTimeFormatter FORMATTER_MILLIS = DateTimeFormatter.ofPattern("yyyyMMddhhmmssSSS");
 
     /**
      * 日期转string
@@ -131,4 +131,24 @@ public class DateUtils {
         }
         return seconds;
     }
+
+	/**
+	 * 获得周几日期，上一周或下一周，依此类推
+	 * @param week 指定周几
+	 * @param whichWeek 那一周
+	 * @return string 日期 年-月-日
+	 */
+	public static String getDayOfWhichWeek(DayOfWeek week, int whichWeek) {
+		LocalDate day = LocalDate.now().with(TemporalAdjusters.previous(week)).minusWeeks(whichWeek -1);
+		return day.format(FORMATTER_DAY);
+	}
+
+	/**
+	 * 天数累加
+	 * @param plusDay plusDay
+	 * @return LocalDateTime
+	 */
+	public static LocalDateTime plusDay(int plusDay) {
+		return LocalDateTime.now().plusDays(plusDay);
+	}
 }

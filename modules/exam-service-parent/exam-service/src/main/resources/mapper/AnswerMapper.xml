@@ -93,6 +93,14 @@
         <include refid="whereColumnList"/>
     </select>
 
+    <select id="findListByExamRecordId" resultMap="answerResultMap">
+        SELECT
+        <include refid="answerColumns"/>
+        FROM exam_answer a
+        WHERE a.del_flag = 0
+        AND a.exam_record_id = #{examRecordId}
+     </select>
+
     <insert id="insert">
         insert into exam_answer (
             id,

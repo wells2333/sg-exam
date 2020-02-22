@@ -3,9 +3,9 @@
     <div class="filter-container">
       <el-button v-if="menu_btn_add" icon="el-icon-check" type="primary" @click="handlerAddSuper">添加顶级菜单</el-button>
       <el-button v-if="menu_btn_add" icon="el-icon-check" type="primary" @click="handlerAdd">添加子菜单</el-button>
-      <el-button v-if="menu_btn_del" icon="el-icon-delete" plain @click="handleDelete">{{ $t('table.del') }}</el-button>
-      <el-button v-if="menu_btn_import" icon="el-icon-upload2" plain @click="handleImport">{{ $t('table.import') }}</el-button>
-      <el-button v-if="menu_btn_export" icon="el-icon-download" plain @click="handleExport">{{ $t('table.export') }}</el-button>
+      <el-button v-if="menu_btn_del" icon="el-icon-delete" type="danger" @click="handleDelete">{{ $t('table.del') }}</el-button>
+      <el-button v-if="menu_btn_import" icon="el-icon-upload2" type="success" @click="handleImport">{{ $t('table.import') }}</el-button>
+      <el-button v-if="menu_btn_export" icon="el-icon-download" type="success" @click="handleExport">{{ $t('table.export') }}</el-button>
 
       <el-row>
         <el-col :span="4" style ="margin-top:10px;">

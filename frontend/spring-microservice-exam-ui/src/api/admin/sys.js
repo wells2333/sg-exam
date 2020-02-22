@@ -16,3 +16,14 @@ export function getDashboard () {
     method: 'get'
   })
 }
+
+/**
+ * 过去一周考试记录数据
+ */
+export function getExamRecordTendency (query) {
+  return request({
+    url: '/api/user/v1/dashboard/examRecordTendency',
+    method: 'get',
+    params: query
+  })
+}

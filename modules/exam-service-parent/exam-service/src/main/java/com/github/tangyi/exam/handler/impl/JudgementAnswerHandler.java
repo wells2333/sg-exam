@@ -27,16 +27,20 @@ public class JudgementAnswerHandler extends AbstractAnswerHandler {
 	}
 
 	@Override
+	public boolean judgeRight(Answer answer, SubjectDto subject) {
+		return subject.getAnswer().getAnswer().equalsIgnoreCase(answer.getAnswer());
+	}
+
+	@Override
 	public void judge(Answer answer, SubjectDto subject, List<Double> rightScore) {
-		if (subject.getAnswer().getAnswer().equalsIgnoreCase(answer.getAnswer())) {
+		if (judgeRight(answer, subject)) {
 			rightScore.add(subject.getScore());
 			answer.setAnswerType(AnswerConstant.RIGHT);
 			answer.setScore(subject.getScore());
-			answer.setMarkStatus(AnswerConstant.MARKED);
 		} else {
 			answer.setAnswerType(AnswerConstant.WRONG);
 			answer.setScore(0.0);
-			answer.setMarkStatus(AnswerConstant.MARKED);
 		}
+		answer.setMarkStatus(AnswerConstant.MARKED);
 	}
 }

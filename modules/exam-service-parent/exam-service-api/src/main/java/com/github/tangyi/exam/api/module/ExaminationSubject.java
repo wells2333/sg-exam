@@ -1,6 +1,7 @@
 package com.github.tangyi.exam.api.module;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
 
@@ -11,6 +12,7 @@ import lombok.Data;
  * @date 2019/6/16 13:46
  */
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExaminationSubject extends BaseEntity<ExaminationSubject> {
 
     /**

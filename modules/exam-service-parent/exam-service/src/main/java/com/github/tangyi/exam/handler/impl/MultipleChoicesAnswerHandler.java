@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.handler.impl;
 
+import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.exam.api.constants.AnswerConstant;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.Answer;
@@ -28,26 +29,51 @@ public class MultipleChoicesAnswerHandler extends AbstractAnswerHandler {
 		return SubjectTypeEnum.MULTIPLE_CHOICES;
 	}
 
+	/**
+	 * 判断选项是否正确
+	 *
+	 * @param answer  answer
+	 * @param subject subject
+	 * @author tangyi
+	 * @date 2020/02/19 23:23
+	 */
+	public void judgeOptionRight(Answer answer, SubjectDto subject) {
+		String userAnswer = answer.getAnswer();
+		String correctAnswer = subject.getAnswer().getAnswer();
+		if (StringUtils.isNotBlank(userAnswer) && StringUtils.isNotBlank(correctAnswer)) {
+			String[] userAnswers = userAnswer.split(CommonConstant.COMMA);
+			String[] correctAnswers = correctAnswer.split(CommonConstant.COMMA);
+			subject.getOptions().forEach(option -> {
+				if (ArrayUtils.contains(correctAnswers, option.getOptionName())) {
+					option.setRight(ArrayUtils.contains(userAnswers, option.getOptionName()) ? TRUE : FALSE);
+				}
+			});
+		}
+	}
+
+	@Override
+	public boolean judgeRight(Answer answer, SubjectDto subject) {
+		String[] correctAnswers = subject.getAnswer().getAnswer().split(CommonConstant.COMMA);
+		for (String as : answer.getAnswer().split(CommonConstant.COMMA)) {
+			if (!ArrayUtils.contains(correctAnswers, as)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	@Override
 	public void judge(Answer answer, SubjectDto subject, List<Double> rightScore) {
 		if (StringUtils.isNotBlank(subject.getAnswer().getAnswer())) {
-			boolean isRight = true;
-			String[] standerAnswers = subject.getAnswer().getAnswer().split(",");
-			for (String as : answer.getAnswer().split(",")) {
-				if (!ArrayUtils.contains(standerAnswers, as)) {
-					isRight = false;
-				}
-			}
-			if (isRight) {
+			if (judgeRight(answer, subject)) {
 				rightScore.add(subject.getScore());
 				answer.setAnswerType(AnswerConstant.RIGHT);
 				answer.setScore(subject.getScore());
-				answer.setMarkStatus(AnswerConstant.MARKED);
 			} else {
 				answer.setAnswerType(AnswerConstant.WRONG);
 				answer.setScore(0.0);
-				answer.setMarkStatus(AnswerConstant.MARKED);
 			}
+			answer.setMarkStatus(AnswerConstant.MARKED);
 		}
 	}
 }

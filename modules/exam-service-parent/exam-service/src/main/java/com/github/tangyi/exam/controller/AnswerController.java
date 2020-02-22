@@ -19,14 +19,10 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 答题controller
@@ -125,6 +121,23 @@ public class AnswerController extends BaseController {
     }
 
     /**
+     * 批改答题
+     *
+     * @param answer answer
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2020/02/22 14:47
+     */
+    @PutMapping("mark")
+    @ApiOperation(value = "批改答题", notes = "根据答题id批改答题")
+    @ApiImplicitParam(name = "answer", value = "答题实体answer", required = true, dataType = "Answer")
+    @Log("批改答题")
+    public ResponseBean<Boolean> markAnswer(@RequestBody @Valid Answer answer) {
+        answer.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        return new ResponseBean<>(answerService.updateScore(answer) > 0);
+    }
+
+    /**
      * 删除
      *
      * @param id id
@@ -159,7 +172,7 @@ public class AnswerController extends BaseController {
      * @date 2018/12/24 20:06
      */
     @PostMapping("save")
-    @ApiOperation(value = "保存答题", notes = "保存答题")
+    @ApiOperation(value = "保存答题，并返回下一题", notes = "保存答题，并返回下一题")
     @ApiImplicitParam(name = "answer", value = "答题信息", dataType = "Answer")
     @Log("保存答题")
     public ResponseBean<Boolean> save(@RequestBody @Valid Answer answer) {
@@ -186,6 +199,39 @@ public class AnswerController extends BaseController {
                                                 @RequestParam(required = false) Integer nextSubjectType) {
         return new ResponseBean<>(answerService.saveAndNext(answer, nextType, nextSubjectId, nextSubjectType));
     }
+
+	/**
+	 * 保存答题
+	 *
+	 * @param answer          answer
+	 * @return ResponseBean
+	 * @author tangyi
+	 * @date 2019/04/30 18:06
+	 */
+	@PostMapping("saveAnswer")
+	@ApiOperation(value = "保存答题", notes = "保存答题")
+	@ApiImplicitParam(name = "answer", value = "答题信息", dataType = "Answer")
+	public ResponseBean<Boolean> saveAnswer(@RequestBody AnswerDto answer) {
+		return new ResponseBean<>(answerService.save(answer, SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode()) > 0);
+	}
+
+	/**
+	 * 下一题
+	 *
+	 * @param examinationId       examinationId
+	 * @param subjectId          subjectId
+	 * @param type          	type
+	 * @param nextType          0：下一题，1：上一题
+	 * @return ResponseBean
+	 * @author tangyi
+	 * @date 2019/04/30 18:06
+	 */
+	@GetMapping("nextSubject")
+	@ApiOperation(value = "获取下一题", notes = "获取下一题")
+	public ResponseBean<SubjectDto> nextSubject(@RequestParam Long examinationId, @RequestParam Long subjectId,
+			@RequestParam Integer type, @RequestParam Integer nextType) {
+		return new ResponseBean<>(subjectService.getNextByCurrentIdAndType(examinationId, subjectId, type, nextType));
+	}
 
     /**
      * 提交答卷
@@ -229,24 +275,7 @@ public class AnswerController extends BaseController {
             @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
             @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
             @PathVariable Long recordId, Answer answer) {
-        List<AnswerDto> answerDtos = new ArrayList<>();
-        answer.setExamRecordId(recordId);
-        PageInfo<Answer> answerPageInfo = answerService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), answer);
-        if (CollectionUtils.isNotEmpty(answerPageInfo.getList())) {
-            answerDtos = answerPageInfo.getList().stream().map(tempAnswer -> {
-                AnswerDto answerDto = new AnswerDto();
-                BeanUtils.copyProperties(tempAnswer, answerDto);
-                SubjectDto subjectDto = subjectService.get(tempAnswer.getSubjectId(), tempAnswer.getType());
-                answerDto.setSubject(subjectDto);
-                return answerDto;
-            }).collect(Collectors.toList());
-        }
-        PageInfo<AnswerDto> answerDtoPageInfo = new PageInfo<>();
-        answerDtoPageInfo.setList(answerDtos);
-        answerDtoPageInfo.setTotal(answerPageInfo.getTotal());
-        answerDtoPageInfo.setPageNum(answerPageInfo.getPageNum());
-        answerDtoPageInfo.setPageSize(answerPageInfo.getPageSize());
-        return answerDtoPageInfo;
+        return answerService.answerListInfo(pageNum, pageSize, sort, order, recordId, answer);
     }
 
     /**
