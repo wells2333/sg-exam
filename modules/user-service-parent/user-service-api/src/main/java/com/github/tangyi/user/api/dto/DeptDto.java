@@ -1,9 +1,11 @@
 package com.github.tangyi.user.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.tangyi.common.core.persistence.TreeEntity;
 import com.github.tangyi.user.api.module.Dept;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 部门dto
@@ -12,6 +14,8 @@ import lombok.Data;
  * @date 2018-10-25 12:49
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DeptDto extends TreeEntity<DeptDto> {
 
     /**

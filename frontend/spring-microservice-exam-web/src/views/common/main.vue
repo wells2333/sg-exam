@@ -20,7 +20,7 @@ export default {
   },
   methods: {
     // TODO 提交考试
-    handleSubmitExam() {
+    handleSubmitExam () {
       console.log('handleSubmitExam')
     }
   }

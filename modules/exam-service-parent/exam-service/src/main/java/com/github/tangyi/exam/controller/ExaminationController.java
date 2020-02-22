@@ -3,17 +3,15 @@ package com.github.tangyi.exam.controller;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.model.ResponseBean;
-import com.github.tangyi.common.core.utils.PageUtil;
+import com.github.tangyi.common.core.persistence.BaseEntity;
 import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.annotations.AdminTenantTeacherAuthorization;
 import com.github.tangyi.exam.api.dto.ExaminationDto;
 import com.github.tangyi.exam.api.dto.SubjectDto;
-import com.github.tangyi.exam.api.module.Course;
 import com.github.tangyi.exam.api.module.Examination;
 import com.github.tangyi.exam.api.module.ExaminationSubject;
-import com.github.tangyi.exam.service.CourseService;
 import com.github.tangyi.exam.service.ExaminationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -21,15 +19,12 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 考试controller
@@ -45,8 +40,6 @@ import java.util.stream.Collectors;
 public class ExaminationController extends BaseController {
 
     private final ExaminationService examinationService;
-
-    private final CourseService courseService;
 
     /**
      * 根据ID获取
@@ -89,22 +82,7 @@ public class ExaminationController extends BaseController {
                                                     @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
                                                     @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                                     Examination examination) {
-        examination.setTenantCode(SysUtil.getTenantCode());
-        PageInfo<Examination> page = examinationService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), examination);
-        PageInfo<ExaminationDto> examinationDtoPageInfo = new PageInfo<>();
-        BeanUtils.copyProperties(page, examinationDtoPageInfo);
-        if (CollectionUtils.isNotEmpty(page.getList())) {
-            List<Course> courses = courseService.findListById(page.getList().stream().map(Examination::getCourseId).distinct().toArray(Long[]::new));
-            List<ExaminationDto> examinationDtos = page.getList().stream().map(exam -> {
-                ExaminationDto examinationDto = new ExaminationDto();
-                BeanUtils.copyProperties(exam, examinationDto);
-                // 设置考试所属课程
-                courses.stream().filter(tempCourse -> tempCourse.getId().equals(exam.getCourseId())).findFirst().ifPresent(examinationDto::setCourse);
-                return examinationDto;
-            }).collect(Collectors.toList());
-            examinationDtoPageInfo.setList(examinationDtos);
-        }
-        return examinationDtoPageInfo;
+        return examinationService.examinationList(pageNum, pageSize, sort, order, examination);
     }
 
     /**
@@ -119,22 +97,20 @@ public class ExaminationController extends BaseController {
      * @author tangyi
      * @date 2019/6/16 15:45
      */
-    @RequestMapping("/{examinationId}/subjectList")
+    @RequestMapping("/subjectList")
     @ApiOperation(value = "获取题目列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
             @ApiImplicitParam(name = CommonConstant.PAGE_SIZE, value = "分页大小", defaultValue = CommonConstant.PAGE_SIZE_DEFAULT, dataType = "String"),
             @ApiImplicitParam(name = CommonConstant.SORT, value = "排序字段", defaultValue = CommonConstant.PAGE_SORT_DEFAULT, dataType = "String"),
             @ApiImplicitParam(name = CommonConstant.ORDER, value = "排序方向", defaultValue = CommonConstant.PAGE_ORDER_DEFAULT, dataType = "String"),
-            @ApiImplicitParam(name = "examinationId", value = "考试ID", required = true, dataType = "Long", paramType = "path"),
             @ApiImplicitParam(name = "subjectDto", value = "题目信息", dataType = "SubjectDto")
     })
     public PageInfo<SubjectDto> subjectList(@RequestParam(value = CommonConstant.PAGE_NUM, required = false, defaultValue = CommonConstant.PAGE_NUM_DEFAULT) String pageNum,
                                             @RequestParam(value = CommonConstant.PAGE_SIZE, required = false, defaultValue = CommonConstant.PAGE_SIZE_DEFAULT) String pageSize,
                                             @RequestParam(value = CommonConstant.SORT, required = false, defaultValue = CommonConstant.PAGE_SORT_DEFAULT) String sort,
                                             @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
-                                            @PathVariable Long examinationId, SubjectDto subjectDto) {
-        subjectDto.setExaminationId(examinationId);
+			SubjectDto subjectDto) {
         return examinationService.findSubjectPageById(subjectDto, pageNum, pageSize, sort, order);
     }
 
@@ -234,21 +210,6 @@ public class ExaminationController extends BaseController {
     }
 
     /**
-     * 查询考试数量
-     *
-     * @param tenantCode 租户标识
-     * @return ResponseBean
-     * @author tangyi
-     * @date 2019/3/1 15:30
-     */
-    @GetMapping("examinationCount")
-    public ResponseBean<Integer> findExaminationCount(@RequestParam @NotBlank String tenantCode) {
-        Examination examination = new Examination();
-        examination.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), tenantCode);
-        return new ResponseBean<>(examinationService.findExaminationCount(examination));
-    }
-
-    /**
      * 根据考试ID查询题目id列表
      *
      * @param examinationId examinationId
@@ -259,21 +220,8 @@ public class ExaminationController extends BaseController {
     @ApiImplicitParam(name = "examinationId", value = "考试ID", required = true, paramType = "path")
     @GetMapping("/{examinationId}/subjectIds")
     public ResponseBean<List<ExaminationSubject>> findExaminationSubjectIds(@PathVariable Long examinationId) {
-        return new ResponseBean<>(examinationService.findListByExaminationId(examinationId));
-    }
-
-    /**
-     * 查询参与考试人数
-     *
-     * @param tenantCode tenantCode
-     * @return ResponseBean
-     * @author tangyi
-     * @date 2019/10/27 20:07:38
-     */
-    @GetMapping("examUserCount")
-    public ResponseBean<Integer> findExamUserCount(@RequestParam @NotBlank String tenantCode) {
-        Examination examination = new Examination();
-        examination.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), tenantCode);
-        return new ResponseBean<>(examinationService.findExamUserCount(examination));
+		List<ExaminationSubject> subjects = examinationService.findListByExaminationId(examinationId);
+		subjects.forEach(BaseEntity::clearCommonValue);
+        return new ResponseBean<>(subjects);
     }
 }

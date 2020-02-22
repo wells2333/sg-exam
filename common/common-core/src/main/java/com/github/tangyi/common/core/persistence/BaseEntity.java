@@ -67,6 +67,11 @@ public class BaseEntity<T> implements Serializable {
      */
     protected boolean isNewRecord;
 
+	/**
+	 * 扩展字段
+	 */
+	protected String ext;
+
     public BaseEntity(Long id) {
         this();
         this.id = id;
@@ -112,5 +117,18 @@ public class BaseEntity<T> implements Serializable {
         this.applicationCode = applicationCode;
         this.tenantCode = tenantCode;
     }
+
+	/**
+	 * 置空属性
+	 */
+	public void clearCommonValue() {
+		this.creator = null;
+		this.createDate = null;
+		this.modifier = null;
+		this.modifyDate = null;
+    	this.delFlag = null;
+    	this.applicationCode = null;
+    	this.tenantCode = null;
+	}
 }
 

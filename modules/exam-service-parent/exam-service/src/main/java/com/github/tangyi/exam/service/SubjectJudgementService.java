@@ -5,9 +5,13 @@ import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.SubjectJudgement;
 import com.github.tangyi.exam.mapper.SubjectJudgementMapper;
+import com.github.tangyi.exam.utils.SubjectUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,7 +37,7 @@ public class SubjectJudgementService extends CrudService<SubjectJudgementMapper,
      */
     @Override
     public SubjectDto getSubject(Long id) {
-        return null;
+        return SubjectUtil.subjectJudgementToDto(this.get(id));
     }
 
     /**
@@ -88,7 +92,7 @@ public class SubjectJudgementService extends CrudService<SubjectJudgementMapper,
      */
     @Override
     public List<SubjectDto> findSubjectListById(Long[] ids) {
-        return null;
+        return SubjectUtil.subjectJudgementToDto(this.findListById(ids));
     }
 
     /**
@@ -100,8 +104,13 @@ public class SubjectJudgementService extends CrudService<SubjectJudgementMapper,
      * @date 2019-07-16 13:10
      */
     @Override
+    @Transactional
+    @CacheEvict(value = "subjectJudgement", key = "#subjectDto.id")
     public int insertSubject(SubjectDto subjectDto) {
-        return 0;
+        SubjectJudgement subjectJudgement = new SubjectJudgement();
+        BeanUtils.copyProperties(subjectDto, subjectJudgement);
+        subjectJudgement.setAnswer(subjectDto.getAnswer().getAnswer());
+        return this.insert(subjectJudgement);
     }
 
     /**
@@ -113,8 +122,13 @@ public class SubjectJudgementService extends CrudService<SubjectJudgementMapper,
      * @date 2019-07-16 13:10
      */
     @Override
+    @Transactional
+    @CacheEvict(value = "subjectJudgement", key = "#subjectDto.id")
     public int updateSubject(SubjectDto subjectDto) {
-        return 0;
+        SubjectJudgement subjectJudgement = new SubjectJudgement();
+        BeanUtils.copyProperties(subjectDto, subjectJudgement);
+        subjectJudgement.setAnswer(subjectDto.getAnswer().getAnswer());
+        return this.update(subjectJudgement);
     }
 
     /**
@@ -126,8 +140,26 @@ public class SubjectJudgementService extends CrudService<SubjectJudgementMapper,
      * @date 2019-07-16 13:10
      */
     @Override
+    @Transactional
+    @CacheEvict(value = "subjectJudgement", key = "#subjectDto.id")
     public int deleteSubject(SubjectDto subjectDto) {
-        return 0;
+        SubjectJudgement subjectJudgement = new SubjectJudgement();
+        BeanUtils.copyProperties(subjectDto, subjectJudgement);
+        return this.delete(subjectJudgement);
+    }
+
+    /**
+     * 物理删除题目
+     *
+     * @param subjectJudgement subjectJudgement
+     * @return int
+     * @author tangyi
+     * @date 2019/6/16 22:58
+     */
+    @Transactional
+    @CacheEvict(value = "subjectJudgement", key = "#subjectJudgement.id")
+    public int physicalDelete(SubjectJudgement subjectJudgement) {
+        return this.dao.physicalDelete(subjectJudgement);
     }
 
     /**
@@ -139,8 +171,24 @@ public class SubjectJudgementService extends CrudService<SubjectJudgementMapper,
      * @date 2019-07-16 13:10
      */
     @Override
+    @Transactional
+    @CacheEvict(value = "subjectJudgement", allEntries = true)
     public int deleteAllSubject(Long[] ids) {
-        return 0;
+        return this.deleteAll(ids);
+    }
+
+    /**
+     * 批量删除题目
+     *
+     * @param ids ids
+     * @return int
+     * @author tangyi
+     * @date 2019/6/16 22:58
+     */
+    @Transactional
+    @CacheEvict(value = "subjectJudgement", allEntries = true)
+    public int physicalDeleteAll(Long[] ids) {
+        return this.dao.physicalDeleteAll(ids);
     }
 
     /**
@@ -152,8 +200,12 @@ public class SubjectJudgementService extends CrudService<SubjectJudgementMapper,
      * @date 2019-07-16 13:10
      */
     @Override
+    @Transactional
+    @CacheEvict(value = "subjectJudgement", key = "#subjectDto.id")
     public int physicalDeleteSubject(SubjectDto subjectDto) {
-        return 0;
+        SubjectJudgement subjectJudgement = new SubjectJudgement();
+        BeanUtils.copyProperties(subjectDto, subjectJudgement);
+        return this.physicalDelete(subjectJudgement);
     }
 
     /**
@@ -165,7 +217,9 @@ public class SubjectJudgementService extends CrudService<SubjectJudgementMapper,
      * @date 2019-07-16 13:11
      */
     @Override
+    @Transactional
+    @CacheEvict(value = "subjectJudgement", allEntries = true)
     public int physicalDeleteAllSubject(Long[] ids) {
-        return 0;
+        return this.physicalDeleteAll(ids);
     }
 }

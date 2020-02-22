@@ -39,8 +39,8 @@
           <svg-icon icon-class="chart" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">课程数</div>
-          <count-to :start-val="0" :end-val="13600" :duration="2600" class="card-panel-num"/>
+          <div class="card-panel-text">考试次数</div>
+          <count-to :start-val="0" :end-val="examinationRecordNumber" :duration="2600" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
@@ -50,7 +50,7 @@
 <script>
 import CountTo from 'vue-count-to'
 import { getDashboard } from '@/api/admin/sys'
-import { isNotEmpty, isSuccess, messageFail } from '@/utils/util'
+import { isNotEmpty, isSuccess } from '@/utils/util'
 
 export default {
   components: {
@@ -61,7 +61,8 @@ export default {
       onlineUserNumber: 0,
       examinationNumber: 0,
       examUserNumber: 0,
-      tenantNumber: 0
+      tenantNumber: 0,
+      examinationRecordNumber: 0
     }
   },
   created () {
@@ -88,6 +89,9 @@ export default {
           if (isNotEmpty(data.tenantCount)) {
             this.tenantNumber = parseInt(data.tenantCount)
           }
+          if (isNotEmpty(data.examinationRecordNumber)) {
+            this.examinationRecordNumber = parseInt(data.examinationRecordNumber)
+          }
         }
       }).catch(error => {
         console.error(error)
@@ -113,7 +117,6 @@ export default {
     box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
     border-color: rgba(0, 0, 0, .05);
     border-radius: 6px;
-    border-top: 3px solid #40c9c6;
     &:hover {
       .card-panel-icon-wrapper {
         color: #fff;

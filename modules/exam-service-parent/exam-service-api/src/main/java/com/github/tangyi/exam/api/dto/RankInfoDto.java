@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 /**
@@ -8,6 +9,7 @@ import lombok.Data;
  * @date 2019/12/8 23:33
  */
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RankInfoDto {
 
 	private Long userId;

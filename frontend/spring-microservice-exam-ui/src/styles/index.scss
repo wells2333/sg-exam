@@ -7,10 +7,12 @@
 
 body {
   height: 100%;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+  font-family: -apple-system,system-ui,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #292b2c;
+  background-color: #fff;
 }
 
 label {
@@ -33,7 +35,7 @@ html {
 }
 
 .no-padding {
-  padding: 0px !important;
+  padding: 0 !important;
 }
 
 .padding-content {
@@ -117,7 +119,6 @@ code {
   background: rgba(66,185,131,.1);
   border-radius: 2px;
   padding: 16px;
-  padding: 1rem;
   line-height: 1.6rem;
   word-spacing: .05rem;
   a{
@@ -128,7 +129,7 @@ code {
 
 //main-container全局样式
 .app-container {
-  padding: 20px;
+  padding: 12px;
 }
 
 .components-container {
@@ -200,4 +201,8 @@ code {
 }
 .avatar-uploader .el-upload:hover {
   border-color: #409EFF;
+}
+
+.dialog-footer {
+  text-align: center;
 }

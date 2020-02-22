@@ -44,7 +44,7 @@
               <span class="time">结束时间：{{ exam.endTime | timeFilter }}</span>
             </div>
             <div class="card-item-btn">
-              <el-button class="start-btn" type="default" size="mini" icon="el-icon-edit" plain round @click="startExam(exam)">开始</el-button>
+              <el-button class="start-btn" type="info" size="mini" plain round @click="startExam(exam)">开始</el-button>
             </div>
           </div>
         </el-card>
@@ -60,10 +60,10 @@
   </div>
 </template>
 <script>
-import { mapState } from 'vuex'
+import {mapGetters, mapState} from 'vuex'
 import { fetchList } from '@/api/exam/exam'
 import { getCurrentTime } from '@/api/exam/examRecord'
-import { isNotEmpty, notifyFail, notifyWarn, getAttachmentPreviewUrl, formatDate } from '@/utils/util'
+import { isNotEmpty, messageFail, messageWarn, getAttachmentPreviewUrl, formatDate } from '@/utils/util'
 import store from '@/store'
 import moment from 'moment'
 import PanThumb from '@/components/PanThumb'
@@ -94,7 +94,8 @@ export default {
         order: ' asc',
         pageNum: 1,
         pageSize: 50,
-        examinationName: ''
+        examinationName: '',
+        status: 0
       },
       tempExamRecord: {
         id: null,
@@ -110,8 +111,12 @@ export default {
     ...mapState({
       userInfo: state => state.user.userInfo,
       course: state => state.course.course,
-      sysConfig: state => state.sysConfig.sysConfig
-    })
+      sysConfig: state => state.sysConfig.sysConfig,
+      examRecord: state => state.exam.examRecord
+    }),
+    ...mapGetters([
+      'subject'
+    ])
   },
   created () {
     if (isNotEmpty(this.course)) {
@@ -132,7 +137,7 @@ export default {
         this.total = response.data.total
         this.listLoading = false
       }).catch(() => {
-        notifyWarn(this, '查看考试失败！')
+        messageWarn(this, '查看考试失败！')
         this.listLoading = false
       })
     },
@@ -145,10 +150,10 @@ export default {
         const currentTime = moment(response.data.data)
         // 校验结束时间
         if (currentTime.isAfter(exam.endTime)) {
-          notifyWarn(this, '考试已结束')
+          messageWarn(this, '考试已结束')
         } else if (currentTime.isBefore(exam.startTime)) {
           // 考试未开始
-          notifyWarn(this, '考试未开始')
+          messageWarn(this, '考试未开始')
         } else {
           this.$confirm('确定要开始吗?', '提示', {
             confirmButtonText: '确定',
@@ -157,29 +162,33 @@ export default {
           }).then(() => {
             // 开始考试
             store.dispatch('StartExam', this.tempExamRecord).then(() => {
-              this.$router.push({name: 'start'})
+              if (this.examRecord === undefined || this.subject === undefined) {
+                messageWarn(this, '开始考试失败')
+                return
+              }
+              this.$router.push({ path: `/start/${exam.id}-${this.examRecord.id}-${this.subject.id}-${this.subject.type}` })
             }).catch(() => {
-              notifyWarn(this, '开始考试失败')
+              messageWarn(this, '开始考试失败')
             })
           }).catch(() => {
             console.log('取消考试')
           })
         }
       }).catch(() => {
-        notifyFail(this, '开始考试失败！')
+        messageFail(this, '开始考试失败！')
       })
     },
     getAvatar (avatar) {
       return getAttachmentPreviewUrl(this.sysConfig, avatar)
     },
-    submitForm() {
+    submitForm () {
       this.getExamList()
     },
-    resetForm() {
+    resetForm () {
       this.query.examinationName = ''
     },
     // 切换tag
-    changeTag(tag) {
+    changeTag (tag) {
       this.activeTag = tag
       this.getExamList()
     },
@@ -190,7 +199,7 @@ export default {
     handleCurrentChange (val) {
       this.query.pageNum = val
       this.getExamList()
-    },
+    }
   }
 }
 </script>
@@ -308,7 +317,6 @@ export default {
         line-height: normal;
         background: hsla(0,0%,100%,.9);
         border-top: 1px solid #eee;
-        text-align: center;
         width: 100%;
         .card-item-time {
           display: inline-block;
@@ -326,9 +334,9 @@ export default {
           display: inline-block;
           padding-top: 5px;
           padding-right: 0;
+          float: right;
           .start-btn {
             margin: 7px;
-            float: right;
           }
         }
       }

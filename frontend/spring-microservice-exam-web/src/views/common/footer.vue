@@ -3,28 +3,29 @@
     <div class="container">
       <div class="site-info">
         <el-row>
-          <el-col :span="4" :offset="2" class="footer-col">
+          <el-col :span="3" :offset="2" class="footer-col">
             <h4>链接</h4>
             <a target="_blank" href="https://gitee.com/wells2333/spring-microservice-exam">码云</a>
             <a target="_blank" href="https://github.com/">GITHUB</a>
             <a target="_blank" href="http://118.25.138.130:81">管理后台</a>
             <a target="_blank" href="https://gitee.com/wells2333/spring-microservice-exam/blob/master/CHANGELOG.md">更新日志</a>
           </el-col>
-          <el-col :span="4" class="footer-col">
+          <el-col :span="3" class="footer-col">
             <h4>工具</h4>
             <a target="_blank" href="http://element-cn.eleme.io">Element Ui</a>
             <a target="_blank" href="https://cn.vuejs.org/">Vue</a>
           </el-col>
-          <el-col :span="4" class="footer-col">
+          <el-col :span="3" class="footer-col">
             <h4>社区</h4>
             <a target="_blank" href="https://www.kancloud.cn/tangyi/spring-microservice-exam/1322864">看云</a>
             <a target="_blank" href="https://gitee.com/wells2333/spring-microservice-exam/issues">反馈建议</a>
           </el-col>
-          <el-col :span="4" class="footer-col">
+          <el-col :span="7" class="footer-col">
             <div class="we-chat">
+
+            </div>
+            <div class="we-chat-new">
               加入技术交流群，请扫二维码
-              <br>
-              （Spring Cloud技术交流群）
             </div>
           </el-col>
         </el-row>
@@ -173,11 +174,25 @@ export default {
     .we-chat {
       position: absolute;
       right: 0;
-      top: 80px;
+      top: 60px;
       width: 216px;
       z-index: 2;
-      padding-top: 232px;
-      background-image: url("../../../static/images/home/WechatIMG4.png");
+      padding-top: 260px;
+      background-image: url("../../../static/images/home/qq.png");
+      background-repeat: no-repeat;
+      background-position: top;
+      text-align: center;
+      color: #bdb8ce;
+      line-height: 22px;
+    }
+
+    .we-chat-new {
+      position: absolute;
+      top: 60px;
+      width: 216px;
+      z-index: 2;
+      padding-top: 260px;
+      background-image: url("../../../static/images/home/qq_new.png");
       background-repeat: no-repeat;
       background-position: top;
       text-align: center;

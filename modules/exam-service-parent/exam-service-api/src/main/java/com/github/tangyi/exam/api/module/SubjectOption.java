@@ -28,4 +28,9 @@ public class SubjectOption extends BaseEntity<SubjectOption> {
      * 选项内容
      */
     private String optionContent;
+
+    /**
+     * 是否正确
+     */
+    private String right;
 }

@@ -26,9 +26,10 @@ import com.github.tangyi.exam.handler.AnswerHandleResult;
 import com.github.tangyi.exam.handler.impl.ChoicesAnswerHandler;
 import com.github.tangyi.exam.handler.impl.JudgementAnswerHandler;
 import com.github.tangyi.exam.handler.impl.MultipleChoicesAnswerHandler;
+import com.github.tangyi.exam.handler.impl.ShortAnswerHandler;
 import com.github.tangyi.exam.mapper.AnswerMapper;
-import com.github.tangyi.exam.utils.ExamRecordUtil;
 import com.github.tangyi.exam.utils.AnswerHandlerUtil;
+import com.github.tangyi.exam.utils.ExamRecordUtil;
 import com.github.tangyi.user.api.feign.UserServiceClient;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,6 +75,8 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
 
 	private final JudgementAnswerHandler judgementHandler;
 
+	private final ShortAnswerHandler shortAnswerHandler;
+
 	private final RedisTemplate<String, String> redisTemplate;
 
 	/**
@@ -114,6 +117,47 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
     @Transactional
     @CacheEvict(value = "answer", key = "#answer.id")
     public int update(Answer answer) {
+    	answer.setAnswer(AnswerHandlerUtil.replaceComma(answer.getAnswer()));
+        return super.update(answer);
+    }
+
+    /**
+     * 更新答题总分
+     *
+     * @param answer answer
+     * @return int
+     * @author tangyi
+     * @date 2019/1/3 14:27
+     */
+    @Transactional
+    @CacheEvict(value = "answer", key = "#answer.id")
+    public int updateScore(Answer answer) {
+        answer.setAnswer(AnswerHandlerUtil.replaceComma(answer.getAnswer()));
+        // 加分减分逻辑
+        Answer oldAnswer = this.get(answer);
+        if (!oldAnswer.getAnswerType().equals(answer.getAnswerType())) {
+            ExaminationRecord record = new ExaminationRecord();
+            record.setId(oldAnswer.getExamRecordId());
+            record = examRecordService.get(record);
+            if (record == null) {
+                throw new CommonException("ExamRecord is null");
+            }
+            Double oldScore = record.getScore();
+            if (AnswerConstant.RIGHT.equals(answer.getAnswerType())) {
+                // 加分
+                record.setCorrectNumber(record.getInCorrectNumber() + 1);
+                record.setInCorrectNumber(record.getInCorrectNumber() - 1);
+                record.setScore(record.getScore() + answer.getScore());
+            } else if (AnswerConstant.WRONG.equals(answer.getAnswerType())) {
+                // 减分
+                record.setCorrectNumber(record.getInCorrectNumber() - 1);
+                record.setInCorrectNumber(record.getInCorrectNumber() + 1);
+                record.setScore(record.getScore() - answer.getScore());
+            }
+            if (examRecordService.update(record) > 0) {
+                log.info("Update answer success, examRecordId: {}, oldScore: {}, newScore: {}", oldAnswer.getExamRecordId(), oldScore, record.getScore());
+            }
+        }
         return super.update(answer);
     }
 
@@ -158,7 +202,8 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
     @Transactional
     public int save(Answer answer) {
         answer.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
-        return super.save(answer);
+		answer.setAnswer(AnswerHandlerUtil.replaceComma(answer.getAnswer()));
+		return super.save(answer);
     }
 
     /**
@@ -174,30 +219,47 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
      */
     @Transactional
     public SubjectDto saveAndNext(AnswerDto answerDto, Integer type, Long nextSubjectId, Integer nextSubjectType) {
-        String userCode = SysUtil.getUser();
-        String sysCode = SysUtil.getSysCode();
-        String tenantCode = SysUtil.getTenantCode();
-        Answer answer = new Answer();
-        BeanUtils.copyProperties(answerDto, answer);
-        Answer tempAnswer = this.getAnswer(answer);
-        if (tempAnswer != null) {
-            tempAnswer.setCommonValue(userCode, sysCode, tenantCode);
-            tempAnswer.setAnswer(answer.getAnswer());
-            tempAnswer.setType(answer.getType());
-            tempAnswer.setEndTime(tempAnswer.getModifyDate());
-            this.update(tempAnswer);
-        } else {
-            answer.setCommonValue(userCode, sysCode, tenantCode);
-            answer.setMarkStatus(AnswerConstant.TO_BE_MARKED);
-            answer.setAnswerType(AnswerConstant.WRONG);
-            answer.setEndTime(answer.getModifyDate());
-            this.insert(answer);
-        }
-
-        // 查询下一题
-        return this.subjectAnswer(answerDto.getSubjectId(), answer.getExamRecordId(),
-                userCode, sysCode, tenantCode, type, nextSubjectId, nextSubjectType);
+		String userCode = SysUtil.getUser();
+		String sysCode = SysUtil.getSysCode();
+		String tenantCode = SysUtil.getTenantCode();
+		if (this.save(answerDto, userCode, sysCode, tenantCode) > 0) {
+			// 查询下一题
+			return this.subjectAnswer(answerDto.getSubjectId(), answerDto.getExamRecordId(),
+					type, nextSubjectId, nextSubjectType);
+		}
+        return null;
     }
+
+	/**
+	 * 保存答题
+	 *
+	 * @param answerDto       answerDto
+	 * @param userCode       userCode
+	 * @param sysCode       sysCode
+	 * @param tenantCode       tenantCode
+	 * @return int
+	 * @author tangyi
+	 * @date 2019/05/01 11:42
+	 */
+	@Transactional
+	public int save(AnswerDto answerDto, String userCode, String sysCode, String tenantCode) {
+		Answer answer = new Answer();
+		BeanUtils.copyProperties(answerDto, answer);
+		Answer tempAnswer = this.getAnswer(answer);
+		if (tempAnswer != null) {
+			tempAnswer.setCommonValue(userCode, sysCode, tenantCode);
+			tempAnswer.setAnswer(answer.getAnswer());
+			tempAnswer.setType(answer.getType());
+			tempAnswer.setEndTime(tempAnswer.getModifyDate());
+			return this.update(tempAnswer);
+		} else {
+			answer.setCommonValue(userCode, sysCode, tenantCode);
+			answer.setMarkStatus(AnswerConstant.TO_BE_MARKED);
+			answer.setAnswerType(AnswerConstant.WRONG);
+			answer.setEndTime(answer.getModifyDate());
+			return this.insert(answer);
+		}
+	}
 
     /**
      * 提交答卷，自动统计选择题得分
@@ -222,16 +284,16 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
 		AnswerHandleResult choiceResult = choicesHandler.handle(distinctAnswer.get(SubjectTypeEnum.CHOICES.name()));
 		AnswerHandleResult multipleResult = multipleChoicesHandler.handle(distinctAnswer.get(SubjectTypeEnum.MULTIPLE_CHOICES.name()));
 		AnswerHandleResult judgementResult = judgementHandler.handle(distinctAnswer.get(SubjectTypeEnum.JUDGEMENT.name()));
-		AnswerHandleResult result = AnswerHandlerUtil.addAll(Arrays.asList(choiceResult, multipleResult, judgementResult));
+        AnswerHandleResult shortAnswerResult = shortAnswerHandler.handle(distinctAnswer.get(SubjectTypeEnum.SHORT_ANSWER.name()));
+		AnswerHandleResult result = AnswerHandlerUtil.addAll(Arrays.asList(choiceResult, multipleResult, judgementResult, shortAnswerResult));
 		// 记录总分、正确题目数、错误题目数
 		record.setScore(result.getScore());
 		record.setCorrectNumber(result.getCorrectNum());
 		record.setInCorrectNumber(result.getInCorrectNum());
 		// 更新答题状态
-		distinctAnswer.values().forEach(answers -> update(answer));
-        // 如果全部为选择题，则更新状态为统计完成，否则需要阅卷完成后才更改统计状态
-        if (!distinctAnswer.containsKey(SubjectTypeEnum.SHORT_ANSWER.name()))
-            record.setSubmitStatus(SubmitStatusEnum.CALCULATED.getValue());
+		distinctAnswer.values().forEach(answers -> answers.forEach(this::update));
+        // 更新状态为统计完成，否则需要阅卷完成后才更改统计状态
+        record.setSubmitStatus(SubmitStatusEnum.CALCULATED.getValue());
         // 保存成绩
         record.setCommonValue(currentUsername, SysUtil.getSysCode());
         record.setId(answer.getExamRecordId());
@@ -341,10 +403,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
      *
      * @param subjectId       subjectId
      * @param examRecordId    examRecordId
-     * @param userCode        userCode
-     * @param sysCode         sysCode
-     * @param tenantCode      tenantCode
-     * @param nextType        0：下一题，1：上一题
+     * @param nextType        -1：当前题目，0：下一题，1：上一题
      * @param nextSubjectId   nextSubjectId
      * @param nextSubjectType 下一题的类型，选择题、判断题
      * @return SubjectDto
@@ -352,8 +411,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
      * @date 2019/04/30 17:10
      */
     @Transactional
-    public SubjectDto subjectAnswer(Long subjectId, Long examRecordId, String userCode, String sysCode,
-                                    String tenantCode, Integer nextType, Long nextSubjectId, Integer nextSubjectType) {
+    public SubjectDto subjectAnswer(Long subjectId, Long examRecordId, Integer nextType, Long nextSubjectId, Integer nextSubjectType) {
 		// 查找考试记录
     	ExaminationRecord examRecord = examRecordService.get(examRecordId);
         if (examRecord == null)
@@ -472,8 +530,35 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
         answer.setSubjectId(subjectDto.getId());
         answer.setExamRecordId(recordId);
         Answer userAnswer = this.getAnswer(answer);
+        if (userAnswer == null)
+            userAnswer = answer;
         BeanUtils.copyProperties(userAnswer, answerDto);
         answerDto.setDuration(ExamRecordUtil.getExamDuration(userAnswer.getStartTime(), userAnswer.getEndTime()));
+        // 判断正误
+        SubjectTypeEnum subjectType = SubjectTypeEnum.matchByValue(subjectDto.getType());
+        if (subjectType != null) {
+            switch (subjectType) {
+                case CHOICES:
+                    choicesHandler.judgeOptionRight(userAnswer, subjectDto);
+                    break;
+                case MULTIPLE_CHOICES:
+                    multipleChoicesHandler.judgeOptionRight(userAnswer, subjectDto);
+                    break;
+                case SHORT_ANSWER:
+                    shortAnswerHandler.judgeRight(userAnswer, subjectDto);
+                    break;
+                case JUDGEMENT:
+                    judgementHandler.judgeRight(userAnswer, subjectDto);
+                    break;
+                default:
+                    break;
+            }
+        }
+        ResponseBean<List<UserVo>> userVoResponseBean = userServiceClient.findUserById(new Long[] {record.getUserId()});
+        if (ResponseUtil.isSuccess(userVoResponseBean) && CollectionUtils.isNotEmpty(userVoResponseBean.getData())) {
+            UserVo userVo = userVoResponseBean.getData().get(0);
+            answerDto.setUserName(userVo.getName());
+        }
         return answerDto;
     }
 
@@ -550,5 +635,70 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
 			}
 		}
 		return rankInfos;
+	}
+
+    /**
+     * 获取错题列表
+     *
+     * @param pageNum  pageNum
+     * @param pageSize pageSize
+     * @param sort     sort
+     * @param order    order
+     * @param recordId recordId
+     * @param answer   answer
+     * @return List
+     * @author tangyi
+     * @date 2020/02/19 22:50
+     */
+	public PageInfo<AnswerDto> answerListInfo(String pageNum, String pageSize, String sort, String order, Long recordId, Answer answer) {
+        List<AnswerDto> answerDtos = new ArrayList<>();
+        answer.setExamRecordId(recordId);
+        PageInfo<Answer> answerPageInfo = this.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), answer);
+        if (CollectionUtils.isNotEmpty(answerPageInfo.getList())) {
+            answerDtos = answerPageInfo.getList().stream().map(tempAnswer -> {
+                AnswerDto answerDto = new AnswerDto();
+                BeanUtils.copyProperties(tempAnswer, answerDto);
+                SubjectDto subjectDto = subjectService.get(tempAnswer.getSubjectId(), tempAnswer.getType());
+                answerDto.setSubject(subjectDto);
+                // 判断正误
+                SubjectTypeEnum subjectType = SubjectTypeEnum.matchByValue(subjectDto.getType());
+                if (subjectType != null) {
+                    switch (subjectType) {
+                        case CHOICES:
+                            choicesHandler.judgeOptionRight(tempAnswer, subjectDto);
+                            break;
+                        case MULTIPLE_CHOICES:
+                            multipleChoicesHandler.judgeOptionRight(tempAnswer, subjectDto);
+                            break;
+                        case SHORT_ANSWER:
+                            shortAnswerHandler.judgeRight(tempAnswer, subjectDto);
+                            break;
+                        case JUDGEMENT:
+                            judgementHandler.judgeRight(tempAnswer, subjectDto);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                return answerDto;
+            }).collect(Collectors.toList());
+        }
+        PageInfo<AnswerDto> answerDtoPageInfo = new PageInfo<>();
+        answerDtoPageInfo.setList(answerDtos);
+        answerDtoPageInfo.setTotal(answerPageInfo.getTotal());
+        answerDtoPageInfo.setPageNum(answerPageInfo.getPageNum());
+        answerDtoPageInfo.setPageSize(answerPageInfo.getPageSize());
+        return answerDtoPageInfo;
+    }
+
+	/**
+	 * 根据examRecordId查询
+	 * @param examRecordId examRecordId
+	 * @return List
+	 * @author tangyi
+	 * @date 2020/2/21 1:08 下午
+	 */
+	public List<Answer> findListByExamRecordId(Long examRecordId) {
+		return this.dao.findListByExamRecordId(examRecordId);
 	}
 }

@@ -3,18 +3,38 @@
     <el-tabs v-model="activeName" @tab-click="handleTabChange">
       <!-- 单选题 -->
       <el-tab-pane label="单选题" name="0" :disabled="tempSubject.type !== 0 && dialogStatus !== dialogStatusType.create">
-        <choices ref="choices" subjectInfo="tempSubject"></choices>
+        <transition name="el-fade-in">
+          <choices ref="choices" subjectInfo="tempSubject"/>
+        </transition>
       </el-tab-pane>
       <!-- 多选题 -->
       <el-tab-pane label="多选题" name="3" :disabled="tempSubject.type !== 3 && dialogStatus !== dialogStatusType.create">
-        <multiple-choices ref="multipleChoices" subjectInfo="tempSubject"></multiple-choices>
+        <transition name="el-fade-in">
+          <multiple-choices ref="multipleChoices" subjectInfo="tempSubject"/>
+        </transition>
+      </el-tab-pane>
+      <!-- 判断题 -->
+      <el-tab-pane label="判断题" name="2" :disabled="tempSubject.type !== 2 && dialogStatus !== dialogStatusType.create">
+        <transition name="el-fade-in">
+          <judgement ref="judgement" subjectInfo="tempSubject"/>
+        </transition>
       </el-tab-pane>
       <!-- 简答题 -->
       <el-tab-pane label="简答题" name="1" :disabled="tempSubject.type !== 1 && dialogStatus !== dialogStatusType.create">
-        <short-answer ref="shortAnswer" subjectInfo="tempSubject"></short-answer>
+        <transition name="el-fade-in">
+          <short-answer ref="shortAnswer" subjectInfo="tempSubject"/>
+        </transition>
+      </el-tab-pane>
+
+      <!-- 从题库新增 -->
+      <el-tab-pane name="4" v-if="subjectsType === '0'" :disabled="dialogStatus !== dialogStatusType.create">
+        <span slot="label"><i class="el-icon-document"/> 从题库新增</span>
+        <transition name="el-fade-in">
+          <category-subjects ref="addFromSubjects" @selected="handleSelectSubject"/>
+        </transition>
       </el-tab-pane>
     </el-tabs>
-    <div slot="footer" class="dialog-footer collapse-top">
+    <div slot="footer" class="dialog-footer collapse-top" v-show="activeName !== '4'">
       <el-button @click="dialogSubjectFormVisible = false">{{ $t('table.cancel') }}</el-button>
       <el-button v-if="dialogStatus === dialogStatusType.create" type="primary" @click="createSubjectData">{{ $t('table.save') }}</el-button>
       <el-button v-else type="primary" @click="updateSubjectData">{{ $t('table.save') }}</el-button>
@@ -26,7 +46,7 @@
 <script>
 import waves from '@/directive/waves'
 import { mapGetters } from 'vuex'
-import { getSubject, addSubject, putSubject, delSubject, exportSubject } from '@/api/exam/subject'
+import { getSubject, addSubject, putSubject } from '@/api/exam/subject'
 import { notifySuccess, isNotEmpty, isCreate } from '@/utils/util'
 import { dialogStatusConstant } from '@/utils/constant'
 import SpinnerLoading from '@/components/SpinnerLoading'
@@ -34,10 +54,12 @@ import Tinymce from '@/components/Tinymce'
 import Choices from '@/components/Subjects/Choices'
 import MultipleChoices from '@/components/Subjects/MultipleChoices'
 import ShortAnswer from '@/components/Subjects/ShortAnswer'
+import Judgement from '@/components/Subjects/Judgement'
+import CategorySubjects from '@/components/Subjects/CategorySubjects'
 
 export default {
-  name: 'CourseManagement',
-  components: { Tinymce, SpinnerLoading, Choices, MultipleChoices, ShortAnswer },
+  name: 'SubjectDetails',
+  components: { Tinymce, SpinnerLoading, Choices, MultipleChoices, ShortAnswer, Judgement, CategorySubjects },
   directives: {
     waves
   },
@@ -47,12 +69,13 @@ export default {
       activeName: '0',
       dialogStatus: '',
       dialogStatusType: { ...dialogStatusConstant },
-      examinationId: '',
+      examinationId: undefined,
+      categoryId: undefined,
       // 题目临时信息
       tempSubject: {
         id: '',
-        examinationId: '',
-        categoryId: 0,
+        examinationId: undefined,
+        categoryId: undefined,
         subjectName: '',
         type: 0,
         choicesType: 0,
@@ -72,10 +95,23 @@ export default {
         analysis: '',
         level: 2
       },
+      // 0：试卷的题目，1：题库的题目
+      subjectsType: '0'
     }
   },
   created () {
-    this.getSubject()
+    let subjectInfo = this.$route.params.id
+    if (isNotEmpty(subjectInfo)) {
+      let subjectInfoArr = subjectInfo.split('-')
+      // 0：试卷的题目，1：题库的题目
+      this.subjectsType = subjectInfoArr[3]
+      if (subjectInfoArr[3] === '0') {
+        this.examinationId = subjectInfoArr[0]
+      } else {
+        this.categoryId = subjectInfoArr[0]
+      }
+      this.getSubject(subjectInfoArr[1], subjectInfoArr[2])
+    }
   },
   computed: {
     ...mapGetters([
@@ -84,12 +120,10 @@ export default {
     ])
   },
   methods: {
-    getSubject() {
-      let subjectId = this.$route.params.id
-      this.examinationId = this.$route.params.examinationId
-      if (isNotEmpty(subjectId)) {
+    getSubject (id, type) {
+      if (isNotEmpty(id)) {
         // 加载选项信息
-        getSubject(subjectId, { type: this.$route.params.type }).then(response => {
+        getSubject(id, { type: type }).then(response => {
           const subjectInfo = response.data.data
           this.tempSubject = subjectInfo
           this.dialogStatus = dialogStatusConstant.update
@@ -133,6 +167,7 @@ export default {
       if (ref.validate()) {
         const subjectInfo = ref.getSubjectInfo()
         subjectInfo.examinationId = this.examinationId
+        subjectInfo.categoryId = this.categoryId
         putSubject(subjectInfo).then(() => {
           this.dialogSubjectFormVisible = false
           notifySuccess(this, '更新成功')
@@ -146,13 +181,13 @@ export default {
         const subjectInfo = ref.getSubjectInfo()
         // 绑定考试ID
         subjectInfo.examinationId = this.examinationId
+        subjectInfo.categoryId = this.categoryId
         // 创建
         if (isCreate(this.dialogStatus)) {
           addSubject(subjectInfo).then(() => {
             this.resetTempSubject(subjectInfo.score)
             this.dialogStatus = dialogStatusConstant.create
             ref.clearValidate()
-            this.getSubject()
             notifySuccess(this, '创建成功')
           })
         } else {
@@ -186,6 +221,9 @@ export default {
         case '1':
           ref = this.$refs['shortAnswer']
           break
+        case '2':
+          ref = this.$refs['judgement']
+          break
         case '3':
           ref = this.$refs['multipleChoices']
           break
@@ -199,25 +237,87 @@ export default {
         let subjectInfo = ref.getSubjectInfo()
         // 绑定考试ID
         subjectInfo.examinationId = this.examinationId
-        addSubject(subjectInfo).then(() => {
+        subjectInfo.categoryId = this.categoryId
+        addSubject(subjectInfo).then((response) => {
           this.dialogSubjectFormVisible = false
-          this.getSubject()
+          // 获取题目
+          const { id, type } = response.data.data
+          this.updateRouteSubjectId(id, type)
           notifySuccess(this, '创建成功')
         })
       }
     },
     // 切换题目类型
     changeSubjectType (value) {
-      console.log(value)
     },
     resetActiveName () {
       // 重置选项卡至单选题
       this.activeName = '0'
     },
     resetTempSubject (score) {
-      const ref = this.getSubjectRef()
-      if (isNotEmpty(ref)) {
-        ref.resetTempSubject(score)
+      this.tempSubject = {
+        id: '',
+        examinationId: undefined,
+        categoryId: undefined,
+        subjectName: '',
+        type: 0,
+        choicesType: 0,
+        options: [
+          { subjectChoicesId: '', optionName: 'A', optionContent: '' },
+          { subjectChoicesId: '', optionName: 'B', optionContent: '' },
+          { subjectChoicesId: '', optionName: 'C', optionContent: '' },
+          { subjectChoicesId: '', optionName: 'D', optionContent: '' }
+        ],
+        answer: {
+          subjectId: '',
+          answer: '',
+          answerType: '',
+          score: ''
+        },
+        score: score,
+        analysis: '',
+        level: 2
+      }
+      this.$refs['choices'].resetTempSubject(score)
+      this.$refs['shortAnswer'].resetTempSubject(score)
+      this.$refs['multipleChoices'].resetTempSubject(score)
+      this.$refs['judgement'].resetTempSubject(score)
+    },
+    updateRouteSubjectId (subjectId, type) {
+      let subjectInfoArr = this.$route.params.id.split('-')
+      // 当subjectId为undefined时才刷新页面
+      if (subjectInfoArr[1] !== subjectId) {
+        this.$router.push({
+          path: `/exam/subjects/detail/${subjectInfoArr[0]}-${subjectId}-${type}-${subjectInfoArr[3]}`
+        })
+      }
+    },
+    // 选择题目回调
+    handleSelectSubject (selected) {
+      if (isNotEmpty(selected)) {
+        this.resetSubject(selected)
+        this.tempSubject = selected
+        this.categoryId = selected.categoryId
+        // 切换到对应的题型选项卡
+        this.updateCurrentTag(selected.type)
+        setTimeout(() => {
+          const ref = this.getSubjectRef()
+          if (isNotEmpty(ref)) {
+            this.$nextTick(() => {
+              ref.clearValidate()
+              ref.setSubjectInfo(selected)
+            })
+          }
+        }, 200)
+      }
+    },
+    resetSubject (subjected) {
+      subjected.id = undefined
+      subjected.examinationId = undefined
+      if (isNotEmpty(subjected.options)) {
+        subjected.options.forEach(option => {
+          option.id = ''
+        })
       }
     }
   }
@@ -225,7 +325,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .collapse-top {
+  .dialog-footer {
     margin-top: 20px;
   }
 </style>

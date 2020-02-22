@@ -12,7 +12,7 @@
           style="width: 100%;">
           <el-table-column label="考试名称" align="center">
             <template slot-scope="scope">
-              <span :title="scope.row.examinationName">{{ scope.row.examinationName | examinationNameFilter }}</span>
+              <span :title="scope.row.examinationName">{{ scope.row.examinationName }}</span>
             </template>
           </el-table-column>
           <el-table-column label="考试类型" min-width="90" align="center">
@@ -109,7 +109,7 @@ export default {
     timeFilter (time) {
       return formatDate(new Date(time), 'yyyy-MM-dd hh:mm')
     },
-    examinationNameFilter(name) {
+    examinationNameFilter (name) {
       return cropStr(name, 8)
     }
   },

@@ -1,10 +1,13 @@
 package com.github.tangyi.exam.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 考试记录DTO
@@ -13,6 +16,8 @@ import java.util.Date;
  * @date 2018-12-26 16:26
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExaminationRecordDto extends BaseEntity<ExaminationRecordDto> {
 
     /**
@@ -136,4 +141,10 @@ public class ExaminationRecordDto extends BaseEntity<ExaminationRecordDto> {
     private Integer submitStatus;
 
     private String submitStatusName;
+
+	/**
+	 * 答题列表
+	 */
+	private List<AnswerDto> answers;
+
 }

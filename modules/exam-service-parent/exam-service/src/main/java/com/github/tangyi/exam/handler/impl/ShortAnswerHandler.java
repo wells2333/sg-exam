@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.handler.impl;
 
+import com.github.tangyi.exam.api.constants.AnswerConstant;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.Answer;
 import com.github.tangyi.exam.enums.SubjectTypeEnum;
@@ -26,12 +27,21 @@ public class ShortAnswerHandler extends AbstractAnswerHandler {
 	}
 
 	@Override
-	public List<SubjectDto> getSubjects(List<Answer> answers) {
-		return null;
+	public boolean judgeRight(Answer answer, SubjectDto subject) {
+		// TODO 暂时全匹配
+		return subject.getAnswer().getAnswer().equals(answer.getAnswer());
 	}
 
 	@Override
 	public void judge(Answer answer, SubjectDto subject, List<Double> rightScore) {
-		// TODO
+		if (judgeRight(answer, subject)) {
+			rightScore.add(subject.getScore());
+			answer.setAnswerType(AnswerConstant.RIGHT);
+			answer.setScore(subject.getScore());
+		} else {
+			answer.setAnswerType(AnswerConstant.WRONG);
+			answer.setScore(0.0);
+		}
+		answer.setMarkStatus(AnswerConstant.MARKED);
 	}
 }

@@ -4,6 +4,8 @@ import com.github.tangyi.common.core.persistence.CrudMapper;
 import com.github.tangyi.exam.api.module.Answer;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * 答题Mapper
  *
@@ -22,4 +24,13 @@ public interface AnswerMapper extends CrudMapper<Answer> {
      * @date 2019/01/21 19:38
      */
     Answer getAnswer(Answer answer);
+
+    /**
+     * 根据examRecordId查询
+     * @param examRecordId examRecordId
+     * @return List
+     * @author tangyi
+     * @date 2020/2/21 1:08 下午
+     */
+    List<Answer> findListByExamRecordId(Long examRecordId);
 }

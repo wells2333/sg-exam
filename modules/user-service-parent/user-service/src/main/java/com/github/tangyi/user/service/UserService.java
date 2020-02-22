@@ -36,10 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -506,12 +503,12 @@ public class UserService extends CrudService<UserMapper, User> {
     private void initUserAvatar(UserInfoDto userInfoDto, User user) {
         try {
             // 附件id不为空，获取对应的预览地址，否则获取配置默认头像地址
-            if (user.getAvatarId() != null) {
+            if (user.getAvatarId() != 0L) {
                 Attachment attachment = new Attachment();
                 attachment.setId(user.getAvatarId());
                 userInfoDto.setAvatarUrl(attachmentService.getPreviewUrl(attachment));
             } else {
-                userInfoDto.setAvatarUrl(sysProperties.getDefaultAvatar());
+                userInfoDto.setAvatarUrl(sysProperties.getDefaultAvatar() + (new Random().nextInt(4) + 1) + ".jpg");
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);

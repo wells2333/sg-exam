@@ -3,9 +3,9 @@
     <div class="filter-container">
       <el-input :placeholder="$t('table.route.routeId')" v-model="listQuery.routeId" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.search') }}</el-button>
-      <el-button v-if="route_btn_add" class="filter-item" style="margin-left: 10px;" icon="el-icon-check" plain @click="handleCreate">{{ $t('table.add') }}</el-button>
-      <el-button v-if="route_btn_del" class="filter-item" icon="el-icon-delete" plain @click="handleDeletes">{{ $t('table.del') }}</el-button>
-      <el-button v-if="route_btn_refresh" class="filter-item" icon="el-icon-refresh" plain @click="handleRefreshRoute">{{ $t('table.route.refresh') }}</el-button>
+      <el-button v-if="route_btn_add" class="filter-item" type="primary" style="margin-left: 10px;" icon="el-icon-check" @click="handleCreate">{{ $t('table.add') }}</el-button>
+      <el-button v-if="route_btn_del" class="filter-item" type="danger" icon="el-icon-delete" @click="handleDeletes">{{ $t('table.del') }}</el-button>
+      <el-button v-if="route_btn_refresh" class="filter-item" type="success" icon="el-icon-refresh" @click="handleRefreshRoute">{{ $t('table.route.refresh') }}</el-button>
     </div>
     <spinner-loading v-if="listLoading"/>
     <el-table
@@ -40,13 +40,13 @@
       </el-table-column>
       <el-table-column :label="$t('table.route.status')">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusTypeFilter">{{ scope.row.status | statusFilter }}</el-tag>
+          <el-tag :type="scope.row.status | statusTypeFilter" effect="dark" size="small">{{ scope.row.status | statusFilter }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.actions')" class-name="status-col" width="300px">
         <template slot-scope="scope">
-          <el-button v-if="route_btn_edit" type="text" @click="handleUpdate(scope.row)" icon="el-icon-edit">{{ $t('table.edit') }}</el-button>
-          <el-button v-if="route_btn_del" type="text" @click="handleDelete(scope.row)" icon="el-icon-delete">{{ $t('table.delete') }}</el-button>
+          <el-button v-if="route_btn_edit" type="primary" size="mini" @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
+          <el-button v-if="route_btn_del" type="danger" size="mini" @click="handleDelete(scope.row)">{{ $t('table.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -55,33 +55,38 @@
       <el-pagination v-show="total>0" :current-page="listQuery.pageNum" :page-sizes="[10,20,30, 50]" :page-size="listQuery.pageSize" :total="total" background layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange"/>
     </div>
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="60%" top="10vh">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="60%" top="2vh">
       <el-form ref="dataForm" :rules="rules" :model="temp" :label-position="labelPosition" label-width="100px">
         <el-row>
           <el-col :span="12">
             <el-form-item :label="$t('table.route.routeId')" prop="routeId">
-              <el-input v-model="temp.routeId"/>
+              <el-input v-model="temp.routeId" placeholder="路由ID"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item :label="$t('table.route.routeName')" prop="routeName">
-              <el-input v-model="temp.routeName"/>
+              <el-input v-model="temp.routeName" placeholder="路由名称"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item :label="$t('table.route.uri')">
-              <el-input v-model="temp.uri"/>
+              <el-input v-model="temp.uri" placeholder="路由URI"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item :label="$t('table.route.sort')">
-              <el-input v-model="temp.sort"/>
+              <el-input v-model="temp.sort" placeholder="路由排序号"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
+          <el-col :span="12">
+            <el-form-item :label="$t('table.route.predicates')">
+              <el-input v-model="temp.tempPredicatesPath" placeholder="多个用逗号隔开"/>
+            </el-form-item>
+          </el-col>
           <el-col :span="12">
             <el-form-item :label="$t('table.route.status')">
               <el-radio-group v-model="temp.status">
@@ -93,15 +98,19 @@
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item :label="$t('table.route.predicates')" prop="predicates">
-              <json-editor ref="predicatesJsonEditor" v-model="temp.tempPredicates"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item :label="$t('table.route.filters')" prop="filters">
-              <json-editor ref="filtersJsonEditor" v-model="temp.tempFilters"/>
+            <el-form-item :label="$t('table.route.filters')">
+              <el-row class="filter-body" :gutter="10" v-for="filter in tempFilters" :key="filter.name">
+                <el-col :span="6" class="filter-body-col">
+                  <el-input placeholder="名称" v-model="filter.name"/>
+                </el-col>
+                <el-col :span="16">
+                  <el-input placeholder="参数（key=value，多个用逗号隔开）" v-model="filter.args"/>
+                </el-col>
+              </el-row>
+              <div class="filter-footer">
+                <el-button type="success" size="mini" @click.prevent="addFilter()" style="display: inline-block;margin: 8px;">新增</el-button>
+                <el-button type="danger" size="mini" @click.prevent="delFilter()" style="display: inline-block;margin: 8px;">删除</el-button>
+              </div>
             </el-form-item>
           </el-col>
         </el-row>
@@ -119,15 +128,13 @@
 import { fetchList, addObj, putObj, delObj, delAllObj, refresh } from '@/api/admin/route'
 import waves from '@/directive/waves'
 import { mapGetters } from 'vuex'
-import { checkMultipleSelect, notifySuccess, notifyFail, messageSuccess } from '@/utils/util'
-import JsonEditor from '@/components/JsonEditor'
+import { checkMultipleSelect, notifySuccess, notifyFail, messageSuccess, messageWarn, trimComma } from '@/utils/util'
 import SpinnerLoading from '@/components/SpinnerLoading'
 
 export default {
   name: 'ClientManagement',
   components: {
-    SpinnerLoading,
-    JsonEditor
+    SpinnerLoading
   },
   directives: {
     waves
@@ -161,14 +168,22 @@ export default {
         id: '',
         routeId: '',
         routeName: '',
-        predicates: '',
+        predicates: [],
         filters: '',
-        tempPredicates: {},
-        tempFilters: {},
+        tempPredicates: [],
+        tempPredicatesPath: '',
+        tempFilters: [],
         uri: '',
         sort: '',
         status: 0
       },
+      tempPredicates: {
+        name: 'Path',
+        args: {
+          _genkey_0: ''
+        }
+      },
+      tempFilters: [],
       checkedKeys: [],
       multipleSelection: [],
       dialogFormVisible: false,
@@ -190,6 +205,8 @@ export default {
     }
   },
   created () {
+    // 初始化默认的Filter
+    this.initFilters()
     this.getList()
     this.route_btn_add = this.permissions['sys:route:add']
     this.route_btn_edit = this.permissions['sys:route:edit']
@@ -248,10 +265,11 @@ export default {
         id: '',
         routeId: '',
         routeName: '',
-        predicates: '',
-        filters: '',
-        tempPredicates: {},
-        tempFilters: {},
+        predicates: [],
+        filters: [],
+        tempPredicates: [],
+        tempPredicatesPath: '',
+        tempFilters: [],
         uri: '',
         sort: '',
         status: 0
@@ -268,8 +286,9 @@ export default {
     createData () {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.predicates = this.$refs.predicatesJsonEditor.getValue()
-          this.temp.filters = this.$refs.filtersJsonEditor.getValue()
+          const paths = this.temp.tempPredicatesPath.split(',')
+          this.temp.predicates = this.getPredicates(paths)
+          this.temp.filters = this.getFilters(this.tempFilters)
           addObj(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
@@ -282,8 +301,13 @@ export default {
     handleUpdate (row) {
       this.temp = Object.assign({}, row) // copy obj
       this.dialogStatus = 'update'
-      this.temp.tempPredicates = JSON.parse(this.temp.predicates)
-      this.temp.tempFilters = JSON.parse(this.temp.filters)
+      let tempPredicatesPath = ''
+      JSON.parse(this.temp.predicates).forEach(predicate => {
+        tempPredicatesPath += predicate.args._genkey_0 + ','
+      })
+      this.temp.tempPredicatesPath = trimComma(tempPredicatesPath)
+      // 处理filters
+      this.tempFilters = this.parseFilter(JSON.parse(this.temp.filters))
       this.temp.status = parseInt(this.temp.status)
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -294,8 +318,9 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          tempData.predicates = this.$refs.predicatesJsonEditor.getValue()
-          tempData.filters = this.$refs.filtersJsonEditor.getValue()
+          const paths = tempData.tempPredicatesPath.split(',')
+          tempData.predicates = this.getPredicates(paths)
+          tempData.filters = this.getFilters(this.tempFilters)
           putObj(tempData).then(() => {
             this.dialogFormVisible = false
             this.getList()
@@ -316,8 +341,6 @@ export default {
           this.getList()
           notifySuccess(this, '删除成功')
         })
-        const index = this.list.indexOf(row)
-        this.list.splice(index, 1)
       }).catch(() => {})
     },
     // 批量删除
@@ -352,7 +375,77 @@ export default {
           notifyFail(this, '刷新失败')
         })
       }).catch(() => {})
+    },
+    addFilter () {
+      if (this.tempFilters.length === 0) {
+        this.tempFilters.push({ name: '', args: '' })
+      } else if (this.tempFilters[this.tempFilters.length - 1].name !== '') {
+        this.tempFilters.push({ name: '', args: '' })
+      } else {
+        messageWarn(this, '请输入后再添加')
+      }
+    },
+    delFilter () {
+      if (this.tempFilters.length > 0) {
+        this.tempFilters.pop()
+      } else {
+        messageWarn(this, '暂无更多数据')
+      }
+    },
+    initFilters () {
+      // 默认filter
+      this.tempFilters.push({ name: 'StripPrefix', args: '_genkey_0=2' })
+      this.tempFilters.push({ name: 'RemoveRequestHeader', args: '_genkey_0=Cookie,_genkey_1=Set-Cookie' })
+    },
+    getPredicates (paths) {
+      const predicates = paths.map(path => {
+        const predicate = Object.assign(this.tempPredicates)
+        predicate.args._genkey_0 = path
+        return predicate
+      })
+      return JSON.stringify(predicates)
+    },
+    parseFilter (filters) {
+      let result = []
+      if (filters.length > 0) {
+        result = filters.map(filter => {
+          let args = ''
+          for (let key in filter.args) {
+            args = args + key + '=' + filter.args[key] + ','
+          }
+          return { name: filter.name, args: trimComma(args) }
+        })
+      }
+      return result
+    },
+    getFilters (filters) {
+      let result = filters.map(filter => {
+        debugger
+        const tempFilter = Object.assign(filter)
+        let tempArgs = Object.assign(tempFilter.args)
+        const args = tempArgs.split(',')
+        tempArgs = {}
+        args.forEach(arg => {
+          const argArr = arg.split('=')
+          this.$set(tempArgs, argArr[0], argArr[1])
+        })
+        tempFilter.args = tempArgs
+        return tempFilter
+      })
+      return JSON.stringify(result)
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  .filter-body {
+    padding: 5px;
+  }
+  .filter-footer {
+    text-align: center;
+    .filter-body-col {
+      margin-left: -5px;
+    }
+  }
+</style>
