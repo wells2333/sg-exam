@@ -97,9 +97,9 @@
 - 个人资料：姓名、头像等基本信息的修改
 - 修改密码：修改密码
 
-## 系统截图（点击查看大图）
+## 系统截图
 
-### 前台功能
+### 前台功能（点击查看大图）
 
 <table>
 	<tr>
@@ -116,7 +116,7 @@
     </tr>
 </table>
 
-### 后台功能
+### 后台功能（点击查看大图）
 
 <table>
 	<tr>
@@ -128,7 +128,7 @@
         <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_menu_manage.png" alt="菜单管理"/></td>
     </tr>
     <tr>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_menu_role_manage.png" alt="角色管理"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_role_manage.png" alt="角色管理"/></td>
         <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_route_manage.png" alt="路由管理"/></td>
     </tr>
     <tr>
