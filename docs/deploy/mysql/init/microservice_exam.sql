@@ -85,10 +85,13 @@ CREATE TABLE `exam_examination`  (
 -- ----------------------------
 -- Records of exam_examination
 -- ----------------------------
-INSERT INTO `exam_examination` VALUES (590969316204220416, '全国计算机统考练习题10道', 2, '练习', '2019-06-19 18:20:00', '2019-06-19 20:20:00', 50, 0, NULL, 590968789617741824, '全国计算机统考练习题10道', 'admin', '2019-06-19 18:21:04', 'admin', '2019-06-19 18:45:33', 0, 'EXAM', 'gitee');
-INSERT INTO `exam_examination` VALUES (590969514372501504, '四川省2016年普通高考文科综合能力测试-语文部分', 0, '注意事项:\n1.本试卷分第工卷(选择题)和第II卷(非选择题)两部分。答卷前，考生务必将白己的姓名、准考证号填写在答题卡上。\n2.回答第Ⅰ卷时，选出每小题答案后，用铅笔把答题卡上对应题目的答案标号涂黑。如需改动，用橡皮擦干净后，再选涂其它答案标号。写在本试卷上无效。\n3.回答第Ⅱ卷时，将答案写在答题卡上。写在本试卷上无效。\n4.考试结束后，将本试卷和答题卡一并交回。', '2019-07-02 19:21:00', '2019-07-04 16:02:00', 60, 0, NULL, 590968881187786752, '四川省2016年普通高考-文科综合能力测试', 'admin', '2019-06-19 18:21:51', 'admin', '2019-09-21 19:58:55', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination` VALUES (590969316204220416, '全国计算机统考练习题10道', 2, '练习', '2019-12-13 22:29:24', '2019-12-16 22:29:30', 50, 0, NULL, 590968789617741824, '全国计算机统考练习题10道', 'admin', '2019-06-19 18:21:04', 'admin', '2019-12-14 22:20:45', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination` VALUES (590969514372501504, '四川省2016年普通高考文科综合能力测试-语文部分', 0, '注意事项:\n1.本试卷分第工卷(选择题)和第II卷(非选择题)两部分。答卷前，考生务必将白己的姓名、准考证号填写在答题卡上。\n2.回答第Ⅰ卷时，选出每小题答案后，用铅笔把答题卡上对应题目的答案标号涂黑。如需改动，用橡皮擦干净后，再选涂其它答案标号。写在本试卷上无效。\n3.回答第Ⅱ卷时，将答案写在答题卡上。写在本试卷上无效。\n4.考试结束后，将本试卷和答题卡一并交回。', '2019-12-14 22:29:43', '2019-12-17 22:29:46', 60, 0, NULL, 590968881187786752, '四川省2016年普通高考-文科综合能力测试', 'admin', '2019-06-19 18:21:51', 'admin', '2019-12-14 22:20:13', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_examination` VALUES (625826218704506880, '12', 0, '1', '2019-10-07 15:32:23', '2019-10-09 15:32:25', 1, 0, NULL, NULL, '1', 'admin', '2019-09-23 22:49:58', 'admin', '2019-10-07 15:32:30', 1, 'EXAM', 'gitee');
 INSERT INTO `exam_examination` VALUES (630880779513237504, '2', 0, '2', '2019-10-07 21:34:53', '2019-10-15 00:00:00', 2, 0, NULL, NULL, '22', 'admin', '2019-10-07 21:34:59', 'admin', '2019-10-11 22:20:47', 1, 'EXAM', 'gitee');
+INSERT INTO `exam_examination` VALUES (636313595680002048, '1', 0, '1', '2019-12-13 22:33:24', '2019-12-17 22:33:31', 1, 0, NULL, NULL, '1', 'admin', '2019-10-22 21:23:03', 'admin', '2019-12-14 22:23:58', 1, 'EXAM', 'gitee');
+INSERT INTO `exam_examination` VALUES (672753150888906752, '测试考试1', 0, '测试考试1', '2020-02-08 13:55:39', '2020-02-20 13:55:41', 20, 0, NULL, 590968881187786752, '测试考试1', 'admin', '2020-01-31 10:40:50', 'admin', '2020-02-17 19:11:55', 1, 'EXAM', 'gitee');
+INSERT INTO `exam_examination` VALUES (679446626552647680, '测试考试1', 0, '测试考试1', '2020-02-21 21:58:09', '2020-02-23 00:00:00', 50, 0, NULL, 590968881187786752, '测试考试1', 'admin', '2020-02-18 21:58:19', 'admin', '2020-02-22 13:26:17', 0, 'EXAM', 'gitee');
 
 -- ----------------------------
 -- Table structure for exam_examination_record
@@ -162,6 +165,21 @@ INSERT INTO `exam_examination_subject` VALUES (630880822823620608, 6308807795132
 INSERT INTO `exam_examination_subject` VALUES (630880853144244224, 630880779513237504, NULL, 630880852892585984, 0, 'EXAM', 'gitee');
 INSERT INTO `exam_examination_subject` VALUES (630880881971695616, 630880779513237504, NULL, 630880881720037376, 0, 'EXAM', 'gitee');
 INSERT INTO `exam_examination_subject` VALUES (635557908003819520, NULL, 635555845517742080, 635557907726995456, 1, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (660248786156785664, NULL, 0, 660248785791881216, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (660573712369717248, NULL, 0, 660573712097087488, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (668114910588309504, NULL, 0, 668114909724282880, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (672815799131574272, NULL, 602231546270846976, 672815798720532480, 3, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (672817386306539520, NULL, 602231546270846976, 672817385757085696, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (672818579904794624, NULL, 602231546270846976, 672818579560861696, 3, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (672819333487005696, NULL, 602231546270846976, 672819333117906944, 1, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (672824502287208448, NULL, 602231546270846976, 672824501133774848, 3, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (679455142529077248, 679446626552647680, NULL, 679455142176755712, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (679455223491727360, 679446626552647680, NULL, 679455223147794432, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (679455353464819712, 679446626552647680, NULL, 679455353129275392, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (679680050186031104, 679446626552647680, NULL, 679680049900818432, 3, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (679680687841873920, 679446626552647680, NULL, 679680687489552384, 0, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (680037907620302848, 679446626552647680, NULL, 680037906714333184, 1, 'EXAM', 'gitee');
+INSERT INTO `exam_examination_subject` VALUES (680772677467770880, 679446626552647680, NULL, 680772677350330368, 2, 'EXAM', 'gitee');
 
 -- ----------------------------
 -- Table structure for exam_knowledge
@@ -186,7 +204,7 @@ CREATE TABLE `exam_knowledge`  (
 -- ----------------------------
 -- Records of exam_knowledge
 -- ----------------------------
-INSERT INTO `exam_knowledge` VALUES (590978901526843392, '四川省2016年普通高考适应性测试', '四川省2016年普通高考适应性测试', 590978944174526464, 0, 'admin', '2019-10-07 15:16:52', 'admin', '2019-10-07 15:08:25', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_knowledge` VALUES (590978901526843392, '四川省2016年普通高考适应性测试', '四川省2016年普通高考适应性测试', 590978944174526464, 0, 'admin', '2020-02-22 13:26:59', 'admin', '2020-02-22 13:16:16', 0, 'EXAM', 'gitee');
 
 -- ----------------------------
 -- Table structure for exam_pictures
@@ -246,7 +264,7 @@ INSERT INTO `exam_subject_category` VALUES (635555845517742080, '测试', '测�
 DROP TABLE IF EXISTS `exam_subject_choices`;
 CREATE TABLE `exam_subject_choices`  (
   `id` bigint(20) NOT NULL COMMENT '主键',
-  `category_id` bigint(20) NOT NULL,
+  `category_id` bigint(20) NULL DEFAULT 0,
   `subject_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '题目名称',
   `choices_type` tinyint(4) NOT NULL COMMENT '题目类型',
   `answer` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '参考答案',
@@ -301,6 +319,19 @@ INSERT INTO `exam_subject_choices` VALUES (630856556883349504, 0, '3', 0, 'C', 5
 INSERT INTO `exam_subject_choices` VALUES (630880822542602240, 0, '1', 0, 'A', 5, '1', 2, 'admin', '2019-10-07 21:35:09', 'admin', '2019-10-07 21:35:09', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_choices` VALUES (630880852892585984, 0, '2', 0, 'B', 5, '2', 2, 'admin', '2019-10-07 21:35:17', 'admin', '2019-10-07 21:35:17', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_choices` VALUES (630880881720037376, 0, '3', 0, 'C', 5, '3', 2, 'admin', '2019-10-07 21:35:23', 'admin', '2019-10-07 21:35:23', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_choices` VALUES (660248785791881216, 0, '1', 0, 'A', 5, '1', 2, 'admin', '2019-12-27 22:32:57', 'admin', '2019-12-27 22:32:57', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_choices` VALUES (660573712097087488, 0, '2', 0, '', 5, '', 2, 'admin', '2019-12-28 20:04:06', 'admin', '2019-12-28 20:04:06', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_choices` VALUES (660944353132417024, 0, '大苏打实打实的', 0, 'A', 5, '<p>2323为</p>', 2, 'admin', '2019-12-29 20:36:54', 'admin', '2019-12-29 20:36:54', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_choices` VALUES (668114909724282880, 0, '1', 0, 'A', 5, '555', 2, 'admin', '2020-01-18 15:30:07', 'admin', '2020-01-18 15:30:07', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_choices` VALUES (672815798720532480, 602231546270846976, '1', 3, ',B', 5, '1', 2, 'admin', '2020-01-31 15:03:38', 'admin', '2020-01-31 15:03:38', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_choices` VALUES (672817385757085696, 602231546270846976, '2', 0, 'B', 5, '2', 2, 'admin', '2020-01-31 14:56:05', 'admin', '2020-01-31 14:56:05', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_choices` VALUES (672818579560861696, 602231546270846976, '3', 3, ',C', 5, '3', 2, 'admin', '2020-01-31 15:00:50', 'admin', '2020-01-31 15:00:50', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_choices` VALUES (672824501133774848, 602231546270846976, '1', 3, ',B', 5, '1', 2, 'admin', '2020-01-31 15:24:22', 'admin', '2020-01-31 15:24:22', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_choices` VALUES (679455142176755712, NULL, '选择题1', 0, 'A', 5, '选择题1', 2, 'admin', '2020-02-18 22:32:10', 'admin', '2020-02-18 22:32:10', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_choices` VALUES (679455223147794432, NULL, '选择题2', 0, 'B', 5, '选择题2', 2, 'admin', '2020-02-18 22:32:29', 'admin', '2020-02-18 22:32:29', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_choices` VALUES (679455353129275392, NULL, '选择题3', 0, 'C', 5, '选择题3', 2, 'admin', '2020-02-18 22:33:00', 'admin', '2020-02-18 22:33:00', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_choices` VALUES (679680049900818432, NULL, '多选题', 3, ',A,C', 5, '多选题', 2, 'admin', '2020-02-19 13:25:52', 'admin', '2020-02-19 13:25:52', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_choices` VALUES (679680687489552384, NULL, '测试两个选项', 0, 'A', 5, '测试两个选项', 2, 'admin', '2020-02-19 22:08:02', 'admin', '2020-02-19 22:08:02', 0, 'EXAM', 'gitee');
 
 -- ----------------------------
 -- Table structure for exam_subject_judgement
@@ -323,6 +354,11 @@ CREATE TABLE `exam_subject_judgement`  (
   `tenant_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '简答题表' ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of exam_subject_judgement
+-- ----------------------------
+INSERT INTO `exam_subject_judgement` VALUES (680772677350330368, NULL, '测试判断题', '正确', 5, '测试判断题', 2, 'admin', '2020-02-22 13:47:34', 'admin', '2020-02-22 13:47:34', 0, 'EXAM', 'gitee');
 
 -- ----------------------------
 -- Table structure for exam_subject_option
@@ -510,6 +546,94 @@ INSERT INTO `exam_subject_option` VALUES (635557908268060672, 635557907726995456
 INSERT INTO `exam_subject_option` VALUES (635557908268060673, 635557907726995456, 'B', '43', 'admin', '2019-10-20 19:20:13', 'admin', '2019-10-20 19:20:13', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_option` VALUES (635557908268060674, 635557907726995456, 'C', '4', 'admin', '2019-10-20 19:20:13', 'admin', '2019-10-20 19:20:13', 0, 'EXAM', 'gitee');
 INSERT INTO `exam_subject_option` VALUES (635557908276449280, 635557907726995456, 'D', '3434', 'admin', '2019-10-20 19:20:13', 'admin', '2019-10-20 19:20:13', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660248786647519232, 660248785791881216, 'A', '1', 'admin', '2019-12-27 22:32:58', 'admin', '2019-12-27 22:32:58', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660248786647519233, 660248785791881216, 'B', '1', 'admin', '2019-12-27 22:32:58', 'admin', '2019-12-27 22:32:58', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660248786647519234, 660248785791881216, 'C', '1', 'admin', '2019-12-27 22:32:58', 'admin', '2019-12-27 22:32:58', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660248786647519235, 660248785791881216, 'D', '1', 'admin', '2019-12-27 22:32:58', 'admin', '2019-12-27 22:32:58', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660573712646541312, 660573712097087488, 'A', '<p>2</p>', 'admin', '2019-12-28 20:04:06', 'admin', '2019-12-28 20:04:06', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660573712646541313, 660573712097087488, 'B', '<p>22</p>', 'admin', '2019-12-28 20:04:06', 'admin', '2019-12-28 20:04:06', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660573712646541314, 660573712097087488, 'C', '<p>2</p>', 'admin', '2019-12-28 20:04:06', 'admin', '2019-12-28 20:04:06', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660573712646541315, 660573712097087488, 'D', '<p>2323</p>', 'admin', '2019-12-28 20:04:06', 'admin', '2019-12-28 20:04:06', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660937117618278400, 660937116812972032, 'A', '<p>AAAAAA</p>', 'admin', '2019-12-29 20:08:08', 'admin', '2019-12-29 20:08:08', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660937117618278401, 660937116812972032, 'B', '<p>BBBBBB</p>', 'admin', '2019-12-29 20:08:08', 'admin', '2019-12-29 20:08:08', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660937117618278402, 660937116812972032, 'C', '', 'admin', '2019-12-29 20:08:08', 'admin', '2019-12-29 20:08:08', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660937117618278403, 660937116812972032, 'D', '', 'admin', '2019-12-29 20:08:08', 'admin', '2019-12-29 20:08:08', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660941851133612032, 660941850579963904, 'A', '干干干干干干', 'admin', '2019-12-29 20:26:57', 'admin', '2019-12-29 20:26:57', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660941851133612033, 660941850579963904, 'B', '干干干干干', 'admin', '2019-12-29 20:26:57', 'admin', '2019-12-29 20:26:57', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660941851133612034, 660941850579963904, 'C', '干干干干干干', 'admin', '2019-12-29 20:26:57', 'admin', '2019-12-29 20:26:57', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660941851133612035, 660941850579963904, 'D', '干干干干干干', 'admin', '2019-12-29 20:26:57', 'admin', '2019-12-29 20:26:57', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660942635250356224, 660942634457632768, 'A', '的发射点发射点', 'admin', '2019-12-29 20:30:04', 'admin', '2019-12-29 20:30:04', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660942635250356225, 660942634457632768, 'B', '打发手动阀撒旦', 'admin', '2019-12-29 20:30:04', 'admin', '2019-12-29 20:30:04', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660942635250356226, 660942634457632768, 'C', '蒂法蒂法但是', 'admin', '2019-12-29 20:30:04', 'admin', '2019-12-29 20:30:04', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660942635250356227, 660942634457632768, 'D', '放大发生的', 'admin', '2019-12-29 20:30:04', 'admin', '2019-12-29 20:30:04', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660944352176115712, 660944350934601728, 'A', '的发射点发射点', 'admin', '2019-12-29 20:36:53', 'admin', '2019-12-29 20:36:53', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660944352176115713, 660944350934601728, 'B', '打发手动阀撒旦', 'admin', '2019-12-29 20:36:53', 'admin', '2019-12-29 20:36:53', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660944352176115714, 660944350934601728, 'C', '蒂法蒂法但是', 'admin', '2019-12-29 20:36:53', 'admin', '2019-12-29 20:36:53', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (660944352176115715, 660944350934601728, 'D', '放大发生的', 'admin', '2019-12-29 20:36:53', 'admin', '2019-12-29 20:36:53', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (661321950190243840, 661321949674344448, 'A', '323', 'admin', '2019-12-30 21:37:20', 'admin', '2019-12-30 21:37:20', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (661321950190243841, 661321949674344448, 'B', '3233', 'admin', '2019-12-30 21:37:20', 'admin', '2019-12-30 21:37:20', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (661321950190243842, 661321949674344448, 'C', '32323', 'admin', '2019-12-30 21:37:20', 'admin', '2019-12-30 21:37:20', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (661321950190243843, 661321949674344448, 'D', '3232323', 'admin', '2019-12-30 21:37:20', 'admin', '2019-12-30 21:37:20', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (661322975735320576, 661322812270710784, 'A', '2', 'admin', '2019-12-30 21:41:24', 'admin', '2019-12-30 21:41:24', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (668114910005301248, 668114909753643008, 'A', '23', 'admin', '2020-01-18 15:30:08', 'admin', '2020-01-18 15:30:08', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (668114910005301249, 668114909753643008, 'B', '32', 'admin', '2020-01-18 15:30:08', 'admin', '2020-01-18 15:30:08', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (668114910005301250, 668114909753643008, 'C', '3233', 'admin', '2020-01-18 15:30:08', 'admin', '2020-01-18 15:30:08', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (668114910005301251, 668114909753643008, 'D', '23', 'admin', '2020-01-18 15:30:08', 'admin', '2020-01-18 15:30:08', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (668114911150346240, 668114909724282880, 'A', '23', 'admin', '2020-01-18 15:30:08', 'admin', '2020-01-18 15:30:08', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (668114911150346241, 668114909724282880, 'B', '32', 'admin', '2020-01-18 15:30:08', 'admin', '2020-01-18 15:30:08', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (668114911150346242, 668114909724282880, 'C', '3233', 'admin', '2020-01-18 15:30:08', 'admin', '2020-01-18 15:30:08', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (668114911150346243, 668114909724282880, 'D', '23', 'admin', '2020-01-18 15:30:08', 'admin', '2020-01-18 15:30:08', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672765654515978240, 672765654134296576, 'A', '选项11111', 'admin', '2020-01-31 11:30:31', 'admin', '2020-01-31 11:30:31', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672765654515978241, 672765654134296576, 'B', '选项2', 'admin', '2020-01-31 11:30:31', 'admin', '2020-01-31 11:30:31', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672765654515978242, 672765654134296576, 'C', '选项3', 'admin', '2020-01-31 11:30:31', 'admin', '2020-01-31 11:30:31', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672765654515978243, 672765654134296576, 'D', '选项4', 'admin', '2020-01-31 11:30:31', 'admin', '2020-01-31 11:30:31', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672768293509140480, 672768293106487296, 'A', '选项11111', 'admin', '2020-01-31 11:41:01', 'admin', '2020-01-31 11:41:01', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672768293513334784, 672768293106487296, 'B', '选项2', 'admin', '2020-01-31 11:41:01', 'admin', '2020-01-31 11:41:01', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672768293513334785, 672768293106487296, 'C', '选项3', 'admin', '2020-01-31 11:41:01', 'admin', '2020-01-31 11:41:01', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672768293513334786, 672768293106487296, 'D', '选项4', 'admin', '2020-01-31 11:41:01', 'admin', '2020-01-31 11:41:01', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672768816400437248, 672768816001978368, 'A', '选项11111', 'admin', '2020-01-31 11:43:05', 'admin', '2020-01-31 11:43:05', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672768816400437249, 672768816001978368, 'B', '选项2', 'admin', '2020-01-31 11:43:05', 'admin', '2020-01-31 11:43:05', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672768816400437250, 672768816001978368, 'C', '选项3', 'admin', '2020-01-31 11:43:05', 'admin', '2020-01-31 11:43:05', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672768816400437251, 672768816001978368, 'D', '选项4', 'admin', '2020-01-31 11:43:05', 'admin', '2020-01-31 11:43:05', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672815799890743296, 672815798720532480, 'A', '1', 'admin', '2020-01-31 14:49:47', 'admin', '2020-01-31 15:03:38', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672815799890743297, 672815798720532480, 'B', '1', 'admin', '2020-01-31 14:49:47', 'admin', '2020-01-31 15:03:38', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672815799890743298, 672815798720532480, 'C', '1', 'admin', '2020-01-31 14:49:47', 'admin', '2020-01-31 15:03:38', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672815799890743299, 672815798720532480, 'D', '1', 'admin', '2020-01-31 14:49:47', 'admin', '2020-01-31 15:03:38', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672817387019571200, 672817385757085696, 'A', '2', 'admin', '2020-01-31 14:56:05', 'admin', '2020-01-31 14:56:05', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672817387019571201, 672817385757085696, 'B', '2', 'admin', '2020-01-31 14:56:05', 'admin', '2020-01-31 14:56:05', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672817387019571202, 672817385757085696, 'C', '2', 'admin', '2020-01-31 14:56:05', 'admin', '2020-01-31 14:56:05', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672817387019571203, 672817385757085696, 'D', '22', 'admin', '2020-01-31 14:56:05', 'admin', '2020-01-31 14:56:05', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672818580617826304, 672818579560861696, 'A', '3', 'admin', '2020-01-31 15:00:50', 'admin', '2020-01-31 15:00:50', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672818580617826305, 672818579560861696, 'B', '3', 'admin', '2020-01-31 15:00:50', 'admin', '2020-01-31 15:00:50', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672818580617826306, 672818579560861696, 'C', '3', 'admin', '2020-01-31 15:00:50', 'admin', '2020-01-31 15:00:50', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672818580617826307, 672818579560861696, 'D', '3', 'admin', '2020-01-31 15:00:50', 'admin', '2020-01-31 15:00:50', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672824501511262208, 672824501133774849, 'A', '1', 'admin', '2020-01-31 15:24:22', 'admin', '2020-01-31 15:24:22', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672824501511262209, 672824501133774849, 'B', '1', 'admin', '2020-01-31 15:24:22', 'admin', '2020-01-31 15:24:22', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672824501511262210, 672824501133774849, 'C', '1', 'admin', '2020-01-31 15:24:22', 'admin', '2020-01-31 15:24:22', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672824501511262211, 672824501133774849, 'D', '1', 'admin', '2020-01-31 15:24:22', 'admin', '2020-01-31 15:24:22', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672824503025405952, 672824501133774848, 'A', '1', 'admin', '2020-01-31 15:24:22', 'admin', '2020-01-31 15:24:22', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672824503025405953, 672824501133774848, 'B', '1', 'admin', '2020-01-31 15:24:22', 'admin', '2020-01-31 15:24:22', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672824503025405954, 672824501133774848, 'C', '1', 'admin', '2020-01-31 15:24:22', 'admin', '2020-01-31 15:24:22', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (672824503025405955, 672824501133774848, 'D', '1', 'admin', '2020-01-31 15:24:22', 'admin', '2020-01-31 15:24:22', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (679455143225331712, 679455142176755712, 'A', '选择题1', 'admin', '2020-02-18 22:32:10', 'admin', '2020-02-18 22:32:10', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (679455143225331713, 679455142176755712, 'B', '选择题1', 'admin', '2020-02-18 22:32:10', 'admin', '2020-02-18 22:32:10', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (679455143225331714, 679455142176755712, 'C', '选择题1', 'admin', '2020-02-18 22:32:10', 'admin', '2020-02-18 22:32:10', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (679455143225331715, 679455142176755712, 'D', '选择题1', 'admin', '2020-02-18 22:32:10', 'admin', '2020-02-18 22:32:10', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (679455224125067264, 679455223147794432, 'A', '选择题2', 'admin', '2020-02-18 22:32:29', 'admin', '2020-02-18 22:32:29', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (679455224125067265, 679455223147794432, 'B', '选择题2', 'admin', '2020-02-18 22:32:29', 'admin', '2020-02-18 22:32:29', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (679455224125067266, 679455223147794432, 'C', '选择题2', 'admin', '2020-02-18 22:32:29', 'admin', '2020-02-18 22:32:29', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (679455224129261568, 679455223147794432, 'D', '选择题2', 'admin', '2020-02-18 22:32:29', 'admin', '2020-02-18 22:32:29', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (679455354119131136, 679455353129275392, 'A', '选择题3', 'admin', '2020-02-18 22:33:00', 'admin', '2020-02-18 22:33:00', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (679455354119131137, 679455353129275392, 'B', '选择题3', 'admin', '2020-02-18 22:33:00', 'admin', '2020-02-18 22:33:00', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (679455354119131138, 679455353129275392, 'C', '选择题3', 'admin', '2020-02-18 22:33:00', 'admin', '2020-02-18 22:33:00', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (679455354119131139, 679455353129275392, 'D', '选择题3', 'admin', '2020-02-18 22:33:00', 'admin', '2020-02-18 22:33:00', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (679680050878091264, 679680049900818432, 'A', '多选题', 'admin', '2020-02-19 13:25:52', 'admin', '2020-02-19 13:25:52', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (679680050878091265, 679680049900818432, 'B', '多选题', 'admin', '2020-02-19 13:25:52', 'admin', '2020-02-19 13:25:52', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (679680050878091266, 679680049900818432, 'C', '多选题', 'admin', '2020-02-19 13:25:52', 'admin', '2020-02-19 13:25:52', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (679680050878091267, 679680049900818432, 'D', '多选题', 'admin', '2020-02-19 13:25:52', 'admin', '2020-02-19 13:25:52', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (679680050878091268, 679680049900818432, 'E', '多选题', 'admin', '2020-02-19 13:25:52', 'admin', '2020-02-19 13:25:52', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (679680688584265728, 679680687489552384, 'A', '测试两个选项', 'admin', '2020-02-19 13:28:24', 'admin', '2020-02-19 22:08:02', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_option` VALUES (679680688584265729, 679680687489552384, 'B', '测试两个选项', 'admin', '2020-02-19 13:28:24', 'admin', '2020-02-19 22:08:02', 0, 'EXAM', 'gitee');
 
 -- ----------------------------
 -- Table structure for exam_subject_short_answer
@@ -532,5 +656,11 @@ CREATE TABLE `exam_subject_short_answer`  (
   `tenant_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '简答题表' ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of exam_subject_short_answer
+-- ----------------------------
+INSERT INTO `exam_subject_short_answer` VALUES (672819333117906944, NULL, '333', '333', 5, '3333', 2, 'admin', '2020-01-31 15:03:49', 'admin', '2020-01-31 15:03:49', 0, 'EXAM', 'gitee');
+INSERT INTO `exam_subject_short_answer` VALUES (680037906714333184, NULL, '测试简答题', '测试简答题', 5, '测试简答题', 2, 'admin', '2020-02-20 13:07:51', 'admin', '2020-02-20 13:07:51', 0, 'EXAM', 'gitee');
 
 SET FOREIGN_KEY_CHECKS = 1;
