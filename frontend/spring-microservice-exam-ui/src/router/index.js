@@ -114,7 +114,7 @@ export const constantExamRouterMap = [
     component: Layout,
     children: [
       {
-        path: '/exam/exam/subjects/:id',
+        path: '/exam/subjects/:id',
         component: () => import('@/views/exam/examSubjects'),
         name: '题目管理',
         title: '题目管理',
@@ -127,10 +127,36 @@ export const constantExamRouterMap = [
     component: Layout,
     children: [
       {
-        path: '/exam/:examinationId/subjects/:id/:type',
+        path: '/exam/subjects/detail/:id',
         component: () => import('@/views/exam/subjectDetails'),
         name: '题目详情',
         title: '题目详情',
+        noCache: true
+      }
+    ]
+  },
+  {
+    path: '',
+    component: Layout,
+    children: [
+      {
+        path: '/exam/score/detail/:id',
+        component: () => import('@/views/exam/scoreDetails'),
+        name: '成绩详情',
+        title: '成绩详情',
+        noCache: true
+      }
+    ]
+  },
+  {
+    path: '',
+    component: Layout,
+    children: [
+      {
+        path: '/exam/mark/:id',
+        component: () => import('@/views/exam/markExam'),
+        name: '成绩批改',
+        title: '成绩批改',
         noCache: true
       }
     ]

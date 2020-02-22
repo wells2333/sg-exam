@@ -6,7 +6,7 @@
 
     <div class="right-menu">
       <template v-if="device!=='mobile'">
-        <a class="animated fadeIn hi">{{ $t('navbar.hi') }}，{{ userInfo.name }}</a>
+        <a class="animated fadeIn hi">{{ tip }},{{ userInfo.name }}</a>
 
         <el-tooltip :content="$t('navbar.lock')" effect="dark" placement="bottom">
           <lock class="lock right-menu-item"/>
@@ -72,11 +72,13 @@ export default {
   },
   data () {
     return {
-      avatarUrl: ''
+      avatarUrl: '',
+      tip: ''
     }
   },
   created () {
     this.userInfo.sex = parseInt(this.userInfo.sex)
+    this.getTip()
   },
   computed: {
     ...mapGetters([
@@ -97,6 +99,17 @@ export default {
       this.$store.dispatch('LogOut').then(() => {
         location.reload()// In order to re-instantiate the vue-router object to avoid bugs
       })
+    },
+    getTip () {
+      let self = this
+      let date = new Date()
+      if (date.getHours() >= 0 && date.getHours() < 12) {
+        self.tip = '上午好'
+      } else if (date.getHours() >= 12 && date.getHours() < 18) {
+        self.tip = '下午好'
+      } else {
+        self.tip = '晚上好'
+      }
     }
   }
 }
@@ -152,7 +165,7 @@ export default {
         .user-avatar {
           width: 40px;
           height: 40px;
-          border-radius: 10px;
+          border-radius: 50%  !important;
         }
         .el-icon-caret-bottom {
           position: absolute;

@@ -35,7 +35,6 @@
               </el-form-item>
             </el-col>
           </el-row>
-        </div>
       </el-col>
       <el-col :span="14">
         <div class="subject-tinymce">
@@ -62,8 +61,8 @@ export default {
         return {
           id: '',
           serialNumber: 1,
-          examinationId: '',
-          categoryId: 0,
+          examinationId: -1,
+          categoryId: -1,
           subjectName: '',
           type: 1,
           answer: {
@@ -159,9 +158,8 @@ export default {
     resetTempSubject (serialNumber, score) {
       this.subjectInfo = {
         id: '',
-        serialNumber: 1,
-        examinationId: '',
-        categoryId: 0,
+        examinationId: undefined,
+        categoryId: undefined,
         subjectName: '',
         type: 1,
         choicesType: 0,
@@ -180,7 +178,7 @@ export default {
         this.subjectInfo.score = score
       }
     },
-    initDefaultOptions() {
+    initDefaultOptions () {
 
     }
   }

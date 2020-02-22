@@ -17,10 +17,11 @@ export function fetchSubjectList (query) {
   })
 }
 
-export function getObj (id) {
+export function getObj (id, query) {
   return request({
     url: baseSubjectUrl + id,
-    method: 'get'
+    method: 'get',
+    params: query
   })
 }
 

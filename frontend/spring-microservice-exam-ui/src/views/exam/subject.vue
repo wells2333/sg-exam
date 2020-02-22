@@ -8,8 +8,8 @@
         <el-row>
           <el-button v-if="subject_category_btn_add" class="category-btn" icon="el-icon-plus" size="mini" type="primary" @click="handleAddSuperCategory">主分类</el-button>
           <el-button v-if="subject_category_btn_add" class="category-btn" icon="el-icon-plus" size="mini" type="primary" @click="handleAddCategory">子分类</el-button>
-          <el-button v-if="subject_category_btn_edit" class="category-btn" icon="el-icon-edit" size="mini" plain @click="handleUpdateCategory">{{ $t('table.edit') }}</el-button>
-          <el-button v-if="subject_category_btn_del" class="category-btn" icon="el-icon-delete" size="mini" plain @click="handleDeleteCategory">{{ $t('table.del') }}</el-button>
+          <el-button v-if="subject_category_btn_edit" class="category-btn" icon="el-icon-edit" size="mini" type="primary" @click="handleUpdateCategory">{{ $t('table.edit') }}</el-button>
+          <el-button v-if="subject_category_btn_del" class="category-btn" icon="el-icon-delete" size="mini" type="danger" @click="handleDeleteCategory">{{ $t('table.del') }}</el-button>
         </el-row>
         <el-row>
           <div class="tree-container">
@@ -36,10 +36,10 @@
           <div class="filter-container">
             <el-input v-model="listQuery.subjectName" placeholder="题目名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
             <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.search') }}</el-button>
-            <el-button v-if="subject_bank_btn_add" class="filter-item" style="margin-left: 10px;" icon="el-icon-check" plain @click="handleCreateSubject">{{ $t('table.add') }}</el-button>
-            <el-button v-if="subject_bank_btn_del" class="filter-item" icon="el-icon-delete" plain @click="handleDeletesSubject">{{ $t('table.del') }}</el-button>
-            <el-button v-if="subject_bank_btn_import" class="filter-item" icon="el-icon-upload2" plain @click="handleImportSubject">{{ $t('table.import') }}</el-button>
-            <el-button v-if="subject_bank_btn_export" class="filter-item" icon="el-icon-download" plain @click="handleExportSubject">{{ $t('table.export') }}</el-button>
+            <el-button v-if="subject_bank_btn_add" class="filter-item" type="primary" style="margin-left: 10px;" icon="el-icon-check" @click="handleCreateSubject">{{ $t('table.add') }}</el-button>
+            <el-button v-if="subject_bank_btn_del" class="filter-item" type="danger" icon="el-icon-delete" @click="handleDeletesSubject">{{ $t('table.del') }}</el-button>
+            <el-button v-if="subject_bank_btn_import" class="filter-item" type="success" icon="el-icon-upload2" @click="handleImportSubject">{{ $t('table.import') }}</el-button>
+            <el-button v-if="subject_bank_btn_export" class="filter-item" type="success" icon="el-icon-download" @click="handleExportSubject">{{ $t('table.export') }}</el-button>
           </div>
           <spinner-loading v-if="listLoading"/>
           <el-table
@@ -52,12 +52,12 @@
             <el-table-column type="selection" width="55"/>
             <el-table-column :label="$t('table.subjectName')" min-width="120">
               <template slot-scope="scope">
-                <span>{{ scope.row.subjectName | subjectNameFilter }}</span>
+                <span>{{ scope.row.subjectName | simpleStrFilter }}</span>
               </template>
             </el-table-column>
             <el-table-column :label="$t('table.subject.type')" width="120">
               <template slot-scope="scope">
-                <el-tag type="success">{{ scope.row.type | subjectTypeFilter }}</el-tag>
+                <el-tag :type="scope.row.type | subjectTypeTagFilter" effect="dark" size="small">{{ scope.row.type | subjectTypeFilter }}</el-tag>
               </template>
             </el-table-column>
             <el-table-column :label="$t('table.subject.score')" width="120">
@@ -65,15 +65,20 @@
                 <span>{{ scope.row.score }}</span>
               </template>
             </el-table-column>
-            <el-table-column :label="$t('table.subject.level')" width="120">
+            <el-table-column :label="$t('table.subject.modifyDate')" property="updateTime" width="150">
               <template slot-scope="scope">
-                <el-rate v-model="scope.row.level" :max="4"/>
+                <span>{{ scope.row.modifyDate | fmtDate('yyyy-MM-dd hh:mm') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :label="$t('table.subject.modifier')" property="modifier" width="120">
+              <template slot-scope="scope">
+                <span>{{ scope.row.modifier }}</span>
               </template>
             </el-table-column>
             <el-table-column :label="$t('table.actions')" class-name="status-col">
               <template slot-scope="scope">
-                <el-button v-if="subject_bank_btn_edit" type="text" @click="handleUpdateSubject(scope.row)" icon="el-icon-edit">{{ $t('table.edit') }}</el-button>
-                <el-button v-if="subject_bank_btn_del" type="text" @click="handleDeleteSubject(scope.row)" icon="el-icon-delete">{{ $t('table.delete') }}</el-button>
+                <el-button v-if="subject_bank_btn_edit" type="primary" size="mini" @click="handleUpdateSubject(scope.row)">{{ $t('table.edit') }}</el-button>
+                <el-button v-if="subject_bank_btn_del" type="danger" size="mini" @click="handleDeleteSubject(scope.row)">{{ $t('table.delete') }}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -122,15 +127,15 @@
         <el-tabs v-model="activeName" @tab-click="handleTabChange">
           <!-- 单选题 -->
           <el-tab-pane label="单选题" name="0" :disabled="tempSubject.type !== 0 && subjectFormStatus !== 'create'">
-            <choices ref="choices" subjectInfo="tempSubject"></choices>
+            <choices ref="choices" subjectInfo="tempSubject"/>
           </el-tab-pane>
           <!-- 多选题 -->
           <el-tab-pane label="多选题" name="3" :disabled="tempSubject.type !== 3 && subjectFormStatus !== 'create'">
-            <multiple-choices ref="multipleChoices" subjectInfo="tempSubject"></multiple-choices>
+            <multiple-choices ref="multipleChoices" subjectInfo="tempSubject"/>
           </el-tab-pane>
           <!-- 简答题 -->
           <el-tab-pane label="简答题" name="1" :disabled="tempSubject.type !== 1 && subjectFormStatus !== 'create'">
-            <short-answer ref="shortAnswer" subjectInfo="tempSubject"></short-answer>
+            <short-answer ref="shortAnswer" subjectInfo="tempSubject"/>
           </el-tab-pane>
         </el-tabs>
       </el-form>
@@ -157,7 +162,7 @@
             :headers="headers"
             :data="params"
             style="text-align: center;">
-            <i class="el-icon-upload"></i>
+            <i class="el-icon-upload"/>
             <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
             <div slot="tip" class="el-upload__tip">只能上传xlsx文件</div>
           </el-upload>
@@ -169,7 +174,7 @@
 
 <script>
 import { fetchCategoryTree, getCategory, addCategory, delCategory, putCategory } from '@/api/exam/subjectCategory'
-import { fetchSubjectList, getSubject, addSubject, putSubject, delSubject, delAllSubject, exportSubject } from '@/api/exam/subject'
+import { fetchSubjectList, addSubject, putSubject, delSubject, delAllSubject, exportSubject } from '@/api/exam/subject'
 import { mapGetters } from 'vuex'
 import { getToken } from '@/utils/auth'
 import { checkMultipleSelect, exportExcel, notifySuccess, isNotEmpty } from '@/utils/util'
@@ -186,29 +191,6 @@ export default {
   directives: {
     waves
   },
-  filters: {
-    statusTypeFilter (status) {
-      const statusMap = {
-        0: 'success',
-        1: 'warning'
-      }
-      return statusMap[status]
-    },
-    subjectTypeFilter (type) {
-      const typeMap = {
-        0: '单选题',
-        1: '简答题',
-        3: '多选题'
-      }
-      return typeMap[type]
-    },
-    subjectNameFilter (subjectName) {
-      if (subjectName.length > 50) {
-        return subjectName.substring(0, 50) + '...'
-      }
-      return subjectName
-    }
-  },
   data () {
     return {
       baseUrl: '/exam',
@@ -221,9 +203,10 @@ export default {
       listLoading: true,
       listQuery: {
         subjectName: undefined,
-        categoryId: -1,
+        categoryId: undefined,
+        examinationId: undefined,
         sort: 'id',
-        order: 'ascending'
+        order: 'descending'
       },
       treeData: [],
       oExpandedKey: {
@@ -253,8 +236,8 @@ export default {
       // 题目临时信息
       tempSubject: {
         id: '',
-        examinationId: '',
-        categoryId: 0,
+        examinationId: undefined,
+        categoryId: undefined,
         subjectName: '',
         type: 0,
         choicesType: 0,
@@ -320,7 +303,7 @@ export default {
       uploadingSubject: false,
       percentageSubject: 0,
       params: {
-        categoryId: ''
+        categoryId: undefined
       },
       headers: {
         Authorization: 'Bearer ' + getToken()
@@ -552,11 +535,33 @@ export default {
         sort: 30
       }
     },
-    resetTempSubject (serialNumber, score) {
-      const ref = this.getSubjectRef()
-      if (isNotEmpty(ref)) {
-        ref.resetTempSubject(serialNumber, score)
+    resetTempSubject (score) {
+      this.tempSubject = {
+        id: '',
+        examinationId: undefined,
+        categoryId: undefined,
+        subjectName: '',
+        type: 0,
+        choicesType: 0,
+        options: [
+          { subjectChoicesId: '', optionName: 'A', optionContent: '' },
+          { subjectChoicesId: '', optionName: 'B', optionContent: '' },
+          { subjectChoicesId: '', optionName: 'C', optionContent: '' },
+          { subjectChoicesId: '', optionName: 'D', optionContent: '' }
+        ],
+        answer: {
+          subjectId: '',
+          answer: '',
+          answerType: '',
+          score: ''
+        },
+        score: score,
+        analysis: '',
+        level: 2
       }
+      this.$refs['choices'].resetTempSubject(score)
+      this.$refs['shortAnswer'].resetTempSubject(score)
+      this.$refs['multipleChoices'].resetTempSubject(score)
     },
     // 加载题目
     handleSubjectManagement () {
@@ -585,31 +590,14 @@ export default {
         })
         return
       }
-      this.resetTempSubject()
-      this.subjectFormStatus = 'create'
-      this.dialogSubjectFormVisible = true
-      this.resetActiveName()
+      this.$router.push({
+        path: `/exam/subjects/detail/${this.currentCategoryId}-undefined-0-1`
+      })
     },
     // 修改题目
     handleUpdateSubject (row) {
-      // 加载选项信息
-      getSubject(row.id, { type: row.type }).then(response => {
-        const subjectInfo = response.data.data
-        this.subjectFormStatus = 'update'
-        this.dialogSubjectFormVisible = true
-        this.tempSubject = subjectInfo
-        // 切换到对应的题型选项卡
-        this.updateCurrentTag(subjectInfo.type)
-        setTimeout(() => {
-          const ref = this.getSubjectRef()
-          if (isNotEmpty(ref)) {
-            // 初始化单选题
-            this.$nextTick(() => {
-              ref.clearValidate()
-              ref.setSubjectInfo(subjectInfo)
-            })
-          }
-        }, 200)
+      this.$router.push({
+        path: `/exam/subjects/detail/${this.currentCategoryId}-${row.id}-${row.type}-1`
       })
     },
     // 删除题目
@@ -634,7 +622,6 @@ export default {
         subjectInfo.categoryId = this.currentCategoryId
         addSubject(subjectInfo).then(() => {
           this.dialogSubjectFormVisible = false
-          this.handleSubjectManagement()
           notifySuccess(this, '创建成功')
         })
       }
@@ -646,7 +633,6 @@ export default {
         const subjectInfo = ref.getSubjectInfo()
         putSubject(subjectInfo).then(() => {
           this.dialogSubjectFormVisible = false
-          this.handleSubjectManagement()
           notifySuccess(this, '更新成功')
         })
       }
@@ -662,21 +648,19 @@ export default {
         // 创建
         if (this.subjectFormStatus === 'create') {
           addSubject(subjectInfo).then(() => {
-            this.resetTempSubject(parseInt(subjectInfo.serialNumber) + 1, subjectInfo.score)
+            this.resetTempSubject(subjectInfo.score)
             this.subjectFormStatus = 'create'
             ref.clearValidate()
-            this.handleSubjectManagement()
             notifySuccess(this, '创建成功')
           })
         } else {
           // 更新
           putSubject(subjectInfo).then(() => {
-            this.resetTempSubject(parseInt(subjectInfo.serialNumber) + 1, subjectInfo.score)
+            this.resetTempSubject(subjectInfo.score)
             this.subjectFormStatus = 'create'
             // 绑定分类ID
             this.tempSubject.categoryId = this.currentCategoryId
             ref.clearValidate()
-            this.handleSubjectManagement()
             notifySuccess(this, '更新成功')
           })
         }
@@ -724,7 +708,6 @@ export default {
 
         })
       } else {
-        debugger
         // 导出选中
         this.$confirm('是否导出选中的题目?', '提示', {
           confirmButtonText: '确定',

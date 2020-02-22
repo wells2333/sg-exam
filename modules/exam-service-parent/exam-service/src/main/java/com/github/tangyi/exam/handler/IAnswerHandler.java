@@ -13,6 +13,10 @@ import java.util.List;
  */
 public interface IAnswerHandler {
 
+	String TRUE = Boolean.TRUE.toString();
+
+	String FALSE = Boolean.FALSE.toString();
+
 	/**
 	 * 统计成绩
 	 * @param answers answers
@@ -34,10 +38,17 @@ public interface IAnswerHandler {
 	List<SubjectDto> getSubjects(List<Answer> answers);
 
 	/**
-	 * 判断是否正确
+	 * 判断逻辑
 	 * @param answer answer
 	 * @param subject subject
 	 * @param rightScore rightScore
 	 */
 	void judge(Answer answer, SubjectDto subject, List<Double> rightScore);
+
+	/**
+	 * 判断答题是否正确
+	 * @param answer answer
+	 * @param subject subject
+	 */
+	boolean judgeRight(Answer answer, SubjectDto subject);
 }

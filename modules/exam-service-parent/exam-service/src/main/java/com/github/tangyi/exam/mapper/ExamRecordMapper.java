@@ -4,6 +4,9 @@ import com.github.tangyi.common.core.persistence.CrudMapper;
 import com.github.tangyi.exam.api.module.ExaminationRecord;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.Date;
+import java.util.List;
+
 /**
  * 考试记录Mapper
  *
@@ -22,4 +25,23 @@ public interface ExamRecordMapper extends CrudMapper<ExaminationRecord> {
      * @date 2018/12/26 13:56
      */
     ExaminationRecord getByUserIdAndExaminationId(ExaminationRecord examRecord);
+
+	/**
+	 * 查询考试记录数量
+	 *
+	 * @param examinationRecord examinationRecord
+	 * @return int
+	 * @author tangyi
+	 * @date 2020/1/31 5:17 下午
+	 */
+	int findExaminationRecordCount(ExaminationRecord examinationRecord);
+
+	/**
+	 * 时间范围条件查询
+	 * @param start start
+	 * @return List
+	 * @author tangyi
+	 * @date 2020/2/1 11:57 上午
+	 */
+	List<ExaminationRecord> findExaminationRecordCountByDate(Date start);
 }

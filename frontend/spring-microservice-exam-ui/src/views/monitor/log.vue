@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-input :placeholder="$t('table.title')" v-model="listQuery.title" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.search') }}</el-button>
-      <el-button v-if="log_btn_del" class="filter-item" icon="el-icon-delete" plain @click="handleDeletes">{{ $t('table.del') }}</el-button>
+      <el-button v-if="log_btn_del" class="filter-item" type="danger" icon="el-icon-delete" @click="handleDeletes">{{ $t('table.del') }}</el-button>
     </div>
     <spinner-loading v-if="listLoading"/>
     <el-table
@@ -18,7 +18,7 @@
       <el-table-column type="selection" width="55"/>
       <el-table-column :label="$t('table.log.type')" width="120px" align="center">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.type | statusTypeFilter">{{ scope.row.type | statusFilter }}</el-tag>
+          <el-tag :type="scope.row.type | statusTypeFilter" effect="dark" size="small">{{ scope.row.type | statusFilter }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.log.title')" prop="title">
@@ -51,14 +51,14 @@
           <span>{{ scope.row.creator }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.log.createDate')" sortable prop="createDate">
+      <el-table-column :label="$t('table.log.createDate')" prop="createDate" min-width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.createDate | timeFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.actions')" class-name="status-col">
         <template slot-scope="scope">
-          <el-button v-if="log_btn_del" type="text" @click="handleDelete(scope.row)">{{ $t('table.delete') }}
+          <el-button v-if="log_btn_del" type="danger" size="mini" @click="handleDelete(scope.row)">{{ $t('table.delete') }}
           </el-button>
         </template>
       </el-table-column>

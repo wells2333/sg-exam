@@ -66,6 +66,14 @@ export function putAnswer (obj) {
   })
 }
 
+export function markAnswer (obj) {
+  return request({
+    url: baseAnswerUrl + 'mark',
+    method: 'put',
+    data: obj
+  })
+}
+
 export function delAnswer (id) {
   return request({
     url: baseAnswerUrl + id,

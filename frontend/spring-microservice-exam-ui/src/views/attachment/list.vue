@@ -73,7 +73,6 @@ import { fetchList, addObj, putObj, delAttachment, getDownloadUrl } from '@/api/
 import waves from '@/directive/waves'
 import { getToken } from '@/utils/auth' // getToken from cookie
 import { notifySuccess, messageSuccess, isNotEmpty, formatDate } from '@/utils/util'
-import { mapState } from 'vuex'
 import SpinnerLoading from '@/components/SpinnerLoading'
 
 export default {

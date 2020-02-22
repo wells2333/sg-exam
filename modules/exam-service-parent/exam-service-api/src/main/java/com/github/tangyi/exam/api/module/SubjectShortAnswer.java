@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.api.module;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
 
@@ -17,7 +18,8 @@ public class SubjectShortAnswer extends BaseEntity<SubjectShortAnswer> {
 	/**
 	 * 题目分类ID
 	 */
-	private String categoryId;
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
+	private Long categoryId;
 
 	/**
 	 * 题目名称

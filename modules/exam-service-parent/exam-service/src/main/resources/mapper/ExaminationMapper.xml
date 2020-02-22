@@ -51,7 +51,7 @@
         <if test="courseId != null and courseId != ''">
             and a.course_id = #{courseId}
         </if>
-        <if test="status != null and status != ''">
+        <if test="status != null">
             and a.status = #{status}
         </if>
         <if test="type != null and type != ''">

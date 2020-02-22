@@ -9,7 +9,9 @@
   </a>
 </p>
 
-> 硕果云，基于Spring Cloud搭建的新一代微服务教学管理平台，提供多租户、权限管理、考试、练习等功能。
+> 硕果云，基于Spring Cloud搭建的新一代微服务教学管理平台，提供多租户、权限管理、在线考试、练习等功能
+>
+> 题型支持单选题、多选题、不定项选择题、判断题、简答题等
 
 ### 🏠 [主页](https://gitee.com/wells2333/spring-microservice-exam)
 
@@ -49,8 +51,8 @@
 
 |      名称      |   版本    |
 | --------- | -------- |
-| `Spring Boot`    | `2.1.11.RELEASE`  |
-| `Spring Cloud`   | `Greenwich.SR4`  |
+| `Spring Boot`    | `2.2.2.RELEASE`  |
+| `Spring Cloud`   | `Hoxton.SR1`  |
 
 ## 系统架构
 
@@ -62,7 +64,9 @@
 
 前台主要提供在线考试、在线学习功能
 
-后台管理分为：系统管理、系统监控、考务管理、附件管理、个人管理
+后台管理分为：首页监控、系统管理、系统监控、考务管理、附件管理、个人管理
+
+首页监控：提供系统租户数、用户数、考试数、近七天考试记录数等监控
 
 系统管理：提供用户、部门、角色、权限等基础管理
 - 用户管理：用户信息增删改查、导入导出
@@ -81,9 +85,9 @@
 
 考务管理：提供课程、考试、题库、成绩等管理
 - 课程管理：课程信息增删改查
-- 考试管理：考试信息增删改查、题目管理、发布回收，题目管理支持简单文本、富文本输入、从题库添加等
-- 题库管理：题目分类增删改查、题目信息增删改查
-- 成绩管理：查看成绩、导出成绩
+- 考试管理：考试信息增删改查、题目管理、发布回收，题目管理支持简单文本、富文本输入、从题库添加等，题型支持单选题、多选题、不定项选择题、判断题、简答题
+- 题库管理：题目分类增删改查、题目信息增删改查，题型支持单选题、多选题、不定项选择题、判断题、简答题
+- 成绩管理：查看成绩、成绩批改、导出等功能
 - 知识库：知识库增删改查、上传附件
 
 附件管理：项目的所有附件存储在`fastDfs`里，提供统一的管理入口
@@ -95,24 +99,51 @@
 
 ## 系统截图
 
-### 前台功能
+### 前台功能（点击查看大图）
 
-1. 首页
-![image](docs/images/image_web.png)
+<table>
+	<tr>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_login.png" alt="登录"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web.png" alt="首页"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_exams.png" alt="考试列表"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_exam.png" alt="考试"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_record.png" alt="考试记录"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_incorrect_answer.png" alt="错题列表"/></td>
+    </tr>
+</table>
 
-2. 考试
-![image](docs/images/image_web_exam.png)
+### 后台功能（点击查看大图）
 
-### 后台功能
-
-1. 总体功能
-![image](docs/images/image_ui_menu.png)
-
-2. 考试管理
-![image](docs/images/image_ui_exam.png)
-
-3. 题目管理
-![image](docs/images/image_ui_subjects_rich_edit.png)
+<table>
+	<tr>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_login.png" alt="登录"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_exam.png" alt="首页"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_menu.png" alt="菜单"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_menu_manage.png" alt="菜单管理"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_role_manage.png" alt="角色管理"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_route_manage.png" alt="路由管理"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_subjects_manage.png" alt="题库管理"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_subjects_rich_edit.png" alt="题目编辑"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_score_manage.png" alt="成绩管理"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_score_detail.png" alt="成绩详情"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_log_manage.png" alt="日志监控"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_consul.png" alt="服务监控"/></td>
+    </tr>
+</table>
 
 ## 部署文档
 

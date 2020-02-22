@@ -28,6 +28,7 @@
                   <template slot="title">功能</template>
                   <el-menu-item index="exams" @click="open('/exams')">在线考试</el-menu-item>
                   <el-menu-item index="practices" @click="open('/practices')">在线学习</el-menu-item>
+                  <el-menu-item index="exam-record" @click="open('/exam-record')">考试记录</el-menu-item>
                   <el-menu-item index="incorrect" @click="open('/incorrect')">错题本</el-menu-item>
                 </el-submenu>
                 <el-submenu index="/u">
@@ -74,17 +75,16 @@
 
 <script>
 import { mapState } from 'vuex'
-import { fetchList } from '@/api/exam/exam'
 import { isNotEmpty } from '@/utils/util'
 
 export default {
   mounted () {
     // handleScroll为页面滚动的监听回调
-    window.addEventListener("scroll", this.handleScroll);
+    window.addEventListener('scroll', this.handleScroll)
   },
-  destroyed() {
-    //同时在destroyed回调中移除监听：
-    window.removeEventListener("scroll", this.handleScroll);
+  destroyed () {
+    // 同时在destroyed回调中移除监听：
+    window.removeEventListener('scroll', this.handleScroll)
   },
   computed: {
     // 获取用户信息
@@ -113,7 +113,7 @@ export default {
     // 导航栏切换
     open (path) {
       if (path !== this.$route.fullPath) {
-        if ('/start' === this.$route.fullPath) {
+        if (this.$route.fullPath === '/start') {
           this.$confirm('是否要结束当前考试?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
@@ -163,7 +163,7 @@ export default {
       this.$store.dispatch('LogOut').then(() => {
         this.login = false
         this.$router.push('/home')
-      }).catch(error => {
+      }).catch(() => {
         this.login = false
         this.$router.push('/home')
       })
@@ -174,7 +174,7 @@ export default {
         this.login = true
       }
     },
-    search() {
+    search () {
       if (isNotEmpty(this.query)) {
         this.$router.push({name: 'exams', query: {query: this.query}})
       }
@@ -208,7 +208,7 @@ export default {
       vertical-align: top;
       cursor: pointer;
       .home-link {
-        margin-right: -30px;
+        margin-right: -100px;
       }
       .site-name {
         display: inline-block;
@@ -217,7 +217,6 @@ export default {
         height: 32px;
         background-size: 100%;
         margin: 17px 0 0 33px;
-        background-image: url("../../../static/images/home/scloud-logo.png");
       }
     }
     .nav-bar {

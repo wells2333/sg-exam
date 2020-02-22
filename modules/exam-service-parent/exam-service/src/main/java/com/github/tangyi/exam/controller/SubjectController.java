@@ -105,9 +105,12 @@ public class SubjectController extends BaseController {
     @ApiOperation(value = "创建题目", notes = "创建题目")
     @ApiImplicitParam(name = "subject", value = "题目信息", required = true, dataType = "SubjectDto")
     @Log("新增题目")
-    public ResponseBean<Boolean> addSubject(@RequestBody @Valid SubjectDto subject) {
+    public ResponseBean<SubjectDto> addSubject(@RequestBody @Valid SubjectDto subject) {
         subject.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
-        return new ResponseBean<>(subjectService.insert(subject) > 0);
+        if (!(subjectService.insert(subject) > 0)) {
+			subject = null;
+		}
+		return new ResponseBean<>(subject);
     }
 
     /**
@@ -123,9 +126,12 @@ public class SubjectController extends BaseController {
     @ApiOperation(value = "更新题目信息", notes = "根据题目id更新题目的基本信息")
     @ApiImplicitParam(name = "subject", value = "角色实体subject", required = true, dataType = "Subject")
     @Log("更新题目")
-    public ResponseBean<Boolean> updateSubject(@RequestBody @Valid SubjectDto subject) {
+    public ResponseBean<SubjectDto> updateSubject(@RequestBody @Valid SubjectDto subject) {
         subject.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
-        return new ResponseBean<>(subjectService.update(subject) > 0);
+        if (!(subjectService.update(subject) > 0)) {
+			subject = null;
+		}
+        return new ResponseBean<>(subject);
     }
 
     /**
@@ -234,7 +240,7 @@ public class SubjectController extends BaseController {
      * @param subjectId    subjectId
      * @param examRecordId examRecordId
      * @param userId       userId
-     * @param nextType     0：下一题，1：上一题
+     * @param nextType     -1：当前题目，0：下一题，1：上一题
      * @param nextSubjectId nextSubjectId
      * @param nextSubjectType 下一题的类型，选择题、判断题
 	 * @return ResponseBean
@@ -246,7 +252,7 @@ public class SubjectController extends BaseController {
     @ApiImplicitParams({@ApiImplicitParam(name = "subjectId", value = "题目ID", required = true, dataType = "Long"),
             @ApiImplicitParam(name = "examRecordId", value = "考试记录ID", required = true, dataType = "Long"),
             @ApiImplicitParam(name = "userId", value = "用户ID", dataType = "String"),
-            @ApiImplicitParam(name = "nextType", value = "0：下一题，1：上一题", dataType = "Integer")})
+            @ApiImplicitParam(name = "nextType", value = "-1：当前题目，0：下一题，1：上一题", dataType = "Integer")})
     public ResponseBean<SubjectDto> subjectAnswer(@RequestParam("subjectId") @NotBlank Long subjectId,
                                                   @RequestParam("examRecordId") @NotBlank Long examRecordId,
                                                   @RequestParam(value = "userId", required = false) String userId,
@@ -254,7 +260,6 @@ public class SubjectController extends BaseController {
                                                   @RequestParam(required = false) Long nextSubjectId,
 			@RequestParam(required = false) Integer nextSubjectType) {
         return new ResponseBean<>(answerService
-                .subjectAnswer(subjectId, examRecordId, SysUtil.getUser(), SysUtil.getSysCode(),
-                        SysUtil.getTenantCode(), nextType, nextSubjectId, nextSubjectType));
+                .subjectAnswer(subjectId, examRecordId, nextType, nextSubjectId, nextSubjectType));
     }
 }

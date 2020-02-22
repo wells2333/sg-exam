@@ -12,7 +12,7 @@ export function fetchList (query) {
 
 export function fetchSubjectListById (query) {
   return request({
-    url: baseExaminationUrl + query.examinationId + '/subjectList',
+    url: baseExaminationUrl + 'subjectList',
     method: 'get',
     params: query
   })

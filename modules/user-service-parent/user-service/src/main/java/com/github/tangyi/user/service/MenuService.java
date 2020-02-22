@@ -17,6 +17,7 @@ import com.github.tangyi.user.mapper.MenuMapper;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -199,10 +200,11 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 		String userCode = SysUtil.getUser();
 		String sysCode = SysUtil.getSysCode();
 		String tenantCode = SysUtil.getTenantCode();
-		menu = this.get(menu);
+		Menu source = this.get(menu);
 		// 默认租户的用户更新菜单或更新本租户的菜单，直接更新
-		if (tenantCode.equals(SecurityConstant.DEFAULT_TENANT_CODE) || tenantCode.equals(menu.getTenantCode())) {
-			return super.update(menu);
+		if (tenantCode.equals(SecurityConstant.DEFAULT_TENANT_CODE) || tenantCode.equals(source.getTenantCode())) {
+			BeanUtils.copyProperties(menu, source);
+			return super.update(source);
 		} else {
 			// 其它租户更新默认租户的菜单，copy一份原始菜单的数据
 			Long originalId = menu.getId();
