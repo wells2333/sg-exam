@@ -18,6 +18,7 @@ import VueParticles from 'vue-particles'
 import { loadStyle } from './utils/util'
 import * as urls from '@/config/env'
 import Spinner from 'vue-spinkit'
+import moment from 'moment'
 
 const iconfontVersion = ['567566_r22zi6t8noas8aor', '599693_0b5sleso3f1j1yvi', '667895_xte3dcfrvbo6r']
 const iconfontUrl = `//at.alicdn.com/t/font_$key.css`
@@ -29,6 +30,8 @@ Vue.use(Element, {
 
 // 使用登录页粒子效果插件
 Vue.use(VueParticles)
+
+Vue.prototype.moment = moment
 
 // loading效果
 Vue.component('Spinner', Spinner)

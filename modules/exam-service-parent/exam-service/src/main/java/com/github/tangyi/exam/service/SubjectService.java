@@ -9,6 +9,7 @@ import com.github.tangyi.exam.api.constants.ExamSubjectConstant;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.ExaminationSubject;
 import com.github.tangyi.exam.api.module.SubjectChoices;
+import com.github.tangyi.exam.api.module.SubjectJudgement;
 import com.github.tangyi.exam.api.module.SubjectShortAnswer;
 import com.github.tangyi.exam.enums.SubjectTypeEnum;
 import com.github.tangyi.exam.utils.SubjectUtil;
@@ -41,8 +42,6 @@ public class SubjectService {
     private final SubjectShortAnswerService subjectShortAnswerService;
 
     private final ExaminationSubjectService examinationSubjectService;
-
-    private final SubjectOptionService subjectOptionService;
 
     private final SubjectJudgementService subjectJudgementService;
 
@@ -232,7 +231,12 @@ public class SubjectService {
      */
     @Transactional
     public int physicalDelete(SubjectDto subjectDto) {
-        return subjectService(subjectDto.getType()).physicalDeleteSubject(subjectDto);
+        if (subjectService(subjectDto.getType()).physicalDeleteSubject(subjectDto) > 0) {
+            ExaminationSubject examinationSubject = new ExaminationSubject();
+            examinationSubject.setSubjectId(subjectDto.getId());
+            return examinationSubjectService.deleteBySubjectId(examinationSubject);
+        }
+        return -1;
     }
 
     /**
@@ -342,6 +346,11 @@ public class SubjectService {
                                         temp.stream().map(ExaminationSubject::getSubjectId).distinct()
                                                 .toArray(Long[]::new));
                                 break;
+                            case JUDGEMENT:
+                                idMap.put(SubjectTypeEnum.JUDGEMENT.name(),
+                                        temp.stream().map(ExaminationSubject::getSubjectId).distinct()
+                                                .toArray(Long[]::new));
+                                break;
                             case MULTIPLE_CHOICES:
                                 idMap.put(SubjectTypeEnum.MULTIPLE_CHOICES.name(),
                                         temp.stream().map(ExaminationSubject::getSubjectId).distinct()
@@ -411,6 +420,12 @@ public class SubjectService {
                 subjectDtoList.addAll(SubjectUtil.subjectShortAnswerToDto(subjectShortAnswers));
             }
         }
+        if (idMap.containsKey((SubjectTypeEnum.JUDGEMENT.name()))) {
+            List<SubjectJudgement> subjectJudgements = subjectJudgementService.findListById(idMap.get(SubjectTypeEnum.JUDGEMENT.name()));
+            if (CollectionUtils.isNotEmpty(subjectJudgements)) {
+                subjectDtoList.addAll(SubjectUtil.subjectJudgementToDto(subjectJudgements));
+            }
+        }
         return subjectDtoList;
     }
 
@@ -463,8 +478,12 @@ public class SubjectService {
             examinationSubjects = examinationSubjectService.findListByCategoryId(examinationSubject);
         }
         if (CollectionUtils.isNotEmpty(examinationSubjects)) {
-            for (ExaminationSubject es : examinationSubjects)
-                subjects.add(this.get(es.getSubjectId(), es.getType()));
+            for (ExaminationSubject es : examinationSubjects) {
+				SubjectDto subjectDto = this.get(es.getSubjectId(), es.getType());
+				subjectDto.setExaminationId(es.getExaminationId());
+				subjectDto.setCategoryId(es.getCategoryId());
+				subjects.add(subjectDto);
+			}
         }
         return subjects;
     }

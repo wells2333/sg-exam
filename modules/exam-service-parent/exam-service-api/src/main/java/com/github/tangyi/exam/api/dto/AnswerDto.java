@@ -1,6 +1,7 @@
 package com.github.tangyi.exam.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,6 +12,7 @@ import java.util.Date;
  * @date 2019/6/18 15:02
  */
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AnswerDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -51,13 +53,18 @@ public class AnswerDto implements Serializable {
     /**
      * 得分
      */
-    private Integer score;
+    private Double score;
 
     /**
      * 用户ID
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long userId;
+
+    /**
+     * 用户名
+     */
+    private String userName;
 
     /**
      * 题目详情

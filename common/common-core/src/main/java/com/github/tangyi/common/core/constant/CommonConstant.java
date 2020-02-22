@@ -186,5 +186,10 @@ public class CommonConstant {
 	 * 女
 	 */
 	public static final Integer GENDER_WOMEN = 1;
+
+	/**
+	 * 逗号
+	 */
+	public static final String COMMA = ",";
 }
 

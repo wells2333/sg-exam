@@ -1,14 +1,18 @@
 package com.github.tangyi.exam.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author tangyi
  * @date 2019/1/1 22:04
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class KnowledgeDto extends BaseEntity<KnowledgeDto> {
 
     /**

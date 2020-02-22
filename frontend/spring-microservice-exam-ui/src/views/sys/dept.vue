@@ -2,7 +2,7 @@
   <div class="tab-container">
     <div class="filter-container">
       <el-button v-if="dept_btn_add" icon="el-icon-check" type="primary" @click="handlerAdd">添加</el-button>
-      <el-button v-if="dept_btn_del" icon="el-icon-delete" plain @click="handleDelete">删除</el-button>
+      <el-button v-if="dept_btn_del" icon="el-icon-delete" type="danger" @click="handleDelete">删除</el-button>
 
       <el-row>
         <el-col :span="5" style ="margin-top:10px;">

@@ -1,10 +1,10 @@
 package com.github.tangyi.exam.api.feign.fallback;
 
 import com.github.tangyi.common.core.model.ResponseBean;
+import com.github.tangyi.exam.api.dto.ExaminationDashboardDto;
 import com.github.tangyi.exam.api.feign.ExaminationServiceClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 考试服务熔断
@@ -16,25 +16,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Service
 public class ExaminationServiceClientFallbackImpl implements ExaminationServiceClient {
 
-    private Throwable throwable;
+	private Throwable throwable;
 
-    @Override
-    public ResponseBean<Integer> findExaminationCount(@RequestParam String tenantCode) {
-        log.error("Call findExaminationCount error, {}", tenantCode, throwable);
-        return new ResponseBean<>(0);
-    }
+	@Override
+	public ResponseBean<ExaminationDashboardDto> findExaminationDashboardData(String tenantCode) {
+		log.error("Call findExaminationDashboardData error, {}", tenantCode, throwable);
+		return new ResponseBean<>(new ExaminationDashboardDto());
+	}
 
-    @Override
-    public ResponseBean<Integer> findExamUserCount(String tenantCode) {
-        log.error("Call findExamUserCount error, {}", tenantCode, throwable);
-        return null;
-    }
+	@Override
+	public ResponseBean<ExaminationDashboardDto> findExamRecordTendencyData(String tenantCode, Integer pastDays) {
+		log.error("Call findExamRecordTendencyData error, {}, {}", tenantCode, pastDays, throwable);
+		return new ResponseBean<>(new ExaminationDashboardDto());
+	}
 
-    public Throwable getThrowable() {
-        return throwable;
-    }
+	public Throwable getThrowable() {
+		return throwable;
+	}
 
-    public void setThrowable(Throwable throwable) {
-        this.throwable = throwable;
-    }
+	public void setThrowable(Throwable throwable) {
+		this.throwable = throwable;
+	}
 }

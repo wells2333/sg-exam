@@ -1,0 +1,81 @@
+.subject-exam-title{
+  font-size: 18px;
+  line-height: 25px;
+  padding: 18px 20px;
+  border-bottom: 1px solid #DEDEDE;
+  margin-bottom: 12px;
+}
+.subject {
+  padding-left: 30px;
+  padding-right: 75px;
+}
+.subject-content{
+  margin-top: 18px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 300;
+  background: #fff;
+  z-index: 1;
+  position: relative;
+}
+/* 题目 */
+.subject-title {
+  font-size: 18px;
+  line-height: 22px;
+  .subject-title-number {
+    display: inline-block;
+    line-height: 22px;
+  }
+  .subject-title-content {
+    display: inline-block;
+  }
+}
+.subject-options {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  > li {
+    position: relative;
+    font-size: 24px;
+    .toggle {
+      opacity: 0;
+      text-align: center;
+      width: 35px;
+      /* auto, since non-WebKit browsers doesn't support input styling */
+      height: auto;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      margin: auto 0;
+      border: none;
+      /* Mobile Safari */
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .toggle+label {
+      background-image: url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%22-10%20-18%20100%20135%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22none%22%20stroke%3D%22%23ededed%22%20stroke-width%3D%223%22/%3E%3C/svg%3E');
+      background-repeat: no-repeat;
+      background-position: center left;
+      background-size: 30px;
+    }
+    .toggle:checked+label {
+      background-size: 30px;
+      background-image: url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%22-10%20-18%20100%20135%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22none%22%20stroke%3D%22%23bddad5%22%20stroke-width%3D%223%22/%3E%3Cpath%20fill%3D%22%235dc2af%22%20d%3D%22M72%2025L42%2071%2027%2056l-4%204%2020%2020%2034-52z%22/%3E%3C/svg%3E');
+    }
+    label {
+      word-break: break-all;
+      padding: 10px 10px 10px 45px;
+      display: block;
+      line-height: 1.0;
+      transition: color 0.4s;
+    }
+    /* 选项名称 */
+    .subject-option-prefix {
+      font-size: 16px;
+      display: inline-block
+    }
+  }
+}
+.subject-answer {
+  padding: 16px;
+}

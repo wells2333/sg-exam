@@ -149,7 +149,7 @@ export const isNotEmpty = (obj) => {
  * @param duration
  */
 export const notify = (obj, title, msg, type, duration) => {
-  obj.$notify({ title: title, message: msg, type: type, duration: duration, offset: 70})
+  obj.$notify({ title: title, message: msg, type: type, duration: duration, offset: 70 })
 }
 
 /**
@@ -177,6 +177,43 @@ export const notifyWarn = (obj, msg) => {
  */
 export const notifyFail = (obj, msg) => {
   notify(obj, '失败', msg, 'error', 2000)
+}
+
+/**
+ * 消息提示
+ * @param obj
+ * @param message
+ * @param type
+ */
+export const message = (obj, message, type) => {
+  obj.$message({ message: message, type: type, offset: 70 })
+}
+
+/**
+ * 成功消息提示
+ * @param obj
+ * @param message
+ */
+export const messageSuccess = (obj, message) => {
+  obj.$message({ message: message, type: 'success', offset: 70 })
+}
+
+/**
+ * 警告消息提示
+ * @param obj
+ * @param message
+ */
+export const messageWarn = (obj, message) => {
+  obj.$message({ message: message, type: 'warning', offset: 70 })
+}
+
+/**
+ * 失败消息提示
+ * @param obj
+ * @param message
+ */
+export const messageFail = (obj, message) => {
+  obj.$message({ message: message, type: 'error', offset: 70 })
 }
 
 /**

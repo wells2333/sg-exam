@@ -3,10 +3,10 @@
     <div class="filter-container">
       <el-input placeholder="输入姓名查询" v-model="listQuery.name" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.query') }}</el-button>
-      <el-button v-if="user_btn_add" class="filter-item" icon="el-icon-check" plain @click="handleCreate">{{ $t('table.add') }}</el-button>
-      <el-button v-if="user_btn_del" class="filter-item" icon="el-icon-delete" plain @click="handleDeletes">{{ $t('table.del') }}</el-button>
-      <el-button v-if="user_btn_import" class="filter-item" icon="el-icon-upload2" plain @click="handleImport">{{ $t('table.import') }}</el-button>
-      <el-button v-if="user_btn_export" class="filter-item" icon="el-icon-download" plain @click="handleExport">{{ $t('table.export') }}</el-button>
+      <el-button v-if="user_btn_add" class="filter-item" icon="el-icon-check" type="primary" @click="handleCreate">{{ $t('table.add') }}</el-button>
+      <el-button v-if="user_btn_del" class="filter-item" icon="el-icon-delete" type="danger" @click="handleDeletes">{{ $t('table.del') }}</el-button>
+      <el-button v-if="user_btn_import" class="filter-item" icon="el-icon-upload2" type="success" @click="handleImport">{{ $t('table.import') }}</el-button>
+      <el-button v-if="user_btn_export" class="filter-item" icon="el-icon-download" type="success" @click="handleExport">{{ $t('table.export') }}</el-button>
     </div>
     <spinner-loading v-if="listLoading"/>
     <el-table
@@ -46,15 +46,15 @@
       </el-table-column>
       <el-table-column :label="$t('table.status')">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusTypeFilter">{{ scope.row.status | statusFilter }}</el-tag>
+          <el-tag :type="scope.row.status | statusTypeFilter" effect="dark" size="small">{{ scope.row.status | statusFilter }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.actions')" class-name="status-col" width="300px">
         <template slot-scope="scope">
-          <el-button v-if="user_btn_edit" type="text"  @click="handleUpdate(scope.row)" icon="el-icon-edit">{{ $t('table.edit') }}</el-button>
-          <el-button v-if="user_btn_edit  && scope.row.status === 0" type="text" @click="handleEnableOrDisable(scope.row, 1)" icon="el-icon-remove-outline">{{ $t('table.disable') }}</el-button>
-          <el-button v-else type="text" @click="handleEnableOrDisable(scope.row, 0)" icon="el-icon-check">{{ $t('table.enable') }}</el-button>
-          <el-button v-if="user_btn_edit" type="text" @click="handleResetPassword(scope.row)" icon="el-icon-refresh">{{ $t('table.resetPassword') }}</el-button>
+          <el-button v-if="user_btn_edit" type="primary" size="mini" @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
+          <el-button v-if="user_btn_edit" type="warning" size="mini" @click="handleResetPassword(scope.row)">{{ $t('table.resetPassword') }}</el-button>
+          <el-button v-if="user_btn_edit  && scope.row.status === 0" type="danger" size="mini" @click="handleEnableOrDisable(scope.row, 1)">{{ $t('table.disable') }}</el-button>
+          <el-button v-else type="success" size="mini" @click="handleEnableOrDisable(scope.row, 0)">{{ $t('table.enable') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -264,14 +264,6 @@ export default {
     }
   },
   data () {
-    // 校验手机号码
-    const checkPhone = (rule, value, callback) => {
-      if (!(/^1[34578]\d{9}$/.test(value))) {
-        callback(new Error('请输入正确的手机号码!'))
-      } else {
-        callback()
-      }
-    }
     return {
       tableKey: 0,
       list: null,
@@ -311,9 +303,7 @@ export default {
         create: '新建'
       },
       rules: {
-        name: [{ required: true, message: '请输入账号', trigger: 'change' }],
-        username: [{ required: true, message: '请输入姓名', trigger: 'change' }],
-        phone: [{ required: true, message: '请输入手机号码', trigger: 'change' }, { validator: checkPhone, trigger: 'change' }]
+        identifier: [{ required: true, message: '请输入账号', trigger: 'change' }]
       },
       downloadLoading: false,
       treeDeptData: [],

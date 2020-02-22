@@ -30,13 +30,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.11.RELEASE</version>
+        <version>2.2.2.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <properties>
         <!-- 版本号 -->
-        <revision>3.5.0</revision>
+        <revision>3.6.0</revision>
         <!-- 编译 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -45,8 +45,8 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <!-- spring boot、spring cloud -->
-        <spring-boot.version>2.1.11.RELEASE</spring-boot.version>
-        <spring-cloud.version>Greenwich.SR4</spring-cloud.version>
+        <spring-boot.version>2.2.2.RELEASE</spring-boot.version>
+        <spring-cloud.version>Hoxton.SR1</spring-cloud.version>
         <spring-boot-admin.version>2.2.0-SNAPSHOT</spring-boot-admin.version>
         <zipkin.version>2.11.3</zipkin.version>
         <swagger.version>2.9.2</swagger.version>

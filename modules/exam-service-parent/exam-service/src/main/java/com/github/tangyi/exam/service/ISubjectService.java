@@ -28,7 +28,7 @@ public interface ISubjectService {
      *
      * @param examinationId examinationId
      * @param previousId    previousId
-     * @param nextType      0：下一题，1：上一题
+     * @param nextType      -1：当前题目，0：下一题，1：上一题
      * @return SubjectDto
      * @author tangyi
      * @date 2019-09-14 16:33

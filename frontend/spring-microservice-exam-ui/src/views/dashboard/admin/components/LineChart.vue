@@ -19,7 +19,7 @@ export default {
     },
     height: {
       type: String,
-      default: '350px'
+      default: '400px'
     },
     autoResize: {
       type: Boolean,
@@ -78,10 +78,10 @@ export default {
         this.__resizeHandler()
       }
     },
-    setOptions ({ expectedData, actualData } = {}) {
+    setOptions ({ examRecordDate, examRecordData } = {}) {
       this.chart.setOption({
         xAxis: {
-          data: ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日'],
+          data: examRecordDate,
           boundaryGap: false,
           axisTick: {
             show: false
@@ -107,27 +107,10 @@ export default {
           }
         },
         legend: {
-          data: ['预期', '实际']
+          data: ['考试记录数']
         },
         series: [{
-          name: '预期',
-          itemStyle: {
-            normal: {
-              color: '#FF005A',
-              lineStyle: {
-                color: '#FF005A',
-                width: 2
-              }
-            }
-          },
-          smooth: true,
-          type: 'line',
-          data: expectedData,
-          animationDuration: 2800,
-          animationEasing: 'cubicInOut'
-        },
-        {
-          name: '实际',
+          name: '考试记录数',
           smooth: true,
           type: 'line',
           itemStyle: {
@@ -142,7 +125,7 @@ export default {
               }
             }
           },
-          data: actualData,
+          data: examRecordData,
           animationDuration: 2800,
           animationEasing: 'quadraticOut'
         }]
@@ -155,4 +138,3 @@ export default {
   }
 }
 </script>
-

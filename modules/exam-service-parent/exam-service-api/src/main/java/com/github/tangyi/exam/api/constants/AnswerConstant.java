@@ -29,6 +29,11 @@ public class AnswerConstant {
     public static final Integer MARKED = 1;
 
     /**
+     * 当前题目
+     */
+    public static final Integer CURRENT = -1;
+
+    /**
      * 下一题
      */
     public static final Integer NEXT = 0;

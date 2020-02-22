@@ -139,12 +139,14 @@ export default {
     actions: '操作',
     edit: '修改',
     view: '查看',
+    preview: '预览',
     publish: '发布',
     draft: '草稿',
     delete: '删除',
     cancel: '取 消',
     confirm: '确 定',
     save: '保存',
+    select: '选择',
     saveAndAdd: '保存并添加',
     username: '账号',
     name: '姓名',
@@ -179,10 +181,17 @@ export default {
     attention: '注意事项',
     startTime: '开始时间',
     endTime: '结束时间',
-    totalScore: '考试总分',
+    examTime: '考试时间',
+    totalScore: '总分',
     totalSubject: '题目数',
     subjectManagement: '题目管理',
     subjectName: '题目名称',
+    userAnswer: '考生答案',
+    correct: '正确',
+    inCorrect: '错误',
+    time: '耗时',
+    answerCorrectType: '答题结果',
+    score: '得分',
     subject: {
       serialNumber: '序号',
       type: '类型',
@@ -202,7 +211,7 @@ export default {
       modifier: '修改人'
     },
     public: '发布',
-    retrieve: '回收',
+    withdraw: '撤回',
     categoryName: '分类名称',
     categoryDesc: '分类描述',
     sort: '排序号',
@@ -214,7 +223,8 @@ export default {
       examTime: '考试时间',
       submitStatus: '状态',
       details: '详情',
-      marking: '批改'
+      marking: '批改',
+      markStatus: '批改状态'
     },
     knowledge: {
       knowledgeName: '名称',
@@ -241,8 +251,8 @@ export default {
       clientSecretPlainText: '密钥明文',
       scope: '授权范围',
       authorizedGrantTypes: '授权类型',
-      accessTokenValidity: 'token有效期',
-      refreshTokenValidity: 'refresh_token有效期'
+      accessTokenValidity: 'token有效期/秒',
+      refreshTokenValidity: 'refresh_token有效期/秒'
     },
     route: {
       routeId: '路由ID',

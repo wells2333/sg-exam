@@ -138,12 +138,13 @@ public class AttachmentService extends CrudService<AttachmentMapper, Attachment>
 	@Cacheable(value = "attachment_preview#" + CommonConstant.CACHE_EXPIRE, key = "#attachment.id")
 	public String getPreviewUrl(Attachment attachment) {
 		attachment = this.get(attachment);
-		if (attachment == null)
-			throw new CommonException("Attachment does not exist");
-		String preview = attachment.getPreviewUrl();
-		if (!preview.startsWith("http"))
-			preview = "http://" + preview;
-		log.debug("GetPreviewUrl id: {}, preview url: {}", attachment.getId(), preview);
-		return preview;
+		if (attachment != null) {
+			String preview = attachment.getPreviewUrl();
+			if (!preview.startsWith("http"))
+				preview = "http://" + preview;
+			log.debug("GetPreviewUrl id: {}, preview url: {}", attachment.getId(), preview);
+			return preview;
+		}
+		return "";
 	}
 }
