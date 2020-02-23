@@ -110,7 +110,6 @@ swagger:
 preview:
   ignores:
     - api/auth  # 授权服务
-    - resetPassword   # 重置密码
     - register
     - checkExist
     - updateInfo

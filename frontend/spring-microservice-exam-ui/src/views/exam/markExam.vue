@@ -192,11 +192,11 @@ export default {
           if (subjectData.length > 0) {
             for (let i = 0; i < subjectData.length; i++) {
               const { subjectId, type } = subjectData[i]
-              this.subjectIds.push({subjectId, type, index: i + 1})
+              this.subjectIds.push({ subjectId, type, index: i + 1 })
             }
           }
         })
-      }).catch(error => {
+      }).catch(() => {
         messageFail(this, '加载答题失败')
       })
     },

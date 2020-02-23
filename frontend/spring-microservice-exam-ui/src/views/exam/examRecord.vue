@@ -83,14 +83,11 @@
 </template>
 
 <script>
-import { fetchExamRecordList, exportObj, completeMarking } from '@/api/exam/examRecord'
-import { getAnswerByRecordId, putAnswer } from '@/api/exam/answer'
-import { getSubjectIds } from '@/api/exam/exam'
+import { fetchExamRecordList, exportObj } from '@/api/exam/examRecord'
 import waves from '@/directive/waves'
 import { mapGetters } from 'vuex'
-import { exportExcel, messageFail, messageSuccess, formatDate } from '@/utils/util'
+import { exportExcel } from '@/utils/util'
 import SpinnerLoading from '@/components/SpinnerLoading'
-import Tinymce from '@/components/Tinymce'
 
 export default {
   name: 'ExamRecordManagement',

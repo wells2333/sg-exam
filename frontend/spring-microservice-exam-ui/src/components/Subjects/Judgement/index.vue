@@ -50,144 +50,29 @@
 </template>
 
 <script>
+import Tinymce from '@/components/Tinymce'
+import { isNotEmpty } from '@/utils/util'
 
-  import Tinymce from '@/components/Tinymce'
-  import { isNotEmpty, message } from '@/utils/util'
-
-  export default {
-    name: 'Judgement',
-    components: {
-      Tinymce
-    },
-    props: {
-      subject: {
-        type: Object,
-        default: function () {
-          return {
-            id: '',
-            examinationId: undefined,
-            categoryId: undefined,
-            subjectName: '',
-            type: 0,
-            choicesType: 0,
-            options: [
-              { subjectChoicesId: '', optionName: '正确', optionContent: '正确' },
-              { subjectChoicesId: '', optionName: '错误', optionContent: '错误' }
-            ],
-            answer: {
-              subjectId: '',
-              answer: '',
-              answerType: '',
-              score: ''
-            },
-            score: 5,
-            analysis: '',
-            level: 2,
-            editType: 0 // 0: 输入框，1：富文本
-          }
-        }
-      },
-      choices: {
-        type: String,
-        default: ''
-      }
-    },
-    data () {
-      return {
-        subjectInfo: this.subject,
-        choicesContent: this.choices,
-        labelPosition: 'right',
-        // 表单校验规则
-        subjectRules: {
-          subjectName: [{ required: true, message: '请输入题目名称', trigger: 'change' }],
-          score: [{ required: true, message: '请输入题目分值', trigger: 'change' }],
-          answer: [{ required: true, message: '请输入答案', trigger: 'change' }]
-        },
-        tinymce: {
-          type: 1, // 类型 0：题目名称，1：选项
-          dialogTinymceVisible: false,
-          tempValue: '',
-          currentEdit: -1
-        },
-        // 编辑对象
-        tinymceEdit: {
-          subjectName: -1,
-          answer: 4,
-          analysis: 5
-        },
-        options: []
-      }
-    },
-    watch: {
-      // 监听富文本编辑器的输入
-      choicesContent: {
-        handler: function (choicesContent) {
-          if (isNotEmpty(this.$refs.choicesEditor)) {
-            if (this.editType === 1 && this.$refs.choicesEditor.getHasClick()) {
-              this.saveTinymceContent(choicesContent)
-            }
-          }
-        },
-        immediate: true
-      }
-    },
-    methods: {
-      initDefaultOptions () {
-        this.options = [
-          { subjectChoicesId: '', optionName: '正确', optionContent: '正确' },
-          { subjectChoicesId: '', optionName: '错误', optionContent: '错误' }
-        ]
-      },
-      setSubjectInfo (subject) {
-        this.subjectInfo = subject
-        this.initDefaultOptions()
-      },
-      getSubjectInfo () {
-        return this.subjectInfo
-      },
-      // 绑定富文本的内容
-      updateTinymceContent (content, currentEdit, type) {
-        // 重置富文本
-        this.choicesContent = ''
-        // 绑定当前编辑的对象
-        this.tinymce.currentEdit = currentEdit
-        this.tinymce.type = type
-        this.$refs.choicesEditor.setContent(content || '')
-        this.editType = 0
-        this.$refs.choicesEditor.setHashClick(false)
-      },
-      saveTinymceContent (content) {
-        switch (this.tinymce.currentEdit) {
-          case this.tinymceEdit.subjectName:
-            this.subjectInfo.subjectName = content
-            break
-          case this.tinymceEdit.answer:
-            this.subjectInfo.answer.answer = content
-            break
-          case this.tinymceEdit.analysis:
-            this.subjectInfo.analysis = content
-            break
-        }
-      },
-      // 表单校验
-      validate () {
-        let valid = false
-        this.$refs['dataSubjectForm'].validate((validate) => {
-          valid = validate
-        })
-        return valid
-      },
-      clearValidate () {
-        this.$refs['dataSubjectForm'].clearValidate()
-      },
-      resetTempSubject (score) {
-        this.subjectInfo = {
+export default {
+  name: 'Judgement',
+  components: {
+    Tinymce
+  },
+  props: {
+    subject: {
+      type: Object,
+      default: function () {
+        return {
           id: '',
           examinationId: undefined,
           categoryId: undefined,
           subjectName: '',
           type: 0,
           choicesType: 0,
+          options: [
+            { subjectChoicesId: '', optionName: '正确', optionContent: '正确' },
+            { subjectChoicesId: '', optionName: '错误', optionContent: '错误' }
+          ],
           answer: {
             subjectId: '',
             answer: '',
@@ -196,21 +81,134 @@
           },
           score: 5,
           analysis: '',
-          level: 2
+          level: 2,
+          editType: 0 // 0: 输入框，1：富文本
         }
-        // 默认分数
-        if (isNotEmpty(score)) {
-          this.subjectInfo.score = score
-        }
-        this.initDefaultOptions()
-      },
-      // 点击事件回调
-      hasClick (hasClick) {
-        this.editType = 1
       }
+    },
+    choices: {
+      type: String,
+      default: ''
+    }
+  },
+  data () {
+    return {
+      subjectInfo: this.subject,
+      choicesContent: this.choices,
+      labelPosition: 'right',
+      // 表单校验规则
+      subjectRules: {
+        subjectName: [{ required: true, message: '请输入题目名称', trigger: 'change' }],
+        score: [{ required: true, message: '请输入题目分值', trigger: 'change' }],
+        answer: [{ required: true, message: '请输入答案', trigger: 'change' }]
+      },
+      tinymce: {
+        type: 1, // 类型 0：题目名称，1：选项
+        dialogTinymceVisible: false,
+        tempValue: '',
+        currentEdit: -1
+      },
+      // 编辑对象
+      tinymceEdit: {
+        subjectName: -1,
+        answer: 4,
+        analysis: 5
+      },
+      options: []
+    }
+  },
+  watch: {
+    // 监听富文本编辑器的输入
+    choicesContent: {
+      handler: function (choicesContent) {
+        if (isNotEmpty(this.$refs.choicesEditor)) {
+          if (this.editType === 1 && this.$refs.choicesEditor.getHasClick()) {
+            this.saveTinymceContent(choicesContent)
+          }
+        }
+      },
+      immediate: true
+    }
+  },
+  methods: {
+    initDefaultOptions () {
+      this.options = [
+        { subjectChoicesId: '', optionName: '正确', optionContent: '正确' },
+        { subjectChoicesId: '', optionName: '错误', optionContent: '错误' }
+      ]
+    },
+    setSubjectInfo (subject) {
+      this.subjectInfo = subject
+      this.initDefaultOptions()
+    },
+    getSubjectInfo () {
+      return this.subjectInfo
+    },
+    // 绑定富文本的内容
+    updateTinymceContent (content, currentEdit, type) {
+      // 重置富文本
+      this.choicesContent = ''
+      // 绑定当前编辑的对象
+      this.tinymce.currentEdit = currentEdit
+      this.tinymce.type = type
+      this.$refs.choicesEditor.setContent(content || '')
+      this.editType = 0
+      this.$refs.choicesEditor.setHashClick(false)
+    },
+    saveTinymceContent (content) {
+      switch (this.tinymce.currentEdit) {
+        case this.tinymceEdit.subjectName:
+          this.subjectInfo.subjectName = content
+          break
+        case this.tinymceEdit.answer:
+          this.subjectInfo.answer.answer = content
+          break
+        case this.tinymceEdit.analysis:
+          this.subjectInfo.analysis = content
+          break
+      }
+    },
+    // 表单校验
+    validate () {
+      let valid = false
+      this.$refs['dataSubjectForm'].validate((validate) => {
+        valid = validate
+      })
+      return valid
+    },
+    clearValidate () {
+      this.$refs['dataSubjectForm'].clearValidate()
+    },
+    resetTempSubject (score) {
+      this.subjectInfo = {
+        id: '',
+        examinationId: undefined,
+        categoryId: undefined,
+        subjectName: '',
+        type: 0,
+        choicesType: 0,
+        answer: {
+          subjectId: '',
+          answer: '',
+          answerType: '',
+          score: ''
+        },
+        score: 5,
+        analysis: '',
+        level: 2
+      }
+      // 默认分数
+      if (isNotEmpty(score)) {
+        this.subjectInfo.score = score
+      }
+      this.initDefaultOptions()
+    },
+    // 点击事件回调
+    hasClick (hasClick) {
+      this.editType = 1
     }
   }
-
+}
 </script>
 
 <style lang="scss" scoped>
