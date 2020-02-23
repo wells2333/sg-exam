@@ -25,6 +25,7 @@ const getters = {
   course: state => state.course.course,
   sysConfig: state => state.sysConfig.sysConfig,
   tenantCode: state => state.user.tenantCode,
-  incorrectRecord: state => state.exam.incorrectRecord
+  incorrectRecord: state => state.exam.incorrectRecord,
+  userInfo: state => state.user.userInfo
 }
 export default getters
