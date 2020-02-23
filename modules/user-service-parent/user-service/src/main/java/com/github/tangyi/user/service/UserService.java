@@ -503,7 +503,7 @@ public class UserService extends CrudService<UserMapper, User> {
     private void initUserAvatar(UserInfoDto userInfoDto, User user) {
         try {
             // 附件id不为空，获取对应的预览地址，否则获取配置默认头像地址
-            if (user.getAvatarId() != 0L) {
+            if (user.getAvatarId() != null && user.getAvatarId() != 0L) {
                 Attachment attachment = new Attachment();
                 attachment.setId(user.getAvatarId());
                 userInfoDto.setAvatarUrl(attachmentService.getPreviewUrl(attachment));

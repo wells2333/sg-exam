@@ -79,7 +79,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
      */
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
-        String msg = "服务器内部错误.";
+        String msg = "Internal Server Error";
         // 返回给前端用的状态码
         int keyCode = ApiMsg.KEY_UNKNOWN;
         int msgCode = ApiMsg.ERROR;
@@ -112,7 +112,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
         ResponseBean<String> responseBean = new ResponseBean<>(msg, keyCode, msgCode);
         // 错误记录
         ServerHttpRequest request = exchange.getRequest();
-        log.error("[全局异常处理]异常请求路径:{}, 异常信息:{}", request.getPath(), ex.getMessage());
+        log.error("GatewayExceptionHandler: {}, error: {}", request.getPath(), ex.getMessage());
         if (exchange.getResponse().isCommitted())
             return Mono.error(ex);
         exceptionHandlerResult.set(responseBean);

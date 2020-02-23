@@ -15,7 +15,8 @@ router.beforeEach((to, from, next) => {
     if (to.path === '/login' || to.path === '/register') {
       next({ path: '/' })
     } else {
-      if (store.getters.roles.length === 0) { // 判断当前用户是否已拉取完user_info信息
+      const userInfo = store.getters.userInfo
+      if (Object.keys(userInfo).length === 0) { // 判断当前用户是否已拉取完user_info信息
         store.dispatch('GetUserInfo').then(res => { // 拉取user_info
           next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
         }).catch((err) => {
@@ -25,9 +26,10 @@ router.beforeEach((to, from, next) => {
           })
         })
         // 获取系统配置信息
-        if (store.getters.sysConfig.fdfsHttpHost === undefined) {
+        const sysConfig = store.getters.sysConfig
+        if (Object.keys(sysConfig).length === 0) {
           store.dispatch('GetSysConfig').then(res => {}).catch(() => {
-            console.log('获取附件配置失败！')
+            console.log('获取系统配置失败！')
           })
         }
       } else {

@@ -20,53 +20,53 @@
 </template>
 
 <script>
-  export default {
-    name: 'Judgement',
-    data () {
-      return {
-        exam: {
-          examinationName: '',
-          totalScore: ''
-        },
-        subjectCount: 0,
-        subjectInfo: {
-          subjectName: '',
-          score: 0
-        },
-        options: [
-          { id: 1, optionName: '正确' },
-          { id: 2, optionName: '错误' }
-        ],
-        userAnswer: '',
-        index: ''
-      }
+export default {
+  name: 'Judgement',
+  data () {
+    return {
+      exam: {
+        examinationName: '',
+        totalScore: ''
+      },
+      subjectCount: 0,
+      subjectInfo: {
+        subjectName: '',
+        score: 0
+      },
+      options: [
+        { id: 1, optionName: '正确' },
+        { id: 2, optionName: '错误' }
+      ],
+      userAnswer: '',
+      index: ''
+    }
+  },
+  methods: {
+    getAnswer () {
+      return this.userAnswer
     },
-    methods: {
-      getAnswer () {
-        return this.userAnswer
-      },
-      setAnswer (answer) {
-        this.userAnswer = answer
-      },
-      setSubjectInfo (exam, subject, subjectCount, index) {
-        this.exam = exam
-        this.subjectCount = subjectCount
-        this.subjectInfo = subject
-        if (subject.hasOwnProperty('answer')) {
-          this.setAnswer(subject.answer.answer)
-        }
-        this.index = index + '.'
-      },
-      getSubjectInfo () {
-        this.subjectInfo.options = this.options
-        return this.subjectInfo
-      },
-      // 选中选项
-      toggleOption (option) {
-        this.userAnswer = option.optionName
+    setAnswer (answer) {
+      this.userAnswer = answer
+    },
+    setSubjectInfo (exam, subject, subjectCount, index) {
+      this.exam = exam
+      this.subjectCount = subjectCount
+      this.subjectInfo = subject
+      if (subject.hasOwnProperty('answer')) {
+        this.setAnswer(subject.answer.answer)
       }
+      this.index = index + '.'
+    },
+    getSubjectInfo () {
+      this.subjectInfo.options = this.options
+      return this.subjectInfo
+    },
+    // 选中选项
+    toggleOption (option) {
+      this.userAnswer = option.optionName
     }
   }
+}
 </script>
 
 <style lang="scss" scoped>
