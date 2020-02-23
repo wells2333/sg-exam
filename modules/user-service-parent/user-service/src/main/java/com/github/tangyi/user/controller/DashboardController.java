@@ -59,9 +59,15 @@ public class DashboardController extends BaseController {
         ResponseBean<ExaminationDashboardDto> dashboardData = examinationService.findExaminationDashboardData(tenantCode);
         if (!ResponseUtil.isSuccess(dashboardData))
             throw new ServiceException("Get examination dashboard data failed: " + dashboardData.getMsg());
-        dashboardDto.setExaminationNumber(dashboardData.getData().getExaminationCount().toString());
-		dashboardDto.setExamUserNumber(dashboardData.getData().getExamUserCount().toString());
-		dashboardDto.setExaminationRecordNumber(dashboardData.getData().getExaminationRecordCount().toString());
+        ExaminationDashboardDto examinationDashboardDto = dashboardData.getData();
+        if (examinationDashboardDto != null) {
+            if (examinationDashboardDto.getExaminationCount() != null)
+                dashboardDto.setExaminationNumber(examinationDashboardDto.getExaminationCount().toString());
+            if (examinationDashboardDto.getExamUserCount() != null)
+             dashboardDto.setExamUserNumber(examinationDashboardDto.getExamUserCount().toString());
+            if (examinationDashboardDto.getExaminationRecordCount() != null)
+                dashboardDto.setExaminationRecordNumber(examinationDashboardDto.getExaminationRecordCount().toString());
+        }
         return new ResponseBean<>(dashboardDto);
     }
 
