@@ -13,7 +13,6 @@
       highlight-current-row
       style="width: 100%;"
       @selection-change="handleSubjectSelectionChange"
-      @cell-dblclick="handleUpdateSubject"
       @sort-change="sortSubjectChange">
       <el-table-column type="selection" width="55"/>
       <el-table-column :label="$t('table.subjectName')" min-width="120">

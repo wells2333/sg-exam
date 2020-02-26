@@ -14,7 +14,6 @@
       :default-sort="{ prop: 'id', order: 'descending' }"
       highlight-current-row
       style="width: 100%;"
-      @cell-dblclick="handleUpdate"
       @selection-change="handleSelectionChange"
       @sort-change="sortChange">
       <el-table-column type="selection" width="55"/>
@@ -420,7 +419,6 @@ export default {
     },
     getFilters (filters) {
       let result = filters.map(filter => {
-        debugger
         const tempFilter = Object.assign(filter)
         let tempArgs = Object.assign(tempFilter.args)
         const args = tempArgs.split(',')

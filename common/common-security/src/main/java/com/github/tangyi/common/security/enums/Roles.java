@@ -27,7 +27,12 @@ public enum Roles implements GrantedAuthority {
     /**
      * 老师
      */
-    ROLE_TEACHER;
+    ROLE_TEACHER,
+
+    /**
+     * 预览角色
+     */
+    ROLE_PREVIEW;
 
     @Override
     public String getAuthority() {

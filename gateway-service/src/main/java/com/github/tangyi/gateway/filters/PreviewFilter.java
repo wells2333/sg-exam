@@ -37,12 +37,6 @@ public class PreviewFilter implements GlobalFilter, Ordered {
 
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-		ServerHttpRequest request = exchange.getRequest();
-		if (shouldFilter(request)) {
-			ServerHttpResponse response = exchange.getResponse();
-			response.setStatusCode(HttpStatus.LOCKED);
-			return response.setComplete();
-		}
 		return chain.filter(exchange);
 	}
 

@@ -6,6 +6,17 @@
 
     <div class="right-menu">
       <template v-if="device!=='mobile'">
+        <div v-if="userInfo.identifier === 'admin'" class="preview-switch animated fadeIn">
+          <el-switch
+            v-model="previewSwitch"
+            active-text="开"
+            inactive-text="关"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+          @change="handlePreviewSwitch">
+          </el-switch>
+        </div>
+
         <a class="animated fadeIn hi">{{ tip }},{{ userInfo.name }}</a>
 
         <el-tooltip :content="$t('navbar.lock')" effect="dark" placement="bottom">
@@ -59,6 +70,8 @@ import SizeSelect from '@/components/SizeSelect'
 import LangSelect from '@/components/LangSelect'
 import ThemePicker from '@/components/ThemePicker'
 import Lock from '@/components/Lock'
+import { messageSuccess, messageFail } from '@/utils/util'
+import { previewSwitch, getPreviewSwitch } from '@/api/admin/route'
 
 export default {
   components: {
@@ -73,12 +86,14 @@ export default {
   data () {
     return {
       avatarUrl: '',
-      tip: ''
+      tip: '',
+      previewSwitch: true
     }
   },
   created () {
     this.userInfo.sex = parseInt(this.userInfo.sex)
     this.getTip()
+    this.getPreviewSwitch()
   },
   computed: {
     ...mapGetters([
@@ -110,6 +125,30 @@ export default {
       } else {
         self.tip = '晚上好'
       }
+    },
+    handlePreviewSwitch () {
+      this.$prompt('请输入Secret', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(({ value }) => {
+        previewSwitch({ secret: value, enable: this.previewSwitch }).then(response => {
+          console.log(response.data)
+          messageSuccess(this, '操作成功')
+        }).catch(error => {
+          console.error(error)
+          this.previewSwitch = !this.previewSwitch
+        })
+      }).catch(() => {
+        this.previewSwitch = !this.previewSwitch
+      });
+    },
+    getPreviewSwitch () {
+      getPreviewSwitch().then(response => {
+        this.previewSwitch = response.data.data === 'true'
+      }).catch(error => {
+        console.error(error)
+        messageFail(this, '获取演示模式状态失败')
+      })
     }
   }
 }
@@ -179,6 +218,11 @@ export default {
       vertical-align: 15px;
       margin-right: 30px;
     }
+  }
+  .preview-switch {
+    vertical-align: 15px;
+    margin-right: 30px;
+    display: inline-block;
   }
 }
 </style>
