@@ -150,8 +150,8 @@
 
 <table>
 	<tr>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_spring_boot_admin.jpg" alt="服务监控"/></td>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_spring_boot_admin01.jpg" alt="服务监控"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_spring_boot_admin.png" alt="服务监控"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_spring_boot_admin01.png" alt="服务监控"/></td>
     </tr>
     <tr>
         <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_swagger.png" alt="swagger文档"/></td>
