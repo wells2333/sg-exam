@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @AllArgsConstructor
 @RestController
-@RequestMapping(value = "/preview")
+@RequestMapping(value = "/api/preview")
 public class PreviewController {
 
     private final SysProperties sysProperties;
@@ -35,12 +35,26 @@ public class PreviewController {
      * @date 2019/12/15 19:45
      */
     @GetMapping("/enable")
-    public ResponseBean<Boolean> preview(@RequestParam String enable, @RequestParam String secret) {
+    public ResponseBean<Boolean> preview(@RequestParam(required = false) String enable, @RequestParam String secret) {
+
         if (StringUtils.isNotBlank(enable) && sysProperties.getGatewaySecret().equals(secret)) {
             log.info("Preview enable: {}", enable);
             RedisTemplate<String, String> redisTemplate = (RedisTemplate) SpringContextHolder.getApplicationContext().getBean("redisTemplate");
             redisTemplate.opsForValue().set(PreviewConfigLoader.PREVIEW_ENABLE, enable);
         }
         return new ResponseBean<>(Boolean.TRUE);
+    }
+
+    /**
+     * 获取演示模式开关
+     *
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/12/15 19:45
+     */
+    @GetMapping("/getPreview")
+    public ResponseBean<String> getPreview() {
+        RedisTemplate<String, String> redisTemplate = (RedisTemplate) SpringContextHolder.getApplicationContext().getBean("redisTemplate");
+        return new ResponseBean<>(redisTemplate.opsForValue().get(PreviewConfigLoader.PREVIEW_ENABLE));
     }
 }

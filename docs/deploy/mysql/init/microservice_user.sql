@@ -1301,7 +1301,7 @@ CREATE TABLE `sys_user_auths`  (
 -- ----------------------------
 -- Records of sys_user_auths
 -- ----------------------------
-INSERT INTO `sys_user_auths` VALUES (596329627606192128, 596078038307966976, 1, 'admin', '$2a$10$6rHs.Z/VLIM.DIfxHonuX.KYsMlOirIu75KBsyhqJsKI8.pN0eYZ2', 'admin', '2019-07-04 13:21:02', 'admin', '2019-07-04 13:21:02', 0, 'EXAM', 'gitee');
+INSERT INTO `sys_user_auths` VALUES (596329627606192128, 596078038307966976, 1, 'admin', '$2a$10$mE.iDKH2pUr.vEIYhykpcuOjTnYmtjHrSevgbevfuVTDOf0Z33tL6', 'admin', '2019-07-04 13:21:02', 'admin', '2019-07-04 13:21:02', 0, 'EXAM', 'gitee');
 INSERT INTO `sys_user_auths` VALUES (596329627648135168, 596307222997372928, 1, 'student', '$2a$10$czmVw4WF7Qt7RpwDJ4V4W.jkDKheEev63HlIsP31QnWHVOpSJz3au', 'admin', '2019-07-04 13:21:03', 'admin', '2019-07-04 13:21:03', 0, 'EXAM', 'gitee');
 INSERT INTO `sys_user_auths` VALUES (596332387693105152, 596332387600830464, 1, 'teacher', '$2a$10$4p0VfFRF969ltVakk6Qz9uQyuZXZSRZy4kA2Ur8pgazKQMqpvNAEy', 'admin', '2019-07-04 13:32:01', 'admin', '2019-07-04 13:32:01', 0, 'EXAM', 'gitee');
 INSERT INTO `sys_user_auths` VALUES (681167777872089088, 681167776798347264, 1, 'preview', '$2a$10$mE.iDKH2pUr.vEIYhykpcuOjTnYmtjHrSevgbevfuVTDOf0Z33tL6', 'admin', '2020-02-23 15:57:34', 'admin', '2020-02-23 15:57:34', 0, 'EXAM', 'gitee');

@@ -2,6 +2,8 @@ import request from '@/router/axios'
 
 const baseRouteUrl = '/api/route/v1/route/'
 
+const previewSwitchUrl = '/api/preview/'
+
 export function routeList () {
   return request({
     url: baseRouteUrl + 'routeList',
@@ -58,6 +60,21 @@ export function delAllObj (obj) {
 export function refresh () {
   return request({
     url: baseRouteUrl + 'refresh',
+    method: 'get'
+  })
+}
+
+export function previewSwitch (query) {
+  return request({
+    url: previewSwitchUrl + 'enable',
+    method: 'get',
+    params: query
+  })
+}
+
+export function getPreviewSwitch () {
+  return request({
+    url: previewSwitchUrl + 'getPreview',
     method: 'get'
   })
 }

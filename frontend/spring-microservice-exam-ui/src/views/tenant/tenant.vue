@@ -13,7 +13,6 @@
       :default-sort="{ prop: 'id', order: 'descending' }"
       highlight-current-row
       style="width: 100%;"
-      @cell-dblclick="handleUpdate"
       @selection-change="handleSelectionChange"
       @sort-change="sortChange">
       <el-table-column type="selection" width="55"/>

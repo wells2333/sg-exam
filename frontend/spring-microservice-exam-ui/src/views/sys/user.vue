@@ -15,7 +15,6 @@
       :data="list"
       highligidStringht-current-row
       style="width: 100%;"
-      @cell-dblclick="handleUpdate"
       @selection-change="handleSelectionChange"
       @sort-change="sortChange">
       <el-table-column type="selection" width="55"/>
@@ -173,8 +172,7 @@
         highlight-current-row
         style="width: 100%;"
         @row-click = "handleSingleRoleSelection"
-        @current-change="handleSingleRoleCurrentChange"
-        @cell-dblclick="updateRoleData">
+        @current-change="handleSingleRoleCurrentChange">
         <el-table-column align="center" width="55" label="" >
           <template slot-scope="scope">
             <el-radio :label="scope.$index" v-model="tempRadio" @change.native="handleSingleRoleSelectionChange(scope.$index, scope.row)">&nbsp;</el-radio>

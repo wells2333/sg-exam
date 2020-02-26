@@ -46,7 +46,6 @@
             :data="list"
             highlight-current-row
             style="width: 100%;"
-            @cell-dblclick="handleUpdateSubject"
             @selection-change="handleSubjectSelectionChange"
             @sort-change="sortSubjectChange">
             <el-table-column type="selection" width="55"/>
