@@ -90,7 +90,7 @@ export default {
     any: '随便填',
     thirdparty: '第三方登录',
     thirdpartyTips: '本地不能模拟，请结合自己业务进行模拟！！！',
-    forget: '忘记密码',
+    forget: '忘记密码？',
     info: '你咋忘不了吃呢？'
   },
   documentation: {
@@ -157,6 +157,7 @@ export default {
     enable: '启用',
     disable: '禁用',
     resetPassword: '重置密码',
+    loginTime: '最近登录时间',
     roleName: '角色名称',
     roleCode: '角色代码',
     roleDesc: '角色描述',
@@ -192,6 +193,8 @@ export default {
     time: '耗时',
     answerCorrectType: '答题结果',
     score: '得分',
+    modifyDate: '修改时间',
+    modifier: '修改人',
     subject: {
       serialNumber: '序号',
       type: '类型',
@@ -206,9 +209,7 @@ export default {
       optionE: '选项E',
       optionF: '选项F',
       answer: '参考答案',
-      analysis: '解析',
-      modifyDate: '修改时间',
-      modifier: '修改人'
+      analysis: '解析'
     },
     public: '发布',
     withdraw: '撤回',

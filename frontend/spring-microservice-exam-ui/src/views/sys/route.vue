@@ -22,27 +22,37 @@
           <span>{{ scope.row.routeId }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.route.routeName')">
+      <el-table-column :label="$t('table.route.routeName')" min-width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.routeName }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.route.uri')">
+      <el-table-column :label="$t('table.route.uri')" min-width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.uri }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.route.sort')">
+      <el-table-column :label="$t('table.route.sort')" min-width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.sort }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.route.status')">
+      <el-table-column :label="$t('table.route.status')" min-width="80">
         <template slot-scope="scope">
           <el-tag :type="scope.row.status | statusTypeFilter" effect="dark" size="small">{{ scope.row.status | statusFilter }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.actions')" class-name="status-col" width="300px">
+      <el-table-column :label="$t('table.modifier')" property="modifier" min-width="80">
+        <template slot-scope="scope">
+          <span>{{ scope.row.modifier }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('table.modifyDate')" property="updateTime" width="150">
+        <template slot-scope="scope">
+          <span>{{ scope.row.modifyDate | fmtDate('yyyy-MM-dd hh:mm') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('table.actions')" class-name="status-col">
         <template slot-scope="scope">
           <el-button v-if="route_btn_edit" type="primary" size="mini" @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
           <el-button v-if="route_btn_del" type="danger" size="mini" @click="handleDelete(scope.row)">{{ $t('table.delete') }}</el-button>

@@ -47,7 +47,7 @@
                 </el-col>
               </el-row>
               <el-form-item>
-                <el-button type="primary" @click="create">保存</el-button>
+                <el-button v-if="dept_btn_add || dept_btn_edit" type="primary" @click="create">保存</el-button>
                 <el-button @click="onCancel">取消</el-button>
               </el-form-item>
             </el-form>

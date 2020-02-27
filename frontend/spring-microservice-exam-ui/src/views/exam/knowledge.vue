@@ -32,6 +32,16 @@
           <el-tag :type="scope.row.status | statusTypeFilter" effect="dark" size="small">{{ scope.row.status | publicStatusFilter }}</el-tag>
         </template>
       </el-table-column>
+      <el-table-column :label="$t('table.status')" min-width="80">
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.status | statusTypeFilter" effect="dark" size="small">{{ scope.row.status | statusFilter }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('table.modifyDate')" min-width="80">
+        <template slot-scope="scope">
+          <span>{{ scope.row.modifyDate | fmtDate('yyyy-MM-dd hh:mm') }}</span>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('table.actions')" class-name="status-col" width="300px">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>

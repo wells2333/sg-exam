@@ -38,14 +38,14 @@
           <span>{{ scope.row.attachName }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.uploader')" min-width="50">
-        <template slot-scope="scope">
-          <span>{{ scope.row.creator }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="附件类型" min-width="90">
         <template slot-scope="scope">
           <span>{{ scope.row.busiType | attachmentTypeFilter }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('table.uploader')" min-width="50">
+        <template slot-scope="scope">
+          <span>{{ scope.row.creator }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.uploadDate')" min-width="70">

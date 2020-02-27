@@ -5,6 +5,7 @@ import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.PageUtil;
+import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.gateway.module.Route;
 import com.github.tangyi.gateway.service.RouteService;
@@ -80,6 +81,7 @@ public class RouteController extends BaseController {
     @PutMapping
     public ResponseBean<Boolean> updateRoute(@RequestBody @Valid Route route) {
         try {
+        	route.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
             // 更新路由
             return new ResponseBean<>(routeService.update(route) > 0);
         } catch (Exception e) {

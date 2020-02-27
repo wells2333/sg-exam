@@ -6,6 +6,10 @@
 
 <script>
 export default{
-  name: 'App'
+  name: 'App',
+  mounted () {
+    document.getElementById('app').style.display = 'block'
+    document.getElementById('preloader-init').style.display = 'none'
+  }
 }
 </script>

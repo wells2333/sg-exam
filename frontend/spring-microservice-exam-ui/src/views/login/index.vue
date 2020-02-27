@@ -1,59 +1,43 @@
 <template>
   <div class="bg">
     <div class="login-wrap animated flipInY">
-      <h3>{{ $t('login.title') }}</h3>
-      <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-        <el-form-item prop="tenantCode">
-          <el-input :placeholder="$t('login.tenantCode')" v-model="loginForm.tenantCode" name="tenantCode" type="text" auto-complete="on"/>
-        </el-form-item>
-        <el-form-item prop="identifier">
-          <el-input :placeholder="$t('login.identifier')" v-model="loginForm.identifier" name="identifier" type="text" auto-complete="on"/>
-        </el-form-item>
-        <el-form-item prop="password">
-          <el-input :placeholder="$t('login.credential')" :type="passwordType" v-model="loginForm.credential" name="credential" auto-complete="on" @keyup.enter.native="handleLogin"/>
-        </el-form-item>
-        <el-form-item prop="code">
-          <el-row :span="24">
-            <el-col :span="14">
-              <el-input :maxlength="code.len" v-model="loginForm.code" size="small" auto-complete="off" placeholder="请输入验证码" @keyup.enter.native="handleLogin" />
-            </el-col>
-            <el-col :span="10">
-              <div class="login-code">
-                <span v-if="code.type === 'text'" class="login-code-img" @click="refreshCode">{{ code.value }}</span>
-                <img v-else :src="code.src" alt="验证码" class="login-code-img" @click="refreshCode">
-              </div>
-            </el-col>
-          </el-row>
-        </el-form-item>
-        <el-form-item>
-          <el-row type="flex" justify="space-between">
-            <el-checkbox v-model="loginForm.rememberMe" style="color:#eee">记住密码</el-checkbox>
-            <a href="" style="color:#eee" @click.prevent="openMsg">{{ $t('login.forget') }}</a>
-          </el-row>
-        </el-form-item>
-        <el-form-item>
-          <el-button :loading="loading" type="primary" @click.native.prevent="handleLogin">{{ $t('login.logIn') }}</el-button>
-        </el-form-item>
-      </el-form>
+      <div class="text-center">
+        <h3>
+          <span class="light-font">SG-</span>Admin
+        </h3>
+      </div>
+      <el-row>
+        <el-col :span="24">
+          <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
+            <el-form-item prop="tenantCode">
+              <el-input :placeholder="$t('login.tenantCode')" v-model="loginForm.tenantCode" name="tenantCode" type="text" auto-complete="on"/>
+            </el-form-item>
+            <el-form-item prop="identifier">
+              <el-input :placeholder="$t('login.identifier')" v-model="loginForm.identifier" name="identifier" type="text" auto-complete="on"/>
+            </el-form-item>
+            <el-form-item prop="password">
+              <el-input :placeholder="$t('login.credential')" :type="passwordType" v-model="loginForm.credential" name="credential" auto-complete="on" @keyup.enter.native="handleLogin"/>
+            </el-form-item>
+            <el-form-item prop="code">
+              <el-row>
+                <el-col :span="14">
+                  <el-input :maxlength="code.len" v-model="loginForm.code" size="small" auto-complete="off" placeholder="请输入验证码" @keyup.enter.native="handleLogin" />
+                </el-col>
+                <el-col :span="10">
+                  <div class="login-code">
+                    <span v-if="code.type === 'text'" class="login-code-img" @click="refreshCode">{{ code.value }}</span>
+                    <img v-else :src="code.src" alt="验证码" class="login-code-img" @click="refreshCode">
+                  </div>
+                </el-col>
+              </el-row>
+            </el-form-item>
+            <el-form-item>
+              <el-button class="login-btn" type="primary" :loading="loading" @click.native.prevent="handleLogin"> {{ $t('login.logIn') }}</el-button>
+            </el-form-item>
+          </el-form>
+        </el-col>
+      </el-row>
     </div>
-    <!-- 粒子漂浮物 -->
-    <vue-particles
-      :particle-opacity="0.7"
-      :particles-number="30"
-      :particle-size="5"
-      :lines-width="2"
-      :line-linked="true"
-      :line-opacity="0.4"
-      :lines-distance="150"
-      :move-speed="3"
-      :hover-effect="true"
-      :click-effect="true"
-      click-mode="push"
-      color="#fff"
-      shape-type="star"
-      hover-mode="grab"
-      lines-color="#fff"
-    />
   </div>
 </template>
 
@@ -165,30 +149,31 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    //background-image: linear-gradient(-45deg, #0e4067 0%, #2978b7 33%, #16776a 100%);
     background: url('../../../static/img/login_bg.jpg') -20% 10%;
     background-size: cover;
-    #particles-js {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-    }
+  }
+  .light-font {
+    color: #00abff;
   }
   .login-wrap {
-    width: 330px;
+    top: 15%;
+    position: absolute;
+    width: 420px;
+    margin: 0 auto;
     border-radius: 5px;
-    padding: 20px;
-    z-index: 3;
-    margin-right: -37%;
-    background: rgba(149, 159, 181, 0.5);
+    color: #fff;
+    background: rgba(0,0,0,.55);
+    text-align: center;
+    padding: 32px;
+    background-size: cover;
     .el-form-item {
       margin-bottom: 25px !important;
     }
     h3 {
       text-align: center;
       color: #ebedef;
-      margin-top: 0px;
+      margin-top: 0;
       margin-bottom: 5px;
       span {
         color: #20a0ff;
@@ -209,10 +194,21 @@ export default {
       font-weight: 600;
     }
   }
+  .login-form {
+    input {
+      color: #fff;
+      border: 1px solid hsla(0,0%,100%,.6);
+      border-radius: 5px;
+      background-color: hsla(0,0%,100%,.1);
+      box-shadow: none;
+      font-size: 14px;
+    }
+  }
   .login-code-img {
     margin-left: 10px;
     margin-top: -4px;
     width: 110px;
     height: 40px;
+    border-radius: 2px;
   }
 </style>
