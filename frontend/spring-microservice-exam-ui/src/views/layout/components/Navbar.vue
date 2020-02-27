@@ -140,7 +140,7 @@ export default {
         })
       }).catch(() => {
         this.previewSwitch = !this.previewSwitch
-      });
+      })
     },
     getPreviewSwitch () {
       getPreviewSwitch().then(response => {

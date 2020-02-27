@@ -37,6 +37,16 @@
           <span>{{ scope.row.teacher }}</span>
         </template>
       </el-table-column>
+      <el-table-column :label="$t('table.modifier')" property="modifier" min-width="80">
+        <template slot-scope="scope">
+          <span>{{ scope.row.modifier }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('table.modifyDate')" property="updateTime" width="150">
+        <template slot-scope="scope">
+          <span>{{ scope.row.modifyDate | fmtDate('yyyy-MM-dd hh:mm') }}</span>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('table.actions')" class-name="status-col" width="300">
         <template slot-scope="scope">
           <el-button v-if="course_btn_edit" type="primary" size="mini" @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>

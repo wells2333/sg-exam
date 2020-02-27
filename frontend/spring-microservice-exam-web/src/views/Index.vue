@@ -19,7 +19,6 @@ export default {
   methods: {
     // 提交考试
     handleSubmitExam () {
-      debugger
       this.$refs.mainRef.handleSubmitExam()
     }
   }

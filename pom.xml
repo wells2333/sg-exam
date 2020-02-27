@@ -73,6 +73,7 @@
         <jjwt.version>0.9.0</jjwt.version>
         <qiniu.version>[7.2.0, 7.2.99]</qiniu.version>
         <easyexcel.version>2.1.4</easyexcel.version>
+        <guava.version>28.2-jre</guava.version>
 
         <!-- docker -->
         <docker.maven.verion>1.4.3</docker.maven.verion>
@@ -329,6 +330,13 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>easyexcel</artifactId>
                 <version>${easyexcel.version}</version>
+            </dependency>
+
+            <!-- guava -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

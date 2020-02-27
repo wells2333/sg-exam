@@ -40,10 +40,10 @@
     </appender>
 
     <!-- 输出到logstash的appender， LOGSTASH_HOST为logstash的IP和端口，从环境变量注入-->
-     <!--<appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-         <destination>${LOGSTASH_HOST}</destination>
-         <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder"/>
-     </appender>-->
+    <!--<appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>${LOGSTASH_HOST}</destination>
+        <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder"/>
+    </appender>-->
 
     <!-- Level: FATAL 0  ERROR 3  WARN 4  INFO 6  DEBUG 7 -->
     <root level="warn">

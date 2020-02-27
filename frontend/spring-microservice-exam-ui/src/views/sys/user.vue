@@ -18,42 +18,47 @@
       @selection-change="handleSelectionChange"
       @sort-change="sortChange">
       <el-table-column type="selection" width="55"/>
-      <el-table-column :label="$t('login.identifier')" min-width="110">
+      <el-table-column :label="$t('login.identifier')" min-width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.identifier }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.name')" min-width="110">
+      <el-table-column :label="$t('table.name')" min-width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.sex')">
+      <el-table-column :label="$t('table.sex')" min-width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.sex | sexFilter}}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.ownDept')">
+      <el-table-column :label="$t('table.ownDept')" min-width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.deptName }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.role')">
+      <el-table-column :label="$t('table.role')" min-width="80">
         <template slot-scope="scope">
           <span v-for="role in scope.row.roleList" :key="role.id">{{ role.roleName }} </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.status')">
+      <el-table-column :label="$t('table.status')" min-width="80">
         <template slot-scope="scope">
           <el-tag :type="scope.row.status | statusTypeFilter" effect="dark" size="small">{{ scope.row.status | statusFilter }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.actions')" class-name="status-col" width="300px">
+      <el-table-column :label="$t('table.loginTime')" min-width="80">
+        <template slot-scope="scope">
+          <span>{{ scope.row.loginTime | fmtDate('yyyy-MM-dd hh:mm') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('table.actions')" class-name="status-col">
         <template slot-scope="scope">
           <el-button v-if="user_btn_edit" type="primary" size="mini" @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
           <el-button v-if="user_btn_edit" type="warning" size="mini" @click="handleResetPassword(scope.row)">{{ $t('table.resetPassword') }}</el-button>
           <el-button v-if="user_btn_edit  && scope.row.status === 0" type="danger" size="mini" @click="handleEnableOrDisable(scope.row, 1)">{{ $t('table.disable') }}</el-button>
-          <el-button v-else type="success" size="mini" @click="handleEnableOrDisable(scope.row, 0)">{{ $t('table.enable') }}</el-button>
+          <el-button v-if="user_btn_edit  && scope.row.status === 1" type="success" size="mini" @click="handleEnableOrDisable(scope.row, 0)">{{ $t('table.enable') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
