@@ -110,8 +110,7 @@ swagger:
 preview:
   ignores:
     - api/auth  # 授权服务
-    - register
-    - checkExist
+    - anonymousUser
     - updateInfo
     - updateAvatar
     - attachment

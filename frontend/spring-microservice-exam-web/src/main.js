@@ -8,10 +8,15 @@ import store from './store'
 import './permission' // 权限控制
 import 'element-ui/lib/theme-chalk/index.css'
 import './icons' // icon
+import * as filters from './filters' // global filters
 
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)
+
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
+})
 
 /* eslint-disable no-new */
 new Vue({

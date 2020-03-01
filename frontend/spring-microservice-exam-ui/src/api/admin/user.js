@@ -50,7 +50,7 @@ export function updateObjInfo (obj) {
 
 export function updatePassword (obj) {
   return request({
-    url: baseUserUrl + 'updatePassword',
+    url: baseUserUrl + 'anonymousUser/updatePassword',
     method: 'put',
     data: obj
   })
@@ -86,7 +86,7 @@ export function exportObj (obj) {
 // 重置密码
 export function resetPassword (obj) {
   return request({
-    url: baseUserUrl + 'resetPassword',
+    url: baseUserUrl + 'anonymousUser/resetPassword',
     method: 'put',
     data: obj
   })

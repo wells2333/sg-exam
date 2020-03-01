@@ -35,7 +35,7 @@ public interface UserServiceClient {
      * @author tangyi
      * @date 2019/03/17 12:14
      */
-    @GetMapping("/v1/user/findUserByIdentifier/{identifier}")
+    @GetMapping("/v1/user/anonymousUser/findUserByIdentifier/{identifier}")
     ResponseBean<UserVo> findUserByIdentifier(@PathVariable("identifier") String identifier, @RequestParam("tenantCode") String tenantCode);
 
     /**
@@ -48,7 +48,7 @@ public interface UserServiceClient {
      * @author tangyi
      * @date 2019/07/06 14:14:11
      */
-    @GetMapping("/v1/user/findUserByIdentifier/{identifier}")
+    @GetMapping("/v1/user/anonymousUser/findUserByIdentifier/{identifier}")
 	ResponseBean<UserVo> findUserByIdentifier(@PathVariable("identifier") String identifier, @RequestParam(value = "identityType", required = false) Integer identityType, @RequestParam("tenantCode") String tenantCode);
 
 
@@ -131,7 +131,7 @@ public interface UserServiceClient {
      * @author tangyi
      * @date 2019/04/08 20:42
      */
-    @GetMapping("/v1/menu/findMenuByRole/{role}")
+    @GetMapping("/v1/menu/anonymousUser/findMenuByRole/{role}")
     ResponseBean<List<Menu>> findMenuByRole(@PathVariable("role") String role, @RequestParam("tenantCode") String tenantCode);
 
     /**
@@ -142,7 +142,7 @@ public interface UserServiceClient {
      * @author tangyi
      * @date 2019/04/26 11:48
      */
-    @GetMapping("/v1/menu/findAllMenu")
+    @GetMapping("/v1/menu/anonymousUser/findAllMenu")
 	ResponseBean<List<Menu>> findAllMenu(@RequestParam("tenantCode") String tenantCode);
 
     /**
@@ -153,7 +153,7 @@ public interface UserServiceClient {
      * @author tangyi
      * @date 2019/05/26 10:21
      */
-    @GetMapping("/v1/tenant/findTenantByTenantCode/{tenantCode}")
+    @GetMapping("/v1/tenant/anonymousUser/findTenantByTenantCode/{tenantCode}")
     ResponseBean<Tenant> findTenantByTenantCode(@PathVariable("tenantCode") String tenantCode);
 
     /**
@@ -176,17 +176,17 @@ public interface UserServiceClient {
      * @author tangyi
      * @date 2019/07/05 20:57:31
      */
-    @PostMapping("/v1/user/register")
+    @PostMapping("/v1/user/anonymousUser/register")
     ResponseBean<Boolean> registerUser(@RequestBody UserDto userDto);
 
     /**
-     * 更新用户
+     * 更新用户登录信息
      *
      * @param userDto userDto
      * @return ResponseBean
      * @author tangyi
      * @date 2019/07/05 20:59:06
      */
-    @PutMapping("/v1/user")
-    ResponseBean<Boolean> updateUser(UserDto userDto);
+    @PutMapping("/v1/user/anonymousUser/updateLoginInfo")
+    ResponseBean<Boolean> updateLoginInfo(UserDto userDto);
 }

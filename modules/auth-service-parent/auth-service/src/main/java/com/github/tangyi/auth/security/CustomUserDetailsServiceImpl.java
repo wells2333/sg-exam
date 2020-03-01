@@ -63,7 +63,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
         UserVo userVo = userVoResponseBean.getData();
         if (userVo == null)
             throw new UsernameNotFoundException("user does not exist");
-        return new CustomUserDetails(username, userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(), start, LoginTypeEnum.PWD);
+        return new CustomUserDetails(username, userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(), userVo.getId(), start, LoginTypeEnum.PWD);
     }
 
     /**
@@ -103,7 +103,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
                 throw new ServiceException(GET_USER_INFO_FAIL + userVoResponseBean.getMsg());
             userVo = userVoResponseBean.getData();
         }
-        return new CustomUserDetails(userVo.getIdentifier(), userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(), start, LoginTypeEnum.SMS);
+        return new CustomUserDetails(userVo.getIdentifier(), userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(), userVo.getId(), start, LoginTypeEnum.SMS);
     }
 
     /**
@@ -149,7 +149,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
                 throw new ServiceException(GET_USER_INFO_FAIL + userVoResponseBean.getMsg());
             userVo = userVoResponseBean.getData();
         }
-        return new CustomUserDetails(userVo.getIdentifier(), userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(), start, LoginTypeEnum.WECHAT);
+        return new CustomUserDetails(userVo.getIdentifier(), userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(), userVo.getId(), start, LoginTypeEnum.WECHAT);
     }
 
     /**

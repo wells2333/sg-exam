@@ -30,12 +30,12 @@
           <span>{{ scope.row.score }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.subject.modifyDate')" property="updateTime" width="150">
+      <el-table-column :label="$t('table.modifyDate')" property="updateTime" width="150">
         <template slot-scope="scope">
           <span>{{ scope.row.modifyDate | fmtDate('yyyy-MM-dd hh:mm') }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.subject.modifier')" property="modifier" width="120">
+      <el-table-column :label="$t('table.modifier')" property="modifier" width="120">
         <template slot-scope="scope">
           <span>{{ scope.row.modifier }}</span>
         </template>

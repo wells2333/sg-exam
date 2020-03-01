@@ -38,7 +38,7 @@ export function loginBySocial (social, code) {
 
 export function registerByUsername (identifier, email, credential, code, randomStr) {
   return request({
-    url: '/api/user/v1/user/register',
+    url: '/api/user/v1/user/anonymousUser/register',
     method: 'post',
     params: {identifier, email, credential, randomStr, code},
     data: {identifier, email, credential}

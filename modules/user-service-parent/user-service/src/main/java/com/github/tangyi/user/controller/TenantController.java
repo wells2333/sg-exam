@@ -61,7 +61,7 @@ public class TenantController extends BaseController {
      * @author tangyi
      * @date 2019/05/26 10:23
      */
-    @GetMapping("findTenantByTenantCode/{tenantCode}")
+    @GetMapping("anonymousUser/findTenantByTenantCode/{tenantCode}")
     public ResponseBean<Tenant> findTenantByTenantCode(@PathVariable String tenantCode) {
         return new ResponseBean<>(tenantService.getByTenantCode(tenantCode));
     }

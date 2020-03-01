@@ -1,5 +1,6 @@
 import axios from 'axios'
 import store from '../store'
+import router from './index'
 import { getToken, setToken, getRefreshToken, getTenantCode } from '@/utils/auth'
 import { isNotEmpty, isSuccess } from '@/utils/util'
 import { refreshToken } from '@/api/admin/login'
@@ -39,7 +40,9 @@ axios.interceptors.response.use(data => {
   NProgress.done()
   // 请求失败，弹出提示信息
   if (!isSuccess(data.data)) {
-    Message({ message: data.data.msg, type: 'error' })
+    const { code, msg } = data.data
+    const errMsg = errorCode[String(code)] || msg || errorCode['default']
+    Message({ message: errMsg, type: 'error' })
   }
   return data
 }, error => {
@@ -67,11 +70,16 @@ axios.interceptors.response.use(data => {
       })
     } else if (error.response.status === 423) {
       Message({ message: '演示环境不能操作', type: 'warning' })
+    } else if (error.response.status === 404) {
+      // 跳转到404页面
+      router.replace({
+        path: '404',
+        query: { redirect: router.currentRoute.fullPath }
+      })
     } else {
       // 其它错误则弹出提示
-      const { code, data } = error.response.data
-      const errMsg = data || errorCode[code] || errorCode['default']
-      // TODO 跳转到对应的404、500提示页面
+      const { code, msg } = error.response.data
+      const errMsg = errorCode[String(code)] || msg || errorCode['default']
       Message({ message: errMsg, type: 'error' })
     }
   }

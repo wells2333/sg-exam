@@ -24,6 +24,11 @@ public class CustomUserDetails extends User {
     private String tenantCode;
 
     /**
+     * id
+     */
+    private Long id;
+
+    /**
      * 开始授权时间
      */
     private long start;
@@ -44,9 +49,10 @@ public class CustomUserDetails extends User {
      * @param start       start
      * @param loginType   loginType
      */
-    public CustomUserDetails(String username, String password, boolean enabled, Collection<? extends GrantedAuthority> authorities, String tenantCode, long start, LoginTypeEnum loginType) {
+    public CustomUserDetails(String username, String password, boolean enabled, Collection<? extends GrantedAuthority> authorities, String tenantCode, Long id, long start, LoginTypeEnum loginType) {
         super(username, password, enabled, true, true, true, authorities);
         this.tenantCode = tenantCode;
+        this.id = id;
         this.start = start;
         this.loginType = loginType;
     }

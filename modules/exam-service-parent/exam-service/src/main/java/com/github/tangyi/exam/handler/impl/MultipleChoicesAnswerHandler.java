@@ -6,6 +6,7 @@ import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.Answer;
 import com.github.tangyi.exam.enums.SubjectTypeEnum;
 import com.github.tangyi.exam.handler.AbstractAnswerHandler;
+import com.github.tangyi.exam.utils.AnswerHandlerUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.ArrayUtils;
@@ -41,8 +42,8 @@ public class MultipleChoicesAnswerHandler extends AbstractAnswerHandler {
 		String userAnswer = answer.getAnswer();
 		String correctAnswer = subject.getAnswer().getAnswer();
 		if (StringUtils.isNotBlank(userAnswer) && StringUtils.isNotBlank(correctAnswer)) {
-			String[] userAnswers = userAnswer.split(CommonConstant.COMMA);
-			String[] correctAnswers = correctAnswer.split(CommonConstant.COMMA);
+			String[] userAnswers = AnswerHandlerUtil.replaceComma(userAnswer).split(CommonConstant.COMMA);
+			String[] correctAnswers = AnswerHandlerUtil.replaceComma(correctAnswer).split(CommonConstant.COMMA);
 			subject.getOptions().forEach(option -> {
 				if (ArrayUtils.contains(correctAnswers, option.getOptionName())) {
 					option.setRight(ArrayUtils.contains(userAnswers, option.getOptionName()) ? TRUE : FALSE);
@@ -53,7 +54,7 @@ public class MultipleChoicesAnswerHandler extends AbstractAnswerHandler {
 
 	@Override
 	public boolean judgeRight(Answer answer, SubjectDto subject) {
-		String[] correctAnswers = subject.getAnswer().getAnswer().split(CommonConstant.COMMA);
+		String[] correctAnswers = AnswerHandlerUtil.replaceComma(subject.getAnswer().getAnswer()).split(CommonConstant.COMMA);
 		for (String as : answer.getAnswer().split(CommonConstant.COMMA)) {
 			if (!ArrayUtils.contains(correctAnswers, as)) {
 				return false;
