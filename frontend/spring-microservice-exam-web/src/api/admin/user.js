@@ -50,7 +50,7 @@ export function updateObjInfo (obj) {
 
 export function updatePassword (obj) {
   return request({
-    url: baseUserUrl + 'updatePassword',
+    url: baseUserUrl + 'anonymousUser/updatePassword',
     method: 'put',
     data: obj
   })
@@ -74,7 +74,7 @@ export function delAllObj (obj) {
 
 export function checkExist (username, tenantCode) {
   return request({
-    url: baseUserUrl + 'checkExist/' + username,
+    url: baseUserUrl + 'anonymousUser/checkExist/' + username,
     method: 'get',
     params: { tenantCode, identityType: 1 }
   })

@@ -249,7 +249,9 @@
         <if test="applicationCode != null">
             application_code = #{applicationCode} ,
         </if>
-        modifier = #{modifier} ,
+        <if test="modifier != null">
+            modifier = #{modifier} ,
+        </if>
         modify_date = #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date}
         where id = #{id}
     </update>

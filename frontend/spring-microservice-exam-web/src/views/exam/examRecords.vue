@@ -17,22 +17,17 @@
           </el-table-column>
           <el-table-column label="考试类型" min-width="90" align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.type | typeFilter }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="所属课程" min-width="90" align="center">
-            <template slot-scope="scope">
-              <span>{{ scope.row.type | typeFilter }}</span>
+              <span>{{ scope.row.type | examTypeFilter }}</span>
             </template>
           </el-table-column>
           <el-table-column label="考试时间" sortable prop="start_time" min-width="90" align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.startTime | timeFilter }}</span>
+              <span>{{ scope.row.startTime | fmtDate('yyyy-MM-dd hh:mm') }}</span>
             </template>
           </el-table-column>
           <el-table-column label="状态" min-width="90" align="center">
             <template slot-scope="scope">
-              <el-tag :type="scope.row.submitStatus | submitStatusTypeFilter">{{ scope.row.submitStatus | submitStatusFilter }}</el-tag>
+              <el-tag :type="scope.row.submitStatus | simpleTagStatusFilter(3)">{{ scope.row.submitStatus | submitStatusFilter }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="成绩" sortable prop="score" align="center" width="120px">
@@ -43,7 +38,6 @@
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
               <el-button type="success" size="mini" @click="handleDetail(scope.row)" :disabled="scope.row.submitStatus !== 3">成绩详情</el-button>
-              <el-button type="danger" size="mini" @click="incorrectAnswer(scope.row)" :disabled="scope.row.submitStatus !== 3">查看错题</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -52,73 +46,19 @@
         </div>
       </el-col>
     </el-row>
-
-    <!-- 成绩详情 -->
-    <el-dialog :visible.sync="dialogDetailVisible" title="成绩详情">
-      <el-row>
-        <el-col :span="24">
-          <div slot="header" class="score-gray-box-title">
-            <span>考试成绩</span>
-          </div>
-          <div class="score">
-            <h4>成绩: <span type="success">{{ tempScore.score }}</span></h4>
-            <h4>正确题数: <span type="success">{{ tempScore.correctNumber }}</span></h4>
-            <h4>错误题数: <span type="success">{{ tempScore.inCorrectNumber }}</span></h4>
-            <h4>开始时间: <span type="success">{{ tempScore.startTime | timeFilter }}</span></h4>
-            <h4>结束时间: <span type="success">{{ tempScore.endTime | timeFilter }}</span></h4>
-          </div>
-        </el-col>
-      </el-row>
-    </el-dialog>
   </div>
 </template>
 <script>
 import { mapState } from 'vuex'
 import { fetchList } from '@/api/exam/examRecord'
 import store from '@/store'
-import { formatDate, cropStr } from '@/utils/util'
 
 export default {
-  filters: {
-    typeFilter (type) {
-      const typeMap = {
-        0: '正式考试',
-        1: '模拟考试',
-        2: '在线练习'
-      }
-      return typeMap[type]
-    },
-    submitStatusFilter (type) {
-      const typeMap = {
-        0: '未提交',
-        1: '已提交',
-        2: '待批改',
-        3: '批改完成'
-      }
-      return typeMap[type]
-    },
-    submitStatusTypeFilter (status) {
-      const statusMap = {
-        0: 'warning',
-        1: 'warning',
-        2: 'warning',
-        3: 'success'
-      }
-      return statusMap[status]
-    },
-    timeFilter (time) {
-      return formatDate(new Date(time), 'yyyy-MM-dd hh:mm')
-    },
-    examinationNameFilter (name) {
-      return cropStr(name, 8)
-    }
-  },
   data () {
     return {
       examRecodeList: [],
       total: 0,
       listLoading: true,
-      dialogDetailVisible: false,
       tableKey: 0,
       listQuery: {
         pageNum: 1,
@@ -172,11 +112,6 @@ export default {
     },
     // 查看成绩详情
     handleDetail (row) {
-      this.tempScore = row
-      this.dialogDetailVisible = true
-    },
-    // 查看错题
-    incorrectAnswer (row) {
       store.dispatch('SetIncorrectRecord', { id: row.id }).then(() => {
         this.$router.push({ name: 'incorrect' })
       }).catch((error) => {

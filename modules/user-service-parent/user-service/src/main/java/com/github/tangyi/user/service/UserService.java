@@ -657,8 +657,10 @@ public class UserService extends CrudService<UserMapper, User> {
             userVos = userStream.map(tempUser -> {
                 UserVo tempUserVo = new UserVo();
                 BeanUtils.copyProperties(tempUser, tempUserVo);
-				attachment.setId(tempUser.getAvatarId());
-				tempUserVo.setAvatarUrl(attachmentService.getPreviewUrl(attachment));
+                if (tempUser.getAvatarId() != null) {
+                    attachment.setId(tempUser.getAvatarId());
+                    tempUserVo.setAvatarUrl(attachmentService.getPreviewUrl(attachment));
+                }
                 return tempUserVo;
             }).collect(Collectors.toList());
         }

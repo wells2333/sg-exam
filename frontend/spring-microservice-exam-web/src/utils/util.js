@@ -284,3 +284,27 @@ export const cropStr = (str, len) => {
   }
   return result
 }
+
+/**
+ * 截取指定长度
+ * @param str
+ * @param length
+ * @returns {string}
+ */
+export const commonFilter = (str, length) => {
+  if (str.length > length) {
+    return str.substring(0, length) + '...'
+  }
+  return str
+}
+
+/**
+ * 新建状态
+ */
+export const isCreate = (status) => {
+  return status === 'create'
+}
+
+export const trimComma = (str) => {
+  return str.replace(new RegExp('^,*|,*$', 'gm'), '')
+}

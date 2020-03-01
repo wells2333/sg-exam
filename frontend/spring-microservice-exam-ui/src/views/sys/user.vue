@@ -53,7 +53,7 @@
           <span>{{ scope.row.loginTime | fmtDate('yyyy-MM-dd hh:mm') }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.actions')" class-name="status-col">
+      <el-table-column :label="$t('table.actions')" class-name="status-col" width="300">
         <template slot-scope="scope">
           <el-button v-if="user_btn_edit" type="primary" size="mini" @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
           <el-button v-if="user_btn_edit" type="warning" size="mini" @click="handleResetPassword(scope.row)">{{ $t('table.resetPassword') }}</el-button>

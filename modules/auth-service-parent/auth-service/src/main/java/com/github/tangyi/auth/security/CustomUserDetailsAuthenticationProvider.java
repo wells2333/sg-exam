@@ -43,7 +43,7 @@ public class CustomUserDetailsAuthenticationProvider extends AbstractUserDetails
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
         if (authentication.getCredentials() == null) {
             log.debug("Authentication failed: password is blank");
-            throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "密码为空."));
+            throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "密码为空"));
         }
         // 获取密码
         String presentedPassword = authentication.getCredentials().toString();
@@ -51,7 +51,7 @@ public class CustomUserDetailsAuthenticationProvider extends AbstractUserDetails
         if (!passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
             log.debug("Authentication failed: invalid password");
 			publisher.publishEvent(new CustomAuthenticationFailureEvent(authentication, userDetails));
-			throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "密码错误."));
+			throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "用户名或密码错误"));
         }
 		publisher.publishEvent(new CustomAuthenticationSuccessEvent(authentication, userDetails));
 	}
@@ -77,16 +77,14 @@ public class CustomUserDetailsAuthenticationProvider extends AbstractUserDetails
         try {
             // 加载用户信息
             loadedUser = this.userDetailsService.loadUserByIdentifierAndTenantCode(TenantContextHolder.getTenantCode(), authentication.getPrincipal().toString());
-        } catch (TenantNotFoundException tenantNotFound) {
-			throw new InternalAuthenticationServiceException(tenantNotFound.getMessage(), tenantNotFound);
         } catch (UsernameNotFoundException notFound) {
             if (authentication.getCredentials() != null) {
                 String presentedPassword = authentication.getCredentials().toString();
                 passwordEncoder.matches(presentedPassword, userNotFoundEncodedPassword);
             }
             throw notFound;
-        } catch (Exception repositoryProblem) {
-            throw new InternalAuthenticationServiceException(repositoryProblem.getMessage(), repositoryProblem);
+        } catch (Exception tenantNotFound) {
+			throw new InternalAuthenticationServiceException(tenantNotFound.getMessage(), tenantNotFound);
         }
         if (loadedUser == null) {
             throw new InternalAuthenticationServiceException("get user information failed");

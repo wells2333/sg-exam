@@ -203,14 +203,14 @@ public class UserServiceClientFallbackImpl implements UserServiceClient {
     }
 
     /**
-     * 更新用户
+     * 更新用户登录信息
      *
      * @param userDto userDto
      * @return ResponseBean
      */
     @Override
-    public ResponseBean<Boolean> updateUser(UserDto userDto) {
-        log.error("Feign updateUser failed, {}, {}, {}", userDto.getIdentityType(), userDto.getIdentifier(), throwable);
+    public ResponseBean<Boolean> updateLoginInfo(UserDto userDto) {
+        log.error("Feign updateLoginInfo failed, {}, {}, {}", userDto.getIdentityType(), userDto.getIdentifier(), throwable);
         return null;
     }
 

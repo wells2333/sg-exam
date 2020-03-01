@@ -64,6 +64,7 @@ public class LoginSuccessListener implements ApplicationListener<CustomAuthentic
 			logInfo.setServiceId(ServiceConstant.AUTH_SERVICE);
 			// 记录日志和登录时间
 			UserDto userDto = new UserDto();
+			userDto.setId(customUserDetails.getId());
 			userDto.setIdentifier(username);
 			userDto.setLoginTime(DateUtils.asDate(LocalDateTime.now()));
 			saveLoginInfo(logInfo, userDto);
@@ -82,7 +83,7 @@ public class LoginSuccessListener implements ApplicationListener<CustomAuthentic
 	public void saveLoginInfo(Log logInfo, UserDto userDto) {
 		try {
 			userServiceClient.saveLog(logInfo);
-			//userServiceClient.updateUser(userDto);
+			userServiceClient.updateLoginInfo(userDto);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}

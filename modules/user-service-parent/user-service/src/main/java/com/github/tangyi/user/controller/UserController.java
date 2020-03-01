@@ -105,7 +105,7 @@ public class UserController extends BaseController {
      * @param tenantCode   tenantCode
      * @return ResponseBean
      */
-    @GetMapping("/findUserByIdentifier/{identifier}")
+    @GetMapping("anonymousUser/findUserByIdentifier/{identifier}")
     @ApiOperation(value = "获取用户信息", notes = "根据用户name获取用户详细信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "identifier", value = "用户唯一标识", required = true, dataType = "String", paramType = "path"),
@@ -235,7 +235,7 @@ public class UserController extends BaseController {
      * @author tangyi
      * @date 2019/06/21 20:09
      */
-    @PutMapping("updatePassword")
+    @PutMapping("anonymousUser/updatePassword")
     @ApiOperation(value = "修改用户密码", notes = "修改用户密码")
     @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
     @Log("更新用户密码")
@@ -403,7 +403,7 @@ public class UserController extends BaseController {
             @ApiImplicitParam(name = "randomStr", value = "随机数", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "mobile", value = "手机号", dataType = "String", paramType = "query")
     })
-    @PostMapping("register")
+    @PostMapping("anonymousUser/register")
     @Log("注册用户")
     public ResponseBean<Boolean> register(@RequestBody @Valid UserDto userDto) {
         return new ResponseBean<>(userService.register(userDto));
@@ -425,7 +425,7 @@ public class UserController extends BaseController {
             @ApiImplicitParam(name = "identifier", value = "用户唯一标识", required = true, dataType = "String", paramType = "path"),
             @ApiImplicitParam(name = "tenantCode", value = "租户标识", required = true, dataType = "String"),
     })
-    @GetMapping("checkExist/{identifier}")
+    @GetMapping("anonymousUser/checkExist/{identifier}")
     public ResponseBean<Boolean> checkExist(@PathVariable("identifier") String identifier, @RequestParam Integer identityType, @RequestHeader(SecurityConstant.TENANT_CODE_HEADER) String tenantCode) {
         return new ResponseBean<>(userService.checkIdentifierIsExist(identityType, identifier, tenantCode));
     }
@@ -451,12 +451,42 @@ public class UserController extends BaseController {
      * @author tangyi
      * @date 2019/6/7 12:00
      */
-    @PutMapping("/resetPassword")
+    @PutMapping("anonymousUser/resetPassword")
     @AdminTenantTeacherAuthorization
     @ApiOperation(value = "重置密码", notes = "根据用户id重置密码")
     @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
     @Log("重置密码")
     public ResponseBean<Boolean> resetPassword(@RequestBody UserDto userDto) {
         return new ResponseBean<>(userService.resetPassword(userDto));
+    }
+
+    /**
+     * 更新用户的基本信息
+     *
+     * @param userDto userDto
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2020/02/29 16:55
+     */
+    @PutMapping("anonymousUser/updateLoginInfo")
+    @ApiOperation(value = "更新用户登录信息", notes = "根据用户id更新用户的登录信息")
+    @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
+    @Log("更新用户登录信息")
+    public ResponseBean<Boolean> updateLoginInfo(@RequestBody UserDto userDto) {
+        Boolean success = Boolean.FALSE;
+        if (StringUtils.isNotBlank(userDto.getIdentifier())) {
+            UserAuths userAuths = new UserAuths();
+            userAuths.setIdentifier(userDto.getIdentifier());
+            userAuths = userAuthsService.getByIdentifier(userAuths);
+            if (userAuths != null) {
+                User user = new User();
+                user.setId(userAuths.getUserId());
+                user.setLoginTime(userDto.getLoginTime());
+                user.setModifyDate(userDto.getLoginTime());
+                user.setModifier(userAuths.getIdentifier());
+                success = userService.update(user) > 0;
+            }
+        }
+        return new ResponseBean<>(success);
     }
 }

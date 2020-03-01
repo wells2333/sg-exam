@@ -119,12 +119,9 @@ ignore:
     - /actuator/**
     - /hystrix.sender
     - /v1/sms/**
-    - /v1/user/findUserByIdentifier/**
-    - /v1/tenant/findTenantByTenantCode/**
-    - /v1/menu/findMenuByRole/**
-    - /v1/menu/findAllMenu
-    - /v1/user/checkExist/**
-    - /v1/user/updatePassword
+    - /v1/user/anonymousUser/**
+    - /v1/tenant/anonymousUser/**
+    - /v1/menu/anonymousUser/**
     - /v1/code/**
     - /v1/attachment/download
     - /v1/log/**

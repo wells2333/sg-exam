@@ -47,6 +47,19 @@ export const constantRouterMap = [
     hidden: true
   },
   {
+    path: '/500',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/errorPage/500'),
+        name: '500',
+        title: '500'
+      }
+    ],
+    hidden: true
+  },
+  {
     path: '/404',
     component: Layout,
     children: [
