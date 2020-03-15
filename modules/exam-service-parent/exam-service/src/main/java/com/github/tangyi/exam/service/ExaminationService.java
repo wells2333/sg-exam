@@ -1,16 +1,20 @@
 package com.github.tangyi.exam.service;
 
 import com.github.pagehelper.PageInfo;
+import com.github.tangyi.common.basic.properties.SysProperties;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.common.core.utils.PageUtil;
-import com.github.tangyi.common.core.utils.SysUtil;
+import com.github.tangyi.common.core.utils.zxing.QRCodeUtils;
+import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.exam.api.dto.ExaminationDto;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.Course;
 import com.github.tangyi.exam.api.module.Examination;
 import com.github.tangyi.exam.api.module.ExaminationSubject;
+import com.github.tangyi.exam.enums.ExaminationTypeEnum;
 import com.github.tangyi.exam.mapper.ExaminationMapper;
+import com.github.tangyi.user.api.module.Attachment;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -20,8 +24,11 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -41,6 +48,8 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 
 	private final CourseService courseService;
 
+	private final SysProperties sysProperties;
+
     /**
      * 查询考试
      *
@@ -54,6 +63,23 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
     public Examination get(Examination examination) {
         return super.get(examination);
     }
+
+	/**
+	 * 新增考试
+	 *
+	 * @param examinationDto examinationDto
+	 * @return int
+	 * @author tangyi
+	 * @date 2019/1/3 14:06
+	 */
+	public int insert(ExaminationDto examinationDto) {
+		this.initExaminationAvatarUrl(examinationDto);
+		Examination examination = new Examination();
+		BeanUtils.copyProperties(examinationDto, examination);
+		examination.setCourseId(examinationDto.getCourse().getId());
+		examination.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+		return super.insert(examination);
+	}
 
 	/**
 	 * 获取分页数据
@@ -79,6 +105,8 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 				BeanUtils.copyProperties(exam, examinationDto);
 				// 设置考试所属课程
 				courses.stream().filter(tempCourse -> tempCourse.getId().equals(exam.getCourseId())).findFirst().ifPresent(examinationDto::setCourse);
+				// 初始化封面图片
+				this.initExaminationAvatarUrl(examinationDto);
 				return examinationDto;
 			}).collect(Collectors.toList());
 			examinationDtoPageInfo.setList(examinationDtos);
@@ -89,15 +117,22 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
     /**
      * 更新考试
      *
-     * @param examination examination
+     * @param examinationDto examinationDto
      * @return int
      * @author tangyi
      * @date 2019/1/3 14:07
      */
-    @Override
     @Transactional
-    @CacheEvict(value = "examination", key = "#examination.id")
-    public int update(Examination examination) {
+    @CacheEvict(value = "examinationDto", key = "#examinationDto.id")
+    public int update(ExaminationDto examinationDto) {
+    	if (examinationDto.getAvatarId() == null || examinationDto.getAvatarId() == 0L) {
+    		this.initExaminationAvatarUrl(examinationDto);
+		}
+		Examination examination = new Examination();
+		BeanUtils.copyProperties(examinationDto, examination);
+		if (examinationDto.getCourse() != null)
+			examination.setCourseId(examinationDto.getCourse().getId());
+		examination.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return super.update(examination);
     }
 
@@ -201,12 +236,26 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
             // 按题目类型分组，获取对应的ID集合
             subjectDtoList = subjectService.findSubjectDtoList(examinationSubjects.getList());
         }
-        subjectDtoPageInfo.setList(subjectDtoList);
-        subjectDtoPageInfo.setTotal(examinationSubjects.getTotal());
-        subjectDtoPageInfo.setPageNum(examinationSubjects.getPageNum());
-        subjectDtoPageInfo.setPageSize(examinationSubjects.getPageSize());
+		subjectDtoPageInfo.setList(subjectDtoList);
+		PageUtil.copyProperties(examinationSubjects, subjectDtoPageInfo);
         return subjectDtoPageInfo;
     }
+
+	/**
+	 * 获取全部题目
+	 * @param subjectDto subjectDto
+	 * @return List
+	 * @author tangyi
+	 * @date 2020/3/12 1:00 下午
+	 */
+    public List<SubjectDto> allSubjectList(SubjectDto subjectDto) {
+		// 查询考试题目关联表
+		List<ExaminationSubject> examinationSubjects = examinationSubjectService.findListByExaminationId(subjectDto.getExaminationId());
+		if (CollectionUtils.isNotEmpty(examinationSubjects)) {
+			return subjectService.findSubjectDtoList(examinationSubjects, true, false);
+		}
+		return Collections.emptyList();
+	}
 
     /**
      * 根据考试ID查询题目id列表
@@ -230,5 +279,51 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	 */
 	public int findExamUserCount(Examination examination) {
 		return this.dao.findExamUserCount(examination);
+	}
+
+	/**
+	 * 获取考试封面
+	 *
+	 * @param examinationDto examinationDto
+	 * @author tangyi
+	 * @date 2020/03/12 22:32:30
+	 */
+	public void initExaminationAvatarUrl(ExaminationDto examinationDto) {
+		try {
+			if (sysProperties.getWebAvatar() != null && !sysProperties.getWebAvatar().endsWith("/")) {
+				sysProperties.setWebAvatar(sysProperties.getWebAvatar() + "/");
+			}
+			// 获取配置默认头像地址
+			if (examinationDto.getAvatarId() != null && examinationDto.getAvatarId() != 0L) {
+				Attachment attachment = new Attachment();
+				attachment.setId(examinationDto.getAvatarId());
+				examinationDto.setAvatarUrl(sysProperties.getWebAvatar() + examinationDto.getAvatarId() + sysProperties.getWebAvatarSuffix());
+			} else {
+				Long index = new Random().nextInt(sysProperties.getWebAvatarCount()) + 1L;
+				examinationDto.setAvatarUrl(sysProperties.getWebAvatar() + index + sysProperties.getWebAvatarSuffix());
+				examinationDto.setAvatarId(index);
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+	}
+
+	/**
+	 * 根据考试ID生成二维码
+	 * @param examinationId examinationId
+	 * @author tangyi
+	 * @date 2020/3/15 1:16 下午
+	 */
+	public byte[] share(Long examinationId) {
+		Examination examination = this.get(examinationId);
+		// 调查问卷
+		if (examination == null/* || !ExaminationTypeEnum.QUESTIONNAIRE.getValue().equals(examination.getType())*/) {
+			return new byte[0];
+		}
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		String url = sysProperties.getQrCodeUrl() + examination.getId();
+		QRCodeUtils.encoderQRCode(url, outputStream, "png");
+		log.info("Share examinationId: {}, url: {}", examinationId, url);
+		return outputStream.toByteArray();
 	}
 }

@@ -1,13 +1,12 @@
 package com.github.tangyi.user.service;
 
 import cn.hutool.core.collection.CollUtil;
+import com.github.tangyi.common.basic.properties.SysProperties;
 import com.github.tangyi.common.core.constant.CommonConstant;
-import com.github.tangyi.common.core.properties.SysProperties;
 import com.github.tangyi.common.core.service.CrudService;
-import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.utils.TreeUtil;
 import com.github.tangyi.common.security.constant.SecurityConstant;
-import com.github.tangyi.common.security.utils.SecurityUtil;
+import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.user.api.constant.MenuConstant;
 import com.github.tangyi.user.api.dto.MenuDto;
 import com.github.tangyi.user.api.module.Menu;
@@ -79,7 +78,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 				userMenus = mergeMenu(defaultMenus, tenantMenus);
 			}
 		} else {
-			List<Role> roleList = SecurityUtil.getCurrentAuthentication().getAuthorities().stream()
+			List<Role> roleList = SysUtil.getCurrentAuthentication().getAuthorities().stream()
 					// 按角色过滤
 					.filter(authority -> authority.getAuthority() != null && authority.getAuthority()
 							.startsWith("ROLE_")).map(authority -> {

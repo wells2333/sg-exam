@@ -1,7 +1,8 @@
 package com.github.tangyi.auth.model;
 
-import com.github.tangyi.common.core.enums.LoginTypeEnum;
+import com.github.tangyi.common.basic.enums.LoginTypeEnum;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
@@ -14,6 +15,7 @@ import java.util.Collection;
  * @date 2019/5/28 21:13
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class CustomUserDetails extends User {
 
     private static final long serialVersionUID = 1L;
@@ -22,6 +24,11 @@ public class CustomUserDetails extends User {
      * 租户标识
      */
     private String tenantCode;
+
+    /**
+     * id
+     */
+    private Long id;
 
     /**
      * 开始授权时间
@@ -44,9 +51,10 @@ public class CustomUserDetails extends User {
      * @param start       start
      * @param loginType   loginType
      */
-    public CustomUserDetails(String username, String password, boolean enabled, Collection<? extends GrantedAuthority> authorities, String tenantCode, long start, LoginTypeEnum loginType) {
+    public CustomUserDetails(String username, String password, boolean enabled, Collection<? extends GrantedAuthority> authorities, String tenantCode, Long id, long start, LoginTypeEnum loginType) {
         super(username, password, enabled, true, true, true, authorities);
         this.tenantCode = tenantCode;
+        this.id = id;
         this.start = start;
         this.loginType = loginType;
     }

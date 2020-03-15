@@ -1,12 +1,12 @@
 package com.github.tangyi.auth.listener;
 
 import com.github.tangyi.auth.model.CustomUserDetails;
+import com.github.tangyi.common.basic.model.Log;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.constant.ServiceConstant;
-import com.github.tangyi.common.core.model.Log;
 import com.github.tangyi.common.core.utils.DateUtils;
-import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.security.event.CustomAuthenticationSuccessEvent;
+import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.user.api.dto.UserDto;
 import com.github.tangyi.user.api.feign.UserServiceClient;
 import lombok.AllArgsConstructor;
@@ -64,6 +64,7 @@ public class LoginSuccessListener implements ApplicationListener<CustomAuthentic
 			logInfo.setServiceId(ServiceConstant.AUTH_SERVICE);
 			// 记录日志和登录时间
 			UserDto userDto = new UserDto();
+			userDto.setId(customUserDetails.getId());
 			userDto.setIdentifier(username);
 			userDto.setLoginTime(DateUtils.asDate(LocalDateTime.now()));
 			saveLoginInfo(logInfo, userDto);
@@ -82,7 +83,7 @@ public class LoginSuccessListener implements ApplicationListener<CustomAuthentic
 	public void saveLoginInfo(Log logInfo, UserDto userDto) {
 		try {
 			userServiceClient.saveLog(logInfo);
-			//userServiceClient.updateUser(userDto);
+			userServiceClient.updateLoginInfo(userDto);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}

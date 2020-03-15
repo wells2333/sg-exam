@@ -137,7 +137,7 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
      */
     @Override
     public SubjectDto getSubject(Long id) {
-        return SubjectUtil.subjectShortAnswerToDto(this.get(id));
+        return SubjectUtil.subjectShortAnswerToDto(this.get(id), true);
     }
 
     /**
@@ -268,7 +268,7 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
     public List<SubjectDto> findSubjectList(SubjectDto subjectDto) {
         SubjectShortAnswer subjectShortAnswer = new SubjectShortAnswer();
         BeanUtils.copyProperties(subjectDto, subjectShortAnswer);
-        return SubjectUtil.subjectShortAnswerToDto(this.findList(subjectShortAnswer));
+        return SubjectUtil.subjectShortAnswerToDto(this.findList(subjectShortAnswer), true);
     }
 
     /**
@@ -287,7 +287,7 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
         PageInfo subjectShortAnswerPageInfo = this.findPage(pageInfo, subjectShortAnswer);
         PageInfo<SubjectDto> subjectDtoPageInfo = new PageInfo<>();
 		PageUtil.copyProperties(subjectShortAnswerPageInfo, subjectDtoPageInfo);
-        subjectDtoPageInfo.setList(SubjectUtil.subjectShortAnswerToDto(subjectShortAnswerPageInfo.getList()));
+        subjectDtoPageInfo.setList(SubjectUtil.subjectShortAnswerToDto(subjectShortAnswerPageInfo.getList(), true));
         return subjectDtoPageInfo;
     }
 
@@ -301,6 +301,6 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
      */
     @Override
     public List<SubjectDto> findSubjectListById(Long[] ids) {
-        return SubjectUtil.subjectShortAnswerToDto(this.findListById(ids));
+        return SubjectUtil.subjectShortAnswerToDto(this.findListById(ids), true);
     }
 }

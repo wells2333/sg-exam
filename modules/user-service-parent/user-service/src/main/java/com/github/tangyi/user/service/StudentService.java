@@ -1,9 +1,9 @@
 package com.github.tangyi.user.service;
 
+import com.github.tangyi.common.basic.vo.UserVo;
 import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.service.CrudService;
-import com.github.tangyi.common.core.utils.SysUtil;
-import com.github.tangyi.common.core.vo.UserVo;
+import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.user.api.constant.UserStudentConstant;
 import com.github.tangyi.user.api.dto.StudentDto;
 import com.github.tangyi.user.api.module.Student;

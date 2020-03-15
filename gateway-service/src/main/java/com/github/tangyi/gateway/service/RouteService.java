@@ -50,13 +50,13 @@ public class RouteService extends CrudService<RouteMapper, Route> {
     public int insert(Route route) {
         int update;
         if (StringUtils.isBlank(route.getRouteId()))
-            throw new CommonException("服务ID不能为空！");
+            throw new CommonException("Service id is empty");
         // 校验服务路由是否存在
         Route condition = new Route();
         condition.setRouteId(route.getRouteId());
         List<Route> routes = this.findList(condition);
         if (CollectionUtils.isNotEmpty(routes))
-            throw new CommonException("该服务的路由已存在！");
+            throw new CommonException("Service id is exits");
         route.setCommonValue("", GatewayConstant.SYS_CODE, GatewayConstant.DEFAULT_TENANT_CODE);
         if ((update = this.dao.insert(route)) > 0) {
             dynamicRouteService.add(routeDefinition(route));
@@ -74,7 +74,7 @@ public class RouteService extends CrudService<RouteMapper, Route> {
     public int update(Route route) {
         int update;
         if (StringUtils.isBlank(route.getRouteId()))
-            throw new CommonException("服务ID不能为空！");
+            throw new CommonException("Service id is empty");
         route.setNewRecord(false);
         route.setCommonValue("", GatewayConstant.SYS_CODE, GatewayConstant.DEFAULT_TENANT_CODE);
         if ((update = this.dao.update(route)) > 0) {
@@ -102,21 +102,18 @@ public class RouteService extends CrudService<RouteMapper, Route> {
 
     /**
      * 刷新路由
-     *
-     * @return boolean
      */
-    public boolean refresh() {
+    public void refresh() {
         Route init = new Route();
         init.setStatus(CommonConstant.DEL_FLAG_NORMAL.toString());
         List<Route> routes = this.findList(init);
         if (CollectionUtils.isNotEmpty(routes)) {
-            log.info("加载{}条路由记录", routes.size());
+            log.info("Init {} route records", routes.size());
             for (Route route : routes)
                 dynamicRouteService.update(routeDefinition(route));
             // 存入Redis
             redisTemplate.opsForValue().set(CommonConstant.ROUTE_KEY, JsonMapper.getInstance().toJson(routes));
         }
-        return true;
     }
 
     /**

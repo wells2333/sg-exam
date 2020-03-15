@@ -24,7 +24,7 @@ public class GatewayConstant {
     /**
      * 注册
      */
-    public static final String REGISTER = "/user/register";
+    public static final String REGISTER = "/user/anonymousUser/register";
 
     /**
      * 授权类型

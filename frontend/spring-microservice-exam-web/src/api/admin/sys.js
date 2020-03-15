@@ -6,3 +6,24 @@ export function getSysConfig () {
     method: 'get'
   })
 }
+
+/**
+ * 首页数据
+ */
+export function getDashboard () {
+  return request({
+    url: '/api/user/v1/dashboard',
+    method: 'get'
+  })
+}
+
+/**
+ * 过去一周考试记录数据
+ */
+export function getExamRecordTendency (query) {
+  return request({
+    url: '/api/user/v1/dashboard/examRecordTendency',
+    method: 'get',
+    params: query
+  })
+}

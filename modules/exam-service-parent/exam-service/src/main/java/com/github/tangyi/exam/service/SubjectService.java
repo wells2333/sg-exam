@@ -4,7 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.common.core.utils.SpringContextHolder;
-import com.github.tangyi.common.core.utils.SysUtil;
+import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.exam.api.constants.ExamSubjectConstant;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.ExaminationSubject;
@@ -123,7 +123,7 @@ public class SubjectService {
         if (SubjectTypeEnum.CHOICES.getValue().equals(subjectDto.getType()) && CollectionUtils.isNotEmpty(subjectDtos)) {
 			// 查找选项信息
 			subjectDtos = subjectDtos.stream()
-					.map(dto -> SubjectUtil.subjectChoicesToDto(subjectChoicesService.get(dto.getId())))
+					.map(dto -> SubjectUtil.subjectChoicesToDto(subjectChoicesService.get(dto.getId()), true))
 					.collect(Collectors.toList());
         }
         return subjectDtos;
@@ -379,15 +379,30 @@ public class SubjectService {
         return findSubjectDtoList(examinationSubjects, false);
     }
 
+	/**
+	 * 根据关系列表查询对应的题目的详细信息
+	 *
+	 * @param examinationSubjects examinationSubjects
+	 * @param findOptions findOptions
+	 * @return List
+	 * @author tangyi
+	 * @date 2019/06/17 11:54
+	 */
+	public List<SubjectDto> findSubjectDtoList(List<ExaminationSubject> examinationSubjects, boolean findOptions) {
+    	return findSubjectDtoList(examinationSubjects, findOptions, true);
+	}
+
     /**
      * 根据关系列表查询对应的题目的详细信息
      *
      * @param examinationSubjects examinationSubjects
-     * @return List
+     * @param findOptions findOptions
+	 * @param findAnswer findAnswer
+	 * @return List
      * @author tangyi
      * @date 2019/06/17 11:54
      */
-    public List<SubjectDto> findSubjectDtoList(List<ExaminationSubject> examinationSubjects, boolean findOptions) {
+    public List<SubjectDto> findSubjectDtoList(List<ExaminationSubject> examinationSubjects, boolean findOptions, boolean findAnswer) {
         Map<String, Long[]> idMap = this.getSubjectIdByType(examinationSubjects);
         // 查询题目信息，聚合
         List<SubjectDto> subjectDtoList = new ArrayList<>();
@@ -399,7 +414,7 @@ public class SubjectService {
                     subjectChoicesList = subjectChoicesList.stream().map(subjectChoicesService::get)
                             .collect(Collectors.toList());
                 }
-                subjectDtoList.addAll(SubjectUtil.subjectChoicesToDto(subjectChoicesList));
+                subjectDtoList.addAll(SubjectUtil.subjectChoicesToDto(subjectChoicesList, findAnswer));
             }
         }
 
@@ -411,19 +426,19 @@ public class SubjectService {
                     subjectChoicesList = subjectChoicesList.stream().map(subjectChoicesService::get)
                             .collect(Collectors.toList());
                 }
-                subjectDtoList.addAll(SubjectUtil.subjectChoicesToDto(subjectChoicesList));
+                subjectDtoList.addAll(SubjectUtil.subjectChoicesToDto(subjectChoicesList, findAnswer));
             }
         }
         if (idMap.containsKey(SubjectTypeEnum.SHORT_ANSWER.name())) {
             List<SubjectShortAnswer> subjectShortAnswers = subjectShortAnswerService.findListById(idMap.get(SubjectTypeEnum.SHORT_ANSWER.name()));
             if (CollectionUtils.isNotEmpty(subjectShortAnswers)) {
-                subjectDtoList.addAll(SubjectUtil.subjectShortAnswerToDto(subjectShortAnswers));
+                subjectDtoList.addAll(SubjectUtil.subjectShortAnswerToDto(subjectShortAnswers, findAnswer));
             }
         }
         if (idMap.containsKey((SubjectTypeEnum.JUDGEMENT.name()))) {
             List<SubjectJudgement> subjectJudgements = subjectJudgementService.findListById(idMap.get(SubjectTypeEnum.JUDGEMENT.name()));
             if (CollectionUtils.isNotEmpty(subjectJudgements)) {
-                subjectDtoList.addAll(SubjectUtil.subjectJudgementToDto(subjectJudgements));
+                subjectDtoList.addAll(SubjectUtil.subjectJudgementsToDto(subjectJudgements, findAnswer));
             }
         }
         return subjectDtoList;

@@ -1,6 +1,6 @@
 <h1 align="center">Welcome to spring-microservice-exam 👋</h1>
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-3.5.0-blue.svg?cacheSeconds=2592000" />
+  <img alt="Version" src="https://img.shields.io/badge/version-3.7.0-blue.svg?cacheSeconds=2592000" />
   <a href="https://www.kancloud.cn/tangyi/spring-microservice-exam/1322864" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
@@ -12,6 +12,8 @@
 > 硕果云，基于Spring Cloud搭建的新一代微服务教学管理平台，提供多租户、权限管理、在线考试、练习等功能
 >
 > 题型支持单选题、多选题、不定项选择题、判断题、简答题等
+>
+> 支持二维码分享，移动端答题
 
 ### 🏠 [主页](https://gitee.com/wells2333/spring-microservice-exam)
 
@@ -23,7 +25,6 @@
 
 |   单位ID   |      账号      |   密码   |   角色    |
 | --------- | -------- | -------- | -------- |
-|  gitee  |  admin    | ******  |  管理员  |
 |  gitee  |  preview  | 123456  |  预览权限|
 |  gitee  |  student  | 123456  |  学生  |
 |  gitee  |  teacher  | 123456  |  老师  |
@@ -52,12 +53,12 @@
 
 |      名称      |   版本    |
 | --------- | -------- |
-| `Spring Boot`    | `2.2.2.RELEASE`  |
-| `Spring Cloud`   | `Hoxton.SR1`  |
+| `Spring Boot`    | `2.2.5.RELEASE`  |
+| `Spring Cloud`   | `Hoxton.SR3`  |
 
 ## 系统架构
 
-![image](docs/images/系统架构图v3.0.jpg)
+![image](docs/images/系统架构图v3.0.png)
 
 ## 功能概述
 
@@ -86,7 +87,7 @@
 
 考务管理：提供课程、考试、题库、成绩等管理
 - 课程管理：课程信息增删改查
-- 考试管理：考试信息增删改查、题目管理、发布回收，题目管理支持简单文本、富文本输入、从题库添加等，题型支持单选题、多选题、不定项选择题、判断题、简答题
+- 考试管理：考试信息增删改查、题目管理、发布回收，题目管理支持简单文本、富文本输入、从题库添加等，题型支持单选题、多选题、不定项选择题、判断题、简答题，生成二维码分享
 - 题库管理：题目分类增删改查、题目信息增删改查，题型支持单选题、多选题、不定项选择题、判断题、简答题
 - 成绩管理：查看成绩、成绩批改、导出等功能
 - 知识库：知识库增删改查、上传附件
@@ -104,8 +105,8 @@
 
 <table>
 	<tr>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_login.png" alt="登录"/></td>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web.png" alt="首页"/></td>
+	    <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web.png" alt="首页"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_home.png" alt="首页"/></td>
     </tr>
     <tr>
         <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_exams.png" alt="考试列表"/></td>
@@ -114,6 +115,10 @@
     <tr>
         <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_record.png" alt="考试记录"/></td>
         <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_incorrect_answer.png" alt="错题列表"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_courses.png" alt="热门课程"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_login.png" alt="登录"/></td>
     </tr>
 </table>
 
@@ -142,13 +147,32 @@
     </tr>
     <tr>
         <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_log_manage.png" alt="日志监控"/></td>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_consul.png" alt="服务监控"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_consul.png" alt="consul监控"/></td>
+    </tr>
+</table>
+
+### 系统监控（点击查看大图）
+
+<table>
+	<tr>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_spring_boot_admin.png" alt="服务监控"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_spring_boot_admin01.png" alt="服务监控"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_swagger.png" alt="swagger文档"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_elk.png" alt="elk日志"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_zipkin1.png" alt="zipkin"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_zipkin2.png" alt="zipkin"/></td>
     </tr>
 </table>
 
 ## 部署文档
 
 - [在线考试系统-部署文档](https://www.kancloud.cn/tangyi/spring-microservice-exam/1322870)
+
+- [部署视频教程](https://www.kancloud.cn/tangyi/spring-microservice-exam/1519487)
 
 - [在线考试系统-部署文档(docker版)](https://www.kancloud.cn/tangyi/spring-microservice-exam/1322869)
 

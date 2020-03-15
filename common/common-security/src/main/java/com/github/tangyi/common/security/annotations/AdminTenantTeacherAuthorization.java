@@ -13,6 +13,6 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-@PreAuthorize("hasRole(T(com.github.tangyi.common.security.enums.Roles).ROLE_ADMIN) or hasRole(T(com.github.tangyi.common.security.enums.Roles).ROLE_TENANT_ADMIN) or hasRole(T(com.github.tangyi.common.security.enums.Roles).ROLE_TEACHER)")
+@PreAuthorize("hasRole(T(com.github.tangyi.common.security.enums.Roles).ROLE_ADMIN) or hasRole(T(com.github.tangyi.common.security.enums.Roles).ROLE_TENANT_ADMIN) or hasRole(T(com.github.tangyi.common.security.enums.Roles).ROLE_TEACHER) or hasRole(T(com.github.tangyi.common.security.enums.Roles).ROLE_PREVIEW)")
 public @interface AdminTenantTeacherAuthorization {
 }

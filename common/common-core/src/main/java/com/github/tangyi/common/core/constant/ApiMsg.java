@@ -96,6 +96,11 @@ public class ApiMsg {
 	public static final int KEY_ACCESS = 404;
 
 	/**
+	 * 认证
+	 */
+	public static final int KEY_AUTHENTICATION = 405;
+
+	/**
 	 * code和提示内容的对应关系
 	 */
 	private static final Map<Integer, String> CODE_MAP = new HashMap<>();

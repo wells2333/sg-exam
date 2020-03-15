@@ -10,7 +10,6 @@ import com.github.tangyi.gateway.module.Route;
 import com.github.tangyi.gateway.service.RouteService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.ArrayUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -32,7 +31,6 @@ public class RouteController extends BaseController {
 
     /**
      * 根据id获取路由
-     *
      * @param id id
      * @return Route
      * @author tangyi
@@ -50,7 +48,6 @@ public class RouteController extends BaseController {
 
     /**
      * 路由分页查询
-     *
      * @param pageNum  pageNum
      * @param pageSize pageSize
      * @param sort     sort
@@ -71,7 +68,6 @@ public class RouteController extends BaseController {
 
     /**
      * 修改路由
-     *
      * @param route route
      * @return ResponseBean
      * @author tangyi
@@ -80,9 +76,9 @@ public class RouteController extends BaseController {
     @PutMapping
     public ResponseBean<Boolean> updateRoute(@RequestBody @Valid Route route) {
         try {
-            // 更新路由
-            return new ResponseBean<>(routeService.update(route) > 0);
-        } catch (Exception e) {
+            route.setCommonValue("", "", "");
+			return new ResponseBean<>(routeService.update(route) > 0);
+		} catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new CommonException(e.getMessage());
         }
@@ -90,7 +86,6 @@ public class RouteController extends BaseController {
 
     /**
      * 创建路由
-     *
      * @param route route
      * @return ResponseBean
      * @author tangyi
@@ -99,7 +94,6 @@ public class RouteController extends BaseController {
     @PostMapping
     public ResponseBean<Boolean> add(@RequestBody @Valid Route route) {
         try {
-            // 新增路由
             return new ResponseBean<>(routeService.insert(route) > 0);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -109,7 +103,6 @@ public class RouteController extends BaseController {
 
     /**
      * 根据id删除路由
-     *
      * @param id id
      * @return ResponseBean
      * @author tangyi
@@ -118,7 +111,7 @@ public class RouteController extends BaseController {
     @DeleteMapping("/{id}")
     public ResponseBean<Boolean> delete(@PathVariable Long id) {
         try {
-            return new ResponseBean<>(routeService.delete(id) > 0);
+			return new ResponseBean<>(routeService.delete(id) > 0);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new CommonException(e.getMessage());
@@ -127,7 +120,6 @@ public class RouteController extends BaseController {
 
     /**
      * 批量删除
-     *
      * @param ids ids
      * @return ResponseBean
      * @author tangyi
@@ -135,11 +127,8 @@ public class RouteController extends BaseController {
      */
     @PostMapping("deleteAll")
     public ResponseBean<Boolean> deleteAll(@RequestBody Long[] ids) {
-        boolean success = false;
-        try {
-            if (ArrayUtils.isNotEmpty(ids))
-                success = routeService.deleteAll(ids) > 0;
-            return new ResponseBean<>(success);
+		try {
+			return new ResponseBean<>( routeService.deleteAll(ids) > 0);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new CommonException(e.getMessage());
@@ -157,7 +146,8 @@ public class RouteController extends BaseController {
     @GetMapping("refresh")
     public ResponseBean<Boolean> refresh() {
         try {
-            return new ResponseBean<>(routeService.refresh());
+            routeService.refresh();
+            return new ResponseBean<>(true);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CommonException(e.getMessage());

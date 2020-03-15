@@ -3,15 +3,15 @@ package com.github.tangyi.auth.security;
 import com.github.tangyi.auth.api.module.WxSession;
 import com.github.tangyi.auth.model.CustomUserDetails;
 import com.github.tangyi.auth.service.WxSessionService;
+import com.github.tangyi.common.basic.enums.LoginTypeEnum;
+import com.github.tangyi.common.basic.vo.UserVo;
 import com.github.tangyi.common.core.constant.CommonConstant;
-import com.github.tangyi.common.core.enums.LoginTypeEnum;
 import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.exceptions.ServiceException;
 import com.github.tangyi.common.core.exceptions.TenantNotFoundException;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.DateUtils;
 import com.github.tangyi.common.core.utils.ResponseUtil;
-import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.security.core.CustomUserDetailsService;
 import com.github.tangyi.common.security.core.GrantedAuthorityImpl;
 import com.github.tangyi.common.security.mobile.MobileUser;
@@ -63,7 +63,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
         UserVo userVo = userVoResponseBean.getData();
         if (userVo == null)
             throw new UsernameNotFoundException("user does not exist");
-        return new CustomUserDetails(username, userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(), start, LoginTypeEnum.PWD);
+        return new CustomUserDetails(username, userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(), userVo.getId(), start, LoginTypeEnum.PWD);
     }
 
     /**
@@ -103,7 +103,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
                 throw new ServiceException(GET_USER_INFO_FAIL + userVoResponseBean.getMsg());
             userVo = userVoResponseBean.getData();
         }
-        return new CustomUserDetails(userVo.getIdentifier(), userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(), start, LoginTypeEnum.SMS);
+        return new CustomUserDetails(userVo.getIdentifier(), userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(), userVo.getId(), start, LoginTypeEnum.SMS);
     }
 
     /**
@@ -149,7 +149,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
                 throw new ServiceException(GET_USER_INFO_FAIL + userVoResponseBean.getMsg());
             userVo = userVoResponseBean.getData();
         }
-        return new CustomUserDetails(userVo.getIdentifier(), userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(), start, LoginTypeEnum.WECHAT);
+        return new CustomUserDetails(userVo.getIdentifier(), userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(), userVo.getId(), start, LoginTypeEnum.WECHAT);
     }
 
     /**

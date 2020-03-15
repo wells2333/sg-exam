@@ -2,7 +2,7 @@ package com.github.tangyi.common.security.wx;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tangyi.common.security.constant.SecurityConstant;
-import com.github.tangyi.common.security.utils.SecurityUtil;
+import com.github.tangyi.common.security.utils.SysUtil;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -57,7 +57,7 @@ public class WxLoginSuccessHandler implements AuthenticationSuccessHandler {
         if (header == null || !header.startsWith(BASIC_))
             throw new UnapprovedClientAuthenticationException("请求头中client信息为空");
         try {
-            String[] tokens = SecurityUtil.extractAndDecodeHeader(header);
+            String[] tokens = SysUtil.extractAndDecodeHeader(header);
             assert tokens.length == 2;
             String clientId = tokens[0];
             ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);

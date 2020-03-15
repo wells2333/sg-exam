@@ -1,6 +1,6 @@
 package com.github.tangyi.common.log.event;
 
-import com.github.tangyi.common.core.model.Log;
+import com.github.tangyi.common.basic.model.Log;
 import org.springframework.context.ApplicationEvent;
 
 /**

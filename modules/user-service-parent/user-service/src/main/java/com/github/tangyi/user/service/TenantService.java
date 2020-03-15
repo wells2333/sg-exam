@@ -2,8 +2,8 @@ package com.github.tangyi.user.service;
 
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.service.CrudService;
-import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.security.constant.SecurityConstant;
+import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.user.api.constant.TenantConstant;
 import com.github.tangyi.user.api.enums.IdentityType;
 import com.github.tangyi.user.api.module.*;

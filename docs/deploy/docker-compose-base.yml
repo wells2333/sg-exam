@@ -72,6 +72,18 @@ services:
       - net
 
   # ---------------------------
+  # zipkin
+  # ---------------------------
+  zipkin-service:
+    image: openzipkin/zipkin
+    container_name: zipkin-service
+    restart: always
+    ports:
+      - "9411:9411"
+    networks:
+      - net
+
+  # ---------------------------
   # 配置中心
   # ---------------------------
   config-service:

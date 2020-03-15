@@ -6,10 +6,10 @@ import com.github.tangyi.auth.service.OauthClientDetailsService;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.PageUtil;
-import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.annotations.AdminAuthorization;
+import com.github.tangyi.common.security.utils.SysUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -116,7 +116,7 @@ public class OauthClientDetailsController extends BaseController {
     @ApiImplicitParam(name = "oauthClientDetails", value = "客户端实体oauthClientDetails", required = true, dataType = "OauthClientDetails")
     @Log("新增客户端")
     public ResponseBean<Boolean> oauthClient(@RequestBody OauthClientDetails oauthClientDetails) {
-        oauthClientDetails.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
+        oauthClientDetails.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         // 加密密钥
         oauthClientDetails.setClientSecret(bCryptPasswordEncoder.encode(oauthClientDetails.getClientSecretPlainText()));
         return new ResponseBean<>(oauthClientDetailsService.insert(oauthClientDetails) > 0);
@@ -140,7 +140,7 @@ public class OauthClientDetailsController extends BaseController {
         // 有调整过明文则重新加密密钥
         if (tempOauthClientDetails != null && !tempOauthClientDetails.getClientSecretPlainText().equals(oauthClientDetails.getClientSecretPlainText()))
             oauthClientDetails.setClientSecret(bCryptPasswordEncoder.encode(oauthClientDetails.getClientSecretPlainText()));
-        oauthClientDetails.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
+        oauthClientDetails.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(oauthClientDetailsService.update(oauthClientDetails) > 0);
     }
 
@@ -161,7 +161,7 @@ public class OauthClientDetailsController extends BaseController {
         OauthClientDetails oauthClientDetails = new OauthClientDetails();
         oauthClientDetails.setId(id);
         oauthClientDetails.setNewRecord(false);
-        oauthClientDetails.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
+        oauthClientDetails.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         return new ResponseBean<>(oauthClientDetailsService.delete(oauthClientDetails) > 0);
     }
 

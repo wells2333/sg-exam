@@ -1,11 +1,11 @@
 package com.github.tangyi.user.controller;
 
+import com.github.tangyi.common.basic.vo.UserVo;
 import com.github.tangyi.common.core.exceptions.ServiceException;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.ResponseUtil;
-import com.github.tangyi.common.core.utils.SysUtil;
-import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.core.web.BaseController;
+import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.exam.api.dto.ExaminationDashboardDto;
 import com.github.tangyi.exam.api.feign.ExaminationServiceClient;
 import com.github.tangyi.user.api.dto.DashboardDto;

@@ -1,14 +1,14 @@
 package com.github.tangyi.user.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.github.tangyi.common.basic.utils.excel.ExcelToolUtil;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.PageUtil;
-import com.github.tangyi.common.core.utils.SysUtil;
-import com.github.tangyi.common.core.utils.excel.ExcelToolUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.annotations.AdminTenantTeacherAuthorization;
+import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.user.api.dto.MenuDto;
 import com.github.tangyi.user.api.module.Menu;
 import com.github.tangyi.user.excel.listener.MenuImportListener;
@@ -179,7 +179,7 @@ public class MenuController extends BaseController {
      * @author tangyi
      * @date 2018/8/27 15:58
      */
-    @GetMapping("findMenuByRole/{role}")
+    @GetMapping("anonymousUser/findMenuByRole/{role}")
     @ApiOperation(value = "根据角色查找菜单", notes = "根据角色id获取角色菜单")
     @ApiImplicitParam(name = "role", value = "角色名称", required = true, dataType = "String", paramType = "path")
     public ResponseBean<List<Menu>> findMenuByRole(@PathVariable String role, @RequestParam @NotBlank String tenantCode) {
@@ -194,7 +194,7 @@ public class MenuController extends BaseController {
      * @author tangyi
      * @date 2019/04/26 11:50
      */
-    @GetMapping("findAllMenu")
+    @GetMapping("anonymousUser/findAllMenu")
     @ApiOperation(value = "查询所有菜单", notes = "查询所有菜单")
     public ResponseBean<List<Menu>> findAllMenu(@RequestParam @NotBlank String tenantCode) {
         Menu menu = new Menu();

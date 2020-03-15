@@ -13,10 +13,10 @@
     <description>考试服务</description>
 
     <dependencies>
-        <!-- common-core -->
+        <!-- common-basic -->
         <dependency>
             <groupId>com.github.tangyi</groupId>
-            <artifactId>common-core</artifactId>
+            <artifactId>common-basic</artifactId>
         </dependency>
 
         <!-- common-config -->

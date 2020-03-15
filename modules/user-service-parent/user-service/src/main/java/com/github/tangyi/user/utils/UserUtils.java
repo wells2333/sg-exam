@@ -1,8 +1,8 @@
 package com.github.tangyi.user.utils;
 
-import com.github.tangyi.common.core.properties.SysProperties;
+import com.github.tangyi.common.basic.properties.SysProperties;
+import com.github.tangyi.common.basic.vo.RoleVo;
 import com.github.tangyi.common.core.utils.SpringContextHolder;
-import com.github.tangyi.common.core.vo.RoleVo;
 import com.github.tangyi.user.api.dto.UserInfoDto;
 import com.github.tangyi.user.api.module.Role;
 import com.github.tangyi.user.api.module.User;

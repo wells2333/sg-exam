@@ -14,7 +14,6 @@
       :default-sort="{ prop: 'id', order: 'descending' }"
       highlight-current-row
       style="width: 100%;"
-      @row-dblclick="handleUpdate"
       @selection-change="handleSelectionChange"
       @sort-change="sortChange">
       <el-table-column type="selection" width="55"/>
@@ -31,6 +30,16 @@
       <el-table-column :label="$t('table.knowledge.status')" min-width="90">
         <template slot-scope="scope">
           <el-tag :type="scope.row.status | statusTypeFilter" effect="dark" size="small">{{ scope.row.status | publicStatusFilter }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('table.status')" min-width="80">
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.status | statusTypeFilter" effect="dark" size="small">{{ scope.row.status | statusFilter }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('table.modifyDate')" min-width="80">
+        <template slot-scope="scope">
+          <span>{{ scope.row.modifyDate | fmtDate('yyyy-MM-dd hh:mm') }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.actions')" class-name="status-col" width="300px">

@@ -41,3 +41,7 @@ redis的配置
 ## start.sh
 
 启动脚本
+
+## QRCode.jar
+
+安装到本地maven仓库命令：mvn install:install-file -Dfile=C:\Users\Administrator\Downloads>\QRCode.jar -DgroupId=QRCode -DartifactId=QRCode -Dversion=3.0 -Dpackaging=jar

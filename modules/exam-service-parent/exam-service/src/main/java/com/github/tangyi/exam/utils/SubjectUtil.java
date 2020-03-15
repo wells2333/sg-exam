@@ -53,11 +53,12 @@ public class SubjectUtil {
      * SubjectChoices转SubjectDto
      *
      * @param subjectChoice subjectChoice
-     * @return List
+     * @param findAnswer findAnswer
+	 * @return List
      * @author tangyi
      * @date 2019/06/16 16:50
      */
-    public static SubjectDto subjectChoicesToDto(SubjectChoices subjectChoice) {
+    public static SubjectDto subjectChoicesToDto(SubjectChoices subjectChoice, boolean findAnswer) {
         if (subjectChoice == null)
             return null;
         SubjectDto subjectDto = new SubjectDto();
@@ -77,9 +78,11 @@ public class SubjectUtil {
         subjectDto.setModifier(subjectChoice.getModifier());
         subjectDto.setModifyDate(subjectChoice.getModifyDate());
         // 参考答案
-        Answer answer = new Answer();
-        answer.setAnswer(subjectChoice.getAnswer());
-        subjectDto.setAnswer(answer);
+		if (findAnswer) {
+			Answer answer = new Answer();
+			answer.setAnswer(subjectChoice.getAnswer());
+			subjectDto.setAnswer(answer);
+		}
         return subjectDto;
     }
 
@@ -87,14 +90,15 @@ public class SubjectUtil {
      * SubjectChoices转SubjectDto
      *
      * @param subjectChoices subjectChoices
-     * @return List
+     * @param findAnswer findAnswer
+	 * @return List
      * @author tangyi
      * @date 2019/06/16 16:50
      */
-    public static List<SubjectDto> subjectChoicesToDto(List<SubjectChoices> subjectChoices) {
+    public static List<SubjectDto> subjectChoicesToDto(List<SubjectChoices> subjectChoices, boolean findAnswer) {
         List<SubjectDto> subjectDtoList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(subjectChoices)) {
-            subjectDtoList = subjectChoices.stream().map(SubjectUtil::subjectChoicesToDto).collect(Collectors.toList());
+            subjectDtoList = subjectChoices.stream().map(subjectChoice -> SubjectUtil.subjectChoicesToDto(subjectChoice, findAnswer)).collect(Collectors.toList());
         }
         return subjectDtoList;
     }
@@ -103,11 +107,12 @@ public class SubjectUtil {
      * SubjectShortAnswer转SubjectDto
      *
      * @param subjectShortAnswer subjectShortAnswer
-     * @return List
+     * @param findAnswer findAnswer
+	 * @return List
      * @author tangyi
      * @date 2019/06/16 16:59
      */
-    public static SubjectDto subjectShortAnswerToDto(SubjectShortAnswer subjectShortAnswer) {
+    public static SubjectDto subjectShortAnswerToDto(SubjectShortAnswer subjectShortAnswer, boolean findAnswer) {
         if (subjectShortAnswer == null)
             return null;
         SubjectDto subjectDto = new SubjectDto();
@@ -125,9 +130,11 @@ public class SubjectUtil {
         subjectDto.setType(SubjectTypeEnum.SHORT_ANSWER.getValue());
 
         // 参考答案
-        Answer answer = new Answer();
-        answer.setAnswer(subjectShortAnswer.getAnswer());
-        subjectDto.setAnswer(answer);
+		if (findAnswer) {
+			Answer answer = new Answer();
+			answer.setAnswer(subjectShortAnswer.getAnswer());
+			subjectDto.setAnswer(answer);
+		}
         return subjectDto;
     }
 
@@ -135,28 +142,42 @@ public class SubjectUtil {
      * SubjectShortAnswer转SubjectDto
      *
      * @param subjectShortAnswers subjectShortAnswers
-     * @return List
+     * @param findAnswer findAnswer
+	 * @return List
      * @author tangyi
      * @date 2019/06/16 16:59
      */
-    public static List<SubjectDto> subjectShortAnswerToDto(List<SubjectShortAnswer> subjectShortAnswers) {
+    public static List<SubjectDto> subjectShortAnswerToDto(List<SubjectShortAnswer> subjectShortAnswers, boolean findAnswer) {
         List<SubjectDto> subjectDtoList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(subjectShortAnswers)) {
-            subjectDtoList = subjectShortAnswers.stream().map(SubjectUtil::subjectShortAnswerToDto)
+            subjectDtoList = subjectShortAnswers.stream().map(subjectShortAnswer -> SubjectUtil.subjectShortAnswerToDto(subjectShortAnswer, findAnswer))
                     .collect(Collectors.toList());
         }
         return subjectDtoList;
     }
 
+	/**
+	 * SubjectJudgement转SubjectDto
+	 *
+	 * @param subjectJudgement subjectJudgement
+	 * @return List
+	 * @author tangyi
+	 * @date 2020/02/22 12:23
+	 */
+	public static SubjectDto subjectJudgementToDto(SubjectJudgement subjectJudgement) {
+		return subjectJudgementToDto(subjectJudgement, true);
+	}
+
     /**
      * SubjectJudgement转SubjectDto
      *
      * @param subjectJudgement subjectJudgement
-     * @return List
+     * @param findAnswer findAnswer
+	 * @return List
      * @author tangyi
      * @date 2020/02/22 12:23
      */
-    public static SubjectDto subjectJudgementToDto(SubjectJudgement subjectJudgement) {
+    public static SubjectDto subjectJudgementToDto(SubjectJudgement subjectJudgement, boolean findAnswer) {
         if (subjectJudgement == null)
             return null;
         SubjectDto subjectDto = new SubjectDto();
@@ -174,24 +195,39 @@ public class SubjectUtil {
         subjectDto.setType(SubjectTypeEnum.JUDGEMENT.getValue());
 
         // 参考答案
-        Answer answer = new Answer();
-        answer.setAnswer(subjectJudgement.getAnswer());
-        subjectDto.setAnswer(answer);
+		if (findAnswer) {
+			Answer answer = new Answer();
+			answer.setAnswer(subjectJudgement.getAnswer());
+			subjectDto.setAnswer(answer);
+		}
         return subjectDto;
     }
+
+	/**
+	 * SubjectJudgement转SubjectDto
+	 *
+	 * @param subjectJudgements subjectJudgements
+	 * @return List
+	 * @author tangyi
+	 * @date 2020/02/22 12:24
+	 */
+	public static List<SubjectDto> subjectJudgementsToDto(List<SubjectJudgement> subjectJudgements) {
+		return subjectJudgementsToDto(subjectJudgements, true);
+	}
 
     /**
      * SubjectJudgement转SubjectDto
      *
      * @param subjectJudgements subjectJudgements
-     * @return List
+     * @param findAnswer findAnswer
+	 * @return List
      * @author tangyi
      * @date 2020/02/22 12:24
      */
-    public static List<SubjectDto> subjectJudgementToDto(List<SubjectJudgement> subjectJudgements) {
+    public static List<SubjectDto> subjectJudgementsToDto(List<SubjectJudgement> subjectJudgements, boolean findAnswer) {
         List<SubjectDto> subjectDtoList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(subjectJudgements)) {
-            subjectDtoList = subjectJudgements.stream().map(SubjectUtil::subjectJudgementToDto)
+            subjectDtoList = subjectJudgements.stream().map(subjectJudgement -> SubjectUtil.subjectJudgementToDto(subjectJudgement, findAnswer))
                     .collect(Collectors.toList());
         }
         return subjectDtoList;

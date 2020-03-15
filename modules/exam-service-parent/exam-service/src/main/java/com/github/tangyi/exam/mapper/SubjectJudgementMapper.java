@@ -2,7 +2,6 @@ package com.github.tangyi.exam.mapper;
 
 import com.github.tangyi.common.core.persistence.CrudMapper;
 import com.github.tangyi.exam.api.module.SubjectJudgement;
-import com.github.tangyi.exam.api.module.SubjectShortAnswer;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
