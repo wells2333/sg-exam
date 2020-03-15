@@ -4,9 +4,9 @@ import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.PageUtil;
-import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
+import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.user.api.constant.TenantConstant;
 import com.github.tangyi.user.api.module.Tenant;
 import com.github.tangyi.user.service.TenantService;
@@ -108,7 +108,7 @@ public class TenantController extends BaseController {
     @ApiImplicitParam(name = "tenant", value = "租户实体tenant", required = true, dataType = "Tenant")
     @Log("新增租户")
     public ResponseBean<Boolean> add(@RequestBody @Valid Tenant tenant) {
-        tenant.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
+        tenant.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         // 初始化状态为待审核
         tenant.setStatus(TenantConstant.PENDING_AUDIT);
         // 保存租户
@@ -151,7 +151,7 @@ public class TenantController extends BaseController {
     public ResponseBean<Boolean> delete(@PathVariable Long id) {
         try {
             Tenant tenant = tenantService.get(id);
-            tenant.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
+            tenant.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
             tenantService.delete(tenant);
         } catch (Exception e) {
             log.error("Delete tenant failed", e);

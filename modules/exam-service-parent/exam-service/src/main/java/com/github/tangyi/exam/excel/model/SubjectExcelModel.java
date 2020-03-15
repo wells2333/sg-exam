@@ -6,7 +6,7 @@ import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import com.alibaba.excel.annotation.write.style.ContentRowHeight;
 import com.alibaba.excel.annotation.write.style.HeadRowHeight;
 import com.alibaba.excel.converters.longconverter.LongStringConverter;
-import com.github.tangyi.common.core.utils.excel.annotation.ExcelModel;
+import com.github.tangyi.common.basic.utils.excel.annotation.ExcelModel;
 import com.github.tangyi.exam.excel.converter.SubjectLevelConverter;
 import com.github.tangyi.exam.excel.converter.SubjectTypeConverter;
 import lombok.Data;

@@ -4,9 +4,9 @@ import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.PageUtil;
-import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
+import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.exam.api.dto.AnswerDto;
 import com.github.tangyi.exam.api.dto.RankInfoDto;
 import com.github.tangyi.exam.api.dto.SubjectDto;
@@ -312,4 +312,21 @@ public class AnswerController extends BaseController {
     public ResponseBean<List<RankInfoDto>> rankInfo(@PathVariable Long recordId) {
 		return new ResponseBean<>(answerService.getRankInfo(recordId));
 	}
+
+    /**
+     * 移动端提交答题
+     * @param examinationId examinationId
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2020/03/15 16:08
+     */
+    @PostMapping("anonymousUser/submit/{examinationId}")
+    @ApiOperation(value = "提交答题", notes = "提交答题")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "examinationId", value = "考试id", dataType = "Long"),
+            @ApiImplicitParam(name = "identifier", value = "考生账号", dataType = "String")
+    })
+	public ResponseBean<Boolean> anonymousUserSubmit(@PathVariable Long examinationId, @RequestParam String identifier, @RequestBody List<SubjectDto> subjectDtos) {
+        return new ResponseBean<>(answerService.anonymousUserSubmit(examinationId, identifier, subjectDtos));
+    }
 }

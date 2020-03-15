@@ -1,47 +1,28 @@
 import request from '@/router/axios'
 import { getRefreshToken } from '@/utils/auth'
-
 const baseAuthenticationUrl = '/api/auth/v1/authentication/'
 
 const basicAuthorization = 'Basic ' + btoa('web_app:spring-microservice-exam-secret')
 
-export function loginByUsername (identifier, credential, code, randomStr) {
+/**
+ * 登录
+ * @param tenantCode 租户标识
+ * @param identifier 账号
+ * @param credential 密码
+ * @param code 验证码
+ * @param randomStr 随机数
+ */
+export function loginByUsername (tenantCode, identifier, credential, code, randomStr) {
   const grantType = 'password'
   const scope = 'read'
   return request({
     url: '/api/auth/oauth/token',
     headers: {
-      'Authorization': basicAuthorization
+      'Authorization': basicAuthorization,
+      'Tenant-Code': tenantCode
     },
     method: 'post',
-    params: {username: identifier, credential, randomStr, code, grant_type: grantType, scope}
-  })
-}
-
-/**
- * 根据手机号登录
- * @param social
- * @param code
- */
-export function loginBySocial (social, code) {
-  const grantType = 'mobile'
-  const scope = 'read'
-  return request({
-    url: '/api/auth/mobile/token',
-    headers: {
-      'Authorization': basicAuthorization
-    },
-    method: 'post',
-    params: {mobile: social, code, grant_type: grantType, scope}
-  })
-}
-
-export function registerByUsername (identifier, email, credential, code, randomStr) {
-  return request({
-    url: '/api/user/v1/user/anonymousUser/register',
-    method: 'post',
-    params: {identifier, email, credential, randomStr, code},
-    data: {identifier, email, credential}
+    params: { username: identifier, credential, randomStr, code, grant_type: grantType, scope }
   })
 }
 

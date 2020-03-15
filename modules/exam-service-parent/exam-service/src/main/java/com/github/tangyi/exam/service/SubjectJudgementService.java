@@ -92,7 +92,7 @@ public class SubjectJudgementService extends CrudService<SubjectJudgementMapper,
      */
     @Override
     public List<SubjectDto> findSubjectListById(Long[] ids) {
-        return SubjectUtil.subjectJudgementToDto(this.findListById(ids));
+        return SubjectUtil.subjectJudgementsToDto(this.findListById(ids));
     }
 
     /**

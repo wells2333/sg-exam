@@ -1,16 +1,17 @@
 package com.github.tangyi.exam.service;
 
 import com.github.pagehelper.PageInfo;
+import com.github.tangyi.common.basic.vo.UserVo;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.constant.MqConstant;
 import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.service.CrudService;
+import com.github.tangyi.common.core.utils.DateUtils;
 import com.github.tangyi.common.core.utils.JsonMapper;
 import com.github.tangyi.common.core.utils.PageUtil;
 import com.github.tangyi.common.core.utils.ResponseUtil;
-import com.github.tangyi.common.core.utils.SysUtil;
-import com.github.tangyi.common.core.vo.UserVo;
+import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.exam.api.constants.AnswerConstant;
 import com.github.tangyi.exam.api.dto.AnswerDto;
 import com.github.tangyi.exam.api.dto.RankInfoDto;
@@ -34,6 +35,7 @@ import com.github.tangyi.user.api.feign.UserServiceClient;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
@@ -43,6 +45,7 @@ import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -280,12 +283,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
         ExaminationRecord record = new ExaminationRecord();
         // 分类题目
         Map<String, List<Answer>> distinctAnswer = this.distinctAnswer(answerList);
-        // 暂时只自动统计单选题、多选题、判断题，简答题由老师阅卷批改
-		AnswerHandleResult choiceResult = choicesHandler.handle(distinctAnswer.get(SubjectTypeEnum.CHOICES.name()));
-		AnswerHandleResult multipleResult = multipleChoicesHandler.handle(distinctAnswer.get(SubjectTypeEnum.MULTIPLE_CHOICES.name()));
-		AnswerHandleResult judgementResult = judgementHandler.handle(distinctAnswer.get(SubjectTypeEnum.JUDGEMENT.name()));
-        AnswerHandleResult shortAnswerResult = shortAnswerHandler.handle(distinctAnswer.get(SubjectTypeEnum.SHORT_ANSWER.name()));
-		AnswerHandleResult result = AnswerHandlerUtil.addAll(Arrays.asList(choiceResult, multipleResult, judgementResult, shortAnswerResult));
+		AnswerHandleResult result = handleAll(distinctAnswer);
 		// 记录总分、正确题目数、错误题目数
 		record.setScore(result.getScore());
 		record.setCorrectNumber(result.getCorrectNum());
@@ -295,7 +293,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
         // 更新状态为统计完成，否则需要阅卷完成后才更改统计状态
         record.setSubmitStatus(SubmitStatusEnum.CALCULATED.getValue());
         // 保存成绩
-        record.setCommonValue(currentUsername, SysUtil.getSysCode());
+        record.setCommonValue(currentUsername, SysUtil.getSysCode(), SysUtil.getTenantCode());
         record.setId(answer.getExamRecordId());
         record.setEndTime(record.getCreateDate());
         examRecordService.update(record);
@@ -701,4 +699,83 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
 	public List<Answer> findListByExamRecordId(Long examRecordId) {
 		return this.dao.findListByExamRecordId(examRecordId);
 	}
+
+    /**
+     * 移动端提交答题
+     * @param examinationId examinationId
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2020/03/15 16:08
+     */
+    @Transactional
+	public boolean anonymousUserSubmit(Long examinationId, String identifier, List<SubjectDto> subjectDtos) {
+        long start = System.currentTimeMillis();
+        if (StringUtils.isBlank(identifier) || CollectionUtils.isEmpty(subjectDtos)) {
+            return false;
+        }
+        Examination examination = examinationService.get(examinationId);
+        if (examination == null) {
+            return false;
+        }
+        String tenantCode = SysUtil.getTenantCode();
+        String sysCode = SysUtil.getSysCode();
+        Date currentDate = DateUtils.asDate(LocalDateTime.now());
+        // 判断用户是否存在，不存在则自动创建
+        ResponseBean<UserVo> userVoResponseBean = userServiceClient.findUserByIdentifier(identifier, tenantCode);
+        if (!ResponseUtil.isSuccess(userVoResponseBean) || userVoResponseBean.getData() == null) {
+            return false;
+        }
+        // TODO 自动注册账号
+        UserVo user = userVoResponseBean.getData();
+        // 保存考试记录
+        ExaminationRecord record = new ExaminationRecord();
+        record.setCommonValue(identifier, sysCode, tenantCode);
+        record.setUserId(user.getUserId());
+
+        // 初始化Answer
+        List<Answer> answers = new ArrayList<>(subjectDtos.size());
+        subjectDtos.forEach(subjectDto -> {
+            Answer answer = new Answer();
+            answer.setCommonValue(identifier, sysCode, tenantCode);
+            answer.setAnswer(subjectDto.getAnswer().getAnswer());
+            answer.setExamRecordId(record.getId());
+            answer.setEndTime(currentDate);
+            answer.setSubjectId(subjectDto.getId());
+            answer.setType(subjectDto.getType());
+            answer.setAnswerType(AnswerConstant.WRONG);
+            answers.add(answer);
+        });
+        // 分类题目
+        Map<String, List<Answer>> distinctAnswer = this.distinctAnswer(answers);
+        AnswerHandleResult result = handleAll(distinctAnswer);
+        // 记录总分、正确题目数、错误题目数
+        record.setScore(result.getScore());
+        record.setCorrectNumber(result.getCorrectNum());
+        record.setInCorrectNumber(result.getInCorrectNum());
+        // 更新状态为统计完成，否则需要阅卷完成后才更改统计状态
+        record.setExaminationId(examinationId);
+        record.setSubmitStatus(SubmitStatusEnum.CALCULATED.getValue());
+        record.setStartTime(currentDate);
+        record.setEndTime(currentDate);
+        examRecordService.insert(record);
+        answers.forEach(this::insert);
+        log.info("AnonymousUser submit, examinationId:{}, identifier: {}, time consuming: {}ms", examinationId, identifier, System.currentTimeMillis() - start);
+        return true;
+    }
+
+    /**
+     * 自动判分
+     * @param distinctAnswer distinctAnswer
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2020/03/15 16:21
+     */
+    public AnswerHandleResult handleAll(Map<String, List<Answer>> distinctAnswer) {
+        // 暂时只自动统计单选题、多选题、判断题，简答题由老师阅卷批改
+        AnswerHandleResult choiceResult = choicesHandler.handle(distinctAnswer.get(SubjectTypeEnum.CHOICES.name()));
+        AnswerHandleResult multipleResult = multipleChoicesHandler.handle(distinctAnswer.get(SubjectTypeEnum.MULTIPLE_CHOICES.name()));
+        AnswerHandleResult judgementResult = judgementHandler.handle(distinctAnswer.get(SubjectTypeEnum.JUDGEMENT.name()));
+        AnswerHandleResult shortAnswerResult = shortAnswerHandler.handle(distinctAnswer.get(SubjectTypeEnum.SHORT_ANSWER.name()));
+        return AnswerHandlerUtil.addAll(Arrays.asList(choiceResult, multipleResult, judgementResult, shortAnswerResult));
+    }
 }

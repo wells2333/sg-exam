@@ -84,7 +84,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
                 .description("https://gitee.com/wells2333/spring-microservice-exam")
                 .termsOfServiceUrl("https://gitee.com/wells2333/spring-microservice-exam")
                 .contact(new Contact("tangyi", "https://gitee.com/wells2333/spring-microservice-exam", "1633736729@qq.com"))
-                .version("3.6.0")
+                .version("3.7.0")
                 .build();
     }
 

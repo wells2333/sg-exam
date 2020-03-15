@@ -4,10 +4,10 @@ import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.persistence.BaseEntity;
-import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.annotations.AdminTenantTeacherAuthorization;
+import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.exam.api.dto.ExaminationDto;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.Examination;
@@ -20,10 +20,14 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.ArrayUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.imageio.ImageIO;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.util.List;
 
 /**
@@ -53,6 +57,21 @@ public class ExaminationController extends BaseController {
     @ApiOperation(value = "获取考试信息", notes = "根据考试id获取考试详细信息")
     @ApiImplicitParam(name = "id", value = "考试ID", required = true, dataType = "String", paramType = "path")
     public ResponseBean<Examination> examination(@PathVariable Long id) {
+        return new ResponseBean<>(examinationService.get(id));
+    }
+
+    /**
+     * 根据ID获取
+     *
+     * @param id id
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2018/11/10 21:08
+     */
+    @GetMapping("/anonymousUser/{id}")
+    @ApiOperation(value = "获取考试信息", notes = "根据考试id获取考试详细信息")
+    @ApiImplicitParam(name = "id", value = "考试ID", required = true, dataType = "String", paramType = "path")
+    public ResponseBean<Examination> anonymousUserGet(@PathVariable Long id) {
         return new ResponseBean<>(examinationService.get(id));
     }
 
@@ -97,7 +116,7 @@ public class ExaminationController extends BaseController {
      * @author tangyi
      * @date 2019/6/16 15:45
      */
-    @RequestMapping("/subjectList")
+    @RequestMapping("subjectList")
     @ApiOperation(value = "获取题目列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = CommonConstant.PAGE_NUM, value = "分页页码", defaultValue = CommonConstant.PAGE_NUM_DEFAULT, dataType = "String"),
@@ -114,6 +133,19 @@ public class ExaminationController extends BaseController {
         return examinationService.findSubjectPageById(subjectDto, pageNum, pageSize, sort, order);
     }
 
+    /**
+     * 获取全部题目
+     * @param subjectDto subjectDto
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2020/3/12 1:00 下午
+     */
+	@RequestMapping("anonymousUser/allSubjectList")
+	@ApiOperation(value = "获取全部题目列表")
+	@ApiImplicitParam(name = "subjectDto", value = "题目信息", dataType = "SubjectDto")
+    public ResponseBean<List<SubjectDto>> allSubjectList(SubjectDto subjectDto) {
+		return new ResponseBean<>(examinationService.allSubjectList(subjectDto));
+	}
 
     /**
      * 创建
@@ -129,11 +161,7 @@ public class ExaminationController extends BaseController {
     @ApiImplicitParam(name = "examinationDto", value = "考试实体examinationDto", required = true, dataType = "ExaminationDto")
     @Log("新增考试")
     public ResponseBean<Boolean> addExamination(@RequestBody @Valid ExaminationDto examinationDto) {
-        Examination examination = new Examination();
-        BeanUtils.copyProperties(examinationDto, examination);
-        examination.setCourseId(examinationDto.getCourse().getId());
-        examination.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
-        return new ResponseBean<>(examinationService.insert(examination) > 0);
+        return new ResponseBean<>(examinationService.insert(examinationDto) > 0);
     }
 
     /**
@@ -150,12 +178,7 @@ public class ExaminationController extends BaseController {
     @ApiImplicitParam(name = "examinationDto", value = "考试实体answer", required = true, dataType = "ExaminationDto")
     @Log("更新考试")
     public ResponseBean<Boolean> updateExamination(@RequestBody @Valid ExaminationDto examinationDto) {
-        Examination examination = new Examination();
-        BeanUtils.copyProperties(examinationDto, examination);
-        if (examinationDto.getCourse() != null)
-            examination.setCourseId(examinationDto.getCourse().getId());
-        examination.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
-        return new ResponseBean<>(examinationService.update(examination) > 0);
+        return new ResponseBean<>(examinationService.update(examinationDto) > 0);
     }
 
     /**
@@ -224,4 +247,25 @@ public class ExaminationController extends BaseController {
 		subjects.forEach(BaseEntity::clearCommonValue);
         return new ResponseBean<>(subjects);
     }
+
+    /**
+     * 根据考试ID生成二维码
+     * @param examinationId examinationId
+     * @param response response
+     * @author tangyi
+     * @date 2020/3/15 1:16 下午
+     */
+	@ApiOperation(value = "生成二维码", notes = "生成二维码")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "examinationId", value = "考试ID", required = true, dataType = "Long", paramType = "path")
+	})
+	@GetMapping("anonymousUser/generateQrCode/{examinationId}")
+	public void produceCode(@PathVariable Long examinationId, HttpServletResponse response) throws Exception {
+		response.setHeader("Cache-Control", "no-store, no-cache");
+		response.setContentType("image/jpeg");
+		try (ByteArrayInputStream inputStream = new ByteArrayInputStream(examinationService.share(examinationId)); ServletOutputStream out = response.getOutputStream()) {
+			BufferedImage image = ImageIO.read(inputStream);
+			ImageIO.write(image, "PNG", out);
+		}
+	}
 }

@@ -29,12 +29,12 @@ public class SecurityConstant {
     /**
      * 手机登录URL
      */
-    public static final String MOBILE_TOKEN_URL = "/mobile/token";
+    public static final String MOBILE_TOKEN_URL = "/api/v1/mobile/token";
 
     /**
      * 微信登录URL
      */
-    public static final String WX_TOKEN_URL = "/wx/token";
+    public static final String WX_TOKEN_URL = "/api/v1/wx/token";
 
     /**
      * 租户编号请求头

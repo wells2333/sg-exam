@@ -1,5 +1,4 @@
 import { setStore, getStore, removeStore } from '@/utils/store'
-import { TENANT_CODE } from '../../config/prod.env'
 
 export function getToken () {
   return getStore({ name: 'access_token' })
@@ -26,8 +25,5 @@ export function removeRefreshToken () {
 }
 
 export function getTenantCode () {
-  if (TENANT_CODE !== undefined) {
-    return TENANT_CODE
-  }
   return getStore({ name: 'tenantCode' })
 }

@@ -1,11 +1,12 @@
 package com.github.tangyi.user.controller;
 
+
+import com.github.tangyi.common.basic.vo.DeptVo;
 import com.github.tangyi.common.core.model.ResponseBean;
-import com.github.tangyi.common.core.utils.SysUtil;
-import com.github.tangyi.common.core.vo.DeptVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.annotations.AdminTenantTeacherAuthorization;
+import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.user.api.dto.DeptDto;
 import com.github.tangyi.user.api.module.Dept;
 import com.github.tangyi.user.service.DeptService;

@@ -1,12 +1,12 @@
 package com.github.tangyi.auth.security;
 
 import com.github.tangyi.common.core.exceptions.TenantNotFoundException;
+import com.github.tangyi.common.core.utils.SpringContextHolder;
 import com.github.tangyi.common.security.core.CustomUserDetailsService;
 import com.github.tangyi.common.security.event.CustomAuthenticationFailureEvent;
 import com.github.tangyi.common.security.event.CustomAuthenticationSuccessEvent;
 import com.github.tangyi.common.security.tenant.TenantContextHolder;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,12 +31,9 @@ public class CustomUserDetailsAuthenticationProvider extends AbstractUserDetails
 
     private String userNotFoundEncodedPassword;
 
-	private ApplicationEventPublisher publisher;
-
-    public CustomUserDetailsAuthenticationProvider(PasswordEncoder passwordEncoder, CustomUserDetailsService userDetailsService, ApplicationEventPublisher publisher) {
+    public CustomUserDetailsAuthenticationProvider(PasswordEncoder passwordEncoder, CustomUserDetailsService userDetailsService) {
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
-        this.publisher = publisher;
     }
 
     @Override
@@ -50,10 +47,10 @@ public class CustomUserDetailsAuthenticationProvider extends AbstractUserDetails
         // 匹配密码
         if (!passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
             log.debug("Authentication failed: invalid password");
-			publisher.publishEvent(new CustomAuthenticationFailureEvent(authentication, userDetails));
+            SpringContextHolder.publishEvent(new CustomAuthenticationFailureEvent(authentication, userDetails));
 			throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "用户名或密码错误"));
         }
-		publisher.publishEvent(new CustomAuthenticationSuccessEvent(authentication, userDetails));
+        SpringContextHolder.publishEvent(new CustomAuthenticationSuccessEvent(authentication, userDetails));
 	}
 
     @Override

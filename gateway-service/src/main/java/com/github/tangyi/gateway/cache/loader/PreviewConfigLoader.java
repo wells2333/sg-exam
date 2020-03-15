@@ -1,6 +1,6 @@
 package com.github.tangyi.gateway.cache.loader;
 
-import com.github.tangyi.common.core.cache.loadingcache.LoadingCacheHelper;
+import com.github.tangyi.common.basic.cache.loadingcache.LoadingCacheHelper;
 import com.github.tangyi.common.core.utils.SpringContextHolder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.util.concurrent.ListenableFuture;

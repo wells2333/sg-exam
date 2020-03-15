@@ -1,10 +1,10 @@
 package com.github.tangyi.user.api.feign.fallback;
 
-import com.github.tangyi.common.core.model.Log;
+import com.github.tangyi.common.basic.model.Log;
+import com.github.tangyi.common.basic.vo.AttachmentVo;
+import com.github.tangyi.common.basic.vo.DeptVo;
+import com.github.tangyi.common.basic.vo.UserVo;
 import com.github.tangyi.common.core.model.ResponseBean;
-import com.github.tangyi.common.core.vo.AttachmentVo;
-import com.github.tangyi.common.core.vo.DeptVo;
-import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.user.api.dto.UserDto;
 import com.github.tangyi.user.api.dto.UserInfoDto;
 import com.github.tangyi.user.api.feign.UserServiceClient;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 日志断路器实现
+ * 用户服务断路器实现
  *
  * @author tangyi
  * @date 2019/3/23 23:39

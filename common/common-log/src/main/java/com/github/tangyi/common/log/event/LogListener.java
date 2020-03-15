@@ -1,6 +1,6 @@
 package com.github.tangyi.common.log.event;
 
-import com.github.tangyi.common.core.model.Log;
+import com.github.tangyi.common.basic.model.Log;
 import com.github.tangyi.user.api.feign.UserServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;

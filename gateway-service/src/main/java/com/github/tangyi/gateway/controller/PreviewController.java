@@ -1,7 +1,7 @@
 package com.github.tangyi.gateway.controller;
 
+import com.github.tangyi.common.basic.properties.SysProperties;
 import com.github.tangyi.common.core.model.ResponseBean;
-import com.github.tangyi.common.core.properties.SysProperties;
 import com.github.tangyi.common.core.utils.SpringContextHolder;
 import com.github.tangyi.gateway.cache.loader.PreviewConfigLoader;
 import lombok.AllArgsConstructor;

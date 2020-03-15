@@ -1,7 +1,7 @@
 package com.github.tangyi.gateway.filters;
 
 import cn.hutool.core.util.StrUtil;
-import com.github.tangyi.common.core.cache.loadingcache.LoadingCacheHelper;
+import com.github.tangyi.common.basic.cache.loadingcache.LoadingCacheHelper;
 import com.github.tangyi.gateway.cache.loader.PreviewConfigLoader;
 import com.github.tangyi.gateway.config.PreviewConfig;
 import com.github.tangyi.gateway.constants.GatewayConstant;
@@ -12,9 +12,7 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 

@@ -1,11 +1,11 @@
 package com.github.tangyi.user.api.feign;
 
+import com.github.tangyi.common.basic.model.Log;
+import com.github.tangyi.common.basic.vo.AttachmentVo;
+import com.github.tangyi.common.basic.vo.DeptVo;
+import com.github.tangyi.common.basic.vo.UserVo;
 import com.github.tangyi.common.core.constant.ServiceConstant;
-import com.github.tangyi.common.core.model.Log;
 import com.github.tangyi.common.core.model.ResponseBean;
-import com.github.tangyi.common.core.vo.AttachmentVo;
-import com.github.tangyi.common.core.vo.DeptVo;
-import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.feign.config.CustomFeignConfig;
 import com.github.tangyi.user.api.dto.UserDto;
 import com.github.tangyi.user.api.dto.UserInfoDto;

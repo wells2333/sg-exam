@@ -1,10 +1,10 @@
 package com.github.tangyi.common.log.aspect;
 
 import com.github.tangyi.common.core.utils.SpringContextHolder;
-import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.log.event.LogEvent;
 import com.github.tangyi.common.log.utils.LogUtil;
+import com.github.tangyi.common.security.utils.SysUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -27,14 +27,14 @@ public class LogAspect {
         String strClassName = point.getTarget().getClass().getName();
         String strMethodName = point.getSignature().getName();
         logger.debug("[类名]:{},[方法]:{}", strClassName, strMethodName);
-        com.github.tangyi.common.core.model.Log logVo = LogUtil.getLog();
+        com.github.tangyi.common.basic.model.Log logVo = LogUtil.getLog();
         logVo.setTitle(log.value());
         // 发送异步日志事件
         Long startTime = System.currentTimeMillis();
         Object obj = point.proceed();
         Long endTime = System.currentTimeMillis();
         logVo.setTime(String.valueOf(endTime - startTime));
-        logVo.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
+        logVo.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
         SpringContextHolder.publishEvent(new LogEvent(logVo));
         return obj;
     }

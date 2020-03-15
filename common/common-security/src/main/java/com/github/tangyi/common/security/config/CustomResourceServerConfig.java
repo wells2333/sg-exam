@@ -3,7 +3,7 @@ package com.github.tangyi.common.security.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tangyi.common.security.handler.CustomAccessDeniedHandler;
 import com.github.tangyi.common.security.mobile.MobileSecurityConfigurer;
-import com.github.tangyi.common.security.properties.FilterIgnorePropertiesConfig;
+import com.github.tangyi.common.core.properties.FilterIgnorePropertiesConfig;
 import com.github.tangyi.common.security.wx.WxSecurityConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

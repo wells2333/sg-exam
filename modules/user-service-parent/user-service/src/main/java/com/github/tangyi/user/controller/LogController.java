@@ -1,13 +1,13 @@
 package com.github.tangyi.user.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.github.tangyi.common.basic.model.Log;
 import com.github.tangyi.common.core.constant.CommonConstant;
-import com.github.tangyi.common.core.model.Log;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.PageUtil;
-import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.security.annotations.AdminAuthorization;
+import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.user.service.LogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

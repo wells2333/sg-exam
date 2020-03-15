@@ -1,18 +1,18 @@
 package com.github.tangyi.user.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.github.tangyi.common.basic.utils.excel.ExcelToolUtil;
+import com.github.tangyi.common.basic.vo.UserVo;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.DateUtils;
 import com.github.tangyi.common.core.utils.PageUtil;
-import com.github.tangyi.common.core.utils.SysUtil;
-import com.github.tangyi.common.core.utils.excel.ExcelToolUtil;
-import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.annotations.AdminTenantTeacherAuthorization;
 import com.github.tangyi.common.security.constant.SecurityConstant;
+import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.user.api.dto.UserDto;
 import com.github.tangyi.user.api.dto.UserInfoDto;
 import com.github.tangyi.user.api.module.*;
@@ -471,7 +471,6 @@ public class UserController extends BaseController {
     @PutMapping("anonymousUser/updateLoginInfo")
     @ApiOperation(value = "更新用户登录信息", notes = "根据用户id更新用户的登录信息")
     @ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
-    @Log("更新用户登录信息")
     public ResponseBean<Boolean> updateLoginInfo(@RequestBody UserDto userDto) {
         Boolean success = Boolean.FALSE;
         if (StringUtils.isNotBlank(userDto.getIdentifier())) {

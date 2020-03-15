@@ -1,15 +1,16 @@
 package com.github.tangyi.user.service;
 
+import com.github.tangyi.common.basic.enums.LoginTypeEnum;
+import com.github.tangyi.common.basic.properties.SysProperties;
+import com.github.tangyi.common.basic.vo.UserVo;
 import com.github.tangyi.common.core.constant.CommonConstant;
-import com.github.tangyi.common.core.enums.LoginTypeEnum;
 import com.github.tangyi.common.core.exceptions.CommonException;
-import com.github.tangyi.common.core.properties.SysProperties;
 import com.github.tangyi.common.core.service.CrudService;
+import com.github.tangyi.common.core.utils.AesUtil;
 import com.github.tangyi.common.core.utils.DateUtils;
 import com.github.tangyi.common.core.utils.IdGen;
-import com.github.tangyi.common.core.utils.SysUtil;
-import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.common.security.constant.SecurityConstant;
+import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.user.api.constant.AttachmentConstant;
 import com.github.tangyi.user.api.constant.MenuConstant;
 import com.github.tangyi.user.api.constant.RoleConstant;
@@ -120,7 +121,7 @@ public class UserService extends CrudService<UserMapper, User> {
         if (CollectionUtils.isNotEmpty(user.getRole())) {
             user.getRole().forEach(roleId -> {
                 UserRole sysUserRole = new UserRole();
-                sysUserRole.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
+                sysUserRole.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
                 sysUserRole.setUserId(user.getId());
                 sysUserRole.setRoleId(roleId);
                 // 保存角色
@@ -389,6 +390,7 @@ public class UserService extends CrudService<UserMapper, User> {
         BeanUtils.copyProperties(user, userVo);
         BeanUtils.copyProperties(userAuths, userVo);
         userVo.setRoleList(UserUtils.rolesToVo(roles));
+        userVo.setUserId(user.getId());
         return userVo;
     }
 
@@ -601,7 +603,7 @@ public class UserService extends CrudService<UserMapper, User> {
             return encoded;
         // 解密密码
         try {
-            encoded = SysUtil.decryptAES(encoded, sysProperties.getKey()).trim();
+            encoded = AesUtil.decryptAES(encoded, sysProperties.getKey()).trim();
             log.info("Decrypt result: {}", encoded);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

@@ -76,6 +76,12 @@ axios.interceptors.response.use(data => {
         path: '404',
         query: { redirect: router.currentRoute.fullPath }
       })
+    } else if (error.response.status === 500) {
+      // 500提示页面
+      router.replace({
+        path: '500',
+        query: { redirect: router.currentRoute.fullPath }
+      })
     } else {
       // 其它错误则弹出提示
       const { code, msg } = error.response.data

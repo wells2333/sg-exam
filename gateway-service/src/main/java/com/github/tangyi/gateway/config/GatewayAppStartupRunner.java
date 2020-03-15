@@ -1,6 +1,6 @@
 package com.github.tangyi.gateway.config;
 
-import com.github.tangyi.common.core.cache.loadingcache.LoadingCacheHelper;
+import com.github.tangyi.common.basic.cache.loadingcache.LoadingCacheHelper;
 import com.github.tangyi.gateway.cache.loader.PreviewConfigLoader;
 import com.github.tangyi.gateway.service.RouteService;
 import lombok.AllArgsConstructor;

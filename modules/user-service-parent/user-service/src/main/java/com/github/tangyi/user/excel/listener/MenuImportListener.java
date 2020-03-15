@@ -1,6 +1,6 @@
 package com.github.tangyi.user.excel.listener;
 
-import com.github.tangyi.common.core.utils.excel.AbstractExcelImportListener;
+import com.github.tangyi.common.basic.utils.excel.AbstractExcelImportListener;
 import com.github.tangyi.user.api.module.Menu;
 import com.github.tangyi.user.excel.model.MenuExcelModel;
 import com.github.tangyi.user.service.MenuService;

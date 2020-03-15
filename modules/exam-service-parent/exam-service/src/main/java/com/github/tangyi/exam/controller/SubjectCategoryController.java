@@ -1,10 +1,11 @@
 package com.github.tangyi.exam.controller;
 
+
 import com.github.tangyi.common.core.model.ResponseBean;
-import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.annotations.AdminTenantTeacherAuthorization;
+import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.exam.api.constants.ExamSubjectConstant;
 import com.github.tangyi.exam.api.dto.SubjectCategoryDto;
 import com.github.tangyi.exam.api.module.SubjectCategory;

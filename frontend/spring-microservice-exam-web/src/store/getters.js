@@ -1,4 +1,9 @@
 const getters = {
+  tag: state => state.tags.tag,
+  tagList: state => state.tags.tagList,
+  tagCurrent: state => state.tags.tagCurrent,
+  tagWel: state => state.tags.tagWel,
+  lockPasswd: state => state.common.lockPasswd,
   sidebar: state => state.app.sidebar,
   language: state => state.app.language,
   size: state => state.app.size,
@@ -6,7 +11,7 @@ const getters = {
   visitedViews: state => state.tagsView.visitedViews,
   cachedViews: state => state.tagsView.cachedViews,
   access_token: state => state.user.access_token,
-  avatar: state => state.user.avatar,
+  avatar: state => state.user.avatarUrl,
   name: state => state.user.name,
   introduction: state => state.user.introduction,
   status: state => state.user.status,
@@ -16,16 +21,8 @@ const getters = {
   addRouters: state => state.permission.addRouters,
   menu: state => state.user.menu,
   isCollapse: state => state.common.isCollapse,
-  exam: state => state.exam.exam,
-  subject: state => state.exam.subject,
-  examRecord: state => state.exam.examRecord,
-  practice: state => state.practice.practice,
-  practiceRecord: state => state.practice.practiceRecord,
-  practiceSubject: state => state.practice.practiceSubject,
-  course: state => state.course.course,
   sysConfig: state => state.sysConfig.sysConfig,
   tenantCode: state => state.user.tenantCode,
-  incorrectRecord: state => state.exam.incorrectRecord,
   userInfo: state => state.user.userInfo
 }
 export default getters

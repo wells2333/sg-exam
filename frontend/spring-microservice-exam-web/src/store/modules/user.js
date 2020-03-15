@@ -1,7 +1,9 @@
-import {loginByUsername, loginBySocial, registerByUsername, logout, getUserInfo} from '@/api/admin/login'
+import { loginByUsername, logout, getUserInfo } from '@/api/admin/login'
 import { setToken, removeToken, setRefreshToken, removeRefreshToken } from '@/utils/auth'
 import { setStore, getStore } from '@/utils/store'
 import { encryption } from '@/utils/util'
+import { GetMenu } from '@/api/admin/menu'
+import { validatenull } from '@/utils/validate'
 
 const user = {
   state: {
@@ -32,7 +34,11 @@ const user = {
   },
   actions: {
     // 根据用户名登录
-    LoginByUsername ({ commit, state, dispatch }, userInfo) {
+    LoginByUsername ({
+      commit,
+      state,
+      dispatch
+    }, userInfo) {
       return new Promise((resolve, reject) => {
         const user = encryption({
           data: userInfo,
@@ -40,57 +46,25 @@ const user = {
           param: ['credential']
         })
 
-        // 根据用户名、密码、租户code登录
-        loginByUsername(user.identifier, user.credential, user.code, user.randomStr).then(response => {
+        loginByUsername(user.tenantCode, user.identifier, user.credential, user.code, user.randomStr).then(response => {
           const data = response.data
           setToken(data.access_token)
           setRefreshToken(data.refresh_token)
           commit('SET_ACCESS_TOKEN', data.access_token)
           commit('SET_REFRESH_TOKEN', data.refresh_token)
           commit('SET_TENANT_CODE', data.tenantCode)
+          commit('CLEAR_LOCK')
           resolve()
         }).catch(error => {
           reject(error)
         })
       })
     },
-    // 根据手机号登录
-    LoginBySocial ({ commit, state, dispatch }, userInfo) {
-      return new Promise((resolve, reject) => {
-        const user = encryption({
-          data: userInfo,
-          key: '1234567887654321',
-          param: ['credential']
-        })
-        // 根据用户手机号、短信验证码获取token
-        loginBySocial(user.phone, user.code).then(response => {
-          const data = response.data
-          setToken(data.access_token)
-          setRefreshToken(data.refresh_token)
-          commit('SET_ACCESS_TOKEN', data.access_token)
-          commit('SET_REFRESH_TOKEN', data.refresh_token)
-          commit('SET_TENANT_CODE', data.tenantCode)
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
-      })
-    },
-    RegisterByUsername ({ commit, state, dispatch }, userInfo) {
-      return new Promise((resolve, reject) => {
-        const user = encryption({
-          data: userInfo,
-          key: '1234567887654321',
-          param: ['credential']
-        })
-        registerByUsername(user.identifier, user.email, user.credential, user.code, user.randomStr).then(response => {
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
-      })
-    },
-    GetUserInfo ({ commit, state, dispatch }) {
+    GetUserInfo ({
+      commit,
+      state,
+      dispatch
+    }) {
       return new Promise((resolve, reject) => {
         getUserInfo(state.token).then(response => {
           const data = response.data.data
@@ -104,9 +78,14 @@ const user = {
       })
     },
     // 登出
-    LogOut ({ commit, state }) {
+    LogOut ({
+      commit,
+      state
+    }) {
       return new Promise((resolve, reject) => {
         logout(state.access_token, state.refresh_token).then(() => {
+          // 清除菜单
+          commit('SET_MENU', [])
           // 清除权限
           commit('SET_PERMISSIONS', [])
           // 清除用户信息
@@ -114,11 +93,13 @@ const user = {
           commit('SET_ACCESS_TOKEN', '')
           commit('SET_REFRESH_TOKEN', '')
           commit('SET_ROLES', [])
+          commit('DEL_ALL_TAG')
           // 清除系统配置信息
           commit('SET_SYS_CONFIG', {})
           // 清除租户信息
           commit('SET_TENANT_CODE', {})
           removeToken()
+          removeRefreshToken()
           resolve()
         }).catch(error => {
           reject(error)
@@ -126,8 +107,12 @@ const user = {
       })
     },
     // 注销session
-    FedLogOut ({ commit }) {
+    FedLogOut ({
+      commit
+    }) {
       return new Promise(resolve => {
+        // 清除菜单
+        commit('SET_MENU', [])
         // 清除权限
         commit('SET_PERMISSIONS', [])
         // 清除用户信息
@@ -135,6 +120,7 @@ const user = {
         commit('SET_ACCESS_TOKEN', '')
         commit('SET_REFRESH_TOKEN', '')
         commit('SET_ROLES', [])
+        commit('DEL_ALL_TAG')
         // 清除系统配置信息
         commit('SET_SYS_CONFIG', {})
         // 清除租户信息
@@ -142,6 +128,21 @@ const user = {
         removeToken()
         removeRefreshToken()
         resolve()
+      })
+    },
+    // 获取系统菜单
+    GetMenu ({ commit }) {
+      return new Promise(resolve => {
+        GetMenu().then((res) => {
+          const data = res.data
+          data.forEach(ele => {
+            ele.children.forEach(child => {
+              if (!validatenull(child.component)) child.path = `${ele.path}/${child.path}`
+            })
+          })
+          commit('SET_MENU', data)
+          resolve(data)
+        })
       })
     }
   },
@@ -151,6 +152,13 @@ const user = {
       setStore({
         name: 'access_token',
         content: state.access_token
+      })
+    },
+    SET_MENU: (state, menu) => {
+      state.menu = menu
+      setStore({
+        name: 'menu',
+        content: state.menu
       })
     },
     SET_USER_INFO: (state, userInfo) => {

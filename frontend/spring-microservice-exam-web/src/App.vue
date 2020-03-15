@@ -1,18 +1,15 @@
 <template>
   <div id="app">
-    <router-view clas="main"> </router-view>
+    <router-view/>
   </div>
 </template>
 
 <script>
-export default {
-  name: 'app'
+export default{
+  name: 'App',
+  mounted () {
+    document.getElementById('app').style.display = 'block'
+    document.getElementById('preloader-init').style.display = 'none'
+  }
 }
 </script>
-
-<style lang="scss" rel="stylesheet/scss">
-  @import "assets/css/index.scss";
-  #app {
-    height: 100%;
-  }
-</style>

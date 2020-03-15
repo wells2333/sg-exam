@@ -15,4 +15,9 @@ public class ExaminationDto extends Examination {
 
     private Course course;
 
+    /**
+     * 封面地址
+     */
+    private String avatarUrl;
+
 }

@@ -1,8 +1,8 @@
 package com.github.tangyi.gateway.filters;
 
 import cn.hutool.core.util.StrUtil;
+import com.github.tangyi.common.basic.enums.LoginTypeEnum;
 import com.github.tangyi.common.core.constant.CommonConstant;
-import com.github.tangyi.common.core.enums.LoginTypeEnum;
 import com.github.tangyi.common.core.exceptions.InvalidValidateCodeException;
 import com.github.tangyi.common.core.exceptions.ValidateCodeExpiredException;
 import com.github.tangyi.gateway.constants.GatewayConstant;

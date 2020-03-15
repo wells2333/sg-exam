@@ -1,8 +1,8 @@
 package com.github.tangyi.user.service;
 
 import cn.hutool.core.util.RandomUtil;
+import com.github.tangyi.common.basic.enums.LoginTypeEnum;
 import com.github.tangyi.common.core.constant.CommonConstant;
-import com.github.tangyi.common.core.enums.LoginTypeEnum;
 import com.github.tangyi.common.core.exceptions.ServiceException;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.ResponseUtil;

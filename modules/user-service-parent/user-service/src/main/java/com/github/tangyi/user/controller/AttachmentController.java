@@ -1,14 +1,14 @@
 package com.github.tangyi.user.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.github.tangyi.common.basic.vo.AttachmentVo;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.PageUtil;
-import com.github.tangyi.common.core.utils.SysUtil;
-import com.github.tangyi.common.core.vo.AttachmentVo;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
+import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.user.api.module.Attachment;
 import com.github.tangyi.user.service.AttachmentService;
 import io.swagger.annotations.*;

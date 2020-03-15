@@ -19,6 +19,12 @@
             <artifactId>common-core</artifactId>
         </dependency>
 
+        <!-- common-basic -->
+        <dependency>
+            <groupId>com.github.tangyi</groupId>
+            <artifactId>common-basic</artifactId>
+        </dependency>
+
         <!-- common-feign -->
         <dependency>
             <groupId>com.github.tangyi</groupId>

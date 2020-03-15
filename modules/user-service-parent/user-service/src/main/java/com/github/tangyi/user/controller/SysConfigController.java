@@ -1,8 +1,8 @@
 package com.github.tangyi.user.controller;
 
-import com.github.tangyi.common.core.dto.SysConfigDto;
+import com.github.tangyi.common.basic.dto.SysConfigDto;
+import com.github.tangyi.common.basic.properties.SysProperties;
 import com.github.tangyi.common.core.model.ResponseBean;
-import com.github.tangyi.common.core.properties.SysProperties;
 import com.github.tangyi.common.core.web.BaseController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

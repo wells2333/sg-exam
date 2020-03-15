@@ -4,9 +4,9 @@ import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.model.ResponseBean;
 import com.github.tangyi.common.core.utils.PageUtil;
-import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
+import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.user.api.dto.StudentDto;
 import com.github.tangyi.user.api.module.Student;
 import com.github.tangyi.user.service.StudentService;
@@ -142,7 +142,7 @@ public class StudentController extends BaseController {
     public ResponseBean<Boolean> delete(@PathVariable Long id) {
         try {
             Student student = studentService.get(id);
-            student.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode());
+            student.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
             studentService.delete(student);
         } catch (Exception e) {
             log.error("Delete student info failed", e);

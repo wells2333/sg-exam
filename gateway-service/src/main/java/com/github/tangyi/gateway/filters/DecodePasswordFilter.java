@@ -1,9 +1,9 @@
 package com.github.tangyi.gateway.filters;
 
 import cn.hutool.core.util.StrUtil;
+import com.github.tangyi.common.basic.properties.SysProperties;
 import com.github.tangyi.common.core.constant.CommonConstant;
-import com.github.tangyi.common.core.properties.SysProperties;
-import com.github.tangyi.common.core.utils.SysUtil;
+import com.github.tangyi.common.core.utils.AesUtil;
 import com.github.tangyi.gateway.constants.GatewayConstant;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +56,7 @@ public class DecodePasswordFilter implements GlobalFilter, Ordered {
                 if (StringUtils.isNotBlank(credential)) {
                     try {
                         // 开始解密
-                        credential = SysUtil.decryptAES(credential, sysProperties.getKey());
+                        credential = AesUtil.decryptAES(credential, sysProperties.getKey());
                         credential = credential.trim();
                     } catch (Exception e) {
                         log.error("credential decrypt fail:{}", credential);

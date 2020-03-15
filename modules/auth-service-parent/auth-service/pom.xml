@@ -13,10 +13,10 @@
     <description>认证服务</description>
 
     <dependencies>
-        <!-- common-core -->
+        <!-- common-basic -->
         <dependency>
             <groupId>com.github.tangyi</groupId>
-            <artifactId>common-core</artifactId>
+            <artifactId>common-basic</artifactId>
         </dependency>
 
         <!-- common-config -->
@@ -94,6 +94,12 @@
         <dependency>
             <groupId>com.github.binarywang</groupId>
             <artifactId>weixin-java-miniapp</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>8.2</version>
         </dependency>
     </dependencies>
 

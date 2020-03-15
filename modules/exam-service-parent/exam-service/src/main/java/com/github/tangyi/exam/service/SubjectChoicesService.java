@@ -3,7 +3,7 @@ package com.github.tangyi.exam.service;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.service.CrudService;
-import com.github.tangyi.common.core.utils.SysUtil;
+import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.exam.api.constants.AnswerConstant;
 import com.github.tangyi.exam.api.dto.SubjectDto;
 import com.github.tangyi.exam.api.module.ExaminationSubject;
@@ -14,7 +14,6 @@ import com.github.tangyi.exam.utils.AnswerHandlerUtil;
 import com.github.tangyi.exam.utils.SubjectUtil;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -271,7 +270,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
             List<SubjectOption> options = subjectOptionService.getBySubjectChoicesId(subjectOption);
             subject.setOptions(options);
         }
-        return SubjectUtil.subjectChoicesToDto(subject);
+        return SubjectUtil.subjectChoicesToDto(subject, true);
     }
 
     /**
@@ -296,7 +295,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
         } else {
             subjectChoices = this.getPreviousByCurrentId(examinationId, subjectChoices);
         }
-        return SubjectUtil.subjectChoicesToDto(subjectChoices);
+        return SubjectUtil.subjectChoicesToDto(subjectChoices, true);
     }
 
     /**
@@ -438,7 +437,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
     public List<SubjectDto> findSubjectList(SubjectDto subjectDto) {
         SubjectChoices subjectChoices = new SubjectChoices();
         BeanUtils.copyProperties(subjectDto, subjectChoices);
-        return SubjectUtil.subjectChoicesToDto(this.findList(subjectChoices));
+        return SubjectUtil.subjectChoicesToDto(this.findList(subjectChoices), true);
     }
 
     /**
@@ -458,7 +457,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
         if (subjectDto.getType() != null)
             subjectChoices.setChoicesType(subjectDto.getType());
         PageInfo<SubjectChoices> subjectChoicesPageInfo = this.findPage(pageInfo, subjectChoices);
-        List<SubjectDto> subjectDtos = SubjectUtil.subjectChoicesToDto(subjectChoicesPageInfo.getList());
+        List<SubjectDto> subjectDtos = SubjectUtil.subjectChoicesToDto(subjectChoicesPageInfo.getList(), true);
         PageInfo<SubjectDto> subjectDtoPageInfo = new PageInfo<>();
         subjectDtoPageInfo.setList(subjectDtos);
         subjectDtoPageInfo.setTotal(subjectChoicesPageInfo.getTotal());
@@ -477,7 +476,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
      */
     @Override
     public List<SubjectDto> findSubjectListById(Long[] ids) {
-        return SubjectUtil.subjectChoicesToDto(this.findListById(ids));
+        return SubjectUtil.subjectChoicesToDto(this.findListById(ids), true);
     }
 
     /**

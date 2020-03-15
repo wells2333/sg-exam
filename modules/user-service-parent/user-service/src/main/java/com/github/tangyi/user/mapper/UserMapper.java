@@ -1,7 +1,7 @@
 package com.github.tangyi.user.mapper;
 
+import com.github.tangyi.common.basic.vo.UserVo;
 import com.github.tangyi.common.core.persistence.CrudMapper;
-import com.github.tangyi.common.core.vo.UserVo;
 import com.github.tangyi.user.api.module.User;
 import org.apache.ibatis.annotations.Mapper;
 

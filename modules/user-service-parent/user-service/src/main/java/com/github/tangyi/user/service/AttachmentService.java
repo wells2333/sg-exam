@@ -3,7 +3,7 @@ package com.github.tangyi.user.service;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.service.CrudService;
-import com.github.tangyi.common.core.utils.SysUtil;
+import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.oss.service.QiNiuService;
 import com.github.tangyi.user.api.module.Attachment;
 import com.github.tangyi.user.mapper.AttachmentMapper;

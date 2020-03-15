@@ -13,7 +13,8 @@ export const statusType = {
 export const examType = {
   0: '正式考试',
   1: '模拟考试',
-  2: '在线练习'
+  2: '在线练习',
+  3: '调查问卷'
 }
 
 // 题目类型

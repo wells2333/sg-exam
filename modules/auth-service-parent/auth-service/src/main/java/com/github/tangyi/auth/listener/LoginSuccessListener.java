@@ -1,12 +1,12 @@
 package com.github.tangyi.auth.listener;
 
 import com.github.tangyi.auth.model.CustomUserDetails;
+import com.github.tangyi.common.basic.model.Log;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.constant.ServiceConstant;
-import com.github.tangyi.common.core.model.Log;
 import com.github.tangyi.common.core.utils.DateUtils;
-import com.github.tangyi.common.core.utils.SysUtil;
 import com.github.tangyi.common.security.event.CustomAuthenticationSuccessEvent;
+import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.user.api.dto.UserDto;
 import com.github.tangyi.user.api.feign.UserServiceClient;
 import lombok.AllArgsConstructor;

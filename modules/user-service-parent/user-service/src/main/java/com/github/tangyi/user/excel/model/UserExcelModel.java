@@ -6,9 +6,9 @@ import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import com.alibaba.excel.annotation.write.style.ContentRowHeight;
 import com.alibaba.excel.annotation.write.style.HeadRowHeight;
 import com.alibaba.excel.converters.longconverter.LongStringConverter;
-import com.github.tangyi.common.core.utils.excel.annotation.ExcelModel;
-import com.github.tangyi.common.core.utils.excel.converter.GenderConverter;
-import com.github.tangyi.common.core.utils.excel.converter.StatusConverter;
+import com.github.tangyi.common.basic.utils.excel.annotation.ExcelModel;
+import com.github.tangyi.common.basic.utils.excel.converter.GenderConverter;
+import com.github.tangyi.common.basic.utils.excel.converter.StatusConverter;
 import com.github.tangyi.user.excel.IdentityTypeConverter;
 import lombok.Data;
 

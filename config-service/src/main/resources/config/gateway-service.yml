@@ -24,6 +24,12 @@ spring:
     port: ${RABBIT_PORT:5672}
     username: ${RABBITMQ_DEFAULT_USER:guest}
     password: ${RABBITMQ_DEFAULT_PASS:guest}
+  security:
+    # oauth2配置
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://${AUTH_SERVICE_HOST:localhost}:9182/v1/authentication/jwks.json
   boot:
     admin:
       client:
@@ -105,6 +111,20 @@ swagger:
     - exam-service
     - auth-service
     - msc-service
+
+ignore:
+  urls:
+    - /
+    - /error
+    - /favicon.ico
+    - /actuator/**
+    - /api/auth/**
+    - /api/user/**
+    - /api/exam/**
+    - /api/msc/**
+    - /health
+    - /metrics/**
+    - /loggers/**
 
 # 演示环境
 preview:
