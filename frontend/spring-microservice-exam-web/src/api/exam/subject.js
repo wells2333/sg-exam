@@ -17,7 +17,7 @@ export function fetchSubjectList (query) {
   })
 }
 
-export function getSubject (id, query) {
+export function getObj (id, query) {
   return request({
     url: baseSubjectUrl + id,
     method: 'get',
@@ -41,11 +41,10 @@ export function putSubject (obj) {
   })
 }
 
-export function delSubject (id, query) {
+export function delSubject (id) {
   return request({
     url: baseSubjectUrl + id,
-    method: 'delete',
-    params: query
+    method: 'delete'
   })
 }
 
@@ -57,20 +56,10 @@ export function delAllSubject (obj) {
   })
 }
 
-// 导出
-export function exportSubject (ids, examinationId, categoryId) {
-  let url = baseSubjectUrl + 'export?'
-  if (examinationId !== undefined && examinationId !== null && examinationId !== '') {
-    url = url + 'examinationId=' + examinationId
-  }
-  if (categoryId !== undefined && categoryId !== null && categoryId !== '') {
-    url = url + '&categoryId=' + categoryId
-  }
+export function getSubjectAnswer (obj) {
   return request({
-    url: url,
-    method: 'post',
-    responseType: 'arraybuffer',
-    headers: { 'filename': 'utf-8' },
-    data: ids
+    url: baseSubjectUrl + 'subjectAnswer',
+    method: 'get',
+    params: obj
   })
 }

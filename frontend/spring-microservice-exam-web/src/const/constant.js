@@ -8,7 +8,3 @@ export const answerType = {
   'true': 'right',
   'false': 'incorrect'
 }
-
-export const apiList = {
-  exam: '/api/exam/v1/examination/'
-}

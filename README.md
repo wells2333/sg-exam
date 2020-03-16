@@ -110,14 +110,18 @@
     </tr>
     <tr>
         <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_exams.png" alt="考试列表"/></td>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_exam.png" alt="考试"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_courses.png" alt="热门课程"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_exam.png" alt="PC端考试"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_mobile.jpeg" alt="手机端考试"/></td>
     </tr>
     <tr>
         <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_record.png" alt="考试记录"/></td>
         <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_incorrect_answer.png" alt="错题列表"/></td>
     </tr>
     <tr>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_courses.png" alt="热门课程"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_register.png" alt="注册"/></td>
         <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_login.png" alt="登录"/></td>
     </tr>
 </table>

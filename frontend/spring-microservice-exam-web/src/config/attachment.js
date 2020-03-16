@@ -1,1 +1,1 @@
-export const ATTACHMENT_URL = 'http://localhost:4000/attachment'
+export const ATTACHMENT_URL = '/api/user/v1/attachment'

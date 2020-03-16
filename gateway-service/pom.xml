@@ -102,12 +102,12 @@
             </plugin>
 
             <!-- docker的maven插件 -->
-            <plugin>
+            <!--<plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>dockerfile-maven-plugin</artifactId>
                 <version>${docker.maven.verion}</version>
                 <executions>
-                    <!--执行 mvn package 时 自动构建docker镜像并推送到仓库 -->
+                    &lt;!&ndash;执行 mvn package 时 自动构建docker镜像并推送到仓库 &ndash;&gt;
                     <execution>
                         <id>default</id>
                         <phase>package</phase>
@@ -120,12 +120,12 @@
                 <configuration>
                     <repository>${docker.registry}/${docker.namespace}/${project.artifactId}</repository>
                     <tag>latest</tag>
-                    <!-- 构建参数，指定jar包名称 -->
+                    &lt;!&ndash; 构建参数，指定jar包名称 &ndash;&gt;
                     <buildArgs>
                         <JAR_FILE>${project.name}.jar</JAR_FILE>
                     </buildArgs>
                 </configuration>
-            </plugin>
+            </plugin>-->
         </plugins>
     </build>
 

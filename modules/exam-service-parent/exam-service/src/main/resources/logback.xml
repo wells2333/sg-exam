@@ -40,23 +40,23 @@
     </appender>
 
     <!-- 输出到logstash的appender， LOGSTASH_HOST为logstash的IP和端口，从环境变量注入-->
-    <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+    <!--<appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <destination>${LOGSTASH_HOST}</destination>
         <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder"/>
-    </appender>
+    </appender>-->
 
     <!-- Level: FATAL 0  ERROR 3  WARN 4  INFO 6  DEBUG 7 -->
     <root level="warn">
         <appender-ref ref="console"/>
         <appender-ref ref="debug"/>
         <appender-ref ref="error"/>
-        <appender-ref ref="logstash"/>
+        <!--<appender-ref ref="logstash"/>-->
     </root>
 
     <logger name="com.github.tangyi" level="info" additivity="false">
         <appender-ref ref="console"/>
         <appender-ref ref="debug"/>
         <appender-ref ref="error"/>
-        <appender-ref ref="logstash"/>
+        <!--<appender-ref ref="logstash"/>-->
     </logger>
 </configuration>
