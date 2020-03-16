@@ -34,7 +34,7 @@ export function delObj (id) {
 
 export function putObj (obj) {
   return request({
-    url: baseUserUrl + obj.id,
+    url: baseUserUrl,
     method: 'put',
     data: obj
   })
@@ -72,22 +72,10 @@ export function delAllObj (obj) {
   })
 }
 
-// 导出
-export function exportObj (obj) {
+export function checkExist (username, tenantCode) {
   return request({
-    url: baseUserUrl + 'export',
-    method: 'post',
-    responseType: 'arraybuffer',
-    headers: { 'filename': 'utf-8' },
-    data: obj
-  })
-}
-
-// 重置密码
-export function resetPassword (obj) {
-  return request({
-    url: baseUserUrl + 'anonymousUser/resetPassword',
-    method: 'put',
-    data: obj
+    url: baseUserUrl + 'anonymousUser/checkExist/' + username,
+    method: 'get',
+    params: { tenantCode, identityType: 1 }
   })
 }

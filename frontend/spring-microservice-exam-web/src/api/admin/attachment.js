@@ -31,14 +31,6 @@ export function preview (id) {
   })
 }
 
-export function getDownloadUrl (id) {
-  return request({
-    url: baseAttachmentUrl + '/download',
-    method: 'get',
-    params: { id: id }
-  })
-}
-
 export function addObj (obj) {
   return request({
     url: baseAttachmentUrl,

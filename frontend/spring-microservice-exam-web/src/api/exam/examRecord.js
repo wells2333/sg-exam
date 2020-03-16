@@ -2,14 +2,7 @@ import request from '@/router/axios'
 
 const baseExamRecordUrl = '/api/exam/v1/examRecord/'
 
-export function examRecordList () {
-  return request({
-    url: baseExamRecordUrl + 'examRecordList',
-    method: 'get'
-  })
-}
-
-export function fetchExamRecordList (query) {
+export function fetchList (query) {
   return request({
     url: baseExamRecordUrl + 'examRecordList',
     method: 'get',
@@ -17,10 +10,11 @@ export function fetchExamRecordList (query) {
   })
 }
 
-export function getObj (id) {
+export function getObj (id, query) {
   return request({
     url: baseExamRecordUrl + id,
-    method: 'get'
+    method: 'get',
+    params: query
   })
 }
 
@@ -32,45 +26,18 @@ export function addObj (obj) {
   })
 }
 
-export function putObj (obj) {
+export function start (obj) {
   return request({
-    url: baseExamRecordUrl,
-    method: 'put',
-    data: obj
-  })
-}
-
-export function completeMarking (obj) {
-  return request({
-    url: baseExamRecordUrl + 'completeMarking',
-    method: 'put',
-    data: obj
-  })
-}
-
-export function delObj (id) {
-  return request({
-    url: baseExamRecordUrl + id,
-    method: 'delete'
-  })
-}
-
-export function delAllObj (obj) {
-  return request({
-    url: baseExamRecordUrl + 'deleteAll',
+    url: baseExamRecordUrl + 'start',
     method: 'post',
     data: obj
   })
 }
 
-// 导出
-export function exportObj (obj) {
+export function getCurrentTime () {
   return request({
-    url: baseExamRecordUrl + 'export',
-    method: 'post',
-    responseType: 'arraybuffer',
-    headers: { 'filename': 'utf-8' },
-    data: obj
+    url: baseExamRecordUrl + 'currentTime',
+    method: 'get'
   })
 }
 

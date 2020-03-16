@@ -33,23 +33,6 @@ export function getAnswerListInfo (id, query) {
   })
 }
 
-export function getAnswerByRecordId (recordId, currentSubjectId, nextSubjectType, nextType) {
-  let url = baseAnswerUrl + 'record/' + recordId + '/answerInfo?'
-  if (currentSubjectId !== undefined) {
-    url += '&currentSubjectId=' + currentSubjectId
-  }
-  if (nextSubjectType !== undefined) {
-    url += '&nextSubjectType=' + nextSubjectType
-  }
-  if (nextType !== undefined) {
-    url += '&nextType=' + nextType
-  }
-  return request({
-    url: url,
-    method: 'get'
-  })
-}
-
 export function addAnswer (obj) {
   return request({
     url: baseAnswerUrl,
@@ -61,14 +44,6 @@ export function addAnswer (obj) {
 export function putAnswer (obj) {
   return request({
     url: baseAnswerUrl,
-    method: 'put',
-    data: obj
-  })
-}
-
-export function markAnswer (obj) {
-  return request({
-    url: baseAnswerUrl + 'mark',
     method: 'put',
     data: obj
   })
@@ -89,9 +64,16 @@ export function save (obj) {
   })
 }
 
-export function saveAndNext (obj) {
+export function saveAndNext (obj, nextType, nextSubjectId, nextSubjectType) {
+  let url = baseAnswerUrl + 'saveAndNext?nextType=' + nextType
+  if (nextSubjectId !== undefined) {
+    url += '&nextSubjectId=' + nextSubjectId
+  }
+  if (nextSubjectType !== undefined) {
+    url += '&nextSubjectType=' + nextSubjectType
+  }
   return request({
-    url: baseAnswerUrl + 'saveAndNext',
+    url: url,
     method: 'post',
     data: obj
   })
@@ -100,6 +82,14 @@ export function saveAndNext (obj) {
 export function submit (obj) {
   return request({
     url: baseAnswerUrl + 'submit',
+    method: 'post',
+    data: obj
+  })
+}
+
+export function anonymousUserSubmit (obj, examinationId, identifier) {
+  return request({
+    url: baseAnswerUrl + 'anonymousUser/submit/' + examinationId + '?identifier=' + identifier,
     method: 'post',
     data: obj
   })

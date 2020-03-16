@@ -1,32 +1,42 @@
 import request from '@/router/axios'
-import { apiList } from '@/const/constant'
+
+const baseExaminationUrl = '/api/exam/v1/examination/'
 
 export function fetchList (query) {
   return request({
-    url: apiList.exam + 'examinationList',
+    url: baseExaminationUrl + 'examinationList',
     method: 'get',
     params: query
   })
 }
 
-export function fetchSubjectListById (query) {
+export function fetchAllSubjectList (query) {
   return request({
-    url: apiList.exam + 'subjectList',
+    url: baseExaminationUrl + 'anonymousUser/allSubjectList',
     method: 'get',
     params: query
   })
 }
 
-export function getObj (id) {
+export function getObj (id, query) {
   return request({
-    url: apiList.exam + id,
-    method: 'get'
+    url: baseExaminationUrl + id,
+    method: 'get',
+    params: query
+  })
+}
+
+export function anonymousUserGetObj (id, query) {
+  return request({
+    url: baseExaminationUrl + 'anonymousUser/' + id,
+    method: 'get',
+    params: query
   })
 }
 
 export function getSubjectIds (id, query) {
   return request({
-    url: apiList.exam + id + '/subjectIds',
+    url: baseExaminationUrl + id + '/subjectIds',
     method: 'get',
     params: query
   })
@@ -34,7 +44,7 @@ export function getSubjectIds (id, query) {
 
 export function addObj (obj) {
   return request({
-    url: apiList.exam,
+    url: baseExaminationUrl,
     method: 'post',
     data: obj
   })
@@ -42,7 +52,7 @@ export function addObj (obj) {
 
 export function putObj (obj) {
   return request({
-    url: apiList.exam,
+    url: baseExaminationUrl,
     method: 'put',
     data: obj
   })
@@ -50,22 +60,15 @@ export function putObj (obj) {
 
 export function delObj (id) {
   return request({
-    url: apiList.exam + id,
+    url: baseExaminationUrl + id,
     method: 'delete'
   })
 }
 
 export function delAllObj (obj) {
   return request({
-    url: apiList.exam + 'deleteAll',
+    url: baseExaminationUrl + 'deleteAll',
     method: 'post',
     data: obj
-  })
-}
-
-export function generateQrCode (id) {
-  return request({
-    url: apiList.exam + 'anonymousUser/generateQrCode/' + id,
-    method: 'get'
   })
 }

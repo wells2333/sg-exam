@@ -43,7 +43,6 @@ export default {
   data () {
     return {
       hasChange: false,
-      hasClick: false,
       hasInit: false,
       tinymceId: this.id,
       fullscreen: false,
@@ -113,11 +112,6 @@ export default {
             this.hasChange = true
             this.$emit('input', editor.getContent())
           })
-
-          editor.on('Click', () => {
-            this.hasClick = true
-            this.$emit('hasClick', this.hasClick)
-          })
         },
         setup (editor) {
           editor.on('FullscreenStateChanged', (e) => {
@@ -136,12 +130,6 @@ export default {
     },
     getContent () {
       return window.tinymce.get(this.tinymceId).getContent()
-    },
-    getHasClick () {
-      return this.hasClick
-    },
-    setHashClick (click) {
-      this.hasClick = click
     }
   }
 }

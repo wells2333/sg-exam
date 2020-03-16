@@ -2,10 +2,11 @@ import request from '@/router/axios'
 
 const baseCourseUrl = '/api/exam/v1/course/'
 
-export function courseList () {
+export function courseList (query) {
   return request({
     url: baseCourseUrl + 'courseList',
-    method: 'get'
+    method: 'get',
+    params: query
   })
 }
 
