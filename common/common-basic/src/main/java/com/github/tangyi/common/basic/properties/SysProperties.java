@@ -36,19 +36,19 @@ public class SysProperties {
     private String gatewaySecret;
 
     /**
-     * web端配置的静态封面路径
+     * logo路径
      */
-    private String webAvatar;
+    private String logoUrl;
 
     /**
-     * web端配置的静态封面数量
+     * logo数量
      */
-    private Integer webAvatarCount;
+    private Integer logoCount;
 
     /**
-     * web端配置的静态封面的后缀名
+     * logo的后缀名
      */
-    private String webAvatarSuffix;
+    private String logoSuffix;
 
     /**
      * 二维码生成链接

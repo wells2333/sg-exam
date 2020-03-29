@@ -140,5 +140,10 @@ public class UserVo extends BaseEntity<UserVo> {
      */
     private Integer familyRole;
 
+    /**
+     * 个性签名
+     */
+    private String signature;
+
 }
 

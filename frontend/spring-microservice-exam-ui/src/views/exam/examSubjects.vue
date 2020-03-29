@@ -17,7 +17,7 @@
       <el-table-column type="selection" width="55"/>
       <el-table-column :label="$t('table.subjectName')" min-width="120">
         <template slot-scope="scope">
-          <span>{{ scope.row.subjectName | simpleStrFilter }}</span>
+          <span v-html="scope.row.subjectName"></span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.subject.type')" width="120">
@@ -40,11 +40,30 @@
           <span>{{ scope.row.modifier }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.actions')" class-name="status-col" width="300">
+      <el-table-column :label="$t('table.actions')" class-name="status-col" width="100px">
         <template slot-scope="scope">
-          <el-button v-if="exam_btn_subject" type="primary" size="mini" @click="handleUpdateSubject(scope.row)">{{ $t('table.edit') }}</el-button>
-          <el-button type="success" size="mini" @click="handleViewSubject(scope.row)">{{ $t('table.preview') }}</el-button>
-          <el-button v-if="exam_btn_del" type="danger" size="mini" @click="handleDeleteSubject(scope.row)">{{ $t('table.delete') }}</el-button>
+          <el-dropdown>
+            <span class="el-dropdown-link">
+              操作<i class="el-icon-caret-bottom el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item v-if="exam_btn_subject">
+                <a @click="handleUpdateSubject(scope.row)">
+                  <span><i class="el-icon-edit"></i>{{ $t('table.edit') }}</span>
+                </a>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <a @click="handleViewSubject(scope.row)">
+                  <span><i class="el-icon-view"></i>{{ $t('table.preview') }}</span>
+                </a>
+              </el-dropdown-item>
+              <el-dropdown-item v-if="exam_btn_del">
+                <a @click="handleDeleteSubject(scope.row)">
+                  <span><i class="el-icon-delete"></i>{{ $t('table.delete') }}</span>
+                </a>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </template>
       </el-table-column>
     </el-table>

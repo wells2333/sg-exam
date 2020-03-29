@@ -78,7 +78,7 @@ public class CourseController extends BaseController {
                                        @RequestParam(value = CommonConstant.ORDER, required = false, defaultValue = CommonConstant.PAGE_ORDER_DEFAULT) String order,
                                        Course course) {
         course.setTenantCode(SysUtil.getTenantCode());
-        return courseService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), course);
+        return  courseService.findPage(PageUtil.pageInfo(pageNum, pageSize, sort, order), course);
     }
 
     /**

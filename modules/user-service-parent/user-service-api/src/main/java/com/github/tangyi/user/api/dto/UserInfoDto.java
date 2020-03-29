@@ -156,4 +156,9 @@ public class UserInfoDto implements Serializable {
      * 微信
      */
     private String wechat;
+
+    /**
+     * 个性签名
+     */
+    private String signature;
 }

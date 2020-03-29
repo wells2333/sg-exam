@@ -88,7 +88,6 @@
 </template>
 <script>
 import { updateObjInfo, updateAvatar } from '@/api/admin/user'
-import OHeader from '../common/header'
 import OFooter from '../common/footer'
 import { getToken } from '@/utils/auth'
 import { mapState } from 'vuex'
@@ -113,7 +112,6 @@ export default {
     }
   },
   components: {
-    OHeader,
     OFooter
   },
   created () {

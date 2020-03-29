@@ -37,7 +37,6 @@
   </div>
 </template>
 <script>
-import OHeader from '../common/header'
 import OFooter from '../common/footer'
 import { updatePassword } from '@/api/admin/user'
 import { mapState } from 'vuex'
@@ -82,7 +81,6 @@ export default {
     }
   },
   components: {
-    OHeader,
     OFooter
   },
   computed: {

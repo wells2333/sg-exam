@@ -46,10 +46,25 @@
           <el-tag :type="scope.row.submitStatus | simpleTagStatusFilter(3)" effect="dark" size="small">{{ scope.row.submitStatus | submitStatusFilter }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.actions')" class-name="status-col" width="300px">
+      <el-table-column :label="$t('table.actions')" class-name="status-col" width="100px">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="handleDetails(scope.row)">{{ $t('table.examRecord.details') }}</el-button>
-          <el-button type="success" size="mini" @click="handleMarking(scope.row)">{{ $t('table.examRecord.marking') }}</el-button>
+          <el-dropdown>
+            <span class="el-dropdown-link">
+              操作<i class="el-icon-caret-bottom el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>
+                <a @click="handleDetails(scope.row)">
+                  <span><i class="el-icon-edit"></i>{{ $t('table.examRecord.details') }}</span>
+                </a>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <a @click="handleMarking(scope.row)">
+                  <span><i class="el-icon-check"></i>{{ $t('table.examRecord.marking') }}</span>
+                </a>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </template>
       </el-table-column>
     </el-table>

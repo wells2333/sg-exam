@@ -10,11 +10,11 @@
         </div>
       </el-col>
     </el-row>
-    <div class="cool-facts-area padding-100-0">
+    <div class="cool-facts-area padding-80-0">
       <el-row type="flex" justify="center" :gutter="50">
         <el-col :span="4">
           <transition name="fade-transform" mode="out-in">
-            <div class="single-cool-facts-area mb-100" v-show="showFacts">
+            <div class="single-cool-facts-area mb-80" v-show="showFacts">
               <div class="icon">
                 <img src="static/img/core-img/star.png" alt="">
               </div>
@@ -27,7 +27,7 @@
         </el-col>
         <el-col :span="4">
           <transition name="fade-transform" mode="out-in">
-            <div class="single-cool-facts-area mb-100" v-show="showFacts">
+            <div class="single-cool-facts-area mb-80" v-show="showFacts">
               <div class="icon">
                 <img src="static/img/core-img/star.png" alt="">
               </div>
@@ -40,7 +40,7 @@
         </el-col>
         <el-col :span="4">
           <transition name="fade-transform" mode="out-in">
-            <div class="single-cool-facts-area mb-100" v-show="showFacts">
+            <div class="single-cool-facts-area mb-80" v-show="showFacts">
               <div class="icon">
                 <img src="static/img/core-img/star.png" alt="">
               </div>
@@ -53,7 +53,7 @@
         </el-col>
         <el-col :span="4">
           <transition name="fade-transform" mode="out-in">
-            <div class="single-cool-facts-area mb-100" v-show="showFacts">
+            <div class="single-cool-facts-area mb-80" v-show="showFacts">
               <div class="icon">
                 <img src="static/img/core-img/star.png" alt="">
               </div>
@@ -67,7 +67,7 @@
       </el-row>
     </div>
 
-    <div class="popular-courses-area padding-100-0">
+    <div class="popular-courses-area padding-80-0">
       <el-row>
         <el-col :span="24">
           <div class="section-heading">
@@ -107,7 +107,7 @@
         </el-col>
         <el-col :span="6">
           <transition name="fade-transform" mode="out-in">
-            <div class="single-popular-course mb-100" v-show="showCourses">
+            <div class="single-popular-course mb-80" v-show="showCourses">
               <img src="static/img/bg-img/c2.jpg" alt="">
               <div class="course-content">
                 <h4>词汇</h4>
@@ -136,7 +136,7 @@
         </el-col>
         <el-col :span="6">
           <transition name="fade-transform" mode="out-in">
-            <div class="single-popular-course mb-100" v-show="showCourses">
+            <div class="single-popular-course mb-80" v-show="showCourses">
               <img src="static/img/bg-img/c3.jpg" alt="">
               <div class="course-content">
                 <h4>说明文写作</h4>
@@ -166,7 +166,7 @@
       </el-row>
     </div>
 
-    <div class="blog-area padding-100-0">
+    <div class="blog-area padding-80-0">
       <el-row>
         <el-col :span="24">
           <div class="section-heading">
@@ -177,7 +177,7 @@
       <el-row type="flex" justify="center" :gutter="50">
         <el-col :span="10">
           <transition name="fade-transform" mode="out-in">
-            <div class="single-blog-area mb-100" v-show="showBlog">
+            <div class="single-blog-area mb-80" v-show="showBlog">
               <img src="static/img/blog-img/1.jpg" alt="">
               <div class="blog-content">
                 <a href="#" class="blog-headline">
@@ -195,7 +195,7 @@
         </el-col>
         <el-col :span="10">
           <transition name="fade-transform" mode="out-in">
-            <div class="single-blog-area mb-100" v-show="showBlog">
+            <div class="single-blog-area mb-80" v-show="showBlog">
               <img src="static/img/blog-img/2.jpg" alt="">
               <div class="blog-content">
                 <a href="#" class="blog-headline">
@@ -256,13 +256,13 @@ export default {
     let vm = this
     window.onscroll = function () {
       vm.isActive = document.documentElement.scrollTop > 60
-      if (document.documentElement.scrollTop > 300) {
+      if (document.documentElement.scrollTop > 250) {
         setTimeout(() => {
           vm.showCourses = true
         }, 350)
       }
 
-      if (document.documentElement.scrollTop > 800) {
+      if (document.documentElement.scrollTop > 650) {
         setTimeout(() => {
           vm.showBlog = true
         }, 350)

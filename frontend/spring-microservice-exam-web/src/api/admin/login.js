@@ -3,7 +3,7 @@ import { getRefreshToken } from '@/utils/auth'
 
 const baseAuthenticationUrl = '/api/auth/v1/authentication/'
 
-const basicAuthorization = 'Basic ' + btoa('web_app:spring-microservice-exam-secret')
+const basicAuthorization = 'Basic d2ViX2FwcDpzcHJpbmctbWljcm9zZXJ2aWNlLWV4YW0tc2VjcmV0'
 
 export function loginByUsername (identifier, credential, code, randomStr) {
   const grantType = 'password'

@@ -43,12 +43,6 @@
             <artifactId>common-feign</artifactId>
         </dependency>
 
-        <!-- user-service-api -->
-        <dependency>
-            <groupId>com.github.tangyi</groupId>
-            <artifactId>user-service-api</artifactId>
-        </dependency>
-
         <!-- exam-service-api -->
         <dependency>
             <groupId>com.github.tangyi</groupId>

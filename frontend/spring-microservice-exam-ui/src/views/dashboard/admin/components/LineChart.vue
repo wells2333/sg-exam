@@ -107,10 +107,10 @@ export default {
           }
         },
         legend: {
-          data: ['考试记录数']
+          data: ['考试次数']
         },
         series: [{
-          name: '考试记录数',
+          name: '考试次数',
           smooth: true,
           type: 'line',
           itemStyle: {

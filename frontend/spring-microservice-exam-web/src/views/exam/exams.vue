@@ -28,7 +28,7 @@
         <div class="card-item" v-show="exam.show">
           <div>
             <a href="javascript: void(-1);" class="card-item-snapshoot"
-               :style="'background-image: url(' + exam.avatarUrl + ');'"
+               :style="'background-image: url(' + exam.logoUrl + ');'"
                @click="startExam(exam)">
             </a>
           </div>
@@ -36,17 +36,17 @@
             <div>
               <a href="javascript:void(-1);" @click="startExam(exam)"></a>
               <h3>
-                <div class="card-item-name">
+                <div class="card-item-name mb-12">
                   {{ exam.examinationName  | simpleStrFilter }}
                 </div>
               </h3>
             </div>
             <div class="card-item-course" v-if="exam.course !== undefined && exam.course !== null">
-              <div class="card-item-course-detail">
-                {{ exam.course.courseName }}
+              <div class="card-item-course-detail mb-12">
+                <a href="#">{{ exam.course.courseName }}</a>
               </div>
-              <div class="card-item-course-detail">
-                {{ exam.startTime | timeFilter }}~{{ exam.endTime | timeFilter }}
+              <div class="card-item-course-detail mb-12">
+                <a href="#">{{ exam.startTime | timeFilter }}~{{ exam.endTime | timeFilter }}</a>
               </div>
             </div>
           </div>
@@ -57,7 +57,7 @@
     </div>
     <el-row style="text-align: center; margin-bottom: 50px;">
       <el-col :span="24">
-        <el-button type="primary" @click="scrollList" :loading="loading" style="margin-bottom: 100px;">加载更多</el-button>
+        <el-button type="default" @click="scrollList" :loading="loading" style="margin-bottom: 100px;">加载更多</el-button>
       </el-col>
     </el-row>
   </div>
@@ -346,6 +346,16 @@ export default {
           .card-item-course-detail {
             color: rgba(0,0,0,.54);
             fill: rgba(0,0,0,.54);
+            a {
+              color: rgba(0, 0, 0, 0.4);
+              display: inline-block;
+              font-size: 14px;
+              font-weight: 400;
+              margin-right: 10px;
+              &:hover {
+                color: #000;
+              }
+            }
           }
         }
       }

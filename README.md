@@ -11,9 +11,9 @@
 
 > 硕果云，基于Spring Cloud搭建的新一代微服务教学管理平台，提供多租户、权限管理、在线考试、练习等功能
 >
-> 题型支持单选题、多选题、不定项选择题、判断题、简答题等
+> 题型支持单选题、多选题、不定项选择题、判断题、简答题
 >
-> 支持二维码分享，移动端答题
+> 支持PC、H5、微信小程序（小程序后面开源）
 
 ### 🏠 [主页](https://gitee.com/wells2333/spring-microservice-exam)
 
@@ -45,9 +45,10 @@
 - 构建工具：`Maven`
 - 后台 API 文档：`Swagger`
 - 消息队列：`RabbitMQ`
-- 文件系统：`七牛云`
+- 文件系统：`七牛云`、`FastDfs`
 - 缓存：`Redis`
 - 前端：`vue`
+- 小程序：`wepy`
 
 ## 核心依赖
 
@@ -110,18 +111,14 @@
     </tr>
     <tr>
         <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_exams.png" alt="考试列表"/></td>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_courses.png" alt="热门课程"/></td>
-    </tr>
-    <tr>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_exam.png" alt="PC端考试"/></td>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_mobile.jpeg" alt="手机端考试"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_exam.png" alt="考试"/></td>
     </tr>
     <tr>
         <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_record.png" alt="考试记录"/></td>
         <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_incorrect_answer.png" alt="错题列表"/></td>
     </tr>
     <tr>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_register.png" alt="注册"/></td>
+        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_courses.png" alt="热门课程"/></td>
         <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_login.png" alt="登录"/></td>
     </tr>
 </table>

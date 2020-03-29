@@ -73,7 +73,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	 * @date 2019/1/3 14:06
 	 */
 	public int insert(ExaminationDto examinationDto) {
-		this.initExaminationAvatarUrl(examinationDto);
+		this.initExaminationLogo(examinationDto);
 		Examination examination = new Examination();
 		BeanUtils.copyProperties(examinationDto, examination);
 		examination.setCourseId(examinationDto.getCourse().getId());
@@ -106,7 +106,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 				// 设置考试所属课程
 				courses.stream().filter(tempCourse -> tempCourse.getId().equals(exam.getCourseId())).findFirst().ifPresent(examinationDto::setCourse);
 				// 初始化封面图片
-				this.initExaminationAvatarUrl(examinationDto);
+				this.initExaminationLogo(examinationDto);
 				return examinationDto;
 			}).collect(Collectors.toList());
 			examinationDtoPageInfo.setList(examinationDtos);
@@ -126,7 +126,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
     @CacheEvict(value = "examinationDto", key = "#examinationDto.id")
     public int update(ExaminationDto examinationDto) {
     	if (examinationDto.getAvatarId() == null || examinationDto.getAvatarId() == 0L) {
-    		this.initExaminationAvatarUrl(examinationDto);
+    		this.initExaminationLogo(examinationDto);
 		}
 		Examination examination = new Examination();
 		BeanUtils.copyProperties(examinationDto, examination);
@@ -288,19 +288,19 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	 * @author tangyi
 	 * @date 2020/03/12 22:32:30
 	 */
-	public void initExaminationAvatarUrl(ExaminationDto examinationDto) {
+	public void initExaminationLogo(ExaminationDto examinationDto) {
 		try {
-			if (sysProperties.getWebAvatar() != null && !sysProperties.getWebAvatar().endsWith("/")) {
-				sysProperties.setWebAvatar(sysProperties.getWebAvatar() + "/");
+			if (sysProperties.getLogoUrl() != null && !sysProperties.getLogoUrl().endsWith("/")) {
+				sysProperties.setLogoUrl(sysProperties.getLogoUrl() + "/");
 			}
 			// 获取配置默认头像地址
 			if (examinationDto.getAvatarId() != null && examinationDto.getAvatarId() != 0L) {
 				Attachment attachment = new Attachment();
 				attachment.setId(examinationDto.getAvatarId());
-				examinationDto.setAvatarUrl(sysProperties.getWebAvatar() + examinationDto.getAvatarId() + sysProperties.getWebAvatarSuffix());
+				examinationDto.setLogoUrl(sysProperties.getLogoUrl() + examinationDto.getAvatarId() + sysProperties.getLogoSuffix());
 			} else {
-				Long index = new Random().nextInt(sysProperties.getWebAvatarCount()) + 1L;
-				examinationDto.setAvatarUrl(sysProperties.getWebAvatar() + index + sysProperties.getWebAvatarSuffix());
+				Long index = new Random().nextInt(sysProperties.getLogoCount()) + 1L;
+				examinationDto.setLogoUrl(sysProperties.getLogoUrl() + index + sysProperties.getLogoSuffix());
 				examinationDto.setAvatarId(index);
 			}
 		} catch (Exception e) {
@@ -314,16 +314,35 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	 * @author tangyi
 	 * @date 2020/3/15 1:16 下午
 	 */
-	public byte[] share(Long examinationId) {
+	public byte[] produceCode(Long examinationId) {
 		Examination examination = this.get(examinationId);
 		// 调查问卷
 		if (examination == null/* || !ExaminationTypeEnum.QUESTIONNAIRE.getValue().equals(examination.getType())*/) {
 			return new byte[0];
 		}
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		String url = sysProperties.getQrCodeUrl() + examination.getId();
+		String url = sysProperties.getQrCodeUrl() + "?id=" + examination.getId();
 		QRCodeUtils.encoderQRCode(url, outputStream, "png");
 		log.info("Share examinationId: {}, url: {}", examinationId, url);
+		return outputStream.toByteArray();
+	}
+
+	/**
+	 * 根据考试ID生成二维码
+	 * @param examinationId examinationId
+	 * @author tangyi
+	 * @date 2020/3/21 5:38 下午
+	 */
+	public byte[] produceCodeV2(Long examinationId) {
+		Examination examination = this.get(examinationId);
+		// 调查问卷
+		if (examination == null/* || !ExaminationTypeEnum.QUESTIONNAIRE.getValue().equals(examination.getType())*/) {
+			return new byte[0];
+		}
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		String url = sysProperties.getQrCodeUrl() + "-v2?id=" + examination.getId();
+		QRCodeUtils.encoderQRCode(url, outputStream, "png");
+		log.info("Share v2 examinationId: {}, url: {}", examinationId, url);
 		return outputStream.toByteArray();
 	}
 }

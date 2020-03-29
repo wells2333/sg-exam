@@ -13,7 +13,7 @@
         <el-col :span="24">
           <!-- 题目内容 -->
           <choices :ref="`choices${subject.id}`" v-if="subject.type === 0"/>
-          <short-answer :ref="`shortAnswer${subject.id}`" v-if="subject.type === 1"/>
+          <short-answer :ref="`shortAnswer${subject.id}`" :height="100" v-if="subject.type === 1"/>
           <judgement :ref="`judgement${subject.id}`" v-if="subject.type === 2"/>
           <multiple-choices :ref="`multipleChoices${subject.id}`" v-if="subject.type === 3"/>
         </el-col>
@@ -27,7 +27,7 @@
 
 <script>
 import { anonymousUserGetObj, fetchAllSubjectList } from '@/api/exam/exam'
-import { anonymousUserSubmit } from '@/api/exam/answer'
+import { anonymousUserSubmitAll } from '@/api/exam/answer'
 import { isNotEmpty, messageWarn, messageFail, messageSuccess } from '@/utils/util'
 import Choices from '@/components/Subjects/Choices'
 import MultipleChoices from '@/components/Subjects/MultipleChoices'
@@ -64,7 +64,7 @@ export default {
       this.$prompt('请输入考生账号', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        inputPlaceholder: '注册或联系管理员创建账号',
+        inputPlaceholder: '自行注册或联系管理员创建账号',
         inputValidator: function (value) {
           if (value.length < 4) {
             return false
@@ -148,6 +148,16 @@ export default {
     },
     // 提交考试
     handleSubmitExam () {
+      this.$confirm('确定要提交吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        center: true
+      }).then(() => {
+        this.doSubmitExam()
+      }).catch(() => {})
+    },
+    doSubmitExam () {
       if (this.subjectList.length > 0) {
         for (let i = 0; i < this.subjectList.length; i++) {
           const subject = this.subjectList[i]
@@ -159,7 +169,7 @@ export default {
           }
         }
         // 提交到后台
-        anonymousUserSubmit(this.subjectList, this.exam.id, this.identifier).then(response => {
+        anonymousUserSubmitAll(this.subjectList, this.exam.id, this.identifier).then(response => {
           if (response.data.data) {
             messageSuccess(this, '提交成功，5s后自动退出')
             setTimeout(() => {

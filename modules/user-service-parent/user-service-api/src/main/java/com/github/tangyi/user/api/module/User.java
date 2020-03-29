@@ -126,4 +126,9 @@ public class User extends BaseEntity<User> {
      * 家庭角色，参考UserStudentConstant
      */
     private Integer familyRole;
+
+    /**
+     * 个性签名
+     */
+    private String signature;
 }

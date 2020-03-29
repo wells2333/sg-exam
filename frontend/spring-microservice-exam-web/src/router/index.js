@@ -66,6 +66,11 @@ export const constantRouterMap = [
         component: () => import('@/views/exam/courses')
       },
       {
+        path: '/course-details',
+        name: 'course-details',
+        component: () => import('@/views/exam/courseDetails')
+      },
+      {
         path: '/account',
         name: 'account',
         component: () => import('@/views/personal/account')
@@ -91,6 +96,11 @@ export const constantRouterMap = [
     path: '/mobile',
     name: 'Mobile',
     component: () => import('@/views/mobile/Index')
+  },
+  {
+    path: '/mobile-v2',
+    name: 'MobileV2',
+    component: () => import('@/views/mobileV2/Index')
   },
   {
     path: '*',
