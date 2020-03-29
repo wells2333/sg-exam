@@ -34,6 +34,14 @@ export function start (obj) {
   })
 }
 
+export function anonymousUserStart (obj) {
+  return request({
+    url: baseExamRecordUrl + 'anonymousUser/start',
+    method: 'post',
+    params: obj
+  })
+}
+
 export function getCurrentTime () {
   return request({
     url: baseExamRecordUrl + 'currentTime',

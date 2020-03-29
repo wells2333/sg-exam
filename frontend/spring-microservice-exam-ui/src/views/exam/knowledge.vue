@@ -32,22 +32,40 @@
           <el-tag :type="scope.row.status | statusTypeFilter" effect="dark" size="small">{{ scope.row.status | publicStatusFilter }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.status')" min-width="80">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusTypeFilter" effect="dark" size="small">{{ scope.row.status | statusFilter }}</el-tag>
-        </template>
-      </el-table-column>
       <el-table-column :label="$t('table.modifyDate')" min-width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.modifyDate | fmtDate('yyyy-MM-dd hh:mm') }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.actions')" class-name="status-col" width="300px">
+      <el-table-column :label="$t('table.actions')" class-name="status-col" width="100px">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
-          <el-button v-if="scope.row.status == 1" type="success" size="mini" @click="handlePublic(scope.row, 0)">{{ $t('table.public') }}</el-button>
-          <el-button v-if="scope.row.status == 0" type="info" size="mini" @click="handlePublic(scope.row, 1)">{{ $t('table.withdraw') }}</el-button>
-          <el-button type="danger" size="mini" @click="handleDelete(scope.row)">{{ $t('table.delete') }}</el-button>
+          <el-dropdown>
+            <span class="el-dropdown-link">
+              操作<i class="el-icon-caret-bottom el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>
+                <a @click="handleUpdate(scope.row)">
+                  <span><i class="el-icon-edit"></i>{{ $t('table.edit') }}</span>
+                </a>
+              </el-dropdown-item>
+              <el-dropdown-item v-if="scope.row.status == 1">
+                <a @click="handlePublic(scope.row, 0)">
+                  <span><i class="el-icon-check"></i>{{ $t('table.public') }}</span>
+                </a>
+              </el-dropdown-item>
+              <el-dropdown-item v-if="scope.row.status == 0">
+                <a @click="handlePublic(scope.row, 1)">
+                  <span><i class="el-icon-close"></i>{{ $t('table.withdraw') }}</span>
+                </a>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <a @click="handleDelete(scope.row)">
+                  <span><i class="el-icon-delete"></i>{{ $t('table.delete') }}</span>
+                </a>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </template>
       </el-table-column>
     </el-table>

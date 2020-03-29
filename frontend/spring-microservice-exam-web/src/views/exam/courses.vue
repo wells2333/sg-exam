@@ -6,8 +6,8 @@
     <div class="content-container">
       <div class="course-card-list">
         <transition name="fade-transform" mode="out-in" v-for="course in courseList" :key="course.id">
-          <div class="single-popular-course mb-100" v-show="course.show">
-            <img src="static/img/bg-img/c2.jpg" alt="">
+          <div class="single-popular-course mb-80" v-show="course.show">
+            <img :src="course.logoUrl" alt="">
             <div class="course-content">
               <h4>{{ course.courseName }}</h4>
               <div class="meta d-flex align-items-center">
@@ -27,7 +27,7 @@
                 </div>
               </div>
               <div class="course-fee h-100">
-                <a href="#" @click="startCourse(course)">免费</a>
+                <a href="#" @click="handleStartCourse(course)">免费</a>
               </div>
             </div>
           </div>
@@ -37,7 +37,7 @@
       </div>
       <el-row style="text-align: center; margin-bottom: 50px;">
         <el-col :span="24">
-          <el-button type="primary" @click="scrollList" :loading="loading" style="margin-bottom: 100px;">加载更多</el-button>
+          <el-button type="default" @click="scrollList" :loading="loading" style="margin-bottom: 100px;">加载更多</el-button>
         </el-col>
       </el-row>
     </div>
@@ -82,8 +82,9 @@ export default {
         this.loading = false
       })
     },
-    startCourse (course) {
-      messageWarn(this, '功能正在开发中！')
+    handleStartCourse (course) {
+      // messageWarn(this, '功能正在开发中！')
+      this.$router.push({name: 'course-details', query: {courseId: course.id}})
     },
     scrollList () {
       if (this.isLastPage) {

@@ -196,6 +196,7 @@ export default {
     modifyDate: '修改时间',
     modifier: '修改人',
     share: '分享',
+    shareV2: '分享（v2）',
     subject: {
       serialNumber: '序号',
       type: '类型',

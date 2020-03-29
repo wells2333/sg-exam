@@ -43,7 +43,7 @@
         </el-table>
         <el-row style="text-align: center; margin-bottom: 50px;">
           <el-col :span="24">
-            <el-button type="primary" @click="scrollList" :loading="listLoading" style="margin-top:20px; margin-bottom: 100px;">加载更多</el-button>
+            <el-button type="default" @click="scrollList" :loading="listLoading" style="margin-top:20px; margin-bottom: 100px;">加载更多</el-button>
           </el-col>
         </el-row>
       </el-col>

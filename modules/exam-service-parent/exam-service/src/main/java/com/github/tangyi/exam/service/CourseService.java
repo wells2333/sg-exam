@@ -1,13 +1,23 @@
 package com.github.tangyi.exam.service;
 
+import com.github.pagehelper.PageInfo;
+import com.github.tangyi.common.basic.properties.SysProperties;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.exam.api.module.Course;
 import com.github.tangyi.exam.mapper.CourseMapper;
+import com.github.tangyi.user.api.module.Attachment;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 /**
  * 课程service
@@ -15,8 +25,30 @@ import org.springframework.transaction.annotation.Transactional;
  * @author tangyi
  * @date 2018/11/8 21:18
  */
+@Slf4j
 @Service
+@AllArgsConstructor
 public class CourseService extends CrudService<CourseMapper, Course> {
+
+    private final SysProperties sysProperties;
+
+    /**
+     * 根据id获取课程信息
+     *
+     * @param id id
+     * @return Course
+     * @author tangyi
+     * @date 2018/12/03 21:30
+     */
+    @Cacheable(value = "course#" + CommonConstant.CACHE_EXPIRE, key = "#id")
+    @Override
+    public Course get(Long id) {
+        Course course = super.get(id);
+        if (course != null) {
+            this.initLogoUrl(Collections.singletonList(course));
+        }
+        return course;
+    }
 
     /**
      * 获取课程信息
@@ -30,6 +62,23 @@ public class CourseService extends CrudService<CourseMapper, Course> {
     @Cacheable(value = "course#" + CommonConstant.CACHE_EXPIRE, key = "#course.id")
     public Course get(Course course) {
         return super.get(course);
+    }
+
+    /**
+     * 初始化logo
+     *
+     * @param page page
+     * @param course course
+     * @author tangyi
+     * @date 2020/03/18 20:38
+     */
+    @Override
+    public PageInfo<Course> findPage(PageInfo<Course> page, Course course) {
+        PageInfo<Course> pageInfo = super.findPage(page, course);
+        if (CollectionUtils.isNotEmpty(pageInfo.getList())) {
+            this.initLogoUrl(pageInfo.getList());
+        }
+        return pageInfo;
     }
 
     /**
@@ -75,5 +124,34 @@ public class CourseService extends CrudService<CourseMapper, Course> {
     @CacheEvict(value = "course", allEntries = true)
     public int deleteAll(Long[] ids) {
         return super.deleteAll(ids);
+    }
+
+    /**
+     * 初始化logo
+     *
+     * @param courseList courseList
+     * @author tangyi
+     * @date 2020/03/18 20:38
+     */
+    public void initLogoUrl(List<Course> courseList) {
+        try {
+            if (sysProperties.getLogoUrl() != null && !sysProperties.getLogoUrl().endsWith("/")) {
+                sysProperties.setLogoUrl(sysProperties.getLogoUrl() + "/");
+            }
+            courseList.forEach(course -> {
+                // 获取配置默认头像地址
+                if (course.getLogoId() != null && course.getLogoId() != 0L) {
+                    Attachment attachment = new Attachment();
+                    attachment.setId(course.getLogoId());
+                    course.setLogoUrl(sysProperties.getLogoUrl() + course.getLogoId() + sysProperties.getLogoSuffix());
+                } else {
+                    Long index = new Random().nextInt(sysProperties.getLogoCount()) + 1L;
+                    course.setLogoUrl(sysProperties.getLogoUrl() + index + sysProperties.getLogoSuffix());
+                    course.setLogoId(index);
+                }
+            });
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
     }
 }

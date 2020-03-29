@@ -20,6 +20,7 @@
         <result column="login_time" property="loginTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="lock_time" property="lockTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="wechat" property="wechat"/>
+        <result column="signature" property="signature"/>
         <result column="family_role" property="familyRole" />
         <result column="creator" property="creator"/>
         <result column="create_date" property="createDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
@@ -49,6 +50,7 @@
         a.login_time,
         a.lock_time,
         a.wechat,
+        a.signature,
         a.family_role,
         a.creator,
         a.create_date,
@@ -142,6 +144,7 @@
             login_time,
             lock_time,
             wechat,
+            signature,
             family_role,
             creator,
             create_date,
@@ -169,6 +172,7 @@
             #{loginTime, jdbcType=TIMESTAMP, javaType=java.util.Date},
             #{lockTime, jdbcType=TIMESTAMP, javaType=java.util.Date},
             #{wechat},
+            #{signature},
             #{familyRole, jdbcType=INTEGER},
             #{creator},
             #{createDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
@@ -233,6 +237,9 @@
         </if>
         <if test="wechat != null">
             wechat = #{wechat} ,
+        </if>
+        <if test="signature != null">
+            signature = #{signature} ,
         </if>
         <if test="familyRole != null">
             family_role = #{familyRole, jdbcType=INTEGER} ,

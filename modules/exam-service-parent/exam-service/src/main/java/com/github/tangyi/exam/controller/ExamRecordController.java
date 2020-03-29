@@ -249,4 +249,19 @@ public class ExamRecordController extends BaseController {
 	public ResponseBean<ExaminationRecordDto> details(@PathVariable Long id) {
     	return new ResponseBean<>(examRecordService.details(id));
 	}
+
+    /**
+     * 开始考试
+     *
+     * @param examinationId examinationId
+     * @param identifier identifier
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2020/3/21 5:51 下午
+     */
+    @PostMapping("anonymousUser/start")
+    @Log("开始考试(匿名)")
+    public ResponseBean<StartExamDto> anonymousUserStart(Long examinationId, String identifier) {
+        return new ResponseBean<>(answerService.anonymousUserStart(examinationId, identifier));
+    }
 }

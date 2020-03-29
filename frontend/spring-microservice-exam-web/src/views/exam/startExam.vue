@@ -227,7 +227,10 @@ export default {
           store.dispatch('SetSubjectInfo', subject).then(() => {})
           this.updateSubjectIndex()
         }
-        this.subjectStartTime = new Date()
+        // 更新时间
+        getCurrentTime().then(response => {
+          this.subjectStartTime = moment(response.data.data)
+        })
         this.endLoading(nextType)
       }).catch((error) => {
         console.log(error)

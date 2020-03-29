@@ -63,3 +63,11 @@ export function getSubjectAnswer (obj) {
     params: obj
   })
 }
+
+export function anonymousUserGetSubjectAnswer (obj) {
+  return request({
+    url: baseSubjectUrl + 'anonymousUser/subjectAnswer',
+    method: 'get',
+    params: obj
+  })
+}

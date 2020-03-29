@@ -262,4 +262,33 @@ public class SubjectController extends BaseController {
         return new ResponseBean<>(answerService
                 .subjectAnswer(subjectId, examRecordId, nextType, nextSubjectId, nextSubjectType));
     }
+
+    /**
+     * 查询题目和答题
+     *
+     * @param subjectId    subjectId
+     * @param examRecordId examRecordId
+     * @param userId       userId
+     * @param nextType     -1：当前题目，0：下一题，1：上一题
+     * @param nextSubjectId nextSubjectId
+     * @param nextSubjectType 下一题的类型，选择题、判断题
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/01/16 22:25
+     */
+    @GetMapping("anonymousUser/subjectAnswer")
+    @ApiOperation(value = "查询题目和答题", notes = "根据题目id查询题目和答题")
+    @ApiImplicitParams({@ApiImplicitParam(name = "subjectId", value = "题目ID", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "examRecordId", value = "考试记录ID", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "userId", value = "用户ID", dataType = "String"),
+            @ApiImplicitParam(name = "nextType", value = "-1：当前题目，0：下一题，1：上一题", dataType = "Integer")})
+    public ResponseBean<SubjectDto> anonymousUserSubjectAnswer(@RequestParam("subjectId") @NotBlank Long subjectId,
+                                                  @RequestParam("examRecordId") @NotBlank Long examRecordId,
+                                                  @RequestParam(value = "userId", required = false) String userId,
+                                                  @RequestParam Integer nextType,
+                                                  @RequestParam(required = false) Long nextSubjectId,
+                                                  @RequestParam(required = false) Integer nextSubjectType) {
+        return new ResponseBean<>(answerService
+                .subjectAnswer(subjectId, examRecordId, nextType, nextSubjectId, nextSubjectType));
+    }
 }

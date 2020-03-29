@@ -17,9 +17,9 @@
       @selection-change="handleSelectionChange"
       @sort-change="sortChange">
       <el-table-column type="selection" width="55"/>
-      <el-table-column :label="$t('table.examinationName')">
+      <el-table-column :label="$t('table.examinationName')" min-width="100">
         <template slot-scope="scope">
-          <span>{{ scope.row.examinationName | simpleStrFilter }}</span>
+          <span>{{ scope.row.examinationName }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.examinationType')">
@@ -42,13 +42,55 @@
           <el-tag :type="scope.row.status | statusTypeFilter " effect="dark" size="small">{{ scope.row.status | publicStatusFilter }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.actions')" class-name="status-col" width="400">
+      <el-table-column :label="$t('table.modifier')">
         <template slot-scope="scope">
-          <el-button v-if="exam_btn_edit" type="success" size="mini" @click="handleShare(scope.row)">{{ $t('table.share') }}</el-button>
-          <el-button v-if="exam_btn_edit" type="primary" size="mini" @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
-          <el-button v-if="exam_btn_edit && scope.row.status == 1" type="success" size="mini" @click="handlePublic(scope.row, 0)">{{ $t('table.public') }}</el-button>
-          <el-button v-if="exam_btn_edit && scope.row.status == 0" type="info" size="mini" @click="handlePublic(scope.row, 1)">{{ $t('table.withdraw') }}</el-button>
-          <el-button v-if="exam_btn_subject" type="success" size="mini" @click="handleSubjectManagement(scope.row)">{{ $t('table.subjectManagement') }}</el-button>
+          <span>{{ scope.row.modifier }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('table.modifyDate')">
+        <template slot-scope="scope">
+          <span>{{ scope.row.modifyDate | fmtDate('yyyy-MM-dd hh:mm')}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('table.actions')" class-name="status-col" width="100">
+        <template slot-scope="scope">
+          <el-dropdown>
+            <span class="el-dropdown-link">
+              操作<i class="el-icon-caret-bottom el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item v-if="exam_btn_edit">
+                <a @click="handleUpdate(scope.row)">
+                  <span><i class="el-icon-edit"></i>{{ $t('table.edit') }}</span>
+                </a>
+              </el-dropdown-item>
+              <el-dropdown-item v-if="exam_btn_edit && scope.row.status == 1">
+                <a @click="handlePublic(scope.row, 0)">
+                  <span><i class="el-icon-check"></i>{{ $t('table.public') }}</span>
+                </a>
+              </el-dropdown-item>
+              <el-dropdown-item v-if="exam_btn_edit && scope.row.status == 0">
+                <a @click="handlePublic(scope.row, 1)">
+                  <span><i class="el-icon-close"></i>{{ $t('table.withdraw') }}</span>
+                </a>
+              </el-dropdown-item>
+              <el-dropdown-item v-if="exam_btn_subject">
+                <a @click="handleSubjectManagement(scope.row)">
+                  <span><i class="el-icon-document"></i>{{ $t('table.subjectManagement') }}</span>
+                </a>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <a @click="handleShare(scope.row)">
+                  <span><i class="el-icon-share"></i>{{ $t('table.share') }}</span>
+                </a>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <a @click="handleShareV2(scope.row)">
+                  <span><i class="el-icon-share"></i>{{ $t('table.shareV2') }}</span>
+                </a>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </template>
       </el-table-column>
     </el-table>
@@ -106,7 +148,7 @@
                 <el-form-item :label="$t('table.status')">
                   <el-radio-group v-model="temp.status">
                     <el-radio :label="0">已发布</el-radio>
-                    <el-radio :label="1">未发布</el-radio>
+                    <el-radio :label="1">草稿</el-radio>
                   </el-radio-group>
                 </el-form-item>
               </el-col>
@@ -257,7 +299,7 @@ export default {
         duration: '',
         totalScore: '',
         totalSubject: '0',
-        status: 0,
+        status: 1,
         avatarId: null,
         collegeId: '',
         majorId: '',
@@ -415,6 +457,10 @@ export default {
     },
     handleShare (row) {
       this.qrCodeUrl = apiList.exam + 'anonymousUser/generateQrCode/' + row.id
+      this.dialogQrCodeVisible = true
+    },
+    handleShareV2 (row) {
+      this.qrCodeUrl = apiList.exam + 'anonymousUser/generateQrCode/v2/' + row.id
       this.dialogQrCodeVisible = true
     },
     handleUpdate (row) {

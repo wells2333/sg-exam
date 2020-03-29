@@ -200,6 +200,27 @@ public class AnswerController extends BaseController {
         return new ResponseBean<>(answerService.saveAndNext(answer, nextType, nextSubjectId, nextSubjectType));
     }
 
+    /**
+     * 保存答题，返回下一题信息
+     *
+     * @param answer          answer
+     * @param nextType        0：下一题，1：上一题，2：提交
+     * @param nextSubjectId   nextSubjectId
+     * @param nextSubjectType 下一题的类型，选择题、判断题
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/04/30 18:06
+     */
+    @PostMapping("anonymousUser/saveAndNext")
+    @ApiOperation(value = "保存答题", notes = "保存答题")
+    @ApiImplicitParam(name = "answer", value = "答题信息", dataType = "Answer")
+    public ResponseBean<SubjectDto> anonymousUserSaveAndNext(@RequestBody AnswerDto answer,
+                                                @RequestParam Integer nextType,
+                                                @RequestParam(required = false) Long nextSubjectId,
+                                                @RequestParam(required = false) Integer nextSubjectType) {
+        return new ResponseBean<>(answerService.saveAndNext(answer, nextType, nextSubjectId, nextSubjectType));
+    }
+
 	/**
 	 * 保存答题
 	 *
@@ -246,6 +267,22 @@ public class AnswerController extends BaseController {
     @ApiImplicitParam(name = "answer", value = "答卷信息", dataType = "Answer")
     @Log("提交答题")
     public ResponseBean<Boolean> submit(@RequestBody Answer answer) {
+        return new ResponseBean<>(answerService.submitAsync(answer));
+    }
+
+    /**
+     * 提交答卷
+     *
+     * @param answer answer
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2018/12/24 20:44
+     */
+    @PostMapping("anonymousUser/submit")
+    @ApiOperation(value = "提交答卷", notes = "提交答卷")
+    @ApiImplicitParam(name = "answer", value = "答卷信息", dataType = "Answer")
+    @Log("提交答题")
+    public ResponseBean<Boolean> anonymousUserSubmit(@RequestBody Answer answer) {
         return new ResponseBean<>(answerService.submitAsync(answer));
     }
 
@@ -320,13 +357,13 @@ public class AnswerController extends BaseController {
      * @author tangyi
      * @date 2020/03/15 16:08
      */
-    @PostMapping("anonymousUser/submit/{examinationId}")
+    @PostMapping("anonymousUser/submitAll/{examinationId}")
     @ApiOperation(value = "提交答题", notes = "提交答题")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "examinationId", value = "考试id", dataType = "Long"),
             @ApiImplicitParam(name = "identifier", value = "考生账号", dataType = "String")
     })
-	public ResponseBean<Boolean> anonymousUserSubmit(@PathVariable Long examinationId, @RequestParam String identifier, @RequestBody List<SubjectDto> subjectDtos) {
+	public ResponseBean<Boolean> anonymousUserSubmitAll(@PathVariable Long examinationId, @RequestParam String identifier, @RequestBody List<SubjectDto> subjectDtos) {
         return new ResponseBean<>(answerService.anonymousUserSubmit(examinationId, identifier, subjectDtos));
     }
 }

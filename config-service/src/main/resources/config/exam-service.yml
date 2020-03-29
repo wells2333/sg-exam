@@ -79,10 +79,10 @@ pagehelper:
 # 系统配置
 sys:
   cacheExpire: 86400 # 缓存失效时间，单位秒，默认一天
-  webAvatar: /static/img/exam
-  webAvatarCount: 22
-  webAvatarSuffix: .jpeg
-  qrCodeUrl: http://${QR_CODE_URL:localhost}:${QR_CODE_PORT:8080}/#/mobile?id=
+  logoUrl: /static/img/exam
+  logoCount: 22
+  logoSuffix: .jpeg
+  qrCodeUrl: http://${QR_CODE_URL:localhost}:${QR_CODE_PORT:8080}/#/mobile
 
 # feign相关配置
 feign:
@@ -127,6 +127,10 @@ ignore:
     - /v1/tenant/anonymousUser/**
     - /v1/menu/anonymousUser/**
     - /v1/examination/anonymousUser/**
+    - /v1/answer/anonymousUser/**
+    - /v1/examRecord/anonymousUser/**
+    - /v1/examRecord/currentTime
+    - /v1/subject/anonymousUser/**
     - /v1/answer/anonymousUser/**
     - /v1/code/**
     - /v1/attachment/download

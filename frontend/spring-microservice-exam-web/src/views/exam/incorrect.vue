@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
-    <transition name="fade-transform" mode="out-in">
-      <el-card v-show="!listLoading">
-        <el-row>
-          <el-col :span="20" :offset="2">
-            <el-divider>成绩详情</el-divider>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="20" :offset="2">
+    <el-card>
+      <el-row>
+        <el-col :span="20" :offset="2">
+          <el-divider>成绩详情</el-divider>
+        </el-col>
+      </el-row>
+      <el-row>
+        <transition name="fade-transform" mode="out-in">
+          <el-col :span="20" :offset="2" v-show="!examRecordLoading">
             <el-row>
               <el-col :span="8">
                 <label class="el-form-item__label">考试名称: {{ examRecordDetail.examinationName }}</label>
@@ -43,15 +43,17 @@
               </el-col>
             </el-row>
           </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="20" :offset="2">
-            <el-divider>错题列表</el-divider>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="20" :offset="2">
-            <div class="subject-content" v-for="(tempIncorrectAnswer, index) in list" :key="tempIncorrectAnswer.id">
+        </transition>
+      </el-row>
+      <el-row>
+        <el-col :span="20" :offset="2">
+          <el-divider>错题列表</el-divider>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="20" :offset="2">
+          <transition name="fade-transform" mode="out-in" v-for="(tempIncorrectAnswer, index) in list" :key="tempIncorrectAnswer.id">
+            <div class="subject-content" v-show="tempIncorrectAnswer.show">
               <div class="subject-content-option">
                 <div class="subject-title">
                   <span class="subject-title-number">{{index + 1}} .</span>
@@ -72,39 +74,39 @@
                   <span v-html="tempIncorrectAnswer.subject.answer.answer"></span>
                 </p>
               </div>
-              <p class="subject-content-answer">
-                参考答案：{{tempIncorrectAnswer.subject.answer.answer}}
+              <p class="subject-content-answer" v-if="tempIncorrectAnswer.subject.answer.answer !== ''">
+                参考答案：<span v-html="tempIncorrectAnswer.subject.answer.answer"></span>
               </p>
-              <p class="subject-content-analysis">
-                解析：{{tempIncorrectAnswer.subject.analysis}}
+              <p class="subject-content-analysis" v-if="tempIncorrectAnswer.subject.analysis !== ''">
+                解析：<span v-html="tempIncorrectAnswer.subject.analysis"></span>
               </p>
             </div>
-            <div class="pagination-container">
-              <el-pagination v-show="total > 0" :current-page="listQuery.pageNum" :page-sizes="[10,20,30, 50]" :page-size="listQuery.pageSize" :total="total" background layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange"/>
-            </div>
-          </el-col>
-        </el-row>
-      </el-card>
-    </transition>
+          </transition>
+        </el-col>
+      </el-row>
+      <el-row style="text-align: center; margin-bottom: 50px;">
+        <el-col :span="24">
+          <el-button type="default" @click="scrollList" :loading="loading" style="margin-bottom: 100px;">加载更多</el-button>
+        </el-col>
+      </el-row>
+    </el-card>
   </div>
 </template>
 <script>
 import { mapState } from 'vuex'
 import { getAnswerListInfo } from '@/api/exam/answer'
 import { examRecordDetails } from '@/api/exam/examRecord'
-import { notifyFail } from '@/utils/util'
+import { notifyFail, messageWarn } from '@/utils/util'
 import { answerType } from '@/const/constant'
-import SpinnerLoading from '@/components/SpinnerLoading'
 
 export default {
   name: 'Incorrect',
-  components: {
-    SpinnerLoading
-  },
   data () {
     return {
-      listLoading: true,
+      loading: true,
+      examRecordLoading: true,
       total: 0,
+      isLastPage: false,
       tableKey: 0,
       list: [],
       listQuery: {
@@ -139,25 +141,77 @@ export default {
   },
   methods: {
     getRecordDetail () {
-      this.listLoading = true
+      this.loading = true
+      this.examRecordLoading = true
       examRecordDetails(this.incorrectRecord.id).then(response => {
-        this.examRecordDetail = response.data.data
+        setTimeout(() => {
+          this.examRecordDetail = response.data.data
+          this.examRecordLoading = false
+        }, 500)
         getAnswerListInfo(this.incorrectRecord.id, this.listQuery).then(response => {
-          this.list = response.data.list
-          this.total = response.data.total
-          this.listLoading = false
-        }).catch(() => {
+          const { total, isLastPage, list } = response.data
+          this.updateList(list)
+          this.total = total
+          this.isLastPage = isLastPage
+          this.loading = false
+        }).catch(error => {
+          console.error(error)
           notifyFail(this, '加载错题失败')
+          this.loading = false
         })
       })
     },
-    handleSizeChange (val) {
-      this.listQuery.limit = val
-      this.getList()
+    scrollList () {
+      if (this.isLastPage) {
+        messageWarn(this, '暂无更多数据！')
+        return
+      }
+      if (this.loading) {
+        messageWarn(this, '正在拼命加载！')
+        return
+      }
+      this.loading = true
+      setTimeout(() => {
+        this.listQuery.pageNum++
+        getAnswerListInfo(this.incorrectRecord.id, this.listQuery).then(response => {
+          const { total, isLastPage, list } = response.data
+          this.updateList(list)
+          this.total = total
+          this.isLastPage = isLastPage
+          this.loading = false
+        }).catch(() => {
+          messageWarn(this, '加载数据失败！')
+          this.loading = false
+        })
+      }, 500)
     },
-    handleCurrentChange (val) {
-      this.listQuery.pageNum = val
-      this.getList()
+    updateList (list) {
+      if (list === undefined || list.length === 0) {
+        return list
+      }
+      list.forEach(item => {
+        item.show = false
+      })
+      if (this.list.length === 0) {
+        this.list = list
+      } else {
+        list.forEach(item => {
+          let exist = false
+          for (let i = 0; i < this.list.length; i++) {
+            if (this.list[i].id === item.id) {
+              exist = true
+            }
+          }
+          if (!exist) {
+            this.list.push(item)
+          }
+        })
+      }
+      for (let i = 0; i < list.length; i++) {
+        setTimeout(() => {
+          list[i].show = true
+        }, 250 + (100 * i))
+      }
     },
     getClass (right) {
       return answerType[right]

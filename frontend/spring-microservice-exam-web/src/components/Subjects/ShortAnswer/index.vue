@@ -6,7 +6,7 @@
         <span class="subject-title-content" v-html="subjectInfo.subjectName"/>
         <span class="subject-title-content" v-if="subjectInfo.score !== undefined && subjectInfo.score !== 0">&nbsp;({{subjectInfo.score}})分</span>
         <div class="subject-tinymce">
-          <tinymce ref="editor" :height="300" v-model="userAnswer"/>
+          <tinymce ref="editor" :height="height" v-model="userAnswer"/>
         </div>
       </div>
     </div>
@@ -20,6 +20,13 @@ export default {
   name: 'ShortAnswer',
   components: {
     Tinymce
+  },
+  props: {
+    height: {
+      type: Number,
+      required: false,
+      default: 300
+    }
   },
   data () {
     return {

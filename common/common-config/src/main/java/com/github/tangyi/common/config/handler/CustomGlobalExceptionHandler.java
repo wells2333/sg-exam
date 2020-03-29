@@ -59,4 +59,10 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         ResponseBean<String> responseBean = new ResponseBean<>(e.getMessage(), ApiMsg.KEY_SERVICE, ApiMsg.ERROR);
         return new ResponseEntity<>(responseBean, HttpStatus.OK);
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ResponseBean<String>> handleException(Exception e) {
+        ResponseBean<String> responseBean = new ResponseBean<>(e.getMessage(), ApiMsg.KEY_ERROR, ApiMsg.ERROR);
+        return new ResponseEntity<>(responseBean, HttpStatus.OK);
+    }
 }

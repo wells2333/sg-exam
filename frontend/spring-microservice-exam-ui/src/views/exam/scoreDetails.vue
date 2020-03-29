@@ -15,10 +15,11 @@
                 <br>
                 <span class="user-info-item" v-show="examRecord.deptName !== undefined && examRecord.deptName !== ''">所属部门：{{ examRecord.deptName }}</span>
                 <br>
-                <span class="user-info-item" v-show="examRecord.startTime !== undefined && examRecord.startTime !== ''">考试时间：
-                  <el-tag type="info" >{{ examRecord.startTime | fmtDate('yyyy.MM.dd hh:mm') }}</el-tag>
-                  ~
-                  <el-tag type="info">{{ examRecord.endTime | fmtDate('yyyy.MM.dd hh:mm') }}</el-tag>
+                <span class="user-info-item" v-show="examRecord.startTime !== undefined">开始时间：
+                  {{ examRecord.startTime | fmtDate('yyyy.MM.dd hh:mm') }}
+                </span>
+                <span class="user-info-item" v-show="examRecord.endTime !== undefined">结束时间：
+                  {{ examRecord.endTime | fmtDate('yyyy.MM.dd hh:mm') }}
                 </span>
                 <br>
               </div>
@@ -31,7 +32,7 @@
             </el-col>
             <el-col :span="3">
               <div class="description">
-                <div>耗时</div>
+                <div>总耗时</div>
                 <div class="description-score">{{ examRecord.duration }}</div>
               </div>
             </el-col>
@@ -56,7 +57,7 @@
             style="width: 100%;">
             <el-table-column :label="$t('table.subjectName')" min-width="120">
               <template slot-scope="scope">
-                <span>{{ scope.row.subject.subjectName | simpleStrFilter(15) }}</span>
+                <span v-html="scope.row.subject.subjectName"></span>
               </template>
             </el-table-column>
             <el-table-column :label="$t('table.subject.type')" min-width="90">

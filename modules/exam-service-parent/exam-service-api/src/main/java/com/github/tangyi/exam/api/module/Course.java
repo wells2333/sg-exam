@@ -39,4 +39,14 @@ public class Course extends BaseEntity<Course> {
      * 课程描述
      */
     private String courseDescription;
+
+    /**
+     * logoId
+     */
+    private Long logoId;
+
+    /**
+     * logo URL
+     */
+    private String logoUrl;
 }

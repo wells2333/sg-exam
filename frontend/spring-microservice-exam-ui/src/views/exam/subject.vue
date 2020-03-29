@@ -51,7 +51,7 @@
             <el-table-column type="selection" width="55"/>
             <el-table-column :label="$t('table.subjectName')" min-width="120">
               <template slot-scope="scope">
-                <span>{{ scope.row.subjectName | simpleStrFilter }}</span>
+                <span v-html="scope.row.subjectName"></span>
               </template>
             </el-table-column>
             <el-table-column :label="$t('table.subject.type')" width="120">
@@ -74,11 +74,26 @@
                 <span>{{ scope.row.modifyDate | fmtDate('yyyy-MM-dd hh:mm') }}</span>
               </template>
             </el-table-column>
-            <el-table-column :label="$t('table.actions')" class-name="status-col">
+            <el-table-column :label="$t('table.actions')" class-name="status-col" width="100px">
               <template slot-scope="scope">
-                <el-button v-if="subject_bank_btn_edit" type="primary" size="mini" @click="handleUpdateSubject(scope.row)">{{ $t('table.edit') }}</el-button>
-                <el-button v-if="subject_bank_btn_del" type="danger" size="mini" @click="handleDeleteSubject(scope.row)">{{ $t('table.delete') }}</el-button>
-              </template>
+                <el-dropdown>
+                  <span class="el-dropdown-link">
+                    操作<i class="el-icon-caret-bottom el-icon--right"></i>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item v-if="subject_bank_btn_edit">
+                      <a @click="handleUpdateSubject(scope.row)">
+                        <span><i class="el-icon-edit"></i>{{ $t('table.edit') }}</span>
+                      </a>
+                    </el-dropdown-item>
+                    <el-dropdown-item v-if="subject_bank_btn_del">
+                      <a @click="handleDeleteSubject(scope.row)">
+                        <span><i class="el-icon-delete"></i>{{ $t('table.delete') }}</span>
+                      </a>
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+               </template>
             </el-table-column>
           </el-table>
           <div class="pagination-container">

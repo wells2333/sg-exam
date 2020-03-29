@@ -5,7 +5,7 @@
 
     <el-row class="chart-wrapper" style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <div class="chart-wrapper-header">
-        <div>考试记录数</div>
+        <div>考试次数</div>
         <div class="chart-wrapper-header-select">
           <el-select v-model="query.pastDays" placeholder="请选择" size="mini" @change="getExamRecordData">
             <el-option

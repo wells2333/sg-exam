@@ -44,7 +44,6 @@
   </div>
 </template>
 <script>
-import OHeader from '../common/header'
 import OFooter from '../common/footer'
 export default {
   data () {
@@ -57,7 +56,6 @@ export default {
     }
   },
   components: {
-    OHeader,
     OFooter
   },
   methods: {

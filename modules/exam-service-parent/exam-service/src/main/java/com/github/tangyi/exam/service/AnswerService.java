@@ -358,42 +358,13 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
      */
     @Transactional
     public StartExamDto start(ExaminationRecord examRecord) {
-        StartExamDto startExamDto = new StartExamDto();
         String currentUsername = SysUtil.getUser();
-        String applicationCode = SysUtil.getSysCode();
-        String tenantCode = SysUtil.getTenantCode();
         // 创建考试记录
         if (examRecord.getExaminationId() == null)
             throw new CommonException("参数校验失败，考试id为空！");
         if (examRecord.getUserId() == null)
             throw new CommonException("参数校验失败，用户id为空！");
-		// 查找考试信息
-        Examination examination = examinationService.get(examRecord.getExaminationId());
-        examRecord.setCommonValue(currentUsername, applicationCode, tenantCode);
-        examRecord.setStartTime(examRecord.getCreateDate());
-        // 默认未提交状态
-        examRecord.setSubmitStatus(SubmitStatusEnum.NOT_SUBMITTED.getValue());
-        // 保存考试记录
-        if (examRecordService.insert(examRecord) > 0) {
-            startExamDto.setExamination(examination);
-            startExamDto.setExamRecord(examRecord);
-            // 根据题目ID，类型获取第一题的详细信息
-            SubjectDto subjectDto = subjectService.findFirstSubjectByExaminationId(examRecord.getExaminationId());
-            startExamDto.setSubjectDto(subjectDto);
-            // 创建第一题的答题
-            Answer answer = new Answer();
-            answer.setCommonValue(currentUsername, applicationCode, tenantCode);
-            answer.setExamRecordId(examRecord.getId());
-            answer.setSubjectId(subjectDto.getId());
-            // 默认待批改状态
-            answer.setMarkStatus(AnswerConstant.TO_BE_MARKED);
-            answer.setAnswerType(AnswerConstant.WRONG);
-            answer.setStartTime(answer.getCreateDate());
-            // 保存答题
-            this.save(answer);
-            subjectDto.setAnswer(answer);
-        }
-        return startExamDto;
+		return this.start(examRecord.getUserId(), currentUsername, examRecord.getExaminationId(), SysUtil.getSysCode(), SysUtil.getTenantCode());
     }
 
     /**
@@ -777,5 +748,79 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
         AnswerHandleResult judgementResult = judgementHandler.handle(distinctAnswer.get(SubjectTypeEnum.JUDGEMENT.name()));
         AnswerHandleResult shortAnswerResult = shortAnswerHandler.handle(distinctAnswer.get(SubjectTypeEnum.SHORT_ANSWER.name()));
         return AnswerHandlerUtil.addAll(Arrays.asList(choiceResult, multipleResult, judgementResult, shortAnswerResult));
+    }
+
+    /**
+     * 开始考试
+     *
+     * @param examinationId examinationId
+     * @param identifier identifier
+     * @return StartExamDto
+     * @author tangyi
+     * @date 2020/3/21 5:51 下午
+     */
+    @Transactional
+    public StartExamDto anonymousUserStart(Long examinationId, String identifier) {
+        String applicationCode = SysUtil.getSysCode();
+        String tenantCode = SysUtil.getTenantCode();
+        // 创建考试记录
+        if (examinationId == null)
+            throw new CommonException("参数校验失败，考试id为空！");
+        if (identifier == null)
+            throw new CommonException("参数校验失败，用户identifier为空！");
+        // 查询用户信息
+        ResponseBean<UserVo> userVoResponseBean = userServiceClient.findUserByIdentifier(identifier, tenantCode);
+        if (!ResponseUtil.isSuccess(userVoResponseBean)) {
+            throw new CommonException("获取用户" + identifier + "信息失败！");
+        }
+        return this.start(userVoResponseBean.getData().getUserId(), identifier, examinationId, applicationCode, tenantCode);
+    }
+
+    /**
+     * 开始考试
+     *
+     * @param userId userId
+     * @param identifier identifier
+     * @param examinationId examinationId
+     * @param applicationCode applicationCode
+     * @param tenantCode tenantCode
+     * @return StartExamDto
+     * @author tangyi
+     * @date 2019/04/30 23:06
+     */
+    @Transactional
+    public StartExamDto start(Long userId, String identifier, Long examinationId, String applicationCode, String tenantCode) {
+        StartExamDto startExamDto = new StartExamDto();
+        // 查找考试信息
+        Examination examination = examinationService.get(examinationId);
+        ExaminationRecord examRecord = new ExaminationRecord();
+        examRecord.setCommonValue(identifier, applicationCode, tenantCode);
+        examRecord.setUserId(userId);
+        examRecord.setExaminationId(examinationId);
+        examRecord.setStartTime(examRecord.getCreateDate());
+
+        // 默认未提交状态
+        examRecord.setSubmitStatus(SubmitStatusEnum.NOT_SUBMITTED.getValue());
+        // 保存考试记录
+        if (examRecordService.insert(examRecord) > 0) {
+            startExamDto.setExamination(examination);
+            startExamDto.setExamRecord(examRecord);
+            // 根据题目ID，类型获取第一题的详细信息
+            SubjectDto subjectDto = subjectService.findFirstSubjectByExaminationId(examRecord.getExaminationId());
+            startExamDto.setSubjectDto(subjectDto);
+            // 创建第一题的答题
+            Answer answer = new Answer();
+            answer.setCommonValue(identifier, applicationCode, tenantCode);
+            answer.setExamRecordId(examRecord.getId());
+            answer.setSubjectId(subjectDto.getId());
+            // 默认待批改状态
+            answer.setMarkStatus(AnswerConstant.TO_BE_MARKED);
+            answer.setAnswerType(AnswerConstant.WRONG);
+            answer.setStartTime(answer.getCreateDate());
+            // 保存答题
+            this.save(answer);
+            subjectDto.setAnswer(answer);
+        }
+        return startExamDto;
     }
 }

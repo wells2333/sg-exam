@@ -54,8 +54,8 @@ export default {
     return {
       loginForm: {
         tenantCode: 'gitee',
-        identifier: '',
-        credential: '',
+        identifier: 'preview',
+        credential: '123456',
         code: '',
         randomStr: '',
         rememberMe: false
@@ -149,7 +149,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: linear-gradient(-45deg, #3a82ce 0%, #2f8cec 33%, #19ceb5 100%);
+    background: url('../../../static/img/login_bg.jpg') -20% 10%;
     background-size: cover;
   }
   .light-font {

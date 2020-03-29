@@ -18,6 +18,6 @@ public class ExaminationDto extends Examination {
     /**
      * 封面地址
      */
-    private String avatarUrl;
+    private String logoUrl;
 
 }

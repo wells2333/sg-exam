@@ -127,6 +127,6 @@ sys:
 
 # 微信配置
 wx:
-  appId: test
-  appSecret: test
-  grantType: authorization_code
+  appId: ${WX_APP_ID:test}
+  appSecret: ${WX_APP_SECRET:test}
+  grantType: ${WX_GRANT_TYPE:authorization_code}

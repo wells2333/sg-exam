@@ -249,23 +249,60 @@ public class ExaminationController extends BaseController {
     }
 
     /**
+     * 根据考试ID查询题目id列表
+     *
+     * @param examinationId examinationId
+     * @return ResponseBean
+     * @author tangyi
+     * @date 2019/06/18 14:31
+     */
+    @ApiImplicitParam(name = "examinationId", value = "考试ID", required = true, paramType = "path")
+    @GetMapping("/anonymousUser/{examinationId}/subjectIds")
+    public ResponseBean<List<ExaminationSubject>> anonymousUserFindExaminationSubjectIds(@PathVariable Long examinationId) {
+        List<ExaminationSubject> subjects = examinationService.findListByExaminationId(examinationId);
+        subjects.forEach(BaseEntity::clearCommonValue);
+        return new ResponseBean<>(subjects);
+    }
+
+    /**
      * 根据考试ID生成二维码
      * @param examinationId examinationId
      * @param response response
      * @author tangyi
      * @date 2020/3/15 1:16 下午
      */
-	@ApiOperation(value = "生成二维码", notes = "生成二维码")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "examinationId", value = "考试ID", required = true, dataType = "Long", paramType = "path")
-	})
-	@GetMapping("anonymousUser/generateQrCode/{examinationId}")
-	public void produceCode(@PathVariable Long examinationId, HttpServletResponse response) throws Exception {
-		response.setHeader("Cache-Control", "no-store, no-cache");
-		response.setContentType("image/jpeg");
-		try (ByteArrayInputStream inputStream = new ByteArrayInputStream(examinationService.share(examinationId)); ServletOutputStream out = response.getOutputStream()) {
-			BufferedImage image = ImageIO.read(inputStream);
-			ImageIO.write(image, "PNG", out);
-		}
-	}
+    @ApiOperation(value = "生成二维码", notes = "生成二维码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "examinationId", value = "考试ID", required = true, dataType = "Long", paramType = "path")
+    })
+    @GetMapping("anonymousUser/generateQrCode/{examinationId}")
+    public void produceCode(@PathVariable Long examinationId, HttpServletResponse response) throws Exception {
+        response.setHeader("Cache-Control", "no-store, no-cache");
+        response.setContentType("image/jpeg");
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(examinationService.produceCode(examinationId)); ServletOutputStream out = response.getOutputStream()) {
+            BufferedImage image = ImageIO.read(inputStream);
+            ImageIO.write(image, "PNG", out);
+        }
+    }
+
+    /**
+     * 根据考试ID生成二维码
+     * @param examinationId examinationId
+     * @param response response
+     * @author tangyi
+     * @date 2020/3/21 5:38 下午
+     */
+    @ApiOperation(value = "生成二维码(v2)", notes = "生成二维码(v2)")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "examinationId", value = "考试ID", required = true, dataType = "Long", paramType = "path")
+    })
+    @GetMapping("anonymousUser/generateQrCode/v2/{examinationId}")
+    public void produceCodeV2(@PathVariable Long examinationId, HttpServletResponse response) throws Exception {
+        response.setHeader("Cache-Control", "no-store, no-cache");
+        response.setContentType("image/jpeg");
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(examinationService.produceCodeV2(examinationId)); ServletOutputStream out = response.getOutputStream()) {
+            BufferedImage image = ImageIO.read(inputStream);
+            ImageIO.write(image, "PNG", out);
+        }
+    }
 }

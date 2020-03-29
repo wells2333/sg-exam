@@ -47,10 +47,25 @@
           <span>{{ scope.row.modifyDate | fmtDate('yyyy-MM-dd hh:mm') }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.actions')" class-name="status-col" width="300">
+      <el-table-column :label="$t('table.actions')" class-name="status-col" width="100">
         <template slot-scope="scope">
-          <el-button v-if="course_btn_edit" type="primary" size="mini" @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
-          <el-button v-if="course_btn_del" type="danger" size="mini" @click="handleDelete(scope.row)">{{ $t('table.delete') }}</el-button>
+          <el-dropdown>
+            <span class="el-dropdown-link">
+              操作<i class="el-icon-caret-bottom el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item v-if="course_btn_edit">
+                <a @click="handleUpdate(scope.row)">
+                  <span><i class="el-icon-edit"></i>{{ $t('table.edit') }}</span>
+                </a>
+              </el-dropdown-item>
+              <el-dropdown-item v-if="course_btn_del">
+                <a @click="handleDelete(scope.row)">
+                  <span><i class="el-icon-delete"></i>{{ $t('table.delete') }}</span>
+                </a>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </template>
       </el-table-column>
     </el-table>

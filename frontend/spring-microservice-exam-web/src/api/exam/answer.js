@@ -79,6 +79,21 @@ export function saveAndNext (obj, nextType, nextSubjectId, nextSubjectType) {
   })
 }
 
+export function anonymousUserSaveAndNext (obj, nextType, nextSubjectId, nextSubjectType) {
+  let url = baseAnswerUrl + 'anonymousUser/saveAndNext?nextType=' + nextType
+  if (nextSubjectId !== undefined) {
+    url += '&nextSubjectId=' + nextSubjectId
+  }
+  if (nextSubjectType !== undefined) {
+    url += '&nextSubjectType=' + nextSubjectType
+  }
+  return request({
+    url: url,
+    method: 'post',
+    data: obj
+  })
+}
+
 export function submit (obj) {
   return request({
     url: baseAnswerUrl + 'submit',
@@ -87,9 +102,17 @@ export function submit (obj) {
   })
 }
 
-export function anonymousUserSubmit (obj, examinationId, identifier) {
+export function anonymousUserSubmit (obj) {
   return request({
-    url: baseAnswerUrl + 'anonymousUser/submit/' + examinationId + '?identifier=' + identifier,
+    url: baseAnswerUrl + 'anonymousUser/submit',
+    method: 'post',
+    data: obj
+  })
+}
+
+export function anonymousUserSubmitAll (obj, examinationId, identifier) {
+  return request({
+    url: baseAnswerUrl + 'anonymousUser/submitAll/' + examinationId + '?identifier=' + identifier,
     method: 'post',
     data: obj
   })
