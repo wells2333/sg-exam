@@ -97,6 +97,8 @@ services:
       - redis
     ports:
       - "9181:9181"
+    volumes:
+      - ./logs/config-service:/logs/config-service
     networks:
       - net
 

@@ -6,6 +6,7 @@ import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.service.CrudService;
 import com.github.tangyi.exam.api.module.Course;
 import com.github.tangyi.exam.mapper.CourseMapper;
+import com.github.tangyi.user.api.constant.AttachmentConstant;
 import com.github.tangyi.user.api.module.Attachment;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -141,9 +142,7 @@ public class CourseService extends CrudService<CourseMapper, Course> {
             courseList.forEach(course -> {
                 // 获取配置默认头像地址
                 if (course.getLogoId() != null && course.getLogoId() != 0L) {
-                    Attachment attachment = new Attachment();
-                    attachment.setId(course.getLogoId());
-                    course.setLogoUrl(sysProperties.getLogoUrl() + course.getLogoId() + sysProperties.getLogoSuffix());
+                    course.setLogoUrl(AttachmentConstant.ATTACHMENT_PREVIEW_URL + course.getLogoId());
                 } else {
                     Long index = new Random().nextInt(sysProperties.getLogoCount()) + 1L;
                     course.setLogoUrl(sysProperties.getLogoUrl() + index + sysProperties.getLogoSuffix());

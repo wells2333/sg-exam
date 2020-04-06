@@ -1,7 +1,7 @@
 <template>
   <el-form ref="dataSubjectForm" :rules="subjectRules" :model="subjectInfo" :label-position="labelPosition" label-width="100px">
     <el-row>
-      <el-col :span="10">
+      <el-col :span="20" :offset="2">
         <div class="subject-info">
           <el-row>
             <el-col :span="12">
@@ -17,13 +17,6 @@
           </el-row>
           <el-row>
             <el-col :span="24">
-              <el-form-item :label="$t('table.subjectName')" prop="subjectName">
-                <el-input v-model="subjectInfo.subjectName" @focus="updateTinymceContent(subjectInfo.subjectName, tinymceEdit.subjectName)"/>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
               <el-form-item :label="$t('table.subject.answer')" prop="answer">
                 <el-radio-group v-model="subjectInfo.answer.answer">
                   <el-radio v-for="(option) in options" :label="option.optionName" :key="option.optionName">{{ option.optionName }}</el-radio>
@@ -33,16 +26,18 @@
           </el-row>
           <el-row>
             <el-col :span="24">
-              <el-form-item :label="$t('table.subject.analysis')" prop="analysis" class="analysis-form-item">
-                <el-input v-model="subjectInfo.analysis" @input="updateTinymceContent(subjectInfo.analysis, tinymceEdit.analysis)"/>
+              <el-form-item :label="$t('table.subjectName')" prop="subjectName">
+                <tinymce ref="subjectNameEditor" :height="60" v-model="subjectInfo.subjectName"/>
               </el-form-item>
             </el-col>
           </el-row>
-        </div>
-      </el-col>
-      <el-col :span="14">
-        <div class="subject-tinymce">
-          <tinymce ref="choicesEditor" :height="350" v-model="choicesContent" @hasClick="hasClick"/>
+          <el-row>
+            <el-col :span="24">
+              <el-form-item :label="$t('table.subject.analysis')" prop="analysis" class="analysis-form-item">
+                <tinymce ref="analysisEditor" :height="60" v-model="subjectInfo.analysis"/>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </div>
       </el-col>
     </el-row>
@@ -102,32 +97,7 @@ export default {
         score: [{ required: true, message: '请输入题目分值', trigger: 'change' }],
         answer: [{ required: true, message: '请输入答案', trigger: 'change' }]
       },
-      tinymce: {
-        type: 1, // 类型 0：题目名称，1：选项
-        dialogTinymceVisible: false,
-        tempValue: '',
-        currentEdit: -1
-      },
-      // 编辑对象
-      tinymceEdit: {
-        subjectName: -1,
-        answer: 4,
-        analysis: 5
-      },
       options: []
-    }
-  },
-  watch: {
-    // 监听富文本编辑器的输入
-    choicesContent: {
-      handler: function (choicesContent) {
-        if (isNotEmpty(this.$refs.choicesEditor)) {
-          if (this.editType === 1 && this.$refs.choicesEditor.getHasClick()) {
-            this.saveTinymceContent(choicesContent)
-          }
-        }
-      },
-      immediate: true
     }
   },
   methods: {
@@ -136,6 +106,7 @@ export default {
         { subjectChoicesId: '', optionName: '正确', optionContent: '正确' },
         { subjectChoicesId: '', optionName: '错误', optionContent: '错误' }
       ]
+      this.subjectInfo.answer.answer = '正确'
     },
     setSubjectInfo (subject) {
       this.subjectInfo = subject
@@ -143,30 +114,6 @@ export default {
     },
     getSubjectInfo () {
       return this.subjectInfo
-    },
-    // 绑定富文本的内容
-    updateTinymceContent (content, currentEdit, type) {
-      // 重置富文本
-      this.choicesContent = ''
-      // 绑定当前编辑的对象
-      this.tinymce.currentEdit = currentEdit
-      this.tinymce.type = type
-      this.$refs.choicesEditor.setContent(content || '')
-      this.editType = 0
-      this.$refs.choicesEditor.setHashClick(false)
-    },
-    saveTinymceContent (content) {
-      switch (this.tinymce.currentEdit) {
-        case this.tinymceEdit.subjectName:
-          this.subjectInfo.subjectName = content
-          break
-        case this.tinymceEdit.answer:
-          this.subjectInfo.answer.answer = content
-          break
-        case this.tinymceEdit.analysis:
-          this.subjectInfo.analysis = content
-          break
-      }
     },
     // 表单校验
     validate () {
@@ -202,10 +149,8 @@ export default {
         this.subjectInfo.score = score
       }
       this.initDefaultOptions()
-    },
-    // 点击事件回调
-    hasClick (hasClick) {
-      this.editType = 1
+      this.$refs['subjectNameEditor'].setContent('')
+      this.$refs['analysisEditor'].setContent('')
     }
   }
 }

@@ -101,6 +101,11 @@ public class ApiMsg {
 	public static final int KEY_AUTHENTICATION = 405;
 
 	/**
+	 * 参数校验
+	 */
+	public static final int KEY_PARAM_VALIDATE = 406;
+
+	/**
 	 * code和提示内容的对应关系
 	 */
 	private static final Map<Integer, String> CODE_MAP = new HashMap<>();
@@ -130,6 +135,7 @@ public class ApiMsg {
 		KEY_MAP.put(KEY_VALIDATE_CODE, "VALIDATE CODE");
 		KEY_MAP.put(KEY_TOKEN, "TOKEN");
 		KEY_MAP.put(KEY_ACCESS, "ACCESS");
+		KEY_MAP.put(KEY_PARAM_VALIDATE, "PARAM_VALIDATE");
 	}
 
 	public static String code2Msg(int codeKey, int msgKey) {

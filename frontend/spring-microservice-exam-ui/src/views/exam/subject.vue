@@ -86,6 +86,11 @@
                         <span><i class="el-icon-edit"></i>{{ $t('table.edit') }}</span>
                       </a>
                     </el-dropdown-item>
+                    <el-dropdown-item>
+                      <a @click="handleViewSubject(scope.row)">
+                        <span><i class="el-icon-view"></i>{{ $t('table.preview') }}</span>
+                      </a>
+                    </el-dropdown-item>
                     <el-dropdown-item v-if="subject_bank_btn_del">
                       <a @click="handleDeleteSubject(scope.row)">
                         <span><i class="el-icon-delete"></i>{{ $t('table.delete') }}</span>
@@ -183,12 +188,39 @@
         </el-col>
       </el-row>
     </el-dialog>
+
+    <!-- 预览题目 -->
+    <el-dialog title="预览题目" :visible.sync="dialogViewVisible" width="60%" top="10vh">
+      <div class="subject-title">
+        <span class="subject-title-content" v-html="tempSubject.subjectName"/>
+        <span class="subject-title-content">&nbsp;({{tempSubject.score}})分</span>
+      </div>
+      <ul v-if="tempSubject.type === 0 || tempSubject.type === 3" class="subject-options">
+        <li class="subject-option" v-for="(option) in tempSubject.options" :key="option.id">
+          <input class="toggle" type="checkbox">
+          <label><span class="subject-option-prefix">{{option.optionName}}&nbsp;</span><span v-html="option.optionContent" class="subject-option-prefix"></span></label>
+        </li>
+      </ul>
+      <ul v-if="tempSubject.type === 2" class="subject-options">
+        <li class="subject-option">
+          <input class="toggle" type="checkbox">
+          <label><span class="subject-option-prefix">正确</span></label>
+        </li>
+        <li class="subject-option">
+          <input class="toggle" type="checkbox">
+          <label><span class="subject-option-prefix">错误</span></label>
+        </li>
+      </ul>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogViewVisible = false">{{ $t('table.confirm') }}</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { fetchCategoryTree, getCategory, addCategory, delCategory, putCategory } from '@/api/exam/subjectCategory'
-import { fetchSubjectList, addSubject, putSubject, delSubject, delAllSubject, exportSubject } from '@/api/exam/subject'
+import { fetchSubjectList, addSubject, getSubject, putSubject, delSubject, delAllSubject, exportSubject } from '@/api/exam/subject'
 import { mapGetters } from 'vuex'
 import { getToken } from '@/utils/auth'
 import { checkMultipleSelect, exportExcel, notifySuccess, isNotEmpty } from '@/utils/util'
@@ -308,6 +340,8 @@ export default {
       dialogImportVisible: false,
       // 导出窗口状态
       dialogExportVisible: false,
+      // 预览窗口状态
+      dialogViewVisible: false,
       // 选择的菜单
       multipleSelection: [],
       importUrl: '/api/exam/v1/subject/import',
@@ -699,6 +733,14 @@ export default {
         }).catch(() => {})
       }
     },
+    // 查看题目
+    handleViewSubject (row) {
+      // 加载题目信息
+      getSubject(row.id, { type: row.type }).then(response => {
+        this.tempSubject = response.data.data
+        this.dialogViewVisible = true
+      })
+    },
     // 点击排序按钮
     sortSubjectChange (column, prop, order) {
       this.listQuery.sort = column.prop
@@ -813,16 +855,88 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
   .category-header {
     margin: 12px;
   }
-  .tree-container{
+
+  .tree-container {
     padding-top: 10px;
   }
+
   .category-btn {
     margin: 5px;
     padding: 6px 13px;
   }
 
+  .filter-tree {
+    overflow: hidden;
+  }
+
+  .subject-title {
+    font-size: 18px;
+    line-height: 22px;
+
+    .subject-title-number {
+      display: inline-block;
+      line-height: 22px;
+    }
+
+    .subject-title-content {
+      display: inline-block;
+    }
+  }
+
+  .subject-options {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    > li {
+      position: relative;
+      font-size: 24px;
+
+      .toggle {
+        opacity: 0;
+        text-align: center;
+        width: 35px;
+        /* auto, since non-WebKit browsers doesn't support input styling */
+        height: auto;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin: auto 0;
+        border: none;
+        /* Mobile Safari */
+        -webkit-appearance: none;
+        appearance: none;
+      }
+
+      .toggle + label {
+        background-image: url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%22-10%20-18%20100%20135%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22none%22%20stroke%3D%22%23ededed%22%20stroke-width%3D%223%22/%3E%3C/svg%3E');
+        background-repeat: no-repeat;
+        background-position: center left;
+        background-size: 30px;
+      }
+
+      .toggle:checked + label {
+        background-size: 30px;
+        background-image: url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%22-10%20-18%20100%20135%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22none%22%20stroke%3D%22%23bddad5%22%20stroke-width%3D%223%22/%3E%3Cpath%20fill%3D%22%235dc2af%22%20d%3D%22M72%2025L42%2071%2027%2056l-4%204%2020%2020%2034-52z%22/%3E%3C/svg%3E');
+      }
+
+      label {
+        word-break: break-all;
+        padding: 10px 10px 10px 45px;
+        display: block;
+        line-height: 1.0;
+        transition: color 0.4s;
+      }
+
+      /* 选项名称 */
+      .subject-option-prefix {
+        font-size: 16px;
+        display: inline-block
+      }
+    }
+  }
 </style>

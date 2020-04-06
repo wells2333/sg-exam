@@ -428,4 +428,7 @@ export default {
   .tab-container{
     margin: 30px;
   }
+  .filter-tree {
+    overflow: hidden;
+  }
 </style>

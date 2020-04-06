@@ -1,26 +1,37 @@
 package com.github.tangyi.user.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.github.tangyi.common.basic.properties.SysProperties;
 import com.github.tangyi.common.basic.vo.AttachmentVo;
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.model.ResponseBean;
+import com.github.tangyi.common.core.utils.FileUtil;
 import com.github.tangyi.common.core.utils.PageUtil;
+import com.github.tangyi.common.core.utils.Servlets;
 import com.github.tangyi.common.core.web.BaseController;
 import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.security.utils.SysUtil;
 import com.github.tangyi.user.api.module.Attachment;
 import com.github.tangyi.user.service.AttachmentService;
+import com.github.tangyi.user.uploader.UploadInvoker;
+import com.google.common.net.HttpHeaders;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
+import java.io.*;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +49,8 @@ import java.util.stream.Collectors;
 public class AttachmentController extends BaseController {
 
     private final AttachmentService attachmentService;
+
+    private final SysProperties sysProperties;
 
     /**
      * 根据ID获取
@@ -104,9 +117,19 @@ public class AttachmentController extends BaseController {
     @Log("上传文件")
     public ResponseBean<Attachment> upload(@ApiParam(value = "要上传的文件", required = true) @RequestParam("file") MultipartFile file,
                                            Attachment attachment) {
-        if (file.isEmpty())
-            return new ResponseBean<>(new Attachment());
-        return new ResponseBean<>(attachmentService.upload(file, attachment));
+        if (!file.isEmpty()) {
+            try {
+                attachment.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+                attachment.setAttachType(FileUtil.getFileNameEx(file.getOriginalFilename()));
+                attachment.setAttachSize(String.valueOf(file.getSize()));
+                attachment.setAttachName(file.getOriginalFilename());
+                attachment.setBusiId(attachment.getId().toString());
+                attachment = UploadInvoker.getInstance().upload(attachment, file.getBytes());
+            } catch (Exception e) {
+                log.error("upload attachment error: {}", e.getMessage(), e);
+            }
+        }
+        return new ResponseBean<>(attachment);
     }
 
     /**
@@ -119,19 +142,36 @@ public class AttachmentController extends BaseController {
     @GetMapping("download")
     @ApiOperation(value = "下载附件", notes = "根据ID下载附件")
     @ApiImplicitParam(name = "id", value = "附件ID", required = true, dataType = "Long")
-    public ResponseBean<String> download(@NotBlank Long id) {
-        String downloadUrl = "";
+    public void download(HttpServletRequest request, HttpServletResponse response, @NotBlank Long id) {
         try {
 			Attachment attachment = new Attachment();
 			attachment.setId(id);
 			attachment = attachmentService.get(attachment);
 			if (attachment == null)
 				throw new CommonException("Attachment does not exist");
-			downloadUrl = attachmentService.download(attachment);
+			InputStream inputStream = UploadInvoker.getInstance().download(attachment);
+			if (inputStream == null) {
+			    log.info("attachment is not exists");
+			    return;
+            }
+            OutputStream outputStream = response.getOutputStream();
+            response.setContentType("application/zip");
+            response.setHeader(HttpHeaders.CACHE_CONTROL, "max-age=10");
+            // IE之外的浏览器使用编码输出名称
+            String contentDisposition = "";
+            String httpUserAgent = request.getHeader("User-Agent");
+            if (StringUtils.isNotEmpty(httpUserAgent)) {
+                httpUserAgent = httpUserAgent.toLowerCase();
+                String fileName = attachment.getAttachName();
+                contentDisposition = httpUserAgent.contains("wps") ? "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8") : Servlets.getDownName(request, fileName);
+            }
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition);
+            response.setContentLength(inputStream.available());
+            FileCopyUtils.copy(inputStream, outputStream);
+            log.info("download {} success", attachment.getAttachName());
 		} catch (Exception e) {
         	log.error("Download attachment failed: {}", e.getMessage(), e);
 		}
-		return new ResponseBean<>(downloadUrl);
 	}
 
     /**
@@ -152,7 +192,7 @@ public class AttachmentController extends BaseController {
         attachment = attachmentService.get(attachment);
         boolean success = false;
         if (attachment != null)
-            success = attachmentService.delete(attachment) > 0;
+            success = UploadInvoker.getInstance().delete(attachment);
         return new ResponseBean<>(success);
     }
 
@@ -172,7 +212,7 @@ public class AttachmentController extends BaseController {
         boolean success = false;
         try {
             if (ArrayUtils.isNotEmpty(ids))
-                success = attachmentService.deleteAll(ids) > 0;
+                success = UploadInvoker.getInstance().deleteAll(ids);
         } catch (Exception e) {
             log.error("Delete attachment failed", e);
         }
@@ -205,19 +245,49 @@ public class AttachmentController extends BaseController {
     }
 
     /**
-     * 获取预览地址
+     * 是否支持预览
      *
      * @param id id
      * @return ResponseBean
      * @author tangyi
      * @date 2019/06/19 15:47
      */
-    @GetMapping("/{id}/preview")
-    @ApiOperation(value = "获取预览地址", notes = "根据附件ID获取预览地址")
+    @GetMapping("/{id}/canPreview")
+    @ApiOperation(value = "判断附件是否支持预览", notes = "根据附件ID判断附件是否支持预览")
     @ApiImplicitParam(name = "id", value = "附件id", required = true, dataType = "Long", paramType = "path")
-    public ResponseBean<String> getPreviewUrl(@PathVariable Long id) {
+    public ResponseBean<Boolean> canPreview(@PathVariable Long id) {
         Attachment attachment = new Attachment();
         attachment.setId(id);
-        return new ResponseBean<>(attachmentService.getPreviewUrl(attachment));
+        attachment = attachmentService.get(attachment);
+        return new ResponseBean<>(attachment != null && ArrayUtils.contains(sysProperties.getCanPreview().split(","), attachment.getAttachType()));
+    }
+
+    /**
+     * 预览附件
+     *
+     * @param response response
+     * @param id id
+     * @author tangyi
+     * @date 2019/06/19 15:47
+     */
+    @GetMapping("/preview")
+    @ApiOperation(value = "预览附件", notes = "根据附件ID预览附件")
+    @ApiImplicitParam(name = "id", value = "附件id", required = true, dataType = "Long")
+    public void preview(HttpServletResponse response, @RequestParam Long id) throws Exception {
+        Attachment attachment = new Attachment();
+        attachment.setId(id);
+        attachment = attachmentService.get(attachment);
+        FileInputStream stream = new FileInputStream(new File(attachment.getFastFileId() + File.separator + attachment.getAttachName()));
+        ByteArrayOutputStream out = new ByteArrayOutputStream(1000);
+        byte[] b = new byte[1000];
+        int n;
+        while ((n = stream.read(b)) != -1) {
+            out.write(b, 0, n);
+        }
+        response.setHeader("Content-Type", "image/png");
+        response.getOutputStream().write(out.toByteArray());
+        response.getOutputStream().flush();
+        out.close();
+        stream.close();
     }
 }

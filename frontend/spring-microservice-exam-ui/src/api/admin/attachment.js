@@ -24,9 +24,9 @@ export function getObj (id) {
   })
 }
 
-export function preview (id) {
+export function canPreview (id) {
   return request({
-    url: baseAttachmentUrl + id + '/preview',
+    url: baseAttachmentUrl + id + '/canPreview',
     method: 'get'
   })
 }

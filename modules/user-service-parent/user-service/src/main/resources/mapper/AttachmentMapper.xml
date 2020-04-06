@@ -4,6 +4,7 @@
     <resultMap id="attachmentResultMap" type="com.github.tangyi.user.api.module.Attachment">
         <id column="id" property="id"/>
         <result column="attach_name" property="attachName"/>
+        <result column="attach_type" property="attachType"/>
         <result column="attach_size" property="attachSize"/>
         <result column="group_name" property="groupName"/>
         <result column="fast_file_id" property="fastFileId"/>
@@ -11,6 +12,7 @@
         <result column="busi_module" property="busiModule"/>
         <result column="busi_type" property="busiType"/>
         <result column="preview_url" property="previewUrl"/>
+        <result column="upload_type" property="uploadType"/>
         <result column="creator" property="creator"/>
         <result column="create_date" property="createDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="modifier" property="modifier"/>
@@ -23,6 +25,7 @@
     <sql id="attachmentColumns">
         a.id,
         a.attach_name,
+        a.attach_type,
         a.attach_size,
         a.group_name,
         a.fast_file_id,
@@ -30,6 +33,7 @@
         a.busi_module,
         a.busi_type,
         a.preview_url,
+        a.upload_type,
         a.creator,
         a.create_date,
         a.modifier,
@@ -92,6 +96,7 @@
         INSERT INTO sys_attachment (
             id,
             attach_name,
+            attach_type,
             attach_size,
             group_name,
             fast_file_id,
@@ -99,6 +104,7 @@
             busi_module,
             busi_type,
             preview_url,
+            upload_type,
             creator,
             create_date,
             modifier,
@@ -109,6 +115,7 @@
         ) VALUES (
             #{id},
             #{attachName},
+            #{attachType},
             #{attachSize},
             #{groupName},
             #{fastFileId},
@@ -116,6 +123,7 @@
             #{busiModule},
             #{busiType},
             #{previewUrl},
+            #{uploadType},
             #{creator},
             #{createDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
             #{modifier},
@@ -130,6 +138,9 @@
         UPDATE sys_attachment SET
         <if test="attachName != null">
             attach_name = #{attachName},
+        </if>
+        <if test="attachType != null">
+            attach_type = #{attachType},
         </if>
         <if test="attachSize != null">
             attach_size = #{attachSize},
@@ -151,6 +162,9 @@
         </if>
         <if test="previewUrl != null">
             preview_url = #{previewUrl},
+        </if>
+        <if test="uploadType != null">
+            upload_type = #{uploadType},
         </if>
         <if test="delFlag != null">
             del_flag = #{delFlag},

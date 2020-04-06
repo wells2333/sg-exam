@@ -1,3 +1,4 @@
+
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
@@ -32,6 +33,6 @@ CREATE TABLE `oauth_client_details`  (
 -- ----------------------------
 -- Records of oauth_client_details
 -- ----------------------------
-INSERT INTO `oauth_client_details` VALUES (607150228717572096, 'web_app', NULL, 'spring-microservice-exam-secret', '$2a$10$IWLD8r7e0rKMW.ZhGsGCUO./MZUNDKudIswSToa9puXJwty.h59.u', 'read,write', 'password,authorization_code,refresh_token,implicit', NULL, NULL, '3600', '86400', NULL, NULL, 'admin', '2019-03-30 23:43:07', 'admin', '2019-12-24 21:56:19', 0, 'EXAM', 'gitee');
+INSERT INTO `oauth_client_details` VALUES (607150228717572096, 'web_app', NULL, 'spring-microservice-exam-secret', '$2a$10$IWLD8r7e0rKMW.ZhGsGCUO./MZUNDKudIswSToa9puXJwty.h59.u', 'read,write', 'password,authorization_code,refresh_token,implicit', NULL, NULL, '86400', '86400', NULL, NULL, 'admin', '2019-03-30 23:43:07', 'admin', '2020-03-28 20:01:31', 0, 'EXAM', 'gitee');
 
 SET FOREIGN_KEY_CHECKS = 1;

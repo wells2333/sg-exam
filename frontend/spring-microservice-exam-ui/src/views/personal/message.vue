@@ -95,7 +95,6 @@
 import { updateObjInfo, updateAvatar } from '@/api/admin/user'
 import { mapState } from 'vuex'
 import { getToken } from '@/utils/auth'
-import { preview } from '@/api/admin/attachment'
 import { isNotEmpty, notifySuccess, notifyFail } from '@/utils/util'
 import store from '@/store'
 
@@ -152,9 +151,7 @@ export default {
         return
       }
       // 重新获取预览地址
-      preview(res.data.id).then(response => {
-        this.userInfo.avatarUrl = response.data.data
-      })
+      this.userInfo.avatarUrl = '/api/user/v1/attachment/preview?id=' + res.data.id
       this.userInfo.avatarId = res.data.id
       updateAvatar(this.userInfo).then(response => {
         notifySuccess(this, '头像上传成功')

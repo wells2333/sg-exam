@@ -1,10 +1,9 @@
 package com.github.tangyi.user.api.module;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.tangyi.common.core.persistence.BaseEntity;
 import com.github.tangyi.user.api.constant.AttachmentConstant;
 import lombok.Data;
-
-import javax.validation.constraints.NotBlank;
 
 /**
  * 附件信息
@@ -18,14 +17,17 @@ public class Attachment extends BaseEntity<Attachment> {
     /**
      * 附件名称
      */
-    @NotBlank(message = "附件名称不能为空")
     private String attachName;
 
     /**
      * 附件大小
      */
-    @NotBlank(message = "附件大小不能为空")
     private String attachSize;
+
+    /**
+     * 附件类型
+     */
+    private String attachType;
 
     /**
      * 组名称
@@ -35,12 +37,12 @@ public class Attachment extends BaseEntity<Attachment> {
     /**
      * 文件ID
      */
+    @JsonIgnore
     private String fastFileId;
 
     /**
      * 业务流水号
      */
-    @NotBlank(message = "附件业务流水号不能为空")
     private String busiId;
 
     /**
@@ -57,4 +59,14 @@ public class Attachment extends BaseEntity<Attachment> {
      * 预览地址
      */
     private String previewUrl;
+
+    /**
+     * 上传类型，1：本地目录，2：fastDfs，3：七牛云
+     */
+    private Integer uploadType;
+
+    /**
+     * 上传结果
+     */
+    private String uploadResult;
 }
