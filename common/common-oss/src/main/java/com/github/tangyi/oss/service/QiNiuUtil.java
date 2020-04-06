@@ -2,6 +2,7 @@ package com.github.tangyi.oss.service;
 
 import com.github.tangyi.common.core.constant.CommonConstant;
 import com.github.tangyi.common.core.utils.JsonMapper;
+import com.github.tangyi.common.core.utils.SpringContextHolder;
 import com.github.tangyi.oss.config.QiNiuConfig;
 import com.github.tangyi.oss.exceptions.OssException;
 import com.qiniu.common.QiniuException;
@@ -14,10 +15,7 @@ import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -27,10 +25,7 @@ import java.net.URLEncoder;
  * @date 2019/12/8 20:25
  */
 @Slf4j
-@Service
-public class QiNiuService {
-
-	private final QiNiuConfig qiNiuConfig;
+public class QiNiuUtil {
 
 	private Auth auth;
 
@@ -38,18 +33,25 @@ public class QiNiuService {
 
 	private BucketManager bucketManager;
 
-	@Autowired
-	public QiNiuService(QiNiuConfig qiNiuConfig) {
-		this.qiNiuConfig = qiNiuConfig;
+	private QiNiuConfig qiNiuConfig;
+
+	private static QiNiuUtil instance;
+
+	public synchronized static QiNiuUtil getInstance() {
+		if (instance == null) {
+			instance = new QiNiuUtil();
+		}
+		return instance;
 	}
 
-	@PostConstruct
-	public void init() {
+	public QiNiuUtil() {
+		qiNiuConfig = SpringContextHolder.getApplicationContext().getBean(QiNiuConfig.class);
 		if (StringUtils.isNotBlank(qiNiuConfig.getAccessKey()) && StringUtils.isNotBlank(qiNiuConfig.getSecretKey())) {
-			auth = Auth.create(qiNiuConfig.getAccessKey(), qiNiuConfig.getSecretKey());
+			instance = new QiNiuUtil();
+			instance.auth = Auth.create(qiNiuConfig.getAccessKey(), qiNiuConfig.getSecretKey());
 			Configuration config = new Configuration(Region.region2());
-			uploadManager = new UploadManager(config);
-			bucketManager = new BucketManager(auth, config);
+			instance.uploadManager = new UploadManager(config);
+			instance.bucketManager = new BucketManager(instance.auth, config);
 		}
 	}
 
@@ -59,7 +61,7 @@ public class QiNiuService {
 	 * @return String
 	 */
 	public String getQiNiuToken() {
-		return auth.uploadToken(qiNiuConfig.getBucket());
+		return auth.uploadToken(getInstance().qiNiuConfig.getBucket());
 	}
 
 	/**

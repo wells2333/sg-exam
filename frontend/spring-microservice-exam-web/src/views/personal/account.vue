@@ -91,7 +91,6 @@ import { updateObjInfo, updateAvatar } from '@/api/admin/user'
 import OFooter from '../common/footer'
 import { getToken } from '@/utils/auth'
 import { mapState } from 'vuex'
-import { preview } from '@/api/admin/attachment'
 import { isNotEmpty, notifySuccess, notifyFail } from '@/utils/util'
 import store from '@/store'
 
@@ -144,14 +143,12 @@ export default {
       })
     },
     handleAvatarSuccess (res, file) {
-      if (!isNotEmpty(res.data) || !isNotEmpty(res.data.fastFileId)) {
+      if (!isNotEmpty(res.data)) {
         notifyFail(this, '头像上传失败')
         return
       }
       // 重新获取预览地址
-      preview(res.data.id).then(response => {
-        this.userInfo.avatarUrl = response.data.data
-      })
+      this.userInfo.avatarUrl = '/api/user/v1/attachment/preview?id=' + res.data.id
       this.userInfo.avatarId = res.data.id
       updateAvatar(this.userInfo).then(response => {
         notifySuccess(this, '头像上传成功')

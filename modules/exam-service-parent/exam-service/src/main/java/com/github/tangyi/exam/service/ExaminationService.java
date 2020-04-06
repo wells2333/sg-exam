@@ -14,6 +14,7 @@ import com.github.tangyi.exam.api.module.Examination;
 import com.github.tangyi.exam.api.module.ExaminationSubject;
 import com.github.tangyi.exam.enums.ExaminationTypeEnum;
 import com.github.tangyi.exam.mapper.ExaminationMapper;
+import com.github.tangyi.user.api.constant.AttachmentConstant;
 import com.github.tangyi.user.api.module.Attachment;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -297,7 +298,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 			if (examinationDto.getAvatarId() != null && examinationDto.getAvatarId() != 0L) {
 				Attachment attachment = new Attachment();
 				attachment.setId(examinationDto.getAvatarId());
-				examinationDto.setLogoUrl(sysProperties.getLogoUrl() + examinationDto.getAvatarId() + sysProperties.getLogoSuffix());
+				examinationDto.setLogoUrl(AttachmentConstant.ATTACHMENT_PREVIEW_URL + examinationDto.getAvatarId());
 			} else {
 				Long index = new Random().nextInt(sysProperties.getLogoCount()) + 1L;
 				examinationDto.setLogoUrl(sysProperties.getLogoUrl() + index + sysProperties.getLogoSuffix());

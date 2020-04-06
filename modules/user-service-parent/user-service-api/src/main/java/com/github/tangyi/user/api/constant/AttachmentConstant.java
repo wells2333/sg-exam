@@ -20,4 +20,9 @@ public class AttachmentConstant {
      * 知识库附件
      */
     public static final String BUSI_TYPE_KNOWLEDGE_ATTACHMENT = "2";
+
+    /**
+     * 附件预览地址
+     */
+    public static final String ATTACHMENT_PREVIEW_URL = "/api/user/v1/attachment/preview?id=";
 }

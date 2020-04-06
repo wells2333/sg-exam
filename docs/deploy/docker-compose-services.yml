@@ -10,6 +10,8 @@ services:
     restart: always
     ports:
       - "9180:9180"
+    volumes:
+      - ./logs/gateway-service:/logs/gateway-service
     networks:
       - net
 
@@ -23,6 +25,8 @@ services:
     restart: always
     ports:
       - "9182:9182"
+    volumes:
+      - ./logs/auth-service:/logs/auth-service
     networks:
       - net
 
@@ -36,6 +40,9 @@ services:
     restart: always
     ports:
       - "9183:9183"
+    volumes:
+      - ./logs/user-service:/logs/user-service
+      - ./attach:/attach
     networks:
       - net
 
@@ -49,6 +56,8 @@ services:
     restart: always
     ports:
       - "9184:9184"
+    volumes:
+      - ./logs/exam-service:/logs/exam-service
     networks:
       - net
 
@@ -62,6 +71,8 @@ services:
     restart: always
     ports:
       - "9185:9185"
+    volumes:
+      - ./logs/msc-service:/logs/msc-service
     networks:
       - net
 
@@ -75,6 +86,8 @@ services:
     restart: always
     ports:
       - "9186:9186"
+    volumes:
+      - ./logs/monitor-service:/logs/monitor-service
     networks:
       - net
 

@@ -1,3 +1,4 @@
+
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
@@ -8,6 +9,7 @@ DROP TABLE IF EXISTS `sys_attachment`;
 CREATE TABLE `sys_attachment`  (
   `id` bigint(20) NOT NULL,
   `attach_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '附件名称',
+  `attach_type` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '附件类型',
   `attach_size` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '附件大小',
   `group_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '组名称',
   `fast_file_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '文件ID',
@@ -15,6 +17,7 @@ CREATE TABLE `sys_attachment`  (
   `busi_module` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '业务模块',
   `busi_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '业务类型 0-普通，1-头像',
   `preview_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '预览地址',
+  `upload_type` tinyint(4) NULL DEFAULT NULL COMMENT '上传类型',
   `creator` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '创建人',
   `create_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   `modifier` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '修改人',
@@ -146,7 +149,7 @@ INSERT INTO `sys_menu` VALUES ('571362994005610496', 'zipkin监控', 'monitor:li
 INSERT INTO `sys_menu` VALUES ('571363268497641472', '服务监控', 'monitor:admin', '/api/monitor/**', '571361163502292992', '', '33', '0', 1, 'admin', '2019-04-26 15:53:38', 'admin', '2020-02-23 16:20:24', '0', 'EXAM', NULL, 'http://118.25.138.130:9186/admin', NULL, NULL, 'gitee');
 INSERT INTO `sys_menu` VALUES ('571363537549660160', '接口文档', 'monitor:document', '/api/monitor/**', '571361163502292992', '', '34', '0', 1, 'admin', '2019-04-26 15:54:42', 'admin', '2020-02-23 16:19:58', '0', 'EXAM', NULL, 'http://118.25.138.130:9180/swagger-ui.html', NULL, NULL, 'gitee');
 INSERT INTO `sys_menu` VALUES ('571364115214372864', '删除日志', 'monitor:log:del', NULL, '571361526066319360', '', '30', '1', 1, 'admin', '2019-04-26 15:57:00', 'admin', '2019-04-26 15:57:00', '0', 'EXAM', NULL, NULL, NULL, '删除日志', 'gitee');
-INSERT INTO `sys_menu` VALUES ('571365178965364736', '首页', 'dashboard', '/', '-1', 'dashboard', '0', '0', 1, 'admin', '2019-04-26 16:01:14', 'admin', '2020-02-23 16:17:59', '0', 'EXAM', 'Layout', '/dashboard', NULL, '首页', 'gitee');
+INSERT INTO `sys_menu` VALUES ('571365178965364736', '首页', 'dashboard', '/', '-1', 'dashboard', '0', '0', 1, 'admin', '2019-04-26 16:01:14', 'admin', '2020-04-05 19:47:03', '0', 'EXAM', 'Layout', 'dashboard', NULL, '首页', 'gitee');
 INSERT INTO `sys_menu` VALUES ('571367565360762880', '系统管理', 'sys', '/api/user/v1/**', '-1', 'component', '1', '0', 1, 'admin', '2019-04-26 16:10:43', 'admin', '2019-05-23 21:52:26', '0', 'EXAM', 'Layout', '/sys', NULL, '系统管理', 'gitee');
 INSERT INTO `sys_menu` VALUES ('571367969767165952', '用户管理', 'sys:user', '/api/user/v1/user/**', '571367565360762880', '', '2', '0', 1, 'admin', '2019-04-26 16:12:19', 'admin', '2019-04-26 16:12:19', '0', 'EXAM', 'views/sys/user', 'user', NULL, '用户管理', 'gitee');
 INSERT INTO `sys_menu` VALUES ('571368181252362240', '部门管理', 'sys:dept', '/api/user/v1/dept/**', '571367565360762880', '', '8', '0', 1, 'admin', '2019-04-26 16:13:09', 'admin', '2019-04-26 16:13:09', '0', 'EXAM', 'views/sys/dept', 'dept', NULL, '部门管理', 'gitee');
@@ -1243,6 +1246,7 @@ CREATE TABLE `sys_user`  (
   `login_time` timestamp(0) NULL DEFAULT NULL COMMENT '最后登录时间',
   `lock_time` timestamp(0) NULL DEFAULT NULL COMMENT '锁定账号时间',
   `wechat` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '微信号',
+  `signature` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '个性签名',
   `family_role` tinyint(4) NULL DEFAULT NULL COMMENT '家庭角色',
   `creator` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '创建人',
   `create_date` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '创建时间',
@@ -1257,10 +1261,10 @@ CREATE TABLE `sys_user`  (
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
-INSERT INTO `sys_user` VALUES (596078038307966976, '管理员', '15521089123', '0', '1633736729@qq.com', '2019-07-01', 0, 0, 596290673729212416, '管理员', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2020-02-23 16:08:40', 'admin', '2020-02-23 15:57:57', 0, 'EXAM', 'gitee');
-INSERT INTO `sys_user` VALUES (596307222997372928, '梁同学', '15521089123', NULL, '1633736729@qq.com', '2019-07-01', 0, 1, 596290673729212416, '梁同学', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2020-02-23 16:08:36', 'admin', '2020-02-23 15:57:53', 0, 'EXAM', 'gitee');
-INSERT INTO `sys_user` VALUES (596332387600830464, '林老师', '15521089123', NULL, '1633736729@qq.com', '2019-07-03', 0, 1, 596290673729212416, '林老师', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2020-02-23 16:08:30', 'admin', '2020-02-23 15:57:48', 0, 'EXAM', 'gitee');
-INSERT INTO `sys_user` VALUES (681167776798347264, '预览权限', '15521089123', NULL, NULL, '2020-02-23', 0, 0, 596290673729212416, '', 596329627606192128, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2020-02-23 16:10:08', 'preview', '2020-02-23 15:59:25', 0, 'EXAM', 'gitee');
+INSERT INTO `sys_user` VALUES (596078038307966976, '管理员', '15521089123', '0', '1633736729@qq.com', '1995-07-03', 0, 0, 596290673729212416, '管理员', NULL, NULL, NULL, 530100, 530000, '2020-04-05 19:47:18', NULL, NULL, '测试', NULL, 'admin', '2020-04-05 19:58:07', 'admin', '2020-04-05 19:47:18', 0, 'EXAM', 'gitee');
+INSERT INTO `sys_user` VALUES (596307222997372928, '梁同学', '15521089123', '0', '1633736729@qq.com', '2019-07-01', 0, 1, 596290673729212416, '梁同学', NULL, NULL, NULL, NULL, NULL, '2020-04-05 19:36:13', NULL, NULL, NULL, NULL, 'admin', '2020-04-05 19:56:36', 'student', '2020-04-05 19:38:57', 0, 'EXAM', 'gitee');
+INSERT INTO `sys_user` VALUES (596332387600830464, '林老师', '15521089123', NULL, '1633736729@qq.com', '2019-07-03', 0, 1, 596290673729212416, '林老师', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2020-03-05 22:17:01', 'admin', '2020-03-05 22:06:27', 0, 'EXAM', 'gitee');
+INSERT INTO `sys_user` VALUES (681167776798347264, '预览权限', '15521089123', '0', NULL, '2020-02-23', 0, 0, 596290673729212416, '', 596329627606192128, NULL, NULL, NULL, NULL, '2020-04-05 19:30:45', NULL, NULL, NULL, NULL, 'admin', '2020-04-05 19:56:38', 'preview', '2020-04-05 19:30:59', 0, 'EXAM', 'gitee');
 
 -- ----------------------------
 -- Table structure for sys_user_auths
@@ -1285,10 +1289,10 @@ CREATE TABLE `sys_user_auths`  (
 -- ----------------------------
 -- Records of sys_user_auths
 -- ----------------------------
-INSERT INTO `sys_user_auths` VALUES (596329627606192128, 596078038307966976, 1, 'admin', '$2a$10$mE.iDKH2pUr.vEIYhykpcuOjTnYmtjHrSevgbevfuVTDOf0Z33tL6', 'admin', '2019-07-04 13:21:02', 'admin', '2019-07-04 13:21:02', 0, 'EXAM', 'gitee');
-INSERT INTO `sys_user_auths` VALUES (596329627648135168, 596307222997372928, 1, 'student', '$2a$10$czmVw4WF7Qt7RpwDJ4V4W.jkDKheEev63HlIsP31QnWHVOpSJz3au', 'admin', '2019-07-04 13:21:03', 'admin', '2019-07-04 13:21:03', 0, 'EXAM', 'gitee');
-INSERT INTO `sys_user_auths` VALUES (596332387693105152, 596332387600830464, 1, 'teacher', '$2a$10$4p0VfFRF969ltVakk6Qz9uQyuZXZSRZy4kA2Ur8pgazKQMqpvNAEy', 'admin', '2019-07-04 13:32:01', 'admin', '2019-07-04 13:32:01', 0, 'EXAM', 'gitee');
-INSERT INTO `sys_user_auths` VALUES (681167777872089088, 681167776798347264, 1, 'preview', '$2a$10$mE.iDKH2pUr.vEIYhykpcuOjTnYmtjHrSevgbevfuVTDOf0Z33tL6', 'admin', '2020-02-23 15:57:34', 'admin', '2020-02-23 15:57:34', 0, 'EXAM', 'gitee');
+INSERT INTO `sys_user_auths` VALUES (596329627606192128, 596078038307966976, 1, 'admin', '$2a$10$fi16OaJpNVcMuhudn5pxf.0Um3OI0mOODA9Rx3.oLERDrry9RRCRe', 'admin', '2020-02-29 16:13:29', 'admin', '2019-07-04 13:21:02', 0, 'EXAM', 'gitee');
+INSERT INTO `sys_user_auths` VALUES (596329627648135168, 596307222997372928, 1, 'student', '$2a$10$5XMiXaS3XbkZvcdFHFA6HeZGWAfzxQtLVXRZi8Oyic/rbRLExT5Na', 'admin', '2019-07-04 13:21:03', 'admin', '2019-07-04 13:21:03', 0, 'EXAM', 'gitee');
+INSERT INTO `sys_user_auths` VALUES (596332387693105152, 596332387600830464, 1, 'teacher', '$2a$10$8CNmKhP0UJm9WVeDRkowteGHtJEz77xUNaKoVQook6ESYemueK8sC', 'admin', '2019-07-04 13:32:01', 'admin', '2019-07-04 13:32:01', 0, 'EXAM', 'gitee');
+INSERT INTO `sys_user_auths` VALUES (681167777872089088, 681167776798347264, 1, 'preview', '$2a$10$tzwo3TcjyyHnX85WlyO2Huq/gdR7gxhNBGrARAl9PctT6AFZ30Dnu', 'admin', '2020-02-23 15:57:34', 'admin', '2020-02-23 15:57:34', 0, 'EXAM', 'gitee');
 
 -- ----------------------------
 -- Table structure for sys_user_role
@@ -1304,11 +1308,10 @@ CREATE TABLE `sys_user_role`  (
 -- ----------------------------
 -- Records of sys_user_role
 -- ----------------------------
-INSERT INTO `sys_user_role` VALUES (681167777393938432, 681167776798347264, 681167029125910528);
-INSERT INTO `sys_user_role` VALUES (681167778597703680, 681167776798347264, 596116511031169024);
-INSERT INTO `sys_user_role` VALUES (681167836533624832, 596332387600830464, 596330074307956736);
 INSERT INTO `sys_user_role` VALUES (681167857941352448, 596307222997372928, 596116511031169024);
 INSERT INTO `sys_user_role` VALUES (681167874412384256, 596078038307966976, 596117256346406912);
+INSERT INTO `sys_user_role` VALUES (685246878203383808, 596332387600830464, 596330074307956736);
+INSERT INTO `sys_user_role` VALUES (686273423307051008, 681167776798347264, 681167029125910528);
 
 -- ----------------------------
 -- Table structure for sys_user_student

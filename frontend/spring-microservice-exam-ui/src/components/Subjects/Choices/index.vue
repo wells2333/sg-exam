@@ -1,7 +1,7 @@
 <template>
   <el-form ref="dataSubjectForm" :rules="subjectRules" :model="subjectInfo" :label-position="labelPosition" label-width="100px">
     <el-row>
-      <el-col :span="10">
+      <el-col :span="20" :offset="2">
         <div class="subject-info">
           <el-row>
             <el-col :span="12">
@@ -17,13 +17,6 @@
           </el-row>
           <el-row>
             <el-col :span="24">
-              <el-form-item :label="$t('table.subjectName')" prop="subjectName">
-                <el-input v-model="subjectInfo.subjectName" @focus="updateTinymceContent(subjectInfo.subjectName, tinymceEdit.subjectName)"/>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
               <el-form-item :label="$t('table.subject.answer')" prop="answer">
                 <el-radio-group v-model="subjectInfo.answer.answer">
                   <el-radio v-for="(option) in options" :label="option.optionName" :key="option.optionName">{{ option.optionName }}</el-radio>
@@ -33,17 +26,29 @@
           </el-row>
           <el-row>
             <el-col :span="24">
+              <el-form-item :label="$t('table.subjectName')" prop="subjectName">
+                <tinymce ref="subjectNameEditor" :height="60" v-model="subjectInfo.subjectName"/>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="24">
               <el-divider>选项列表</el-divider>
               <el-form-item v-for="(option, index) in options" :label="option.optionName" :key="option.optionName"
-                            :prop="'options.' + index + '.optionContent'">
+                            :prop="'options.' + index + '.optionContent'" label-width="15px">
                 <el-row :gutter="5">
-                  <el-col :span="4">
+                  <el-col :span="2">
                     <el-input v-model="option.optionName"/>
                   </el-col>
-                  <el-col :span="18">
-                    <el-input v-model="option.optionContent" @input="updateTinymceContent(option.optionContent, index, '1')">
-                      <el-button slot="append" @click.prevent="removeOption(option)">删除</el-button>
-                    </el-input>
+                  <el-col :span="21">
+                    <el-row :gutter="5">
+                      <el-col :span="23">
+                        <tinymce :height="60" v-model="option.optionContent"/>
+                      </el-col>
+                      <el-col :span="1">
+                        <el-button @click.prevent="removeOption(option)">删除</el-button>
+                      </el-col>
+                    </el-row>
                   </el-col>
                 </el-row>
               </el-form-item>
@@ -53,15 +58,10 @@
           <el-row>
             <el-col :span="24">
               <el-form-item :label="$t('table.subject.analysis')" prop="analysis" class="analysis-form-item">
-                <el-input v-model="subjectInfo.analysis" @input="updateTinymceContent(subjectInfo.analysis, tinymceEdit.analysis)"/>
+                <tinymce ref="analysisEditor" :height="60" v-model="subjectInfo.analysis"/>
               </el-form-item>
             </el-col>
           </el-row>
-        </div>
-      </el-col>
-      <el-col :span="14">
-        <div class="subject-tinymce">
-          <tinymce ref="choicesEditor" :height="350" v-model="choicesContent" @hasClick="hasClick"/>
         </div>
       </el-col>
     </el-row>
@@ -124,34 +124,9 @@ export default {
         score: [{ required: true, message: '请输入题目分值', trigger: 'change' }],
         answer: [{ required: true, message: '请输入答案', trigger: 'change' }]
       },
-      tinymce: {
-        type: 1, // 类型 0：题目名称，1：选项
-        dialogTinymceVisible: false,
-        tempValue: '',
-        currentEdit: -1
-      },
-      // 编辑对象
-      tinymceEdit: {
-        subjectName: -1,
-        answer: 4,
-        analysis: 5
-      },
       options: [],
       optionCollapseActives: ['1'],
       analysisCollapseActives: ['2']
-    }
-  },
-  watch: {
-    // 监听富文本编辑器的输入
-    choicesContent: {
-      handler: function (choicesContent) {
-        if (isNotEmpty(this.$refs.choicesEditor)) {
-          if (this.editType === 1 && this.$refs.choicesEditor.getHasClick()) {
-            this.saveTinymceContent(choicesContent)
-          }
-        }
-      },
-      immediate: true
     }
   },
   methods: {
@@ -162,6 +137,7 @@ export default {
         { subjectChoicesId: '', optionName: 'C', optionContent: '' },
         { subjectChoicesId: '', optionName: 'D', optionContent: '' }
       ]
+      this.subjectInfo.answer.answer = 'A'
     },
     setSubjectInfo (subject) {
       this.subjectInfo = subject
@@ -180,36 +156,6 @@ export default {
     },
     getChoicesContent () {
       return this.choicesContent
-    },
-    // 绑定富文本的内容
-    updateTinymceContent (content, currentEdit, type) {
-      // 重置富文本
-      this.choicesContent = ''
-      // 绑定当前编辑的对象
-      this.tinymce.currentEdit = currentEdit
-      this.tinymce.type = type
-      // 选择题
-      this.$refs.choicesEditor.setContent(content || '')
-      this.editType = 0
-      this.$refs.choicesEditor.setHashClick(false)
-    },
-    // 保存题目时绑定富文本的内容到subjectInfo
-    saveTinymceContent (content) {
-      if (this.tinymce.type !== '1') {
-        switch (this.tinymce.currentEdit) {
-          case this.tinymceEdit.subjectName:
-            this.subjectInfo.subjectName = content
-            break
-          case this.tinymceEdit.answer:
-            this.subjectInfo.answer.answer = content
-            break
-          case this.tinymceEdit.analysis:
-            this.subjectInfo.analysis = content
-            break
-        }
-      } else {
-        this.options[this.tinymce.currentEdit].optionContent = content
-      }
     },
     // 表单校验
     validate () {
@@ -251,6 +197,8 @@ export default {
         this.subjectInfo.score = score
       }
       this.initDefaultOptions()
+      this.$refs['subjectNameEditor'].setContent('')
+      this.$refs['analysisEditor'].setContent('')
     },
     addOption () {
       // 校验
@@ -270,10 +218,6 @@ export default {
       if (index !== -1) {
         this.options.splice(index, 1)
       }
-    },
-    // 点击事件回调
-    hasClick (hasClick) {
-      this.editType = 1
     }
   }
 }

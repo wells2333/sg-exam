@@ -44,7 +44,7 @@
                   </el-submenu>
                   <el-submenu v-if="login" index="/user-info">
                     <template slot="title">
-                      <img src="https://colorlib.com/preview/theme/clever/img/bg-img/t1.png" style="height: 30px;border-radius: 50%;margin-right: 6px;"/>
+                      <img :src="userInfo.avatarUrl" style="height: 30px;border-radius: 50%;margin-right: 6px;"/>
                       {{userInfo.identifier}}
                     </template>
                     <el-menu-item index="account" @click="open('/account')">个人中心</el-menu-item>

@@ -1,22 +1,20 @@
 package com.github.tangyi.user.service;
 
 import com.github.tangyi.common.core.constant.CommonConstant;
-import com.github.tangyi.common.core.exceptions.CommonException;
 import com.github.tangyi.common.core.service.CrudService;
-import com.github.tangyi.common.security.utils.SysUtil;
-import com.github.tangyi.oss.service.QiNiuService;
+import com.github.tangyi.user.api.constant.AttachmentConstant;
 import com.github.tangyi.user.api.module.Attachment;
 import com.github.tangyi.user.mapper.AttachmentMapper;
+import com.github.tangyi.user.uploader.UploadInvoker;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.charset.StandardCharsets;
+import java.io.InputStream;
 
 /**
  * @author tangyi
@@ -26,8 +24,6 @@ import java.nio.charset.StandardCharsets;
 @AllArgsConstructor
 @Service
 public class AttachmentService extends CrudService<AttachmentMapper, Attachment> {
-
-	private final QiNiuService qiNiuService;
 
 	/**
 	 * 根据id查询
@@ -55,50 +51,14 @@ public class AttachmentService extends CrudService<AttachmentMapper, Attachment>
 	}
 
 	/**
-	 * 上传
-	 *
-	 * @param file       file
-	 * @param attachment attachment
-	 * @return int
-	 */
-	@Transactional
-	public Attachment upload(MultipartFile file, Attachment attachment) {
-		try {
-			long start = System.currentTimeMillis();
-			long attachSize = file.getSize();
-			if (StringUtils.isNotBlank(file.getOriginalFilename())) {
-				String fileName = new String(file.getOriginalFilename().getBytes(), StandardCharsets.UTF_8);
-				String previewUrl = qiNiuService.upload(file.getBytes(), fileName);
-				Attachment newAttachment = new Attachment();
-				newAttachment.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
-				newAttachment.setPreviewUrl(previewUrl);
-				newAttachment.setAttachName(fileName);
-				newAttachment.setGroupName(qiNiuService.getDomainOfBucket());
-				newAttachment.setFastFileId(fileName);
-				newAttachment.setAttachSize(Long.toString(attachSize));
-				newAttachment.setBusiId(attachment.getBusiId());
-				newAttachment.setBusiModule(attachment.getBusiModule());
-				newAttachment.setBusiType(attachment.getBusiType());
-				super.insert(newAttachment);
-				log.info("Upload attachment success, fileName: {}, time: {}ms", file.getName(), System.currentTimeMillis() - start);
-				return newAttachment;
-			}
-			return null;
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-			throw new CommonException(e);
-		}
-	}
-
-	/**
 	 * 下载
 	 *
 	 * @param attachment attachment
 	 * @return InputStream
 	 */
-	public String download(Attachment attachment) throws Exception {
+	public InputStream download(Attachment attachment) throws Exception {
 		// 下载附件
-		return qiNiuService.getDownloadUrl(attachment.getAttachName());
+		return UploadInvoker.getInstance().download(attachment);
 	}
 
 	/**
@@ -140,8 +100,11 @@ public class AttachmentService extends CrudService<AttachmentMapper, Attachment>
 		attachment = this.get(attachment);
 		if (attachment != null) {
 			String preview = attachment.getPreviewUrl();
-			if (!preview.startsWith("http"))
+			if (StringUtils.isNotBlank(preview) && !preview.startsWith("http")) {
 				preview = "http://" + preview;
+			} else {
+				preview = AttachmentConstant.ATTACHMENT_PREVIEW_URL + attachment.getId();
+			}
 			log.debug("GetPreviewUrl id: {}, preview url: {}", attachment.getId(), preview);
 			return preview;
 		}

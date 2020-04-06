@@ -27,7 +27,6 @@ import java.util.Set;
  * @author tangyi
  * @date 2018-01-04 10:34
  */
-@Deprecated
 @Slf4j
 @AllArgsConstructor
 @Service

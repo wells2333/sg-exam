@@ -32,7 +32,7 @@ export default {
     },
     menubar: {
       type: String,
-      default: 'file edit insert view format table'
+      default: ''
     },
     height: {
       type: Number,
@@ -42,8 +42,6 @@ export default {
   },
   data () {
     return {
-      hasChange: false,
-      hasClick: false,
       hasInit: false,
       tinymceId: this.id,
       fullscreen: false,
@@ -94,6 +92,7 @@ export default {
         toolbar: this.toolbar.length > 0 ? this.toolbar : toolbar,
         menubar: this.menubar,
         plugins: plugins,
+        external_plugins: { tiny_mce_wiris: 'https://www.wiris.net/demo/plugins/tiny_mce/plugin.js' },
         end_container_on_empty_block: true,
         powerpaste_word_import: 'clean',
         code_dialog_height: 450,
@@ -103,6 +102,7 @@ export default {
         imagetools_cors_hosts: ['www.tinymce.com', 'codepen.io'],
         default_link_target: '_blank',
         link_title: false,
+        statusbar: false,
         nonbreaking_force_tab: true, // inserting nonbreaking space &nbsp; need Nonbreaking Space Plugin
         init_instance_callback: editor => {
           if (_this.value) {
@@ -112,11 +112,6 @@ export default {
           editor.on('NodeChange Change KeyUp SetContent', () => {
             this.hasChange = true
             this.$emit('input', editor.getContent())
-          })
-
-          editor.on('Click', () => {
-            this.hasClick = true
-            this.$emit('hasClick', this.hasClick)
           })
         },
         setup (editor) {
@@ -136,12 +131,6 @@ export default {
     },
     getContent () {
       return window.tinymce.get(this.tinymceId).getContent()
-    },
-    getHasClick () {
-      return this.hasClick
-    },
-    setHashClick (click) {
-      this.hasClick = click
     }
   }
 }

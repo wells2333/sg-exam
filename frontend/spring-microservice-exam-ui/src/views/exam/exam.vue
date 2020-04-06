@@ -234,7 +234,7 @@ import waves from '@/directive/waves'
 import { mapGetters, mapState } from 'vuex'
 import { getToken } from '@/utils/auth'
 import { checkMultipleSelect, isNotEmpty, notifySuccess, notifyFail, messageSuccess } from '@/utils/util'
-import { delAttachment, preview } from '@/api/admin/attachment'
+import { delAttachment } from '@/api/admin/attachment'
 import Tinymce from '@/components/Tinymce'
 import SpinnerLoading from '@/components/SpinnerLoading'
 import Choices from '@/components/Subjects/Choices'
@@ -465,6 +465,7 @@ export default {
     },
     handleUpdate (row) {
       this.temp = Object.assign({}, row)
+      this.avatar = ''
       if (!isNotEmpty(this.temp.course)) {
         this.temp.course = {
           id: '',
@@ -473,9 +474,7 @@ export default {
       }
       // 获取图片的预览地址
       if (isNotEmpty(this.temp.avatarId)) {
-        preview(this.temp.avatarId).then(response => {
-          this.avatar = response.data.data
-        })
+        this.avatar = '/api/user/v1/attachment/preview?id=' + this.temp.avatarId
       }
       this.dialogStatus = 'update'
       this.dialogFormVisible = true

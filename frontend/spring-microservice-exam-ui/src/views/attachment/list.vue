@@ -15,10 +15,10 @@
         :data="params"
         class="upload-demo"
         multiple>
-        <el-button v-waves type="primary" class="filter-item">上传<i class="el-icon-upload el-icon--right" style="margin-left: 10px;"/></el-button>
-        <el-progress v-if="uploading === true" :percentage="percentage" :text-inside="true" :stroke-width="18" status="success"/>
+        <el-button v-waves type="success" class="filter-item">上传<i class="el-icon-upload el-icon--right" style="margin-left: 10px;"/></el-button>
       </el-upload>
     </div>
+    <el-progress v-if="uploading === true" :percentage="percentage" :text-inside="true" :stroke-width="18" status="success"/>
 
     <spinner-loading v-if="listLoading"/>
     <el-table
@@ -28,7 +28,7 @@
       style="width: 100%;"
       @sort-change="sortChange">
       <el-table-column type="selection" width="55"/>
-      <el-table-column prop="id" label="流水号" min-width="100">
+      <el-table-column prop="流水号" label="id" min-width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
@@ -43,6 +43,11 @@
           <span>{{ scope.row.busiType | attachmentTypeFilter }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="附件大小" min-width="90">
+        <template slot-scope="scope">
+          <span>{{ scope.row.attachSize | attachmentSizeFilter }}</span>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('table.uploader')" min-width="50">
         <template slot-scope="scope">
           <span>{{ scope.row.creator }}</span>
@@ -50,14 +55,38 @@
       </el-table-column>
       <el-table-column :label="$t('table.uploadDate')" min-width="70">
         <template slot-scope="scope">
-          <span>{{ scope.row.createDate | timeFilter }}</span>
+          <span>{{ scope.row.createDate | fmtDate('yyyy-MM-dd hh:mm') }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.actions')" class-name="status-col" width="300px">
+      <el-table-column :label="$t('table.actions')" class-name="status-col" width="100">
         <template slot-scope="scope">
-          <el-button type="text" @click="handleDownload(scope.row)">{{ $t('table.download') }}</el-button>
-          <el-button type="text" @click="handleDelete(scope.row)">{{ $t('table.delete') }}
-          </el-button>
+          <el-dropdown>
+            <span class="el-dropdown-link">
+              操作<i class="el-icon-caret-bottom el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>
+                <a @click="handlePreview(scope.row)">
+                  <span><i class="el-icon-view"></i>{{ $t('table.preview') }}</span>
+                </a>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <a @click="handleDownloadUrl(scope.row)">
+                  <span><i class="el-icon-document-copy"></i>{{ $t('table.downloadUrl') }}</span>
+                </a>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <a @click="handleDownload(scope.row)">
+                  <span><i class="el-icon-download"></i>{{ $t('table.download') }}</span>
+                </a>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <a @click="handleDelete(scope.row)">
+                  <span><i class="el-icon-delete"></i>{{ $t('table.delete') }}</span>
+                </a>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </template>
       </el-table-column>
     </el-table>
@@ -65,14 +94,21 @@
     <div class="pagination-container">
       <el-pagination v-show="total>0" :current-page="listQuery.pageNum" :page-sizes="[10,20,30, 50]" :page-size="listQuery.pageSize" :total="total" background layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange"/>
     </div>
+
+    <!-- 预览 -->
+    <el-dialog :visible.sync="dialogPreviewVisible" title="预览" width="50%" top="12vh">
+      <div class="preview">
+        <img :src="previewUrl" alt="二维码">
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchList, addObj, putObj, delAttachment, getDownloadUrl } from '@/api/admin/attachment'
+import { fetchList, addObj, putObj, delAttachment, canPreview } from '@/api/admin/attachment'
 import waves from '@/directive/waves'
-import { getToken } from '@/utils/auth' // getToken from cookie
-import { notifySuccess, messageSuccess, isNotEmpty, formatDate } from '@/utils/util'
+import { getToken } from '@/utils/auth'
+import { messageSuccess, messageWarn } from '@/utils/util'
 import SpinnerLoading from '@/components/SpinnerLoading'
 
 export default {
@@ -105,8 +141,16 @@ export default {
       }
       return attachType
     },
-    timeFilter (time) {
-      return formatDate(new Date(time), 'yyyy-MM-dd hh:mm')
+    attachmentSizeFilter (attachSize) {
+      let fileSizeByte = attachSize
+      let fileSizeMsg = ''
+      if (fileSizeByte < 1048576) fileSizeMsg = (fileSizeByte / 1024).toFixed(2) + 'KB'
+      else if (fileSizeByte === 1048576) fileSizeMsg = '1MB'
+      else if (fileSizeByte > 1048576 && fileSizeByte < 1073741824) fileSizeMsg = (fileSizeByte / (1024 * 1024)).toFixed(2) + 'MB'
+      else if (fileSizeByte > 1048576 && fileSizeByte === 1073741824) fileSizeMsg = '1GB'
+      else if (fileSizeByte > 1073741824 && fileSizeByte < 1099511627776) fileSizeMsg = (fileSizeByte / (1024 * 1024 * 1024)).toFixed(2) + 'GB'
+      else fileSizeMsg = '文件超过1TB'
+      return fileSizeMsg
     }
   },
   data () {
@@ -151,7 +195,9 @@ export default {
         }
       ],
       uploading: false,
-      percentage: 0
+      percentage: 0,
+      dialogPreviewVisible: false,
+      previewUrl: ''
     }
   },
   created () {
@@ -204,17 +250,30 @@ export default {
           addObj(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.getList()
-            notifySuccess(this, '创建成功')
+            messageSuccess(this, '创建成功')
           })
         }
       })
     },
     handleDownload (row) {
-      getDownloadUrl(row.id).then(response => {
-        if (isNotEmpty(response.data)) {
-          window.open('http://' + response.data.data, '_blank')
+      window.location.href = '/api/user/v1/attachment/download?id=' + row.id
+    },
+    handlePreview (row) {
+      this.previewUrl = ''
+      canPreview(row.id).then(response => {
+        if (response.data.data) {
+          this.previewUrl = '/api/user/v1/attachment/preview?id=' + row.id
+          this.dialogPreviewVisible = true
+        } else {
+          messageWarn(this, '暂不支持预览该格式的附件')
         }
+      }).catch(error => {
+        console.error(error)
       })
+    },
+    handleDownloadUrl (row) {
+      const url = 'http://' + window.location.host + '/api/user/v1/attachment/download?id=' + row.id
+      this.$alert(url, '下载链接', { confirmButtonText: '确定' })
     },
     updateData () {
       this.$refs['dataForm'].validate((valid) => {
@@ -222,7 +281,7 @@ export default {
           const tempData = Object.assign({}, this.temp)
           putObj(tempData).then(() => {
             this.getList()
-            notifySuccess(this, '更新成功')
+            messageSuccess(this, '更新成功')
           })
         }
       })
@@ -236,14 +295,14 @@ export default {
       }).then(() => {
         delAttachment(row.id).then(() => {
           this.getList()
-          notifySuccess(this, '删除成功')
+          messageSuccess(this, '删除成功')
         })
       }).catch(() => {})
     },
     handleUploadSuccess () {
       this.uploading = false
       this.getList()
-      notifySuccess(this, '上传成功')
+      messageSuccess(this, '上传成功')
     },
     handleUploadProgress (event, file, fileList) {
       this.uploading = true
@@ -252,3 +311,13 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  .upload-demo {
+    display: inline-block;
+  }
+  .preview {
+    text-align: center;
+    overflow: hidden;
+  }
+</style>

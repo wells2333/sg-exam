@@ -394,7 +394,6 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
-  /* 题目 */
   .subject-title {
     font-size: 18px;
     line-height: 22px;
