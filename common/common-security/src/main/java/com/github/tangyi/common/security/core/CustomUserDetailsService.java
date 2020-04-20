@@ -3,6 +3,7 @@ package com.github.tangyi.common.security.core;
 import com.github.tangyi.common.security.mobile.MobileUser;
 import com.github.tangyi.common.security.wx.WxUser;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
@@ -11,7 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  * @author tangyi
  * @date 2019/5/28 21:05
  */
-public interface CustomUserDetailsService {
+public interface CustomUserDetailsService extends UserDetailsService {
 
     /**
      * 根据用户名和租户标识查询

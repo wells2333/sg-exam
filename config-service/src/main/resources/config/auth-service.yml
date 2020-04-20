@@ -110,6 +110,8 @@ ignore:
     - /health
     - /metrics/**
     - /loggers/**
+    - /mobile/token
+    - /wx/token
 
 # 集群ID生成配置
 cluster:

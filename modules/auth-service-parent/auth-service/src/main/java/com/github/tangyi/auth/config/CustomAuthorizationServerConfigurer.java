@@ -1,7 +1,10 @@
 package com.github.tangyi.auth.config;
 
 import com.github.tangyi.auth.security.CustomTokenConverter;
+import com.github.tangyi.auth.security.CustomTokenServices;
+import com.github.tangyi.auth.security.CustomUserDetailsByNameServiceWrapper;
 import com.github.tangyi.common.security.core.ClientDetailsServiceImpl;
+import com.github.tangyi.common.security.core.CustomUserDetailsService;
 import com.github.tangyi.common.security.exception.CustomOauthException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -15,7 +18,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.core.token.TokenService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -29,10 +34,12 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
 
 import javax.sql.DataSource;
 import java.security.KeyPair;
 import java.security.interfaces.RSAPublicKey;
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -61,13 +68,16 @@ public class CustomAuthorizationServerConfigurer extends AuthorizationServerConf
      */
     private final KeyProperties keyProperties;
 
+    private final CustomUserDetailsService userDetailsService;
+
     @Autowired
     public CustomAuthorizationServerConfigurer(RedisConnectionFactory redisConnectionFactory,
                                                DataSource dataSource,
-                                               KeyProperties keyProperties) {
+                                               KeyProperties keyProperties, CustomUserDetailsService userDetailsService) {
         this.redisConnectionFactory = redisConnectionFactory;
         this.dataSource = dataSource;
         this.keyProperties = keyProperties;
+        this.userDetailsService = userDetailsService;
     }
 
     /**
@@ -78,6 +88,36 @@ public class CustomAuthorizationServerConfigurer extends AuthorizationServerConf
     @Bean
     public TokenStore tokenStore() {
         return new RedisTokenStore(redisConnectionFactory);
+    }
+
+    /**
+     * 防止刷新token是调用默认的loadUserByUsername，需要自定义tokenService
+     * @param endpoints endpoints
+     * @return CustomTokenServices
+     */
+    private CustomTokenServices tokenService(AuthorizationServerEndpointsConfigurer endpoints) {
+        CustomTokenServices tokenServices = new CustomTokenServices();
+        tokenServices.setTokenStore(tokenStore());
+        tokenServices.setSupportRefreshToken(true);
+        tokenServices.setReuseRefreshToken(true);
+        tokenServices.setAccessTokenValiditySeconds(-1);
+        tokenServices.setClientDetailsService(endpoints.getClientDetailsService());
+        tokenServices.setTokenEnhancer(jwtTokenEnhancer());
+        addUserDetailsService(tokenServices, userDetailsService);
+        return tokenServices;
+    }
+
+    /**
+     * PreAuthenticatedAuthenticationProvider自定义userDetailsService
+     * @param tokenServices tokenServices
+     * @param userDetailsService userDetailsService
+     */
+    private void addUserDetailsService(CustomTokenServices tokenServices, CustomUserDetailsService userDetailsService) {
+        if (userDetailsService != null) {
+            PreAuthenticatedAuthenticationProvider provider = new PreAuthenticatedAuthenticationProvider();
+            provider.setPreAuthenticatedUserDetailsService(new CustomUserDetailsByNameServiceWrapper<>(userDetailsService));
+            tokenServices.setAuthenticationManager(new ProviderManager(Collections.singletonList(provider)));
+        }
     }
 
 	/**
@@ -141,6 +181,7 @@ public class CustomAuthorizationServerConfigurer extends AuthorizationServerConf
 				.authenticationManager(this.authenticationConfiguration.getAuthenticationManager())
                 // 将token存储到redis
                 .tokenStore(tokenStore())
+                .tokenServices(tokenService(endpoints))
                 // token增强
                 .tokenEnhancer(jwtTokenEnhancer())
                 // 异常转换

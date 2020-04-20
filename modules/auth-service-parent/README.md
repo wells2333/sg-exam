@@ -11,7 +11,7 @@ Auth Service
 
 #### 账号密码+图片验证码登录
 
-POST：`/api/auth/api/v1//token?grant_type=password&scope=read&username=admin&credential=lBTqrKS0kZixOFXeZ0HRng==&randomStr=86111562225179514&code=mf3f`
+POST：`/api/auth/api/v1/token?grant_type=password&scope=read&username=admin&credential=lBTqrKS0kZixOFXeZ0HRng==&randomStr=86111562225179514&code=mf3f`
 
 url参数：
 ```

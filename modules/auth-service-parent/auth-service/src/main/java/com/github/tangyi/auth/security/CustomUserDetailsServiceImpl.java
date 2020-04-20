@@ -15,6 +15,7 @@ import com.github.tangyi.common.core.utils.ResponseUtil;
 import com.github.tangyi.common.security.core.CustomUserDetailsService;
 import com.github.tangyi.common.security.core.GrantedAuthorityImpl;
 import com.github.tangyi.common.security.mobile.MobileUser;
+import com.github.tangyi.common.security.tenant.TenantContextHolder;
 import com.github.tangyi.common.security.wx.WxUser;
 import com.github.tangyi.user.api.dto.UserDto;
 import com.github.tangyi.user.api.enums.IdentityType;
@@ -45,6 +46,25 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
     private final UserServiceClient userServiceClient;
 
     private final WxSessionService wxService;
+
+    /**
+     * 加载用户信息
+     * @param username username
+     * @return UserDetails
+     * @throws UsernameNotFoundException
+     */
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        long start = System.currentTimeMillis();
+        ResponseBean<UserVo> userVoResponseBean = userServiceClient.findUserByIdentifier(username, TenantContextHolder.getTenantCode());
+        if (!ResponseUtil.isSuccess(userVoResponseBean))
+            throw new ServiceException(GET_USER_INFO_FAIL + userVoResponseBean.getMsg());
+        UserVo userVo = userVoResponseBean.getData();
+        if (userVo == null)
+            throw new UsernameNotFoundException("user does not exist");
+        return new CustomUserDetails(username, userVo.getCredential(), CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(), userVo.getId(), start, LoginTypeEnum.PWD);
+
+    }
 
     /**
      * 加载用户信息

@@ -21,17 +21,17 @@ public enum LoginTypeEnum {
     /**
      * 验证码登录
      */
-    SMS("SMS", "验证码登录", "/api/v1/mobile/token"),
+    SMS("SMS", "验证码登录", "/mobile/token"),
 
     /**
      * QQ登录
      */
-    QQ("QQ", "QQ登录", "/api/v1/mobile/token"),
+    QQ("QQ", "QQ登录", "/mobile/token"),
 
     /**
      * 微信登录
      */
-    WECHAT("WX", "微信登录", "/api/v1/wx/token");
+    WECHAT("WX", "微信登录", "/wx/token");
 
     /**
      * 类型

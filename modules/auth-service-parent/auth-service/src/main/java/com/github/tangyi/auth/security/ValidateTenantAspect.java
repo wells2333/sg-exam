@@ -26,7 +26,7 @@ public class ValidateTenantAspect {
 
 	private final UserServiceClient userServiceClient;
 
-	@Before("execution(* com.github.tangyi.auth.security.CustomUserDetailsServiceImpl.load*(..)) && args(tenantCode,..)")
+	@Before("execution(* com.github.tangyi.auth.security.CustomUserDetailsServiceImpl.*AndTenantCode(..)) && args(tenantCode,..)")
 	public void validateTenantCode(String tenantCode) throws TenantNotFoundException {
 		// 获取tenantCode
 		if (StringUtils.isBlank(tenantCode))
