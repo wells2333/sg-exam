@@ -199,7 +199,7 @@
 
 交流QQ群：
 
- ![image](docs/images/qq.png) ![image](docs/images/qq_new.png)  
+ ![image](docs/images/qq.png) ![image](docs/images/qq_new.png) ![image](docs/images/qq_3.png)  
  
 ## 请作者喝咖啡
 
