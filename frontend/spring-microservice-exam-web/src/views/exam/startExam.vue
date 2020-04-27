@@ -21,7 +21,7 @@
       </el-col>
       <el-col :span="18">
         <div class="subject-box-card">
-          <div class="subject-exam-title">{{exam.examinationName}}（共{{subjectCount}}题，合计{{exam.totalScore}}分）</div>
+          <div class="subject-exam-title">{{exam.examinationName}}（共{{subjectIds.length}}题，合计{{exam.totalScore}}分）</div>
           <!-- 题目内容 -->
           <choices ref="choices" v-show="this.query.type === 0"/>
           <short-answer ref="shortAnswer" v-show="this.query.type === 1"/>
