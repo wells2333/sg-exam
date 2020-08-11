@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.exam.mapper.SubjectCategoryMapper">
+    <resultMap id="subjectCategoryResultMap" type="com.github.tangyi.api.exam.module.SubjectCategory">
+        <id column="id" property="id"/>
+        <result column="category_name" property="categoryName"/>
+        <result column="category_desc" property="categoryDesc"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="sort" property="sort"/>
+        <result column="type" property="type"/>
+        <result column="creator" property="creator"/>
+        <result column="create_date" property="createDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="modifier" property="modifier"/>
+        <result column="modify_date" property="modifyDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="del_flag" property="delFlag"/>
+        <result column="application_code" property="applicationCode"/>
+        <result column="tenant_code" property="tenantCode"/>
+    </resultMap>
+
+    <sql id="subjectCategoryColumns">
+        a.id,
+        a.category_name,
+        a.category_desc,
+        a.parent_id,
+        a.sort,
+        a.type,
+        a.creator,
+        a.create_date,
+        a.modifier,
+        a.modify_date,
+        a.del_flag,
+        a.application_code,
+        a.tenant_code
+    </sql>
+
+    <!-- where 条件 -->
+    <sql id="whereColumnList">
+        <if test="categoryName != null and categoryName != ''">
+            and a.category_name like CONCAT('%',#{categoryName},'%')
+        </if>
+        <if test="tenantCode != null and tenantCode != ''">
+            and a.tenant_code = #{tenantCode}
+        </if>
+    </sql>
+
+    <select id="getById" resultMap="subjectCategoryResultMap">
+        SELECT
+        <include refid="subjectCategoryColumns"/>
+        FROM exam_subject_category a WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
+    <select id="get" resultMap="subjectCategoryResultMap">
+        SELECT
+        <include refid="subjectCategoryColumns"/>
+        FROM exam_subject_category a WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
+    <insert id="insert">
+        INSERT INTO exam_subject_category (
+            id,
+            category_name,
+            category_desc,
+            parent_id,
+            sort,
+            type,
+            creator,
+            create_date,
+            modifier,
+            modify_date,
+            del_flag,
+            application_code,
+            tenant_code
+        ) VALUES (
+            #{id},
+            #{categoryName},
+            #{categoryDesc},
+            #{parentId},
+            #{sort},
+            #{type},
+            #{creator},
+            #{createDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
+            #{modifier},
+            #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
+            #{delFlag},
+            #{applicationCode},
+            #{tenantCode}
+        )
+    </insert>
+
+    <select id="findList" resultMap="subjectCategoryResultMap">
+        SELECT
+        <include refid="subjectCategoryColumns"/>
+        FROM exam_subject_category a
+        WHERE a.del_flag = 0
+        <include refid="whereColumnList"/>
+        order by sort desc
+    </select>
+
+    <select id="findListById" resultMap="subjectCategoryResultMap">
+        SELECT
+        <include refid="subjectCategoryColumns"/>
+        FROM exam_subject_category a
+        WHERE a.id IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <update id="update">
+        UPDATE exam_subject_category SET
+        <if test="categoryName != null">
+            category_name = #{categoryName},
+        </if>
+        <if test="categoryDesc != null">
+            category_desc = #{categoryDesc},
+        </if>
+        <if test="parentId != null">
+            parent_id = #{parentId},
+        </if>
+        <if test="sort != null">
+            sort = #{sort},
+        </if>
+        <if test="delFlag != null">
+            del_flag = #{delFlag},
+        </if>
+        modifier = #{modifier},
+        modify_date = #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        UPDATE exam_subject_category SET del_flag = 1 WHERE id = #{id}
+    </delete>
+</mapper>

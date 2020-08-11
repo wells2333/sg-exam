@@ -1,0 +1,101 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: init-script
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 30Mi
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: mysql-data-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 250Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      initContainers:
+        - name: init-script-downloader
+          image: appropriate/curl
+          args:
+            - "-o"
+            - "/tmp/data/01_create_db.sh"
+            - "https://raw.githubusercontent.com/wells2333/spring-microservice-exam-db-init-script/master/01_create_db.sh"
+            - "-o"
+            - "/tmp/data/02_microservice-auth.sql"
+            - "https://raw.githubusercontent.com/wells2333/spring-microservice-exam-db-init-script/master/02_microservice-auth.sql"
+            - "-o"
+            - "/tmp/data/03_microservice-exam.sql"
+            - "https://raw.githubusercontent.com/wells2333/spring-microservice-exam-db-init-script/master/03_microservice-exam.sql"
+            - "-o"
+            - "/tmp/data/04_microservice-user.sql"
+            - "https://raw.githubusercontent.com/wells2333/spring-microservice-exam-db-init-script/master/04_microservice-user.sql"
+          volumeMounts:
+            - name: init-script
+              mountPath: /tmp/data
+      containers:
+        - image: mysql:5.7
+          name: mysql
+          args:
+            - "--ignore-db-dir=lost+found"
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: password
+            - name: SG_EXAM_DB_NAME
+              value: microservice-user microservice-auth microservice-exam
+            - name: SG_EXAM_DB_USERNAME
+              value: sg-exam
+            - name: SG_EXAM_DB_PASSWORD
+              value: sg-exam
+          ports:
+            - containerPort: 3306
+              name: mysql
+          resources:
+            limits:
+              memory: 250Mi
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/mysql
+            - name: init-script
+              mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: init-script
+          persistentVolumeClaim:
+            claimName: init-script
+        - name: data
+          persistentVolumeClaim:
+            claimName: mysql-data-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  selector:
+    app: mysql
+  ports:
+    - name: mysql
+      port: 3306

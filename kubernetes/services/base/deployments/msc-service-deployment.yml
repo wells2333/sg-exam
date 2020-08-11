@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: msc-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: msc-service
+  template:
+    metadata:
+      labels:
+        app: msc-service
+        version: latest
+    spec:
+      containers:
+        - name: msc-service
+          image: sg-exam/msc-service
+          imagePullPolicy: Never
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker"
+            - name: SPRING_CONFIG_LOCATION
+              value: file:/config-repo/application.yml,file:/config-repo/msc-service.yml
+          envFrom:
+            - secretRef:
+                name: redis-credentials
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              scheme: HTTP
+              path: /actuator/info
+              port: 80
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 20
+            successThreshold: 1
+          readinessProbe:
+            httpGet:
+              scheme: HTTP
+              path: /actuator/health
+              port: 80
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+            successThreshold: 1
+          volumeMounts:
+            - name: config-repo-volume
+              mountPath: /config-repo
+      volumes:
+        - name: config-repo-volume
+          configMap:
+            name: config-repo-msc-service

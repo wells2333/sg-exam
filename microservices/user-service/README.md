@@ -1,0 +1,1 @@
+resources/sql下的SQL脚本，用于开发环境初始化h2内存数据库

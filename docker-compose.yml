@@ -1,0 +1,57 @@
+version: '2.1'
+
+services:
+  auth-service:
+    build: microservices/auth-service
+    image: sg-exam/auth-service
+    mem_limit: 256m
+    networks:
+      - my-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CONFIG_LOCATION=file:/config-repo/application.yml,file:/config-repo/auth-service.yml
+    volumes:
+      - $PWD/config-repo:/config-repo
+    depends_on:
+      user-service:
+        condition: service_healthy
+
+  user-service:
+    build: microservices/user-service
+    image: sg-exam/user-service
+    mem_limit: 256m
+    networks:
+      - my-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CONFIG_LOCATION=file:/config-repo/application.yml,file:/config-repo/user-service.yml
+    volumes:
+      - $PWD/config-repo:/config-repo
+
+  exam-service:
+    build: microservices/exam-service
+    image: sg-exam/exam-service
+    mem_limit: 256m
+    networks:
+      - my-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CONFIG_LOCATION=file:/config-repo/application.yml,file:/config-repo/exam-service.yml
+    volumes:
+      - $PWD/config-repo:/config-repo
+
+  msc-service:
+    build: microservices/msc-service
+    image: sg-exam/msc-service
+    mem_limit: 256m
+    networks:
+      - my-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CONFIG_LOCATION=file:/config-repo/application.yml,file:/config-repo/msc-service.yml
+    volumes:
+      - $PWD/config-repo:/config-repo
+
+networks:
+  my-network:
+    name: my-network

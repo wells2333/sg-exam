@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: exam-service
+spec:
+  selector:
+    app: exam-service
+  ports:
+    - port: 80
+      name: http
+      targetPort: 80
+    - port: 4004
+      name: http-mgm
+      targetPort: 4004

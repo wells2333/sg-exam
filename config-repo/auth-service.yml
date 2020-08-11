@@ -1,0 +1,80 @@
+server.port: 80
+spring.application.name: auth-service
+
+# mybatis配置
+mybatis:
+  type-aliases-package: com.github.tangyi.api.auth.module
+  configuration:
+    # 驼峰转换
+    map-underscore-to-camel-case: true
+    # 延迟加载
+    lazy-loading-enabled: true
+  mapper-locations: classpath:mapper/*.xml
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+# 集群ID生成配置
+cluster:
+  workId: 1
+  dataCenterId: 1
+
+# 系统配置
+sys:
+  adminUser: ${ADMIN_USER:admin}  # 管理员账号，默认是admin
+  fdfsHttpHost: ${ATTACHMENT_HOST:http://192.168.0.95}:${ATTACHMENT_PORT:8080}  # fastDfs的HTTP配置
+  uploadUrl: api/user/v1/attachment/upload
+  defaultAvatar: https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80
+  key: '1234567887654321'
+  cacheExpire: 86400 # 缓存失效时间，单位秒，默认一天
+
+# 微信配置
+wx:
+  appId: ${WX_APP_ID:test}
+  appSecret: ${WX_APP_SECRET:test}
+  grantType: ${WX_GRANT_TYPE:authorization_code}
+
+---
+server:
+  port: 9182
+spring:
+  profiles: dev
+
+# 集群ID生成配置
+cluster:
+  workId: 1
+  dataCenterId: 1
+
+# 日志文件名称
+logging:
+  file: auth-service.log
+logback:
+  loglevel: warn
+
+---
+spring:
+  profiles: docker
+  port: 80
+  datasource:
+    url: jdbc:mysql://mysql/microservice-auth?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+  redis:
+    host: redis
+
+---
+spring:
+  profiles: prod
+  port: 80
+  datasource:
+    url: jdbc:mysql://mysql/microservice-auth?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+  redis:
+    host: redis
+
+logging:
+  level:
+    root: WARN

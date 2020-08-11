@@ -1,0 +1,7 @@
+bases:
+  - ../../base/deployments
+  - ../../base/services
+  - ../../base/istio
+resources:
+  - mysql-dev.yml
+  - redis-dev.yml

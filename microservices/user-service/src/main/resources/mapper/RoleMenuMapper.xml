@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.user.mapper.RoleMenuMapper">
+    <resultMap id="roleMenuResultMap" type="com.github.tangyi.api.user.module.RoleMenu">
+        <id column="id" property="id"/>
+        <result column="role_id" property="roleId"/>
+        <result column="menu_id" property="menuId"/>
+    </resultMap>
+
+    <sql id="roleMenuColumns">
+        a.id,
+        a.role_id,
+        a.menu_id
+    </sql>
+
+    <select id="getByRoleId" resultMap="roleMenuResultMap">
+        SELECT
+        <include refid="roleMenuColumns"/>
+        FROM sys_role_menu a
+        WHERE a.role_id = #{roleId}
+    </select>
+
+    <select id="getByMenuId" resultMap="roleMenuResultMap">
+        SELECT
+        <include refid="roleMenuColumns"/>
+        FROM sys_role_menu a
+        WHERE a.menu_id = #{menuId}
+    </select>
+
+    <select id="getByMenuIds" resultMap="roleMenuResultMap">
+        SELECT
+        <include refid="roleMenuColumns"/>
+        FROM sys_role_menu a
+        WHERE a.menu_id IN
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item.menuId}
+        </foreach>
+    </select>
+
+    <insert id="insert">
+        INSERT  INTO sys_role_menu (
+            id,
+            role_id,
+            menu_id
+        ) VALUES (
+            #{id},
+            #{roleId},
+            #{menuId}
+        )
+    </insert>
+
+    <insert id="insertBatch" useGeneratedKeys="false">
+        INSERT INTO sys_role_menu (
+        id,
+        role_id,
+        menu_id)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id}, #{item.roleId}, #{item.menuId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteByRoleId">
+        delete from sys_role_menu
+        where role_id = #{roleId}
+    </delete>
+
+    <delete id="deleteByMenuId">
+        delete from sys_role_menu
+        where menu_id = #{menuId}
+    </delete>
+</mapper>

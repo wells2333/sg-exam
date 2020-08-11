@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.exam.mapper.SubjectOptionMapper">
+    <resultMap id="subjectOptionResultMap" type="com.github.tangyi.api.exam.module.SubjectOption">
+        <id column="id" property="id"/>
+        <result column="subject_choices_id" property="subjectChoicesId"/>
+        <result column="option_name" property="optionName"/>
+        <result column="option_content" property="optionContent"/>
+        <result column="creator" property="creator"/>
+        <result column="create_date" property="createDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="modifier" property="modifier"/>
+        <result column="modify_date" property="modifyDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="del_flag" property="delFlag"/>
+        <result column="application_code" property="applicationCode"/>
+        <result column="tenant_code" property="tenantCode"/>
+    </resultMap>
+
+    <sql id="subjectOptionColumns">
+        a.id,
+        a.subject_choices_id,
+        a.option_name,
+        a.option_content,
+        a.creator,
+        a.create_date,
+        a.modifier,
+        a.modify_date,
+        a.del_flag,
+        a.application_code,
+        a.tenant_code
+    </sql>
+
+    <!-- where 条件 -->
+    <sql id="whereColumnList">
+        <if test="subject_choices_id != null and subject_choices_id != ''">
+            and a.subject_choices_id = #{subjectChoicesId}
+        </if>
+    </sql>
+
+    <select id="getById" resultMap="subjectOptionResultMap">
+        SELECT
+        <include refid="subjectOptionColumns"/>
+        FROM exam_subject_option a WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
+    <select id="get" resultMap="subjectOptionResultMap">
+        SELECT
+        <include refid="subjectOptionColumns"/>
+        FROM exam_subject_option a WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
+    <!-- 根据题目ID查询 -->
+    <select id="getBySubjectChoicesId" resultMap="subjectOptionResultMap">
+        SELECT
+        <include refid="subjectOptionColumns"/>
+        FROM exam_subject_option a WHERE a.subject_choices_id = #{subjectChoicesId} and a.del_flag = 0
+    </select>
+
+    <select id="findList" resultMap="subjectOptionResultMap">
+        SELECT
+        <include refid="subjectOptionColumns"/>
+        FROM exam_subject_option a WHERE a.del_flag = 0
+        <include refid="whereColumnList"/>
+    </select>
+
+    <select id="findListById" resultMap="subjectOptionResultMap">
+        SELECT
+        <include refid="subjectOptionColumns"/>
+        FROM exam_subject_option a WHERE a.id IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <insert id="insert">
+        insert into exam_subject_option (
+            id,
+            subject_choices_id,
+            option_name,
+            option_content,
+            creator,
+            create_date,
+            modifier,
+            modify_date,
+            del_flag,
+            application_code,
+            tenant_code
+        ) values (
+            #{id},
+            #{subjectChoicesId},
+            #{optionName},
+            #{optionContent},
+            #{creator},
+            #{createDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
+            #{modifier},
+            #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
+            #{delFlag},
+            #{applicationCode},
+            #{tenantCode}
+        );
+    </insert>
+
+    <!-- 批量插入 -->
+    <insert id="insertBatch">
+        insert into exam_subject_option (
+            id,
+            subject_choices_id,
+            option_name,
+            option_content,
+            creator,
+            create_date,
+            modifier,
+            modify_date,
+            del_flag,
+            application_code,
+            tenant_code
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},
+            #{item.subjectChoicesId},
+            #{item.optionName},
+            #{item.optionContent},
+            #{item.creator},
+            #{item.createDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
+            #{item.modifier},
+            #{item.modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
+            #{item.delFlag},
+            #{item.applicationCode},
+            #{item.tenantCode}
+            )
+        </foreach>
+    </insert>
+
+    <update id="update">
+        UPDATE exam_subject_option SET
+        <if test="subjectChoicesId != null">
+            subject_choices_id = #{subjectChoicesId},
+        </if>
+        <if test="optionName != null">
+            option_name = #{optionName},
+        </if>
+        <if test="optionContent != null">
+            option_content = #{optionContent},
+        </if>
+        <if test="delFlag != null">
+            del_flag = #{delFlag},
+        </if>
+        modifier = #{modifier},
+        modify_date = #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        UPDATE exam_subject_option SET del_flag = 1 WHERE id = #{id}
+    </delete>
+
+    <!-- 物理删除 -->
+    <delete id="deleteBySubjectChoicesId">
+        DELETE FROM exam_subject_option WHERE subject_choices_id = #{subjectChoicesId}
+    </delete>
+
+    <delete id="deleteAll">
+        UPDATE exam_subject_option SET del_flag = 1 WHERE id in
+        <foreach item="item" index="index" collection="ids" open="("
+                 separator="," close=")">#{item}
+        </foreach>
+    </delete>
+
+    <!-- 物理批量删除 -->
+    <delete id="physicalDeleteAll">
+        DELETE FROM exam_subject_option WHERE id in
+        <foreach item="item" index="index" collection="ids" open="("
+                 separator="," close=")">#{item}
+        </foreach>
+    </delete>
+</mapper>

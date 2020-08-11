@@ -1,0 +1,3 @@
+resources:
+  - auth-service.yml
+  - user-service.yml

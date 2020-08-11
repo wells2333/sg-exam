@@ -1,0 +1,27 @@
+plugins {
+    id "org.springframework.boot" version "2.3.2.RELEASE"
+}
+
+dependencies {
+    implementation(project(':common'))
+    implementation(project(':api'))
+    implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation "org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.1.6.RELEASE"
+    implementation 'com.nimbusds:nimbus-jose-jwt:8.2'
+    implementation 'mysql:mysql-connector-java:8.0.13'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.3'
+    implementation 'com.github.binarywang:weixin-java-miniapp:3.4.0'
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+    testImplementation('org.springframework.security:spring-security-test')
+    implementation('com.github.kstyrc:embedded-redis:0.6')
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}

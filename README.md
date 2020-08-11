@@ -1,6 +1,6 @@
 <h1 align="center">Welcome to spring-microservice-exam 👋</h1>
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-3.7.0-blue.svg?cacheSeconds=2592000" />
+  <img alt="Version" src="https://img.shields.io/badge/version-4.0.0-blue.svg?cacheSeconds=2592000" />
   <a href="https://www.kancloud.cn/tangyi/spring-microservice-exam/1322864" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
@@ -9,11 +9,13 @@
   </a>
 </p>
 
-> 硕果云，基于Spring Cloud搭建的新一代微服务教学管理平台，提供多租户、权限管理、在线考试、练习等功能
+> 硕果云，基于Spring Boot、Kubernetes (k8s)、Istio搭建的云原生Service Mesh教学管理平台，提供多租户、权限管理、在线考试、练习等功能
 >
 > 题型支持单选题、多选题、不定项选择题、判断题、简答题
 >
 > 支持PC、H5、微信小程序（小程序后面开源）
+>
+> 支持Spring Cloud（spring-cloud分支）、Service Mesh（master分支）
 
 ### 🏠 [主页](https://gitee.com/wells2333/spring-microservice-exam)
 
@@ -21,7 +23,7 @@
 
 ### ✨ [在线体验-后台](http://118.25.138.130:81)
 
-测试账号：
+账号：
 
 |   单位ID   |      账号      |   密码   |   角色    |
 | --------- | -------- | -------- | -------- |
@@ -31,23 +33,15 @@
 
 ## 技术选型
 
-- 服务注册与发现：`Consul`
-- 熔断器：`Hystrix` + `Turbine`
-- 客户端负载均衡：`Ribbon`
-- 内部服务调用：`Feign`
-- 网关：`Spring Cloud Gateway`
-- 认证鉴权：`Spring Cloud OAuth2` + `JWT`
-- 程序监控：`Spring Boot Admin` / `Spring Boot Actuator`
-- 分布式配置中心：`Spring Cloud Config`
-- 分布式调用链监控：`Spring Cloud Sleuth` + `Zipkin`
+- 微服务基础设施：`Istio`
+- 认证鉴权：`Spring Security OAuth` + `JWT`
 - 数据库：`MySQL 5.7`
-- 部署：`Docker` + `docker-compose`
-- 构建工具：`Maven`
-- 后台 API 文档：`Swagger`
-- 消息队列：`RabbitMQ`
-- 文件系统：`本地目录`、`七牛云`、`FastDfs`
 - 缓存：`Redis`
-- 前端：`vue`
+- 构建工具：`Gradle`
+- 部署：`k8s`、`docker-compose`
+- 后台 API 文档：`Swagger`
+- 文件系统：`本地目录`、`七牛云`、`FastDfs`
+- 前端：`Vue`
 - 小程序：`wepy`
 
 ## 核心依赖
@@ -55,7 +49,8 @@
 |      名称      |   版本    |
 | --------- | -------- |
 | `Spring Boot`    | `2.2.5.RELEASE`  |
-| `Spring Cloud`   | `Hoxton.SR3`  |
+| `Istio`   | `1.5.4`  |
+| `Kubernetes`   | `1.1.6`  |
 
 ## 系统架构
 
@@ -81,9 +76,6 @@
 
 系统监控：监控服务、日志等
 - 日志监控：查看系统日志
-- `consul`监控：`consul`服务监控
-- `zipkin`监控：监控服务的调用链路
-- 服务监控：`spring boot admin`服务监控
 - 接口文档：`swagger api`文档
 
 考务管理：提供课程、考试、题库、成绩等管理

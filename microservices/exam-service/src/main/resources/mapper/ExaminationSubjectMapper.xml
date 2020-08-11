@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.exam.mapper.ExaminationSubjectMapper">
+    <resultMap id="examinationSubjectResultMap" type="com.github.tangyi.api.exam.module.ExaminationSubject">
+        <id column="id" property="id"/>
+        <result column="examination_id" property="examinationId"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="subject_id" property="subjectId"/>
+        <result column="type" property="type"/>
+        <result column="application_code" property="applicationCode"/>
+        <result column="tenant_code" property="tenantCode"/>
+    </resultMap>
+
+    <sql id="examinationSubjectColumns">
+        a.id,
+        a.examination_id,
+        a.category_id,
+        a.subject_id,
+        a.type,
+        a.application_code,
+        a.tenant_code
+    </sql>
+
+    <!-- where 条件 -->
+    <sql id="whereColumnList">
+        <if test="examinationId != null and examinationId != ''">
+            and a.examination_id = #{examinationId}
+        </if>
+        <if test="subjectId != null and subjectId != ''">
+            and a.subject_id = #{subjectId}
+        </if>
+        <choose>
+            <when test="categoryId == -1">
+                and a.category_id != ''
+            </when>
+            <when test="categoryId != '' and categoryId != null">
+                and a.category_id = #{categoryId}
+            </when>
+        </choose>
+        <if test="type != null and type != ''">
+            and a.type = #{type}
+        </if>
+    </sql>
+
+    <select id="getById" resultMap="examinationSubjectResultMap">
+        SELECT
+        <include refid="examinationSubjectColumns"/>
+        FROM exam_examination_subject a WHERE a.id = #{id}
+    </select>
+
+    <select id="get" resultMap="examinationSubjectResultMap">
+        SELECT
+        <include refid="examinationSubjectColumns"/>
+        FROM exam_examination_subject a WHERE a.id = #{id}
+    </select>
+
+    <select id="findListByExaminationId" resultMap="examinationSubjectResultMap">
+        SELECT
+        <include refid="examinationSubjectColumns"/>
+        FROM exam_examination_subject a WHERE a.examination_id = #{examinationId} order by subject_id ASC
+    </select>
+
+    <select id="findByExaminationIdAndSubjectId" resultMap="examinationSubjectResultMap">
+        SELECT
+        <include refid="examinationSubjectColumns"/>
+        FROM exam_examination_subject a WHERE a.examination_id = #{examinationId} and a.subject_id = #{subjectId}
+    </select>
+
+    <select id="findList" resultMap="examinationSubjectResultMap">
+        SELECT
+        <include refid="examinationSubjectColumns"/>
+        FROM exam_examination_subject a WHERE 1=1
+        <include refid="whereColumnList"/>
+        ORDER BY a.subject_id ASC
+    </select>
+
+    <select id="findListBySubjectId" resultMap="examinationSubjectResultMap">
+        SELECT
+        <include refid="examinationSubjectColumns"/>
+        FROM exam_examination_subject a WHERE a.subject_id = #{subjectId}
+    </select>
+
+    <select id="findListById" resultMap="examinationSubjectResultMap">
+        SELECT
+        <include refid="examinationSubjectColumns"/>
+        FROM exam_examination_subject a WHERE a.id IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <!-- 根据上一题ID查询下一题 -->
+    <select id="getByPreviousId" resultMap="examinationSubjectResultMap">
+        SELECT
+        <include refid="examinationSubjectColumns"/>
+        FROM exam_examination_subject a
+        WHERE a.subject_id > #{subjectId} AND a.examination_id = #{examinationId} ORDER BY subject_id ASC LIMIT 1
+    </select>
+
+    <!-- 根据当前题目ID查询上一题 -->
+    <select id="getPreviousByCurrentId" resultMap="examinationSubjectResultMap">
+        SELECT
+        <include refid="examinationSubjectColumns"/>
+        FROM exam_examination_subject a
+        WHERE a.subject_id <![CDATA[<]]> #{subjectId} AND a.examination_id = #{examinationId} ORDER BY subject_id DESC LIMIT 1
+    </select>
+
+    <select id="findListByCategoryId" resultMap="examinationSubjectResultMap">
+        SELECT
+        <include refid="examinationSubjectColumns"/>
+        FROM exam_examination_subject a WHERE a.category_id = #{categoryId}
+    </select>
+
+    <insert id="insert">
+        insert into exam_examination_subject (
+            id,
+            examination_id,
+            category_id,
+            subject_id,
+            type,
+            application_code,
+            tenant_code
+        ) values (
+            #{id},
+            #{examinationId},
+            #{categoryId},
+            #{subjectId},
+            #{type},
+            #{applicationCode},
+            #{tenantCode}
+        );
+    </insert>
+
+    <update id="update">
+        UPDATE exam_examination_subject SET
+        <if test="examinationId != null">
+            examination_id = #{examinationId},
+        </if>
+        <if test="categoryId != null">
+            category_id = #{categoryId},
+        </if>
+        <if test="subjectId != null">
+            subject_id = #{subjectId},
+        </if>
+        <if test="type != null">
+            type = #{type},
+        </if>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 物理删除 -->
+    <delete id="delete">
+        DELETE FROM exam_examination_subject WHERE id = #{id}
+    </delete>
+
+    <!-- 物理删除 -->
+    <delete id="deleteBySubjectId">
+        DELETE FROM exam_examination_subject WHERE subject_id = #{subjectId}
+    </delete>
+
+    <!-- 物理删除 -->
+    <delete id="deleteAll">
+        DELETE FROM exam_examination_subject WHERE id in
+        <foreach item="item" index="index" collection="ids" open="("
+                 separator="," close=")">#{item}
+        </foreach>
+    </delete>
+</mapper>

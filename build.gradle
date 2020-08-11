@@ -1,0 +1,80 @@
+plugins {
+    id "io.spring.dependency-management" version "1.0.8.RELEASE"
+}
+
+ext {
+    springfoxVersion = "2.10.4"
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+subprojects {
+	group "com.github.tangyi"
+    version = '0.0.1-SNAPSHOT'
+
+    apply plugin: 'java'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'java-library'
+
+    repositories {
+        mavenLocal()
+        maven { url aliyunPublicRepository }
+        maven { url aliyunGoogleRepository }
+        maven { url aliyunJcenterRepository }
+        maven { url springSnapshotRepository }
+        maven { url springMilestoneRepository }
+        mavenCentral()
+	}
+
+    dependencyManagement {
+        imports {
+            mavenBom("org.springframework.boot:spring-boot-dependencies:2.3.2.RELEASE")
+        }
+    }
+
+    dependencies {
+        implementation 'org.apache.commons:commons-lang3'
+        implementation 'org.apache.commons:commons-collections4:4.1'
+        implementation 'commons-io:commons-io:2.6'
+        implementation 'commons-beanutils:commons-beanutils:1.9.2'
+        implementation 'cn.hutool:hutool-all:4.5.0'
+        implementation 'javax.servlet:javax.servlet-api:4.0.1'
+        implementation 'com.fasterxml.jackson.module:jackson-module-parameter-names:2.10.2'
+        implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.10.2'
+        implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.2'
+        implementation 'com.github.pagehelper:pagehelper-spring-boot-starter:1.2.10'
+        implementation 'org.apache.poi:poi:3.17'
+        implementation 'org.apache.poi:poi-ooxml:3.17'
+        implementation 'org.apache.poi:poi-ooxml-schemas:3.17'
+        implementation 'org.apache.xmlbeans:xmlbeans:2.3.0'
+        implementation 'org.hibernate:hibernate-validator:6.0.14.Final'
+        implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+        implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:1.18'
+        implementation 'org.hibernate.validator:hibernate-validator:6.0.14.Final'
+        implementation 'com.squareup.okhttp3:okhttp:3.14.2'
+        implementation 'org.json:json:20140107'
+        implementation 'com.alibaba:easyexcel:2.1.4'
+        implementation 'com.google.guava:guava:28.2-jre'
+        implementation 'com.google.zxing:core:3.2.0'
+        implementation 'com.google.zxing:javase:3.2.0'
+        implementation("io.springfox:springfox-swagger2:${springfoxVersion}")
+        implementation("io.springfox:springfox-swagger-ui:${springfoxVersion}")
+        implementation("io.springfox:springfox-swagger-common:${springfoxVersion}")
+        implementation 'com.github.axet:kaptcha:0.0.9'
+        implementation 'com.qiniu:qiniu-java-sdk:7.2.28'
+        implementation 'com.github.tobato:fastdfs-client:1.26.7'
+        implementation 'QRCode:QRCode:3.0'
+        compileOnly 'org.projectlombok:lombok:1.18.10'
+        annotationProcessor 'org.projectlombok:lombok:1.18.10'
+        implementation('org.springframework.cloud:spring-cloud-starter-openfeign:2.2.3.RELEASE')
+        implementation('org.springframework.cloud:spring-cloud-starter-netflix-hystrix:2.2.3.RELEASE')
+        implementation('com.h2database:h2:1.4.193')
+    }
+
+    compileJava {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+}

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.user.mapper.UserStudentMapper">
+    <resultMap id="userStudentResultMap" type="com.github.tangyi.api.user.module.UserStudent">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="student_id" property="studentId"/>
+        <result column="relationship_type" property="relationshipType"/>
+    </resultMap>
+
+    <sql id="userStudentColumns">
+        a.id,
+        a.user_id,
+        a.student_id,
+        a.relationship_type
+    </sql>
+
+    <select id="getById" resultMap="userStudentResultMap">
+        SELECT
+        <include refid="userStudentColumns"/>
+        FROM sys_user_student a
+        WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
+    <select id="get" resultMap="userStudentResultMap">
+        SELECT
+        <include refid="userStudentColumns"/>
+        FROM sys_user_student a
+        WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
+    <select id="getByUserId" resultMap="userStudentResultMap">
+        SELECT
+        <include refid="userStudentColumns"/>
+        FROM sys_user_student a
+        WHERE a.user_id = #{userId}
+    </select>
+
+    <select id="getByStudentId" resultMap="userStudentResultMap">
+        SELECT
+        <include refid="userStudentColumns"/>
+        FROM sys_user_student a
+        WHERE a.student_id = #{studentId}
+    </select>
+
+    <select id="findList" resultMap="userStudentResultMap">
+        SELECT
+        <include refid="userStudentColumns"/>
+        FROM sys_user_student a
+    </select>
+
+    <select id="findListById" resultMap="userStudentResultMap">
+        SELECT
+        <include refid="userStudentColumns"/>
+        FROM sys_user_student a
+        WHERE a.id IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <insert id="insert">
+        INSERT INTO sys_user_student (
+            id,
+            user_id,
+            student_id,
+            relationship_type
+        ) VALUES (
+            #{id},
+            #{userId},
+            #{studentId},
+            #{relationshipType}
+        )
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM sys_user_student WHERE ID = #{id}
+    </delete>
+
+    <delete id="deleteByUserId">
+        DELETE FROM sys_user_student WHERE user_id = #{userId}
+    </delete>
+
+    <delete id="deleteByStudentId">
+        DELETE FROM sys_user_student WHERE student_id = #{studentId}
+    </delete>
+
+    <delete id="deleteAll">
+        DELETE FROM sys_user_student ID in
+        <foreach item="item" index="index" collection="ids" open="("
+                 separator="," close=")">#{item}
+        </foreach>
+    </delete>
+</mapper>

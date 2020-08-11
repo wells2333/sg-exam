@@ -1,3 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.github.tangyi.user.api.feign.fallback.UserServiceClientFallbackImpl,\
-  com.github.tangyi.user.api.feign.factory.UserServiceClientFallbackFactory

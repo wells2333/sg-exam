@@ -1,0 +1,93 @@
+server.port: 80
+spring.application.name: exam-service
+
+# 系统配置
+sys:
+  cacheExpire: 86400 # 缓存失效时间，单位秒，默认一天
+  logoUrl: /static/img/exam
+  logoCount: 22
+  logoSuffix: .jpeg
+  qrCodeUrl: http://${QR_CODE_URL:localhost}:${QR_CODE_PORT:8080}/#/mobile
+
+ignore:
+  urls:
+    - /
+    - /error
+    - /favicon.ico
+    - /**/*swagger*/**
+    - /v2/api-docs
+    - /csrf
+    - /actuator/**
+    - /hystrix.sender
+    - /v1/sms/**
+    - /v1/user/anonymousUser/**
+    - /v1/tenant/anonymousUser/**
+    - /v1/menu/anonymousUser/**
+    - /v1/examination/anonymousUser/**
+    - /v1/answer/anonymousUser/**
+    - /v1/examRecord/anonymousUser/**
+    - /v1/examRecord/currentTime
+    - /v1/subject/anonymousUser/**
+    - /v1/answer/anonymousUser/**
+    - /v1/code/**
+    - /v1/attachment/download
+    - /v1/log/**
+    - /authentication/**
+    - /v1/authentication/**
+    - /**/*.css
+    - /**/*.js
+    - /social
+    - /signin
+    - /signup
+    - /info
+    - /health
+    - /metrics/**
+    - /loggers/**
+
+# 集群ID生成配置
+cluster:
+  workId: 1
+  dataCenterId: 1
+
+---
+server:
+  port: 0
+spring:
+  profiles: dev
+  datasource:
+    dataSourceClassName: org.h2.Driver
+    url: jdbc:h2:mem:microservice-exam;MODE=MYSQL;DATABASE_TO_UPPER=false;INIT=CREATE SCHEMA IF NOT EXISTS microservice-exam
+    initialize: true
+    username: sa
+    password:
+# 日志文件名称
+logging:
+  file: exam-service.log
+logback:
+  loglevel: warn
+
+---
+spring:
+  profiles: docker
+  port: 80
+  datasource:
+    url: jdbc:mysql://mysql/microservice-exam?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+  redis:
+    host: redis
+
+---
+spring:
+  profiles: prod
+  port: 80
+  datasource:
+    url: jdbc:mysql://mysql/microservice-exam?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+  redis:
+    host: redis
+
+logging:
+  level:
+    root: WARN

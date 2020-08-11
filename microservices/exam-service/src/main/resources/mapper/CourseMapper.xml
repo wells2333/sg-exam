@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.exam.mapper.CourseMapper">
+    <resultMap id="courseResultMap" type="com.github.tangyi.api.exam.module.Course">
+        <id column="id" property="id"/>
+        <result column="course_name" property="courseName"/>
+        <result column="college" property="college"/>
+        <result column="major" property="major"/>
+        <result column="teacher" property="teacher"/>
+        <result column="course_description" property="courseDescription"/>
+        <result column="creator" property="creator"/>
+        <result column="create_date" property="createDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="modifier" property="modifier"/>
+        <result column="modify_date" property="modifyDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="del_flag" property="delFlag"/>
+        <result column="application_code" property="applicationCode"/>
+        <result column="tenant_code" property="tenantCode"/>
+    </resultMap>
+
+    <sql id="courseColumns">
+        a.id,
+        a.course_name,
+        a.college,
+        a.major,
+        a.teacher,
+        a.course_description,
+        a.creator,
+        a.create_date,
+        a.modifier,
+        a.modify_date,
+        a.del_flag,
+        a.application_code,
+        a.tenant_code
+    </sql>
+
+    <!-- where 条件 -->
+    <sql id="whereColumnList">
+        <if test="courseName != null and courseName != ''">
+            and a.course_name like CONCAT('%',#{courseName},'%')
+        </if>
+        <if test="tenantCode != null and tenantCode != ''">
+            and a.tenant_code = #{tenantCode}
+        </if>
+    </sql>
+
+    <select id="getById" resultMap="courseResultMap">
+        SELECT
+        <include refid="courseColumns"/>
+        FROM exam_course a
+        WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
+    <select id="get" resultMap="courseResultMap">
+        SELECT
+        <include refid="courseColumns"/>
+        FROM exam_course a
+        WHERE a.id = #{id} and a.del_flag = 0
+    </select>
+
+    <select id="findList" resultMap="courseResultMap">
+        SELECT
+        <include refid="courseColumns"/>
+        FROM exam_course a
+        WHERE a.del_flag = 0
+        <include refid="whereColumnList"/>
+    </select>
+
+    <select id="findListById" resultMap="courseResultMap">
+        SELECT
+        <include refid="courseColumns"/>
+        FROM exam_course a
+        WHERE a.id IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <insert id="insert">
+        insert into exam_course (
+            id,
+            course_name,
+            college,
+            major,
+            teacher,
+            course_description,
+            creator,
+            create_date,
+            modifier,
+            modify_date,
+            del_flag,
+            application_code,
+            tenant_code
+        ) values (
+            #{id},
+            #{courseName},
+            #{college},
+            #{major},
+            #{teacher},
+            #{courseDescription},
+            #{creator},
+            #{createDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
+            #{modifier},
+            #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date},
+            #{delFlag},
+            #{applicationCode},
+            #{tenantCode}
+        );
+    </insert>
+
+    <update id="update">
+        UPDATE exam_course SET
+        <if test="courseName != null">
+            course_name = #{courseName},
+        </if>
+        <if test="college != null">
+            college = #{college},
+        </if>
+        <if test="major != null">
+            major = #{major},
+        </if>
+        <if test="teacher != null">
+            teacher = #{teacher},
+        </if>
+        <if test="courseDescription != null">
+            course_description = #{courseDescription},
+        </if>
+        <if test="delFlag != null">
+            del_flag = #{delFlag},
+        </if>
+        modifier = #{modifier},
+        modify_date = #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        UPDATE exam_course SET
+			del_flag = 1
+		WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteAll">
+        UPDATE exam_course SET
+        del_flag = 1
+        WHERE id in
+        <foreach item="item" index="index" collection="ids" open="("
+                 separator="," close=")">#{item}
+        </foreach>
+    </delete>
+</mapper>

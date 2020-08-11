@@ -1,0 +1,84 @@
+app:
+  auth-service: localhost:8080
+
+# mybatis配置
+mybatis:
+  type-aliases-package: com.github.tangyi.api
+  configuration:
+    # 驼峰转换
+    map-underscore-to-camel-case: true
+    # 延迟加载
+    lazy-loading-enabled: true
+  mapper-locations: classpath:mapper/*.xml
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+feign:
+  httpclient:
+    enabled: false
+    connection-timeout: 3000
+  okhttp:
+    enabled: true
+  hystrix:
+    enabled: true
+
+# 系统配置
+sys:
+  adminUser: admin  # 管理员账号，默认是admin
+  uploadUrl: api/user/v1/attachment/upload
+  defaultAvatar: /static/img/avatar/
+  key: '1234567887654321'
+  cacheExpire: 86400 # 缓存失效时间，单位秒，默认一天
+  attachtUploadType: 1  # 上传类型，1：本地目录，2：fastDfs，3：七牛云
+  attachPath: ${ATTACH_PATH:C:/attach} # 附件上传目录
+  canPreview: jpg,png,jpeg,gif # 支持预览的格式
+  authServiceUrl: http://localhost:9182
+  userServiceUrl: http://localhost:9183
+
+ignore:
+  urls:
+    - /
+    - /error
+    - /favicon.ico
+    - /**/*swagger*/**
+    - /v2/api-docs
+    - /csrf
+    - /actuator/**
+    - /hystrix.sender
+    - /v1/sms/**
+    - /v1/user/anonymousUser/**
+    - /v1/tenant/anonymousUser/**
+    - /v1/user/checkExist/**
+    - /v1/user/updatePassword
+    - /v1/menu/anonymousUser/**
+    - /v1/code/**
+    - /v1/attachment/download
+    - /v1/log/**
+    - /authentication/**
+    - /v1/authentication/**
+    - /**/*.css
+    - /**/*.js
+    - /social
+    - /signin
+    - /signup
+    - /info
+    - /health
+    - /metrics/**
+    - /loggers/**
+    - /mobile/token
+    - /wx/token
+
+# 建议只在开发、测试环境开放
+management.endpoint.health.show-details: "ALWAYS"
+management.endpoints.web.exposure.include: "*"
+
+---
+spring.profiles: docker
+management.server.port: 80
+management.endpoint.health.show-details: "ALWAYS"
+management.endpoints.web.exposure.include: "*"
+app:
+  auth-service: auth-service

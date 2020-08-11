@@ -1,0 +1,36 @@
+server.port: 80
+spring.application.name: msc-service
+
+# 集群ID生成配置
+cluster:
+  workId: 1
+  dataCenterId: 1
+
+# 短信配置
+sms:
+  appKey: ${SMS_APP_KEY:test}
+  appSecret: ${SMS_APP_SECRET:test}
+  regionId: ${SMS_REGION_ID:default}
+  domain: ${SMS_DOMAIN:dysmsapi.aliyuncs.com}
+  signName: ${SMS_SIGN_NAME:test}
+  templateCode: ${SMS_TEMP_CODE:SMS_171192294}
+  version: ${SMS_VERSION:2017-05-25}
+  action: ${SMS_ACTION:SendSms}
+
+---
+server:
+  port: 0
+spring:
+  profiles: dev
+# 日志文件名称
+logging:
+  file: msc-service.log
+logback:
+  loglevel: warn
+
+---
+spring:
+  profiles: docker
+  port: 80
+  redis:
+    host: redis
