@@ -151,7 +151,7 @@ export default {
         return
       }
       // 重新获取预览地址
-      this.userInfo.avatarUrl = '/api/user/v1/attachment/preview?id=' + res.data.id
+      this.userInfo.avatarUrl = '/user/v1/attachment/preview?id=' + res.data.id
       this.userInfo.avatarId = res.data.id
       updateAvatar(this.userInfo).then(response => {
         notifySuccess(this, '头像上传成功')

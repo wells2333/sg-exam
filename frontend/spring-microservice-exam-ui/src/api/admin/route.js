@@ -1,6 +1,6 @@
 import request from '@/router/axios'
 
-const baseRouteUrl = '/api/route/v1/route/'
+const baseRouteUrl = '/route/v1/route/'
 
 const previewSwitchUrl = '/api/preview/'
 

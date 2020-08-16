@@ -35,6 +35,7 @@ dependencies {
     implementation 'org.aspectj:aspectjweaver:1.9.5'
     implementation 'org.assertj:assertj-core:3.16.1'
     implementation('org.springframework.security:spring-security-core')
+    implementation('org.springframework.security:spring-security-oauth2-jose')
     compileOnly 'org.projectlombok:lombok:1.18.10'
     annotationProcessor 'org.projectlombok:lombok:1.18.10'
 }

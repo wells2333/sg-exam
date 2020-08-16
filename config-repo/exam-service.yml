@@ -51,12 +51,12 @@ cluster:
 
 ---
 server:
-  port: 0
+  port: 9184
 spring:
   profiles: dev
   datasource:
     dataSourceClassName: org.h2.Driver
-    url: jdbc:h2:mem:microservice-exam;MODE=MYSQL;DATABASE_TO_UPPER=false;INIT=CREATE SCHEMA IF NOT EXISTS microservice-exam
+    url: jdbc:h2:mem:testdb;MODE=MYSQL
     initialize: true
     username: sa
     password:

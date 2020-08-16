@@ -1,6 +1,6 @@
 import request from '@/router/axios'
 
-const baseExamRecordUrl = '/api/exam/v1/examRecord/'
+const baseExamRecordUrl = '/exam/v1/examRecord/'
 
 export function examRecordList () {
   return request({

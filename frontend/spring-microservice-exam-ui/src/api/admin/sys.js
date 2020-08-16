@@ -2,7 +2,7 @@ import request from '@/router/axios'
 
 export function getSysConfig () {
   return request({
-    url: '/api/user/v1/sysConfig',
+    url: '/user/v1/sysConfig',
     method: 'get'
   })
 }
@@ -12,7 +12,7 @@ export function getSysConfig () {
  */
 export function getDashboard () {
   return request({
-    url: '/api/user/v1/dashboard',
+    url: '/user/v1/dashboard',
     method: 'get'
   })
 }
@@ -22,7 +22,7 @@ export function getDashboard () {
  */
 export function getExamRecordTendency (query) {
   return request({
-    url: '/api/user/v1/dashboard/examRecordTendency',
+    url: '/user/v1/dashboard/examRecordTendency',
     method: 'get',
     params: query
   })

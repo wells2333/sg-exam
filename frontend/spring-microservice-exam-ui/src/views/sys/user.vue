@@ -344,7 +344,7 @@ export default {
       user_btn_del: false,
       user_btn_import: false,
       user_btn_export: false,
-      importUrl: '/api/user/v1/user/import',
+      importUrl: '/user/v1/user/import',
       headers: {
         Authorization: 'Bearer ' + getToken()
       },

@@ -205,7 +205,7 @@ export default {
       dialogExportVisible: false,
       // 选择的菜单
       multipleSelection: [],
-      importUrl: '/api/user/v1/menu/import',
+      importUrl: '/user/v1/menu/import',
       headers: {
         Authorization: 'Bearer ' + getToken()
       },

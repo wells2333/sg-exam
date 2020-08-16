@@ -1,11 +1,12 @@
 package com.github.tangyi.common.utils;
 
-import com.github.tangyi.common.constant.SecurityConstant;
+import com.github.tangyi.common.constant.CommonConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.security.Principal;
 
@@ -32,6 +33,10 @@ public class SysUtil {
 				return ((UserDetails) principal).getUsername();
 			if (principal instanceof Principal)
 				return ((Principal) principal).getName();
+			if (principal instanceof Jwt) {
+				Jwt jwt = (Jwt) principal;
+				return (String) jwt.getClaims().getOrDefault(CommonConstant.USER_NAME, "");
+			}
 			return String.valueOf(principal);
 		} catch (Exception e) {
 			log.error("get user error: {}", e.getMessage(), e);
@@ -45,7 +50,7 @@ public class SysUtil {
 	 * @return String
 	 */
 	public static String getSysCode() {
-		return SecurityConstant.SYS_CODE;
+		return CommonConstant.SYS_CODE;
 	}
 
 	/**

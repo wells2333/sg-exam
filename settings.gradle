@@ -1,6 +1,7 @@
 rootProject.name = 'microservice-exam'
 include ':api'
 include ':common'
+include ':common-security'
 include ':microservices:user-service'
 include ':microservices:exam-service'
 include ':microservices:msc-service'

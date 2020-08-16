@@ -15,13 +15,13 @@
 >
 > 支持PC、H5、微信小程序（小程序后面开源）
 >
-> 支持Spring Cloud（spring-cloud分支）、Service Mesh（master分支）
+> 支持Spring Cloud（1分支）、Service Mesh（master分支）
 
 ### 🏠 [主页](https://gitee.com/wells2333/spring-microservice-exam)
 
-### ✨ [在线体验-前台](http://118.25.138.130)
+### ✨ [在线体验-前台](http://two.404forever.com/)
 
-### ✨ [在线体验-后台](http://118.25.138.130:81)
+### ✨ [在线体验-后台](http://two.404forever.com:81)
 
 账号：
 

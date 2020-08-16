@@ -1,6 +1,6 @@
 import request from '@/router/axios'
 
-const baseMenuUrl = '/api/user/v1/menu/'
+const baseMenuUrl = '/user/v1/menu/'
 
 /* 获取菜单 */
 export function GetMenu () {

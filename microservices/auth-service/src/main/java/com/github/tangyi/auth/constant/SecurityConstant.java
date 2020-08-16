@@ -60,4 +60,24 @@ public class SecurityConstant {
      * JSON 资源
      */
     public static final String CONTENT_TYPE = "application/json; charset=utf-8";
+
+	/**
+	 * oauth token
+	 */
+	public static final String OAUTH_TOKEN_URL = "/oauth/token";
+
+	/**
+	 * 注册
+	 */
+	public static final String REGISTER = "/user/anonymousUser/register";
+
+	/**
+	 * 授权类型
+	 */
+	public static final String GRANT_TYPE = "grant_type";
+
+	/**
+	 * 验证码已过期，请重新获取
+	 */
+	public static final String EXPIRED_ERROR = "验证码已过期，请重新获取";
 }

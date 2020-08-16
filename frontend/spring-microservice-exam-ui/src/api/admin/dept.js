@@ -1,6 +1,6 @@
 import request from '@/router/axios'
 
-const baseDeptUrl = '/api/user/v1/dept/'
+const baseDeptUrl = '/user/v1/dept/'
 
 export function fetchTree (query) {
   return request({

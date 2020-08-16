@@ -1,6 +1,6 @@
 import request from '@/router/axios'
 
-const baseSubjectUrl = '/api/exam/v1/subject/'
+const baseSubjectUrl = '/exam/v1/subject/'
 
 export function subjectList () {
   return request({

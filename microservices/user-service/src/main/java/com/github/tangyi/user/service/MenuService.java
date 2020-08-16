@@ -7,7 +7,6 @@ import com.github.tangyi.api.user.module.Menu;
 import com.github.tangyi.api.user.module.Role;
 import com.github.tangyi.api.user.module.RoleMenu;
 import com.github.tangyi.common.constant.CommonConstant;
-import com.github.tangyi.common.constant.SecurityConstant;
 import com.github.tangyi.common.properties.SysProperties;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.SysUtil;
@@ -55,7 +54,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 		List<Menu> userMenus;
 		// 查询默认租户的菜单
 		Menu condition = new Menu();
-		condition.setTenantCode(SecurityConstant.DEFAULT_TENANT_CODE);
+		condition.setTenantCode(CommonConstant.DEFAULT_TENANT_CODE);
 		condition.setApplicationCode(SysUtil.getSysCode());
 		condition.setType(MenuConstant.MENU_TYPE_MENU);
 		List<Menu> defaultMenus = findAllList(condition);
@@ -63,7 +62,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 		// 超级管理员
 		if (identifier.equals(sysProperties.getAdminUser())) {
 			// 获取租户的菜单和默认租户的菜单，最后组装数据，租户的菜单优先
-			if (SecurityConstant.DEFAULT_TENANT_CODE.equals(tenantCode)) {
+			if (CommonConstant.DEFAULT_TENANT_CODE.equals(tenantCode)) {
 				userMenus = defaultMenus;
 			} else {
 				// 获取角色的菜单
@@ -75,14 +74,14 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 				userMenus = mergeMenu(defaultMenus, tenantMenus);
 			}
 		} else {
-//			List<Role> roleList = SysUtil.getCurrentAuthentication().getAuthorities().stream()
-//					// 按角色过滤
-//					.filter(authority -> authority.getAuthority() != null && authority.getAuthority()
-//							.startsWith("ROLE_")).map(authority -> {
-//						Role role = new Role();
-//						role.setRoleCode(authority.getAuthority());
-//						return role;
-//					}).collect(Collectors.toList());
+			//			List<Role> roleList = SysUtil.getCurrentAuthentication().getAuthorities().stream()
+			//					// 按角色过滤
+			//					.filter(authority -> authority.getAuthority() != null && authority.getAuthority()
+			//							.startsWith("ROLE_")).map(authority -> {
+			//						Role role = new Role();
+			//						role.setRoleCode(authority.getAuthority());
+			//						return role;
+			//					}).collect(Collectors.toList());
 			List<Role> roleList = Collections.emptyList();
 			// 根据角色code批量查找菜单
 			List<Menu> tenantMenus = finMenuByRoleList(roleList, tenantCode);
@@ -117,8 +116,8 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 	public List<Menu> findMenuByRole(String role, String tenantCode) {
 		List<Menu> menus = new ArrayList<>();
 		// 返回默认租户的角色菜单
-		if (!tenantCode.equals(SecurityConstant.DEFAULT_TENANT_CODE))
-			menus = menuMapper.findByRole(role, SecurityConstant.DEFAULT_TENANT_CODE);
+		if (!tenantCode.equals(CommonConstant.DEFAULT_TENANT_CODE))
+			menus = menuMapper.findByRole(role, CommonConstant.DEFAULT_TENANT_CODE);
 		List<Menu> tenantMenus = menuMapper.findByRole(role, tenantCode);
 		if (CollectionUtils.isNotEmpty(tenantMenus))
 			menus.addAll(tenantMenus);
@@ -155,10 +154,10 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 	@Override
 	public List<Menu> findAllList(Menu menu) {
 		List<Menu> menus = new ArrayList<>();
-		if (!menu.getTenantCode().equals(SecurityConstant.DEFAULT_TENANT_CODE)) {
+		if (!menu.getTenantCode().equals(CommonConstant.DEFAULT_TENANT_CODE)) {
 			Menu defaultMenu = new Menu();
 			defaultMenu.setApplicationCode(SysUtil.getSysCode());
-			defaultMenu.setTenantCode(SecurityConstant.DEFAULT_TENANT_CODE);
+			defaultMenu.setTenantCode(CommonConstant.DEFAULT_TENANT_CODE);
 			menus = menuMapper.findAllList(defaultMenu);
 		}
 		List<Menu> tenantMenus = menuMapper.findAllList(menu);
@@ -199,7 +198,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 		String tenantCode = SysUtil.getTenantCode();
 		Menu source = this.get(menu);
 		// 默认租户的用户更新菜单或更新本租户的菜单，直接更新
-		if (tenantCode.equals(SecurityConstant.DEFAULT_TENANT_CODE) || tenantCode.equals(source.getTenantCode())) {
+		if (tenantCode.equals(CommonConstant.DEFAULT_TENANT_CODE) || tenantCode.equals(source.getTenantCode())) {
 			BeanUtils.copyProperties(menu, source);
 			return super.update(source);
 		} else {
@@ -396,7 +395,8 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 			// 转成MenuDto
 			List<MenuDto> menuDtoList = menuStream.map(MenuDto::new).collect(Collectors.toList());
 			// 排序、构建树形关系
-			return TreeUtil.buildTree(CollUtil.sort(menuDtoList, Comparator.comparingInt(MenuDto::getSort)), CommonConstant.ROOT);
+			return TreeUtil.buildTree(CollUtil.sort(menuDtoList, Comparator.comparingInt(MenuDto::getSort)),
+					CommonConstant.ROOT);
 		}
 		return new ArrayList<>();
 	}

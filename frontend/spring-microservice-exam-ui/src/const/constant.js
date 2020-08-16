@@ -10,5 +10,5 @@ export const answerType = {
 }
 
 export const apiList = {
-  exam: '/api/exam/v1/examination/'
+  exam: '/exam/v1/examination/'
 }

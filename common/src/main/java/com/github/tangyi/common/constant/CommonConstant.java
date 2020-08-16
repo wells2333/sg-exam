@@ -191,5 +191,22 @@ public class CommonConstant {
 	 * 逗号
 	 */
 	public static final String COMMA = ",";
+
+	/**
+	 * 默认系统编号
+	 */
+	public static final String SYS_CODE = "EXAM";
+
+	/**
+	 * 默认租户编号
+	 */
+	public static final String DEFAULT_TENANT_CODE = "gitee";
+
+	/**
+	 * 租户编号
+	 */
+	public static final String TENANT_CODE = "tenantCode";
+
+	public static final String USER_NAME = "user_name";
 }
 

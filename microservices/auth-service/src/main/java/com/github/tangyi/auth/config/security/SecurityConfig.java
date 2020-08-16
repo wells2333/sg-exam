@@ -1,6 +1,8 @@
 package com.github.tangyi.auth.config.security;
 
 import com.github.tangyi.auth.error.CustomOAuth2AccessDeniedHandler;
+import com.github.tangyi.auth.filter.DecodePasswordFilter;
+import com.github.tangyi.auth.filter.ValidateCodeFilter;
 import com.github.tangyi.auth.security.core.CustomUserDetailsAuthenticationProvider;
 import com.github.tangyi.auth.security.core.CustomUserDetailsService;
 import com.github.tangyi.auth.security.mobile.MobileSecurityConfigurer;
@@ -17,6 +19,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
 
 /**
  * Spring Security配置
@@ -41,20 +44,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	 */
 	private final WxSecurityConfigurer wxSecurityConfigurer;
 
+	private final DecodePasswordFilter decodePasswordFilter;
+
+	private final ValidateCodeFilter validateCodeFilter;
+
 	public SecurityConfig(CustomUserDetailsService userDetailsService,
-			MobileSecurityConfigurer mobileSecurityConfigurer, WxSecurityConfigurer wxSecurityConfigurer) {
+			MobileSecurityConfigurer mobileSecurityConfigurer, WxSecurityConfigurer wxSecurityConfigurer,
+			DecodePasswordFilter decodePasswordFilter, ValidateCodeFilter validateCodeFilter) {
 		this.userDetailsService = userDetailsService;
 		this.mobileSecurityConfigurer = mobileSecurityConfigurer;
 		this.wxSecurityConfigurer = wxSecurityConfigurer;
+		this.decodePasswordFilter = decodePasswordFilter;
+		this.validateCodeFilter = validateCodeFilter;
 	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+		http.addFilterBefore(validateCodeFilter, WebAsyncManagerIntegrationFilter.class);
+		http.addFilterBefore(decodePasswordFilter, WebAsyncManagerIntegrationFilter.class);
 		http
 				// 前后端分离，关闭csrf
-				.csrf().disable().authorizeRequests().antMatchers("/actuator/**").permitAll()
-				.mvcMatchers("/.well-known/jwks.json").permitAll().anyRequest().authenticated().and().httpBasic().and()
-				.csrf().ignoringRequestMatchers(request -> "/introspect".equals(request.getRequestURI()));
+				.csrf().disable().
+				httpBasic().disable().authorizeRequests().antMatchers("/actuator/**").permitAll()
+				.mvcMatchers("/.well-known/jwks.json").permitAll().anyRequest().authenticated();
 		// accessDeniedHandler
 		http.exceptionHandling().accessDeniedHandler(accessDeniedHandler());
 		// 手机号登录

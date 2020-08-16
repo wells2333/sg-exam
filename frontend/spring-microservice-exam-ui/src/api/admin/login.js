@@ -1,8 +1,8 @@
 import request from '@/router/axios'
 import { getRefreshToken } from '@/utils/auth'
-const baseAuthenticationUrl = '/api/auth/v1/authentication/'
+const baseAuthenticationUrl = '/auth/oauth/v1/authentication/'
 
-const basicAuthorization = 'Basic ' + btoa('web_app:spring-microservice-exam-secret')
+const basicAuthorization = 'Basic ' + btoa('web_app:secret')
 
 /**
  * 登录
@@ -16,7 +16,7 @@ export function loginByUsername (tenantCode, identifier, credential, code, rando
   const grantType = 'password'
   const scope = 'read'
   return request({
-    url: '/api/auth/oauth/token',
+    url: '/auth/oauth/token',
     headers: {
       'Authorization': basicAuthorization,
       'Tenant-Code': tenantCode
@@ -35,7 +35,7 @@ export function logout (accesstoken, refreshToken) {
 
 export function getUserInfo (token) {
   return request({
-    url: '/api/user/v1/user/info',
+    url: '/user/v1/user/info',
     method: 'get'
   })
 }
@@ -49,7 +49,7 @@ export function refreshToken () {
   const scope = 'read'
   const refreshToken = getRefreshToken()
   return request({
-    url: '/api/auth/oauth/token',
+    url: '/auth/oauth/token',
     headers: {
       'Authorization': basicAuthorization
     },

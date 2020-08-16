@@ -56,7 +56,7 @@ public class CustomTokenConverter extends JwtAccessTokenConverter {
 		final Map<String, Object> additionalInfo = new HashMap<>();
 		String grantType = authentication.getOAuth2Request().getGrantType();
 		// 加入tenantCode
-		additionalInfo.put(SecurityConstant.TENANT_CODE, TenantContextHolder.getTenantCode());
+		additionalInfo.put(CommonConstant.TENANT_CODE, TenantContextHolder.getTenantCode());
 		// 加入登录类型，用户名/手机号
 		String loginType = "";
 		if (grantType.equalsIgnoreCase(CommonConstant.GRANT_TYPE_PASSWORD)) {

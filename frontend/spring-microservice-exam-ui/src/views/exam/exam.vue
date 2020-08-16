@@ -474,7 +474,7 @@ export default {
       }
       // 获取图片的预览地址
       if (isNotEmpty(this.temp.avatarId)) {
-        this.avatar = '/api/user/v1/attachment/preview?id=' + this.temp.avatarId
+        this.avatar = '/user/v1/attachment/preview?id=' + this.temp.avatarId
       }
       this.dialogStatus = 'update'
       this.dialogFormVisible = true

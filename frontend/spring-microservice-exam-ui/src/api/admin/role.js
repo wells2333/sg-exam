@@ -1,6 +1,6 @@
 import request from '@/router/axios'
 
-const baseRoleUrl = '/api/user/v1/role/'
+const baseRoleUrl = '/user/v1/role/'
 
 export function roleList () {
   return request({
@@ -68,14 +68,14 @@ export function permissionUpdate (id, menus) {
 
 export function fetchRoleTree (roleName) {
   return request({
-    url: '/api/user/v1/menu/roleTree/' + roleName,
+    url: '/user/v1/menu/roleTree/' + roleName,
     method: 'get'
   })
 }
 
 export function fetchDeptTree (query) {
   return request({
-    url: '/api/user/v1/dept/depts',
+    url: '/user/v1/dept/depts',
     method: 'get',
     params: query
   })

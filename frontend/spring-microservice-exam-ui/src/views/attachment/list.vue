@@ -256,13 +256,13 @@ export default {
       })
     },
     handleDownload (row) {
-      window.location.href = '/api/user/v1/attachment/download?id=' + row.id
+      window.location.href = '/user/v1/attachment/download?id=' + row.id
     },
     handlePreview (row) {
       this.previewUrl = ''
       canPreview(row.id).then(response => {
         if (response.data.data) {
-          this.previewUrl = '/api/user/v1/attachment/preview?id=' + row.id
+          this.previewUrl = '/user/v1/attachment/preview?id=' + row.id
           this.dialogPreviewVisible = true
         } else {
           messageWarn(this, '暂不支持预览该格式的附件')
@@ -272,7 +272,7 @@ export default {
       })
     },
     handleDownloadUrl (row) {
-      const url = 'http://' + window.location.host + '/api/user/v1/attachment/download?id=' + row.id
+      const url = 'http://' + window.location.host + '/user/v1/attachment/download?id=' + row.id
       this.$alert(url, '下载链接', { confirmButtonText: '确定' })
     },
     updateData () {

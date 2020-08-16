@@ -1,6 +1,6 @@
 import request from '@/router/axios'
 
-const baseClientUrl = '/api/auth/v1/client/'
+const baseClientUrl = '/oauth/v1/client/'
 
 export function clientList () {
   return request({

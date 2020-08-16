@@ -37,6 +37,7 @@ sys:
   canPreview: jpg,png,jpeg,gif # 支持预览的格式
   authServiceUrl: http://localhost:9182
   userServiceUrl: http://localhost:9183
+  examServiceUrl: http://localhost:9184
 
 ignore:
   urls:

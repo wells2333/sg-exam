@@ -1,6 +1,6 @@
 import request from '@/router/axios'
 
-const baseLogUrl = '/api/user/v1/log/'
+const baseLogUrl = '/user/v1/log/'
 
 export function fetchList (query) {
   return request({

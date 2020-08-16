@@ -1,6 +1,6 @@
 import request from '@/router/axios'
 
-const baseTenantUrl = '/api/user/v1/tenant/'
+const baseTenantUrl = '/user/v1/tenant/'
 
 export function fetchList (query) {
   return request({

@@ -1,22 +1,17 @@
-package com.github.tangyi.user.config;
+package com.github.tangyi.common.security.config;
 
 import com.github.tangyi.common.properties.FilterIgnorePropertiesConfig;
 import com.github.tangyi.common.properties.SysProperties;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 /**
  * 资源服务器配置
  *
  * @author tangyi
- * @date 2019-03-15 11:37
+ * @date 2019-03-15 13:30
  */
-@Configuration
-@EnableWebSecurity
-public class CustomResourceServerConfig extends WebSecurityConfigurerAdapter {
+public class CustomWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
 	private final SysProperties sysProperties;
 
@@ -25,8 +20,7 @@ public class CustomResourceServerConfig extends WebSecurityConfigurerAdapter {
 	 */
 	private final FilterIgnorePropertiesConfig filterIgnorePropertiesConfig;
 
-	@Autowired
-	public CustomResourceServerConfig(FilterIgnorePropertiesConfig filterIgnorePropertiesConfig,
+	public CustomWebSecurityConfigurerAdapter(FilterIgnorePropertiesConfig filterIgnorePropertiesConfig,
 			SysProperties sysProperties) {
 		this.filterIgnorePropertiesConfig = filterIgnorePropertiesConfig;
 		this.sysProperties = sysProperties;
