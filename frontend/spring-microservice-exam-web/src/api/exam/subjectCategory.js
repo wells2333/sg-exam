@@ -1,6 +1,6 @@
 import request from '@/router/axios'
 
-const baseSubjectCategoryUrl = '/api/exam/v1/subjectCategory/'
+const baseSubjectCategoryUrl = '/exam/v1/subjectCategory/'
 
 export function fetchTree (query) {
   return request({

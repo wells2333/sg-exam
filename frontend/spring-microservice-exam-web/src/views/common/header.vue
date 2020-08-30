@@ -38,7 +38,7 @@
                     <el-menu-item index="c-overview"  @click="open('https://www.kancloud.cn/tangyi/spring-microservice-exam/1322864#6__112')">
                       规划总览
                     </el-menu-item>
-                    <el-menu-item index="u-admin" @click="open('http://118.25.138.130:81')">
+                    <el-menu-item index="u-admin" @click="open('http://two.404forever.com:81/')">
                       管理后台
                     </el-menu-item>
                   </el-submenu>

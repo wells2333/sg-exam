@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-service
+  template:
+    metadata:
+      labels:
+        app: web-service
+        version: latest
+    spec:
+      containers:
+        - name: web-service
+          image: registry.cn-hangzhou.aliyuncs.com/sg-exam/web-service
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80

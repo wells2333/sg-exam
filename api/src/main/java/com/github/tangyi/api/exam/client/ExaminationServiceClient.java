@@ -2,7 +2,6 @@ package com.github.tangyi.api.exam.client;
 
 import com.github.tangyi.api.config.CustomFeignConfig;
 import com.github.tangyi.api.exam.dto.ExaminationDashboardDto;
-import com.github.tangyi.api.user.client.UserServiceClientFallbackFactory;
 import com.github.tangyi.common.constant.ServiceConstant;
 import com.github.tangyi.common.model.ResponseBean;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -37,6 +36,7 @@ public interface ExaminationServiceClient {
 	 * @return ResponseBean
 	 */
 	@GetMapping("/v1/examRecord/dashboard/examRecordTendency")
-	ResponseBean<ExaminationDashboardDto> findExamRecordTendencyData(@RequestParam("tenantCode") String tenantCode, @RequestParam("pastDays") Integer pastDays);
+	ResponseBean<ExaminationDashboardDto> findExamRecordTendencyData(@RequestParam("tenantCode") String tenantCode,
+			@RequestParam("pastDays") Integer pastDays);
 
 }

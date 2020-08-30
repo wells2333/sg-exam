@@ -4,7 +4,6 @@ import com.github.tangyi.api.exam.constants.ExamSubjectConstant;
 import com.github.tangyi.api.exam.dto.SubjectCategoryDto;
 import com.github.tangyi.api.exam.module.SubjectCategory;
 import com.github.tangyi.common.model.ResponseBean;
-import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.common.web.BaseController;
 import com.github.tangyi.exam.service.SubjectCategoryService;
 import io.swagger.annotations.Api;
@@ -70,7 +69,7 @@ public class SubjectCategoryController extends BaseController {
     @ApiOperation(value = "创建分类", notes = "创建分类")
     @ApiImplicitParam(name = "subjectCategory", value = "分类实体subjectCategory", required = true, dataType = "SubjectCategory")
     public ResponseBean<Boolean> addSubjectCategory(@RequestBody @Valid SubjectCategory subjectCategory) {
-        subjectCategory.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        subjectCategory.setCommonValue();
         subjectCategory.setType(ExamSubjectConstant.PUBLIC_CATEGORY);
         return new ResponseBean<>(categoryService.insert(subjectCategory) > 0);
     }
@@ -87,7 +86,7 @@ public class SubjectCategoryController extends BaseController {
     @ApiOperation(value = "更新分类信息", notes = "根据分类id更新分类的基本信息")
     @ApiImplicitParam(name = "subjectCategory", value = "分类实体subjectCategory", required = true, dataType = "SubjectCategory")
     public ResponseBean<Boolean> updateSubjectCategory(@RequestBody @Valid SubjectCategory subjectCategory) {
-        subjectCategory.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        subjectCategory.setCommonValue();
         return new ResponseBean<>(categoryService.update(subjectCategory) > 0);
     }
 

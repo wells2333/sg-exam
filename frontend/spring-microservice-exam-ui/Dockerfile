@@ -1,16 +1,23 @@
-FROM nginx:1.13.6-alpine
-MAINTAINER tangyi(1633736729@qq.com)
+FROM node:latest as build-stage
 
-ARG TZ="Asia/Guangzhou"
+WORKDIR /app
 
-ENV TZ ${TZ}
+COPY package*.json ./
 
-RUN apk upgrade --update \
-    && apk add bash tzdata \
-    && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime \
-    && echo ${TZ} > /etc/timezone \
-    && rm -rf /var/cache/apk/*
+RUN npm install -g cnpm --registry=https://registry.npm.taobao.org
+RUN npm install node-sass --sass\_binary\_site=https://npm.taobao.org/mirrors/node-sass/
 
-COPY dist /usr/share/nginx/html
+COPY ./ .
+
+RUN npm run build
+
+FROM nginx as production-stage
+
+RUN mkdir /app
+
+COPY --from=build-stage /app/dist /app
+COPY nginx.conf /etc/nginx/nginx.conf
+
+EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]

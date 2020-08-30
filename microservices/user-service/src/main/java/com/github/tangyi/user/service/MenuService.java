@@ -254,7 +254,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 		Menu parentMenu = new Menu();
 		parentMenu.setParentId(menu.getId());
 		parentMenu.setNewRecord(false);
-		parentMenu.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+		parentMenu.setCommonValue();
 		parentMenu.setDelFlag(CommonConstant.DEL_FLAG_DEL);
 		return super.update(parentMenu);
 	}

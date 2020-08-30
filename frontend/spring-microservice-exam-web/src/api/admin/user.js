@@ -1,6 +1,6 @@
 import request from '@/router/axios'
 
-const baseUserUrl = '/api/user/v1/user/'
+const baseUserUrl = '/user/v1/user/'
 
 export function fetchList (query) {
   return request({

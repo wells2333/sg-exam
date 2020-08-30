@@ -1,9 +1,9 @@
 package com.github.tangyi.auth.security.core;
 
-import com.github.tangyi.common.utils.TenantContextHolder;
 import com.github.tangyi.common.constant.CommonConstant;
 import com.github.tangyi.common.constant.SecurityConstant;
 import com.github.tangyi.common.enums.LoginTypeEnum;
+import com.github.tangyi.common.utils.TenantContextHolder;
 import org.springframework.security.jwt.JwtHelper;
 import org.springframework.security.jwt.crypto.sign.RsaSigner;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;

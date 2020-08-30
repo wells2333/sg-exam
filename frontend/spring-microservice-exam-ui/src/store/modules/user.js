@@ -102,7 +102,7 @@ const user = {
           removeRefreshToken()
           resolve()
         }).catch(error => {
-          reject(error)
+          console.error(error)
         })
       })
     },

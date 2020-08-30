@@ -38,4 +38,5 @@ dependencies {
     implementation('org.springframework.security:spring-security-oauth2-jose')
     compileOnly 'org.projectlombok:lombok:1.18.10'
     annotationProcessor 'org.projectlombok:lombok:1.18.10'
+    implementation('com.github.kstyrc:embedded-redis:0.6')
 }

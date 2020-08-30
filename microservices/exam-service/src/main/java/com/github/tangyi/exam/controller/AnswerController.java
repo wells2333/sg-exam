@@ -97,7 +97,7 @@ public class AnswerController extends BaseController {
     @ApiOperation(value = "创建答题", notes = "创建答题")
     @ApiImplicitParam(name = "answer", value = "答题实体answer", required = true, dataType = "Answer")
     public ResponseBean<Boolean> addAnswer(@RequestBody @Valid Answer answer) {
-        answer.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        answer.setCommonValue();
         return new ResponseBean<>(answerService.insert(answer) > 0);
     }
 
@@ -113,7 +113,7 @@ public class AnswerController extends BaseController {
     @ApiOperation(value = "更新答题信息", notes = "根据答题id更新答题的基本信息")
     @ApiImplicitParam(name = "answer", value = "答题实体answer", required = true, dataType = "Answer")
     public ResponseBean<Boolean> updateAnswer(@RequestBody @Valid Answer answer) {
-        answer.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        answer.setCommonValue();
         return new ResponseBean<>(answerService.update(answer) > 0);
     }
 
@@ -129,7 +129,7 @@ public class AnswerController extends BaseController {
     @ApiOperation(value = "批改答题", notes = "根据答题id批改答题")
     @ApiImplicitParam(name = "answer", value = "答题实体answer", required = true, dataType = "Answer")
     public ResponseBean<Boolean> markAnswer(@RequestBody @Valid Answer answer) {
-        answer.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        answer.setCommonValue();
         return new ResponseBean<>(answerService.updateScore(answer) > 0);
     }
 
@@ -149,7 +149,7 @@ public class AnswerController extends BaseController {
         try {
             Answer answer = answerService.get(id);
             if (answer != null) {
-                answer.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+                answer.setCommonValue();
                 success = answerService.delete(answer) > 0;
             }
         } catch (Exception e) {

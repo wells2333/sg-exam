@@ -16,7 +16,6 @@ import com.github.tangyi.exam.service.SubjectService;
 import com.github.tangyi.exam.utils.SubjectUtil;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -103,7 +102,7 @@ public class SubjectController extends BaseController {
     @ApiOperation(value = "创建题目", notes = "创建题目")
     @ApiImplicitParam(name = "subject", value = "题目信息", required = true, dataType = "SubjectDto")
     public ResponseBean<SubjectDto> addSubject(@RequestBody @Valid SubjectDto subject) {
-        subject.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        subject.setCommonValue();
         if (!(subjectService.insert(subject) > 0)) {
 			subject = null;
 		}
@@ -122,7 +121,7 @@ public class SubjectController extends BaseController {
     @ApiOperation(value = "更新题目信息", notes = "根据题目id更新题目的基本信息")
     @ApiImplicitParam(name = "subject", value = "角色实体subject", required = true, dataType = "Subject")
     public ResponseBean<SubjectDto> updateSubject(@RequestBody @Valid SubjectDto subject) {
-        subject.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        subject.setCommonValue();
         if (!(subjectService.update(subject) > 0)) {
 			subject = null;
 		}
@@ -146,7 +145,7 @@ public class SubjectController extends BaseController {
         boolean success = false;
         SubjectDto subject = subjectService.get(id, type);
         if (subject != null) {
-            subject.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+            subject.setCommonValue();
             success = subjectService.physicalDelete(subject) > 0;
         }
         return new ResponseBean<>(success);

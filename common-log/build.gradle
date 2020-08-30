@@ -1,0 +1,11 @@
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:unchecked'
+    options.deprecation = true
+    options.encoding = "UTF-8"
+}
+
+dependencies {
+    implementation(project(':common'))
+    implementation(project(':api'))
+    implementation('org.springframework.security:spring-security-core')
+}

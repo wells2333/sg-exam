@@ -7,6 +7,7 @@ import com.github.tangyi.auth.security.core.CustomUserDetailsAuthenticationProvi
 import com.github.tangyi.auth.security.core.CustomUserDetailsService;
 import com.github.tangyi.auth.security.mobile.MobileSecurityConfigurer;
 import com.github.tangyi.auth.security.wx.WxSecurityConfigurer;
+import com.github.tangyi.common.properties.FilterIgnorePropertiesConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,25 +49,31 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private final ValidateCodeFilter validateCodeFilter;
 
+	private final FilterIgnorePropertiesConfig ignorePropertiesConfig;
+
 	public SecurityConfig(CustomUserDetailsService userDetailsService,
 			MobileSecurityConfigurer mobileSecurityConfigurer, WxSecurityConfigurer wxSecurityConfigurer,
-			DecodePasswordFilter decodePasswordFilter, ValidateCodeFilter validateCodeFilter) {
+			DecodePasswordFilter decodePasswordFilter, ValidateCodeFilter validateCodeFilter,
+			FilterIgnorePropertiesConfig ignorePropertiesConfig) {
 		this.userDetailsService = userDetailsService;
 		this.mobileSecurityConfigurer = mobileSecurityConfigurer;
 		this.wxSecurityConfigurer = wxSecurityConfigurer;
 		this.decodePasswordFilter = decodePasswordFilter;
 		this.validateCodeFilter = validateCodeFilter;
+		this.ignorePropertiesConfig = ignorePropertiesConfig;
 	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.addFilterBefore(validateCodeFilter, WebAsyncManagerIntegrationFilter.class);
 		http.addFilterBefore(decodePasswordFilter, WebAsyncManagerIntegrationFilter.class);
+
+		String[] ignores = new String[ignorePropertiesConfig.getUrls().size()];
 		http
 				// 前后端分离，关闭csrf
 				.csrf().disable().
-				httpBasic().disable().authorizeRequests().antMatchers("/actuator/**").permitAll()
-				.mvcMatchers("/.well-known/jwks.json").permitAll().anyRequest().authenticated();
+				httpBasic().disable().authorizeRequests().antMatchers(ignorePropertiesConfig.getUrls().toArray(ignores))
+				.permitAll().mvcMatchers("/.well-known/jwks.json").permitAll().anyRequest().authenticated();
 		// accessDeniedHandler
 		http.exceptionHandling().accessDeniedHandler(accessDeniedHandler());
 		// 手机号登录

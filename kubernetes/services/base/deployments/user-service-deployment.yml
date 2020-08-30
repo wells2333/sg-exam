@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: user-service
-          image: sg-exam/user-service
+          image: registry.cn-hangzhou.aliyuncs.com/sg-exam/user-service
           imagePullPolicy: Never
           env:
             - name: SPRING_PROFILES_ACTIVE

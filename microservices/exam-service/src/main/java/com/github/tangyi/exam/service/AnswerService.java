@@ -193,7 +193,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
      */
     @Transactional
     public int save(Answer answer) {
-        answer.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        answer.setCommonValue();
 		answer.setAnswer(AnswerHandlerUtil.replaceComma(answer.getAnswer()));
 		return super.save(answer);
     }

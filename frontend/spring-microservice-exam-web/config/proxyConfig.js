@@ -1,15 +1,37 @@
-// 网关地址
-const GATEWAY_HOST = process.env.GATEWAY_HOST || 'localhost'
-const GATEWAY_PORT = process.env.GATEWAY_PORT || '9180'
+// user服务地址
+const USER_SERVICE_HOST = process.env.USER_SERVICE_HOST || 'localhost'
+const USER_SERVICE_PORT = process.env.USER_SERVICE_PORT || '9183'
+
+// auth服务地址
+const AUTH_SERVICE_HOST = process.env.AUTH_SERVICE_HOST || 'localhost'
+const AUTH_SERVICE_PORT = process.env.AUTH_SERVICE_PORT || '9182'
+
+// exam服务地址
+const EXAM_SERVICE_HOST = process.env.EXAM_SERVICE_HOST || 'localhost'
+const EXAM_SERVICE_PORT = process.env.EXAM_SERVICE_PORT || '9184'
 
 // 转发配置
 module.exports = {
   proxyList: {
-    '/api': {
-      target: 'http://' + GATEWAY_HOST + ':' + GATEWAY_PORT,
+    '/user': {
+      target: 'http://' + USER_SERVICE_HOST + ':' + USER_SERVICE_PORT,
       changeOrigin: true,
       pathRewrite: {
-        '^/api': '/api'
+        '^/user': '/'
+      }
+    },
+    '/exam': {
+      target: 'http://' + EXAM_SERVICE_HOST + ':' + EXAM_SERVICE_PORT,
+      changeOrigin: true,
+      pathRewrite: {
+        '^/exam': '/'
+      }
+    },
+    '/auth': {
+      target: 'http://' + AUTH_SERVICE_HOST + ':' + AUTH_SERVICE_PORT,
+      changeOrigin: true,
+      pathRewrite: {
+        '^/auth': '/'
       }
     }
   }

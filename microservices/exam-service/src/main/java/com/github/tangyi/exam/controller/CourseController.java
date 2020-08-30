@@ -91,7 +91,7 @@ public class CourseController extends BaseController {
     @ApiOperation(value = "创建课程", notes = "创建课程")
     @ApiImplicitParam(name = "course", value = "课程实体course", required = true, dataType = "Course")
     public ResponseBean<Boolean> addCourse(@RequestBody @Valid Course course) {
-        course.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        course.setCommonValue();
         return new ResponseBean<>(courseService.insert(course) > 0);
     }
 
@@ -107,7 +107,7 @@ public class CourseController extends BaseController {
     @ApiOperation(value = "更新课程信息", notes = "根据课程id更新课程的基本信息")
     @ApiImplicitParam(name = "course", value = "课程实体course", required = true, dataType = "Course")
     public ResponseBean<Boolean> updateCourse(@RequestBody @Valid Course course) {
-        course.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        course.setCommonValue();
         return new ResponseBean<>(courseService.update(course) > 0);
     }
 
@@ -127,7 +127,7 @@ public class CourseController extends BaseController {
         try {
             Course course = courseService.get(id);
             if (course != null) {
-                course.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+                course.setCommonValue();
                 success = courseService.delete(course) > 0;
             }
         } catch (Exception e) {

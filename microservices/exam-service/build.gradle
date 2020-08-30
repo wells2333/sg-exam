@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     implementation(project(':common'))
+    implementation(project(':common-log'))
     implementation(project(':common-security'))
     implementation(project(':api'))
     implementation('org.springframework.boot:spring-boot-starter-web')
@@ -16,7 +17,6 @@ dependencies {
     implementation('org.springframework.security:spring-security-oauth2-resource-server')
     implementation('org.springframework.security:spring-security-oauth2-jose')
     implementation "org.springframework.security.oauth:spring-security-oauth2:2.3.4.RELEASE"
-    implementation('com.github.kstyrc:embedded-redis:0.6')
 }
 
 test {

@@ -5,6 +5,7 @@ import com.github.tangyi.api.user.dto.MenuDto;
 import com.github.tangyi.api.user.module.Menu;
 import com.github.tangyi.common.constant.CommonConstant;
 import com.github.tangyi.common.excel.ExcelToolUtil;
+import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.model.ResponseBean;
 import com.github.tangyi.common.utils.PageUtil;
 import com.github.tangyi.common.utils.SysUtil;
@@ -78,8 +79,9 @@ public class MenuController extends BaseController {
     @PostMapping
     @ApiOperation(value = "创建菜单", notes = "创建菜单")
     @ApiImplicitParam(name = "menu", value = "角色实体menu", required = true, dataType = "Menu")
+	@Log("新增菜单")
     public ResponseBean<Boolean> addMenu(@RequestBody @Valid Menu menu) {
-        menu.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        menu.setCommonValue();
         return new ResponseBean<>(menuService.insert(menu) > 0);
     }
 
@@ -94,8 +96,9 @@ public class MenuController extends BaseController {
     @PutMapping
     @ApiOperation(value = "更新菜单信息", notes = "根据菜单id更新菜单的基本信息")
     @ApiImplicitParam(name = "menu", value = "角色实体menu", required = true, dataType = "Menu")
+	@Log("更新菜单")
     public ResponseBean<Boolean> updateMenu(@RequestBody @Valid Menu menu) {
-        menu.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        menu.setCommonValue();
         return new ResponseBean<>(menuService.update(menu) > 0);
     }
 
@@ -110,6 +113,7 @@ public class MenuController extends BaseController {
     @DeleteMapping("/{id}")
     @ApiOperation(value = "删除菜单", notes = "根据ID删除菜单")
     @ApiImplicitParam(name = "id", value = "菜单ID", required = true, paramType = "path")
+	@Log("删除菜单")
     public ResponseBean<Boolean> deleteMenu(@PathVariable Long id) {
         Menu menu = new Menu();
         menu.setId(id);
@@ -223,6 +227,7 @@ public class MenuController extends BaseController {
     @PostMapping("export")
     @ApiOperation(value = "导出菜单", notes = "根据菜单id导出菜单")
     @ApiImplicitParam(name = "ids", value = "菜单ID", required = true, dataType = "Long")
+	@Log("导出菜单")
     public void exportMenu(@RequestBody Long[] ids, HttpServletRequest request, HttpServletResponse response) {
         String tenantCode = SysUtil.getTenantCode();
         try {
@@ -251,6 +256,7 @@ public class MenuController extends BaseController {
      */
     @PostMapping("import")
     @ApiOperation(value = "导入菜单", notes = "导入菜单")
+	@Log("导入菜单")
     public ResponseBean<Boolean> importMenu(@ApiParam(value = "要上传的文件", required = true) MultipartFile file) {
         try {
             log.debug("Start import menu data");

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.tangyi.common.constant.CommonConstant;
 import com.github.tangyi.common.utils.DateUtils;
 import com.github.tangyi.common.utils.IdGen;
+import com.github.tangyi.common.utils.SysUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -84,6 +85,10 @@ public class BaseEntity<T> implements Serializable {
     public boolean isNewRecord() {
         return this.isNewRecord || this.getId() == null;
     }
+
+    public void setCommonValue() {
+		setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+	}
 
     /**
      * 设置基本属性

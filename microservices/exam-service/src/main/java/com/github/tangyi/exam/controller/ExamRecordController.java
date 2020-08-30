@@ -8,7 +8,6 @@ import com.github.tangyi.api.exam.module.ExaminationRecord;
 import com.github.tangyi.common.constant.CommonConstant;
 import com.github.tangyi.common.model.ResponseBean;
 import com.github.tangyi.common.utils.DateUtils;
-import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.common.web.BaseController;
 import com.github.tangyi.exam.service.AnswerService;
 import com.github.tangyi.exam.service.ExamRecordService;
@@ -17,7 +16,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -100,7 +98,7 @@ public class ExamRecordController extends BaseController {
     @ApiOperation(value = "创建考试记录", notes = "创建考试记录")
     @ApiImplicitParam(name = "examRecord", value = "考试记录实体examRecord", required = true, dataType = "ExamRecord")
     public ResponseBean<ExaminationRecord> addExamRecord(@RequestBody @Valid ExaminationRecord examRecord) {
-        examRecord.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        examRecord.setCommonValue();
         examRecord.setStartTime(examRecord.getCreateDate());
         examRecordService.insert(examRecord);
         return new ResponseBean<>(examRecord);
@@ -118,7 +116,7 @@ public class ExamRecordController extends BaseController {
     @ApiOperation(value = "更新考试记录信息", notes = "根据考试记录id更新考试记录的基本信息")
     @ApiImplicitParam(name = "examRecord", value = "考试记录实体examRecord", required = true, dataType = "ExamRecord")
     public ResponseBean<Boolean> updateExamRecord(@RequestBody @Valid ExaminationRecord examRecord) {
-        examRecord.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        examRecord.setCommonValue();
         return new ResponseBean<>(examRecordService.update(examRecord) > 0);
     }
 
@@ -138,7 +136,7 @@ public class ExamRecordController extends BaseController {
         try {
             ExaminationRecord examRecord = examRecordService.get(id);
             if (examRecord != null) {
-                examRecord.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+                examRecord.setCommonValue();
                 success = examRecordService.delete(examRecord) > 0;
             }
         } catch (Exception e) {

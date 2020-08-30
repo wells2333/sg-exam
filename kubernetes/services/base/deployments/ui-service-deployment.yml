@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ui-service
+  template:
+    metadata:
+      labels:
+        app: ui-service
+        version: latest
+    spec:
+      containers:
+        - name: ui-service
+          image: registry.cn-hangzhou.aliyuncs.com/sg-exam/ui-service
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80

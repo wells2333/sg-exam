@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.user.module.Attachment;
 import com.github.tangyi.common.constant.CommonConstant;
 import com.github.tangyi.common.exceptions.CommonException;
+import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.model.ResponseBean;
 import com.github.tangyi.common.properties.SysProperties;
 import com.github.tangyi.common.utils.FileUtil;
@@ -113,11 +114,12 @@ public class AttachmentController extends BaseController {
             @ApiImplicitParam(name = "busiId", value = "业务Id", dataType = "String"),
             @ApiImplicitParam(name = "busiModule", value = "业务模块", dataType = "String"),
     })
+	@Log("上传文件")
     public ResponseBean<Attachment> upload(@ApiParam(value = "要上传的文件", required = true) @RequestParam("file") MultipartFile file,
                                            Attachment attachment) {
         if (!file.isEmpty()) {
             try {
-                attachment.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+                attachment.setCommonValue();
                 attachment.setAttachType(FileUtil.getFileNameEx(file.getOriginalFilename()));
                 attachment.setAttachSize(String.valueOf(file.getSize()));
                 attachment.setAttachName(file.getOriginalFilename());
@@ -140,6 +142,7 @@ public class AttachmentController extends BaseController {
     @GetMapping("download")
     @ApiOperation(value = "下载附件", notes = "根据ID下载附件")
     @ApiImplicitParam(name = "id", value = "附件ID", required = true, dataType = "Long")
+	@Log("下载文件")
     public void download(HttpServletRequest request, HttpServletResponse response, @NotBlank Long id) {
         try {
 			Attachment attachment = new Attachment();
@@ -183,6 +186,7 @@ public class AttachmentController extends BaseController {
     @DeleteMapping("/{id}")
     @ApiOperation(value = "删除附件", notes = "根据ID删除附件")
     @ApiImplicitParam(name = "id", value = "附件ID", required = true, paramType = "path")
+	@Log("删除附件")
     public ResponseBean<Boolean> delete(@PathVariable Long id) {
         Attachment attachment = new Attachment();
         attachment.setId(id);
@@ -204,6 +208,7 @@ public class AttachmentController extends BaseController {
     @PostMapping("deleteAll")
     @ApiOperation(value = "批量删除附件", notes = "根据附件id批量删除附件")
     @ApiImplicitParam(name = "ids", value = "附件ID", dataType = "Long")
+	@Log("批量删除附件")
     public ResponseBean<Boolean> deleteAllAttachments(@RequestBody Long[] ids) {
         boolean success = false;
         try {

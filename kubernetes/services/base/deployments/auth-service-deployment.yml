@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: auth-service
-          image: sg-exam/auth-service
+          image: registry.cn-hangzhou.aliyuncs.com/sg-exam/auth-service
           imagePullPolicy: Never
           env:
             - name: SPRING_PROFILES_ACTIVE

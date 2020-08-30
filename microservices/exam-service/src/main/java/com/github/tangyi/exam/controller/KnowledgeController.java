@@ -136,7 +136,7 @@ public class KnowledgeController extends BaseController {
     @ApiOperation(value = "创建知识", notes = "创建知识")
     @ApiImplicitParam(name = "knowledge", value = "知识实体knowledge", required = true, dataType = "Knowledge")
     public ResponseBean<Boolean> addKnowledge(@RequestBody @Valid Knowledge knowledge) {
-        knowledge.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        knowledge.setCommonValue();
         return new ResponseBean<>(knowledgeService.insert(knowledge) > 0);
     }
 
@@ -152,7 +152,7 @@ public class KnowledgeController extends BaseController {
     @ApiOperation(value = "更新知识信息", notes = "根据知识id更新知识的基本信息")
     @ApiImplicitParam(name = "knowledge", value = "知识实体knowledge", required = true, dataType = "Knowledge")
     public ResponseBean<Boolean> updateKnowledge(@RequestBody @Valid Knowledge knowledge) {
-        knowledge.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        knowledge.setCommonValue();
         return new ResponseBean<>(knowledgeService.update(knowledge) > 0);
     }
 
@@ -171,7 +171,7 @@ public class KnowledgeController extends BaseController {
         boolean success = false;
 		Knowledge knowledge = knowledgeService.get(id);
 		if (knowledge != null) {
-			knowledge.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+			knowledge.setCommonValue();
 			success = knowledgeService.delete(knowledge) > 0;
 		}
 		// 删除附件

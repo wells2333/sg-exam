@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     implementation(project(':common'))
+    implementation(project(':common-log'))
     implementation(project(':api'))
     implementation('org.springframework.boot:spring-boot-starter-web')
     implementation 'org.springframework.boot:spring-boot-starter-actuator'

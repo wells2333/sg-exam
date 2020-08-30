@@ -1,8 +1,8 @@
 package com.github.tangyi.auth.utils;
 
 import com.github.tangyi.auth.constant.SecurityConstant;
-import com.github.tangyi.common.utils.TenantContextHolder;
 import com.github.tangyi.common.utils.SpringContextHolder;
+import com.github.tangyi.common.utils.TenantContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.util.encoders.Base64;

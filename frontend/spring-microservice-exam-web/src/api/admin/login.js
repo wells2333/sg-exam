@@ -1,15 +1,15 @@
 import request from '@/router/axios'
 import { getRefreshToken } from '@/utils/auth'
 
-const baseAuthenticationUrl = '/api/auth/v1/authentication/'
+const baseAuthenticationUrl = '/auth/v1/authentication/'
 
-const basicAuthorization = 'Basic d2ViX2FwcDpzcHJpbmctbWljcm9zZXJ2aWNlLWV4YW0tc2VjcmV0'
+const basicAuthorization = 'Basic ' + btoa('web_app:secret')
 
 export function loginByUsername (identifier, credential, code, randomStr) {
   const grantType = 'password'
   const scope = 'read'
   return request({
-    url: '/api/auth/oauth/token',
+    url: '/auth/oauth/token',
     headers: {
       'Authorization': basicAuthorization
     },
@@ -27,7 +27,7 @@ export function loginBySocial (social, code) {
   const grantType = 'mobile'
   const scope = 'read'
   return request({
-    url: '/api/auth/api/v1/mobile/token',
+    url: '/auth/v1/mobile/token',
     headers: {
       'Authorization': basicAuthorization
     },
@@ -38,7 +38,7 @@ export function loginBySocial (social, code) {
 
 export function registerByUsername (identifier, email, credential, code, randomStr) {
   return request({
-    url: '/api/user/v1/user/anonymousUser/register',
+    url: '/user/v1/user/anonymousUser/register',
     method: 'post',
     params: {identifier, email, credential, randomStr, code},
     data: {identifier, email, credential}
@@ -54,7 +54,7 @@ export function logout (accesstoken, refreshToken) {
 
 export function getUserInfo (token) {
   return request({
-    url: '/api/user/v1/user/info',
+    url: '/user/v1/user/info',
     method: 'get'
   })
 }
@@ -68,7 +68,7 @@ export function refreshToken () {
   const scope = 'read'
   const refreshToken = getRefreshToken()
   return request({
-    url: '/api/auth/oauth/token',
+    url: '/auth/oauth/token',
     headers: {
       'Authorization': basicAuthorization
     },

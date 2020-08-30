@@ -1,5 +1,7 @@
 .gradle
 **/build/
+!frontend/spring-microservice-exam-ui/build
+!frontend/spring-microservice-exam-web/build
 !gradle/wrapper/gradle-wrapper.jar
 
 ### STS ###
@@ -29,3 +31,6 @@ bin
 ML-labb
 istio-1.5.*
 /logs/
+
+**/package-lock.json
+**/*.log

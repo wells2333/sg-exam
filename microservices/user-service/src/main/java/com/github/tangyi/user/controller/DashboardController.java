@@ -1,5 +1,6 @@
 package com.github.tangyi.user.controller;
 
+import com.github.tangyi.api.exam.client.ExaminationServiceClient;
 import com.github.tangyi.api.exam.dto.ExaminationDashboardDto;
 import com.github.tangyi.api.user.dto.DashboardDto;
 import com.github.tangyi.common.exceptions.ServiceException;
@@ -34,7 +35,9 @@ public class DashboardController extends BaseController {
 
     private final TenantService tenantService;
 
-    /**
+	private final ExaminationServiceClient examinationService;
+
+	/**
      * 获取管控台首页数据
      *
      * @return ResponseBean
@@ -53,7 +56,7 @@ public class DashboardController extends BaseController {
         // 租户数量
 		dashboardDto.setTenantCount(tenantService.tenantCount().toString());
         // 查询考试数量
-        ResponseBean<ExaminationDashboardDto> dashboardData = null;
+        ResponseBean<ExaminationDashboardDto> dashboardData = examinationService.findExaminationDashboardData(tenantCode);;
         if (!ResponseUtil.isSuccess(dashboardData))
             throw new ServiceException("Get examination dashboard data failed: " + dashboardData.getMsg());
         ExaminationDashboardDto examinationDashboardDto = dashboardData.getData();
@@ -78,7 +81,7 @@ public class DashboardController extends BaseController {
 	@ApiOperation(value = "过去一周考试记录数", notes = "过去一周考试记录数")
 	public ResponseBean<DashboardDto> examRecordTendency(@RequestParam Integer pastDays) {
 		DashboardDto dashboardDto = new DashboardDto();
-		ResponseBean<ExaminationDashboardDto> examRecordTendencyData = null;
+		ResponseBean<ExaminationDashboardDto> examRecordTendencyData = examinationService.findExamRecordTendencyData(SysUtil.getTenantCode(), pastDays);;
 		if (!ResponseUtil.isSuccess(examRecordTendencyData))
 			throw new ServiceException("Get examination record tendency data failed: " + examRecordTendencyData.getMsg());
 		dashboardDto.setExamRecordDate(examRecordTendencyData.getData().getExamRecordDate());

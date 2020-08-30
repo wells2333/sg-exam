@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: msc-service
-          image: sg-exam/msc-service
+          image: registry.cn-hangzhou.aliyuncs.com/sg-exam/msc-service
           imagePullPolicy: Never
           env:
             - name: SPRING_PROFILES_ACTIVE

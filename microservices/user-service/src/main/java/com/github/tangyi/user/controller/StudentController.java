@@ -116,7 +116,7 @@ public class StudentController extends BaseController {
             Student student = new Student();
             BeanUtils.copyProperties(studentDto, student);
             student.setId(studentDto.getId());
-            student.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+            student.setCommonValue();
             return new ResponseBean<>(studentService.update(student) > 0);
         } catch (Exception e) {
             log.error("Update student info failed", e);
@@ -138,7 +138,7 @@ public class StudentController extends BaseController {
     public ResponseBean<Boolean> delete(@PathVariable Long id) {
         try {
             Student student = studentService.get(id);
-            student.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+            student.setCommonValue();
             studentService.delete(student);
         } catch (Exception e) {
             log.error("Delete student info failed", e);

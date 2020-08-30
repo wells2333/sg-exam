@@ -2,7 +2,7 @@ import request from '@/router/axios'
 
 const baseRouteUrl = '/route/v1/route/'
 
-const previewSwitchUrl = '/api/preview/'
+const previewSwitchUrl = '/user/api/preview/'
 
 export function routeList () {
   return request({

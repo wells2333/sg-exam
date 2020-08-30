@@ -1,6 +1,6 @@
 import request from '@/router/axios'
 
-const baseKnowledgeUrl = '/api/exam/v1/knowledge/'
+const baseKnowledgeUrl = '/exam/v1/knowledge/'
 
 export function fetchKnowledgeList (query) {
   return request({

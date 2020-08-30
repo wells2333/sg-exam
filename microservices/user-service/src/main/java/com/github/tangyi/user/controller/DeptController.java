@@ -2,8 +2,8 @@ package com.github.tangyi.user.controller;
 
 import com.github.tangyi.api.user.dto.DeptDto;
 import com.github.tangyi.api.user.module.Dept;
+import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.model.ResponseBean;
-import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.common.vo.DeptVo;
 import com.github.tangyi.common.web.BaseController;
 import com.github.tangyi.user.service.DeptService;
@@ -73,8 +73,9 @@ public class DeptController extends BaseController {
     @PostMapping
     @ApiOperation(value = "创建部门", notes = "创建部门")
     @ApiImplicitParam(name = "dept", value = "部门实体", required = true, dataType = "Dept")
+	@Log("新增部门")
     public ResponseBean<Boolean> add(@RequestBody @Valid Dept dept) {
-        dept.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        dept.setCommonValue();
         return new ResponseBean<>(deptService.insert(dept) > 0);
     }
 
@@ -89,10 +90,11 @@ public class DeptController extends BaseController {
     @DeleteMapping("/{id}")
     @ApiOperation(value = "删除部门", notes = "根据ID删除部门")
     @ApiImplicitParam(name = "id", value = "部门ID", required = true, paramType = "path")
+	@Log("删除部门")
     public ResponseBean<Boolean> delete(@PathVariable Long id) {
         Dept dept = new Dept();
         dept.setId(id);
-        dept.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        dept.setCommonValue();
         return new ResponseBean<>(deptService.delete(dept) > 0);
     }
 
@@ -107,8 +109,9 @@ public class DeptController extends BaseController {
     @PutMapping
     @ApiOperation(value = "更新部门信息", notes = "根据部门id更新部门的基本信息")
     @ApiImplicitParam(name = "dept", value = "部门实体", required = true, dataType = "Dept")
+	@Log("更新部门")
     public ResponseBean<Boolean> update(@RequestBody @Valid Dept dept) {
-        dept.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        dept.setCommonValue();
         return new ResponseBean<>(deptService.update(dept) > 0);
     }
 

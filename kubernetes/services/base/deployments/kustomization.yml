@@ -1,3 +1,7 @@
 resources:
   - auth-service-deployment.yml
   - user-service-deployment.yml
+  - exam-service-deployment.yml
+  - msc-service-deployment.yml
+  - ui-service-deployment.yml
+  - web-service-deployment.yml

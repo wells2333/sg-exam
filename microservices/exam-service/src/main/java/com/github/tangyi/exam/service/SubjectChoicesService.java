@@ -8,7 +8,6 @@ import com.github.tangyi.api.exam.module.SubjectChoices;
 import com.github.tangyi.api.exam.module.SubjectOption;
 import com.github.tangyi.common.constant.CommonConstant;
 import com.github.tangyi.common.service.CrudService;
-import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.exam.mapper.SubjectChoicesMapper;
 import com.github.tangyi.exam.utils.AnswerHandlerUtil;
 import com.github.tangyi.exam.utils.SubjectUtil;
@@ -355,7 +354,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 	public int updateSubject(SubjectDto subjectDto) {
         SubjectChoices subjectChoices = new SubjectChoices();
         BeanUtils.copyProperties(subjectDto, subjectChoices);
-        subjectChoices.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        subjectChoices.setCommonValue();
         // 参考答案
         subjectChoices.setAnswer(AnswerHandlerUtil.replaceComma(subjectDto.getAnswer().getAnswer()));
         return this.update(subjectChoices);

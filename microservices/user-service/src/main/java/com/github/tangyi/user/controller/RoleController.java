@@ -3,6 +3,7 @@ package com.github.tangyi.user.controller;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.user.module.Role;
 import com.github.tangyi.common.constant.CommonConstant;
+import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.model.ResponseBean;
 import com.github.tangyi.common.utils.PageUtil;
 import com.github.tangyi.common.utils.SysUtil;
@@ -114,8 +115,9 @@ public class RoleController extends BaseController {
     @PutMapping
     @ApiOperation(value = "更新角色信息", notes = "根据角色id更新角色的基本信息")
     @ApiImplicitParam(name = "role", value = "角色实体role", required = true, dataType = "RoleVo")
+	@Log("修改角色")
     public ResponseBean<Boolean> updateRole(@RequestBody @Valid Role role) {
-        role.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        role.setCommonValue();
         return new ResponseBean<>(roleService.update(role) > 0);
     }
 
@@ -130,6 +132,7 @@ public class RoleController extends BaseController {
     @PutMapping("roleMenuUpdate")
     @ApiOperation(value = "更新角色菜单信息", notes = "更新角色菜单信息")
     @ApiImplicitParam(name = "role", value = "角色实体role", required = true, dataType = "RoleVo")
+	@Log("更新角色菜单")
     public ResponseBean<Boolean> updateRoleMenu(@RequestBody Role role) {
         boolean success = false;
         String menuIds = role.getMenuIds();
@@ -153,8 +156,9 @@ public class RoleController extends BaseController {
     @PostMapping
     @ApiOperation(value = "创建角色", notes = "创建角色")
     @ApiImplicitParam(name = "role", value = "角色实体role", required = true, dataType = "RoleVo")
+	@Log("新增角色")
     public ResponseBean<Boolean> role(@RequestBody @Valid Role role) {
-        role.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        role.setCommonValue();
         return new ResponseBean<>(roleService.insert(role) > 0);
     }
 
@@ -169,11 +173,12 @@ public class RoleController extends BaseController {
     @DeleteMapping("/{id}")
     @ApiOperation(value = "删除角色", notes = "根据ID删除角色")
     @ApiImplicitParam(name = "id", value = "角色ID", required = true, paramType = "path")
+	@Log("删除角色")
     public ResponseBean<Boolean> deleteRole(@PathVariable Long id) {
         Role role = new Role();
         role.setId(id);
         role.setNewRecord(false);
-        role.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        role.setCommonValue();
         return new ResponseBean<>(roleService.delete(roleService.get(role)) > 0);
     }
 
@@ -188,6 +193,7 @@ public class RoleController extends BaseController {
     @PostMapping("deleteAll")
     @ApiOperation(value = "批量删除角色", notes = "根据角色id批量删除角色")
     @ApiImplicitParam(name = "ids", value = "角色ID", dataType = "Long")
+	@Log("批量删除角色")
     public ResponseBean<Boolean> deleteAllRoles(@RequestBody Long[] ids) {
         boolean success = false;
         try {

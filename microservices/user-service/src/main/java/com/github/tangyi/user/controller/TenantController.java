@@ -4,9 +4,9 @@ import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.user.constant.TenantConstant;
 import com.github.tangyi.api.user.module.Tenant;
 import com.github.tangyi.common.constant.CommonConstant;
+import com.github.tangyi.common.log.annotation.Log;
 import com.github.tangyi.common.model.ResponseBean;
 import com.github.tangyi.common.utils.PageUtil;
-import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.common.web.BaseController;
 import com.github.tangyi.user.service.TenantService;
 import io.swagger.annotations.Api;
@@ -105,8 +105,9 @@ public class TenantController extends BaseController {
     @PostMapping
     @ApiOperation(value = "创建租户", notes = "创建租户")
     @ApiImplicitParam(name = "tenant", value = "租户实体tenant", required = true, dataType = "Tenant")
+	@Log("新增租户")
     public ResponseBean<Boolean> add(@RequestBody @Valid Tenant tenant) {
-        tenant.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        tenant.setCommonValue();
         // 初始化状态为待审核
         tenant.setStatus(TenantConstant.PENDING_AUDIT);
         // 保存租户
@@ -124,6 +125,7 @@ public class TenantController extends BaseController {
     @PutMapping
     @ApiOperation(value = "更新租户信息", notes = "根据租户id更新租户的基本信息")
     @ApiImplicitParam(name = "tenant", value = "租户实体tenant", required = true, dataType = "Tenant")
+	@Log("修改租户")
     public ResponseBean<Boolean> update(@RequestBody @Valid Tenant tenant) {
         try {
             return new ResponseBean<>(tenantService.update(tenant) > 0);
@@ -144,10 +146,11 @@ public class TenantController extends BaseController {
     @DeleteMapping("/{id}")
     @ApiOperation(value = "删除租户", notes = "根据ID删除租户")
     @ApiImplicitParam(name = "id", value = "租户ID", required = true, paramType = "path")
+	@Log("删除租户")
     public ResponseBean<Boolean> delete(@PathVariable Long id) {
         try {
             Tenant tenant = tenantService.get(id);
-            tenant.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+            tenant.setCommonValue();
             tenantService.delete(tenant);
         } catch (Exception e) {
             log.error("Delete tenant failed", e);
@@ -166,6 +169,7 @@ public class TenantController extends BaseController {
     @PostMapping("deleteAll")
     @ApiOperation(value = "批量删除租户", notes = "根据租户id批量删除租户")
     @ApiImplicitParam(name = "ids", value = "租户ID", dataType = "Long")
+	@Log("批量删除租户")
     public ResponseBean<Boolean> deleteAll(@RequestBody Long[] ids) {
         boolean success = false;
         try {

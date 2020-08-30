@@ -3,7 +3,7 @@ version: '2.1'
 services:
   auth-service:
     build: microservices/auth-service
-    image: sg-exam/auth-service
+    image: registry.cn-hangzhou.aliyuncs.com/sg-exam/auth-service
     mem_limit: 256m
     networks:
       - my-network
@@ -18,7 +18,7 @@ services:
 
   user-service:
     build: microservices/user-service
-    image: sg-exam/user-service
+    image: registry.cn-hangzhou.aliyuncs.com/sg-exam/user-service
     mem_limit: 256m
     networks:
       - my-network
@@ -30,7 +30,7 @@ services:
 
   exam-service:
     build: microservices/exam-service
-    image: sg-exam/exam-service
+    image: registry.cn-hangzhou.aliyuncs.com/sg-exam/exam-service
     mem_limit: 256m
     networks:
       - my-network
@@ -42,7 +42,7 @@ services:
 
   msc-service:
     build: microservices/msc-service
-    image: sg-exam/msc-service
+    image: registry.cn-hangzhou.aliyuncs.com/sg-exam/msc-service
     mem_limit: 256m
     networks:
       - my-network
@@ -51,6 +51,22 @@ services:
       - SPRING_CONFIG_LOCATION=file:/config-repo/application.yml,file:/config-repo/msc-service.yml
     volumes:
       - $PWD/config-repo:/config-repo
+
+  ui-service:
+    build: frontend/spring-microservice-exam-ui
+    image: registry.cn-hangzhou.aliyuncs.com/sg-exam/ui-service
+    networks:
+      - my-network
+    environment:
+      - TENANT_CODE=gitee
+
+  web-service:
+    build: frontend/spring-microservice-exam-ui
+    image: registry.cn-hangzhou.aliyuncs.com/sg-exam/web-service
+    networks:
+      - my-network
+    environment:
+      - TENANT_CODE=gitee
 
 networks:
   my-network:

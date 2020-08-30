@@ -2,5 +2,9 @@ resources:
   - gateway.yml
   - user-service-virtual-service.yml
   - auth-service-virtual-service.yml
+  - exam-service-virtual-service.yml
+  - msc-service-virtual-service.yml
+  - ui-service-virtual-service.yml
+  - web-service-virtual-service.yml
   - jwt-authentication-policy.yml
   - inrernal_mtls_destination_rules.yml

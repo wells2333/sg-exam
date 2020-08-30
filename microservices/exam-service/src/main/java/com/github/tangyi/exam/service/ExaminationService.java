@@ -77,7 +77,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		Examination examination = new Examination();
 		BeanUtils.copyProperties(examinationDto, examination);
 		examination.setCourseId(examinationDto.getCourse().getId());
-		examination.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+		examination.setCommonValue();
 		return super.insert(examination);
 	}
 
@@ -132,7 +132,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		BeanUtils.copyProperties(examinationDto, examination);
 		if (examinationDto.getCourse() != null)
 			examination.setCourseId(examinationDto.getCourse().getId());
-		examination.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+		examination.setCommonValue();
         return super.update(examination);
     }
 

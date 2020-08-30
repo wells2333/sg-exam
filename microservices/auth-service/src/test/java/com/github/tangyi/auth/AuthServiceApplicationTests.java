@@ -1,15 +1,7 @@
 package com.github.tangyi.auth;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JacksonJsonParser;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.web.FilterChainProxy;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -23,10 +15,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("dev")
+//@RunWith(SpringRunner.class)
+//@SpringBootTest
+//@AutoConfigureMockMvc
+//@ActiveProfiles("dev")
 public class AuthServiceApplicationTests {
 
 	private static final String CLIENT_ID = "web_app";
@@ -34,20 +26,20 @@ public class AuthServiceApplicationTests {
 
 	private static final String CONTENT_TYPE = "application/json;charset=UTF-8";
 
-	@Autowired
+	//@Autowired
 	private WebApplicationContext wac;
 
-	@Autowired
+	//@Autowired
 	private FilterChainProxy springSecurityFilterChain;
 
 	private MockMvc mvc;
 
-	@BeforeEach
+	//@BeforeEach
 	public void setup() {
 		this.mvc = MockMvcBuilders.webAppContextSetup(this.wac).addFilter(springSecurityFilterChain).build();
 	}
 
-	@Test
+	//@Test
 	public void testWellKnownJwks() throws Exception {
 		String accessToken = obtainAccessToken("admin", "123456");
 		mvc.perform(

@@ -8,7 +8,6 @@ import com.github.tangyi.api.exam.module.ExaminationSubject;
 import com.github.tangyi.common.constant.CommonConstant;
 import com.github.tangyi.common.model.ResponseBean;
 import com.github.tangyi.common.persistence.BaseEntity;
-import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.common.web.BaseController;
 import com.github.tangyi.exam.service.ExaminationService;
 import io.swagger.annotations.Api;
@@ -191,7 +190,7 @@ public class ExaminationController extends BaseController {
         try {
             Examination examination = examinationService.get(id);
             if (examination != null) {
-                examination.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+                examination.setCommonValue();
                 success = examinationService.delete(examination) > 0;
             }
         } catch (Exception e) {

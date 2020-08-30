@@ -23,6 +23,7 @@ import com.github.tangyi.user.utils.UserUtils;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
+import com.github.tangyi.common.log.annotation.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -176,6 +177,7 @@ public class UserController extends BaseController {
 	@PostMapping
 	@ApiOperation(value = "创建用户", notes = "创建用户")
 	@ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
+	@Log("新增用户")
 	public ResponseBean<Boolean> addUser(@RequestBody @Valid UserDto userDto) {
 		return new ResponseBean<>(userService.createUser(userDto) > 0);
 	}
@@ -192,6 +194,7 @@ public class UserController extends BaseController {
 	@PutMapping("/{id:[a-zA-Z0-9,]+}")
 	@ApiOperation(value = "更新用户信息", notes = "根据用户id更新用户的基本信息、角色信息")
 	@ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
+	@Log("修改用户")
 	public ResponseBean<Boolean> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
 		try {
 			return new ResponseBean<>(userService.updateUser(id, userDto));
@@ -212,10 +215,11 @@ public class UserController extends BaseController {
 	@PutMapping("updateInfo")
 	@ApiOperation(value = "更新用户基本信息", notes = "根据用户id更新用户的基本信息")
 	@ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
+	@Log("更新用户基本信息")
 	public ResponseBean<Boolean> updateInfo(@RequestBody UserDto userDto) {
 		User user = new User();
 		BeanUtils.copyProperties(userDto, user);
-		user.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+		user.setCommonValue();
 		return new ResponseBean<>(userService.update(user) > 0);
 	}
 
@@ -230,6 +234,7 @@ public class UserController extends BaseController {
 	@PutMapping("anonymousUser/updatePassword")
 	@ApiOperation(value = "修改用户密码", notes = "修改用户密码")
 	@ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
+	@Log("更新用户密码")
 	public ResponseBean<Boolean> updatePassword(@RequestBody UserDto userDto) {
 		return new ResponseBean<>(userService.updatePassword(userDto) > 0);
 	}
@@ -245,6 +250,7 @@ public class UserController extends BaseController {
 	@PutMapping("updateAvatar")
 	@ApiOperation(value = "更新用户头像", notes = "根据用户id更新用户的头像信息")
 	@ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
+	@Log("更新用户头像")
 	public ResponseBean<Boolean> updateAvatar(@RequestBody UserDto userDto) {
 		return new ResponseBean<>(userService.updateAvatar(userDto) > 0);
 	}
@@ -260,10 +266,11 @@ public class UserController extends BaseController {
 	@DeleteMapping("/{id}")
 	@ApiOperation(value = "删除用户", notes = "根据ID删除用户")
 	@ApiImplicitParam(name = "id", value = "用户ID", required = true, paramType = "path")
+	@Log("删除用户")
 	public ResponseBean<Boolean> deleteUser(@PathVariable Long id) {
 		try {
 			User user = userService.get(id);
-			user.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+			user.setCommonValue();
 			return new ResponseBean<>(userService.delete(user) > 0);
 		} catch (Exception e) {
 			log.error("Delete user failed: {}", e.getMessage(), e);
@@ -281,6 +288,7 @@ public class UserController extends BaseController {
 	@PostMapping("export")
 	@ApiOperation(value = "导出用户", notes = "根据用户id导出用户")
 	@ApiImplicitParam(name = "userVo", value = "用户信息", required = true, dataType = "UserVo")
+	@Log("导出用户")
 	public void exportUser(@RequestBody Long[] ids, HttpServletRequest request, HttpServletResponse response) {
 		try {
 			List<User> users;
@@ -322,6 +330,7 @@ public class UserController extends BaseController {
 	 */
 	@PostMapping("import")
 	@ApiOperation(value = "导入数据", notes = "导入数据")
+	@Log("导入用户")
 	public ResponseBean<Boolean> importUser(@ApiParam(value = "要上传的文件", required = true) MultipartFile file,
 			HttpServletRequest request) {
 		try {
@@ -344,6 +353,7 @@ public class UserController extends BaseController {
 	@PostMapping("deleteAll")
 	@ApiOperation(value = "批量删除用户", notes = "根据用户id批量删除用户")
 	@ApiImplicitParam(name = "ids", value = "用户信息", dataType = "Long")
+	@Log("批量删除用户")
 	public ResponseBean<Boolean> deleteAllUsers(@RequestBody Long[] ids) {
 		try {
 			boolean success = Boolean.FALSE;
@@ -386,6 +396,7 @@ public class UserController extends BaseController {
 			@ApiImplicitParam(name = "randomStr", value = "随机数", dataType = "String", paramType = "query"),
 			@ApiImplicitParam(name = "mobile", value = "手机号", dataType = "String", paramType = "query")})
 	@PostMapping("anonymousUser/register")
+	@Log("注册用户")
 	public ResponseBean<Boolean> register(@RequestBody @Valid UserDto userDto) {
 		return new ResponseBean<>(userService.register(userDto));
 	}
@@ -435,6 +446,7 @@ public class UserController extends BaseController {
 	@PutMapping("anonymousUser/resetPassword")
 	@ApiOperation(value = "重置密码", notes = "根据用户id重置密码")
 	@ApiImplicitParam(name = "userDto", value = "用户实体user", required = true, dataType = "UserDto")
+	@Log("重置密码")
 	public ResponseBean<Boolean> resetPassword(@RequestBody UserDto userDto) {
 		return new ResponseBean<>(userService.resetPassword(userDto));
 	}

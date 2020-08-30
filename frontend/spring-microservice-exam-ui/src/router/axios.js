@@ -51,23 +51,25 @@ axios.interceptors.response.use(data => {
     const originalRequest = error.config
     const currentRefreshToken = getRefreshToken()
     // 接口返回401并且已经重试过，自动刷新token
-    if ((error.response.status === 401 || error.response.status === 403) && !originalRequest._retry && isNotEmpty(currentRefreshToken)) {
+    if ((error.response.status === 401 || error.response.status === 403)) {
       // 退出请求
       if (originalRequest.url.indexOf('removeToken') !== -1) {
         return
       }
-      return refreshToken().then(response => {
-        // 保存新的token
-        setToken(response.data.access_token)
-        store.commit('SET_ACCESS_TOKEN', response.data.access_token)
-        // 带上新的token
-        originalRequest.headers['Authorization'] = 'Bearer ' + response.data.access_token
-        // 重新请求
-        return axios(originalRequest)
-      }).catch(() => {
-        // 刷新失败，执行退出
-        store.dispatch('LogOut').then(() => location.reload())
-      })
+      if (!originalRequest._retry && isNotEmpty(currentRefreshToken)) {
+        return refreshToken().then(response => {
+          // 保存新的token
+          setToken(response.data.access_token)
+          store.commit('SET_ACCESS_TOKEN', response.data.access_token)
+          // 带上新的token
+          originalRequest.headers['Authorization'] = 'Bearer ' + response.data.access_token
+          // 重新请求
+          return axios(originalRequest)
+        }).catch(() => {
+          // 刷新失败，执行退出
+          store.dispatch('LogOut').then(() => location.reload())
+        })
+      }
     } else if (error.response.status === 423) {
       Message({ message: '演示环境不能操作', type: 'warning' })
     } else if (error.response.status === 404) {

@@ -83,7 +83,7 @@ public class UserService extends CrudService<UserMapper, User> {
         User user = new User();
         BeanUtils.copyProperties(userDto, user);
         // 先保存用户基本信息
-        user.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        user.setCommonValue();
         // 保存父子账号关系
         UserVo currentUser = this.findUserByIdentifier(userDto.getIdentityType(), SysUtil.getUser(), SysUtil.getTenantCode());
         user.setParentUid(currentUser.getId());
@@ -121,7 +121,7 @@ public class UserService extends CrudService<UserMapper, User> {
         if (CollectionUtils.isNotEmpty(user.getRole())) {
             user.getRole().forEach(roleId -> {
                 UserRole sysUserRole = new UserRole();
-                sysUserRole.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+                sysUserRole.setCommonValue();
                 sysUserRole.setUserId(user.getId());
                 sysUserRole.setRoleId(roleId);
                 // 保存角色
@@ -271,7 +271,7 @@ public class UserService extends CrudService<UserMapper, User> {
         User user = new User();
         BeanUtils.copyProperties(userDto, user);
         user.setId(id);
-        user.setCommonValue(SysUtil.getUser(), SysUtil.getSysCode(), SysUtil.getTenantCode());
+        user.setCommonValue();
         // 更新用户信息
         super.update(user);
         // 更新用户角色关系
