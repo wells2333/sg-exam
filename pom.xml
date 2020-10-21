@@ -74,7 +74,7 @@
         <easyexcel.version>2.1.4</easyexcel.version>
         <guava.version>28.2-jre</guava.version>
         <zxing.version>3.2.0</zxing.version>
-        <qrCode.version>3.0</qrCode.version>
+        <qrCode.version>3.0.0</qrCode.version>
 
         <!-- docker -->
         <docker.maven.verion>1.4.3</docker.maven.verion>
@@ -363,6 +363,11 @@
                 <artifactId>QRCode</artifactId>
                 <version>${qrCode.version}</version>
             </dependency>
+            <dependency>
+                <groupId>QRCode</groupId>
+                <artifactId>QRCode_swetake</artifactId>
+                <version>${qrCode.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -429,5 +434,11 @@
                 <enabled>false</enabled>
             </releases>
         </repository>
+        <repository>
+            <id>centit-repository</id>
+            <name>Centit Repository</name>
+            <url>http://develop.centit.com/nexus/content/repositories/centit-releases/</url>
+        </repository>
+
     </repositories>
 </project>

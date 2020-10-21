@@ -140,5 +140,9 @@
             <groupId>QRCode</groupId>
             <artifactId>QRCode</artifactId>
         </dependency>
+        <dependency>
+            <groupId>QRCode</groupId>
+            <artifactId>QRCode_swetake</artifactId>
+        </dependency>
     </dependencies>
 </project>
