@@ -39,7 +39,7 @@
       <div class="answer-card-title" >{{exam.examinationName}}（共{{subjectIds.length}}题，合计{{exam.totalScore}}分）</div>
       <div class="answer-card-split"></div>
       <el-row class="answer-card-content">
-        <el-button circle v-for="(value, index) in subjectIds" :key="index" @click="toSubject(value.subjectId, value.type, index)" >&nbsp;{{index + 1}}&nbsp;</el-button>
+        <el-button :class="{ 'answered': subjectIds[index].answered }" circle v-for="(value, index) in subjectIds" :key="index" @click="toSubject(value.subjectId, value.type, index)" >&nbsp;{{index + 1}}&nbsp;</el-button>
       </el-row>
     </el-dialog>
   </div>
@@ -80,6 +80,7 @@ export default {
       endTime: 0,
       disableSubmit: true,
       subjectIndex: 1,
+      lastSubjectIndex: 1,
       query: {
         examinationId: undefined,
         examRecordId: undefined,
@@ -155,7 +156,7 @@ export default {
         if (subjectData.length > 0) {
           for (let i = 0; i < subjectData.length; i++) {
             const { subjectId, type } = subjectData[i]
-            this.subjectIds.push({subjectId, type, index: i + 1})
+            this.subjectIds.push({subjectId, type, index: i + 1, answered: false})
           }
           this.updateSubjectIndex()
           // 获取当前题目信息
@@ -214,9 +215,13 @@ export default {
     saveCurrentSubjectAndGetNextSubject (nextType, nextSubjectId, subjectType) {
       const answerId = isNotEmpty(this.tempAnswer) ? this.tempAnswer.id : ''
       const answer = this.getAnswer(answerId)
+      const _this = this
       this.startLoading(nextType)
       saveAndNext(answer, nextType, nextSubjectId, subjectType).then(response => {
         if (response.data.data !== null) {
+          // 保存成功后更新答题卡状态
+          this.markAnswered(_this.answer, this.lastSubjectIndex - 1)
+          this.lastSubjectIndex = this.subjectIndex
           const subject = response.data.data
           const { id, type, answer } = subject
           this.query.subjectId = id
@@ -237,6 +242,11 @@ export default {
         messageFail(this, '获取题目失败')
         this.endLoading(nextType)
       })
+    },
+    markAnswered (answer, index) {
+      if (answer && answer.answer !== null) {
+        this.subjectIds[index].answered = true
+      }
     },
     // 答题卡
     answerCard () {
@@ -408,5 +418,8 @@ export default {
     > button {
       margin-top: 5px;
     }
+  }
+  .answered {
+    background-color: greenyellow;
   }
 </style>
