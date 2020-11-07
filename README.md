@@ -9,7 +9,7 @@
   </a>
 </p>
 
-> 硕果云，基于Spring Boot、Kubernetes (k8s)、Istio搭建的云原生Service Mesh教学管理平台，提供多租户、权限管理、在线考试、练习等功能
+> 硕果云，基于Spring Boot、Kubernetes、Istio搭建的云原生Service Mesh教学管理平台，提供多租户、权限管理、在线考试、练习等功能
 >
 > 题型支持单选题、多选题、不定项选择题、判断题、简答题
 >
@@ -191,12 +191,13 @@
 
 ## 反馈交流
 
+微信交流群：
+
+ ![image](docs/images/weixin.jpg)
+ 
 QQ交流群：
 
  ![image](docs/images/qq.png) ![image](docs/images/qq_new.png) ![image](docs/images/qq_3.png)  
- 
- 微信交流群：
- ![image](docs/images/weixin.jpg)
  
 ## 请作者喝咖啡
 
