@@ -35,42 +35,41 @@ sys:
   attachtUploadType: 1  # 上传类型，1：本地目录，2：fastDfs，3：七牛云
   attachPath: ${ATTACH_PATH:C:/attach} # 附件上传目录
   canPreview: jpg,png,jpeg,gif # 支持预览的格式
-  authServiceUrl: http://localhost:9182
-  userServiceUrl: http://localhost:9183
-  examServiceUrl: http://localhost:9184
+  authServiceUrl: http://localhost:9182/auth-service
+  userServiceUrl: http://localhost:9183/user-service
+  examServiceUrl: http://localhost:9184/exam-service
 
 ignore:
   urls:
     - /
-    - /error
-    - /favicon.ico
+    - /**/error
+    - /**/favicon.ico
     - /**/*swagger*/**
-    - /v2/api-docs
-    - /csrf
-    - /actuator/**
-    - /hystrix.sender
-    - /v1/sms/**
-    - /v1/user/anonymousUser/**
-    - /v1/tenant/anonymousUser/**
-    - /v1/user/checkExist/**
-    - /v1/user/updatePassword
-    - /v1/menu/anonymousUser/**
-    - /v1/code/**
-    - /v1/attachment/download
-    - /v1/log/**
-    - /authentication/**
-    - /v1/authentication/**
+    - /**/v2/api-docs
+    - /**/csrf
+    - /**/actuator/**
+    - /**/hystrix.sender
+    - /**/v1/sms/**
+    - /**/v1/user/anonymousUser/**
+    - /**/v1/tenant/anonymousUser/**
+    - /**/v1/user/checkExist/**
+    - /**/v1/user/updatePassword
+    - /**/v1/menu/anonymousUser/**
+    - /**/v1/code/**
+    - /**/v1/attachment/download
+    - /**/v1/log/**
+    - /**/authentication/**
+    - /**/v1/authentication/**
     - /**/*.css
     - /**/*.js
-    - /social
-    - /signin
-    - /signup
-    - /info
-    - /health
-    - /metrics/**
-    - /loggers/**
-    - /mobile/token
-    - /wx/token
+    - /**/social
+    - /**/signin
+    - /**/signup
+    - /**/health
+    - /**/metrics/**
+    - /**/loggers/**
+    - /**/mobile/token
+    - /**/wx/token
 
 # 建议只在开发、测试环境开放
 management.endpoint.health.show-details: "ALWAYS"

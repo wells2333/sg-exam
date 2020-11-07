@@ -57,6 +57,8 @@ public class CustomTokenConverter extends JwtAccessTokenConverter {
 		String grantType = authentication.getOAuth2Request().getGrantType();
 		// 加入tenantCode
 		additionalInfo.put(CommonConstant.TENANT_CODE, TenantContextHolder.getTenantCode());
+		additionalInfo.put("iss", "http://auth-service.local");
+		additionalInfo.put("sub", authentication.getName());
 		// 加入登录类型，用户名/手机号
 		String loginType = "";
 		if (grantType.equalsIgnoreCase(CommonConstant.GRANT_TYPE_PASSWORD)) {

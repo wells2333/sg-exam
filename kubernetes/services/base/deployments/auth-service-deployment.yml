@@ -35,7 +35,7 @@ spec:
           livenessProbe:
             httpGet:
               scheme: HTTP
-              path: /actuator/info
+              path: /auth-service/actuator/info
               port: 80
             initialDelaySeconds: 60
             periodSeconds: 10
@@ -46,7 +46,7 @@ spec:
             httpGet:
 
               scheme: HTTP
-              path: /actuator/health
+              path: /auth-service/actuator/health
               port: 80
             initialDelaySeconds: 60
             periodSeconds: 10

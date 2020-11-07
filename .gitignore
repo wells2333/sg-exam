@@ -1,7 +1,7 @@
 .gradle
 **/build/
-!frontend/spring-microservice-exam-ui/build
-!frontend/spring-microservice-exam-web/build
+!frontend/sg-exam-ui/build
+!frontend/sg-exam-web/build
 !gradle/wrapper/gradle-wrapper.jar
 
 ### STS ###

@@ -10,7 +10,7 @@ spec:
   http:
     - match:
         - uri:
-            prefix: /exam
+            prefix: /exam-service
       route:
         - destination:
             port:

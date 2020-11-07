@@ -34,3 +34,5 @@ spec:
   ports:
     - name: redis
       port: 6379
+      nodePort: 30009
+  type: NodePort

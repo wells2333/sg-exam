@@ -1,4 +1,7 @@
-server.port: 80
+server:
+  port: 80
+  servlet:
+    context-path: /exam-service
 spring.application.name: exam-service
 
 # 系统配置
@@ -12,37 +15,29 @@ sys:
 ignore:
   urls:
     - /
-    - /error
-    - /favicon.ico
-    - /**/*swagger*/**
-    - /v2/api-docs
-    - /csrf
-    - /actuator/**
-    - /hystrix.sender
-    - /v1/sms/**
-    - /v1/user/anonymousUser/**
-    - /v1/tenant/anonymousUser/**
-    - /v1/menu/anonymousUser/**
-    - /v1/examination/anonymousUser/**
-    - /v1/answer/anonymousUser/**
-    - /v1/examRecord/anonymousUser/**
-    - /v1/examRecord/currentTime
-    - /v1/subject/anonymousUser/**
-    - /v1/answer/anonymousUser/**
-    - /v1/code/**
-    - /v1/attachment/download
-    - /v1/log/**
-    - /authentication/**
-    - /v1/authentication/**
+    - /**/error
+    - /**/favicon.ico
+    - /**/**/*swagger*/**
+    - /**/v2/api-docs
+    - /**/csrf
+    - /**/actuator/**
+    - /**/hystrix.sender
+    - /**/v1/sms/**
+    - /**/v1/examination/anonymousUser/**
+    - /**/v1/answer/anonymousUser/**
+    - /**/v1/examRecord/anonymousUser/**
+    - /**/v1/examRecord/currentTime
+    - /**/v1/subject/anonymousUser/**
+    - /**/v1/answer/anonymousUser/**
     - /**/*.css
     - /**/*.js
-    - /social
-    - /signin
-    - /signup
-    - /info
-    - /health
-    - /metrics/**
-    - /loggers/**
+    - /**/social
+    - /**/signin
+    - /**/signup
+    - /**/info
+    - /**/health
+    - /**/metrics/**
+    - /**/loggers/**
 
 # 集群ID生成配置
 cluster:
@@ -71,11 +66,25 @@ spring:
   profiles: docker
   port: 80
   datasource:
-    url: jdbc:mysql://mysql/microservice-exam?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8
+    url: jdbc:mysql://sg-exam-mysql/microservice-exam?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.jdbc.Driver
   redis:
     host: redis
+
+# 系统配置
+sys:
+  adminUser: admin  # 管理员账号，默认是admin
+  uploadUrl: api/user/v1/attachment/upload
+  defaultAvatar: /static/img/avatar/
+  key: '1234567887654321'
+  cacheExpire: 86400 # 缓存失效时间，单位秒，默认一天
+  attachtUploadType: 1  # 上传类型，1：本地目录，2：fastDfs，3：七牛云
+  attachPath: ${ATTACH_PATH:C:/attach} # 附件上传目录
+  canPreview: jpg,png,jpeg,gif # 支持预览的格式
+  authServiceUrl: http://auth-service.sg-exam.svc.cluster.local/auth-service
+  userServiceUrl: http://user-service.sg-exam.svc.cluster.local/user-service
+  examServiceUrl: http://exam-service.sg-exam.svc.cluster.local/exam-service
 
 ---
 spring:

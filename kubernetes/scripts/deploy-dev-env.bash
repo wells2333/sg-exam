@@ -45,7 +45,7 @@ kubectl create secret tls tls-certificate --key kubernetes/cert/tls.key --cert k
 
 kubectl create secret generic redis-credentials --from-literal=REDIS_HOST=redis --from-literal=REDIS_PORT=6379 --save-config
 
-kubectl create secret generic mysql-credentials --from-literal=MYSQL_HOST=mysql --from-literal=SPRING_DATASOURCE_USERNAME=sg-exam --from-literal=SPRING_DATASOURCE_PASSWORD=sg-exam --save-config
+kubectl create secret generic mysql-credentials --from-literal=MYSQL_HOST=mysql --from-literal=SPRING_DATASOURCE_USERNAME=root --from-literal=SPRING_DATASOURCE_PASSWORD=sg-exam --save-config
 
 kubectl label namespace sg-exam istio-injection=enabled
 

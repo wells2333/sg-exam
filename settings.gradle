@@ -1,4 +1,4 @@
-rootProject.name = 'microservice-exam'
+rootProject.name = 'sg-exam'
 include ':api'
 include ':common'
 include ':common-security'

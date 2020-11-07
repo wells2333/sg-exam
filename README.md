@@ -1,7 +1,7 @@
-<h1 align="center">Welcome to spring-microservice-exam 👋</h1>
+<h1 align="center">Welcome to sg-exam 👋</h1>
 <p>
   <img alt="Version" src="https://img.shields.io/badge/version-4.0.0-blue.svg?cacheSeconds=2592000" />
-  <a href="https://www.kancloud.cn/tangyi/spring-microservice-exam/1322864" target="_blank">
+  <a href="https://www.kancloud.cn/tangyi/sg-exam/1322864" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
   <a href="#" target="_blank">
@@ -15,9 +15,9 @@
 >
 > 支持PC、H5、微信小程序（小程序后面开源）
 >
-> 支持Spring Cloud（spring-cloud分支）、Service Mesh（master分支）
+> 可选Spring Cloud版本（spring-cloud分支）、Service Mesh（master分支）
 
-### 🏠 [主页](https://gitee.com/wells2333/spring-microservice-exam)
+### 🏠 [主页](https://gitee.com/wells2333/sg-exam)
 
 ### ✨ [在线体验-前台(http://two.404forever.com)](http://two.404forever.com/)
 
@@ -98,20 +98,20 @@
 
 <table>
 	<tr>
-	    <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web.png" alt="首页"/></td>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_home.png" alt="首页"/></td>
+	    <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_web.png" alt="首页"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_web_home.png" alt="首页"/></td>
     </tr>
     <tr>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_exams.png" alt="考试列表"/></td>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_exam.png" alt="考试"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_web_exams.png" alt="考试列表"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_web_exam.png" alt="考试"/></td>
     </tr>
     <tr>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_record.png" alt="考试记录"/></td>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_incorrect_answer.png" alt="错题列表"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_web_record.png" alt="考试记录"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_web_incorrect_answer.png" alt="错题列表"/></td>
     </tr>
     <tr>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_courses.png" alt="热门课程"/></td>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_web_login.png" alt="登录"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_web_courses.png" alt="热门课程"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_web_login.png" alt="登录"/></td>
     </tr>
 </table>
 
@@ -119,28 +119,28 @@
 
 <table>
 	<tr>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_login.png" alt="登录"/></td>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_exam.png" alt="首页"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_ui_login.png" alt="登录"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_ui_exam.png" alt="首页"/></td>
     </tr>
     <tr>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_menu.png" alt="菜单"/></td>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_menu_manage.png" alt="菜单管理"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_ui_menu.png" alt="菜单"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_ui_menu_manage.png" alt="菜单管理"/></td>
     </tr>
     <tr>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_role_manage.png" alt="角色管理"/></td>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_route_manage.png" alt="路由管理"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_ui_role_manage.png" alt="角色管理"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_ui_route_manage.png" alt="路由管理"/></td>
     </tr>
     <tr>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_subjects_manage.png" alt="题库管理"/></td>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_subjects_rich_edit.png" alt="题目编辑"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_ui_subjects_manage.png" alt="题库管理"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_ui_subjects_rich_edit.png" alt="题目编辑"/></td>
     </tr>
     <tr>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_score_manage.png" alt="成绩管理"/></td>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_score_detail.png" alt="成绩详情"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_ui_score_manage.png" alt="成绩管理"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_ui_score_detail.png" alt="成绩详情"/></td>
     </tr>
     <tr>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_log_manage.png" alt="日志监控"/></td>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_consul.png" alt="consul监控"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_ui_log_manage.png" alt="日志监控"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_ui_consul.png" alt="consul监控"/></td>
     </tr>
 </table>
 
@@ -148,16 +148,16 @@
 
 <table>
 	<tr>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_spring_boot_admin.png" alt="服务监控"/></td>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_spring_boot_admin01.png" alt="服务监控"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_ui_spring_boot_admin.png" alt="服务监控"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_ui_spring_boot_admin01.png" alt="服务监控"/></td>
     </tr>
     <tr>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_swagger.png" alt="swagger文档"/></td>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_elk.png" alt="elk日志"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_ui_swagger.png" alt="swagger文档"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_ui_elk.png" alt="elk日志"/></td>
     </tr>
     <tr>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_zipkin1.png" alt="zipkin"/></td>
-        <td><img src="https://gitee.com/wells2333/spring-microservice-exam/raw/master/docs/images/image_ui_zipkin2.png" alt="zipkin"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_ui_zipkin1.png" alt="zipkin"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/image_ui_zipkin2.png" alt="zipkin"/></td>
     </tr>
 </table>
 
@@ -165,13 +165,13 @@
 
 - [开源项目分析解读——基于Spring Cloud的在线考试系统](https://blog.csdn.net/chengqiuming/article/details/102991984)
 
-- [在线考试系统-部署文档](https://www.kancloud.cn/tangyi/spring-microservice-exam/1322870)
+- [在线考试系统-部署文档](https://www.kancloud.cn/tangyi/sg-exam/1322870)
 
-- [部署视频教程](https://www.kancloud.cn/tangyi/spring-microservice-exam/1519487)
+- [部署视频教程](https://www.kancloud.cn/tangyi/sg-exam/1519487)
 
-- [在线考试系统-部署文档(docker版)](https://www.kancloud.cn/tangyi/spring-microservice-exam/1322869)
+- [在线考试系统-部署文档(docker版)](https://www.kancloud.cn/tangyi/sg-exam/1322869)
 
-- [在线考试系统-数据库设计](https://www.kancloud.cn/tangyi/spring-microservice-exam/1322868)
+- [在线考试系统-数据库设计](https://www.kancloud.cn/tangyi/sg-exam/1322868)
 
 - [微服务架构下的安全设计方案](http://ehedgehog.net/2019/03/23/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E4%B8%8B%E7%9A%84%E5%AE%89%E5%85%A8%E8%AE%BE%E8%AE%A1%E6%96%B9%E6%A1%88/)
 
@@ -187,13 +187,16 @@
 
 ## 🤝 参与贡献
 
-欢迎提交PR、[issues](https://gitee.com/wells2333/spring-microservice-exam/issues)一起完善项目
+欢迎提交PR、[issues](https://gitee.com/wells2333/sg-exam/issues)一起完善项目
 
 ## 反馈交流
 
-交流QQ群：
+QQ交流群：
 
  ![image](docs/images/qq.png) ![image](docs/images/qq_new.png) ![image](docs/images/qq_3.png)  
+ 
+ 微信交流群：
+ ![image](docs/images/weixin.jpg)
  
 ## 请作者喝咖啡
 

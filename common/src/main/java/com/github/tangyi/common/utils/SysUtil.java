@@ -4,6 +4,7 @@ import com.github.tangyi.common.constant.CommonConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -28,15 +29,17 @@ public class SysUtil {
 	 */
 	public static String getUser() {
 		try {
+			SecurityContext sc = SecurityContextHolder.getContext();
 			Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			if (principal instanceof UserDetails)
-				return ((UserDetails) principal).getUsername();
-			if (principal instanceof Principal)
-				return ((Principal) principal).getName();
+			log.info("principal: {}", principal.toString());
 			if (principal instanceof Jwt) {
 				Jwt jwt = (Jwt) principal;
 				return (String) jwt.getClaims().getOrDefault(CommonConstant.USER_NAME, "");
 			}
+			if (principal instanceof UserDetails)
+				return ((UserDetails) principal).getUsername();
+			if (principal instanceof Principal)
+				return ((Principal) principal).getName();
 			return String.valueOf(principal);
 		} catch (Exception e) {
 			log.error("get user error: {}", e.getMessage(), e);

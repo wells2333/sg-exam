@@ -53,7 +53,7 @@ services:
       - $PWD/config-repo:/config-repo
 
   ui-service:
-    build: frontend/spring-microservice-exam-ui
+    build: frontend/sg-exam-ui
     image: registry.cn-hangzhou.aliyuncs.com/sg-exam/ui-service
     networks:
       - my-network
@@ -61,12 +61,25 @@ services:
       - TENANT_CODE=gitee
 
   web-service:
-    build: frontend/spring-microservice-exam-ui
+    build: frontend/sg-exam-ui
     image: registry.cn-hangzhou.aliyuncs.com/sg-exam/web-service
     networks:
       - my-network
     environment:
       - TENANT_CODE=gitee
+
+  sg-exam-mysql:
+    build:
+      context: ./mysql
+    image: registry.cn-hangzhou.aliyuncs.com/sg-exam/sg-exam-mysql
+    container_name: sg-exam-mysql
+    networks:
+      - my-network
+    environment:
+      - MYSQL_ROOT_PASSWORD=sg-exam
+    ports:
+      - "3306:3306"
+    restart: always
 
 networks:
   my-network:

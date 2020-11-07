@@ -27,7 +27,7 @@ public class ValidateCodeConfig {
         // 验证码文本字符间距
         properties.put("kaptcha.textproducer.char.space", "6");
         // 验证码宽度
-        properties.put("kaptcha.image.width", "120");
+        properties.put("kaptcha.image.width", "130");
         // 验证码高度
         properties.put("kaptcha.image.height", "50");
         properties.put("kaptcha.textproducer.char.length", "4");

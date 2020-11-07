@@ -35,7 +35,7 @@ public class TenantTokenFilter implements Filter {
 			tenantCode = request.getParameter(CommonConstant.TENANT_CODE);
 		}
 		if (StringUtils.isBlank(tenantCode)) {
-			log.info("tenant code is blank, use default tenant code");
+			log.debug("tenant code is blank, use default tenant code");
 			tenantCode = CommonConstant.DEFAULT_TENANT_CODE;
 		}
 		TenantContextHolder.setTenantCode(tenantCode);

@@ -18,6 +18,7 @@
         <appender-ref ref="FILE"/>
     </appender>
 
+    <logger name="redis" level="DEBUG"/>
     <logger name="javax.activation" level="WARN"/>
     <logger name="javax.mail" level="WARN"/>
     <logger name="javax.xml.bind" level="WARN"/>
