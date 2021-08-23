@@ -1,11 +1,11 @@
-DROP DATABASE IF EXISTS `microservice-exam`;
+DROP DATABASE IF EXISTS `sg-exam-exam`;
 
-CREATE DATABASE  `microservice-exam` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+CREATE DATABASE  `sg-exam-exam` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
-USE `microservice-exam`;
+USE `sg-exam-exam`;
 
 -- ----------------------------
 -- Table structure for exam_answer

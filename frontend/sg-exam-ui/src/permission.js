@@ -44,7 +44,11 @@ router.beforeEach((to, from, next) => {
       } else {
         // 没有动态改变权限的需求可直接next() 删除下方权限判断 ↓
         if (hasPermission(store.getters.roles, to.meta.roles)) {
-          next()
+          if (to.path !== '/dashboard' && to.path.endsWith('/dashboard')) {
+            next({ path: '/dashboard' })
+          } else {
+            next()
+          }
         } else {
           next({ path: '/401', replace: true, query: { noGoBack: true } })
         }

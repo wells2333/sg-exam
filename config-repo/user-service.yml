@@ -38,7 +38,7 @@ spring:
       # 单次请求的文件的总大小
       max-request-size: 100MB
   datasource:
-    url: jdbc:mysql://sg-exam-mysql/microservice-user?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8
+    url: jdbc:mysql://sg-exam-mysql/sg-exam-user?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.jdbc.Driver
   redis:
@@ -62,7 +62,7 @@ fdfs:
 qiniu:
   access-key: ${QINIU_ACCEESS_KEY:test}
   secret-key: ${QINIU_SECRET_KEY:test}
-  bucket: microservice-exam
+  bucket: sg-exam
   domain-of-bucket: ${QINIU_DOMAIN:test}
   expire: 3600  # 链接超时时间，单位秒，默认一小时
 
@@ -85,7 +85,7 @@ spring:
   profiles: prod
   port: 8080
   datasource:
-    url: jdbc:mysql://mysql/microservice-user?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8
+    url: jdbc:mysql://mysql/sg-exam-user?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.jdbc.Driver
   redis:

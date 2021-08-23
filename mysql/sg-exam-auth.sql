@@ -1,11 +1,11 @@
-DROP DATABASE IF EXISTS `microservice-auth`;
+DROP DATABASE IF EXISTS `sg-exam-auth`;
 
-CREATE DATABASE  `microservice-auth` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+CREATE DATABASE  `sg-exam-auth` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
-USE `microservice-auth`;
+USE `sg-exam-auth`;
 
 -- ----------------------------
 -- Table structure for oauth_client_details
