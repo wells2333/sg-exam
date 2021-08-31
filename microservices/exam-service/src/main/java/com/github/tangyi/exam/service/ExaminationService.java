@@ -322,7 +322,8 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		}
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		String url = sysProperties.getQrCodeUrl() + "?id=" + examination.getId();
-		QRCodeUtils.encoderQRCode(url, outputStream, "png");
+		// TODO
+		//QRCodeUtils.encoderQRCode(url, outputStream, "png");
 		log.info("Share examinationId: {}, url: {}", examinationId, url);
 		return outputStream.toByteArray();
 	}
@@ -341,7 +342,8 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		}
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		String url = sysProperties.getQrCodeUrl() + "-v2?id=" + examination.getId();
-		QRCodeUtils.encoderQRCode(url, outputStream, "png");
+		// TODO
+		//QRCodeUtils.encoderQRCode(url, outputStream, "png");
 		log.info("Share v2 examinationId: {}, url: {}", examinationId, url);
 		return outputStream.toByteArray();
 	}

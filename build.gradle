@@ -65,7 +65,8 @@ subprojects {
         implementation 'com.github.axet:kaptcha:0.0.9'
         implementation 'com.qiniu:qiniu-java-sdk:7.2.28'
         implementation 'com.github.tobato:fastdfs-client:1.26.7'
-        implementation 'QRCode:QRCode:3.0'
+        implementation 'com.google.zxing:core:3.3.0'
+        implementation 'com.google.zxing:javase:3.3.0'
         compileOnly 'org.projectlombok:lombok:1.18.10'
         annotationProcessor 'org.projectlombok:lombok:1.18.10'
         implementation('org.springframework.cloud:spring-cloud-starter-openfeign:2.2.3.RELEASE')
