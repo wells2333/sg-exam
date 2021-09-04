@@ -177,7 +177,8 @@ export const constantExamRouterMap = [
 ]
 
 export default new Router({
-  // mode: 'history', // require service support
+  base: 'admin',
+  mode: 'hash',
   scrollBehavior: () => ({ y: 0 }),
   routes: [].concat(...formatRoutes(store.state.user.menu), constantRouterMap, constantExamRouterMap)
 })

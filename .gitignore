@@ -1,7 +1,7 @@
 .gradle
 **/build/
-!frontend/sg-exam-ui/build
-!frontend/sg-exam-web/build
+!frontend/sg-exam-admin/build
+!frontend/sg-exam-app/build
 !gradle/wrapper/gradle-wrapper.jar
 
 ### STS ###

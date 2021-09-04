@@ -10,4 +10,4 @@ spec:
   jwtRules:
     - issuer: "http://auth-service.local"
       jwksUri: "http://auth-service.sg-exam.svc.cluster.local/auth-service/.well-known/jwks.json"
-      forwardOriginalToken: true  # 巨坑，需要手动配置转发Authorization、Tenant-Code等请求头
+      forwardOriginalToken: true

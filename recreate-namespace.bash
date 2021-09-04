@@ -8,6 +8,15 @@ kubectl create namespace sg-exam
 
 kubectl config set-context $(kubectl config current-context) --namespace=sg-exam
 
+if kubectl -n istio-system get secret istio-ingressgateway-certs > /dev/null ; then
+    echo "Secret istio-ingressgateway-certs found, skip creating it..."
+else
+    echo "Secret istio-ingressgateway-certs not found, creating it..."
+    kubectl create -n istio-system secret tls istio-ingressgateway-certs \
+        --key kubernetes/cert/tls.key \
+        --cert kubernetes/cert/tls.crt
+fi
+
 kubectl create configmap config-repo-auth-service      --from-file=config-repo/application.yml --from-file=config-repo/auth-service.yml --save-config
 kubectl create configmap config-repo-exam-service      --from-file=config-repo/application.yml --from-file=config-repo/exam-service.yml --save-config
 kubectl create configmap config-repo-msc-service      --from-file=config-repo/application.yml --from-file=config-repo/msc-service.yml --save-config

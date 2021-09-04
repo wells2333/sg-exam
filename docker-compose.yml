@@ -52,17 +52,17 @@ services:
     volumes:
       - $PWD/config-repo:/config-repo
 
-  ui-service:
-    build: frontend/sg-exam-ui
-    image: registry.cn-hangzhou.aliyuncs.com/sg-exam/ui-service
+  admin-service:
+    build: frontend/sg-exam-admin
+    image: registry.cn-hangzhou.aliyuncs.com/sg-exam/admin-service
     networks:
       - my-network
     environment:
       - TENANT_CODE=gitee
 
-  web-service:
-    build: frontend/sg-exam-ui
-    image: registry.cn-hangzhou.aliyuncs.com/sg-exam/web-service
+  app-service:
+    build: frontend/sg-exam-app
+    image: registry.cn-hangzhou.aliyuncs.com/sg-exam/app-service
     networks:
       - my-network
     environment:

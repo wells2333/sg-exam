@@ -27,7 +27,6 @@ public class EmbeddedRedisConfig {
 					.setting("daemonize no")
 					.setting("appendonly no")
 					.setting("maxmemory 128M")
-					.setting("maxheap 512M")
 					.build();
 			redisServer.start();
 			log.info("start redis success");

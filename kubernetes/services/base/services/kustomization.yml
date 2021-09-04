@@ -3,5 +3,5 @@ resources:
   - user-service.yml
   - exam-service.yml
   - msc-service.yml
-  - ui-service.yml
-  - web-service.yml
+  - admin-service.yml
+  - app-service.yml

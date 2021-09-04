@@ -1,7 +1,7 @@
 {
-  "name": "sg-exam-web",
+  "name": "sg-exam-app",
   "version": "3.7.0",
-  "description": "sg-exam-web",
+  "description": "sg-exam-app",
   "author": "tangyi <1633736729@qq.com>",
   "private": true,
   "scripts": {

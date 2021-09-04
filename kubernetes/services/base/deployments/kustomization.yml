@@ -3,5 +3,5 @@ resources:
   - user-service-deployment.yml
   - exam-service-deployment.yml
   - msc-service-deployment.yml
-  - ui-service-deployment.yml
-  - web-service-deployment.yml
+  - admin-service-deployment.yml
+  - app-service-deployment.yml

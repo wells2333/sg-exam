@@ -1,7 +1,7 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: web-service-vs
+  name: app-service-vs
 spec:
   hosts:
     - "*"
@@ -15,4 +15,4 @@ spec:
         - destination:
             port:
               number: 80
-            host: web-service.sg-exam.svc.cluster.local
+            host: app-service.sg-exam.svc.cluster.local
