@@ -1,0 +1,11 @@
+bases:
+  - ../../base/deployments
+  - ../../base/services
+  - ../../base/istio
+patchesStrategicMerge:
+  - auth-service-deployment-prod.yml
+  - user-service-deployment-prod.yml
+  - exam-service-deployment-prod.yml
+resources:
+  - redis-prod.yml
+  - mysql-prod.yml

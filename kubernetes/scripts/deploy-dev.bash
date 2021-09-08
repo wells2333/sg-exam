@@ -30,8 +30,8 @@ kubectl create secret generic mysql-credentials --from-literal=SPRING_DATASOURCE
 
 kubectl label namespace sg-exam istio-injection=enabled
 
-kubectl create secret tls tls-certificate --key kubernetes/cert/tls.key --cert kubernetes/cert/tls.crt
+kubectl create secret tls tls-certificate --key cert/tls.key --cert cert/tls.crt
 
 kubectl apply -k kubernetes/services/overlays/dev
 
-kubectl wait --timeout=600s --for=condition=ready pod --all
+kubectl wait --timeout=120s --for=condition=ready pod --all

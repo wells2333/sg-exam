@@ -21,7 +21,7 @@
 
 ### ✨ [在线体验-前台(http://two.404forever.com)](http://two.404forever.com/)
 
-### ✨ [在线体验-后台(http://two.404forever.com:81)](http://two.404forever.com:81)
+### ✨ [在线体验-后台(http://two.404forever.com/admin)](http://two.404forever.com/admin)
 
 账号：
 
@@ -38,7 +38,7 @@
 - 数据库：`MySQL 5.7`
 - 缓存：`Redis`
 - 构建工具：`Gradle`
-- 部署：`k8s`、`docker-compose`
+- 部署：`k8s`、`docker-compose`、`istio`
 - 后台 API 文档：`Swagger`
 - 文件系统：`本地目录`、`七牛云`、`FastDfs`
 - 前端：`Vue`

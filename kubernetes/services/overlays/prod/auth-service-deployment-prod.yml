@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+spec:
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    spec:
+      containers:
+        - name: auth-service
+          image: registry.cn-hangzhou.aliyuncs.com/sg-exam/auth-service
+          imagePullPolicy: Never
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker,prod"
+          resources:
+            limits:
+              memory: 512Mi

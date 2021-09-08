@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: exam-service
+spec:
+  selector:
+    matchLabels:
+      app: exam-service
+  template:
+    spec:
+      containers:
+        - name: exam-service
+          image: registry.cn-hangzhou.aliyuncs.com/sg-exam/exam-service
+          imagePullPolicy: Never
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker,prod"
+          resources:
+            limits:
+              memory: 512Mi

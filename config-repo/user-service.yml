@@ -85,7 +85,7 @@ spring:
   profiles: prod
   port: 8080
   datasource:
-    url: jdbc:mysql://mysql/sg-exam-user?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8
+    url: jdbc:mysql://sg-exam-mysql/sg-exam-user?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.jdbc.Driver
   redis:
