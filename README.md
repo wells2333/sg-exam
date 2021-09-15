@@ -152,8 +152,8 @@
         <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/v4.0/monitor/prometheus-1.png" alt="prometheus"/></td>
     </tr>
     <tr>
-        <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/image_ui_zipkin1.png" alt="zipkin"/></td>
-        <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/image_ui_zipkin2.png" alt="zipkin"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/v4.0/monitor/envoy-1.png" alt="envoy"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/v4.0/monitor/grafana-1.png" alt="grafana"/></td>
     </tr>
 </table>
 
