@@ -54,7 +54,7 @@
 
 ## 系统架构
 
-![image](docs/images/系统架构图v3.0.png)
+![image](docs/images/系统架构图v4.0.png)
 
 ## 功能概述
 
@@ -163,8 +163,6 @@
 
 ## 部署文档
 
-- [开源项目分析解读——基于Spring Cloud的在线考试系统](https://blog.csdn.net/chengqiuming/article/details/102991984)
-
 - [在线考试系统-部署文档](https://www.kancloud.cn/tangyi/sg-exam/1322870)
 
 - [部署视频教程](https://www.kancloud.cn/tangyi/sg-exam/1519487)
@@ -173,9 +171,9 @@
 
 - [在线考试系统-数据库设计](https://www.kancloud.cn/tangyi/sg-exam/1322868)
 
-- [微服务架构下的安全设计方案](http://ehedgehog.net/2019/03/23/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E4%B8%8B%E7%9A%84%E5%AE%89%E5%85%A8%E8%AE%BE%E8%AE%A1%E6%96%B9%E6%A1%88/)
+## 参考资料
 
-- [在线考试系统V3.0镜像构建、推送、部署](http://ehedgehog.net/2019/04/22/%E5%9C%A8%E7%BA%BF%E8%80%83%E8%AF%95%E7%B3%BB%E7%BB%9FV2.0%E9%95%9C%E5%83%8F%E6%9E%84%E5%BB%BA%E3%80%81%E6%8E%A8%E9%80%81%E3%80%81%E9%83%A8%E7%BD%B2/)
+- [开源项目分析解读——基于Spring Cloud的在线考试系统](https://blog.csdn.net/chengqiuming/article/details/102991984)
 
 ## 作者
 
