@@ -138,22 +138,18 @@
         <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/image_ui_score_manage.png" alt="成绩管理"/></td>
         <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/image_ui_score_detail.png" alt="成绩详情"/></td>
     </tr>
-    <tr>
-        <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/image_ui_log_manage.png" alt="日志监控"/></td>
-        <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/image_ui_consul.png" alt="consul监控"/></td>
-    </tr>
 </table>
 
 ### 系统监控（点击查看大图）
 
 <table>
-	<tr>
-        <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/image_ui_spring_boot_admin.png" alt="服务监控"/></td>
-        <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/image_ui_spring_boot_admin01.png" alt="服务监控"/></td>
+    <tr>
+        <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/v4.0/monitor/kiali-1.png" alt="kiali监控"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/v4.0/monitor/kiali-2.png" alt="kiali监控"/></td>
     </tr>
     <tr>
-        <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/image_ui_swagger.png" alt="swagger文档"/></td>
-        <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/image_ui_elk.png" alt="elk日志"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/v4.0/jaeger-1.png" alt="jaeger"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/v4.0/prometheus-1.png" alt="prometheus"/></td>
     </tr>
     <tr>
         <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/image_ui_zipkin1.png" alt="zipkin"/></td>
