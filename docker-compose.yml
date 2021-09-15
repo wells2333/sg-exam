@@ -3,7 +3,7 @@ version: '2.1'
 services:
   auth-service:
     build: microservices/auth-service
-    image: registry.cn-hangzhou.aliyuncs.com/sg-exam/auth-service
+    image: ${SG_EXAM_REGISTRY}/auth-service:${SG_EXAM_VERSION}
     mem_limit: 256m
     networks:
       - my-network
@@ -18,7 +18,7 @@ services:
 
   user-service:
     build: microservices/user-service
-    image: registry.cn-hangzhou.aliyuncs.com/sg-exam/user-service
+    image: ${SG_EXAM_REGISTRY}/user-service:${SG_EXAM_VERSION}
     mem_limit: 256m
     networks:
       - my-network
@@ -30,7 +30,7 @@ services:
 
   exam-service:
     build: microservices/exam-service
-    image: registry.cn-hangzhou.aliyuncs.com/sg-exam/exam-service
+    image: ${SG_EXAM_REGISTRY}/exam-service:${SG_EXAM_VERSION}
     mem_limit: 256m
     networks:
       - my-network
@@ -42,7 +42,7 @@ services:
 
   msc-service:
     build: microservices/msc-service
-    image: registry.cn-hangzhou.aliyuncs.com/sg-exam/msc-service
+    image: ${SG_EXAM_REGISTRY}/msc-service:${SG_EXAM_VERSION}
     mem_limit: 256m
     networks:
       - my-network
@@ -54,7 +54,7 @@ services:
 
   admin-service:
     build: frontend/sg-exam-admin
-    image: registry.cn-hangzhou.aliyuncs.com/sg-exam/admin-service
+    image: ${SG_EXAM_REGISTRY}/admin-service:${SG_EXAM_VERSION}
     networks:
       - my-network
     environment:
@@ -62,7 +62,7 @@ services:
 
   app-service:
     build: frontend/sg-exam-app
-    image: registry.cn-hangzhou.aliyuncs.com/sg-exam/app-service
+    image: ${SG_EXAM_REGISTRY}/app-service:${SG_EXAM_VERSION}
     networks:
       - my-network
     environment:
@@ -71,7 +71,7 @@ services:
   sg-exam-mysql:
     build:
       context: ./mysql
-    image: registry.cn-hangzhou.aliyuncs.com/sg-exam/sg-exam-mysql
+    image: ${SG_EXAM_REGISTRY}/sg-exam-mysql:${SG_EXAM_VERSION}
     container_name: sg-exam-mysql
     networks:
       - my-network
