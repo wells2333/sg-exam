@@ -148,8 +148,8 @@
         <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/v4.0/monitor/kiali-2.png" alt="kiali监控"/></td>
     </tr>
     <tr>
-        <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/v4.0/jaeger-1.png" alt="jaeger"/></td>
-        <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/v4.0/prometheus-1.png" alt="prometheus"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/v4.0/monitor/jaeger-1.png" alt="jaeger"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/v4.0/monitor/prometheus-1.png" alt="prometheus"/></td>
     </tr>
     <tr>
         <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/image_ui_zipkin1.png" alt="zipkin"/></td>
