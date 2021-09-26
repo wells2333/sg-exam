@@ -163,7 +163,7 @@
 
 - [部署视频教程](https://www.kancloud.cn/tangyi/sg-exam/1519487)
 
-- [在线考试系统-部署文档(docker版)](https://www.kancloud.cn/tangyi/sg-exam/1322869)
+- [在线考试系统-部署文档(k8s+istio版)](https://www.kancloud.cn/tangyi/sg-exam/1322869)
 
 - [在线考试系统-数据库设计](https://www.kancloud.cn/tangyi/sg-exam/1322868)
 
