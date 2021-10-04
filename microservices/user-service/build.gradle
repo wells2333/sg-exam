@@ -18,6 +18,7 @@ dependencies {
     implementation('org.springframework.security:spring-security-oauth2-resource-server')
     implementation('org.springframework.security:spring-security-oauth2-jose')
     implementation "org.springframework.security.oauth:spring-security-oauth2:2.3.4.RELEASE"
+    implementation('io.micrometer:micrometer-registry-prometheus:1.5.3')
 }
 
 test {

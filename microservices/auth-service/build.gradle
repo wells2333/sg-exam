@@ -18,6 +18,7 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('org.springframework.security:spring-security-test')
     implementation('com.github.kstyrc:embedded-redis:0.6')
+    implementation('io.micrometer:micrometer-registry-prometheus:1.5.3')
 }
 
 test {

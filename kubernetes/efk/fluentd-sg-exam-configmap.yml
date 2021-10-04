@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentd-sg-exam-config
+  namespace: kube-system
+data:
+  fluentd-sg-exam.conf: |
+
+    <match kubernetes.**istio**>
+      @type rewrite_tag_filter
+      <rule>
+        key log
+        pattern ^(.*)$
+        tag istio.${tag}
+      </rule>
+    </match>
+
+    <match kubernetes.**tangyi**>
+      @type rewrite_tag_filter
+      <rule>
+        key log
+        pattern ^(.*)$
+        tag spring-boot.${tag}
+      </rule>
+    </match>
+
+    <match spring-boot.**>
+      @type rewrite_tag_filter
+      <rule>
+        key log
+        pattern /^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\.\d{3}.*/
+        tag parse.${tag}
+      </rule>
+      <rule>
+        key log
+        pattern /^.*/
+        tag check.exception.${tag}
+      </rule>
+    </match>
+
+    <match check.exception.spring-boot.**>
+      @type detect_exceptions
+      languages java
+      remove_tag_prefix check
+      message log
+      multiline_flush_interval 5
+    </match>
+
+    <filter parse.spring-boot.**>
+      @type parser
+      key_name log
+      time_key time
+      time_format %Y-%m-%d %H:%M:%S.%N
+      reserve_data true
+      format /^(?<time>\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\.\d{3})\s+(?<spring.level>[^\s]+)\s+(\[(?<spring.service>[^,]*),(?<spring.trace>[^,]*),(?<spring.span>[^,]*),[^\]]*\])\s+(?<spring.pid>\d+)\s+---\s+\[\s*(?<spring.thread>[^\]]+)\]\s+(?<spring.class>[^\s]+)\s*:\s+(?<log>.*)$/
+    </filter>

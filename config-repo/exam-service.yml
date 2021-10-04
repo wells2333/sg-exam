@@ -55,11 +55,6 @@ spring:
     initialize: true
     username: sa
     password:
-# 日志文件名称
-logging:
-  file: exam-service.log
-logback:
-  loglevel: warn
 
 ---
 spring:
@@ -96,7 +91,3 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
   redis:
     host: redis
-
-logging:
-  level:
-    root: WARN

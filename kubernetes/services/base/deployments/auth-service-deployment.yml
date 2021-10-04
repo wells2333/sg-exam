@@ -9,6 +9,11 @@ spec:
       app: auth-service
   template:
     metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "4004"
+        prometheus.io/scheme: http
+        prometheus.io/path: "/actuator/prometheus"
       labels:
         app: auth-service
         version: latest
@@ -35,8 +40,8 @@ spec:
           livenessProbe:
             httpGet:
               scheme: HTTP
-              path: /auth-service/actuator/info
-              port: 80
+              path: /actuator/info
+              port: 4004
             initialDelaySeconds: 60
             periodSeconds: 10
             timeoutSeconds: 2
@@ -44,10 +49,9 @@ spec:
             successThreshold: 1
           readinessProbe:
             httpGet:
-
               scheme: HTTP
-              path: /auth-service/actuator/health
-              port: 80
+              path: /actuator/health
+              port: 4004
             initialDelaySeconds: 60
             periodSeconds: 10
             timeoutSeconds: 2

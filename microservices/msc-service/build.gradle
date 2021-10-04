@@ -10,6 +10,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'com.aliyun:aliyun-java-sdk-core:4.0.3'
     testImplementation('org.springframework.boot:spring-boot-starter-test')
+    implementation('io.micrometer:micrometer-registry-prometheus:1.5.3')
 }
 
 test {

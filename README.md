@@ -155,6 +155,10 @@
         <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/v4.0/monitor/envoy-1.png" alt="envoy"/></td>
         <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/v4.0/monitor/grafana-1.png" alt="grafana"/></td>
     </tr>
+    <tr>
+        <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/v4.0/monitor/kinaba.png" alt="kinaba"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam-image/raw/master/images/v4.0/monitor/cerebro.png" alt="cerebro"/></td>
+    </tr>
 </table>
 
 ## 部署文档

@@ -71,14 +71,18 @@ ignore:
     - /**/mobile/token
     - /**/wx/token
 
-# 建议只在开发、测试环境开放
+management.server.port: 4004
 management.endpoint.health.show-details: "ALWAYS"
 management.endpoints.web.exposure.include: "*"
+management.metrics.export.prometheus.enabled: true
+management.metrics.tags.application: ${spring.application.name}
+
+logging:
+  level:
+    root: INFO
+    com.github.tangyi: DEBUG
 
 ---
 spring.profiles: docker
-management.server.port: 80
-management.endpoint.health.show-details: "ALWAYS"
-management.endpoints.web.exposure.include: "*"
 app:
   auth-service: auth-service
