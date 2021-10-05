@@ -1,17 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-service
+  name: msc-service
 spec:
   selector:
     matchLabels:
-      app: auth-service
+      app: msc-service
   template:
+    metadata:
+      labels:
+        app: msc-service
+        version: v1
     spec:
       containers:
-        - name: auth-service
-          image: registry.cn-hangzhou.aliyuncs.com/sg-exam/auth-service
-          imagePullPolicy: Never
+        - name: msc-service
+          image: registry.cn-hangzhou.aliyuncs.com/sg-exam/msc-service:v1
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "docker,prod"

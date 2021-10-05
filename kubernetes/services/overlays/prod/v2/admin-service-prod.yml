@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-service
+spec:
+  selector:
+    matchLabels:
+      app: admin-service
+  template:
+    metadata:
+      labels:
+        app: admin-service
+        version: v2
+    spec:
+      containers:
+        - name: admin-service
+          image: registry.cn-hangzhou.aliyuncs.com/sg-exam/admin-service:v2

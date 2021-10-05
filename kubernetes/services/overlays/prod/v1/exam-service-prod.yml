@@ -7,11 +7,14 @@ spec:
     matchLabels:
       app: exam-service
   template:
+    metadata:
+      labels:
+        app: exam-service
+        version: v1
     spec:
       containers:
         - name: exam-service
-          image: registry.cn-hangzhou.aliyuncs.com/sg-exam/exam-service
-          imagePullPolicy: Never
+          image: registry.cn-hangzhou.aliyuncs.com/sg-exam/exam-service:v1
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "docker,prod"

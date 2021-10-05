@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-service
+spec:
+  selector:
+    matchLabels:
+      app: app-service
+  template:
+    metadata:
+      labels:
+        app: app-service
+        version: v1
+    spec:
+      containers:
+        - name: app-service
+          image: registry.cn-hangzhou.aliyuncs.com/sg-exam/app-service:v1

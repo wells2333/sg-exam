@@ -32,6 +32,28 @@ kubectl label namespace sg-exam istio-injection=enabled
 
 kubectl create secret tls tls-certificate --key kubernetes/cert/tls.key --cert kubernetes/cert/tls.crt
 
-kubectl apply -k kubernetes/services/overlays/prod
+# Deploy v1 services
+docker tag registry.cn-hangzhou.aliyuncs.com/sg-exam/app-service   registry.cn-hangzhou.aliyuncs.com/sg-exam/app-service:v1
+docker tag registry.cn-hangzhou.aliyuncs.com/sg-exam/admin-service   registry.cn-hangzhou.aliyuncs.com/sg-exam/admin-service:v1
+docker tag registry.cn-hangzhou.aliyuncs.com/sg-exam/auth-service   registry.cn-hangzhou.aliyuncs.com/sg-exam/auth-service:v1
+docker tag registry.cn-hangzhou.aliyuncs.com/sg-exam/user-service   registry.cn-hangzhou.aliyuncs.com/sg-exam/user-service:v1
+docker tag registry.cn-hangzhou.aliyuncs.com/sg-exam/exam-service   registry.cn-hangzhou.aliyuncs.com/sg-exam/exam-service:v1
+docker tag registry.cn-hangzhou.aliyuncs.com/sg-exam/msc-service   registry.cn-hangzhou.aliyuncs.com/sg-exam/msc-service:v1
 
-kubectl wait --timeout=120s --for=condition=ready pod --all
+kubectl apply -k kubernetes/services/base/services
+kubectl apply -k kubernetes/services/overlays/prod/common
+kubectl apply -k kubernetes/services/overlays/prod/v1
+kubectl apply -k kubernetes/services/overlays/prod/istio
+kubectl wait --timeout=180s --for=condition=ready pod --all
+
+# Deploy v2 services
+#docker tag registry.cn-hangzhou.aliyuncs.com/sg-exam/app-service   registry.cn-hangzhou.aliyuncs.com/sg-exam/app-service:v2
+#docker tag registry.cn-hangzhou.aliyuncs.com/sg-exam/admin-service   registry.cn-hangzhou.aliyuncs.com/sg-exam/admin-service:v2
+#docker tag registry.cn-hangzhou.aliyuncs.com/sg-exam/auth-service   registry.cn-hangzhou.aliyuncs.com/sg-exam/auth-service:v2
+#docker tag registry.cn-hangzhou.aliyuncs.com/sg-exam/user-service   registry.cn-hangzhou.aliyuncs.com/sg-exam/user-service:v2
+#docker tag registry.cn-hangzhou.aliyuncs.com/sg-exam/exam-service   registry.cn-hangzhou.aliyuncs.com/sg-exam/exam-service:v2
+#docker tag registry.cn-hangzhou.aliyuncs.com/sg-exam/msc-service   registry.cn-hangzhou.aliyuncs.com/sg-exam/msc-service:v2
+
+#kubectl apply -k kubernetes/services/overlays/prod/v2
+#kubectl wait --timeout=180s --for=condition=ready pod --all
+
