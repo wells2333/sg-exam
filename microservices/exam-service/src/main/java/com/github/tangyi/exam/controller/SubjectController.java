@@ -17,6 +17,7 @@ import com.github.tangyi.exam.utils.SubjectUtil;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -198,7 +199,11 @@ public class SubjectController extends BaseController {
                                                @ApiParam(value = "要上传的文件", required = true) MultipartFile file) {
         try {
             log.debug("Start import subject data, examinationId: {}, categoryId: {}", examinationId, categoryId);
-			return new ResponseBean<>(ExcelToolUtil.readExcel(file.getInputStream(), SubjectExcelModel.class, new SubjectImportListener(subjectService, examinationId, categoryId)));
+            if (StringUtils.isNotEmpty(file.getOriginalFilename()) && file.getOriginalFilename().endsWith(".txt")) {
+                return new ResponseBean<>(subjectService.importTxt(categoryId, file));
+            } else {
+                return new ResponseBean<>(ExcelToolUtil.readExcel(file.getInputStream(), SubjectExcelModel.class, new SubjectImportListener(subjectService, examinationId, categoryId)));
+            }
         } catch (Exception e) {
             log.error("Import subject failed", e);
             throw new CommonException("Import subject failed");

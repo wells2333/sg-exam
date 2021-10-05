@@ -344,7 +344,7 @@ export default {
       dialogViewVisible: false,
       // 选择的菜单
       multipleSelection: [],
-      importUrl: '/api/exam/v1/subject/import',
+      importUrl: '/exam-service/v1/subject/import',
       // 多选题目
       multipleSubjectSelection: [],
       uploading: false,
@@ -794,10 +794,10 @@ export default {
     },
     // 上传前
     beforeUploadSubjectUpload (file) {
-      const isExcel = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      const isExcel = (file.type === 'text/plain' || file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
       const isLt10M = file.size / 1024 / 1024 < 10
       if (!isExcel) {
-        this.$message.error('上传附件只能是 excel 格式!')
+        this.$message.error('上传附件只能是 excel/txt 格式!')
       }
       if (!isLt10M) {
         this.$message.error('上传附件大小不能超过 10MB!')

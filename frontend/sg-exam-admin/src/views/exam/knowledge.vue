@@ -98,7 +98,7 @@
               :on-success="handleUploadSuccess"
               :on-exceed="handleExceed"
               :on-remove="handleRemove"
-              action="api/user-service/v1/attachment/upload"
+              action="user-service/v1/attachment/upload"
               :headers="headers"
               :data="params"
               :limit="1"

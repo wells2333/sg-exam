@@ -60,7 +60,7 @@
                         :show-file-list="false"
                         :on-success="handleAvatarSuccess"
                         :before-upload="beforeAvatarUpload"
-                        action="api/user-service/v1/attachment/upload"
+                        action="user-service/v1/attachment/upload"
                         :headers="headers"
                         :data="params"
                         class="avatar-uploader">
@@ -151,7 +151,7 @@ export default {
         return
       }
       // 重新获取预览地址
-      this.userInfo.avatarUrl = '/user-service/v1/attachment/preview?id=' + res.data.id
+      this.userInfo.avatarUrl = res.data.previewUrl
       this.userInfo.avatarId = res.data.id
       updateAvatar(this.userInfo).then(response => {
         notifySuccess(this, '头像上传成功')

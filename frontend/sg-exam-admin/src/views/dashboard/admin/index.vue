@@ -150,7 +150,7 @@ export default {
       }
     }
     .chart-wrapper-body {
-      padding-top: 20px;
+      padding-top: 12px;
     }
   }
 </style>

@@ -3,23 +3,28 @@ package com.github.tangyi.exam.service;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.constants.ExamSubjectConstant;
 import com.github.tangyi.api.exam.dto.SubjectDto;
-import com.github.tangyi.api.exam.module.ExaminationSubject;
-import com.github.tangyi.api.exam.module.SubjectChoices;
-import com.github.tangyi.api.exam.module.SubjectJudgement;
-import com.github.tangyi.api.exam.module.SubjectShortAnswer;
+import com.github.tangyi.api.exam.module.*;
 import com.github.tangyi.common.exceptions.CommonException;
 import com.github.tangyi.common.utils.PageUtil;
 import com.github.tangyi.common.utils.SpringContextHolder;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.exam.enums.SubjectTypeEnum;
 import com.github.tangyi.exam.utils.SubjectUtil;
+import io.swagger.models.auth.In;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -121,10 +126,10 @@ public class SubjectService {
         List<SubjectDto> subjectDtos = subjectService(subjectDto.getType()).findSubjectList(subjectDto);
         // 选择题则查找具体的选项
         if (SubjectTypeEnum.CHOICES.getValue().equals(subjectDto.getType()) && CollectionUtils.isNotEmpty(subjectDtos)) {
-			// 查找选项信息
-			subjectDtos = subjectDtos.stream()
-					.map(dto -> SubjectUtil.subjectChoicesToDto(subjectChoicesService.get(dto.getId()), true))
-					.collect(Collectors.toList());
+            // 查找选项信息
+            subjectDtos = subjectDtos.stream()
+                    .map(dto -> SubjectUtil.subjectChoicesToDto(subjectChoicesService.get(dto.getId()), true))
+                    .collect(Collectors.toList());
         }
         return subjectDtos;
     }
@@ -289,9 +294,9 @@ public class SubjectService {
      * @author tangyi
      * @date 2019/06/16 17:34
      */
-	private ISubjectService subjectService(Integer type) {
-		return SpringContextHolder.getApplicationContext().getBean(SubjectTypeEnum.matchByValue(type).getService());
-	}
+    private ISubjectService subjectService(Integer type) {
+        return SpringContextHolder.getApplicationContext().getBean(SubjectTypeEnum.matchByValue(type).getService());
+    }
 
     /**
      * 导入题目
@@ -379,26 +384,26 @@ public class SubjectService {
         return findSubjectDtoList(examinationSubjects, false);
     }
 
-	/**
-	 * 根据关系列表查询对应的题目的详细信息
-	 *
-	 * @param examinationSubjects examinationSubjects
-	 * @param findOptions findOptions
-	 * @return List
-	 * @author tangyi
-	 * @date 2019/06/17 11:54
-	 */
-	public List<SubjectDto> findSubjectDtoList(List<ExaminationSubject> examinationSubjects, boolean findOptions) {
-    	return findSubjectDtoList(examinationSubjects, findOptions, true);
-	}
+    /**
+     * 根据关系列表查询对应的题目的详细信息
+     *
+     * @param examinationSubjects examinationSubjects
+     * @param findOptions         findOptions
+     * @return List
+     * @author tangyi
+     * @date 2019/06/17 11:54
+     */
+    public List<SubjectDto> findSubjectDtoList(List<ExaminationSubject> examinationSubjects, boolean findOptions) {
+        return findSubjectDtoList(examinationSubjects, findOptions, true);
+    }
 
     /**
      * 根据关系列表查询对应的题目的详细信息
      *
      * @param examinationSubjects examinationSubjects
-     * @param findOptions findOptions
-	 * @param findAnswer findAnswer
-	 * @return List
+     * @param findOptions         findOptions
+     * @param findAnswer          findAnswer
+     * @return List
      * @author tangyi
      * @date 2019/06/17 11:54
      */
@@ -494,12 +499,70 @@ public class SubjectService {
         }
         if (CollectionUtils.isNotEmpty(examinationSubjects)) {
             for (ExaminationSubject es : examinationSubjects) {
-				SubjectDto subjectDto = this.get(es.getSubjectId(), es.getType());
-				subjectDto.setExaminationId(es.getExaminationId());
-				subjectDto.setCategoryId(es.getCategoryId());
-				subjects.add(subjectDto);
-			}
+                SubjectDto subjectDto = this.get(es.getSubjectId(), es.getType());
+                subjectDto.setExaminationId(es.getExaminationId());
+                subjectDto.setCategoryId(es.getCategoryId());
+                subjects.add(subjectDto);
+            }
         }
         return subjects;
+    }
+
+    /**
+     * 导入txt 格式的题目
+     *
+     * @param categoryId categoryId
+     * @param file       file
+     */
+    public Boolean importTxt(Long categoryId, MultipartFile file) {
+        try (InputStream inputStream = file.getInputStream()) {
+            List<String> lines = IOUtils.readLines(inputStream, StandardCharsets.UTF_8);
+            if (CollectionUtils.isNotEmpty(lines)) {
+                List<SubjectDto> subjects = new ArrayList<>();
+                String creator = SysUtil.getUser();
+                String sysCode = SysUtil.getSysCode();
+                String tenantCode = SysUtil.getTenantCode();
+                for (int i = 0; i < lines.size(); i += 7) {
+                    SubjectDto subjectDto = new SubjectDto();
+                    subjectDto.setCommonValue(creator, sysCode, tenantCode);
+                    subjectDto.setSubjectName(lines.get(i));
+                    subjectDto.setCategoryId(categoryId);
+                    List<SubjectOption> subjectOptions = new ArrayList<>();
+                    initSubjectOption(lines.get(i + 1), subjectOptions);
+                    initSubjectOption(lines.get(i + 2), subjectOptions);
+                    initSubjectOption(lines.get(i + 3), subjectOptions);
+                    initSubjectOption(lines.get(i + 4), subjectOptions);
+
+                    subjectDto.setOptions(subjectOptions);
+                    // 答案
+                    Answer answer = new Answer();
+                    answer.setAnswer(lines.get(i + 5));
+                    subjectDto.setAnswer(answer);
+                    subjectDto.setScore(Double.parseDouble(lines.get(i + 6)));
+                    subjects.add(subjectDto);
+                }
+                importSubject(subjects, null, categoryId);
+            }
+        } catch (Exception e) {
+            log.error("importTxt failed", e);
+        }
+        return Boolean.TRUE;
+    }
+
+    public void initSubjectOption(String option, List<SubjectOption> subjectOptions) {
+        String pattern = ".";
+        if (option.contains(pattern)) {
+            String optionName = option.substring(0, option.indexOf(pattern));
+            String optionContent = option.substring(option.indexOf(pattern) + 1);
+            SubjectOption subjectOption = initSubjectOption(optionName, optionContent);
+            subjectOptions.add(subjectOption);
+        }
+    }
+
+    public SubjectOption initSubjectOption(String optionName, String optionContent) {
+        SubjectOption subjectOption = new SubjectOption();
+        subjectOption.setOptionName(optionName);
+        subjectOption.setOptionContent(optionContent);
+        return subjectOption;
     }
 }
