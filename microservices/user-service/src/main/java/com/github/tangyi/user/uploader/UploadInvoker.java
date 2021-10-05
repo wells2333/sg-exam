@@ -24,7 +24,7 @@ public class UploadInvoker {
 
     private static UploadInvoker instance;
 
-    private AttachmentService attachmentService;
+    private final AttachmentService attachmentService;
 
     public UploadInvoker(AttachmentService attachmentService) {
         this.attachmentService = attachmentService;
@@ -132,7 +132,7 @@ public class UploadInvoker {
      * @author tangyi
      * @date 2020/04/05 14:17
      */
-    private IUploader getUploader(Integer uploadType) {
+    public IUploader getUploader(Integer uploadType) {
         IUploader uploader;
         if (uploaderMap == null) {
             uploaderMap = new HashMap<>();

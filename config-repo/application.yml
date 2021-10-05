@@ -25,6 +25,13 @@ feign:
   hystrix:
     enabled: true
 
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+
 # 系统配置
 sys:
   adminUser: admin  # 管理员账号，默认是admin
@@ -32,7 +39,7 @@ sys:
   defaultAvatar: /static/img/avatar/
   key: '1234567887654321'
   cacheExpire: 86400 # 缓存失效时间，单位秒，默认一天
-  attachtUploadType: 1  # 上传类型，1：本地目录，2：fastDfs，3：七牛云
+  attachUploadType: 3  # 上传类型，3：七牛云
   attachPath: ${ATTACH_PATH:C:/attach} # 附件上传目录
   canPreview: jpg,png,jpeg,gif # 支持预览的格式
   authServiceUrl: http://localhost:9182/auth-service
@@ -71,12 +78,6 @@ ignore:
     - /**/mobile/token
     - /**/wx/token
 
-management.server.port: 4004
-management.endpoint.health.show-details: "ALWAYS"
-management.endpoints.web.exposure.include: "*"
-management.metrics.export.prometheus.enabled: true
-management.metrics.tags.application: ${spring.application.name}
-
 logging:
   level:
     root: INFO
@@ -86,3 +87,8 @@ logging:
 spring.profiles: docker
 app:
   auth-service: auth-service
+management.server.port: 4004
+management.endpoint.health.show-details: "ALWAYS"
+management.endpoints.web.exposure.include: "*"
+management.metrics.export.prometheus.enabled: true
+management.metrics.tags.application: ${spring.application.name}

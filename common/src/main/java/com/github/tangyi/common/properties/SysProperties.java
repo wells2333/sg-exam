@@ -56,7 +56,7 @@ public class SysProperties {
     private String qrCodeUrl;
 
     /**
-     * 上传类型，1：本地目录，2：fastDfs，3：七牛云
+     * 上传类型，3：七牛云
      */
     private String attachUploadType;
 

@@ -173,7 +173,7 @@
               :show-file-list="false"
               :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload"
-              action="api/user-service/v1/attachment/upload"
+              action="user-service/v1/attachment/upload"
               :headers="headers"
               :data="params"
               class="avatar-uploader">
@@ -234,7 +234,7 @@ import waves from '@/directive/waves'
 import { mapGetters, mapState } from 'vuex'
 import { getToken } from '@/utils/auth'
 import { checkMultipleSelect, isNotEmpty, notifySuccess, notifyFail, messageSuccess } from '@/utils/util'
-import { delAttachment } from '@/api/admin/attachment'
+import { delAttachment, getDownloadUrl } from '@/api/admin/attachment'
 import Tinymce from '@/components/Tinymce'
 import SpinnerLoading from '@/components/SpinnerLoading'
 import Choices from '@/components/Subjects/Choices'
@@ -438,6 +438,7 @@ export default {
       this.resetTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
+      this.avatar = ''
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
@@ -474,7 +475,11 @@ export default {
       }
       // 获取图片的预览地址
       if (isNotEmpty(this.temp.avatarId)) {
-        this.avatar = '/user-service/v1/attachment/preview?id=' + this.temp.avatarId
+        getDownloadUrl(this.temp.avatarId).then(response => {
+          this.avatar = response.data
+        }).catch((err) => {
+          console.error(err)
+        })
       }
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
@@ -587,10 +592,9 @@ export default {
             delAttachment(this.temp.avatarId).then(() => {
               // 更新头像信息
               this.temp.avatarId = res.data.id
+              this.avatar =res.data.previewUrl
               putObj(Object.assign({}, this.temp)).then(() => {
                 notifySuccess(this, '上传成功')
-                this.dialogFormVisible = false
-                this.getList()
               }).catch(() => {
                 notifyFail(this, '上传失败')
               })
@@ -598,10 +602,9 @@ export default {
           } else {
             // 更新头像信息
             this.temp.avatarId = res.data.id
+            this.avatar =res.data.previewUrl
             putObj(Object.assign({}, this.temp)).then(() => {
               notifySuccess(this, '上传成功')
-              this.dialogFormVisible = false
-              this.getList()
             }).catch(() => {
               notifyFail(this, '上传失败')
             })

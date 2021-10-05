@@ -31,6 +31,16 @@ public abstract class AbstractUploader implements IUploader {
     @Override
     public abstract InputStream download(Attachment attachment);
 
+    @Override
+    public String getDownloadUrl(Attachment attachment) {
+        return null;
+    }
+
+    @Override
+    public String getDownloadUrl(Attachment attachment, int expire) {
+        return null;
+    }
+
     /**
      * 获取附件存储目录
      *

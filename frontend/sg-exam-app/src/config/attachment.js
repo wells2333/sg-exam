@@ -1,1 +1,1 @@
-export const ATTACHMENT_URL = '/api/user-service/v1/attachment'
+export const ATTACHMENT_URL = '/user-service/v1/attachment'

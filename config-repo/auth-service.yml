@@ -65,7 +65,7 @@ sys:
   defaultAvatar: /static/img/avatar/
   key: '1234567887654321'
   cacheExpire: 86400 # 缓存失效时间，单位秒，默认一天
-  attachtUploadType: 1  # 上传类型，1：本地目录，2：fastDfs，3：七牛云
+  attachUploadType: 3  # 上传类型，3：七牛云
   attachPath: ${ATTACH_PATH:C:/attach} # 附件上传目录
   canPreview: jpg,png,jpeg,gif # 支持预览的格式
   authServiceUrl: http://auth-service.sg-exam.svc.cluster.local/auth-service

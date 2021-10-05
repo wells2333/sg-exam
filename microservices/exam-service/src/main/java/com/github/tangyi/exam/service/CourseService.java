@@ -141,7 +141,7 @@ public class CourseService extends CrudService<CourseMapper, Course> {
             courseList.forEach(course -> {
                 // 获取配置默认头像地址
                 if (course.getLogoId() != null && course.getLogoId() != 0L) {
-                    course.setLogoUrl(AttachmentConstant.ATTACHMENT_PREVIEW_URL + course.getLogoId());
+                    //course.setLogoUrl(AttachmentConstant.ATTACHMENT_PREVIEW_URL + course.getLogoId());
                 } else {
                     Long index = new Random().nextInt(sysProperties.getLogoCount()) + 1L;
                     course.setLogoUrl(sysProperties.getLogoUrl() + index + sysProperties.getLogoSuffix());

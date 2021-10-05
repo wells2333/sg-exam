@@ -168,7 +168,7 @@ export default {
         loading: false,
         passwordType: 'password',
         code: {
-          src: '/api/user-service/v1/code',
+          src: '/user-service/v1/code',
           value: '',
           len: 4,
           type: 'image'
@@ -197,7 +197,7 @@ export default {
         loading: false,
         passwordType: 'password',
         code: {
-          src: '/api/user-service/v1/code',
+          src: '/user-service/v1/code',
           value: '',
           len: 4,
           type: 'image'

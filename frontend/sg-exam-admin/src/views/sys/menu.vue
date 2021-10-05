@@ -148,7 +148,7 @@ export default {
     typeFilter (type) {
       const typeMap = {
         0: '菜单',
-        1: '按钮'
+        1: '权限'
       }
       return typeMap[type]
     }

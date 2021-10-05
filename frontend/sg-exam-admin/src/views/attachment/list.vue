@@ -10,7 +10,7 @@
         :show-file-list="showFileList"
         :on-success="handleUploadSuccess"
         :on-progress="handleUploadProgress"
-        action="api/user-service/v1/attachment/upload"
+        action="user-service/v1/attachment/upload"
         :headers="headers"
         :data="params"
         class="upload-demo"
@@ -66,11 +66,6 @@
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>
-                <a @click="handlePreview(scope.row)">
-                  <span><i class="el-icon-view"></i>{{ $t('table.preview') }}</span>
-                </a>
-              </el-dropdown-item>
-              <el-dropdown-item>
                 <a @click="handleDownloadUrl(scope.row)">
                   <span><i class="el-icon-document-copy"></i>{{ $t('table.downloadUrl') }}</span>
                 </a>
@@ -105,10 +100,10 @@
 </template>
 
 <script>
-import { fetchList, addObj, putObj, delAttachment, canPreview } from '@/api/admin/attachment'
+import { fetchList, addObj, putObj, delAttachment, getDownloadUrl } from '@/api/admin/attachment'
 import waves from '@/directive/waves'
 import { getToken } from '@/utils/auth'
-import { messageSuccess, messageWarn } from '@/utils/util'
+import { messageSuccess } from '@/utils/util'
 import SpinnerLoading from '@/components/SpinnerLoading'
 
 export default {
@@ -256,24 +251,24 @@ export default {
       })
     },
     handleDownload (row) {
-      window.location.href = '/user-service/v1/attachment/download?id=' + row.id
-    },
-    handlePreview (row) {
-      this.previewUrl = ''
-      canPreview(row.id).then(response => {
-        if (response.data.data) {
-          this.previewUrl = '/user-service/v1/attachment/preview?id=' + row.id
-          this.dialogPreviewVisible = true
-        } else {
-          messageWarn(this, '暂不支持预览该格式的附件')
+      getDownloadUrl(row.id).then(response => {
+        if (response.data) {
+          window.open(response.data)
         }
       }).catch(error => {
         console.error(error)
       })
     },
     handleDownloadUrl (row) {
-      const url = 'http://' + window.location.host + '/user-service/v1/attachment/download?id=' + row.id
-      this.$alert(url, '下载链接', { confirmButtonText: '确定' })
+      getDownloadUrl(row.id).then(response => {
+        let html = '<div style="width:100%; height:100%;overflow: hidden;">' + response.data + '</div>'
+        this.$alert(html, '链接',{
+          dangerouslyUseHTMLString: true,
+          customClass: 'downloadUrlMsgBox'
+        })
+      }).catch(error => {
+        console.error(error)
+      })
     },
     updateData () {
       this.$refs['dataForm'].validate((valid) => {
@@ -299,9 +294,9 @@ export default {
         })
       }).catch(() => {})
     },
-    handleUploadSuccess () {
+    handleUploadSuccess (e) {
+      debugger
       this.uploading = false
-      this.getList()
       messageSuccess(this, '上传成功')
     },
     handleUploadProgress (event, file, fileList) {
@@ -319,5 +314,10 @@ export default {
   .preview {
     text-align: center;
     overflow: hidden;
+  }
+
+  .downloadUrlMsgBox {
+    width: 60% !important;
+    height: 70% !important;
   }
 </style>

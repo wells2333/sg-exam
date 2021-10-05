@@ -11,6 +11,6 @@ docker-compose build --parallel
 
 echo "build image finished, start to push image"
 
-docker-compose push
+# docker-compose push
 
 echo "all build finished, exit"

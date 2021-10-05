@@ -38,4 +38,9 @@ public class AttachmentVo extends BaseEntity<AttachmentVo> {
      * 业务模块
      */
     private String busiModule;
+
+    /**
+     * 预览地址
+     */
+    private String previewUrl;
 }

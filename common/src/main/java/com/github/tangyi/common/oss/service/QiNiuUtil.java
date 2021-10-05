@@ -21,100 +21,120 @@ import java.net.URLEncoder;
 
 /**
  * 七牛云
+ *
  * @author tangyi
  * @date 2019/12/8 20:25
  */
 @Slf4j
 public class QiNiuUtil {
 
-	private Auth auth;
+    private static class QiNiuUtilInstance {
+        public static QiNiuUtil instance = new QiNiuUtil();
+    }
 
-	private UploadManager uploadManager;
+    public static QiNiuUtil getInstance() {
+        return QiNiuUtilInstance.instance;
+    }
 
-	private BucketManager bucketManager;
+    public QiNiuUtil() {
+    }
 
-	private QiNiuConfig qiNiuConfig;
+    /**
+     * 获取七牛云token
+     *
+     * @return String
+     */
+    public String getQiNiuToken() {
+        return getAuth().uploadToken(getQiNiuConfig().getBucket());
+    }
 
-	private static QiNiuUtil instance;
+    /**
+     * 上传七牛云
+     *
+     * @param uploadBytes 文件
+     * @param fileName    文件名 默认不指定key的情况下，以文件内容的hash值作为文件名
+     * @return String
+     */
+    public String upload(byte[] uploadBytes, String fileName) {
+        try {
+            QiNiuConfig qiNiuConfig = getQiNiuConfig();
+            Response response = getUploadManager().put(uploadBytes, fileName, getQiNiuToken());
+            //解析上传成功的结果
+            DefaultPutRet putRet = JsonMapper.getInstance().fromJson(response.bodyString(), DefaultPutRet.class);
+            return qiNiuConfig.getDomainOfBucket() + "/" + putRet.key;
+        } catch (QiniuException ex) {
+            log.error("upload to qiniu exception: {}", ex.getMessage(), ex);
+            throw new OssException(ex, "upload to qiniu exception");
+        }
+    }
 
-	public synchronized static QiNiuUtil getInstance() {
-		if (instance == null) {
-			instance = new QiNiuUtil();
-		}
-		return instance;
-	}
+    /**
+     * 获取图片url
+     *
+     * @param fileName fileName
+     * @return String
+     */
+    public String getDownloadUrl(String fileName) throws UnsupportedEncodingException {
+        return getDownloadUrl(fileName, getQiNiuConfig().getExpire());
+    }
 
-	public QiNiuUtil() {
-		qiNiuConfig = SpringContextHolder.getApplicationContext().getBean(QiNiuConfig.class);
-		if (StringUtils.isNotBlank(qiNiuConfig.getAccessKey()) && StringUtils.isNotBlank(qiNiuConfig.getSecretKey())) {
-			instance = new QiNiuUtil();
-			instance.auth = Auth.create(qiNiuConfig.getAccessKey(), qiNiuConfig.getSecretKey());
-			Configuration config = new Configuration(Region.region2());
-			instance.uploadManager = new UploadManager(config);
-			instance.bucketManager = new BucketManager(instance.auth, config);
-		}
-	}
+    /**
+     * 获取图片url
+     *
+     * @param fileName fileName
+     * @return String
+     */
+    public String getDownloadUrl(String fileName, int expire) throws UnsupportedEncodingException {
+        QiNiuConfig qiNiuConfig = getQiNiuConfig();
+        String encodedFileName = URLEncoder.encode(fileName, CommonConstant.UTF8).replace("+", "%20");
+        String publicUrl = String.format("%s/%s", qiNiuConfig.getDomainOfBucket(), encodedFileName);
+        Auth auth = getAuth();
+        String url = "";
+        if (expire == -1) {
+            url = auth.privateDownloadUrl(publicUrl);
+        } else {
+            url = auth.privateDownloadUrl(publicUrl, expire);
+        }
+        if (!url.startsWith("http")) {
+            url = "http://" + url;
+        }
+        return url;
+    }
 
-	/**
-	 * 获取七牛云token
-	 *
-	 * @return String
-	 */
-	public String getQiNiuToken() {
-		return auth.uploadToken(getInstance().qiNiuConfig.getBucket());
-	}
+    /**
+     * 删除附件
+     *
+     * @param fileName fileName
+     * @return boolean
+     */
+    public boolean delete(String fileName) {
+        try {
+            getBucketManager(getAuth(), new Configuration(Region.region2())).delete(getQiNiuConfig().getBucket(), fileName);
+            return Boolean.TRUE;
+        } catch (Exception e) {
+            log.error("delete attachment exception:{}", e.getMessage(), e);
+            throw new OssException(e, "delete attachment exception");
+        }
+    }
 
-	/**
-	 * 上传七牛云
-	 *
-	 * @param uploadBytes 文件
-	 * @param fileName         文件名 默认不指定key的情况下，以文件内容的hash值作为文件名
-	 * @return String
-	 */
-	public String upload(byte[] uploadBytes, String fileName) {
-		try {
-			Response response = uploadManager.put(uploadBytes, fileName, getQiNiuToken());
-			//解析上传成功的结果
-			DefaultPutRet putRet = JsonMapper.getInstance().fromJson(response.bodyString(), DefaultPutRet.class);
-			return qiNiuConfig.getDomainOfBucket() + "/" + putRet.key;
-		} catch (QiniuException ex) {
-			log.error("upload to qiniu exception: {}", ex.getMessage(), ex);
-			throw new OssException(ex, "upload to qiniu exception");
-		}
-	}
+    public QiNiuConfig getQiNiuConfig() {
+        return SpringContextHolder.getApplicationContext().getBean(QiNiuConfig.class);
+    }
 
-	/**
-	 * 获取图片url
-	 *
-	 * @param fileName fileName
-	 * @return String
-	 */
-	public String getDownloadUrl(String fileName) throws UnsupportedEncodingException {
-		String encodedFileName = URLEncoder.encode(fileName, CommonConstant.UTF8).replace("+", "%20");
-		String publicUrl = String.format("%s/%s", qiNiuConfig.getDomainOfBucket(), encodedFileName);
-		return auth.privateDownloadUrl(publicUrl, qiNiuConfig.getExpire());
-	}
+    public Auth getAuth() {
+        QiNiuConfig qiNiuConfig = getQiNiuConfig();
+        if (StringUtils.isNotBlank(qiNiuConfig.getAccessKey()) && StringUtils.isNotBlank(qiNiuConfig.getSecretKey())) {
+            return Auth.create(qiNiuConfig.getAccessKey(), qiNiuConfig.getSecretKey());
+        }
+        return null;
+    }
 
-	/**
-	 * 删除附件
-	 * @param fileName fileName
-	 * @return boolean
-	 */
-	public boolean delete(String fileName) {
-		try {
-			bucketManager.delete(qiNiuConfig.getBucket(), fileName);
-			return Boolean.TRUE;
-		} catch (Exception e) {
-			log.error("delete attachment exception:{}", e.getMessage(), e);
-			throw new OssException(e, "delete attachment exception");
-		}
-	}
+    public UploadManager getUploadManager() {
+        Configuration config = new Configuration(Region.region2());
+        return new UploadManager(config);
+    }
 
-	/**
-	 * 获取域名
-	 * @return String
-	 */
-	public String getDomainOfBucket() {
-		return qiNiuConfig.getDomainOfBucket();
-	}
+    public BucketManager getBucketManager(Auth auth, Configuration config) {
+        return new BucketManager(auth, config);
+    }
 }

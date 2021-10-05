@@ -101,7 +101,7 @@
         <include refid="examRecordColumns"/>
         FROM exam_examination_record a
         WHERE a.del_flag = 0
-        AND <![CDATA[ DATE_FORMAT(a.create_date, '%Y-%m-%d') >=  DATE_FORMAT(#{start}, '%Y-%m-%d') ]]>
+        AND <![CDATA[ a.create_date >= #{start} ]]>
     </select>
 
     <insert id="insert">

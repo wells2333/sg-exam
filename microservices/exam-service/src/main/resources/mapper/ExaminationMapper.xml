@@ -96,7 +96,7 @@
     </select>
 
     <select id="findExamUserCount" resultType="java.lang.Integer">
-        SELECT COUNT(*) FROM (SELECT * FROM exam_examination_record WHERE tenant_code = #{tenantCode} GROUP BY user_id) a
+        SELECT COUNT(1) FROM (SELECT user_id FROM exam_examination_record WHERE tenant_code = #{tenantCode} GROUP BY user_id) a
     </select>
 
     <insert id="insert">

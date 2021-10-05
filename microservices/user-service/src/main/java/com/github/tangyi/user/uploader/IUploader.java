@@ -33,6 +33,21 @@ public interface IUploader {
     InputStream download(Attachment attachment);
 
     /**
+     * 获取附件下载URL
+     * @param attachment attachment
+     * @return String
+     */
+    String getDownloadUrl(Attachment attachment);
+
+    /**
+     * 获取附件下载URL
+     * @param attachment attachment
+     * @param expire expire
+     * @return String
+     */
+    String getDownloadUrl(Attachment attachment, int expire);
+
+    /**
      * 删除附件
      * @param attachment attachment
      * @return boolean

@@ -9,29 +9,25 @@ import com.github.tangyi.common.model.ResponseBean;
 import com.github.tangyi.common.properties.SysProperties;
 import com.github.tangyi.common.utils.FileUtil;
 import com.github.tangyi.common.utils.PageUtil;
-import com.github.tangyi.common.utils.Servlets;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.common.vo.AttachmentVo;
 import com.github.tangyi.common.web.BaseController;
 import com.github.tangyi.user.service.AttachmentService;
 import com.github.tangyi.user.uploader.UploadInvoker;
-import com.google.common.net.HttpHeaders;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
-import java.io.*;
-import java.net.URLEncoder;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -114,7 +110,7 @@ public class AttachmentController extends BaseController {
             @ApiImplicitParam(name = "busiId", value = "业务Id", dataType = "String"),
             @ApiImplicitParam(name = "busiModule", value = "业务模块", dataType = "String"),
     })
-	@Log("上传文件")
+    @Log("上传文件")
     public ResponseBean<Attachment> upload(@ApiParam(value = "要上传的文件", required = true) @RequestParam("file") MultipartFile file,
                                            Attachment attachment) {
         if (!file.isEmpty()) {
@@ -142,38 +138,22 @@ public class AttachmentController extends BaseController {
     @GetMapping("download")
     @ApiOperation(value = "下载附件", notes = "根据ID下载附件")
     @ApiImplicitParam(name = "id", value = "附件ID", required = true, dataType = "Long")
-	@Log("下载文件")
-    public void download(HttpServletRequest request, HttpServletResponse response, @NotBlank Long id) {
+    @Log("下载文件")
+    public String download(@NotBlank Long id) {
         try {
-			Attachment attachment = new Attachment();
-			attachment.setId(id);
-			attachment = attachmentService.get(attachment);
-			if (attachment == null)
-				throw new CommonException("Attachment does not exist");
-			InputStream inputStream = UploadInvoker.getInstance().download(attachment);
-			if (inputStream == null) {
-			    log.info("attachment is not exists");
-			    return;
-            }
-            OutputStream outputStream = response.getOutputStream();
-            response.setContentType("application/zip");
-            response.setHeader(HttpHeaders.CACHE_CONTROL, "max-age=10");
-            // IE之外的浏览器使用编码输出名称
-            String contentDisposition = "";
-            String httpUserAgent = request.getHeader("User-Agent");
-            if (StringUtils.isNotEmpty(httpUserAgent)) {
-                httpUserAgent = httpUserAgent.toLowerCase();
-                String fileName = attachment.getAttachName();
-                contentDisposition = httpUserAgent.contains("wps") ? "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8") : Servlets.getDownName(request, fileName);
-            }
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition);
-            response.setContentLength(inputStream.available());
-            FileCopyUtils.copy(inputStream, outputStream);
-            log.info("download {} success", attachment.getAttachName());
-		} catch (Exception e) {
-        	log.error("Download attachment failed: {}", e.getMessage(), e);
-		}
-	}
+            Attachment attachment = new Attachment();
+            attachment.setId(id);
+            attachment = attachmentService.get(attachment);
+            if (attachment == null)
+                throw new CommonException("Attachment does not exist");
+            String url = attachmentService.getDownloadUrl(attachment);
+            log.info("get download url success, {}: {}", attachment.getAttachName(), url);
+            return url;
+        } catch (Exception e) {
+            log.error("Download attachment failed: {}", e.getMessage(), e);
+        }
+        return "";
+    }
 
     /**
      * 删除附件
@@ -186,7 +166,7 @@ public class AttachmentController extends BaseController {
     @DeleteMapping("/{id}")
     @ApiOperation(value = "删除附件", notes = "根据ID删除附件")
     @ApiImplicitParam(name = "id", value = "附件ID", required = true, paramType = "path")
-	@Log("删除附件")
+    @Log("删除附件")
     public ResponseBean<Boolean> delete(@PathVariable Long id) {
         Attachment attachment = new Attachment();
         attachment.setId(id);
@@ -208,7 +188,7 @@ public class AttachmentController extends BaseController {
     @PostMapping("deleteAll")
     @ApiOperation(value = "批量删除附件", notes = "根据附件id批量删除附件")
     @ApiImplicitParam(name = "ids", value = "附件ID", dataType = "Long")
-	@Log("批量删除附件")
+    @Log("批量删除附件")
     public ResponseBean<Boolean> deleteAllAttachments(@RequestBody Long[] ids) {
         boolean success = false;
         try {
@@ -267,7 +247,7 @@ public class AttachmentController extends BaseController {
      * 预览附件
      *
      * @param response response
-     * @param id id
+     * @param id       id
      * @author tangyi
      * @date 2019/06/19 15:47
      */

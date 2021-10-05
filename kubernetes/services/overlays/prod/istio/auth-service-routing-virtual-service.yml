@@ -11,8 +11,8 @@ spec:
         - destination:
             host: auth-service
             subset: old
-          weight: 50
+          weight: 100
         - destination:
             host: auth-service
             subset: new
-          weight: 50
+          weight: 0

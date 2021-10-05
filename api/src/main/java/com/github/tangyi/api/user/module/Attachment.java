@@ -63,7 +63,7 @@ public class Attachment extends BaseEntity<Attachment> {
     private String previewUrl;
 
     /**
-     * 上传类型，1：本地目录，2：fastDfs，3：七牛云
+     * 上传类型，3：七牛云
      */
     private Integer uploadType;
 

@@ -169,7 +169,7 @@ export default {
     attachSize: '附件大小',
     upload: '上传',
     download: '下载',
-    downloadUrl: '复制下载链接',
+    downloadUrl: '获取下载链接',
     uploader: '上传者',
     uploadDate: '上传时间',
     courseName: '课程名称',

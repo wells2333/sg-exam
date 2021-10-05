@@ -4,13 +4,14 @@ import lombok.Getter;
 
 /**
  * 附件存储类型
+ *
  * @author tangyi
  * @date 2020/04/05 14:01
  */
 @Getter
 public enum AttachUploaderEnum {
 
-    FILE(1, "文件", "com.github.tangyi.user.uploader.FileUploader"), FAST_DFS(2, "FastDfs", "com.github.tangyi.user.uploader.FastDfsUploader"),
+    FILE(1, "文件", "com.github.tangyi.user.uploader.FileUploader"),
     QI_NIU(3, "七牛云", "com.github.tangyi.user.uploader.QiNiuUploader");
 
     private Integer value;

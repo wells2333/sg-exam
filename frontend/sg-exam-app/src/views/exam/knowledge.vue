@@ -119,7 +119,7 @@ export default {
     // 下载
     handleDownload (row) {
       if (row.attachmentId !== undefined && row.attachmentId !== '') {
-        window.location.href = '/api/user-service/v1/attachment/download?id=' + row.attachmentId
+        window.location.href = '/user-service/v1/attachment/download?id=' + row.attachmentId
       }
     }
   }

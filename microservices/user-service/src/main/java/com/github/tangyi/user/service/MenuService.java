@@ -248,6 +248,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 	@Transactional
 	@CacheEvict(value = {"menu", "user"}, allEntries = true)
 	public int delete(Menu menu) {
+		menu.setCommonValue();
 		// 删除当前菜单
 		super.delete(menu);
 		// 删除父节点为当前节点的菜单

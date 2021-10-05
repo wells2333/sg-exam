@@ -11,8 +11,8 @@ spec:
         - destination:
             host: user-service
             subset: old
-          weight: 50
+          weight: 100
         - destination:
             host: user-service
             subset: new
-          weight: 50
+          weight: 0
