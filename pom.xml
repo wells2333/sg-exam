@@ -50,7 +50,7 @@
         <zipkin.version>2.11.3</zipkin.version>
         <swagger.version>2.9.2</swagger.version>
         <fastdfs-client.version>1.26.7</fastdfs-client.version>
-        <mysql.connector.version>8.0.13</mysql.connector.version>
+        <mysql.connector.version>8.0.28</mysql.connector.version>
         <!-- common -->
         <commons-io.version>2.6</commons-io.version>
         <commons-collections4.version>4.1</commons-collections4.version>
