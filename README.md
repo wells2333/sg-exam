@@ -173,13 +173,13 @@
 
 - [开源项目分析解读——基于Spring Cloud的在线考试系统](https://blog.csdn.net/chengqiuming/article/details/102991984)
 
-- [在线考试系统-部署文档](https://www.kancloud.cn/tangyi/spring-microservice-exam/1322870)
+- [在线考试系统-部署文档](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg2Mjg2OTcyNA==&action=getalbum&album_id=2653148404657438720#wechat_redirect)
 
-- [部署视频教程](https://www.kancloud.cn/tangyi/spring-microservice-exam/1519487)
+- [部署视频教程](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg2Mjg2OTcyNA==&action=getalbum&album_id=2653148404657438720#wechat_redirect)
 
-- [在线考试系统-部署文档(docker版)](https://www.kancloud.cn/tangyi/spring-microservice-exam/1322869)
+- [在线考试系统-部署文档(docker版)](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg2Mjg2OTcyNA==&action=getalbum&album_id=2653148404657438720#wechat_redirect)
 
-- [在线考试系统-数据库设计](https://www.kancloud.cn/tangyi/spring-microservice-exam/1322868)
+- [在线考试系统-数据库设计](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg2Mjg2OTcyNA==&action=getalbum&album_id=2653148404657438720#wechat_redirect)
 
 - [微服务架构下的安全设计方案](http://ehedgehog.net/2019/03/23/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E4%B8%8B%E7%9A%84%E5%AE%89%E5%85%A8%E8%AE%BE%E8%AE%A1%E6%96%B9%E6%A1%88/)
 
