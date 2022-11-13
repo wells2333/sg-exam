@@ -17,7 +17,7 @@
 
 ### 🏠 [主页](https://gitee.com/wells2333/sg-exam)
 
-### ✨ [在线体验-前台](http://two.404forever.com/)
+### ✨ [在线体验-前台](https://www.yunmianshi.com/)
 
 ### ✨ [在线体验-后台](http://two.404forever.com:81)
 
