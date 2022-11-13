@@ -21,6 +21,10 @@
 
 ### ✨ [在线体验-后台](http://two.404forever.com:81)
 
+### ✨ 小程序
+
+<img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/gh_9d176ad63633_344.jpg" alt="小程序"/>
+
 测试账号：
 
 |   单位ID   |      账号      |   密码   |   角色    |
