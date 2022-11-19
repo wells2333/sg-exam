@@ -1,0 +1,67 @@
+{
+  "name": "sg-exam-next-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "sg-exam-next-app",
+  "templateInfo": {
+    "name": "vue3",
+    "typescript": true,
+    "css": "less"
+  },
+  "scripts": {
+    "build:weapp": "taro build --type weapp",
+    "build:swan": "taro build --type swan",
+    "build:alipay": "taro build --type alipay",
+    "build:tt": "taro build --type tt",
+    "build:h5": "taro build --type h5",
+    "build:rn": "taro build --type rn",
+    "build:qq": "taro build --type qq",
+    "build:quickapp": "taro build --type quickapp",
+    "dev:weapp": "npm run build:weapp -- --watch",
+    "dev:swan": "npm run build:swan -- --watch",
+    "dev:alipay": "npm run build:alipay -- --watch",
+    "dev:tt": "npm run build:tt -- --watch",
+    "dev:h5": "npm run build:h5 -- --watch",
+    "dev:rn": "npm run build:rn -- --watch",
+    "dev:qq": "npm run build:qq -- --watch",
+    "dev:quickapp": "npm run build:quickapp -- --watch"
+  },
+  "browserslist": [
+    "last 3 versions",
+    "Android >= 4.1",
+    "ios >= 8"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/runtime": "^7.7.7",
+    "@nutui/nutui-taro": "^3.1.8",
+    "@tarojs/components": "3.4.6",
+    "@tarojs/plugin-framework-vue3": "3.4.6",
+    "@tarojs/plugin-html": "3.4.6",
+    "@tarojs/runtime": "3.4.6",
+    "taro-ui": "^3.1.0-beta.2",
+    "taro-ui-vue3": "^1.0.0-alpha.21",
+    "vue": "^3.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.0",
+    "@tarojs/cli": "3.4.6",
+    "@tarojs/mini-runner": "3.4.6",
+    "@tarojs/webpack-runner": "3.4.6",
+    "@types/webpack-env": "^1.13.6",
+    "@typescript-eslint/eslint-plugin": "^2.x",
+    "@typescript-eslint/parser": "^2.x",
+    "@vue/compiler-sfc": "^3.0.0",
+    "babel-plugin-import": "^1.13.5",
+    "babel-preset-taro": "3.4.6",
+    "eslint": "^6.8.0",
+    "eslint-config-taro": "3.4.6",
+    "eslint-plugin-vue": "^7.0.0",
+    "postcss-px-scale": "^1.1.1",
+    "stylelint": "9.3.0",
+    "typescript": "^3.7.0",
+    "vite-plugin-style-import": "^2.0.0",
+    "vue-loader": "^16.0.0-beta.8"
+  }
+}

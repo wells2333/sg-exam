@@ -1,0 +1,80 @@
+package ${basePackage}.api.${moduleName}.model;
+
+#foreach ($import in $importList)
+import ${import};
+#end
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.github.tangyi.common.base.BaseEntity;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import javax.persistence.Column;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+
+/**
+ * ${functionName} ${tableName}
+ * 
+ * @author ${author}
+ * @date ${datetime}
+ */
+#if($table.crud || $table.sub)
+#set($Entity="BaseEntity")
+#elseif($table.tree)
+#set($Entity="TreeEntity")
+#end
+@Data
+@Table(name = "${tableName}")
+@EqualsAndHashCode(callSuper = true)
+public class ${ClassName} extends ${Entity}<${ClassName}> {
+
+#foreach ($column in $columns)
+#if(!$table.isSuperColumn($column.javaField))
+    /**
+     * $column.columnComment
+     */
+    #if($column.list)
+#set($parentheseIndex=$column.columnComment.indexOf("（"))
+#if($parentheseIndex != -1)
+#set($comment=$column.columnComment.substring(0, $parentheseIndex))
+#else
+#set($comment=$column.columnComment)
+#end
+#if($column.javaType == 'Date')
+    @JSONField(format = DATE_FORMAT)
+    @JsonFormat(pattern = DATE_FORMAT, timezone = TIMEZONE)
+#end
+#if($column.javaType == 'Long')
+    @JsonSerialize(using = ToStringSerializer.class)
+#end
+#end
+    @Column(name = "$column.columnName")
+    private $column.javaType $column.javaField;
+
+#end
+#end
+#foreach ($column in $columns)
+#if(!$table.isSuperColumn($column.javaField))
+    #if($column.javaField.length() > 2 && $column.javaField.substring(1,2).matches("[A-Z]"))
+        #set($AttrName=$column.javaField)
+    #else
+        #set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+    #end
+    public void set${AttrName}($column.javaType $column.javaField) {
+        this.$column.javaField = $column.javaField;
+    }
+
+    public $column.javaType get${AttrName}() {
+        return $column.javaField;
+    }
+
+#end
+#end
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
+}

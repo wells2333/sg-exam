@@ -1,0 +1,6 @@
+resources:
+  - gateway.yml
+  - user-service-virtual-service.yml
+  - app-service-virtual-service.yml
+  - jwt-authentication-policy.yml
+  - inrernal_mtls_destination_rules.yml

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.user.mapper.MenuMapper">
+    <resultMap id="menuResultMap" type="com.github.tangyi.api.user.model.Menu">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="permission" property="permission"/>
+        <result column="path" property="path"/>
+        <result column="redirect" property="redirect"/>
+        <result column="component" property="component"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="icon" property="icon"/>
+        <result column="sort" property="sort"/>
+        <result column="type" property="type"/>
+        <result column="is_ext" property="isExt"/>
+        <result column="keepalive" property="keepalive"/>
+        <result column="hide_menu" property="hideMenu"/>
+        <result column="remark" property="remark"/>
+        <result column="creator" property="creator"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="operator" property="operator"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+        <result column="tenant_code" property="tenantCode"/>
+    </resultMap>
+
+    <select id="findList" resultMap="menuResultMap">
+        SELECT * FROM sys_menu
+        <where>
+            is_deleted = 0
+            <if test="name != null and name != ''">
+                and (name like CONCAT('%',#{name},'%'))
+            </if>
+            <if test="isDeleted != null">
+                and is_deleted = #{isDeleted}
+            </if>
+            <if test="hideMenu != null">
+                and hideMenu = #{hideMenu}
+            </if>
+            <if test="tenantCode != null and tenantCode != ''">
+                and tenant_code = #{tenantCode}
+            </if>
+        </where>
+    </select>
+
+    <!-- 批量插入 -->
+    <insert id="insertBatch">
+        INSERT INTO sys_menu (
+        id,
+        name,
+        permission,
+        path,
+        redirect,
+        component,
+        parent_id,
+        icon,
+        sort,
+        type,
+        is_ext,
+        keepalive,
+        hide_menu,
+        remark,
+        creator,
+        create_time,
+        operator,
+        update_time,
+        is_deleted,
+        tenant_code
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},
+            #{item.name},
+            #{item.permission},
+            #{item.path},
+            #{item.redirect},
+            #{item.component},
+            #{item.parentId},
+            #{item.icon},
+            #{item.sort},
+            #{item.type},
+            #{item.isExt},
+            #{item.keepalive},
+            #{item.hideMenu},
+            #{item.remark},
+            #{item.creator},
+            #{item.createTime, jdbcType=TIMESTAMP, javaType=java.util.Date},
+            #{item.operator},
+            #{item.updateTime, jdbcType=TIMESTAMP, javaType=java.util.Date},
+            #{item.isDeleted},
+            #{item.tenantCode}
+            )
+        </foreach>
+    </insert>
+
+    <select id="findListById" resultMap="menuResultMap">
+        SELECT a.* FROM sys_menu a WHERE a.id IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="findByRole" resultMap="menuResultMap">
+        SELECT a.*
+        FROM sys_role r
+                 LEFT JOIN sys_role_menu rm ON rm.role_id = r.id
+                 LEFT JOIN sys_menu a ON a.id = rm.menu_id
+        WHERE r.is_deleted = 0
+          AND a.is_deleted = 0
+          AND r.role_code = #{role}
+          AND r.tenant_code = #{tenantCode}
+        ORDER BY a.sort DESC
+    </select>
+
+    <delete id="delete">
+        UPDATE sys_menu
+        SET is_deleted    = 1,
+            operator    = #{operator},
+            update_time = #{updateTime, jdbcType=TIMESTAMP, javaType=java.util.Date}
+        WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByTenantCode">
+        UPDATE sys_menu
+        SET is_deleted    = 1,
+            operator    = #{operator},
+            update_time = #{updateTime, jdbcType=TIMESTAMP, javaType=java.util.Date}
+        WHERE tenant_code = #{tenantCode}
+    </delete>
+</mapper>

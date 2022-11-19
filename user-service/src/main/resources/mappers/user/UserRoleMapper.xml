@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.user.mapper.UserRoleMapper">
+    <resultMap id="userResultMap" type="com.github.tangyi.api.user.model.UserRole">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="role_id" property="roleId"/>
+        <result column="creator" property="creator"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="operator" property="operator"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
+        <result column="tenant_code" property="tenantCode"/>
+    </resultMap>
+
+    <select id="getByUserId" resultMap="userResultMap">
+        SELECT * FROM sys_user_role a WHERE a.user_id = #{userId}
+    </select>
+
+    <select id="getByUserIds" resultMap="userResultMap">
+        SELECT * FROM sys_user_role a
+        WHERE a.user_id IN
+        <foreach collection="collection" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <insert id="insertBatch">
+        INSERT INTO sys_user_role (
+        id, user_id, role_id
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},
+            #{item.userId},
+            #{item.roleId}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="delete">
+        delete from sys_user_role
+        where user_id = #{userId}
+        <if test="roleId != null and roleId != ''">
+            and role_id = #{roleId}
+        </if>
+    </delete>
+
+    <delete id="deleteByUserId">
+        delete from sys_user_role
+        where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteByRoleId">
+        delete from sys_user_role
+        where role_id = #{roleId}
+    </delete>
+</mapper>

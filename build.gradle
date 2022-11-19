@@ -1,0 +1,66 @@
+plugins {
+    id "io.spring.dependency-management" version "1.0.11.RELEASE"
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+subprojects {
+	group "com.github.tangyi"
+    version = '0.0.1-SNAPSHOT'
+
+    apply plugin: 'java'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'java-library'
+
+    repositories {
+        mavenLocal()
+        maven { url aliyunPublicRepository }
+        maven { url aliyunGoogleRepository }
+        maven { url aliyunJcenterRepository }
+        maven { url springSnapshotRepository }
+        maven { url springMilestoneRepository }
+        mavenCentral()
+	}
+
+    dependencyManagement {
+        imports {
+            mavenBom("org.springframework.boot:spring-boot-dependencies:2.7.1")
+        }
+    }
+
+    dependencies {
+        implementation 'org.apache.commons:commons-lang3'
+        implementation 'org.apache.commons:commons-collections4:4.1'
+        implementation 'commons-io:commons-io:2.6'
+        implementation 'commons-beanutils:commons-beanutils:1.9.2'
+        implementation 'cn.hutool:hutool-all:4.5.0'
+        implementation 'javax.servlet:javax.servlet-api:4.0.1'
+        implementation 'com.fasterxml.jackson.module:jackson-module-parameter-names:2.13.3'
+        implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.3'
+        implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3'
+        implementation 'com.github.pagehelper:pagehelper-spring-boot-starter:1.4.2'
+        implementation 'org.hibernate:hibernate-validator:6.2.3.Final'
+        implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+        implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:1.18'
+        implementation 'org.hibernate.validator:hibernate-validator:6.2.3.Final'
+        implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+        implementation 'org.json:json:20140107'
+        implementation 'com.alibaba:easyexcel:2.1.4'
+        implementation 'com.google.guava:guava:28.2-jre'
+        implementation 'com.google.zxing:core:3.4.0'
+        implementation 'com.google.zxing:javase:3.4.0'
+        implementation 'org.springdoc:springdoc-openapi-ui:1.6.8'
+        implementation 'com.github.axet:kaptcha:0.0.9'
+        implementation 'com.qiniu:qiniu-java-sdk:7.8.0'
+        compileOnly 'org.projectlombok:lombok:1.18.24'
+        annotationProcessor 'org.projectlombok:lombok:1.18.24'
+        implementation 'com.h2database:h2:2.1.212'
+    }
+
+    compileJava {
+        sourceCompatibility = JavaVersion.VERSION_14
+        targetCompatibility = JavaVersion.VERSION_14
+    }
+}

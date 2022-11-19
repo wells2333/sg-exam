@@ -1,0 +1,58 @@
+package ${packageName}.service;
+
+import com.github.tangyi.api.${moduleName}.model.${ClassName};
+import com.github.tangyi.common.service.CrudService;
+import ${packageName}.mapper.${ClassName}Mapper;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import com.github.tangyi.constants.${ModuleName}CacheName;
+
+/**
+ * ${functionName}Service
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Slf4j
+@Service
+@AllArgsConstructor
+public class ${ClassName}Service extends CrudService<${ClassName}Mapper, ${ClassName}> implements ${ModuleName}CacheName {
+
+	@Override
+	@Cacheable(value = ${ModuleName}CacheName.${businessNameUpper}, key = "#id")
+	public ${ClassName} get(Long id) {
+		return super.get(id);
+	}
+
+	@Override
+	@Transactional
+	public int insert(${ClassName} ${className}) {
+        ${className}.setCommonValue();
+		return super.insert(${className});
+	}
+
+	@Override
+	@Transactional
+	@CacheEvict(value = ${ModuleName}CacheName.${businessNameUpper}, key = "#${className}.id")
+	public int update(${ClassName} ${className}) {
+        ${className}.setCommonValue();
+		return super.update(${className});
+	}
+
+	@Override
+	@Transactional
+	@CacheEvict(value = ${ModuleName}CacheName.${businessNameUpper}, key = "#${className}.id")
+	public int delete(${ClassName} ${className}) {
+		return super.delete(${className});
+	}
+
+	@Override
+	@Transactional
+	@CacheEvict(value = ${ModuleName}CacheName.${businessNameUpper}, allEntries = true)
+	public int deleteAll(Long[] ids) {
+		return super.deleteAll(ids);
+	}
+}

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.exam.mapper.ExaminationSubjectMapper">
+    <resultMap id="examinationSubjectResultMap" type="com.github.tangyi.api.exam.model.ExaminationSubject">
+        <id column="id" property="id"/>
+        <result column="examination_id" property="examinationId"/>
+        <result column="subject_id" property="subjectId"/>
+        <result column="sort" property="sort"/>
+        <result column="tenant_code" property="tenantCode"/>
+    </resultMap>
+
+    <select id="findList" resultMap="examinationSubjectResultMap">
+        SELECT * FROM exam_examination_subject a WHERE a.examination_id = #{examinationId}
+        ORDER BY a.subject_id ASC
+    </select>
+
+    <select id="findListByExaminationId" resultMap="examinationSubjectResultMap">
+        SELECT * FROM exam_examination_subject a WHERE a.examination_id = #{examinationId} order by sort ASC
+    </select>
+
+    <select id="findByExaminationIdAndSubjectId" resultMap="examinationSubjectResultMap">
+        SELECT * FROM exam_examination_subject a WHERE a.examination_id = #{examinationId} and a.subject_id = #{subjectId}
+    </select>
+
+    <select id="findByExaminationIdAndSort" resultMap="examinationSubjectResultMap">
+        SELECT * FROM exam_examination_subject a WHERE a.examination_id = #{examinationId} and a.sort = #{sort}
+    </select>
+
+    <select id="findMaxSortByExaminationId" resultType="Integer">
+        SELECT max(a.sort) FROM exam_examination_subject a WHERE a.examination_id = #{examinationId}
+    </select>
+
+    <select id="findSubjectCount" resultType="Integer">
+        SELECT count(1) FROM exam_examination_subject a WHERE a.examination_id = #{examinationId}
+    </select>
+
+    <select id="findPage" resultMap="examinationSubjectResultMap">
+        SELECT * FROM exam_examination_subject a where 1=1
+        <if test="params != null">
+            <if test="params.tenantCode != null and params.tenantCode != ''">
+                and tenant_code = #{params.tenantCode}
+            </if>
+            <if test="params.examinationId != null">
+                and examination_id = #{params.examinationId}
+            </if>
+        </if>
+        <choose>
+            <when test="params.sortField != null and params.sortField != '' and params.sortOrder != null and params.sortOrder != ''">
+                order by #{params.sortField} #{params.sortOrder}
+            </when>
+            <otherwise>
+                order by id asc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findListBySubjectId" resultMap="examinationSubjectResultMap">
+        SELECT * FROM exam_examination_subject a WHERE a.subject_id = #{subjectId}
+    </select>
+
+    <!-- 根据上一题ID查询下一题 -->
+    <select id="getByPreviousId" resultMap="examinationSubjectResultMap">
+        SELECT * FROM exam_examination_subject a
+        WHERE a.subject_id > #{subjectId} AND a.examination_id = #{examinationId} ORDER BY subject_id ASC LIMIT 1
+    </select>
+
+    <!-- 根据当前题目ID查询上一题 -->
+    <select id="getPreviousByCurrentId" resultMap="examinationSubjectResultMap">
+        SELECT * FROM exam_examination_subject a
+        WHERE a.subject_id <![CDATA[<]]> #{subjectId} AND a.examination_id = #{examinationId} ORDER BY subject_id DESC LIMIT 1
+    </select>
+
+    <!-- 物理删除 -->
+    <delete id="delete">
+        DELETE FROM exam_examination_subject WHERE id = #{id}
+    </delete>
+
+    <!-- 物理删除 -->
+    <delete id="deleteBySubjectId">
+        DELETE FROM exam_examination_subject WHERE subject_id = #{subjectId}
+    </delete>
+
+    <!-- 物理删除 -->
+    <delete id="deleteAll">
+        DELETE FROM exam_examination_subject WHERE id in
+        <foreach item="item" index="index" collection="ids" open="("
+                 separator="," close=")">#{item}
+        </foreach>
+    </delete>
+</mapper>

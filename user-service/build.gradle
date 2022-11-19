@@ -1,0 +1,44 @@
+plugins {
+    id "org.springframework.boot" version "2.7.1"
+}
+
+dependencies {
+    implementation(project(':common'))
+    implementation(project(':sg-generator'))
+    implementation('org.springframework.boot:spring-boot-starter-web') {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+    }
+    implementation 'org.springframework.boot:spring-boot-starter-undertow'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'com.github.binarywang:weixin-java-miniapp:3.4.0'
+    implementation('com.github.binarywang:weixin-java-mp:4.1.0') {
+        exclude group: 'com.github.binarywang', module: 'weixin-java-common'
+    }
+
+    implementation 'mysql:mysql-connector-java:8.0.13'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.3'
+    implementation 'tk.mybatis:mapper-spring-boot-starter:4.2.1'
+
+    implementation 'io.jsonwebtoken:jjwt:0.9.0'
+    implementation 'com.nimbusds:nimbus-jose-jwt:8.2'
+    implementation 'io.micrometer:micrometer-registry-prometheus:1.9.0'
+    implementation 'com.aliyun:dysmsapi20170525:2.0.9'
+    implementation 'com.alibaba:fastjson:1.2.70'
+    implementation('com.baidu.aip:java-sdk:4.15.4') {
+        exclude group: 'org.slf4j', module: 'slf4j-simple'
+    }
+    implementation 'com.github.kstyrc:embedded-redis:0.6'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}

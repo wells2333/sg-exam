@@ -1,0 +1,12 @@
+package ${packageName}.constants;
+
+/**
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+public interface ${ClassName}CacheName {
+
+	String ${businessNameUpper} = "${businessName}";
+
+}

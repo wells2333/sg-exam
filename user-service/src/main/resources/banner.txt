@@ -1,0 +1,9 @@
+  ${AnsiColor.GREEN} _______  _______   ${AnsiColor.RED}       _______  __   __  _______  __   __
+  ${AnsiColor.GREEN}|       ||       |  ${AnsiColor.RED}      |       ||  |_|  ||   _   ||  |_|  |
+  ${AnsiColor.GREEN}|  _____||    ___|  ${AnsiColor.RED}____  |    ___||       ||  |_|  ||       |
+  ${AnsiColor.GREEN}| |_____ |   | __  ${AnsiColor.RED}|____| |   |___ |       ||       ||       |
+  ${AnsiColor.GREEN}|_____  ||   ||  | ${AnsiColor.RED}       |    ___| |     | |       ||       |
+  ${AnsiColor.GREEN} _____| ||   |_| | ${AnsiColor.RED}       |   |___ |   _   ||   _   || ||_|| |
+  ${AnsiColor.GREEN}|_______||_______| ${AnsiColor.RED}       |_______||__| |__||__| |__||_|   |_|
+ ${AnsiColor.BRIGHT_BLUE}:: SG-EXAM 🤓  :: Running Spring Boot ${spring-boot.version} ::
+ :: https://gitee.com/wells2333/sg-exam ::${AnsiColor.DEFAULT}

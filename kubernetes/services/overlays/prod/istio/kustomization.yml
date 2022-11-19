@@ -1,0 +1,5 @@
+bases:
+  - ../../../base/istio
+patchesStrategicMerge:
+  - user-service-routing-virtual-service.yml
+  - old_new_subsets_destination_rules.yml

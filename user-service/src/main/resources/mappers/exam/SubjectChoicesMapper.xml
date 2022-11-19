@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.exam.mapper.SubjectChoicesMapper">
+    <resultMap id="subjectChoicesResultMap" type="com.github.tangyi.api.exam.model.SubjectChoices">
+        <id column="id" property="id"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="subject_name" property="subjectName"/>
+        <result column="choices_type" property="choicesType"/>
+        <result column="answer" property="answer"/>
+        <result column="score" property="score"/>
+        <result column="analysis" property="analysis"/>
+        <result column="level" property="level"/>
+        <result column="sort" property="sort"/>
+        <result column="speech_id" property="speechId"/>
+        <result column="creator" property="creator"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="operator" property="operator"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
+        <result column="tenant_code" property="tenantCode"/>
+    </resultMap>
+
+    <select id="findPage" resultMap="subjectChoicesResultMap">
+        SELECT * FROM exam_subject_choices a WHERE a.is_deleted = 0
+        <if test="params != null">
+            <if test="params.tenantCode != null and params.tenantCode != ''">
+                and tenant_code = #{params.tenantCode}
+            </if>
+        </if>
+    </select>
+
+    <select id="findListById" resultMap="subjectChoicesResultMap">
+        SELECT * FROM exam_subject_choices a WHERE a.id IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <delete id="delete">
+        UPDATE exam_subject_choices SET is_deleted = 1 WHERE id = #{id}
+    </delete>
+
+    <!-- 物理删除 -->
+    <delete id="physicalDelete">
+        DELETE FROM exam_subject_choices WHERE id = #{id}
+    </delete>
+
+    <!-- 物理删除 -->
+    <delete id="physicalDeleteAll">
+        DELETE FROM exam_subject_choices WHERE id in
+        <foreach item="item" index="index" collection="ids" open="("
+                 separator="," close=")">#{item}
+        </foreach>
+    </delete>
+</mapper>

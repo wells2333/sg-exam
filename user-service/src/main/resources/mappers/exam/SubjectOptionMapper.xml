@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.exam.mapper.SubjectOptionMapper">
+    <resultMap id="subjectOptionResultMap" type="com.github.tangyi.api.exam.model.SubjectOption">
+        <id column="id" property="id"/>
+        <result column="subject_choices_id" property="subjectChoicesId"/>
+        <result column="option_name" property="optionName"/>
+        <result column="option_content" property="optionContent"/>
+        <result column="sort" property="sort"/>
+        <result column="creator" property="creator"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="operator" property="operator"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
+        <result column="tenant_code" property="tenantCode"/>
+    </resultMap>
+
+    <!-- 根据题目ID查询 -->
+    <select id="getBySubjectChoicesId" resultMap="subjectOptionResultMap">
+        SELECT * FROM exam_subject_option a WHERE a.subject_choices_id = #{subjectChoicesId} and a.is_deleted = 0
+    </select>
+
+    <select id="findPage" resultMap="subjectOptionResultMap">
+        SELECT * FROM exam_subject_option a WHERE a.is_deleted = 0
+        <if test="params != null">
+            <if test="params.tenantCode != null and params.tenantCode != ''">
+                and tenant_code = #{params.tenantCode}
+            </if>
+        </if>
+    </select>
+
+    <select id="findListById" resultMap="subjectOptionResultMap">
+        SELECT * FROM exam_subject_option a WHERE a.id IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <!-- 批量插入 -->
+    <insert id="insertBatch">
+        insert into exam_subject_option (
+            id,
+            subject_choices_id,
+            option_name,
+            option_content,
+            sort,
+            creator,
+            create_time,
+            operator,
+            update_time,
+            is_deleted,
+            tenant_code
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},
+            #{item.subjectChoicesId},
+            #{item.optionName},
+            #{item.optionContent},
+            #{item.sort},
+            #{item.creator},
+            #{item.createTime, jdbcType=TIMESTAMP, javaType=java.util.Date},
+            #{item.operator},
+            #{item.updateTime, jdbcType=TIMESTAMP, javaType=java.util.Date},
+            #{item.isDeleted},
+            #{item.tenantCode}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="delete">
+        UPDATE exam_subject_option SET is_deleted = 1 WHERE id = #{id}
+    </delete>
+
+    <!-- 物理删除 -->
+    <delete id="deleteBySubjectChoicesId">
+        DELETE FROM exam_subject_option WHERE subject_choices_id = #{subjectChoicesId}
+    </delete>
+
+    <delete id="deleteAll">
+        UPDATE exam_subject_option SET is_deleted = 1 WHERE id in
+        <foreach item="item" index="index" collection="ids" open="("
+                 separator="," close=")">#{item}
+        </foreach>
+    </delete>
+
+    <!-- 物理批量删除 -->
+    <delete id="physicalDeleteAll">
+        DELETE FROM exam_subject_option WHERE id in
+        <foreach item="item" index="index" collection="ids" open="("
+                 separator="," close=")">#{item}
+        </foreach>
+    </delete>
+</mapper>

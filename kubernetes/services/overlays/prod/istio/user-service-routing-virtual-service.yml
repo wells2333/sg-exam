@@ -1,0 +1,18 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: user-service-vs
+spec:
+  http:
+    - match:
+        - uri:
+            prefix: /user-service
+      route:
+        - destination:
+            host: user-service
+            subset: old
+          weight: 100
+        - destination:
+            host: user-service
+            subset: new
+          weight: 0

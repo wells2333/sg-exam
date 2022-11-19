@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.exam.mapper.AnswerMapper">
+    <resultMap id="answerResultMap" type="com.github.tangyi.api.exam.model.Answer">
+        <id column="id" property="id"/>
+        <result column="exam_record_id" property="examRecordId"/>
+        <result column="subject_id" property="subjectId"/>
+        <result column="type" property="type"/>
+        <result column="answer" property="answer"/>
+        <result column="answer_type" property="answerType"/>
+        <result column="score" property="score"/>
+        <result column="mark_status" property="markStatus"/>
+        <result column="mark_operator" property="markOperator"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="creator" property="creator"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="operator" property="operator"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+        <result column="tenant_code" property="tenantCode"/>
+    </resultMap>
+
+    <select id="findByRecordIdAndSubjectId" resultMap="answerResultMap">
+        SELECT *
+        FROM exam_answer a
+        WHERE a.exam_record_id = #{examRecordId}
+          and a.subject_id = #{subjectId}
+    </select>
+
+    <select id="batchFindByRecordIdAndSubjectId" resultMap="answerResultMap">
+        SELECT * FROM exam_answer a WHERE a.exam_record_id = #{recordId} and a.subject_id in
+        <foreach item="item" index="index" collection="subjectIds" open="("
+                 separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="findPage" resultMap="answerResultMap">
+        SELECT * FROM exam_answer a WHERE a.is_deleted = 0
+        <if test="params != null">
+            <if test="params.examRecordId != null and params.examRecordId != ''">
+                and exam_record_id = #{params.examRecordId}
+            </if>
+            <if test="params.answerType != null and params.answerType != ''">
+                and answer_type = #{params.answerType}
+            </if>
+            <if test="params.tenantCode != null and params.tenantCode != ''">
+                and tenant_code = #{params.tenantCode}
+            </if>
+        </if>
+    </select>
+
+    <select id="findListByExamRecordId" resultMap="answerResultMap">
+        SELECT * FROM exam_answer a WHERE a.is_deleted = 0 AND a.exam_record_id = #{examRecordId}
+    </select>
+
+    <select id="countByAnswerType" resultType="Integer">
+        SELECT count(1) FROM exam_answer a WHERE a.exam_record_id = #{examRecordId} and a.answer_type = #{answerType}
+    </select>
+
+    <select id="sumScoreByAnswerType" resultType="Integer">
+        SELECT sum(score) FROM exam_answer a  WHERE a.exam_record_id = #{examRecordId} and a.answer_type = #{answerType}
+    </select>
+
+    <insert id="batchInsert">
+        INSERT INTO exam_answer (
+        exam_record_id,
+        subject_id,
+        type,
+        answer,
+        answer_type,
+        score,
+        mark_status,
+        mark_operator,
+        start_time,
+        creator,
+        create_time,
+        update_time,
+        operator,
+        is_deleted,
+        tenant_code)
+        VALUES
+        <foreach collection="answers" item="item" index="index" separator=",">
+            (#{item.examRecordId},
+            #{item.subjectId},
+            #{item.type},
+            #{item.answer},
+            #{item.answerType},
+            #{item.score},
+            #{item.markStatus},
+            #{item.markOperator},
+            #{item.startTime},
+            #{item.creator},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.operator},
+            #{item.isDeleted},
+            #{item.tenantCode}
+            )
+        </foreach>
+    </insert>
+
+    <update id="batchUpdate" parameterType="java.util.ArrayList">
+        <foreach collection="answers" item="item" index="index" open="" close="" separator=";">
+            update exam_answer
+            <set>
+                <if test="item.answer != null">
+                    answer = #{item.answer,jdbcType=VARCHAR},
+                </if>
+                <if test="item.score != null">
+                    score = #{item.score},
+                </if>
+                <if test="item.answerType != null">
+                    answer_type = #{item.answerType,jdbcType=TINYINT},
+                </if>
+                <if test="item.markStatus != null">
+                    mark_status = #{item.markStatus,jdbcType=TINYINT},
+                </if>
+                <if test="item.endTime != null">
+                    end_time = #{item.endTime,jdbcType=TIMESTAMP},
+                </if>
+                operator = #{item.operator,jdbcType=VARCHAR},
+                update_time = #{item.updateTime,jdbcType=TIMESTAMP},
+            </set>
+            where exam_record_id = #{item.examRecordId,jdbcType=BIGINT} and subject_id =
+            #{item.subjectId,jdbcType=BIGINT}
+        </foreach>
+    </update>
+
+    <delete id="delete">
+        UPDATE exam_answer SET is_deleted = 1 WHERE id = #{id}
+    </delete>
+</mapper>

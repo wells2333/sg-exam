@@ -1,0 +1,3 @@
+resources:
+  - redis-prod.yml
+  - mysql-prod.yml

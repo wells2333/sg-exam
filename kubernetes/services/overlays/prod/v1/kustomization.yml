@@ -1,0 +1,6 @@
+nameSuffix: -v1
+bases:
+  - ../../../base/deployments
+patchesStrategicMerge:
+  - app-service-prod.yml
+  - user-service-prod.yml

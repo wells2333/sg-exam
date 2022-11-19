@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.exam.mapper.ExamRecordMapper">
+    <resultMap id="examRecordResultMap" type="com.github.tangyi.api.exam.model.ExaminationRecord">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="examination_id" property="examinationId"/>
+        <result column="start_time" property="startTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="end_time" property="endTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="score" property="score"/>
+        <result column="correct_number" property="correctNumber"/>
+        <result column="in_correct_number" property="inCorrectNumber"/>
+        <result column="submit_status" property="submitStatus"/>
+        <result column="creator" property="creator"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="operator" property="operator"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
+        <result column="tenant_code" property="tenantCode"/>
+    </resultMap>
+
+    <select id="findPage" resultMap="examRecordResultMap">
+        SELECT * FROM exam_examination_record a WHERE a.is_deleted = 0
+        <if test="params != null">
+            <if test="params.tenantCode != null and params.tenantCode != ''">
+                and tenant_code = #{params.tenantCode}
+            </if>
+            <if test="params.examinationId != null and params.examinationId != ''">
+                and examination_id = #{params.examinationId}
+            </if>
+            <if test="params.userId != null and params.userId != ''">
+                and user_id = #{params.userId}
+            </if>
+        </if>
+        <choose>
+            <when test="params.sortField != null and params.sortField != '' and params.sortOrder != null and params.sortOrder != ''">
+                order by #{params.sortField} #{params.sortOrder}
+            </when>
+            <otherwise>
+                order by start_time desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="getByUserIdAndExaminationId" resultMap="examRecordResultMap">
+        SELECT * FROM exam_examination_record a
+        WHERE a.user_id = #{userId} and examination_id = #{examinationId} and a.is_deleted = 0
+    </select>
+
+    <select id="getByUserId" resultMap="examRecordResultMap">
+        SELECT * FROM exam_examination_record a
+        WHERE a.user_id = #{userId} and a.is_deleted = 0
+        <if test="params != null">
+            <if test="params.type != null and params.type != ''">
+                and type = #{params.type}
+            </if>
+        </if>
+        order by update_time desc
+    </select>
+
+    <select id="getByExaminationId" resultMap="examRecordResultMap">
+        SELECT * FROM exam_examination_record a
+        WHERE a.examination_id = #{examinationId} and a.is_deleted = 0
+    </select>
+
+    <select id="findExaminationRecordCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM exam_examination_record a WHERE a.is_deleted = 0
+    </select>
+
+    <select id="findExaminationRecordCountByDate" resultMap="examRecordResultMap">
+        SELECT * FROM exam_examination_record a
+        WHERE a.is_deleted = 0
+        AND <![CDATA[ a.create_time >= #{start} ]]>
+    </select>
+
+    <delete id="delete">
+        UPDATE exam_examination_record SET is_deleted = 1 WHERE id = #{id}
+    </delete>
+</mapper>

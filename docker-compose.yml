@@ -1,0 +1,68 @@
+version: '2.1'
+
+services:
+  next-app:
+    build: frontend
+    image: ${SG_EXAM_REGISTRY}/next-app:${SG_EXAM_VERSION}
+    networks:
+      - my-network
+    ports:
+      - "81:80"
+      - "443:443"
+    volumes:
+      - ./config-repo/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./config-repo/nginx/cert:/etc/nginx/cert
+
+  user-service:
+    build: user-service
+    image: ${SG_EXAM_REGISTRY}/user-service:${SG_EXAM_VERSION}
+    mem_limit: 8g
+    networks:
+      - my-network
+    env_file: config-repo/env/user-service.env
+    ports:
+      - "9183:80"
+      - "4004:4004"
+    volumes:
+      - ./config-repo/:/config-repo/
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/redis-data:/data
+      - ./config-repo/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - my-network
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+    networks:
+      - my-network
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    hostname: prometheus
+    restart: always
+    volumes:
+      - ./config-repo/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    name: my-network
+    driver: bridge

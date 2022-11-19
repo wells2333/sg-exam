@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-service
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "4004"
+        prometheus.io/scheme: http
+        prometheus.io/path: "/actuator/prometheus"
+      labels:
+        app: app-service
+        version: latest
+    spec:
+      containers:
+        - name: app-service
+          image: registry.cn-hangzhou.aliyuncs.com/sg-exam/app-service
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80

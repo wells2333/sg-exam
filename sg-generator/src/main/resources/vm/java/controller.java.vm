@@ -1,0 +1,91 @@
+package ${packageName}.controller;
+
+import java.util.List;
+import java.util.Map;
+import com.github.pagehelper.PageInfo;
+import javax.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import com.github.tangyi.common.model.R;
+import com.github.tangyi.common.utils.SysUtil;
+import com.github.tangyi.common.base.BaseController;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import javax.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import com.github.tangyi.api.${moduleName}.model.${ClassName};
+import com.github.tangyi.${moduleName}.service.${ClassName}Service;
+
+/**
+ * ${functionName}Controller
+ * 
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Slf4j
+@RestController
+@AllArgsConstructor
+@Tag(name = "${functionName}管理")
+@RequestMapping("/v1/${businessName}")
+public class ${ClassName}Controller extends BaseController {
+
+    private final ${ClassName}Service ${className}Service;
+
+    /**
+     * 查询${functionName}列表
+     */
+    @GetMapping("/list")
+	@Operation(summary = "查询${functionName}列表")
+    public R<PageInfo<${ClassName}>> list(@RequestParam Map<String, Object> condition,
+		@RequestParam(value = PAGE, required = false, defaultValue = PAGE_DEFAULT) int pageNum,
+		@RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize) {
+	    return R.success(${className}Service.findPage(condition, pageNum, pageSize));
+    }
+
+    /**
+     * 获取${functionName}详细信息
+     */
+    @GetMapping(value = "/{${pkColumn.javaField}}")
+	@Operation(summary = "获取${functionName}详细信息")
+    public R<${ClassName}> get(@PathVariable("${pkColumn.javaField}") ${pkColumn.javaType} ${pkColumn.javaField}) {
+        return R.success(${className}Service.get(${pkColumn.javaField}));
+    }
+
+    /**
+     * 新增${functionName}
+     */
+    @PostMapping
+	@Operation(summary = "新增${functionName}")
+	@SgLog(value = "${functionName}", operationType = OperationType.INSERT)
+    public R<Boolean> add(@RequestBody @Valid ${ClassName} ${className}) {
+        ${className}.setCommonValue();
+        return R.success(${className}Service.insert(${className}) > 0);
+    }
+
+    /**
+     * 修改${functionName}
+     */
+    @PutMapping("{${pkColumn.javaField}}")
+	@Operation(summary = "修改${functionName}")
+	@SgLog(value = "${functionName}", operationType = OperationType.UPDATE)
+    public R<Boolean> update(@PathVariable("${pkColumn.javaField}") ${pkColumn.javaType} ${pkColumn.javaField}, @RequestBody @Valid ${ClassName} ${className}) {
+        ${className}.setId(${pkColumn.javaField});
+        return R.success(${className}Service.update(${className}) > 0);
+    }
+
+    /**
+     * 删除${functionName}
+     */
+	@DeleteMapping("{${pkColumn.javaField}}")
+	@Operation(summary = "删除${functionName}")
+	@SgLog(value = "${functionName}", operationType = OperationType.DELETE)
+    public R<Boolean> delete(@PathVariable("${pkColumn.javaField}") ${pkColumn.javaType} ${pkColumn.javaField}) {
+        ${ClassName} ${className} = ${className}Service.get(id);
+        ${className}.setCommonValue();
+        return R.success(${className}Service.delete(${className}) > 0);
+    }
+}

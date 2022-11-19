@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.exam.mapper.SubjectCategoryMapper">
+    <resultMap id="subjectCategoryResultMap" type="com.github.tangyi.api.exam.model.SubjectCategory">
+        <id column="id" property="id"/>
+        <result column="category_name" property="categoryName"/>
+        <result column="category_desc" property="categoryDesc"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="sort" property="sort"/>
+        <result column="type" property="type"/>
+        <result column="creator" property="creator"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="operator" property="operator"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
+        <result column="tenant_code" property="tenantCode"/>
+    </resultMap>
+
+    <select id="findPage" resultMap="subjectCategoryResultMap">
+        SELECT * FROM exam_subject_category a WHERE a.is_deleted = 0
+        <if test="params != null">
+            <if test="params.tenantCode != null and params.tenantCode != ''">
+                and tenant_code = #{params.tenantCode}
+            </if>
+        </if>
+        order by sort desc
+    </select>
+
+    <select id="findListById" resultMap="subjectCategoryResultMap">
+        SELECT * FROM exam_subject_category a WHERE a.id IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="findList" resultMap="subjectCategoryResultMap">
+        SELECT * FROM exam_subject_category a WHERE a.is_deleted = 0 and tenant_code = #{tenantCode} order by sort desc
+    </select>
+
+    <delete id="delete">
+        UPDATE exam_subject_category SET is_deleted = 1 WHERE id = #{id}
+    </delete>
+</mapper>

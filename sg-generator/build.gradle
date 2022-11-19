@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+
+group 'com.github.tangyi'
+version '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(project(':common'))
+    implementation 'org.apache.velocity:velocity-engine-core:2.3'
+    implementation 'com.alibaba:fastjson:1.2.70'
+    implementation 'tk.mybatis:mapper-spring-boot-starter:4.2.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
+}

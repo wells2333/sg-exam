@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.user.mapper.DeptMapper">
+    <resultMap id="deptResultMap" type="com.github.tangyi.api.user.model.Dept">
+        <id column="id" property="id"/>
+        <result column="dept_name" property="deptName"/>
+        <result column="dept_desc" property="deptDesc"/>
+        <result column="dept_leader" property="deptLeader"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="sort" property="sort"/>
+        <result column="creator" property="creator"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="operator" property="operator"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+        <result column="tenant_code" property="tenantCode"/>
+    </resultMap>
+
+    <select id="findList" resultMap="deptResultMap">
+        SELECT *
+        FROM sys_dept a
+        WHERE a.is_deleted = 0
+    </select>
+
+    <select id="findListById" resultMap="deptResultMap">
+        SELECT * FROM sys_dept a WHERE a.id IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <delete id="delete">
+        UPDATE sys_dept
+        SET is_deleted  = 1,
+            operator    = #{operator},
+            update_time = #{updateTime, jdbcType=TIMESTAMP, javaType=java.util.Date}
+        WHERE ID = #{id}
+    </delete>
+</mapper>

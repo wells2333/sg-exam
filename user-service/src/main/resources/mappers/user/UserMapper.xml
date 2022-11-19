@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.user.mapper.UserMapper">
+    <resultMap id="userResultMap" type="com.github.tangyi.api.user.model.User">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="phone" property="phone"/>
+        <result column="avatar_id" property="avatarId"/>
+        <result column="email" property="email"/>
+        <result column="gender" property="gender"/>
+        <result column="born" property="born" jdbcType="DATE" javaType="java.util.Date"/>
+        <result column="user_desc" property="userDesc"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="status" property="status"/>
+        <result column="parent_uid" property="parentUid"/>
+        <result column="street_id" property="streetId"/>
+        <result column="county_id" property="countyId"/>
+        <result column="city_id" property="cityId"/>
+        <result column="province_id" property="provinceId"/>
+        <result column="login_time" property="loginTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="lock_time" property="lockTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="wechat" property="wechat"/>
+        <result column="signature" property="signature"/>
+        <result column="family_role" property="familyRole" />
+        <result column="creator" property="creator"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="operator" property="operator"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
+        <result column="tenant_code" property="tenantCode"/>
+    </resultMap>
+
+    <select id="findPage" resultMap="userResultMap">
+        SELECT * FROM sys_user where is_deleted = 0
+        <if test="params != null">
+            <if test="params.name != null and params.name != ''">
+                and (name like CONCAT('%',#{params.name},'%'))
+            </if>
+            <if test="params.deptId != null">
+                and dept_id = #{params.deptId}
+            </if>
+            <if test="params.status != null">
+                and status = #{params.status}
+            </if>
+        </if>
+        <choose>
+            <when test="params.sortField != null and params.sortField != '' and params.sortOrder != null and params.sortOrder != ''">
+                order by #{params.sortField} #{params.sortOrder}
+            </when>
+            <otherwise>
+                order by update_time desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findListById" resultMap="userResultMap">
+        SELECT * FROM sys_user a
+        WHERE a.id IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="userCount" resultType="Integer">
+        SELECT COUNT(1) FROM sys_user a WHERE a.is_deleted = 0 and a.tenant_code = #{tenantCode}
+    </select>
+
+    <delete id="delete">
+        UPDATE sys_user SET
+            is_deleted = 1,
+            operator = #{operator} ,
+            update_time = #{updateTime, jdbcType=TIMESTAMP, javaType=java.util.Date}
+        WHERE id = #{id}
+    </delete>
+</mapper>

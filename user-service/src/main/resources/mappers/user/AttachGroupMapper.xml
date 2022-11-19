@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.user.mapper.AttachGroupMapper">
+    <resultMap id="attachGroupResultMap" type="com.github.tangyi.api.user.model.AttachGroup">
+        <id column="id" property="id"/>
+        <result column="group_name" property="groupName"/>
+        <result column="group_code" property="groupCode"/>
+        <result column="url_expire" property="urlExpire"/>
+        <result column="remark" property="remark"/>
+        <result column="creator" property="creator"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="operator" property="operator"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+        <result column="tenant_code" property="tenantCode"/>
+    </resultMap>
+
+    <select id="findPage" resultMap="attachGroupResultMap">
+        SELECT * FROM sys_attachment_group where is_deleted = 0
+        <if test="params != null">
+            <if test="params.groupName != null and params.groupName != ''">
+                and (group_name like CONCAT('%',#{params.groupName},'%'))
+            </if>
+        </if>
+
+        <choose>
+            <when test="params.sortField != null and params.sortField != '' and params.sortOrder != null and params.sortOrder != ''">
+                order by #{params.sortField} #{params.sortOrder}
+            </when>
+            <otherwise>
+                order by update_time desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findList" resultMap="attachGroupResultMap">
+        SELECT * FROM sys_attachment_group a WHERE a.is_deleted = 0 ORDER BY CREATE_DATE DESC
+    </select>
+
+    <select id="findByIdentifier" resultMap="attachGroupResultMap">
+        SELECT * FROM sys_attachment_group a WHERE a.group_code = #{groupCode}
+    </select>
+
+    <delete id="delete">
+        UPDATE sys_attachment_group SET
+        is_deleted = 1,
+        operator = #{operator} ,
+        update_time = #{updateTime, jdbcType=TIMESTAMP, javaType=java.util.Date}
+        WHERE ID = #{id}
+    </delete>
+
+    <delete id="deleteAll">
+        UPDATE sys_attachment_group SET
+        is_deleted = 1
+        WHERE id in
+        <foreach item="item" index="index" collection="ids" open="("
+                 separator="," close=")">#{item}
+        </foreach>
+    </delete>
+</mapper>

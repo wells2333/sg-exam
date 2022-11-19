@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.user.mapper.UserAuthsMapper">
+    <resultMap id="userAuthResultMap" type="com.github.tangyi.api.user.model.UserAuths">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="identity_type" property="identityType" jdbcType="INTEGER"/>
+        <result column="identifier" property="identifier"/>
+        <result column="credential" property="credential"/>
+        <result column="creator" property="creator"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="operator" property="operator"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
+        <result column="tenant_code" property="tenantCode"/>
+    </resultMap>
+
+    <select id="getByIdentifier" resultMap="userAuthResultMap">
+        SELECT * FROM sys_user_auths a WHERE a.identifier = #{identifier} and a.is_deleted = 0 and a.tenant_code = #{tenantCode}
+    </select>
+
+    <select id="getListByUserIds" resultMap="userAuthResultMap">
+        SELECT * FROM sys_user_auths a
+        WHERE a.user_id IN
+        <foreach collection="userIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <update id="deleteByUserId">
+        DELETE FROM sys_user_auths WHERE user_id = #{userId}
+    </update>
+</mapper>

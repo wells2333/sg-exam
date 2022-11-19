@@ -1,0 +1,3 @@
+resources:
+  - user-service-deployment.yml
+  - app-service-deployment.yml

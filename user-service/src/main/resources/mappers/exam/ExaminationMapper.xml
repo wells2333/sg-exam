@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.exam.mapper.ExaminationMapper">
+    <resultMap id="examinationResultMap" type="com.github.tangyi.api.exam.model.Examination">
+        <id column="id" property="id"/>
+        <result column="examination_name" property="examinationName"/>
+        <result column="type" property="type"/>
+        <result column="attention" property="attention"/>
+        <result column="start_time" property="startTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="end_time" property="endTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="total_score" property="totalScore"/>
+        <result column="status" property="status"/>
+        <result column="image_id" property="imageId"/>
+        <result column="course_id" property="courseId"/>
+        <result column="sort" property="sort"/>
+        <result column="tags" property="tags"/>
+        <result column="answer_type" property="answerType"/>
+        <result column="remark" property="remark"/>
+        <result column="start_count" property="startCount"/>
+        <result column="creator" property="creator"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="operator" property="operator"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+        <result column="tenant_code" property="tenantCode"/>
+    </resultMap>
+
+    <select id="findPage" resultMap="examinationResultMap">
+        SELECT * FROM exam_examination a WHERE a.is_deleted = 0
+        <if test="params != null">
+            <if test="params.tenantCode != null and params.tenantCode != ''">
+                and tenant_code = #{params.tenantCode}
+            </if>
+            <if test="params.examinationName != null and params.examinationName != ''">
+                and (examination_name like CONCAT('%',#{params.examinationName},'%'))
+            </if>
+            <if test="params.type != null and params.type != ''">
+                and type = #{params.type}
+            </if>
+            <if test="params.status != null and params.status != ''">
+                and status = #{params.status}
+            </if>
+        </if>
+        <choose>
+            <when test="params.sortField != null and params.sortField != '' and params.sortOrder != null and params.sortOrder != ''">
+                order by #{params.sortField} #{params.sortOrder}
+            </when>
+            <otherwise>
+                order by update_time desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findList" resultMap="examinationResultMap">
+        SELECT *
+        FROM exam_examination a
+        WHERE a.is_deleted = 0
+    </select>
+
+    <select id="findListById" resultMap="examinationResultMap">
+        SELECT * FROM exam_examination a
+        WHERE a.id IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="findExaminationCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM exam_examination a
+        WHERE a.is_deleted = 0
+    </select>
+
+    <select id="findExamUserCount" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM (SELECT user_id FROM exam_examination_record WHERE tenant_code = #{tenantCode} GROUP BY user_id) a
+    </select>
+
+    <update id="bathUpdateStartCountAndFavorite">
+        <foreach collection="examinations" item="item" index="index" open="" close="" separator=";">
+            UPDATE exam_examination
+            <set>
+                <if test="item.favoritesCount != null">
+                    favorites_count = #{item.favoritesCount},
+                </if>
+                <if test="item.startCount != null">
+                    start_count = #{item.startCount},
+                </if>
+            </set>
+            WHERE id = #{item.id}
+        </foreach>
+    </update>
+
+    <delete id="delete">
+        UPDATE exam_examination
+        SET is_deleted = 1
+        WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteAll">
+        UPDATE exam_examination SET is_deleted = 1 WHERE id in
+        <foreach item="item" index="index" collection="ids" open="("
+                 separator="," close=")">#{item}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,5 @@
+rootProject.name = 'sg-exam-next'
+include ':common'
+include ':user-service'
+include 'sg-generator'
+

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.user.mapper.StudentMapper">
+    <resultMap id="studentResultMap" type="com.github.tangyi.api.user.model.Student">
+        <id column="id" property="id"/>
+        <result column="student_name" property="studentName"/>
+        <result column="phone" property="phone"/>
+        <result column="born" property="born" jdbcType="DATE" javaType="java.util.Date"/>
+        <result column="sex" property="sex"/>
+        <result column="address" property="address"/>
+        <result column="grade" property="grade"/>
+        <result column="grade_name" property="gradeName"/>
+        <result column="school" property="school"/>
+        <result column="wechat" property="wechat"/>
+        <result column="city_id" property="cityId"/>
+        <result column="county_id" property="countyId"/>
+        <result column="creator" property="creator"/>
+        <result column="create_date" property="createDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="operator" property="operator"/>
+        <result column="modify_date" property="modifyDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="del_flag" property="delFlag"/>
+    </resultMap>
+
+    <select id="findList" resultMap="studentResultMap">
+        SELECT * FROM sys_student a WHERE a.is_deleted = 0
+    </select>
+
+    <select id="findListById" resultMap="studentResultMap">
+        SELECT * FROM sys_student a WHERE a.id IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <delete id="delete">
+        UPDATE sys_student SET
+        del_flag = 1,
+        modifier = #{modifier} ,
+        modify_date = #{modifyDate, jdbcType=TIMESTAMP, javaType=java.util.Date}
+        WHERE ID = #{id}
+    </delete>
+
+    <delete id="deleteAll">
+        update sys_student SET
+        del_flag = 1
+        where id in
+        <foreach item="item" index="index" collection="ids" open="("
+                 separator="," close=")">#{item}
+        </foreach>
+    </delete>
+</mapper>

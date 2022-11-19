@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.user.mapper.AttachmentMapper">
+    <resultMap id="attachmentResultMap" type="com.github.tangyi.api.user.model.Attachment">
+        <id column="id" property="id"/>
+        <result column="attach_name" property="attachName"/>
+        <result column="attach_type" property="attachType"/>
+        <result column="attach_size" property="attachSize"/>
+        <result column="group_code" property="groupCode"/>
+        <result column="url" property="url"/>
+        <result column="creator" property="creator"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="operator" property="operator"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+        <result column="tenant_code" property="tenantCode"/>
+    </resultMap>
+
+    <select id="findPage" resultMap="attachmentResultMap">
+        SELECT * FROM sys_attachment where is_deleted = 0
+        <if test="params != null">
+            <if test="params.attachmentName != null and params.attachmentName != ''">
+                and (attachment_name like CONCAT('%',#{params.attachmentName},'%'))
+            </if>
+            <if test="params.attachType != null and params.attachType != ''">
+                and (attach_type like CONCAT('%',#{params.attachType},'%'))
+            </if>
+            <if test="params.groupCode != null and params.groupCode != ''">
+                and (group_code like CONCAT('%',#{params.groupCode},'%'))
+            </if>
+        </if>
+
+        <choose>
+            <when test="params.sortField != null and params.sortField != '' and params.sortOrder != null and params.sortOrder != ''">
+                order by #{params.sortField} #{params.sortOrder}
+            </when>
+            <otherwise>
+                order by update_time desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findList" resultMap="attachmentResultMap">
+        SELECT * FROM sys_attachment a WHERE a.is_deleted = 0
+        <if test="groupCode != null and groupCode != ''">
+            and group_code = #{groupCode}
+        </if>
+        <if test="attachType != null and attachType != ''">
+            and attach_type = #{attachType}
+        </if>
+        ORDER BY CREATE_DATE DESC
+    </select>
+
+    <select id="findListById" resultMap="attachmentResultMap">
+        SELECT * FROM sys_attachment a
+        WHERE a.id IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <delete id="delete">
+        UPDATE sys_attachment SET
+        is_deleted = 1,
+        operator = #{operator} ,
+        update_time = #{updateTime, jdbcType=TIMESTAMP, javaType=java.util.Date}
+        WHERE ID = #{id}
+    </delete>
+
+    <delete id="deleteAll">
+        UPDATE sys_attachment SET
+        is_deleted = 1
+        WHERE id in
+        <foreach item="item" index="index" collection="ids" open="("
+                 separator="," close=")">#{item}
+        </foreach>
+    </delete>
+</mapper>

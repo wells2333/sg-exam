@@ -1,0 +1,94 @@
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  servlet:
+    # 文件上传配置
+    multipart:
+      # 单个文件的最大大小
+      max-file-size: 100MB
+      # 整个请求的最大大小
+      max-request-size: 100MB
+  jackson:
+    time-zone: GMT+8
+
+# mybatis配置
+mybatis:
+  type-aliases-package: com.github.tangyi.api
+  configuration:
+    map-underscore-to-camel-case: true
+    lazy-loading-enabled: true
+  mapper-locations: classpath*:mapper/**/*.xml
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+# 系统配置
+sys:
+  adminUser: admin  # 管理员账号，默认是admin
+  key: '1234567887654321'
+  canPreview: jpg,png,jpeg,gif # 支持预览的格式
+
+management:
+  endpoint:
+    health:
+      show-details: "ALWAYS"
+  endpoints:
+    web:
+      exposure:
+        include: "prometheus"
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+
+ignore:
+  urls:
+    - /
+    - /**/*.css
+    - /**/*.js
+    - /**/error
+    - /**/favicon.ico
+    - /**/*swagger*/**
+    - /**/v3/api-docs/**
+    - /**/csrf
+    - /**/health
+    - /**/metrics/**
+    - /**/loggers/**
+    - /**/actuator/**
+    - /**/*anonymousUser*/**
+    - /**/v1/user/checkExist/**
+    - /**/v1/user/updatePassword
+    - /**/v1/code/**
+    - /**/v1/token/logout
+    - /**/**authentication/**
+    - /**/wx/getTicket
+    - /**/wx/checkSign
+    - /**/wx/getQrCode
+    - /**/wx/getOpenId
+    - /**/**/currentTime
+    - /**/mobile/login
+    - /**/wx/login
+    - /**/h2/**
+    - /**/v1/sms/**
+    - /**/v1/mobile/sendSms/**
+    - /tool/**
+
+logging:
+  level:
+    root: INFO
+    com.github.tangyi: DEBUG
+
+---
+spring.profiles: docker
+logging.level.root: INFO
+
+management.server.port: 4004
+management.endpoint.health.show-details: "ALWAYS"
+management.endpoints.web.exposure.include: "prometheus"
+management.metrics.export.prometheus.enabled: true
+management.metrics.tags.application: ${spring.application.name}

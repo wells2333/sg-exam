@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sg-exam-mysql
+spec:
+  selector:
+    matchLabels:
+      app: sg-exam-mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: sg-exam-mysql
+    spec:
+      containers:
+        - image: registry.cn-hangzhou.aliyuncs.com/sg-exam/sg-exam-mysql
+          name: sg-exam-mysql
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3306
+              name: sg-exam-mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: sg-exam
+          resources:
+            limits:
+              memory: 250Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sg-exam-mysql
+spec:
+  selector:
+    app: sg-exam-mysql
+  ports:
+    - name: sg-exam-mysql
+      port: 3306
+      nodePort: 30006
+  type: NodePort

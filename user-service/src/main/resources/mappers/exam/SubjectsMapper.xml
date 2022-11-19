@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.exam.mapper.SubjectsMapper">
+    <resultMap id="subjectTypeResultMap" type="com.github.tangyi.api.exam.model.Subjects">
+        <id column="id" property="id"/>
+        <result column="subject_id" property="subjectId"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="type" property="type"/>
+        <result column="creator" property="creator"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="operator" property="operator"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
+        <result column="tenant_code" property="tenantCode"/>
+    </resultMap>
+
+    <select id="findPage" resultMap="subjectTypeResultMap">
+        SELECT * FROM exam_subjects a where 1=1
+        <if test="params != null">
+            <if test="params.tenantCode != null and params.tenantCode != ''">
+                and tenant_code = #{params.tenantCode}
+            </if>
+            <if test="params.subjectId != null">
+                and subject_id = #{params.subjectId}
+            </if>
+            <if test="params.categoryId != null">
+                and category_id = #{params.categoryId}
+            </if>
+        </if>
+        <choose>
+            <when test="params.sortField != null and params.sortField != '' and params.sortOrder != null and params.sortOrder != ''">
+                order by #{params.sortField} #{params.sortOrder}
+            </when>
+            <otherwise>
+                order by id asc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findBySubjectId" resultMap="subjectTypeResultMap">
+        SELECT * FROM exam_subjects a WHERE a.subject_id = #{subjectId}
+    </select>
+
+    <select id="findBySubjectIds" resultMap="subjectTypeResultMap">
+        SELECT * FROM exam_subjects a WHERE a.subject_id IN
+        <foreach item="item" index="index" collection="subjectIds" open="("
+                 separator="," close=")">#{item}
+        </foreach>
+    </select>
+
+    <select id="findByCategoryId" resultMap="subjectTypeResultMap">
+        SELECT * FROM exam_subjects a WHERE a.category_id = #{categoryId}
+    </select>
+
+    <select id="findByCategoryIds" resultMap="subjectTypeResultMap">
+        SELECT * FROM exam_subjects a WHERE a.category_id IN
+        <foreach item="item" index="index" collection="categoryIds" open="("
+                 separator="," close=")">#{item}
+        </foreach>
+    </select>
+
+    <select id="findByType" resultMap="subjectTypeResultMap">
+        SELECT * FROM exam_subjects a WHERE a.type = #{type}
+    </select>
+
+    <delete id="physicalDelete">
+        DELETE FROM exam_subjects WHERE id = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,148 @@
+<template>
+  <view>
+    <view class="avatar-container flex-row">
+      <at-avatar class="avatar" :circle="true" size="large" :image="avatar"/>
+      <view class="flex-col">
+        <text class="userName">白炽灯</text>
+        <text class="userDesc">2017年加入，我要好好学习天天向上~</text>
+      </view>
+    </view>
+    <view class="top-tab-container flex-row">
+      <view class="top-tab-item" @click="handleClickTopTab('/pages/favorite/index')">我的收藏</view>
+      <view class="top-tab-item" @click="handleClickTopTab('/pages/record/index')">我的考试</view>
+      <view class="top-tab-item" @click="handleClickTopTab('/pages/record/index')">我的成绩</view>
+    </view>
+
+    <view class="container">
+      <at-list>
+        <at-list-item title="消息中心" arrow="right" :iconInfo="{ value: 'message'}"
+                      :hasBorder="true"
+                      @click="handleClick"></at-list-item>
+        <at-list-item title="帮助" arrow="right" :iconInfo="{ value: 'help'}"
+                      :hasBorder="true"
+                      @click="handleClick"></at-list-item>
+        <at-list-item title="联系客服" arrow="right" :iconInfo="{ value: 'phone'}"
+                      :hasBorder="true"
+                      @click="handleClick"></at-list-item>
+      </at-list>
+    </view>
+
+    <view class="container">
+      <at-list>
+        <at-list-item title="设置" arrow="right" :iconInfo="{ value: 'settings'}"
+                      @click="handleClick"></at-list-item>
+      </at-list>
+    </view>
+    <view class="container">
+      <at-list>
+        <at-list-item title="分享给朋友" arrow="right" class="share-box" :iconInfo="{ value: 'share'}"
+                      :hasBorder="true"
+                      @click="handleClick"></at-list-item>
+        <at-list-item title="关于" arrow="right" :iconInfo="{ value: 'link'}"
+                      @click="handleClickAbout"></at-list-item>
+      </at-list>
+    </view>
+  </view>
+</template>
+
+<script lang="ts">
+import {onMounted, ref} from 'vue';
+import api from '../../api/api';
+import Taro from "@tarojs/taro";
+
+export default {
+  setup() {
+    const userInfo = ref<any>(api.getUserInfo());
+    const avatar = ref<string>(userInfo.value.avatar);
+    if (userInfo.value.avatar === '') {
+      avatar.value = 'https://img.yzcdn.cn/vant/cat.jpeg';
+    }
+
+    async function fetch() {
+
+    }
+
+    function handleClickTopTab(url) {
+      Taro.navigateTo({url});
+    }
+
+    function handleClick() {
+      Taro.showToast({title: '功能正在开发中', icon: 'none'});
+    }
+
+    function handleClickAbout() {
+      Taro.navigateTo({url: "/pages/about/index"});
+    }
+
+    onMounted(() => {
+      fetch();
+    });
+    return {
+      avatar,
+      userInfo,
+      handleClickTopTab,
+      handleClick,
+      handleClickAbout
+    }
+  }
+}
+</script>
+
+<style>
+page {
+  background-color: #EEF0F0;
+}
+
+.avatar-container {
+  height: 100px;
+  color: rgba(80, 80, 80, 1);
+  background-color: rgba(255, 255, 255, 1);
+  font-size: 16px;
+}
+
+.top-tab-container {
+  height: 60px;
+  color: rgba(80, 80, 80, 1);
+  background-color: rgba(255, 255, 255, 1);
+  font-size: 16px;
+  text-align: center;
+}
+
+.avatar {
+  margin-left: 20px;
+}
+
+.userName {
+  margin-left: 10px;
+  margin-top: -16px;
+  color: rgba(80, 80, 80, 1);
+  font-size: 18px;
+  text-align: left;
+}
+
+.userDesc {
+  margin-left: 10px;
+  margin-top: 8px;
+  color: rgba(166, 166, 166, 1);
+  font-size: 13px;
+}
+
+.top-tab-item {
+  color: rgba(80, 80, 80, 1);
+  font-size: 14px;
+  flex: 1;
+  border-right: 1px solid rgba(236, 238, 241, 1);
+}
+
+.top-tab-item:last-child {
+  border-right: none;
+}
+
+.share-box {
+  margin-top: 10px;
+}
+
+.container {
+  margin-top: 10px;
+}
+</style>
