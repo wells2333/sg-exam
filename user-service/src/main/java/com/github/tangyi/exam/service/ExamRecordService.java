@@ -240,8 +240,8 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 	 * @author tangyi
 	 * @date 2020/1/31 10:17 下午
 	 */
-	public List<ExaminationRecord> findExaminationRecordCountByDate(Date start) {
-		return this.dao.findExaminationRecordCountByDate(start);
+	public Integer findExaminationRecordCountByDate(Date start, Date end) {
+		return this.dao.findExaminationRecordCountByDate(start, end);
 	}
 
 	/**
@@ -284,8 +284,8 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 						recordDto.setExaminationName(examRecordExamination.getExaminationName());
 						recordDto.setStartTime(tempExamRecord.getStartTime());
 						recordDto.setEndTime(tempExamRecord.getEndTime());
-						recordDto.setDuration(
-								DateUtils.durationNoNeedMillis(tempExamRecord.getStartTime(), tempExamRecord.getEndTime()));
+						recordDto.setDuration(DateUtils.durationNoNeedMillis(tempExamRecord.getStartTime(),
+								tempExamRecord.getEndTime()));
 						recordDto.setScore(tempExamRecord.getScore());
 						recordDto.setUserId(tempExamRecord.getUserId());
 						recordDto.setCorrectNumber(tempExamRecord.getCorrectNumber());
@@ -341,27 +341,17 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 		Examination examination = new Examination();
 		examination.setCommonValue(SysUtil.getUser(), tenantCode);
 		Map<String, String> tendencyMap = new LinkedHashMap<>();
-		LocalDateTime start = null;
 		pastDays = -pastDays;
 		for (int i = pastDays; i <= 0; i++) {
-			LocalDateTime localDateTime = DateUtils.plusDay(i);
-			if (i == pastDays) {
-				start = localDateTime;
-			}
-			tendencyMap.put(localDateTime.format(DateUtils.FORMATTER_DAY), "0");
+			LocalDateTime start = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).plusDays(i);
+			LocalDateTime end = LocalDateTime.now().plusDays(i);
+			Date startDate = DateUtils.asDate(start);
+			Date endDate = DateUtils.asDate(end);
+			Integer count = findExaminationRecordCountByDate(startDate, endDate);
+			tendencyMap.put(start.format(DateUtils.FORMATTER_DAY), count == null ? "0" : String.valueOf(count));
 		}
-		List<ExaminationRecord> examinationRecords = this.findExaminationRecordCountByDate(DateUtils.asDate(start));
-		if (CollectionUtils.isNotEmpty(examinationRecords)) {
-			//			Map<String, List<ExaminationRecord>> examinationRecordsMap = examinationRecords.stream()
-			//					.peek(examinationRecord -> examinationRecord
-			//							.setExt(DateUtils.asLocalDateTime(examinationRecord.getCreateTime())
-			//									.format(DateUtils.FORMATTER_DAY)))
-			//					.collect(Collectors.groupingBy(ExaminationRecord::getExt));
-			//			log.info("ExamRecordTendency map: {}", examinationRecordsMap);
-			//			examinationRecordsMap.forEach((key, value) -> tendencyMap.replace(key, String.valueOf(value.size())));
-		}
-		dashboardDto.setExamRecordDate(new ArrayList<>(tendencyMap.keySet()));
-		dashboardDto.setExamRecordData(new ArrayList<>(tendencyMap.values()));
+		dashboardDto.setExamRecordDate(Lists.newArrayList(tendencyMap.keySet()));
+		dashboardDto.setExamRecordData(Lists.newArrayList(tendencyMap.values()));
 		return dashboardDto;
 	}
 }

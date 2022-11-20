@@ -109,9 +109,7 @@ public class ExaminationActionService {
 	public StartExamDto start(Long userId, String identifier, Long examinationId, String tenantCode) {
 		StartExamDto dto = new StartExamDto();
 		Examination examination = examinationService.get(examinationId);
-
 		dto.setExamination(examination);
-
 		ExaminationRecord record = new ExaminationRecord();
 		record.setCommonValue(identifier, tenantCode);
 		record.setUserId(userId);

@@ -117,6 +117,9 @@ export default defineComponent({
       let include = true;
       if (data) {
         data.forEach(e => {
+          if (e.children !== undefined && e.children.length > 0) {
+            include = false;
+          }
           if (!menuIds.includes(e.id)) {
             include = false;
           }

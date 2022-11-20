@@ -65,5 +65,5 @@ public interface ExamRecordMapper extends CrudMapper<ExaminationRecord> {
 	 * @author tangyi
 	 * @date 2020/2/1 11:57 上午
 	 */
-	List<ExaminationRecord> findExaminationRecordCountByDate(Date start);
+	Integer findExaminationRecordCountByDate(@Param("start") Date start, @Param("end") Date end);
 }
