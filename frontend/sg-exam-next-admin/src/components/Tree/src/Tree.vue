@@ -109,10 +109,10 @@
             } else {
               state.checkedKeys = v;
             }
-
             const rawVal = toRaw(state.checkedKeys);
+            const allRawVal = [...toRaw(state.checkedKeys), ...e.halfCheckedKeys];
             emit('update:value', rawVal);
-            emit('check', rawVal, e);
+            emit('check', rawVal, e, allRawVal);
           },
           onRightClick: handleRightClick,
         };

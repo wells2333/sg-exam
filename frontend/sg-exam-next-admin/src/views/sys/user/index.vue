@@ -3,7 +3,7 @@
     <DeptTree class="w-1/4 xl:w-1/7" @select="handleSelect" />
     <BasicTable @register="registerTable" class="w-3/4 xl:w-4/5" :searchInfo="searchInfo">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate">新增账号</a-button>
+        <a-button v-if="hasPermission(['sys:user:add'])" type="primary" @click="handleCreate">新增账号</a-button>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -12,15 +12,18 @@
               icon: 'ant-design:eye-outlined',
               tooltip: '查看用户详情',
               onClick: handleView.bind(null, record),
+              auth: 'sys:user:view'
             },
             {
               icon: 'clarity:note-edit-line',
               tooltip: '编辑用户资料',
               onClick: handleEdit.bind(null, record),
+              auth: 'sys:user:edit'
             },
             {
               icon: 'ant-design:retweet-outlined',
               tooltip: '重置密码',
+              auth: 'sys:user:edit',
               popConfirm: {
                 title: '是否确认重置密码',
                 confirm: handleResetPassword.bind(null, record)
@@ -29,6 +32,7 @@
             {
               icon: 'ant-design:delete-outlined',
               color: 'error',
+              auth: 'sys:user:del',
               tooltip: '删除此账号',
               popConfirm: {
                 title: '是否确认删除',
@@ -59,11 +63,13 @@ import UserDetailDrawer from './UserDetail.vue';
 import { useDrawer } from '/@/components/Drawer';
 import { columns, searchFormSchema } from './user.data';
 import {useMessage} from "/@/hooks/web/useMessage";
+import { usePermission } from '/@/hooks/web/usePermission';
 
 export default defineComponent({
   name: 'UserManagement',
   components: { BasicTable, PageWrapper, DeptTree, UserModal, UserDetailDrawer, TableAction },
   setup() {
+    const { hasPermission } = usePermission();
     const { createMessage } = useMessage();
     const [registerDetailDrawer, { openDrawer: openDetailDrawer }] = useDrawer();
     const [registerModal, { openModal }] = useModal();
@@ -132,6 +138,7 @@ export default defineComponent({
     }
 
     return {
+      hasPermission,
       registerTable,
       registerModal,
       registerDetailDrawer,

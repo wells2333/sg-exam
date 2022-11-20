@@ -2,7 +2,7 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate"> 新增角色 </a-button>
+        <a-button v-if="hasPermission(['sys:role:add'])" type="primary" @click="handleCreate"> 新增角色 </a-button>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -10,10 +10,12 @@
             {
               icon: 'clarity:note-edit-line',
               onClick: handleEdit.bind(null, record),
+              auth: 'sys:role:edit'
             },
             {
               icon: 'ant-design:delete-outlined',
               color: 'error',
+               auth: 'sys:role:del',
               popConfirm: {
                 title: '是否确认删除',
                 confirm: handleDelete.bind(null, record),
@@ -33,11 +35,15 @@ import { getRoleList, deleteRole } from '/@/api/sys/role';
 import { useModal } from '/@/components/Modal';
 import RoleModal from './RoleModal.vue';
 import { columns, searchFormSchema } from './role.data';
+import {useMessage} from "/@/hooks/web/useMessage";
+import { usePermission } from '/@/hooks/web/usePermission';
 
 export default defineComponent({
   name: 'RoleManagement',
   components: { BasicTable, RoleModal, TableAction },
   setup() {
+    const { hasPermission } = usePermission();
+    const { createMessage } = useMessage();
     const [registerModal, { openModal }] = useModal();
     const [registerTable, { reload }] = useTable({
       title: '角色列表',
@@ -79,10 +85,12 @@ export default defineComponent({
     }
 
     function handleSuccess() {
+      createMessage.success('操作成功');
       reload();
     }
 
     return {
+      hasPermission,
       registerTable,
       registerModal,
       handleCreate,

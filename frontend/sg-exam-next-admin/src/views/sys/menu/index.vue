@@ -2,7 +2,7 @@
   <div>
     <BasicTable @register="registerTable" @fetch-success="onFetchSuccess">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate"> 新增菜单 </a-button>
+        <a-button v-if="hasPermission(['sys:menu:add'])" type="primary" @click="handleCreate"> 新增菜单 </a-button>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -10,10 +10,12 @@
             {
               icon: 'clarity:note-edit-line',
               onClick: handleEdit.bind(null, record),
+              auth: 'sys:menu:edit'
             },
             {
               icon: 'ant-design:delete-outlined',
               color: 'error',
+              auth: 'sys:menu:del',
               popConfirm: {
                 title: '是否确认删除',
                 confirm: handleDelete.bind(null, record),
@@ -36,11 +38,13 @@ import { useDrawer } from '/@/components/Drawer';
 import MenuDrawer from './MenuDrawer.vue';
 
 import { columns, searchFormSchema } from './menu.data';
+import { usePermission } from '/@/hooks/web/usePermission';
 
 export default defineComponent({
   name: 'MenuManagement',
   components: { BasicTable, MenuDrawer, TableAction },
   setup() {
+    const { hasPermission } = usePermission();
     const [registerDrawer, { openDrawer }] = useDrawer();
     const [registerTable, { reload, expandAll }] = useTable({
       title: '菜单列表',
@@ -94,6 +98,7 @@ export default defineComponent({
     }
 
     return {
+      hasPermission,
       registerTable,
       registerDrawer,
       handleCreate,

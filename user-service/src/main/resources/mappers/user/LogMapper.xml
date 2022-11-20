@@ -20,4 +20,25 @@
         <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
         <result column="tenant_code" property="tenantCode"/>
     </resultMap>
+
+    <select id="findPage" resultMap="logResultMap">
+        SELECT * FROM sys_log where is_deleted = 0
+        <if test="params != null">
+            <if test="params.title != null and params.title != ''">
+                and (title like CONCAT('%',#{params.title},'%'))
+            </if>
+        </if>
+        <choose>
+            <when test="params.sortField != null and params.sortField != '' and params.sortOrder != null and params.sortOrder != ''">
+                order by #{params.sortField} #{params.sortOrder}
+            </when>
+            <otherwise>
+                order by update_time desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <delete id="delete">
+        DELETE FROM sys_log WHERE id = #{id}
+    </delete>
 </mapper>

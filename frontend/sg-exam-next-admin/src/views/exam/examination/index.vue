@@ -2,7 +2,7 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate"> 新增 </a-button>
+        <a-button v-if="hasPermission(['exam:exam:add'])" type="primary" @click="handleCreate"> 新增 </a-button>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -11,26 +11,31 @@
               icon: 'ant-design:eye-outlined',
               tooltip: '查看详情',
               onClick: handleView.bind(null, record),
+              auth: 'exam:exam:view'
             },
             {
               icon: 'clarity:note-edit-line',
               tooltip: '编辑',
               onClick: handleEdit.bind(null, record),
+              auth: 'exam:exam:edit'
             },
             {
               icon: 'ant-design:upload-outlined',
-               tooltip: '上传图片',
+              tooltip: '上传图片',
               onClick: handleUpload.bind(null, record),
+              auth: 'exam:exam:edit'
             },
             {
               icon: 'ant-design:align-left-outlined',
               tooltip: '题目管理',
               onClick: handleSubjects.bind(null, record),
+              auth: 'exam:exam:subject:add'
             },
             {
               icon: 'ant-design:delete-outlined',
-               tooltip: '删除',
+              tooltip: '删除',
               color: 'error',
+              auth: 'exam:exam:del',
               popConfirm: {
                 title: '是否确认删除',
                 confirm: handleDelete.bind(null, record),
@@ -56,10 +61,13 @@ import ExamImageModal from "./ExamImageModal.vue";
 import { columns, searchFormSchema } from './examination.data';
 import { useDrawer } from "/@/components/Drawer";
 import {useGo} from "/@/hooks/web/usePage";
+import { usePermission } from '/@/hooks/web/usePermission';
+
 export default defineComponent({
   name: 'ExaminationManagement',
   components: { BasicTable, ExaminationModal, ExaminationDetailDrawer, TableAction, ExamImageModal },
   setup() {
+    const { hasPermission } = usePermission();
     const [registerDetailDrawer, { openDrawer: openDetailDrawer }] = useDrawer();
     const [registerModal, { openModal }] = useModal();
     const [registerExamImageModal, { openModal: openExamImageModal }] = useModal();
@@ -116,6 +124,7 @@ export default defineComponent({
       openExamImageModal(true, record);
     }
     return {
+      hasPermission,
       registerTable,
       registerModal,
       registerDetailDrawer,

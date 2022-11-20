@@ -174,8 +174,9 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 		return menuMapper.findList(condition);
 	}
 
-	@Transactional
 	@Override
+	@Transactional
+	@CacheEvict(value = {UserCacheName.MENU, UserCacheName.ALL_MENU, UserCacheName.USER_MENU}, allEntries = true)
 	public int insert(Menu menu) {
 		return super.insert(menu);
 	}

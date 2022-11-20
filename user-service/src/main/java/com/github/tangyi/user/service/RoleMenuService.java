@@ -35,7 +35,7 @@ public class RoleMenuService extends CrudService<RoleMenuMapper, RoleMenu> {
 	 * @date 2018/10/28 14:29
 	 */
 	@Transactional
-	@CacheEvict(value = UserCacheName.MENU, allEntries = true)
+	@CacheEvict(value = {UserCacheName.MENU, UserCacheName.USER_MENU}, allEntries = true)
 	public int saveRoleMenus(Long roleId, String menuIds) {
 		if (StringUtils.isEmpty(menuIds)) {
 			return -1;
@@ -53,7 +53,7 @@ public class RoleMenuService extends CrudService<RoleMenuMapper, RoleMenu> {
 	 * @date 2018/10/28 14:29
 	 */
 	@Transactional
-	@CacheEvict(value = UserCacheName.MENU, allEntries = true)
+	@CacheEvict(value = {UserCacheName.MENU, UserCacheName.USER_MENU}, allEntries = true)
 	public int saveRoleMenus(Long role, List<Long> menus) {
 		int update = -1;
 		if (CollectionUtils.isNotEmpty(menus)) {

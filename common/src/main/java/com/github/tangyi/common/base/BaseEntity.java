@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Date;
@@ -29,7 +30,7 @@ public class BaseEntity<T> implements Serializable {
 	public static final String TIMEZONE = "GMT+8";
 
 	@Id
-	@GeneratedValue(generator = "JDBC")
+	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "JDBC")
 	@JsonSerialize(using = ToStringSerializer.class)
 	protected Long id;
 

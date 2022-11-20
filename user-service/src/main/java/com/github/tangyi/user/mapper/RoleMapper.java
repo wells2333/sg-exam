@@ -22,4 +22,10 @@ public interface RoleMapper extends CrudMapper<Role> {
      * @date 2019/09/21 12:08:29
      */
     Role findByRoleCode(Role role);
+
+	/**
+	 * 查询默认的角色
+	 * @return Role
+	 */
+	Role findDefaultRole(String tenantCode);
 }

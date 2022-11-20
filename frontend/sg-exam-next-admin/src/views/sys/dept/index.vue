@@ -2,7 +2,7 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate"> 新增部门 </a-button>
+        <a-button v-if="hasPermission(['sys:dept:add'])" type="primary" @click="handleCreate"> 新增部门 </a-button>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -10,10 +10,12 @@
             {
               icon: 'clarity:note-edit-line',
               onClick: handleEdit.bind(null, record),
+              auth: 'sys:dept:edit'
             },
             {
               icon: 'ant-design:delete-outlined',
               color: 'error',
+               auth: 'sys:dept:del',
               popConfirm: {
                 title: '是否确认删除',
                 confirm: handleDelete.bind(null, record),
@@ -33,11 +35,12 @@ import { getDeptList, deleteDept } from '/@/api/sys/dept';
 import { useModal } from '/@/components/Modal';
 import DeptModal from './DeptModal.vue';
 import { columns, searchFormSchema } from './dept.data';
-
+import { usePermission } from '/@/hooks/web/usePermission';
 export default defineComponent({
   name: 'DeptManagement',
   components: { BasicTable, DeptModal, TableAction },
   setup() {
+    const { hasPermission } = usePermission();
     const [registerModal, { openModal }] = useModal();
     const [registerTable, { reload }] = useTable({
       title: '部门列表',
@@ -82,6 +85,7 @@ export default defineComponent({
       reload();
     }
     return {
+      hasPermission,
       registerTable,
       registerModal,
       handleCreate,

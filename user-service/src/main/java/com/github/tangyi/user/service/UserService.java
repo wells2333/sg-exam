@@ -1,7 +1,7 @@
 package com.github.tangyi.user.service;
 
 import com.github.tangyi.api.user.constant.MenuConstant;
-import com.github.tangyi.api.user.constant.RoleConstant;
+import com.github.tangyi.api.user.constant.TenantConstant;
 import com.github.tangyi.api.user.dto.UserDto;
 import com.github.tangyi.api.user.dto.UserInfoDto;
 import com.github.tangyi.api.user.enums.IdentityType;
@@ -46,7 +46,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * 用户service实现
@@ -80,73 +79,65 @@ public class UserService extends CrudService<UserMapper, User> {
 	private final UserAuthsService userAuthsService;
 
 	/**
-	 * 新建用户
-	 *
-	 * @param userDto userDto
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/07/03 12:17:44
-	 */
-	@Transactional
-	public int createUser(UserDto userDto) {
-		int update;
-		User user = new User();
-		if ((update = this.createUser(userDto, user)) > 0) {
-			UserAuths userAuths = new UserAuths();
-			userAuths.setCommonValue(user.getCreator(), user.getTenantCode());
-			userAuths.setUserId(user.getId());
-			userAuths.setIdentifier(userDto.getIdentifier());
-			if (userDto.getIdentityType() == null) {
-				userAuths.setIdentityType(IdentityType.PASSWORD.getValue());
-			}
-			defaultCredential(userDto);
-			userAuths.setCredential(encoder.encode(userDto.getCredential()));
-			update = userAuthsService.insert(userAuths);
-			// 分配默认角色
-			this.defaultRole(user, SysUtil.getTenantCode(), userDto.getIdentifier());
-		}
-		return update;
-	}
-
-	/**
-	 * default password 123456
-	 */
-	public void defaultCredential(UserDto userDto) {
-		if (StringUtils.isBlank(userDto.getCredential())) {
-			userDto.setCredential(CommonConstant.DEFAULT_PASSWORD);
-		}
-	}
-
-	/**
 	 * 新增用户
 	 */
 	@Transactional
-	public int createUser(UserDto userDto, User user) {
+	public int createUser(UserDto userDto) {
+		userDto.setTenantCode(SysUtil.getTenantCode());
+		User user = new User();
 		BeanUtils.copyProperties(userDto, user);
 		user.setCommonValue();
 		// 保存父子账号关系
-		UserVo currentUser = this.findUserByIdentifier(userDto.getIdentityType(), SysUtil.getUser(),
+		UserAuths current = findUserAuthsByIdentifier(userDto.getIdentityType(), SysUtil.getUser(),
 				SysUtil.getTenantCode());
-		user.setParentUid(currentUser.getId());
-		int update = super.insert(user);
-		if (update > 0) {
-			UserVo userVo = findUserByIdentifier(userDto.getIdentityType(), userDto.getIdentifier(),
-					userDto.getTenantCode());
-			if (userVo != null) {
-				user.setId(userVo.getId());
-				if (CollectionUtils.isNotEmpty(user.getRole())) {
-					user.getRole().forEach(roleId -> {
-						UserRole sysUserRole = new UserRole();
-						sysUserRole.setNewRecord(true);
-						sysUserRole.setCommonValue();
-						sysUserRole.setUserId(userVo.getId());
-						sysUserRole.setRoleId(roleId);
-						userRoleMapper.insert(sysUserRole);
-					});
-				}
-			}
+		user.setParentUid(current.getUserId());
+		int update = insert(user);
+		if (user.getId() != null) {
+			createUserAuths(userDto, user);
+			createUserRole(userDto, user);
 		}
 		return update;
+	}
+
+	@Transactional
+	public UserAuths createUserAuths(UserDto userDto, User user) {
+		UserAuths userAuths = new UserAuths();
+		userAuths.setCommonValue(user.getCreator(), user.getTenantCode());
+		userAuths.setUserId(user.getId());
+		userAuths.setIdentifier(userDto.getIdentifier());
+		// 默认为账号密码类型
+		if (userDto.getIdentityType() == null) {
+			userAuths.setIdentityType(IdentityType.PASSWORD.getValue());
+		}
+		// 设置默认密码
+		if (StringUtils.isBlank(userDto.getCredential())) {
+			userDto.setCredential(CommonConstant.DEFAULT_PASSWORD);
+		}
+		userAuths.setCredential(encoder.encode(userDto.getCredential()));
+		userAuthsService.insert(userAuths);
+		return userAuths;
+	}
+
+	@Transactional
+	public void createUserRole(UserDto userDto, User user) {
+		if (CollectionUtils.isEmpty(user.getRole())) {
+			// 分配默认角色
+			defaultRole(user, user.getTenantCode(), userDto.getIdentifier());
+			return;
+		}
+		createUserRole(user.getId(), user.getRole());
+	}
+
+	@Transactional
+	public void createUserRole(Long userId, List<Long> roleIds) {
+		roleIds.forEach(roleId -> {
+			UserRole ur = new UserRole();
+			ur.setNewRecord(true);
+			ur.setCommonValue();
+			ur.setUserId(userId);
+			ur.setRoleId(roleId);
+			userRoleMapper.insert(ur);
+		});
 	}
 
 	/**
@@ -161,12 +152,7 @@ public class UserService extends CrudService<UserMapper, User> {
 	 */
 	@Cacheable(value = UserCacheName.USER_VO, key = "#identifier")
 	public UserVo findUserByIdentifier(Integer identityType, String identifier, String tenantCode) {
-		UserAuths condition = new UserAuths();
-		condition.setIdentifier(identifier);
-		Optional.ofNullable(identityType)
-				.ifPresent(s -> condition.setIdentityType(IdentityType.matchByType(s).getValue()));
-		condition.setTenantCode(tenantCode);
-		UserAuths userAuths = userAuthsService.getByIdentifier(condition);
+		UserAuths userAuths = findUserAuthsByIdentifier(identityType, identifier, tenantCode);
 		if (userAuths == null) {
 			return null;
 		}
@@ -181,6 +167,24 @@ public class UserService extends CrudService<UserMapper, User> {
 		userVo.setRoleList(UserUtils.rolesToVo(roles));
 		userVo.setUserId(user.getId());
 		return userVo;
+	}
+
+	public UserAuths findUserAuthsByIdentifier(String identifier) {
+		return findUserAuthsByIdentifier(null, identifier, SysUtil.getTenantCode());
+	}
+
+	public UserAuths findUserAuthsByIdentifier(String identifier, String tenantCode) {
+		return findUserAuthsByIdentifier(null, identifier, tenantCode);
+	}
+
+	public UserAuths findUserAuthsByIdentifier(Integer identityType, String identifier, String tenantCode) {
+		UserAuths condition = new UserAuths();
+		condition.setIdentifier(identifier);
+		if (identityType != null) {
+			condition.setIdentityType(IdentityType.matchByType(identityType).getValue());
+		}
+		condition.setTenantCode(tenantCode);
+		return userAuthsService.getByIdentifier(condition);
 	}
 
 	/**
@@ -314,13 +318,7 @@ public class UserService extends CrudService<UserMapper, User> {
 		// 删除原有的角色信息
 		userRoleMapper.delete(sysUserRole);
 		if (CollectionUtils.isNotEmpty(userDto.getRole())) {
-			userDto.getRole().forEach(roleId -> {
-				UserRole role = new UserRole();
-				role.setCommonValue();
-				role.setUserId(user.getId());
-				role.setRoleId(roleId);
-				userRoleMapper.insert(role);
-			});
+			createUserRole(user.getId(), userDto.getRole());
 		}
 		return Boolean.TRUE;
 	}
@@ -354,10 +352,7 @@ public class UserService extends CrudService<UserMapper, User> {
 		userDto.setTenantCode(SysUtil.getTenantCode());
 		SgPreconditions.checkBlank(userDto.getNewPassword(), "新密码不能为空");
 		SgPreconditions.checkBlank(userDto.getIdentifier(), "用户名不能为空");
-		UserAuths userAuths = new UserAuths();
-		userAuths.setIdentifier(userDto.getIdentifier());
-		userAuths.setTenantCode(userDto.getTenantCode());
-		userAuths = userAuthsService.getByIdentifier(userAuths);
+		UserAuths userAuths = findUserAuthsByIdentifier(null, userDto.getIdentifier(), userDto.getTenantCode());
 		SgPreconditions.checkNull(userAuths, "账号不存在");
 		if (!encoder.matches(userDto.getOldPassword(), userAuths.getCredential())) {
 			throw new CommonException("新旧密码不匹配");
@@ -394,10 +389,13 @@ public class UserService extends CrudService<UserMapper, User> {
 		User user = this.get(userDto.getId());
 		SgPreconditions.checkNull(user, "用户不存在");
 		if (user.getAvatarId() != null) {
-			Optional.ofNullable(attachmentService.get(user.getAvatarId())).ifPresent(attachmentService::delete);
+			Attachment attach = attachmentService.get(user.getAvatarId());
+			if (attach != null) {
+				attachmentService.delete(attach);
+			}
 		}
 		user.setAvatarId(userDto.getAvatarId());
-		super.update(user);
+		update(user);
 		return qiNiuService.getPreviewUrl(userDto.getAvatarId());
 	}
 
@@ -520,9 +518,7 @@ public class UserService extends CrudService<UserMapper, User> {
 	@CacheEvict(value = {UserCacheName.USER, UserCacheName.USER_VO, UserCacheName.USER_DTO, UserCacheName.USER_ROLE,
 			UserCacheName.USER_PERMISSION, UserCacheName.USER_AUTHS}, key = "#userDto.identifier")
 	public boolean resetPassword(UserDto userDto) {
-		UserAuths userAuths = new UserAuths();
-		userAuths.setIdentifier(userDto.getIdentifier());
-		userAuths = userAuthsService.getByIdentifier(userAuths);
+		UserAuths userAuths = findUserAuthsByIdentifier(null, userDto.getIdentifier(), userDto.getTenantCode());
 		SgPreconditions.checkNull(userAuths, "账号不存在");
 		// reset password
 		userAuths.setCredential(encoder.encode(CommonConstant.DEFAULT_PASSWORD));
@@ -530,7 +526,7 @@ public class UserService extends CrudService<UserMapper, User> {
 	}
 
 	/**
-	 * 注
+	 * 注册
 	 *
 	 * @param userDto userDto
 	 * @return boolean
@@ -546,7 +542,7 @@ public class UserService extends CrudService<UserMapper, User> {
 			userDto.setIdentityType(IdentityType.PASSWORD.getValue());
 		}
 		// 解密
-		String password = this.decryptCredential(userDto.getCredential(), userDto.getIdentityType());
+		String password = decryptCredential(userDto.getCredential(), userDto.getIdentityType());
 		User user = new User();
 		BeanUtils.copyProperties(userDto, user);
 		// 初始化用户名，系统编号，租户编号
@@ -558,8 +554,9 @@ public class UserService extends CrudService<UserMapper, User> {
 			attachment.setCommonValue(userDto.getIdentifier(), SysUtil.getTenantCode());
 			attachment.setUrl(userDto.getAvatarUrl());
 			attachment.setGroupCode(AttachTypeEnum.AVATAR.getValue());
-			if (attachmentService.insert(attachment) > 0)
+			if (attachmentService.insert(attachment) > 0) {
 				user.setAvatarId(attachment.getId());
+			}
 		}
 		// 保存用户基本信息
 		if (this.insert(user) > 0) {
@@ -575,7 +572,7 @@ public class UserService extends CrudService<UserMapper, User> {
 			userAuths.setCredential(encoder.encode(password));
 			userAuthsService.insert(userAuths);
 			// 分配默认角色
-			success = this.defaultRole(user, userDto.getTenantCode(), userDto.getIdentifier());
+			success = defaultRole(user, userDto.getTenantCode(), userDto.getIdentifier());
 		}
 		return success;
 	}
@@ -620,20 +617,17 @@ public class UserService extends CrudService<UserMapper, User> {
 	 */
 	@Transactional
 	public boolean defaultRole(User user, String tenantCode, String identifier) {
-		Role role = new Role();
-		role.setIsDefault(RoleConstant.IS_DEFAULT_ROLE);
-		role.setTenantCode(tenantCode);
-		// 查询默认角色
-		Stream<Role> roleStream = roleMapper.findList(role).stream();
-		if (Optional.ofNullable(roleStream).isPresent()) {
-			Role defaultRole = roleStream.findFirst().orElse(null);
-			if (defaultRole != null) {
-				UserRole userRole = new UserRole();
-				userRole.setCommonValue(identifier, user.getTenantCode());
-				userRole.setUserId(user.getId());
-				userRole.setRoleId(defaultRole.getId());
-				return userRoleMapper.insert(userRole) > 0;
-			}
+		// 设置默认的租户标识
+		if (StringUtils.isEmpty(tenantCode)) {
+			tenantCode = TenantConstant.DEFAULT_TENANT_CODE;
+		}
+		Role defaultRole = roleMapper.findDefaultRole(tenantCode);
+		if (defaultRole != null) {
+			UserRole userRole = new UserRole();
+			userRole.setCommonValue(identifier, tenantCode);
+			userRole.setUserId(user.getId());
+			userRole.setRoleId(defaultRole.getId());
+			return userRoleMapper.insert(userRole) > 0;
 		}
 		return false;
 	}
@@ -647,17 +641,17 @@ public class UserService extends CrudService<UserMapper, User> {
 	 * @date 2019/07/03 13:59:32
 	 */
 	public List<UserVo> findUserVoListById(Long[] ids) {
-		List<UserVo> userVos = Lists.newArrayList();
-		Stream<User> userStream = this.findListById(ids).stream();
-		if (Optional.ofNullable(userStream).isPresent()) {
-			userVos = userStream.map(tempUser -> {
+		List<UserVo> userVos = Lists.newArrayListWithExpectedSize(ids.length);
+		List<User> users = this.findListById(ids);
+		if (CollectionUtils.isNotEmpty(users)) {
+			for (User tempUser : users) {
 				UserVo tempUserVo = new UserVo();
 				BeanUtils.copyProperties(tempUser, tempUserVo);
 				if (tempUser.getAvatarId() != null) {
 					tempUserVo.setAvatarUrl(qiNiuService.getPreviewUrl(tempUser.getAvatarId()));
 				}
-				return tempUserVo;
-			}).collect(Collectors.toList());
+				userVos.add(tempUserVo);
+			}
 		}
 		return userVos;
 	}
@@ -782,9 +776,7 @@ public class UserService extends CrudService<UserMapper, User> {
 
 	public boolean updateLoginInfo(UserDto userDto) {
 		if (StringUtils.isNotBlank(userDto.getIdentifier())) {
-			UserAuths userAuths = new UserAuths();
-			userAuths.setIdentifier(userDto.getIdentifier());
-			userAuths = userAuthsService.getByIdentifier(userAuths);
+			UserAuths userAuths = findUserAuthsByIdentifier(userDto.getIdentifier(), userDto.getTenantCode());
 			if (userAuths != null) {
 				User user = new User();
 				user.setId(userAuths.getUserId());

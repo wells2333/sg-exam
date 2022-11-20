@@ -1,57 +1,53 @@
 <template>
   <div>
-    <BasicTable @register="registerTable" @fetch-success="onFetchSuccess">
-      <template #toolbar>
-        <a-button v-if="hasPermission(['exam:category:add'])" type="primary" @click="handleCreate"> 新增分类 </a-button>
-      </template>
+    <BasicTable @register="registerTable">
       <template #action="{ record }">
         <TableAction
           :actions="[
             {
               icon: 'clarity:note-edit-line',
               onClick: handleEdit.bind(null, record),
-              auth: 'exam:category:edit'
+              auth: 'sys:log:edit',
             },
             {
               icon: 'ant-design:delete-outlined',
               color: 'error',
-              auth: 'exam:category:del',
+              auth: 'sys:log:del',
               popConfirm: {
                 title: '是否确认删除',
                 confirm: handleDelete.bind(null, record),
               },
-            },
+            }
           ]"
         />
       </template>
     </BasicTable>
-    <CategoryModal @register="registerModal" @success="handleSuccess" />
+    <LogModal @register="registerModal" @success="handleSuccess" />
   </div>
 </template>
 <script lang="ts">
-import {defineComponent, nextTick} from 'vue';
+import { defineComponent } from 'vue';
 import { BasicTable, useTable, TableAction } from '/@/components/Table';
-import { getSubjectCategoryTree } from '/@/api/exam/subjectCategory';
+import { getLogList, deleteLog } from '/@/api/sys/log';
 import { useModal } from '/@/components/Modal';
-import CategoryModal from './CategoryModal.vue';
-import { columns, searchFormSchema } from './category.data';
-import { usePermission } from '/@/hooks/web/usePermission';
+import LogModal from './LogModal.vue';
+import { columns, searchFormSchema } from './log.data';
+import {useMessage} from "/@/hooks/web/useMessage";
 export default defineComponent({
-  name: 'CategoryManagement',
-  components: { BasicTable, CategoryModal, TableAction },
+  name: 'LogManagement',
+  components: { BasicTable, LogModal, TableAction },
   setup() {
-    const { hasPermission } = usePermission();
     const [registerModal, { openModal }] = useModal();
-    const [registerTable, { reload, expandAll}] = useTable({
-      title: '分类列表',
-      api: getSubjectCategoryTree,
+    const { createMessage } = useMessage();
+    const [registerTable, { reload }] = useTable({
+      title: '操作日志',
+      api: getLogList,
       columns,
       formConfig: {
         labelWidth: 120,
         schemas: searchFormSchema,
       },
-      isTreeTable: true,
-      pagination: false,
+      pagination: true,
       striped: false,
       useSearchForm: true,
       showTableSetting: true,
@@ -59,18 +55,13 @@ export default defineComponent({
       showIndexColumn: false,
       canResize: false,
       actionColumn: {
-        width: 80,
+        width: 120,
         title: '操作',
         dataIndex: 'action',
         slots: { customRender: 'action' },
         fixed: undefined,
       },
     });
-    function handleCreate() {
-      openModal(true, {
-        isUpdate: false,
-      });
-    }
     function handleEdit(record: Recordable) {
       openModal(true, {
         record,
@@ -78,24 +69,19 @@ export default defineComponent({
       });
     }
     async function handleDelete(record: Recordable) {
-      await deleteCourse(record.id);
+      await deleteLog(record.id);
       await reload();
     }
     function handleSuccess() {
+      createMessage.success('操作成功');
       reload();
     }
-    function onFetchSuccess() {
-      nextTick(expandAll);
-    }
     return {
-      hasPermission,
       registerTable,
       registerModal,
-      handleCreate,
       handleEdit,
       handleDelete,
       handleSuccess,
-      onFetchSuccess
     };
   },
 });

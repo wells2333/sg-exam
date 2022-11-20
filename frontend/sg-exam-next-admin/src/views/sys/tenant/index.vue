@@ -2,7 +2,7 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate"> 新增租户 </a-button>
+        <a-button v-if="hasPermission(['tenant:tenant:add'])" type="primary" @click="handleCreate"> 新增租户 </a-button>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -10,20 +10,25 @@
             {
               icon: 'clarity:note-edit-line',
               onClick: handleEdit.bind(null, record),
+              auth: 'tenant:tenant:edit'
             },
             {
               icon: 'ant-design:delete-outlined',
               color: 'error',
+              auth: 'tenant:tenant:del',
               popConfirm: {
                 title: '是否确认删除',
                 confirm: handleDelete.bind(null, record),
+                auth: 'tenant:tenant:del'
               },
             },
             {
               icon: 'ant-design:reload-outlined',
+               auth: 'tenant:tenant:edit',
               popConfirm: {
                 title: '是否重新初始化',
                 confirm: handleInit.bind(null, record),
+                auth: 'tenant:tenant:edit'
               },
            },
           ]"
@@ -41,10 +46,12 @@ import { useModal } from '/@/components/Modal';
 import TenantModal from './TenantModal.vue';
 import { columns, searchFormSchema } from './tenant.data';
 import {useMessage} from "/@/hooks/web/useMessage";
+import { usePermission } from '/@/hooks/web/usePermission';
 export default defineComponent({
   name: 'TenantManagement',
   components: { BasicTable, TenantModal, TableAction },
   setup() {
+    const { hasPermission } = usePermission();
     const [registerModal, { openModal }] = useModal();
     const { createMessage } = useMessage();
     const [registerTable, { reload }] = useTable({
@@ -94,6 +101,7 @@ export default defineComponent({
       reload();
     }
     return {
+      hasPermission,
       registerTable,
       registerModal,
       handleInit,

@@ -25,6 +25,9 @@
             <if test="params.roleCode != null and params.roleCode != ''">
                 and role_code = #{params.roleCode}
             </if>
+            <if test="params.isDefault != null and params.isDefault != ''">
+                and is_default = #{params.isDefault}
+            </if>
             <if test="params.status != null">
                 and status = #{params.status}
             </if>
@@ -54,6 +57,10 @@
     <select id="findByRoleCode" resultMap="roleResultMap">
         SELECT * FROM sys_role a
         WHERE a.role_code = #{roleCode} and a.is_deleted = 0
+    </select>
+
+    <select id="findDefaultRole" resultMap="roleResultMap">
+        SELECT * FROM sys_role a WHERE a.is_default = 1 AND a.is_deleted = 0 AND a.tenant_code = #{tenantCode}
     </select>
 
     <delete id="delete">

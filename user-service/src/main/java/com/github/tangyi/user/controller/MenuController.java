@@ -5,11 +5,11 @@ import com.github.tangyi.api.user.constant.MenuConstant;
 import com.github.tangyi.api.user.constant.TenantConstant;
 import com.github.tangyi.api.user.dto.MenuDto;
 import com.github.tangyi.api.user.model.Menu;
+import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.excel.ExcelToolUtil;
-import com.github.tangyi.log.annotation.SgLog;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.SysUtil;
-import com.github.tangyi.common.base.BaseController;
+import com.github.tangyi.log.annotation.SgLog;
 import com.github.tangyi.log.constants.OperationType;
 import com.github.tangyi.user.excel.listener.MenuImportListener;
 import com.github.tangyi.user.excel.model.MenuExcelModel;
@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,10 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -56,8 +55,9 @@ public class MenuController extends BaseController {
 	@GetMapping(value = "userMenu")
 	@Operation(summary = "获取当前用户的菜单列表")
 	public R<List<MenuDto>> userMenu() {
-		return R.success(menuService.findUserMenu(MenuConstant.MENU_TYPE_MENU, SysUtil.getUser(), SysUtil.getTenantCode(),
-				true));
+		return R.success(
+				menuService.findUserMenu(MenuConstant.MENU_TYPE_MENU, SysUtil.getUser(), SysUtil.getTenantCode(),
+						true));
 	}
 
 	/**
@@ -65,10 +65,12 @@ public class MenuController extends BaseController {
 	 */
 	@GetMapping(value = "userPermissions")
 	@Operation(summary = "获取当前用户的权限编码")
-	public R<List<MenuDto>> userPermissions() {
-		return R.success(
-				menuService.findUserMenu(MenuConstant.MENU_TYPE_PERMISSION, SysUtil.getUser(), SysUtil.getTenantCode(),
-						false));
+	public R<Set<String>> userPermissions() {
+		List<MenuDto> dtoList = menuService.findUserMenu(MenuConstant.MENU_TYPE_PERMISSION, SysUtil.getUser(),
+				SysUtil.getTenantCode(), false);
+		return R.success(CollectionUtils.isNotEmpty(dtoList) ?
+				dtoList.stream().map(MenuDto::getPermission).collect(Collectors.toSet()) :
+				Collections.emptySet());
 	}
 
 	@GetMapping(value = "defaultTenantMenu")
@@ -163,41 +165,32 @@ public class MenuController extends BaseController {
 		if (Optional.ofNullable(menuStream).isPresent()) {
 			return menuStream.map(menu -> menu.getId().toString()).collect(Collectors.toList());
 		}
-		return new ArrayList<>();
+		return Collections.emptyList();
 	}
 
 	@PostMapping("export")
 	@Operation(summary = "导出菜单", description = "根据菜单id导出菜单")
 	@SgLog(value = "导出菜单", operationType = OperationType.EXPORT)
 	public void exportMenu(@RequestBody Long[] ids, HttpServletRequest request, HttpServletResponse response) {
-		String tenantCode = SysUtil.getTenantCode();
-		try {
-			List<Menu> menus;
-			if (ArrayUtils.isEmpty(ids)) {
-				Menu menu = new Menu();
-				// 导出当前租户下的所有菜单
-				menu.setTenantCode(tenantCode);
-				menus = menuService.findList(menu);
-			} else {
-				// 导出选中
-				menus = menuService.findListById(ids);
-			}
-			ExcelToolUtil.writeExcel(request, response, MenuUtil.convertToExcelModel(menus), MenuExcelModel.class);
-		} catch (Exception e) {
-			log.error("export menu data failed", e);
+		List<Menu> menus;
+		if (ArrayUtils.isEmpty(ids)) {
+			Menu menu = new Menu();
+			// 导出当前租户下的所有菜单
+			menu.setTenantCode(SysUtil.getTenantCode());
+			menus = menuService.findList(menu);
+		} else {
+			// 导出选中
+			menus = menuService.findListById(ids);
 		}
+		ExcelToolUtil.writeExcel(request, response, MenuUtil.convertToExcelModel(menus), MenuExcelModel.class);
 	}
 
 	@PostMapping("import")
 	@Operation(summary = "导入菜单", description = "导入菜单")
 	@SgLog(value = "导入菜单", operationType = OperationType.IMPORT)
-	public R<Boolean> importMenu(@Parameter(description = "要上传的文件", required = true) MultipartFile file) {
-		try {
-			return R.success(ExcelToolUtil.readExcel(file.getInputStream(), MenuExcelModel.class,
-					new MenuImportListener(menuService)));
-		} catch (Exception e) {
-			log.error("import menu data failed", e);
-		}
-		return R.success(Boolean.FALSE);
+	public R<Boolean> importMenu(@Parameter(description = "要上传的文件", required = true) MultipartFile file)
+			throws IOException {
+		return R.success(ExcelToolUtil.readExcel(file.getInputStream(), MenuExcelModel.class,
+				new MenuImportListener(menuService)));
 	}
 }

@@ -867,7 +867,7 @@ INSERT INTO `sys_dept` VALUES (1, '运营中心', '运营中心', '管理员', -
 -- 角色
 -- ----------------------------
 INSERT INTO `sys_role` VALUES (1, '超级管理员', 'role_admin', '超级管理员', 0, 0, 'admin', '2019-10-07 15:02:17', 'admin', '2019-10-07 14:53:50', 0, 'gitee');
-INSERT INTO `sys_role` VALUES (2, '预览角色', 'role_preview', '只有查看权限', 0, 0, 'admin', '2022-11-13 13:24:39', 'admin', '2022-11-13 13:24:39', 0, 'gitee');
+INSERT INTO `sys_role` VALUES (2, '预览角色', 'role_preview', '只有查看权限', 1, 0, 'admin', '2022-11-13 13:24:39', 'admin', '2022-11-13 13:24:39', 0, 'gitee');
 
 -- ----------------------------
 -- 用户角色关系
@@ -958,6 +958,25 @@ INSERT INTO `sys_menu` VALUES (64, '成绩详情', NULL, '/exam/score_detail/:id
 INSERT INTO `sys_menu` VALUES (65, '题目详情', NULL, '/exam/subject_detail/:id', 28, NULL, '6', '0', 'admin', '2022-04-05 09:54:38', 'admin', '2022-11-13 11:48:52', 0, 'exam/subject/SubjectDetail', 0, 0, NULL, 'gitee', 1, '', '/exam/subject');
 INSERT INTO `sys_menu` VALUES (66, '分类管理', NULL, '/exam/category', 28, NULL, '1', '0', 'admin', '2022-04-08 22:45:09', 'admin', '2022-11-13 11:48:52', 0, 'exam/category/index', 0, 0, NULL, 'gitee', 0, '', '');
 
+INSERT INTO `sys_menu` VALUES (67, '操作日志', 'sys:log', '/sys/log', 3, NULL, '11', '0', 'admin', '2022-11-20 14:16:34', 'admin', '2022-11-20 14:16:34', 0, 'sys/log/index', 0, 0, NULL, 'gitee', 0, '', '');
+INSERT INTO `sys_menu` VALUES (68, '查看操作日志', 'sys:log:view', NULL, 67, NULL, '1', '1', 'admin', '2022-11-20 14:20:58', 'admin', '2022-11-20 14:20:58', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
+
+INSERT INTO `sys_menu` VALUES (69, '查看题目分类', 'exam:category:view', NULL, 66, NULL, '1', '1', 'admin', '2022-11-20 18:37:07', 'admin', '2022-11-20 18:37:07', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
+INSERT INTO `sys_menu` VALUES (70, '新增题目分类', 'exam:category:add', NULL, 66, NULL, '2', '1', 'admin', '2022-11-20 18:37:31', 'admin', '2022-11-20 18:37:31', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
+INSERT INTO `sys_menu` VALUES (71, '编辑题目分类', 'exam:category:edit', NULL, 66, NULL, '3', '1', 'admin', '2022-11-20 18:37:53', 'admin', '2022-11-20 18:37:53', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
+INSERT INTO `sys_menu` VALUES (72, '删除题目分类', 'exam:category:del', NULL, 66, NULL, '4', '1', 'admin', '2022-11-20 18:38:13', 'admin', '2022-11-20 18:38:13', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
+INSERT INTO `sys_menu` VALUES (73, '查看考试', 'exam:exam:view', NULL, 33, NULL, '1', '1', 'admin', '2022-11-20 18:44:51', 'admin', '2022-11-20 18:44:51', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
+INSERT INTO `sys_menu` VALUES (74, '编辑考试', 'exam:exam:edit', NULL, 33, NULL, '2', '1', 'admin', '2022-11-20 18:45:11', 'admin', '2022-11-20 18:45:11', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
+INSERT INTO `sys_menu` VALUES (75, '查看成绩', 'exam:examRecord:view', NULL, 50, NULL, '1', '1', 'admin', '2022-11-20 18:47:23', 'admin', '2022-11-20 18:47:23', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
+INSERT INTO `sys_menu` VALUES (76, '删除操作日志', 'sys:log:del', NULL, 67, NULL, '2', '1', 'admin', '2022-11-20 18:50:33', 'admin', '2022-11-20 18:50:33', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
+INSERT INTO `sys_menu` VALUES (77, '查看单位', 'tenant:tenant:view', NULL, 25, NULL, '1', '1', 'admin', '2022-11-20 18:55:12', 'admin', '2022-11-20 18:55:12', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
+INSERT INTO `sys_menu` VALUES (78, '新增单位', 'tenant:tenant:add', NULL, 25, NULL, '1', '1', 'admin', '2022-11-20 18:57:18', 'admin', '2022-11-20 18:57:18', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
+INSERT INTO `sys_menu` VALUES (79, '查看用户', 'sys:user:view', NULL, 10, NULL, '1', '1', 'admin', '2022-11-20 19:00:04', 'admin', '2022-11-20 19:00:04', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
+INSERT INTO `sys_menu` VALUES (81, '查看角色', 'sys:role:view', NULL, 20, NULL, '1', '1', 'admin', '2022-11-20 19:00:55', 'admin', '2022-11-20 19:00:55', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
+INSERT INTO `sys_menu` VALUES (82, '查看菜单', 'sys:menu:view', NULL, 4, NULL, '1', '1', 'admin', '2022-11-20 19:01:21', 'admin', '2022-11-20 19:01:21', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
+INSERT INTO `sys_menu` VALUES (83, '查看部门', 'sys:dept:view', NULL, 16, NULL, '1', '1', 'admin', '2022-11-20 19:12:41', 'admin', '2022-11-20 19:12:41', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
+INSERT INTO `sys_menu` VALUES (84, '查看课程', 'exam:course:view', NULL, 29, NULL, '1', '1', 'admin', '2022-11-20 19:13:01', 'admin', '2022-11-20 19:13:01', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
+
 -- ----------------------------
 -- 角色菜单关系
 -- ----------------------------
@@ -1031,6 +1050,27 @@ INSERT INTO `sys_role_menu` VALUES (67, 2, 1, '', '2022-11-13 13:26:11', '', '20
 INSERT INTO `sys_role_menu` VALUES (68, 2, 2, '', '2022-11-13 13:26:11', '', '2022-11-13 13:26:11', 0, '');
 INSERT INTO `sys_role_menu` VALUES (69, 2, 63, '', '2022-11-13 13:26:11', '', '2022-11-13 13:26:11', 0, '');
 INSERT INTO `sys_role_menu` VALUES (70, 2, 61, '', '2022-11-13 13:26:11', '', '2022-11-13 13:26:11', 0, '');
+INSERT INTO `sys_role_menu` VALUES (71, 2, 62, '', '2022-11-20 14:46:39', '', '2022-11-20 14:46:39', 0, '');
+INSERT INTO `sys_role_menu` VALUES (72, 2, 60, '', '2022-11-20 14:46:39', '', '2022-11-20 14:46:39', 0, '');
+
+INSERT INTO `sys_role_menu` VALUES (73, 1, 67, '', '2022-11-13 13:26:11', '', '2022-11-13 13:26:11', 0, '');
+INSERT INTO `sys_role_menu` VALUES (74, 1, 68, '', '2022-11-13 13:26:11', '', '2022-11-13 13:26:11', 0, '');
+INSERT INTO `sys_role_menu` VALUES (75, 1, 69, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
+INSERT INTO `sys_role_menu` VALUES (76, 1, 70, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
+INSERT INTO `sys_role_menu` VALUES (77, 1, 71, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
+INSERT INTO `sys_role_menu` VALUES (78, 1, 72, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
+INSERT INTO `sys_role_menu` VALUES (79, 1, 73, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
+INSERT INTO `sys_role_menu` VALUES (80, 1, 74, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
+INSERT INTO `sys_role_menu` VALUES (81, 1, 75, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
+INSERT INTO `sys_role_menu` VALUES (82, 1, 76, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
+INSERT INTO `sys_role_menu` VALUES (83, 1, 77, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
+INSERT INTO `sys_role_menu` VALUES (84, 1, 78, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
+INSERT INTO `sys_role_menu` VALUES (85, 1, 79, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
+INSERT INTO `sys_role_menu` VALUES (86, 1, 80, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
+INSERT INTO `sys_role_menu` VALUES (87, 1, 81, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
+INSERT INTO `sys_role_menu` VALUES (88, 1, 82, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
+INSERT INTO `sys_role_menu` VALUES (89, 1, 83, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
+INSERT INTO `sys_role_menu` VALUES (90, 1, 84, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
 
 -- ----------------------------
 -- 默认头像

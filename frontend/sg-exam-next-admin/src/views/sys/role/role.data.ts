@@ -2,8 +2,6 @@ import { BasicColumn } from '/@/components/Table';
 import { FormSchema } from '/@/components/Table';
 import { h } from 'vue';
 import { Switch } from 'ant-design-vue';
-import { updateRoleStatus } from '/@/api/sys/role';
-import { useMessage } from '/@/hooks/web/useMessage';
 
 export const columns: BasicColumn[] = [
   {
@@ -28,23 +26,23 @@ export const columns: BasicColumn[] = [
         checked: record.status === 0,
         checkedChildren: '已启用',
         unCheckedChildren: '已禁用',
-        loading: record.pendingStatus,
-        onChange(checked: boolean) {
-          record.pendingStatus = true;
-          const newStatus = checked ? 0 : 1;
-          const { createMessage } = useMessage();
-          updateRoleStatus(record.id, { status: newStatus })
-            .then(() => {
-              record.status = newStatus;
-              createMessage.success(`已成功修改角色状态`);
-            })
-            .catch(() => {
-              createMessage.error('修改角色状态失败');
-            })
-            .finally(() => {
-              record.pendingStatus = false;
-            });
-        },
+        loading: record.pendingStatus
+      });
+    },
+  },
+  {
+    title: '默认角色',
+    dataIndex: 'isDefault',
+    width: 180,
+    customRender: ({ record }) => {
+      if (!Reflect.has(record, 'pendingStatus')) {
+        record.pendingStatus = false;
+      }
+      return h(Switch, {
+        checked: record.isDefault === 1,
+        checkedChildren: '是',
+        unCheckedChildren: '否',
+        loading: record.pendingStatus
       });
     },
   },
@@ -106,6 +104,19 @@ export const formSchema: FormSchema[] = [
       options: [
         { label: '启用', value: 0 },
         { label: '停用', value: 1 },
+      ],
+    },
+    required: true,
+  },
+  {
+    field: 'isDefault',
+    label: '默认角色',
+    component: 'RadioButtonGroup',
+    defaultValue: 0,
+    componentProps: {
+      options: [
+        { label: '否', value: 0 },
+        { label: '是', value: 1 },
       ],
     },
     required: true,

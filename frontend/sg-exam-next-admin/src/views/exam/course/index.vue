@@ -2,23 +2,26 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate"> 新增课程 </a-button>
+        <a-button v-if="hasPermission(['exam:course:add'])" type="primary" @click="handleCreate"> 新增课程 </a-button>
       </template>
       <template #action="{ record }">
         <TableAction
           :actions="[
             {
               icon: 'ant-design:upload-outlined',
-               tooltip: '上传图片',
+              tooltip: '上传图片',
               onClick: handleUpload.bind(null, record),
+              auth: 'exam:course:edit'
             },
             {
               icon: 'clarity:note-edit-line',
               onClick: handleEdit.bind(null, record),
+              auth: 'exam:course:edit'
             },
             {
               icon: 'ant-design:delete-outlined',
               color: 'error',
+              auth: 'exam:course:del',
               popConfirm: {
                 title: '是否确认删除',
                 confirm: handleDelete.bind(null, record),
@@ -40,11 +43,13 @@ import { useModal } from '/@/components/Modal';
 import CourseModal from './CourseModal.vue';
 import CourseImageModal from "./CourseImageModal.vue";
 import { columns, searchFormSchema } from './course.data';
+import { usePermission } from '/@/hooks/web/usePermission';
 
 export default defineComponent({
   name: 'CourseManagement',
   components: { BasicTable, CourseModal, CourseImageModal, TableAction },
   setup() {
+    const { hasPermission } = usePermission();
     const [registerModal, { openModal }] = useModal();
     const [registerImageModal, { openModal: openImageModal }] = useModal();
     const [registerTable, { reload }] = useTable({
@@ -96,6 +101,7 @@ export default defineComponent({
       reload();
     }
     return {
+      hasPermission,
       registerTable,
       registerModal,
       registerImageModal,

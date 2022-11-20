@@ -1,9 +1,9 @@
 package com.github.tangyi.user.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.model.Log;
 import com.github.tangyi.common.model.R;
-import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.user.service.LogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,10 +38,10 @@ public class LogController extends BaseController {
 
 	@GetMapping("logList")
 	@Operation(summary = "获取日志列表")
-	public PageInfo<Log> list(@RequestParam Map<String, Object> condition,
+	public R<PageInfo<Log>> list(@RequestParam Map<String, Object> condition,
 			@RequestParam(value = PAGE, required = false, defaultValue = PAGE_DEFAULT) int pageNum,
 			@RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize) {
-		return logService.findPage(condition, pageNum, pageSize);
+		return R.success(logService.findPage(condition, pageNum, pageSize));
 	}
 
 	@PostMapping
