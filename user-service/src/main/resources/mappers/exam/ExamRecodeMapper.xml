@@ -68,7 +68,7 @@
     </select>
 
     <select id="findExaminationRecordCountByDate" resultType="java.lang.Integer">
-        SELECT * FROM exam_examination_record a  WHERE a.is_deleted = 0 AND <![CDATA[ a.create_time >= #{start} ]]> AND <![CDATA[ a.create_time <= #{end} ]]>
+        SELECT COUNT(1) FROM exam_examination_record a  WHERE a.is_deleted = 0 AND <![CDATA[ a.create_time >= #{start} ]]> AND <![CDATA[ a.create_time <= #{end} ]]>
     </select>
 
     <delete id="delete">
