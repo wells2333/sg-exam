@@ -32,12 +32,12 @@
 
 |   平台   |      二维码     |   说明  |
 | --------- | -------- | -------- |
-|  小程序  |  <img src="https://gitee.com/wells2333/sg-exam-next/raw/master/docs/images/wx.jpg" width="160"/> | 小程序体验 |
-|  公众号  |  <img src="https://gitee.com/wells2333/sg-exam-next/raw/master/docs/images/wxapp.jpeg" height="130"/> | 发布部署文档、源码解析相关的文章 |
+|  小程序  |  <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wx.jpg" width="160"/> | 小程序体验 |
+|  公众号  |  <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp.jpeg" height="130"/> | 发布部署文档、源码解析相关的文章 |
 
 ## 系统架构
 
-<img src="https://gitee.com/wells2333/sg-exam-next/raw/master/docs/images/framework.png"/>
+<img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/framework.png"/>
 
 ## 功能概述
 
@@ -53,27 +53,27 @@
 
 <table>
     <tr>
-        <td><img src="https://gitee.com/wells2333/sg-exam-next/raw/master/docs/images/web_1.png" height="200"/></td>
-        <td><img src="https://gitee.com/wells2333/sg-exam-next/raw/master/docs/images/web_2.png" height="200"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/web_1.png" height="200"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/web_2.png" height="200"/></td>
     </tr>
     <tr>
-        <td><img src="https://gitee.com/wells2333/sg-exam-next/raw/master/docs/images/web_home.png" height="200"/></td>
-        <td><img src="https://gitee.com/wells2333/sg-exam-next/raw/master/docs/images/admin_dashboard.png" height="200"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/web_home.png" height="200"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/admin_dashboard.png" height="200"/></td>
     </tr>
     <tr>
-        <td><img src="https://gitee.com/wells2333/sg-exam-next/raw/master/docs/images/admin_exam_manage.png" height="200"/></td>
-        <td><img src="https://gitee.com/wells2333/sg-exam-next/raw/master/docs/images/admin_subject_detail.png" height="200"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/admin_exam_manage.png" height="200"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/admin_subject_detail.png" height="200"/></td>
     </tr>
     <tr>
         <td>
-           <img src="https://gitee.com/wells2333/sg-exam-next/raw/master/docs/images/wxapp_1.png" height="200"/>
-           <img src="https://gitee.com/wells2333/sg-exam-next/raw/master/docs/images/wxapp_2.jpeg" height="200"/>
-           <img src="https://gitee.com/wells2333/sg-exam-next/raw/master/docs/images/wxapp_3.png" height="200"/>
-           <img src="https://gitee.com/wells2333/sg-exam-next/raw/master/docs/images/wxapp_5.jpeg" height="200"/>
-           <img src="https://gitee.com/wells2333/sg-exam-next/raw/master/docs/images/wxapp_4.jpeg" height="200"/>
+           <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp_1.png" height="200"/>
+           <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp_2.jpeg" height="200"/>
+           <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp_3.png" height="200"/>
+           <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp_5.jpeg" height="200"/>
+           <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp_4.jpeg" height="200"/>
         </td>
         <td> 
-           <img src="https://gitee.com/wells2333/sg-exam-next/raw/master/docs/images/monitor_1.png" height="200"/>
+           <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/monitor_1.png" height="200"/>
         </td>
     </tr>
 </table>
@@ -98,18 +98,18 @@
 
 交流QQ群：
 
-<img src="https://gitee.com/wells2333/sg-exam-next/raw/master/docs/images/qq.png" width="160"/>
+<img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/qq.png" width="160"/>
 
-<img src="https://gitee.com/wells2333/sg-exam-next/raw/master/docs/images/qq_new.png" width="160"/>
+<img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/qq_new.png" width="160"/>
 
-<img src="https://gitee.com/wells2333/sg-exam-next/raw/master/docs/images/qq_3.png" width="160"/>
+<img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/qq_3.png" width="160"/>
 
 ## 请作者喝咖啡
 
 如果您觉得有帮助，请点右上角 ⭐️ "Star" 或者**微信扫一扫**支持一下，谢谢！
 
-<img src="https://gitee.com/wells2333/sg-exam-next/raw/master/docs/images/wechat.png" width="160"/>
+<img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wechat.png" width="160"/>
 
 ## License
 
-[Apache License 2.0](https://gitee.com/wells2333/sg-exam-next/blob/master/LICENSE)
+[Apache License 2.0](https://gitee.com/wells2333/sg-exam/blob/master/LICENSE)
