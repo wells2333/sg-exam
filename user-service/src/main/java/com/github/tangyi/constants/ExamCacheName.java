@@ -49,4 +49,8 @@ public interface ExamCacheName {
 
 	String SUBJECT_FAVORITES = "subject:favorites";
 
+	String CHAPTER = "chapter";
+
+	String SECTION = "section";
+
 }

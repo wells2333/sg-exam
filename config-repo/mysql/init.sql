@@ -35,7 +35,7 @@ CREATE TABLE `exam_answer` (
 -- ----------------------------
 DROP TABLE IF EXISTS `exam_course`;
 CREATE TABLE `exam_course` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
   `course_name` varchar(128) NOT NULL DEFAULT '' COMMENT '课程名称',
   `college` varchar(128) DEFAULT NULL COMMENT '学院',
   `major` varchar(128) DEFAULT NULL COMMENT '专业',
@@ -47,9 +47,11 @@ CREATE TABLE `exam_course` (
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
   `tenant_code` varchar(16) NOT NULL COMMENT '租户编号',
-  `image_id` bigint(20) DEFAULT NULL COMMENT '图片ID',
+  `image_id` bigint DEFAULT NULL COMMENT '图片ID',
+  `cate_name` varchar(255) DEFAULT NULL COMMENT '类别名称',
+  `tags` varchar(255) DEFAULT NULL COMMENT '标签',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='课程信息';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='课程信息';
 
 -- ----------------------------
 -- Table structure for exam_examination

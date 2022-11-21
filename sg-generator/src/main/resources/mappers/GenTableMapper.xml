@@ -55,24 +55,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<sql id="selectGenTableVo">
         select table_id, table_name, table_comment, sub_table_name, sub_table_fk_name, class_name, tpl_category, package_name, module_name, business_name, function_name, function_author, gen_type, gen_path, options, creator, create_time, operator, update_time, remark from gen_table
     </sql>
-    
-    <select id="selectGenTableList" parameterType="com.github.tangyi.generator.model.GenTable" resultMap="GenTableResult">
-		<include refid="selectGenTableVo"/>
-		<where>
-			<if test="tableName != null and tableName != ''">
-				AND lower(table_name) like lower(concat('%', #{tableName}, '%'))
-			</if>
-			<if test="tableComment != null and tableComment != ''">
-				AND lower(table_comment) like lower(concat('%', #{tableComment}, '%'))
-			</if>
-			<if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
-				AND date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
-			</if>
-			<if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
-				AND date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
-			</if>
-		</where>
-	</select>
+
+    <select id="findPage" resultMap="GenTableResult">
+        SELECT * FROM gen_table where 1 = 1
+        <if test="params != null">
+            <if test="params.tableName != null and params.tableName != ''">
+                and (table_name like CONCAT('%',#{params.tableName},'%'))
+            </if>
+        </if>
+        order by create_time desc
+    </select>
 
 	<select id="selectDbTableList" parameterType="com.github.tangyi.generator.model.GenTable" resultMap="GenTableResult">
 		select table_name, table_comment, create_time, update_time from information_schema.tables

@@ -16,14 +16,6 @@ import java.util.List;
 public interface GenTableMapper extends CrudMapper<GenTable> {
 
 	/**
-	 * 查询业务列表
-	 *
-	 * @param genTable 业务信息
-	 * @return 业务集合
-	 */
-	List<GenTable> selectGenTableList(GenTable genTable);
-
-	/**
 	 * 查询据库列表
 	 *
 	 * @param genTable 业务信息

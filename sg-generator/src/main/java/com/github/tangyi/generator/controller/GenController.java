@@ -8,11 +8,13 @@ import com.github.tangyi.common.model.R;
 import com.github.tangyi.generator.model.GenTable;
 import com.github.tangyi.generator.model.GenTableColumn;
 import com.github.tangyi.generator.service.IGenTableColumnService;
-import com.github.tangyi.generator.service.IGenTableService;
+import com.github.tangyi.generator.service.impl.GenTableServiceImpl;
 import com.google.common.collect.Maps;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,29 +31,26 @@ import java.util.Map;
  * @author tangyi
  * @date 2022/7/18 4:01 下午
  */
+@Tag(name = "代码生成Table管理")
+@AllArgsConstructor
 @RestController
 @RequestMapping("/tool/gen")
 public class GenController extends BaseController {
 
-	@Autowired
-	private IGenTableService genTableService;
+	private final GenTableServiceImpl genTableService;
 
-	@Autowired
-	private IGenTableColumnService genTableColumnService;
+	private final IGenTableColumnService genTableColumnService;
 
-	/**
-	 * 查询代码生成列表
-	 */
 	@GetMapping("/list")
-	public R<PageInfo<GenTable>> genList(GenTable genTable) {
-		List<GenTable> list = genTableService.selectGenTableList(genTable);
-		return R.success(new PageInfo<>(list));
+	@Operation(summary = "获取Table列表")
+	public R<PageInfo<GenTable>> genList(@RequestParam Map<String, Object> params,
+			@RequestParam(value = PAGE, required = false, defaultValue = PAGE_DEFAULT) int pageNum,
+			@RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize) {
+		return R.success(genTableService.findPage(params, pageNum, pageSize));
 	}
 
-	/**
-	 * 修改代码生成业务
-	 */
 	@GetMapping(value = "/{talbleId}")
+	@Operation(summary = "修改代码生成业务")
 	public R<Map<String, Object>> getInfo(@PathVariable Long talbleId) {
 		GenTable table = genTableService.selectGenTableById(talbleId);
 		List<GenTable> tables = genTableService.selectGenTableAll();
@@ -63,18 +62,14 @@ public class GenController extends BaseController {
 		return R.success(map);
 	}
 
-	/**
-	 * 查询数据库列表
-	 */
 	@GetMapping("/db/list")
+	@Operation(summary = "查询数据库列表")
 	public R<PageInfo<GenTable>> dataList(GenTable genTable) {
 		List<GenTable> list = genTableService.selectDbTableList(genTable);
 		return R.success(new PageInfo<>(list));
 	}
 
-	/**
-	 * 查询数据表字段列表
-	 */
+	@Operation(summary = "查询数据表字段列表")
 	@GetMapping(value = "/column/{talbleId}")
 	public R<PageInfo<GenTableColumn>> columnList(Long tableId) {
 		PageInfo<GenTableColumn> dataInfo = new PageInfo<>();
@@ -84,10 +79,8 @@ public class GenController extends BaseController {
 		return R.success(dataInfo);
 	}
 
-	/**
-	 * 导入表结构（保存）
-	 */
 	@GetMapping("/importTable")
+	@Operation(summary = "导入表结构")
 	public R<Boolean> importTableSave(@RequestParam String table, @RequestParam String comment) {
 		genTableService.importGenTable(table, comment);
 		return R.success();
@@ -109,31 +102,25 @@ public class GenController extends BaseController {
 		return R.success();
 	}
 
-	/**
-	 * 删除代码生成
-	 */
-	@DeleteMapping("/{tableIds}")
-	public R<Boolean> remove(@PathVariable Long[] tableIds) {
-		genTableService.deleteGenTableByIds(tableIds);
+	@DeleteMapping("/{tableId}")
+	@Operation(summary = "删除代码生成", description = "根据ID删除代码生成")
+	public R<Boolean> delete(@PathVariable Long tableId) {
+		genTableService.deleteGenTableById(tableId);
 		return R.success(Boolean.TRUE);
 	}
 
-	/**
-	 * 预览代码
-	 */
 	@GetMapping("/preview/{tableId}")
+	@Operation(summary = "预览代码")
 	public R<Map<String, String>> preview(@PathVariable("tableId") Long tableId) throws IOException {
 		Map<String, String> dataMap = genTableService.previewCode(tableId);
 		return R.success(dataMap);
 	}
 
-	/**
-	 * 生成代码（下载方式）
-	 */
 	@GetMapping("/download/{tableName}")
+	@Operation(summary = "生成代码（下载方式）")
 	public void download(HttpServletResponse response, @PathVariable("tableName") String tableName) throws IOException {
 		byte[] data = genTableService.downloadCode(tableName);
-		genCode(response, data);
+		genCode(tableName, response, data);
 	}
 
 	/**
@@ -155,23 +142,13 @@ public class GenController extends BaseController {
 	}
 
 	/**
-	 * 批量生成代码
-	 */
-	@GetMapping("/batchGenCode")
-	public void batchGenCode(HttpServletResponse response, String tables) throws IOException {
-		String[] tableNames = Convert.toStrArray(tables);
-		byte[] data = genTableService.downloadCode(tableNames);
-		genCode(response, data);
-	}
-
-	/**
 	 * 生成zip文件
 	 */
-	private void genCode(HttpServletResponse response, byte[] data) throws IOException {
+	private void genCode(String tableName, HttpServletResponse response, byte[] data) throws IOException {
 		response.reset();
 		response.addHeader("Access-Control-Allow-Origin", "*");
 		response.addHeader("Access-Control-Expose-Headers", "Content-Disposition");
-		response.setHeader("Content-Disposition", "attachment; filename=\"ruoyi.zip\"");
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + tableName + ".zip\"");
 		response.addHeader("Content-Length", "" + data.length);
 		response.setContentType("application/octet-stream; charset=UTF-8");
 		IOUtils.write(data, response.getOutputStream());

@@ -2,6 +2,7 @@ package com.github.tangyi.generator.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.tangyi.common.exceptions.ServiceException;
+import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.generator.config.GenConfig;
 import com.github.tangyi.generator.constants.GenConstants;
@@ -29,10 +30,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -46,7 +44,7 @@ import java.util.zip.ZipOutputStream;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class GenTableServiceImpl implements IGenTableService {
+public class GenTableServiceImpl extends CrudService<GenTableMapper, GenTable> implements IGenTableService {
 
 	private final GenTableMapper genTableMapper;
 
@@ -65,17 +63,6 @@ public class GenTableServiceImpl implements IGenTableService {
 		GenTable genTable = genTableMapper.selectGenTableById(id);
 		setTableFromOptions(genTable);
 		return genTable;
-	}
-
-	/**
-	 * 查询业务列表
-	 *
-	 * @param genTable 业务信息
-	 * @return 业务集合
-	 */
-	@Override
-	public List<GenTable> selectGenTableList(GenTable genTable) {
-		return genTableMapper.selectGenTableList(genTable);
 	}
 
 	/**
@@ -128,15 +115,10 @@ public class GenTableServiceImpl implements IGenTableService {
 		}
 	}
 
-	/**
-	 * 删除业务对象
-	 *
-	 * @param tableIds 需要删除的数据ID
-	 * @return 结果
-	 */
 	@Override
 	@Transactional
-	public void deleteGenTableByIds(Long[] tableIds) {
+	public void deleteGenTableById(Long tableId) {
+		Long[] tableIds = Collections.singletonList(tableId).toArray(Long[]::new);
 		genTableMapper.deleteGenTableByIds(tableIds);
 		genTableColumnMapper.deleteGenTableColumnByIds(tableIds);
 	}

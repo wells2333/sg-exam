@@ -2,7 +2,8 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button v-if="hasPermission(['exam:exam:add'])" type="primary" @click="handleCreate"> 新增 </a-button>
+        <a-button v-if="hasPermission(['exam:exam:add'])" type="primary" @click="handleCreate"> 新增
+        </a-button>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -17,12 +18,6 @@
               icon: 'clarity:note-edit-line',
               tooltip: '编辑',
               onClick: handleEdit.bind(null, record),
-              auth: 'exam:exam:edit'
-            },
-            {
-              icon: 'ant-design:upload-outlined',
-              tooltip: '上传图片',
-              onClick: handleUpload.bind(null, record),
               auth: 'exam:exam:edit'
             },
             {
@@ -45,34 +40,32 @@
         />
       </template>
     </BasicTable>
-    <ExaminationDetailDrawer @register="registerDetailDrawer" />
-    <ExaminationModal @register="registerModal" @success="handleSuccess" />
-    <ExamImageModal @register="registerExamImageModal" @success="handleSuccess"/>
+    <ExaminationDetailDrawer @register="registerDetailDrawer"/>
+    <ExaminationModal width="80%" @register="registerModal" @success="handleSuccess"/>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { BasicTable, useTable, TableAction } from '/@/components/Table';
-import { deleteExamination, getExaminationList } from '/@/api/exam/examination';
-import { useModal } from '/@/components/Modal';
+import {defineComponent} from 'vue';
+import {BasicTable, TableAction, useTable} from '/@/components/Table';
+import {deleteExamination, getExaminationList} from '/@/api/exam/examination';
+import {useModal} from '/@/components/Modal';
 import ExaminationModal from './ExaminationModal.vue';
 import ExaminationDetailDrawer from './ExaminationDetail.vue';
-import ExamImageModal from "./ExamImageModal.vue";
-import { columns, searchFormSchema } from './examination.data';
-import { useDrawer } from "/@/components/Drawer";
+import {columns, searchFormSchema} from './examination.data';
+import {useDrawer} from "/@/components/Drawer";
 import {useGo} from "/@/hooks/web/usePage";
-import { usePermission } from '/@/hooks/web/usePermission';
+import {usePermission} from '/@/hooks/web/usePermission';
 
 export default defineComponent({
   name: 'ExaminationManagement',
-  components: { BasicTable, ExaminationModal, ExaminationDetailDrawer, TableAction, ExamImageModal },
+  components: {BasicTable, ExaminationModal, ExaminationDetailDrawer, TableAction},
   setup() {
-    const { hasPermission } = usePermission();
-    const [registerDetailDrawer, { openDrawer: openDetailDrawer }] = useDrawer();
-    const [registerModal, { openModal }] = useModal();
-    const [registerExamImageModal, { openModal: openExamImageModal }] = useModal();
+    const {hasPermission} = usePermission();
+    const [registerDetailDrawer, {openDrawer: openDetailDrawer}] = useDrawer();
+    const [registerModal, {openModal}] = useModal();
+    const [registerExamImageModal] = useModal();
     const go = useGo();
-    const [registerTable, { reload }] = useTable({
+    const [registerTable, {reload}] = useTable({
       title: '考试列表',
       api: getExaminationList,
       columns,
@@ -91,28 +84,33 @@ export default defineComponent({
         width: 200,
         title: '操作',
         dataIndex: 'action',
-        slots: { customRender: 'action' },
+        slots: {customRender: 'action'},
         fixed: undefined,
       },
     });
+
     function handleView(record: Recordable) {
-      openDetailDrawer(true, { record });
+      openDetailDrawer(true, {record});
     }
+
     function handleCreate() {
       openModal(true, {
         isUpdate: false,
       });
     }
+
     function handleEdit(record: Recordable) {
       openModal(true, {
         record,
         isUpdate: true,
       });
     }
+
     async function handleDelete(record: Recordable) {
       await deleteExamination(record.id);
       await reload();
     }
+
     function handleSuccess() {
       reload();
     }
@@ -120,9 +118,7 @@ export default defineComponent({
     function handleSubjects(record: Recordable) {
       go('/exam/examination_subjects/' + record.id);
     }
-    function handleUpload(record: Recordable) {
-      openExamImageModal(true, record);
-    }
+
     return {
       hasPermission,
       registerTable,
@@ -134,8 +130,7 @@ export default defineComponent({
       handleEdit,
       handleSubjects,
       handleDelete,
-      handleSuccess,
-      handleUpload,
+      handleSuccess
     };
   },
 });

@@ -67,8 +67,6 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 
 	private final ExamFavoriteService examFavoriteService;
 
-	private final ExamExaminationFavoritesService favoritesService;
-
 	@Override
 	@Cacheable(value = ExamCacheName.EXAMINATION, key = "#id")
 	public Examination get(Long id) {
@@ -91,7 +89,9 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		}
 		examination.setCommonValue();
 		// 初始化图片
-		examination.setImageId(qiNiuService.createRandomImage(Group.DEFAULT));
+		if (examination.getImageId() == null) {
+			examination.setImageId(qiNiuService.createRandomImage(Group.DEFAULT));
+		}
 		return super.insert(examination);
 	}
 

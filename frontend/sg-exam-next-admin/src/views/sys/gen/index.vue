@@ -2,69 +2,62 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button v-if="hasPermission(['exam:course:add'])" type="primary" @click="handleCreate"> 新增课程 </a-button>
+        <a-button v-if="hasPermission(['sys:gen:add'])" type="primary" @click="handleCreate"> 新增 </a-button>
       </template>
       <template #action="{ record }">
         <TableAction
           :actions="[
             {
-              icon: 'ant-design:align-right-outlined',
-              tooltip: '章节管理',
-              onClick: handleEditChapter.bind(null, record),
-              auth: 'exam:course:edit'
-            },
-            {
-              icon: 'clarity:note-edit-line',
-              tooltip: '编辑',
-              onClick: handleEdit.bind(null, record),
-              auth: 'exam:course:edit'
-            },
+              icon: 'ant-design:arrow-down-outlined',
+              auth: 'sys:gen:edit',
+              popConfirm: {
+                title: '生成代码',
+                confirm: handleGen.bind(null, record),
+                auth: 'sys:gen:edit'
+              },
+           },
             {
               icon: 'ant-design:delete-outlined',
-               tooltip: '删除',
               color: 'error',
-              auth: 'exam:course:del',
+              auth: 'sys:gen:del',
               popConfirm: {
                 title: '是否确认删除',
                 confirm: handleDelete.bind(null, record),
+                auth: 'sys:gen:del',
               },
             },
           ]"
         />
       </template>
     </BasicTable>
-    <CourseModal @register="registerModal" @success="handleSuccess" />
-    <CourseImageModal @register="registerImageModal" @success="handleUploadSuccess"/>
+    <GenModal @register="registerModal" @success="handleSuccess" />
   </div>
 </template>
 <script lang="ts">
-import {defineComponent} from 'vue';
+import { defineComponent } from 'vue';
 import { BasicTable, useTable, TableAction } from '/@/components/Table';
-import { getCourseList, deleteCourse } from '/@/api/exam/course';
+import {getGenList, genCode, deleteGen} from '/@/api/sys/gen';
 import { useModal } from '/@/components/Modal';
-import CourseModal from './CourseModal.vue';
-import CourseImageModal from "./CourseImageModal.vue";
-import { columns, searchFormSchema } from './course.data';
+import GenModal from './GenModal.vue';
+import { columns, searchFormSchema } from './gen.data';
+import {useMessage} from "/@/hooks/web/useMessage";
 import { usePermission } from '/@/hooks/web/usePermission';
-import {useGo} from "/@/hooks/web/usePage";
-
 export default defineComponent({
-  name: 'CourseManagement',
-  components: { BasicTable, CourseModal, CourseImageModal, TableAction },
+  name: 'GenManagement',
+  components: { BasicTable, GenModal, TableAction },
   setup() {
     const { hasPermission } = usePermission();
     const [registerModal, { openModal }] = useModal();
-    const [registerImageModal] = useModal();
-    const go = useGo();
+    const { createMessage } = useMessage();
     const [registerTable, { reload }] = useTable({
-      title: '课程列表',
-      api: getCourseList,
+      title: 'Table列表',
+      api: getGenList,
       columns,
       formConfig: {
         labelWidth: 120,
         schemas: searchFormSchema,
       },
-      pagination: false,
+      pagination: true,
       striped: false,
       useSearchForm: true,
       showTableSetting: true,
@@ -79,42 +72,30 @@ export default defineComponent({
         fixed: undefined,
       },
     });
-
     function handleCreate() {
       openModal(true, {
         isUpdate: false,
       });
     }
-    function handleEdit(record: Recordable) {
-      openModal(true, {
-        record,
-        isUpdate: true,
-      });
-    }
-    function handleEditChapter(record: Recordable) {
-      go('/exam/course_chapter/' + record.id);
+    function handleGen(record: Recordable) {
+      genCode(record.tableName);
     }
     async function handleDelete(record: Recordable) {
-      await deleteCourse(record.id);
+      await deleteGen(record.tableId);
       await reload();
     }
     function handleSuccess() {
-      reload();
-    }
-    function handleUploadSuccess() {
+      createMessage.success('操作成功');
       reload();
     }
     return {
       hasPermission,
       registerTable,
       registerModal,
-      registerImageModal,
       handleCreate,
-      handleEdit,
-      handleEditChapter,
+      handleGen,
       handleDelete,
       handleSuccess,
-      handleUploadSuccess,
     };
   },
 });

@@ -14,14 +14,6 @@ import java.util.Map;
 public interface IGenTableService {
 
 	/**
-	 * 查询业务列表
-	 *
-	 * @param genTable 业务信息
-	 * @return 业务集合
-	 */
-	List<GenTable> selectGenTableList(GenTable genTable);
-
-	/**
 	 * 查询据库列表
 	 *
 	 * @param genTable 业务信息
@@ -60,13 +52,7 @@ public interface IGenTableService {
 	 */
 	void updateGenTable(GenTable genTable, String options);
 
-	/**
-	 * 删除业务信息
-	 *
-	 * @param tableIds 需要删除的表数据ID
-	 * @return 结果
-	 */
-	void deleteGenTableByIds(Long[] tableIds);
+	void deleteGenTableById(Long tableId);
 
 	/**
 	 * 导入表结构

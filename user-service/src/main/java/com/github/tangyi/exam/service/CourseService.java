@@ -52,7 +52,10 @@ public class CourseService extends CrudService<CourseMapper, Course> {
 	@Override
 	@Transactional
 	public int insert(Course course) {
-		course.setImageId(qiNiuService.createRandomImage(Group.DEFAULT));
+		// 没有上传图片，使用默认图片
+		if (course.getImageId() == null) {
+			course.setImageId(qiNiuService.createRandomImage(Group.DEFAULT));
+		}
 		return super.insert(course);
 	}
 

@@ -35,9 +35,6 @@ public class ${ClassName}Controller extends BaseController {
 
     private final ${ClassName}Service ${className}Service;
 
-    /**
-     * 查询${functionName}列表
-     */
     @GetMapping("/list")
 	@Operation(summary = "查询${functionName}列表")
     public R<PageInfo<${ClassName}>> list(@RequestParam Map<String, Object> condition,
@@ -46,18 +43,12 @@ public class ${ClassName}Controller extends BaseController {
 	    return R.success(${className}Service.findPage(condition, pageNum, pageSize));
     }
 
-    /**
-     * 获取${functionName}详细信息
-     */
     @GetMapping(value = "/{${pkColumn.javaField}}")
 	@Operation(summary = "获取${functionName}详细信息")
     public R<${ClassName}> get(@PathVariable("${pkColumn.javaField}") ${pkColumn.javaType} ${pkColumn.javaField}) {
         return R.success(${className}Service.get(${pkColumn.javaField}));
     }
 
-    /**
-     * 新增${functionName}
-     */
     @PostMapping
 	@Operation(summary = "新增${functionName}")
 	@SgLog(value = "${functionName}", operationType = OperationType.INSERT)
@@ -66,9 +57,6 @@ public class ${ClassName}Controller extends BaseController {
         return R.success(${className}Service.insert(${className}) > 0);
     }
 
-    /**
-     * 修改${functionName}
-     */
     @PutMapping("{${pkColumn.javaField}}")
 	@Operation(summary = "修改${functionName}")
 	@SgLog(value = "${functionName}", operationType = OperationType.UPDATE)
@@ -77,9 +65,6 @@ public class ${ClassName}Controller extends BaseController {
         return R.success(${className}Service.update(${className}) > 0);
     }
 
-    /**
-     * 删除${functionName}
-     */
 	@DeleteMapping("{${pkColumn.javaField}}")
 	@Operation(summary = "删除${functionName}")
 	@SgLog(value = "${functionName}", operationType = OperationType.DELETE)

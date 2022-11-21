@@ -1,8 +1,5 @@
-import {
-  CourseListItem,
-  CourseListGetResultModel,
-} from './model/systemModel';
-import { defHttp } from '/@/utils/http/axios';
+import {CourseListGetResultModel, CourseListItem,} from './model/systemModel';
+import {defHttp} from '/@/utils/http/axios';
 import {ExamService} from '/@/api/services';
 
 const Api = {
@@ -12,10 +9,10 @@ const Api = {
 }
 
 export const getCourseList = (params?: CourseListItem) =>
-  defHttp.get<CourseListGetResultModel>({ url: Api.CourseList, params });
+  defHttp.get<CourseListGetResultModel>({url: Api.CourseList, params});
 
 export const getAllCourses = (params?: CourseListItem) =>
-  defHttp.get<CourseListGetResultModel>({ url: Api.AllCourses, params });
+  defHttp.get<CourseListGetResultModel>({url: Api.AllCourses, params});
 
 export const createCourse = (params?: CourseListItem
 ) => {

@@ -1,4 +1,4 @@
-package com.github.tangyi.exam.service.subject.media;
+package com.github.tangyi.exam.service.media;
 
 import com.github.tangyi.api.user.model.Attachment;
 import com.github.tangyi.common.utils.SysUtil;
@@ -17,18 +17,25 @@ import java.io.IOException;
  * @date 2022/11/8 8:40 下午
  */
 @Slf4j
-@AllArgsConstructor
 @Service
-public class SubjectMediaService {
+@AllArgsConstructor
+public class ExamMediaService {
 
 	private final QiNiuService qiNiuService;
 
 	public Attachment uploadVideo(MultipartFile file) {
+		return upload(file, AttachTypeEnum.EXAM_VIDEO);
+	}
+
+	public Attachment uploadImage(MultipartFile file) {
+		return upload(file, AttachTypeEnum.EXAM_IMAGE);
+	}
+
+	public Attachment upload(MultipartFile file, AttachTypeEnum type) {
 		try {
-			return qiNiuService.upload(file, AttachTypeEnum.EXAM_VIDEO.getValue(), SysUtil.getUser(),
-					SysUtil.getTenantCode());
+			return qiNiuService.upload(file, type.getValue(), SysUtil.getUser(), SysUtil.getTenantCode());
 		} catch (IOException e) {
-			log.error("upload video failed", e);
+			log.error("upload exam media failed, type: {}", type.getDesc(), e);
 		}
 		return null;
 	}

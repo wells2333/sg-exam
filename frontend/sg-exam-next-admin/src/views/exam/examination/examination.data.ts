@@ -4,6 +4,8 @@ import { h } from 'vue';
 import {Image, Tag} from 'ant-design-vue';
 import { getAllCourses } from "/@/api/exam/course";
 import {DescItem} from "/@/components/Description";
+import {BasicUpload} from "/@/components/Upload";
+import {uploadImage} from "/@/api/exam/examMedia";
 
 export const examColor = {
   0: 'green',
@@ -20,18 +22,13 @@ export const columns: BasicColumn[] = [
     align: 'left',
   },
   {
-    title: '考试类型',
+    title: '类型',
     dataIndex: 'type',
     width: 80,
     customRender: ({ record }) => {
       const color = examColor[record.type];
       return h(Tag, { color: color }, () => record.typeLabel);
     },
-  },
-  {
-    title: '所属课程',
-    dataIndex: 'course.courseName',
-    width: 100,
   },
   {
     title: '图片',
@@ -45,13 +42,8 @@ export const columns: BasicColumn[] = [
     },
   },
   {
-    title: '排序',
-    dataIndex: 'sort',
-    width: 50,
-  },
-  {
-    title: '标签',
-    dataIndex: 'tags',
+    title: '课程',
+    dataIndex: 'course.courseName',
     width: 100,
   },
   {
@@ -62,9 +54,14 @@ export const columns: BasicColumn[] = [
       const status = record.status;
       const enable = ~~status === 0;
       const color = enable ? 'green' : 'red';
-      const text = enable ? '启用' : '停用';
+      const text = enable ? '已发布' : '草稿';
       return h(Tag, { color: color }, () => text);
     },
+  },
+  {
+    title: '标签',
+    dataIndex: 'tags',
+    width: 100,
   },
   {
     title: '开始时间',
@@ -125,6 +122,7 @@ export const formSchema: FormSchema[] = [
       ],
     },
     required: true,
+    colProps: { span: 12 },
   },
   {
     field: 'answerType',
@@ -138,12 +136,67 @@ export const formSchema: FormSchema[] = [
       ],
     },
     required: true,
+    colProps: { span: 12 },
+  },
+  {
+    field: 'status',
+    label: '状态',
+    component: 'RadioButtonGroup',
+    defaultValue: 0,
+    componentProps: {
+      options: [
+        { label: '已发布', value: 0 },
+        { label: '草稿', value: 1 },
+      ],
+    },
+    required: true,
+    colProps: { span: 12 },
+  },
+  {
+    field: 'sort',
+    label: '排序',
+    component: 'InputNumber',
+    defaultValue: 100,
+    required: true,
+    colProps: { span: 12 },
   },
   {
     field: 'totalScore',
     label: '总分',
     component: 'InputNumber',
+    defaultValue: 100,
     required: true,
+    colProps: { span: 12 },
+  },
+  {
+    label: '考试图片',
+    field: 'imageId',
+    component: 'Input',
+    render: ({ model, field }) => {
+      return h(BasicUpload, {
+        value: model[field],
+        maxSize: 20,
+        maxNumber: 1,
+        emptyHidePreview: true,
+        api: uploadImage,
+        onChange: (value) => {
+          if (value && value.length > 0) {
+            model[field] = value[0].id;
+          }
+        },
+      });
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'examTime',
+    label: '考试时间',
+    component: 'RangePicker',
+    componentProps: {
+      'show-time': true,
+      valueFormat: 'YYYY-MM-DD HH:mm:ss'
+    },
+    colProps: { span: 12 },
   },
   {
     field: 'courseId',
@@ -154,15 +207,7 @@ export const formSchema: FormSchema[] = [
       labelField: 'courseName',
       valueField: 'id',
     },
-  },
-  {
-    field: 'examTime',
-    label: '考试时间',
-    component: 'RangePicker',
-    componentProps: {
-      'show-time': true,
-      valueFormat: 'YYYY-MM-DD HH:mm:ss'
-    }
+    colProps: { span: 12 },
   },
   {
     field: 'tags',
@@ -172,25 +217,7 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       placeholder: '多个标签用逗号分隔',
     },
-  },
-  {
-    field: 'sort',
-    label: '排序',
-    component: 'InputNumber',
-    required: true,
-  },
-  {
-    field: 'status',
-    label: '状态',
-    component: 'RadioButtonGroup',
-    defaultValue: 0,
-    componentProps: {
-      options: [
-        { label: '启用', value: 0 },
-        { label: '停用', value: 1 },
-      ],
-    },
-    required: true,
+    colProps: { span: 12 },
   },
   {
     label: '注意事项',
