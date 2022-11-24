@@ -2,29 +2,28 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button v-if="hasPermission(['exam:course:edit'])" type="primary" @click="handleCreate"> 新增
-        </a-button>
+        <a-button v-if="hasPermission(['exam:course:edit'])" type="primary" @click="handleCreate"> 新增 </a-button>
       </template>
       <template #action="{ record }">
         <TableAction
           :actions="[
             {
-              icon: 'ant-design:eye-outlined',
-              tooltip: '查看详情',
-              onClick: handleView.bind(null, record),
-              auth: 'exam:exam:view'
+              icon: 'ant-design:align-right-outlined',
+              tooltip: '节管理',
+              onClick: handleSectionManage.bind(null, record),
+              auth: 'exam:course:edit'
             },
             {
               icon: 'clarity:note-edit-line',
               tooltip: '编辑',
               onClick: handleEdit.bind(null, record),
-              auth: 'exam:exam:edit'
+              auth: 'exam:course:edit'
             },
             {
               icon: 'ant-design:delete-outlined',
               tooltip: '删除',
               color: 'error',
-              auth: 'exam:exam:del',
+              auth: 'exam:course:del',
               popConfirm: {
                 title: '是否确认删除',
                 confirm: handleDelete.bind(null, record),
@@ -34,12 +33,13 @@
         />
       </template>
     </BasicTable>
-    <CourseChapterModal width="80%" @register="registerModal" @success="handleSuccess"/>
+    <ChapterModal width="90%" @register="registerModal" @success="handleSuccess"/>
+    <SectionModal width="90%" @register="registerSectionModal" @success="handleSuccess"></SectionModal>
   </div>
 </template>
 
 <script>
-import {defineComponent, ref} from 'vue';
+import {defineComponent, ref, unref} from 'vue';
 import {Divider} from 'ant-design-vue';
 import {useRoute} from 'vue-router';
 import {PageWrapper} from '/@/components/Page';
@@ -47,12 +47,12 @@ import {useGo} from '/@/hooks/web/usePage';
 import {getChapterList} from '/@/api/exam/chapter';
 import {Description} from '/@/components/Description/index';
 import {BasicTable, TableAction, useTable} from '/@/components/Table';
-import {answerColumns, scoreDetailSchema} from './chapter.data';
+import {searchFormSchema, columns} from './chapter.data';
 import {useMessage} from "/@/hooks/web/useMessage";
-import CourseChapterModal from './CourseChapterModal.vue';
+import ChapterModal from './ChapterModal.vue';
+import SectionModal from './SectionModal.vue';
 import {useModal} from '/@/components/Modal';
 import {usePermission} from '/@/hooks/web/usePermission';
-import {searchFormSchema} from "../course/course.data";
 
 export default defineComponent({
   name: 'CourseChapter',
@@ -62,21 +62,23 @@ export default defineComponent({
     BasicTable,
     TableAction,
     [Divider.name]: Divider,
-    CourseChapterModal
+    ChapterModal,
+    SectionModal
   },
   setup() {
     const {hasPermission} = usePermission();
     const [registerModal, {openModal}] = useModal();
+    const [registerSectionModal, {openModal: openSectionModal}] = useModal();
     const route = useRoute();
-    const go = useGo();
-    const {createMessage} = useMessage();
-    const recordId = ref(route.params?.id);
-    const currentKey = ref('detail');
-    const score = ref({});
+    const courseId = ref(route.params?.id);
     const [registerTable, {reload}] = useTable({
       title: '章列表',
-      api: getChapterList,
-      columns: answerColumns,
+      api: (arg) => {
+        const params = {courseId: unref(courseId)};
+        Object.assign(params, arg);
+        return getChapterList(params);
+      },
+      columns: columns,
       formConfig: {
         labelWidth: 120,
         schemas: searchFormSchema,
@@ -103,16 +105,37 @@ export default defineComponent({
         isUpdate: true,
       });
     }
+    function handleCreate() {
+      openModal(true, {
+        isUpdate: false,
+      });
+    }
+    function handleEdit() {
 
+    }
+    function handleDelete() {
+
+    }
+    function handleSuccess() {
+      reload();
+    }
+    function handleSectionManage(record) {
+      openSectionModal(true, {
+        record,
+        isUpdate: true,
+      });
+    }
     return {
       hasPermission,
       registerModal,
-      scoreDetailSchema,
-      score,
-      recordId,
-      currentKey,
+      registerSectionModal,
       registerTable,
-      handleView
+      handleView,
+      handleCreate,
+      handleEdit,
+      handleDelete,
+      handleSuccess,
+      handleSectionManage
     };
   },
 });

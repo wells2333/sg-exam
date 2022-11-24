@@ -134,5 +134,4 @@ public class ExaminationController extends BaseController {
 	public R<Integer> nexSubjectNo(@PathVariable Long id) {
 		return R.success(examinationService.nextSubjectNo(id));
 	}
-
 }

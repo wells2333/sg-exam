@@ -2,7 +2,7 @@ import {BasicColumn} from '/@/components/Table';
 import { DescItem } from '/@/components/Description';
 import { Tag } from 'ant-design-vue';
 
-import { subjectColor, COLOR } from '/@/views/exam/subject/subject.data';
+import { subjectColor, COLOR } from '/@/components/Subjects/subject.constant';
 import { h } from 'vue';
 
 const commonTagRender = (color: string) => (curVal) => h(Tag, { color }, () => curVal);

@@ -6,6 +6,7 @@
         <result column="title" property="title"/>
         <result column="sort" property="sort"/>
         <result column="course_id" property="courseId"/>
+        <result column="chapter_desc" property="chapterDesc"/>
         <result column="creator" property="creator"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="operator" property="operator"/>

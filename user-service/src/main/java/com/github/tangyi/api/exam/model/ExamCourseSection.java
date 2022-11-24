@@ -55,6 +55,18 @@ public class ExamCourseSection extends BaseEntity<ExamCourseSection> {
 	@Column(name = "video_id")
 	private Long videoId;
 
+	/**
+	 * 节描述
+	 */
+	@Column(name = "section_desc")
+	private String sectionDesc;
+
+	/**
+	 * 视频名称
+	 */
+	@Column(name = "video_name")
+	private String videoName;
+
 	public void setTitle(String title) {
 		this.title = title;
 	}
@@ -93,6 +105,22 @@ public class ExamCourseSection extends BaseEntity<ExamCourseSection> {
 
 	public Long getVideoId() {
 		return videoId;
+	}
+
+	public String getSectionDesc() {
+		return sectionDesc;
+	}
+
+	public void setSectionDesc(String sectionDesc) {
+		this.sectionDesc = sectionDesc;
+	}
+
+	public String getVideoName() {
+		return videoName;
+	}
+
+	public void setVideoName(String videoName) {
+		this.videoName = videoName;
 	}
 
 	@Override

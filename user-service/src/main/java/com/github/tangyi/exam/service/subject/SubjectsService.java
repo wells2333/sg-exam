@@ -74,12 +74,17 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 		List<Long> categoryIds = Lists.newArrayList();
 		List<Subjects> subjects = pageInfo.getList();
 		if (CollectionUtils.isNotEmpty(subjects)) {
-			subjects.forEach(
-					es -> Optional.ofNullable(subjectServiceFactory.service(es.getType()).getSubject(es.getSubjectId()))
-							.ifPresent(temp -> {
-								dtoList.add(temp);
-								Optional.ofNullable(temp.getCategoryId()).ifPresent(categoryIds::add);
-							}));
+			for (Subjects es : subjects) {
+				SubjectDto temp = subjectServiceFactory.service(es.getType()).getSubject(es.getSubjectId());
+				dtoList.add(temp);
+				if (temp.getCategoryId() != null) {
+					categoryIds.add(temp.getCategoryId());
+				}
+			}
+		}
+		// 按序号排序
+		if (CollectionUtils.isNotEmpty(dtoList)) {
+			dtoList = dtoList.stream().sorted(Comparator.comparing(SubjectDto::getSort)).collect(Collectors.toList());
 		}
 		initCategoryInfo(categoryIds, dtoList);
 		return PageUtil.newPageInfo(pageInfo, dtoList);
@@ -121,6 +126,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 		subjects.setSubjectId(subjectId);
 		subjects.setCategoryId(dto.getCategoryId());
 		subjects.setType(dto.getType());
+		subjects.setSort(dto.getSort());
 		insert(subjects);
 		if (dto.getExaminationId() != null) {
 			insertEs(dto, subjectId);
@@ -177,14 +183,13 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 		SubjectDto subjectDto = new SubjectDto();
 		subjectDto.setId(id);
 		Subjects subjects = this.findBySubjectId(id);
-		if (subjects != null) {
+		if (subjects != null
+				&& subjectServiceFactory.service(getSubjectType(subjectDto.getId())).physicalDeleteSubject(subjectDto)
+				> 0) {
 			this.dao.deleteByPrimaryKey(subjects.getId());
-			if (subjectServiceFactory.service(getSubjectType(subjectDto.getId())).physicalDeleteSubject(subjectDto)
-					> 0) {
-				ExaminationSubject examinationSubject = new ExaminationSubject();
-				examinationSubject.setSubjectId(subjectDto.getId());
-				return examinationSubjectService.deleteBySubjectId(examinationSubject);
-			}
+			ExaminationSubject examinationSubject = new ExaminationSubject();
+			examinationSubject.setSubjectId(subjectDto.getId());
+			return examinationSubjectService.deleteBySubjectId(examinationSubject);
 		}
 		return -1;
 	}
@@ -363,5 +368,10 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 
 	public List<Subjects> findByType(Integer type) {
 		return super.dao.findByType(type);
+	}
+
+	public Integer nextSubjectNo(Long categoryId) {
+		Integer no = this.dao.findMaxSortByCategoryId(categoryId);
+		return no == null ? 1 : no + 1;
 	}
 }

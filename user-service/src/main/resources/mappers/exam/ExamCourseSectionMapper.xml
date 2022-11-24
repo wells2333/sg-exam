@@ -8,6 +8,8 @@
         <result column="chapter_id" property="chapterId"/>
         <result column="learn_hour" property="learnHour"/>
         <result column="video_id" property="videoId"/>
+        <result column="section_desc" property="sectionDesc"/>
+        <result column="video_name" property="videoName"/>
         <result column="creator" property="creator"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="operator" property="operator"/>

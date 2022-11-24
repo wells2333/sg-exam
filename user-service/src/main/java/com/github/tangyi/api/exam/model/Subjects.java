@@ -32,4 +32,7 @@ public class Subjects extends BaseEntity<Subjects> {
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Integer type;
+
+	@Column(name = "sort")
+	private Integer sort;
 }

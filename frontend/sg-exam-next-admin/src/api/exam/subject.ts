@@ -11,7 +11,7 @@ const Api = {
 }
 
 export const getSubjectList = (params?: SubjectListItem) =>
-  defHttp.get<SubjectListGetResultModel>({ url: Api.SubjectList, params });
+  defHttp.get<SubjectListGetResultModel | undefined>({ url: Api.SubjectList, params });
 
 export const getSubjectInfo = (id: string, params?: SubjectListItem) =>
   defHttp.get<SubjectListGetResultModel>({ url: Api.Base + '/' + id, params });
@@ -45,3 +45,11 @@ export const deleteSubject = (id: string, params?: SubjectListItem
     }
   );
 };
+
+export const cateNexSubjectNo = (id?: string) => {
+  return defHttp.get<string>(
+    {
+      url: Api.Base + '/nexSubjectNo/' + id,
+    }
+  );
+}

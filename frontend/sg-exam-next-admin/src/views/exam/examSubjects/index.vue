@@ -23,6 +23,7 @@
         />
       </template>
     </BasicTable>
+    <SubjectModal @register="registerModal" @success="handleSubjectDataSuccess"></SubjectModal>
   </div>
 </template>
 <script lang="ts">
@@ -30,15 +31,16 @@ import {defineComponent, ref} from 'vue';
 import { BasicTable, useTable, TableAction } from '/@/components/Table';
 import { useModal } from '/@/components/Modal';
 import { columns, searchFormSchema } from '../subject/subject.data';
-import {useGo} from "/@/hooks/web/usePage";
 import {useRoute} from "vue-router";
 import {getExaminationSubjectList} from "/@/api/exam/examination";
+import SubjectModal from "./SubjectModal.vue";
+import {deleteSubject} from '/@/api/exam/subject';
+
 export default defineComponent({
-  name: 'ExaminationSubjectManagement',
-  components: { BasicTable, TableAction },
+  name: 'SubjectManagement',
+  components: { BasicTable, TableAction, SubjectModal },
   setup() {
-    const [registerModal] = useModal();
-    const go = useGo();
+    const [registerModal, { openModal }] = useModal();
     const route = useRoute();
     const examinationId = ref<any>(route.params?.id);
     const [registerTable, { reload }] = useTable({
@@ -60,7 +62,7 @@ export default defineComponent({
       showIndexColumn: false,
       canResize: false,
       actionColumn: {
-        width: 80,
+        width: 180,
         title: '操作',
         dataIndex: 'action',
         slots: { customRender: 'action' },
@@ -68,17 +70,30 @@ export default defineComponent({
       },
     });
     function handleCreate() {
-      go('/exam/subject_detail/0?examinationId=' + examinationId.value);
+      openModal(true, {
+        isUpdate: false,
+        examinationId
+      });
     }
     function handleEdit(record: Recordable) {
-      go('/exam/subject_detail/' + record.id + '?type=' + record.type + '&eId=' + examinationId.value);
+      openModal(true, {
+        record,
+        isUpdate: true,
+        examinationId,
+        type: record.type,
+      });
     }
-    function handleDelete(record: Recordable) {
-      console.log(record);
+    async function handleDelete(record: Recordable) {
+      await deleteSubject(record.id);
+      await reload();
     }
     function handleSuccess() {
       reload();
     }
+    function handleSubjectDataSuccess() {
+      reload();
+    }
+
     return {
       registerTable,
       registerModal,
@@ -86,7 +101,13 @@ export default defineComponent({
       handleEdit,
       handleDelete,
       handleSuccess,
+      handleSubjectDataSuccess
     };
   },
 });
 </script>
+
+<style lang="less">
+
+
+</style>

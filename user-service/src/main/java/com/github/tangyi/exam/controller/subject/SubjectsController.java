@@ -162,4 +162,10 @@ public class SubjectsController extends BaseController {
 			@RequestParam(required = false) Integer nextSubjectSortNo) {
 		return R.success(answerService.subjectAnswer(subjectId, examRecordId, type, nextSubjectSortNo));
 	}
+
+	@GetMapping("nexSubjectNo/{id}")
+	@Operation(summary = "根据分类ID获取下一题的序号")
+	public R<Integer> nexSubjectNo(@PathVariable Long id) {
+		return R.success(subjectsService.nextSubjectNo(id));
+	}
 }

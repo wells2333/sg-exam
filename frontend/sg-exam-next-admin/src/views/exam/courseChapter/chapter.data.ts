@@ -1,149 +1,67 @@
-import {BasicColumn} from '/@/components/Table';
-import { DescItem } from '/@/components/Description';
-import { Tag } from 'ant-design-vue';
+import {BasicColumn, FormSchema} from '/@/components/Table';
 
-import { subjectColor, COLOR } from '/@/views/exam/subject/subject.data';
-import { h } from 'vue';
-
-const commonTagRender = (color: string) => (curVal) => h(Tag, { color }, () => curVal);
-
-export const scoreDetailSchema: DescItem[] = [
+export const searchFormSchema: FormSchema[] = [
   {
-    field: 'examinationName',
-    label: '考试名称',
-  },
-  {
-    field: 'typeLabel',
-    label: '类型',
-    render: commonTagRender(COLOR.ZERO),
-  },
-  {
-    field: 'totalScore',
-    label: '试卷总分',
-  },
-  {
-    field: 'userName',
-    label: '考生',
-  },
-  {
-    field: 'deptName',
-    label: '部门',
-  },
-  {
-    field: 'score',
-    label: '考生得分',
-  },
-  {
-    field: 'startTime',
-    label: '开始时间',
-  },
-  {
-    field: 'duration',
-    label: '耗时',
-  },
-  {
-    field: 'correctNumber',
-    label: '正确题目数',
-  },
-  {
-    field: 'inCorrectNumber',
-    label: '错误题目数',
-  },
-  {
-    field: 'submitStatusName',
-    label: '状态',
-    render: commonTagRender(COLOR.ZERO),
-  },
+    field: 'title',
+    label: '标题',
+    component: 'Input',
+    colProps: { span: 8 },
+  }
 ];
 
-export const answerColumns: BasicColumn[] = [
+export const columns: BasicColumn[] = [
   {
+    title: '标题',
+    dataIndex: 'title',
+    width: 300,
+    align: 'left',
+  },
+  {
+    dataIndex: 'sort',
     title: '序号',
-    dataIndex: 'subject.sort',
-    align: 'left',
-    width: 50,
-  },
-  {
-    title: '题目名称',
-    dataIndex: 'subject.subjectName',
+    width: 60,
     align: 'left',
   },
   {
-    dataIndex: 'subject.typeLabel',
-    title: '类型',
-    width: 80,
-    align: 'left',
-    customRender: ({ record }) => {
-      const { subject } = record;
-      if (subject) {
-        let color = subjectColor[subject.type];
-        return h(Tag, { color: color }, () => subject.typeLabel);
-      }
-      return '';
-    },
-  },
-  {
-    dataIndex: 'answer',
-    title: '考生答案',
-    width: 80,
+    dataIndex: 'chapterDesc',
+    title: '描述',
+    width: 120,
     align: 'left',
   },
   {
-    dataIndex: 'subject.answer.answer',
-    title: '参考答案',
-    width: 80,
-    align: 'left',
-  },
-  {
-    dataIndex: 'markStatus',
-    title: '批改状态',
-    width: 80,
-    align: 'left',
-    customRender:({ record }) => {
-      let color = 'green';
-      let text = '已批改';
-      if (record.markStatus === 0) {
-        color = 'red';
-        text = '待批改';
-      }
-      return h(Tag, { color:  color}, () => text);
-    }
-  },
-  {
-    dataIndex: 'markOperator',
-    title: '批改人',
-    width: 80,
-    align: 'left',
-  },
-  {
-    dataIndex: 'answerType',
-    title: '批改结果',
-    width: 80,
-    align: 'left',
-    customRender:({ record }) => {
-      let color = 'green';
-      let text = '正确';
-      if (record.answerType === 1) {
-        color = 'red';
-        text = '错误';
-      }
-      return h(Tag, { color:  color}, () => text);
-    }
-  },
-  {
-    title: '开始时间',
-    dataIndex: 'startTime',
+    title: '创建时间',
+    dataIndex: 'createTime',
     width: 180,
   },
   {
-    dataIndex: 'duration',
-    title: '耗时',
-    width: 100,
-    align: 'left',
+    title: '更新时间',
+    dataIndex: 'updateTime',
+    width: 180,
   },
   {
-    title: '得分',
-    dataIndex: 'score',
+    title: '操作人',
+    dataIndex: 'operator',
     width: 100,
+  }
+];
+
+export const formSchema: FormSchema[] = [
+  {
+    field: 'title',
+    label: '标题',
+    component: 'Input',
+    required: true,
+  },
+  {
+    field: 'sort',
+    label: '序号',
+    component: 'InputNumber',
+    defaultValue: 100,
+    required: true,
+  },
+  {
+    field: 'chapterDesc',
+    label: '描述',
+    component: 'InputTextArea'
   },
 ];

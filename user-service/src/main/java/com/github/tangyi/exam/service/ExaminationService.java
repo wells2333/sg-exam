@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -245,6 +246,11 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 					.toArray(Long[]::new);
 			List<Subjects> subjects = subjectsService.findBySubjectIds(subjectIds);
 			subjectDtoList = subjectsService.findSubjectDtoList(subjects);
+		}
+		// 按序号排序
+		if (CollectionUtils.isNotEmpty(subjectDtoList)) {
+			subjectDtoList = subjectDtoList.stream().sorted(Comparator.comparing(SubjectDto::getSort))
+					.collect(Collectors.toList());
 		}
 		subjectDtoPageInfo.setList(subjectDtoList);
 		PageUtil.copyProperties(examinationSubjects, subjectDtoPageInfo);

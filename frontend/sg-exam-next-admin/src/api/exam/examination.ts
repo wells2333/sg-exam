@@ -48,7 +48,7 @@ export const deleteExamination = (id: string) => {
 };
 
 export const nexSubjectNo = (id?: string) => {
-  return defHttp.get<void>(
+  return defHttp.get<string>(
     {
       url: Api.Base + '/nexSubjectNo/' + id,
     }

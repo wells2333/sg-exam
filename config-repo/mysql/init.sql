@@ -383,6 +383,7 @@ CREATE TABLE `exam_subjects` (
   `type` tinyint(1) unsigned zerofill NOT NULL COMMENT '题目类型',
   `category_id` bigint(20) DEFAULT NULL COMMENT '分类ID',
   `subject_id` bigint(20) DEFAULT NULL COMMENT '题目ID',
+  `sort` int NOT NULL DEFAULT '0' COMMENT '序号',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `idx_subject_id` (`subject_id`),
   KEY `idx_category_id` (`category_id`),
@@ -1141,11 +1142,11 @@ INSERT INTO `exam_subject_choices` VALUES (3, 0, '<p>把&ldquo;春风&rdquo;比�
 INSERT INTO `exam_subject_choices` VALUES (4, 0, '<p>&ldquo;横看成岭侧成峰，远近高低各不同.&rdquo;诗中写的名胜是</p>', 0, 'D', 5, NULL, 1, 'admin', '2022-11-13 14:43:46', 'admin', '2022-11-13 14:43:46', 0, 'gitee', 0000000004, NULL);
 INSERT INTO `exam_subject_choices` VALUES (5, 0, '<p>&ldquo;解落三秋叶，能开二月花.过江千尺浪，入竹万竿斜.&rdquo;这首诗写的是</p>', 0, 'B', 5, NULL, 1, 'admin', '2022-11-13 14:44:29', 'admin', '2022-11-13 14:44:29', 0, 'gitee', 0000000005, NULL);
 
-INSERT INTO `exam_subjects` VALUES (1, 'admin', '2022-04-14 22:25:06', 'admin', '2022-04-14 22:25:06', 0, 'gitee', 0, NULL, 1);
-INSERT INTO `exam_subjects` VALUES (2, 'admin', '2022-04-14 22:25:06', 'admin', '2022-04-14 22:25:06', 0, 'gitee', 0, NULL, 2);
-INSERT INTO `exam_subjects` VALUES (3, 'admin', '2022-04-14 22:25:06', 'admin', '2022-04-14 22:25:06', 0, 'gitee', 0, NULL, 3);
-INSERT INTO `exam_subjects` VALUES (4, 'admin', '2022-04-14 22:25:06', 'admin', '2022-04-14 22:25:06', 0, 'gitee', 0, NULL, 4);
-INSERT INTO `exam_subjects` VALUES (5, 'admin', '2022-04-14 22:25:06', 'admin', '2022-04-14 22:25:06', 0, 'gitee', 0, NULL, 5);
+INSERT INTO `exam_subjects` VALUES (1, 'admin', '2022-04-14 22:25:06', 'admin', '2022-04-14 22:25:06', 0, 'gitee', 0, NULL, 1, 1);
+INSERT INTO `exam_subjects` VALUES (2, 'admin', '2022-04-14 22:25:06', 'admin', '2022-04-14 22:25:06', 0, 'gitee', 0, NULL, 2, 2);
+INSERT INTO `exam_subjects` VALUES (3, 'admin', '2022-04-14 22:25:06', 'admin', '2022-04-14 22:25:06', 0, 'gitee', 0, NULL, 3, 3);
+INSERT INTO `exam_subjects` VALUES (4, 'admin', '2022-04-14 22:25:06', 'admin', '2022-04-14 22:25:06', 0, 'gitee', 0, NULL, 4, 4);
+INSERT INTO `exam_subjects` VALUES (5, 'admin', '2022-04-14 22:25:06', 'admin', '2022-04-14 22:25:06', 0, 'gitee', 0, NULL, 5, 5);
 
 INSERT INTO `exam_subject_option` VALUES (1, 1, 'A', '<p>春天</p>', 'admin', '2022-05-14 20:39:05', 'admin', '2022-05-14 20:39:05', 0, 'gitee', 0000000001);
 INSERT INTO `exam_subject_option` VALUES (2, 1, 'B', '<p>夏天</p>', 'admin', '2022-05-14 20:39:05', 'admin', '2022-05-14 20:39:05', 0, 'gitee', 0000000002);

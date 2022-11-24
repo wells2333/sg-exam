@@ -13,7 +13,6 @@
 </template>
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue';
-
 import { BasicTree, TreeItem } from '/@/components/Tree';
 import { getSubjectCategoryTree } from '/@/api/exam/subjectCategory';
 

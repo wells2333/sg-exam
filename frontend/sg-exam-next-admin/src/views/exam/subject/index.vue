@@ -1,9 +1,9 @@
 <template>
   <PageWrapper dense contentFullHeight fixedHeight contentClass="flex">
-    <SubjectCategoryTree class="w-1/5 xl:w-1/6" @select="handleSelect" />
+    <SubjectCategoryTree class="w-1/5 xl:w-1/6" @select="handleSelect"/>
     <BasicTable @register="registerTable" class="w-3/4 xl:w-4/5" :searchInfo="searchInfo">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate"> 新增题目 </a-button>
+        <a-button type="primary" @click="handleCreate"> 新增题目</a-button>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -24,27 +24,39 @@
         />
       </template>
     </BasicTable>
+    <SubjectModal @register="registerModal" @success="handleSubjectDataSuccess"></SubjectModal>
+
   </PageWrapper>
 </template>
 <script lang="ts">
-import {defineComponent, reactive} from 'vue';
-import { BasicTable, useTable, TableAction } from '/@/components/Table';
-import { getSubjectList, deleteSubject } from '/@/api/exam/subject';
-import { PageWrapper } from '/@/components/Page';
+import {defineComponent, reactive, unref} from 'vue';
+import {BasicTable, TableAction, useTable} from '/@/components/Table';
+import {deleteSubject, getSubjectList} from '/@/api/exam/subject';
+import {PageWrapper} from '/@/components/Page';
 import SubjectCategoryTree from './SubjectCategoryTree.vue';
-import { useModal } from '/@/components/Modal';
-import { columns, searchFormSchema } from './subject.data';
-import { useGo } from "/@/hooks/web/usePage";
+import {useModal} from '/@/components/Modal';
+import {columns, searchFormSchema} from './subject.data';
+import SubjectModal from "./SubjectModal.vue";
+import { useMessage } from '/@/hooks/web/useMessage';
+
 export default defineComponent({
   name: 'SubjectManagement',
-  components: { BasicTable, PageWrapper, SubjectCategoryTree, TableAction },
+  components: {BasicTable, PageWrapper, SubjectCategoryTree, TableAction, SubjectModal},
   setup() {
-    const [registerModal] = useModal();
+    const [registerModal, { openModal }] = useModal();
+    const {createMessage} = useMessage();
     const searchInfo = reactive<Recordable>({});
-    const go = useGo();
-    const [registerTable, { reload }] = useTable({
+    const [registerTable, {reload}] = useTable({
       title: '题目列表',
-      api: getSubjectList,
+      api: (arg) => {
+        const {categoryId} = searchInfo;
+        if (categoryId === undefined) {
+          return undefined;
+        }
+        const params = {categoryId};
+        Object.assign(params, arg);
+        return getSubjectList(params);
+      },
       columns,
       formConfig: {
         labelWidth: 120,
@@ -64,30 +76,42 @@ export default defineComponent({
         width: 80,
         title: '操作',
         dataIndex: 'action',
-        slots: { customRender: 'action' },
+        slots: {customRender: 'action'},
         fixed: undefined,
       },
     });
+
     function handleCreate() {
-      let url = '/exam/subject_detail/0?';
-      const { categoryId } = searchInfo;
-      if (categoryId && categoryId !== '') {
-        url += 'categoryId=' + categoryId;
+      const {categoryId} = searchInfo;
+      if (categoryId === undefined) {
+        createMessage.warning('请选择题目分类');
+        return;
       }
-      go(url);
+      openModal(true, {
+        isUpdate: false,
+        categoryId
+      });
     }
+
     function handleEdit(record: Recordable) {
-      let url = '/exam/subject_detail/' + record.id + '?';
-      const { categoryId } = searchInfo;
-      if (categoryId) {
-        url += 'categoryId=' + categoryId;
+      const {categoryId} = searchInfo;
+      if (categoryId === undefined) {
+        createMessage.warning('请选择题目分类');
+        return;
       }
-      go(url);
+      openModal(true, {
+        record,
+        isUpdate: true,
+        categoryId,
+        type: record.type,
+      });
     }
+
     async function handleDelete(record: Recordable) {
       await deleteSubject(record.id);
-      reload();
+      await reload();
     }
+
     function handleSuccess() {
       reload();
     }
@@ -96,6 +120,11 @@ export default defineComponent({
       searchInfo.categoryId = categoryId;
       reload();
     }
+
+    function handleSubjectDataSuccess() {
+      reload();
+    }
+
     return {
       registerTable,
       registerModal,
@@ -104,7 +133,8 @@ export default defineComponent({
       handleDelete,
       handleSuccess,
       handleSelect,
-      searchInfo
+      searchInfo,
+      handleSubjectDataSuccess
     };
   },
 });

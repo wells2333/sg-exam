@@ -3,8 +3,8 @@ package com.github.tangyi.exam.controller.subject;
 import com.github.tangyi.api.exam.constants.ExamSubjectConstant;
 import com.github.tangyi.api.exam.dto.SubjectCategoryDto;
 import com.github.tangyi.api.exam.model.SubjectCategory;
-import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.base.BaseController;
+import com.github.tangyi.common.model.R;
 import com.github.tangyi.exam.service.subject.SubjectCategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -56,8 +56,7 @@ public class SubjectCategoryController extends BaseController {
 
 	@PutMapping("{id}")
 	@Operation(summary = "更新分类信息", description = "根据分类id更新分类的基本信息")
-	public R<Boolean> update(@PathVariable Long id,
-			@RequestBody @Valid SubjectCategory subjectCategory) {
+	public R<Boolean> update(@PathVariable Long id, @RequestBody @Valid SubjectCategory subjectCategory) {
 		subjectCategory.setId(id);
 		subjectCategory.setCommonValue();
 		return R.success(categoryService.update(subjectCategory) > 0);

@@ -43,6 +43,12 @@ public class ExamCourseChapter extends BaseEntity<ExamCourseChapter> {
     @Column(name = "course_id")
     private Long courseId;
 
+	/**
+	 * 章描述
+	 */
+	@Column(name = "chapter_desc")
+	private String chapterDesc;
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -67,7 +73,15 @@ public class ExamCourseChapter extends BaseEntity<ExamCourseChapter> {
         return courseId;
     }
 
-    @Override
+	public String getChapterDesc() {
+		return chapterDesc;
+	}
+
+	public void setChapterDesc(String chapterDesc) {
+		this.chapterDesc = chapterDesc;
+	}
+
+	@Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
