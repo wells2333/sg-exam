@@ -1,0 +1,39 @@
+import {defHttp} from '/@/utils/http/axios';
+import {ApiRes} from "/@/api/constant";
+import {${ClassName}Api} from "/@/api/api";
+
+export const ${ClassName}Api = {
+    Base: UserService + '/v1/${className}',
+    ${ClassName}List: UserService + '/v1/${className}/list',
+}
+
+export const get${ClassName}List = (params?: object) =>
+    defHttp.get<ApiRes>({url: ${ClassName}Api.${ClassName}List, params});
+
+export const create${ClassName} = (params?: object
+) => {
+    return defHttp.post<ApiRes>(
+        {
+            url: ${ClassName}Api.Base,
+            params,
+        }
+    );
+};
+
+export const update${ClassName} = (id: string, params?: object
+) => {
+    return defHttp.put<ApiRes>(
+        {
+            url: ${ClassName}Api.Base + '/' + id,
+            params,
+        }
+    );
+};
+
+export const delete${ClassName} = (id: string) => {
+    return defHttp.delete<ApiRes>(
+        {
+            url: ${ClassName}Api.Base + '/' + id,
+        }
+    );
+};

@@ -58,9 +58,13 @@ export const formSchema: FormSchema[] = [
     required: true,
   },
   {
+    field: 'packageName',
+    label: '包名称',
+    component: 'Input',
+  },
+  {
     field: 'tenantCode',
     label: '租户标识',
     component: 'Input',
-    required: true,
   },
 ];

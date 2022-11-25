@@ -51,7 +51,7 @@ public class ${ClassName}Controller extends BaseController {
 
     @PostMapping
 	@Operation(summary = "新增${functionName}")
-	@SgLog(value = "${functionName}", operationType = OperationType.INSERT)
+	@SgLog(value = "新增${functionName}", operationType = OperationType.INSERT)
     public R<Boolean> add(@RequestBody @Valid ${ClassName} ${className}) {
         ${className}.setCommonValue();
         return R.success(${className}Service.insert(${className}) > 0);
@@ -59,7 +59,7 @@ public class ${ClassName}Controller extends BaseController {
 
     @PutMapping("{${pkColumn.javaField}}")
 	@Operation(summary = "修改${functionName}")
-	@SgLog(value = "${functionName}", operationType = OperationType.UPDATE)
+	@SgLog(value = "修改${functionName}", operationType = OperationType.UPDATE)
     public R<Boolean> update(@PathVariable("${pkColumn.javaField}") ${pkColumn.javaType} ${pkColumn.javaField}, @RequestBody @Valid ${ClassName} ${className}) {
         ${className}.setId(${pkColumn.javaField});
         return R.success(${className}Service.update(${className}) > 0);
@@ -67,7 +67,7 @@ public class ${ClassName}Controller extends BaseController {
 
 	@DeleteMapping("{${pkColumn.javaField}}")
 	@Operation(summary = "删除${functionName}")
-	@SgLog(value = "${functionName}", operationType = OperationType.DELETE)
+	@SgLog(value = "删除${functionName}", operationType = OperationType.DELETE)
     public R<Boolean> delete(@PathVariable("${pkColumn.javaField}") ${pkColumn.javaType} ${pkColumn.javaField}) {
         ${ClassName} ${className} = ${className}Service.get(id);
         ${className}.setCommonValue();

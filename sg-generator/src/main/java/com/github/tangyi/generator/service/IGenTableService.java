@@ -60,7 +60,7 @@ public interface IGenTableService {
 	 * @param tableName 导入表列表
 	 * @param comment 注释
 	 */
-	void importGenTable(String tableName, String comment);
+	void importGenTable(String tableName, String comment, String packageName, String tenantCode);
 
 	/**
 	 * 预览代码

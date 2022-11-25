@@ -19,10 +19,10 @@ public class GenUtils {
 	/**
 	 * 初始化表信息
 	 */
-	public static void initTable(GenTable genTable, String operName, GenConfig genConfig) {
+	public static void initTable(GenTable genTable, String operName, GenConfig genConfig, String packageName) {
 		genTable.setClassName(convertClassName(genTable.getTableName(), genConfig));
-		genTable.setPackageName(genConfig.getPackageName());
-		genTable.setModuleName(getModuleName(genConfig.getPackageName()));
+		genTable.setPackageName(packageName);
+		genTable.setModuleName(getModuleName(packageName));
 		genTable.setBusinessName(getBusinessName(genTable.getTableName()));
 		genTable.setFunctionName(replaceText(genTable.getTableComment()));
 		genTable.setFunctionAuthor(genConfig.getAuthor());

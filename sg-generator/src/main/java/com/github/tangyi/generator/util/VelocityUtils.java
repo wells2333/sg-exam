@@ -18,11 +18,11 @@ import java.util.*;
  */
 public class VelocityUtils {
 
-	/** 项目空间路径 */
 	private static final String PROJECT_PATH = "main/java";
 
-	/** mybatis空间路径 */
 	private static final String MYBATIS_PATH = "main/resources/mapper";
+
+	public static final String VUE_PATH = "main/vue";
 
 	/** 默认上级菜单，系统工具 */
 	private static final String DEFAULT_PARENT_MENU_ID = "3";
@@ -83,6 +83,11 @@ public class VelocityUtils {
 		templates.add("vm/java/mapper.java.vm");
 		templates.add("vm/java/constants.java.vm");
 		templates.add("vm/xml/mapper.xml.vm");
+
+		templates.add("vm/vue/api.ts.vm");
+		templates.add("vm/vue/data.ts.vm");
+		templates.add("vm/vue/index.vue.vm");
+		templates.add("vm/vue/modal.vue.vm");
 		return templates;
 	}
 
@@ -102,7 +107,8 @@ public class VelocityUtils {
 		String businessName = genTable.getBusinessName();
 
 		String javaPath = PROJECT_PATH + "/" + StringUtils.replace(packageName, ".", "/");
-		String mybatisPath = MYBATIS_PATH + "/" + moduleName;
+		String mybatisPath = MYBATIS_PATH;
+		String vuePath = VUE_PATH;
 
 		if (template.contains("model.java.vm")) {
 			fileName = StringUtil.format("{}/api/{}/model/{}.java", javaPath, moduleName, className);
@@ -113,10 +119,18 @@ public class VelocityUtils {
 			fileName = StringUtil.format("{}/{}/service/{}Service.java", javaPath, moduleName, className);
 		} else if (template.contains("controller.java.vm")) {
 			fileName = StringUtil.format("{}/{}/controller/{}Controller.java", javaPath, moduleName, className);
-		} else if(template.contains("vm/java/constants.java.vm")) {
+		} else if (template.contains("vm/java/constants.java.vm")) {
 			fileName = StringUtil.format("{}/{}/constants/{}Constants.java", javaPath, moduleName, className);
-		}else if (template.contains("mapper.xml.vm")) {
+		} else if (template.contains("mapper.xml.vm")) {
 			fileName = StringUtil.format("{}/{}/{}Mapper.xml", mybatisPath, moduleName, className);
+		} else if (template.contains("api.ts.vm")) {
+			fileName = StringUtil.format("{}/{}/vue/api.ts.vm", vuePath, moduleName, className);
+		} else if (template.contains("data.ts.vm")) {
+			fileName = StringUtil.format("{}/{}/vue/data.ts.vm", vuePath, moduleName, className);
+		} else if (template.contains("index.vue.vm")) {
+			fileName = StringUtil.format("{}/{}/vue/index.vue.vm", vuePath, moduleName, className);
+		} else if (template.contains("modal.vue.vm")) {
+			fileName = StringUtil.format("{}/{}/vue/modal.vue.vm", vuePath, moduleName, className);
 		}
 		return fileName;
 	}

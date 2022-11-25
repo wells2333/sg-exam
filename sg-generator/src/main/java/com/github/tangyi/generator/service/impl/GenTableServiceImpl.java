@@ -130,13 +130,20 @@ public class GenTableServiceImpl extends CrudService<GenTableMapper, GenTable> i
 	 */
 	@Override
 	@Transactional
-	public void importGenTable(String tableName, String comment) {
+	public void importGenTable(String tableName, String comment, String packageName, String tenantCode) {
 		try {
 			GenTable table = new GenTable();
 			table.setTableName(tableName);
 			table.setTableComment(comment);
-			table.setCommonValue();
-			GenUtils.initTable(table, SysUtil.getUser(), genConfig);
+			if (StringUtils.isNotEmpty(tenantCode)) {
+				table.setCommonValue(SysUtil.getUser(), tenantCode);
+			} else {
+				table.setCommonValue();
+			}
+			if (StringUtils.isEmpty(packageName)) {
+				packageName = genConfig.getPackageName();
+			}
+			GenUtils.initTable(table, SysUtil.getUser(), genConfig, packageName);
 			int row = genTableMapper.insertGenTable(table);
 			if (row > 0) {
 				// 保存列信息

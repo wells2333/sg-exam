@@ -1,6 +1,5 @@
 package com.github.tangyi.generator.controller;
 
-import cn.hutool.core.convert.Convert;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.common.base.BaseController;
@@ -81,8 +80,9 @@ public class GenController extends BaseController {
 
 	@GetMapping("/importTable")
 	@Operation(summary = "导入表结构")
-	public R<Boolean> importTableSave(@RequestParam String table, @RequestParam String comment) {
-		genTableService.importGenTable(table, comment);
+	public R<Boolean> importTableSave(@RequestParam String table, @RequestParam String comment,
+			@RequestParam(required = false) String packageName, @RequestParam(required = false) String tenantCode) {
+		genTableService.importGenTable(table, comment, packageName, tenantCode);
 		return R.success();
 	}
 
