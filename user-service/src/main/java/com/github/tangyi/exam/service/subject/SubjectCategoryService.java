@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -102,10 +103,14 @@ public class SubjectCategoryService extends CrudService<SubjectCategoryMapper, S
 	 * @author tangyi
 	 * @date 2018/12/04 22:03
 	 */
-	@Cacheable(value = ExamCacheName.SUBJECT_CATE_TREE, key = "'tree'")
-	public List<SubjectCategoryDto> categoryTree() {
+	@Cacheable(value = ExamCacheName.SUBJECT_CATE_TREE, key = "'tree'", condition = "#condition == null || #condition.isEmpty()")
+	public List<SubjectCategoryDto> categoryTree(Map<String, Object> condition) {
 		SubjectCategory subjectCategory = new SubjectCategory();
 		subjectCategory.setTenantCode(SysUtil.getTenantCode());
+		Object categoryName = condition.get("categoryName");
+		if (categoryName != null) {
+			subjectCategory.setCategoryName(categoryName.toString());
+		}
 		List<SubjectCategory> subjectCategoryList = findList(subjectCategory);
 		if (CollectionUtils.isNotEmpty(subjectCategoryList)) {
 			List<SubjectCategoryDto> subjectCategorySetTreeList = subjectCategoryList.stream()

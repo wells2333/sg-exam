@@ -1,50 +1,41 @@
-import {
-  TenantListItem,
-  TenantListGetResultModel,
-} from './model/systemModel';
-
 import {defHttp} from '/@/utils/http/axios';
-import {UserService} from '/@/api/services';
+import {ApiRes} from "/@/api/constant";
+import {TenantApi} from "/@/api/api";
 
-const Api = {
-  Base: UserService + '/v1/tenant',
-  TenantList: UserService + '/v1/tenant/tenantList',
-}
+export const getTenantList = (params?: object) =>
+  defHttp.get<ApiRes>({url: TenantApi.TenantList, params});
 
-export const getTenantList = (params?: TenantListItem) =>
-  defHttp.get<TenantListGetResultModel>({url: Api.TenantList, params});
-
-export const createTenant = (params?: TenantListItem
+export const createTenant = (params?: object
 ) => {
-  return defHttp.post<void>(
+  return defHttp.post<ApiRes>(
     {
-      url: Api.Base,
+      url: TenantApi.Base,
       params,
     }
   );
 };
 
-export const updateTenant = (id: string, params?: TenantListItem) => {
-  return defHttp.put<void>(
+export const updateTenant = (id: string, params?: object) => {
+  return defHttp.put<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: TenantApi.Base + '/' + id,
       params,
     }
   );
 };
 
 export const deleteTenant = (id: string) => {
-  return defHttp.delete<void>(
+  return defHttp.delete<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: TenantApi.Base + '/' + id,
     }
   );
 };
 
 export const initTenant = (id: string) => {
-  return defHttp.post<void>(
+  return defHttp.post<ApiRes>(
     {
-      url: Api.Base + '/init/' + id,
+      url: TenantApi.Base + '/init/' + id,
     }
   );
 };

@@ -82,6 +82,7 @@ export default defineComponent({
     }
     async function handleDelete(record: Recordable) {
       await deleteGen(record.tableId);
+      createMessage.success('操作成功');
       await reload();
     }
     function handleSuccess() {

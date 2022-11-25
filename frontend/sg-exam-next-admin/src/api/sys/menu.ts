@@ -1,33 +1,29 @@
-import { defHttp } from '/@/utils/http/axios';
-import { MenuListItem, getMenuListResultModel} from './model/menuModel';
-import {UserService} from '/@/api/services';
-
-const Api = {
-  Base: UserService + '/v1/menu',
-  Tree: UserService + '/v1/menu/menuTree',
-}
+import {defHttp} from '/@/utils/http/axios';
+import {getMenuListResultModel, MenuListItem} from './model/menuModel';
+import {ApiRes} from "/@/api/constant";
+import {MenuApi} from "/@/api/api";
 
 export const getMenuList = () => {
-  return defHttp.get<getMenuListResultModel>({ url: Api.Tree });
+  return defHttp.get<getMenuListResultModel>({url: MenuApi.Tree});
 };
 
 export const userMenuList = () => {
-  return defHttp.get<getMenuListResultModel>({ url: Api.Base + '/userMenu' });
+  return defHttp.get<getMenuListResultModel>({url: MenuApi.Base + '/userMenu'});
 }
 
 export const userPermissions = () => {
-  return defHttp.get<getMenuListResultModel>({ url: Api.Base + '/userPermissions' });
+  return defHttp.get<getMenuListResultModel>({url: MenuApi.Base + '/userPermissions'});
 }
 
 export const defaultTenantMenu = () => {
-  return defHttp.get<getMenuListResultModel>({ url: Api.Base + '/defaultTenantMenu' });
+  return defHttp.get<getMenuListResultModel>({url: MenuApi.Base + '/defaultTenantMenu'});
 }
 
 export const createMenu = (params?: MenuListItem
 ) => {
-  return defHttp.post<void>(
+  return defHttp.post<ApiRes>(
     {
-      url: Api.Base,
+      url: MenuApi.Base,
       params,
     }
   );
@@ -35,18 +31,18 @@ export const createMenu = (params?: MenuListItem
 
 export const updateMenu = (id: string, params?: MenuListItem
 ) => {
-  return defHttp.put<void>(
+  return defHttp.put<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: MenuApi.Base + '/' + id,
       params,
     }
   );
 };
 
 export const deleteMenu = (id: string) => {
-  return defHttp.delete<void>(
+  return defHttp.delete<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: MenuApi.Base + '/' + id,
     }
   );
 };

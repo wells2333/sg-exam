@@ -1,42 +1,33 @@
-import {
-  SynthesisListItem,
-  SynthesisListGetResultModel,
-} from './model/systemModel';
-
 import {defHttp} from '/@/utils/http/axios';
-import {UserService} from '/@/api/services';
+import {ApiRes} from "/@/api/constant";
+import {SpeechApi} from "/@/api/api";
 
-const Api = {
-  Base: UserService + '/v1/speechSynthesis',
-  SynthesisList: UserService + '/v1/speechSynthesis/speechSynthesisList',
-}
+export const getSpeechSynthesisList = (params?: object) =>
+  defHttp.get<ApiRes>({url: SpeechApi.SynthesisList, params});
 
-export const getSpeechSynthesisList = (params?: SynthesisListItem) =>
-  defHttp.get<SynthesisListGetResultModel>({url: Api.SynthesisList, params});
-
-export const createSpeech = (params?: SynthesisListItem
+export const createSpeech = (params?: object
 ) => {
-  return defHttp.post<void>(
+  return defHttp.post<ApiRes>(
     {
-      url: Api.Base,
+      url: SpeechApi.Base,
       params,
     }
   );
 };
 
-export const updateSpeech = (id: string, params?: SynthesisListItem) => {
-  return defHttp.put<void>(
+export const updateSpeech = (id: string, params?: object) => {
+  return defHttp.put<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: SpeechApi.Base + '/' + id,
       params,
     }
   );
 };
 
 export const deleteSpeech = (id: string) => {
-  return defHttp.delete<void>(
+  return defHttp.delete<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: SpeechApi.Base + '/' + id,
     }
   );
 };

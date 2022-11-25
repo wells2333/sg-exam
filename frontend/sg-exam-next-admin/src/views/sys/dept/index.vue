@@ -36,11 +36,13 @@ import { useModal } from '/@/components/Modal';
 import DeptModal from './DeptModal.vue';
 import { columns, searchFormSchema } from './dept.data';
 import { usePermission } from '/@/hooks/web/usePermission';
+import {useMessage} from "/@/hooks/web/useMessage";
 export default defineComponent({
   name: 'DeptManagement',
   components: { BasicTable, DeptModal, TableAction },
   setup() {
     const { hasPermission } = usePermission();
+    const { createMessage } = useMessage();
     const [registerModal, { openModal }] = useModal();
     const [registerTable, { reload }] = useTable({
       title: '部门列表',
@@ -79,9 +81,11 @@ export default defineComponent({
     }
     async function handleDelete(record: Recordable) {
       await deleteDept([record.id]);
+      createMessage.success('操作成功');
       await reload();
     }
     function handleSuccess() {
+      createMessage.success('操作成功');
       reload();
     }
     return {

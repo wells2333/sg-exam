@@ -1,39 +1,34 @@
-import {SectionListGetResultModel, SectionListItem} from './model/systemModel';
 import {defHttp} from '/@/utils/http/axios';
-import {ExamService} from '/@/api/services';
+import {ApiRes} from "/@/api/constant";
+import {SectionApi} from "/@/api/api";
 
-const Api = {
-  Base: ExamService + '/v1/section/',
-  CourseList: ExamService + '/v1/section/list'
-}
+export const getSectionList = (params?: object) =>
+  defHttp.get<ApiRes>({url: SectionApi.CourseList, params});
 
-export const getSectionList = (params?: SectionListItem) =>
-  defHttp.get<SectionListGetResultModel>({url: Api.CourseList, params});
-
-export const createSection = (params?: SectionListItem
+export const createSection = (params?: object
 ) => {
-  return defHttp.post<void>(
+  return defHttp.post<ApiRes>(
     {
-      url: Api.Base,
+      url: SectionApi.Base,
       params,
     }
   );
 };
 
-export const updateSection = (id: string, params?: SectionListItem
+export const updateSection = (id: string, params?: object
 ) => {
-  return defHttp.put<void>(
+  return defHttp.put<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: SectionApi.Base + '/' + id,
       params,
     }
   );
 };
 
 export const deleteSection = (id: string) => {
-  return defHttp.delete<void>(
+  return defHttp.delete<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: SectionApi.Base + '/' + id,
     }
   );
 };

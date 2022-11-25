@@ -2,7 +2,17 @@ import { BasicColumn } from '/@/components/Table';
 import { FormSchema } from '/@/components/Table';
 import { h } from 'vue';
 import { Icon } from '/@/components/Icon';
+import {Tag} from "ant-design-vue";
 
+export const menuType = {
+  0: '菜单',
+  1: '按钮',
+}
+
+export const menuColor = {
+  0: 'green',
+  1: 'blue',
+}
 export const columns: BasicColumn[] = [
   {
     title: '菜单名称',
@@ -21,10 +31,16 @@ export const columns: BasicColumn[] = [
   {
     title: '路由地址',
     dataIndex: 'path',
+    width: 180,
   },
   {
-    title: '组件路径',
-    dataIndex: 'component',
+    title: '类型',
+    dataIndex: 'type',
+    width: 80,
+    customRender: ({ record }) => {
+      const type = record.type;
+      return h(Tag, { color: menuColor[type] }, () => menuType[type]);
+    },
   },
   {
     title: '权限标识',
@@ -35,11 +51,6 @@ export const columns: BasicColumn[] = [
     title: '排序',
     dataIndex: 'sort',
     width: 50,
-  },
-  {
-    title: '创建时间',
-    dataIndex: 'createTime',
-    width: 180,
   },
   {
     title: '更新时间',

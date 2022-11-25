@@ -47,7 +47,7 @@ public class ExamCourseChapterController extends BaseController {
 
 	@PostMapping
 	@Operation(summary = "新增课程章")
-	@SgLog(value = "课程章", operationType = OperationType.INSERT)
+	@SgLog(value = "新增课程章", operationType = OperationType.INSERT)
 	public R<Boolean> add(@RequestBody @Valid ExamCourseChapter examCourseChapter) {
 		examCourseChapter.setCommonValue();
 		return R.success(examCourseChapterService.insert(examCourseChapter) > 0);
@@ -55,7 +55,7 @@ public class ExamCourseChapterController extends BaseController {
 
 	@PutMapping("{id}")
 	@Operation(summary = "修改课程章")
-	@SgLog(value = "课程章", operationType = OperationType.UPDATE)
+	@SgLog(value = "修改课程章", operationType = OperationType.UPDATE)
 	public R<Boolean> update(@PathVariable("id") Long id, @RequestBody @Valid ExamCourseChapter examCourseChapter) {
 		examCourseChapter.setId(id);
 		return R.success(examCourseChapterService.update(examCourseChapter) > 0);
@@ -63,7 +63,7 @@ public class ExamCourseChapterController extends BaseController {
 
 	@DeleteMapping("{id}")
 	@Operation(summary = "删除课程章")
-	@SgLog(value = "课程章", operationType = OperationType.DELETE)
+	@SgLog(value = "删除课程章", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable("id") Long id) {
 		ExamCourseChapter examCourseChapter = examCourseChapterService.get(id);
 		examCourseChapter.setCommonValue();

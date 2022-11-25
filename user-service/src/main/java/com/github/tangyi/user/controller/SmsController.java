@@ -2,9 +2,12 @@ package com.github.tangyi.user.controller;
 
 import com.aliyun.dysmsapi20170525.models.SendSmsResponseBody;
 import com.github.tangyi.api.user.dto.SmsDto;
-import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.base.BaseController;
+import com.github.tangyi.common.model.R;
+import com.github.tangyi.log.annotation.SgLog;
+import com.github.tangyi.log.constants.OperationType;
 import com.github.tangyi.user.service.SmsService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +40,8 @@ public class SmsController extends BaseController {
 	 * @date 2019/06/22 13:12
 	 */
 	@PostMapping("sendSms")
+	@Operation(summary = "发送短信")
+	@SgLog(value = "发送短信", operationType = OperationType.INSERT)
 	public R<SendSmsResponseBody> sendSms(@RequestBody SmsDto smsDto) {
 		log.info("send message to {}, content: {}", smsDto.getReceiver(), smsDto.getContent());
 		SendSmsResponseBody body = smsService.sendSms(smsDto);

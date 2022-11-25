@@ -1,42 +1,34 @@
-import {
-  SubjectCategoryListItem,
-  SubjectCategoryListGetResultModel,
-} from './model/systemModel';
-import { defHttp } from '/@/utils/http/axios';
-import {ExamService} from '/@/api/services';
+import {defHttp} from '/@/utils/http/axios';
+import {ApiRes} from "/@/api/constant";
+import {SubjectCategoryApi} from "/@/api/api";
 
-const Api = {
-  Base: ExamService + '/v1/subjectCategory',
-  SubjectCategoryTree: ExamService + '/v1/subjectCategory/categoryTree'
-}
+export const getSubjectCategoryTree = (params?: object) =>
+  defHttp.get<ApiRes>({url: SubjectCategoryApi.SubjectCategoryTree, params});
 
-export const getSubjectCategoryTree = (params?: SubjectCategoryListItem) =>
-  defHttp.get<SubjectCategoryListGetResultModel>({ url: Api.SubjectCategoryTree, params });
-
-export const createCategory = (params?: SubjectCategoryListItem
+export const createCategory = (params?: object
 ) => {
-  return defHttp.post<void>(
+  return defHttp.post<ApiRes>(
     {
-      url: Api.Base,
+      url: SubjectCategoryApi.Base,
       params,
     }
   );
 };
 
-export const updateCategory = (id: string, params?: SubjectCategoryListItem
+export const updateCategory = (id: string, params?: object
 ) => {
-  return defHttp.put<void>(
+  return defHttp.put<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: SubjectCategoryApi.Base + '/' + id,
       params,
     }
   );
 };
 
 export const deleteCategory = (id: string) => {
-  return defHttp.delete<void>(
+  return defHttp.delete<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: SubjectCategoryApi.Base + '/' + id,
     }
   );
 };

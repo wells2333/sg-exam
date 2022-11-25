@@ -1,43 +1,37 @@
-import {CourseListGetResultModel, CourseListItem,} from './model/systemModel';
 import {defHttp} from '/@/utils/http/axios';
-import {ExamService} from '/@/api/services';
+import {ApiRes} from "/@/api/constant";
+import {CourseApi} from "/@/api/api";
 
-const Api = {
-  Base: ExamService + '/v1/course/',
-  CourseList: ExamService + '/v1/course/courseList',
-  AllCourses: ExamService + '/v1/course/allCourses'
-}
+export const getCourseList = (params?: object) =>
+  defHttp.get<ApiRes>({url: CourseApi.CourseList, params});
 
-export const getCourseList = (params?: CourseListItem) =>
-  defHttp.get<CourseListGetResultModel>({url: Api.CourseList, params});
+export const getAllCourses = (params?: object) =>
+  defHttp.get<ApiRes>({url: CourseApi.AllCourses, params});
 
-export const getAllCourses = (params?: CourseListItem) =>
-  defHttp.get<CourseListGetResultModel>({url: Api.AllCourses, params});
-
-export const createCourse = (params?: CourseListItem
+export const createCourse = (params?: object
 ) => {
-  return defHttp.post<void>(
+  return defHttp.post<ApiRes>(
     {
-      url: Api.Base,
+      url: CourseApi.Base,
       params,
     }
   );
 };
 
-export const updateCourse = (id: string, params?: CourseListItem
+export const updateCourse = (id: string, params?: object
 ) => {
-  return defHttp.put<void>(
+  return defHttp.put<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: CourseApi.Base + '/' + id,
       params,
     }
   );
 };
 
 export const deleteCourse = (id: string) => {
-  return defHttp.delete<void>(
+  return defHttp.delete<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: CourseApi.Base + '/' + id,
     }
   );
 };

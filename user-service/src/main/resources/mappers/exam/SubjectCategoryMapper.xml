@@ -22,6 +22,9 @@
             <if test="params.tenantCode != null and params.tenantCode != ''">
                 and tenant_code = #{params.tenantCode}
             </if>
+            <if test="params.categoryName != null and params.categoryName != ''">
+                and (category_name like CONCAT('%',#{params.categoryName},'%'))
+            </if>
         </if>
         order by sort desc
     </select>
@@ -34,7 +37,11 @@
     </select>
 
     <select id="findList" resultMap="subjectCategoryResultMap">
-        SELECT * FROM exam_subject_category a WHERE a.is_deleted = 0 and tenant_code = #{tenantCode} order by sort desc
+        SELECT * FROM exam_subject_category a WHERE a.is_deleted = 0 and tenant_code = #{tenantCode}
+        <if test="categoryName != null and categoryName != ''">
+            and (category_name like CONCAT('%',#{categoryName},'%'))
+        </if>
+        order by sort desc
     </select>
 
     <delete id="delete">

@@ -7,6 +7,7 @@
             {
               icon: 'ant-design:align-left-outlined',
               onClick: handleView.bind(null, record),
+               tooltip: '查看详情',
             }
           ]"
         />

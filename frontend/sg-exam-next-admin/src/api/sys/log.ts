@@ -1,23 +1,14 @@
-import {
-  LogListItem,
-  LogListGetResultModel,
-} from './model/systemModel';
-
 import {defHttp} from '/@/utils/http/axios';
-import {UserService} from '/@/api/services';
+import {ApiRes} from "/@/api/constant";
+import {LogApi} from "/@/api/api";
 
-const Api = {
-  Base: UserService + '/v1/log',
-  LogList: UserService + '/v1/log/logList',
-}
-
-export const getLogList = (params?: LogListItem) =>
-  defHttp.get<LogListGetResultModel>({url: Api.LogList, params});
+export const getLogList = (params?: object) =>
+  defHttp.get<ApiRes>({url: LogApi.LogList, params});
 
 export const deleteLog = (id: string) => {
-  return defHttp.delete<void>(
+  return defHttp.delete<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: LogApi.Base + '/' + id,
     }
   );
 };

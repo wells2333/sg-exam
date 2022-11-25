@@ -81,6 +81,7 @@ export default defineComponent({
 
     async function handleDelete(record: Recordable) {
       await deleteRole(record.id);
+      createMessage.success('操作成功');
       await reload();
     }
 

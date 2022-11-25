@@ -39,12 +39,14 @@ import MenuDrawer from './MenuDrawer.vue';
 
 import { columns, searchFormSchema } from './menu.data';
 import { usePermission } from '/@/hooks/web/usePermission';
+import {useMessage} from "/@/hooks/web/useMessage";
 
 export default defineComponent({
   name: 'MenuManagement',
   components: { BasicTable, MenuDrawer, TableAction },
   setup() {
     const { hasPermission } = usePermission();
+    const { createMessage } = useMessage();
     const [registerDrawer, { openDrawer }] = useDrawer();
     const [registerTable, { reload, expandAll }] = useTable({
       title: '菜单列表',
@@ -86,10 +88,12 @@ export default defineComponent({
 
     async function handleDelete(record: Recordable) {
       await deleteMenu(record.id);
+      createMessage.success('操作成功');
       await reload();
     }
 
     function handleSuccess() {
+      createMessage.success('操作成功');
       reload();
     }
 

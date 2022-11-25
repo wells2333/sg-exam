@@ -31,16 +31,18 @@
 <script lang="ts">
 import {defineComponent, nextTick} from 'vue';
 import { BasicTable, useTable, TableAction } from '/@/components/Table';
-import { getSubjectCategoryTree } from '/@/api/exam/subjectCategory';
+import { getSubjectCategoryTree, deleteCategory } from '/@/api/exam/subjectCategory';
 import { useModal } from '/@/components/Modal';
 import CategoryModal from './CategoryModal.vue';
 import { columns, searchFormSchema } from './category.data';
 import { usePermission } from '/@/hooks/web/usePermission';
+import {useMessage} from "/@/hooks/web/useMessage";
 export default defineComponent({
   name: 'CategoryManagement',
   components: { BasicTable, CategoryModal, TableAction },
   setup() {
     const { hasPermission } = usePermission();
+    const { createMessage } = useMessage();
     const [registerModal, { openModal }] = useModal();
     const [registerTable, { reload, expandAll}] = useTable({
       title: '分类列表',
@@ -78,10 +80,12 @@ export default defineComponent({
       });
     }
     async function handleDelete(record: Recordable) {
-      await deleteCourse(record.id);
+      await deleteCategory(record.id);
+      createMessage.success('操作成功');
       await reload();
     }
     function handleSuccess() {
+      createMessage.success('操作成功');
       reload();
     }
     function onFetchSuccess() {

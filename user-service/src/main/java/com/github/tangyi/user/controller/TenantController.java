@@ -3,11 +3,11 @@ package com.github.tangyi.user.controller;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.user.constant.TenantConstant;
 import com.github.tangyi.api.user.model.Tenant;
+import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.base.SgPreconditions;
-import com.github.tangyi.log.annotation.SgLog;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.SysUtil;
-import com.github.tangyi.common.base.BaseController;
+import com.github.tangyi.log.annotation.SgLog;
 import com.github.tangyi.log.constants.OperationType;
 import com.github.tangyi.user.service.TenantService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -82,7 +82,6 @@ public class TenantController extends BaseController {
 	@SgLog(value = "删除租户", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable Long id) {
 		Tenant tenant = tenantService.get(id);
-		tenant.setCommonValue();
 		return R.success(tenantService.delete(tenant) > 0);
 	}
 

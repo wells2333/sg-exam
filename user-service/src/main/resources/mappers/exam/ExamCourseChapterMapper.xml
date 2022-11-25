@@ -33,13 +33,13 @@
                 ORDER BY #{params.sortField} #{params.sortOrder}
             </when>
             <otherwise>
-                ORDER BY update_time DESC
+                ORDER BY sort ASC
             </otherwise>
         </choose>
     </select>
 
     <select id="findList" resultMap="examCourseChapterResultMap">
-        SELECT * FROM exam_course_chapter a WHERE a.is_deleted = 0 AND a.tenant_code = #{tenantCode}
+        SELECT * FROM exam_course_chapter a WHERE a.is_deleted = 0 AND a.tenant_code = #{tenantCode} ORDER BY sort ASC
     </select>
 
     <select id="findListById" resultMap="examCourseChapterResultMap">

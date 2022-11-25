@@ -13,6 +13,8 @@ import com.github.tangyi.exam.service.ExamRecordService;
 import com.github.tangyi.exam.service.ExaminationActionService;
 import com.github.tangyi.exam.service.ExaminationService;
 import com.github.tangyi.exam.service.answer.MarkAnswerService;
+import com.github.tangyi.log.annotation.SgLog;
+import com.github.tangyi.log.constants.OperationType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -77,6 +79,7 @@ public class ExamRecordController extends BaseController {
 
 	@PostMapping
 	@Operation(summary = "创建考试记录", description = "创建考试记录")
+	@SgLog(value = "创建考试记录", operationType = OperationType.INSERT)
 	public R<ExaminationRecord> addExamRecord(@RequestBody @Valid ExaminationRecord examRecord) {
 		examRecord.setCommonValue();
 		examRecord.setStartTime(examRecord.getCreateTime());
@@ -86,6 +89,7 @@ public class ExamRecordController extends BaseController {
 
 	@PutMapping("{id}")
 	@Operation(summary = "更新考试记录信息", description = "根据考试记录id更新考试记录的基本信息")
+	@SgLog(value = "新考试记录", operationType = OperationType.UPDATE)
 	public R<Boolean> updateExamRecord(@PathVariable Long id, @RequestBody @Valid ExaminationRecord examRecord) {
 		examRecord.setId(id);
 		examRecord.setCommonValue();
@@ -94,6 +98,7 @@ public class ExamRecordController extends BaseController {
 
 	@DeleteMapping("{id}")
 	@Operation(summary = "删除考试记录", description = "根据ID删除考试记录")
+	@SgLog(value = "删除考试记录", operationType = OperationType.DELETE)
 	public R<Boolean> deleteExamRecord(@PathVariable Long id) {
 		boolean success = false;
 		try {
@@ -116,6 +121,7 @@ public class ExamRecordController extends BaseController {
 
 	@PutMapping("completeMark/{id}")
 	@Operation(summary = "完成批改")
+	@SgLog(value = "完成批改", operationType = OperationType.UPDATE)
 	public R<Boolean> completeMark(@PathVariable Long id) {
 		return R.success(markAnswerService.complete(id));
 	}
@@ -138,6 +144,7 @@ public class ExamRecordController extends BaseController {
 	 */
 	@PostMapping("start")
 	@Operation(summary = "开始考试")
+	@SgLog(value = "开始考试", operationType = OperationType.INSERT)
 	public R<StartExamDto> start(@RequestBody ExaminationRecord examRecord) {
 		return R.success(actionService.start(examRecord));
 	}

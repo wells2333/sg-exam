@@ -7,6 +7,8 @@ import com.github.tangyi.api.exam.model.Examination;
 import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.exam.service.ExaminationService;
+import com.github.tangyi.log.annotation.SgLog;
+import com.github.tangyi.log.constants.OperationType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -89,12 +91,14 @@ public class ExaminationController extends BaseController {
 	 */
 	@PostMapping
 	@Operation(summary = "创建考试", description = "创建考试")
+	@SgLog(value = "创建考试", operationType = OperationType.INSERT)
 	public R<Boolean> add(@RequestBody @Valid ExaminationDto examinationDto) {
 		return R.success(examinationService.insert(examinationDto) > 0);
 	}
 
 	@PutMapping("{id}")
 	@Operation(summary = "更新考试信息", description = "根据考试id更新考试的基本信息")
+	@SgLog(value = "更新考试", operationType = OperationType.UPDATE)
 	public R<Boolean> update(@PathVariable Long id, @RequestBody @Valid ExaminationDto examinationDto) {
 		examinationDto.setId(id);
 		return R.success(examinationService.update(examinationDto) > 0);
@@ -102,6 +106,7 @@ public class ExaminationController extends BaseController {
 
 	@DeleteMapping("{id}")
 	@Operation(summary = "删除考试", description = "根据ID删除考试")
+	@SgLog(value = "删除考试", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable Long id) {
 		boolean success = false;
 		try {
@@ -118,6 +123,7 @@ public class ExaminationController extends BaseController {
 
 	@PostMapping("deleteAll")
 	@Operation(summary = "批量删除考试", description = "根据考试id批量删除考试")
+	@SgLog(value = "删除考试", operationType = OperationType.DELETE)
 	public R<Boolean> deleteAll(@RequestBody Long[] ids) {
 		boolean success = false;
 		try {

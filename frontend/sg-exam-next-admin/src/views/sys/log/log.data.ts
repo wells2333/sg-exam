@@ -39,6 +39,10 @@ export const columns: BasicColumn[] = [
     align: 'left',
   },
   {
+    title: '操作人',
+    dataIndex: 'operator',
+  },
+  {
     title: '创建时间',
     dataIndex: 'createTime',
   },

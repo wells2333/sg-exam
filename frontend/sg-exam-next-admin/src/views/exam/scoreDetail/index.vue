@@ -1,9 +1,5 @@
 <template>
-  <PageWrapper
-    :title="score.userName + `的成绩`"
-    contentBackground
-    @back="goBack"
-  >
+  <div class="score-detail">
     <Description
       size="middle"
       title="成绩详情"
@@ -12,8 +8,7 @@
       :data="score"
       :schema="scoreDetailSchema"
     />
-    <a-divider />
-    <BasicTable @register="registerTable" >
+    <BasicTable @register="registerTable">
       <template #action="{ record }">
         <TableAction
           :actions="[
@@ -37,48 +32,54 @@
       </template>
     </BasicTable>
     <ScoreDetailModal @register="registerModal" width="60%"></ScoreDetailModal>
-  </PageWrapper>
+  </div>
 </template>
-
 <script>
 import {defineComponent, onMounted, ref, unref} from 'vue';
-import { Divider } from 'ant-design-vue';
-import { useRoute } from 'vue-router';
-import { PageWrapper } from '/@/components/Page';
-import { useGo } from '/@/hooks/web/usePage';
-import { getScoreDetail } from '/@/api/exam/score';
-import { markAnswer } from '/@/api/exam/answer';
-import { Description } from '/@/components/Description/index';
-import { BasicTable, TableAction, useTable } from '/@/components/Table';
-import { scoreDetailSchema, answerColumns } from './detail.data';
-import { useMessage } from "/@/hooks/web/useMessage";
+import {Divider} from 'ant-design-vue';
+import {useRoute} from 'vue-router';
+import {PageWrapper} from '/@/components/Page';
+import {useGo} from '/@/hooks/web/usePage';
+import {getScoreDetail} from '/@/api/exam/score';
+import {markAnswer} from '/@/api/exam/answer';
+import {Description} from '/@/components/Description/index';
+import {BasicTable, TableAction, useTable} from '/@/components/Table';
+import {answerColumns, scoreDetailSchema} from './detail.data';
+import {useMessage} from "/@/hooks/web/useMessage";
 import ScoreDetailModal from './ScoreDetailModal.vue';
-import { useModal } from '/@/components/Modal';
+import {useModal} from '/@/components/Modal';
 
 export default defineComponent({
   name: 'ScoreDetail',
-  components: { PageWrapper, Description, BasicTable, TableAction, [Divider.name]: Divider, ScoreDetailModal },
+  components: {
+    PageWrapper,
+    Description,
+    BasicTable,
+    TableAction,
+    [Divider.name]: Divider,
+    ScoreDetailModal
+  },
   setup() {
-    const [registerModal, { openModal }] = useModal();
+    const [registerModal, {openModal}] = useModal();
     const route = useRoute();
     const go = useGo();
-    const { createMessage } = useMessage();
+    const {createMessage} = useMessage();
     const recordId = ref(route.params?.id);
     const currentKey = ref('detail');
     const score = ref({});
     const answers = ref([]);
-    const [registerTable, { reload }] = useTable({
+    const [registerTable, {reload}] = useTable({
       title: '题目列表',
       columns: answerColumns,
       pagination: true,
       dataSource: answers,
       showIndexColumn: false,
-      scroll: { y: 300 },
+      scroll: {y: 300},
       actionColumn: {
         width: 150,
         title: '操作',
         dataIndex: 'action',
-        slots: { customRender: 'action' },
+        slots: {customRender: 'action'},
         fixed: undefined,
       },
     });
@@ -89,8 +90,8 @@ export default defineComponent({
 
     async function fetch() {
       const recordResult = await getScoreDetail(unref(recordId));
-      score.value = recordResult;
-      answers.value = recordResult.answers;
+      score.value = recordResult.record;
+      answers.value = recordResult.record.answers;
     }
 
     function handleView(record) {
@@ -131,6 +132,7 @@ export default defineComponent({
       }
       await fetch();
     }
+
     onMounted(() => {
       fetch();
     });
@@ -143,4 +145,8 @@ export default defineComponent({
 });
 </script>
 
-<style></style>
+<style>
+.score-detail {
+  margin: 10px;
+}
+</style>

@@ -1,42 +1,33 @@
-import {
-  BannerListItem,
-  BannerListGetResultModel,
-} from './model/systemModel';
-
 import {defHttp} from '/@/utils/http/axios';
-import {UserService} from '/@/api/services';
+import {ApiRes} from "/@/api/constant";
+import {OperationApi} from "/@/api/api";
 
-const Api = {
-  Base: UserService + '/v1/operation/banner',
-  BannerList: UserService + '/v1/operation/banner/list',
-}
+export const getBannerList = (params?: object) =>
+  defHttp.get<ApiRes>({url: OperationApi.BannerList, params});
 
-export const getBannerList = (params?: BannerListItem) =>
-  defHttp.get<BannerListGetResultModel>({url: Api.BannerList, params});
-
-export const createBanner = (params?: BannerListItem
+export const createBanner = (params?: object
 ) => {
-  return defHttp.post<void>(
+  return defHttp.post<ApiRes>(
     {
-      url: Api.Base,
+      url: OperationApi.Base,
       params,
     }
   );
 };
 
-export const updateBanner = (id: string, params?: BannerListItem) => {
-  return defHttp.put<void>(
+export const updateBanner = (id: string, params?: object) => {
+  return defHttp.put<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: OperationApi.Base + '/' + id,
       params,
     }
   );
 };
 
 export const deleteBanner = (id: string) => {
-  return defHttp.delete<void>(
+  return defHttp.delete<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: OperationApi.Base + '/' + id,
     }
   );
 };

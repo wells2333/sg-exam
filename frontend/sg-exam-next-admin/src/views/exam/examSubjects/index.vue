@@ -35,12 +35,14 @@ import {useRoute} from "vue-router";
 import {getExaminationSubjectList} from "/@/api/exam/examination";
 import SubjectModal from "./SubjectModal.vue";
 import {deleteSubject} from '/@/api/exam/subject';
+import {useMessage} from "/@/hooks/web/useMessage";
 
 export default defineComponent({
   name: 'SubjectManagement',
   components: { BasicTable, TableAction, SubjectModal },
   setup() {
     const [registerModal, { openModal }] = useModal();
+    const { createMessage } = useMessage();
     const route = useRoute();
     const examinationId = ref<any>(route.params?.id);
     const [registerTable, { reload }] = useTable({
@@ -85,9 +87,11 @@ export default defineComponent({
     }
     async function handleDelete(record: Recordable) {
       await deleteSubject(record.id);
+      createMessage.success('操作成功');
       await reload();
     }
     function handleSuccess() {
+      createMessage.success('操作成功');
       reload();
     }
     function handleSubjectDataSuccess() {

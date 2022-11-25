@@ -47,7 +47,7 @@ public class ExamCourseSectionController extends BaseController {
 
 	@PostMapping
 	@Operation(summary = "新增课程节")
-	@SgLog(value = "课程节", operationType = OperationType.INSERT)
+	@SgLog(value = "新增课程节", operationType = OperationType.INSERT)
 	public R<Boolean> add(@RequestBody @Valid ExamCourseSection examCourseSection) {
 		examCourseSection.setCommonValue();
 		return R.success(examCourseSectionService.insert(examCourseSection) > 0);
@@ -55,7 +55,7 @@ public class ExamCourseSectionController extends BaseController {
 
 	@PutMapping("{id}")
 	@Operation(summary = "修改课程节")
-	@SgLog(value = "课程节", operationType = OperationType.UPDATE)
+	@SgLog(value = "修改课程节", operationType = OperationType.UPDATE)
 	public R<Boolean> update(@PathVariable("id") Long id, @RequestBody @Valid ExamCourseSection examCourseSection) {
 		examCourseSection.setId(id);
 		return R.success(examCourseSectionService.update(examCourseSection) > 0);

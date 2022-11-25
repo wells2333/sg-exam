@@ -55,7 +55,7 @@ public class ExamSubjectFavoritesController extends BaseController {
 	 */
 	@DeleteMapping("{id}")
 	@Operation(summary = "删除收藏题目")
-	@SgLog(value = "收藏题目", operationType = OperationType.DELETE)
+	@SgLog(value = "删除收藏题目", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable("id") Long id) {
 		ExamSubjectFavorites examSubjectFavorites = examSubjectFavoritesService.get(id);
 		examSubjectFavorites.setCommonValue();

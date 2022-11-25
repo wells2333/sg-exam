@@ -1,9 +1,10 @@
 <template>
   <PageWrapper dense contentFullHeight fixedHeight contentClass="flex">
-    <DeptTree class="w-1/4 xl:w-1/7" @select="handleSelect" />
+    <DeptTree class="w-1/4 xl:w-1/7" @select="handleSelect"/>
     <BasicTable @register="registerTable" class="w-3/4 xl:w-4/5" :searchInfo="searchInfo">
       <template #toolbar>
-        <a-button v-if="hasPermission(['sys:user:add'])" type="primary" @click="handleCreate">新增账号</a-button>
+        <a-button v-if="hasPermission(['sys:user:add'])" type="primary" @click="handleCreate">新增账号
+        </a-button>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -43,38 +44,39 @@
         />
       </template>
     </BasicTable>
-    <UserDetailDrawer @register="registerDetailDrawer" />
-    <UserModal @register="registerModal" @success="handleSuccess" />
+    <UserDetailDrawer @register="registerDetailDrawer"/>
+    <UserModal @register="registerModal" @success="handleSuccess"/>
   </PageWrapper>
 </template>
 <script lang="ts">
-import { defineComponent, reactive } from 'vue';
+import {defineComponent, reactive} from 'vue';
 
-import { BasicTable, useTable, TableAction } from '/@/components/Table';
+import {BasicTable, TableAction, useTable} from '/@/components/Table';
 
-import { getUserList, deleteUser, resetPassword } from '/@/api/sys/user';
-import { PageWrapper } from '/@/components/Page';
+import {deleteUser, getUserList, resetPassword} from '/@/api/sys/user';
+import {PageWrapper} from '/@/components/Page';
 import DeptTree from './DeptTree.vue';
 
-import { useModal } from '/@/components/Modal';
+import {useModal} from '/@/components/Modal';
 import UserModal from './UserModal.vue';
 import UserDetailDrawer from './UserDetail.vue';
 
-import { useDrawer } from '/@/components/Drawer';
-import { columns, searchFormSchema } from './user.data';
+import {useDrawer} from '/@/components/Drawer';
+import {columns, searchFormSchema} from './user.data';
 import {useMessage} from "/@/hooks/web/useMessage";
-import { usePermission } from '/@/hooks/web/usePermission';
+import {usePermission} from '/@/hooks/web/usePermission';
+import {ApiRes} from "/@/api/constant";
 
 export default defineComponent({
   name: 'UserManagement',
-  components: { BasicTable, PageWrapper, DeptTree, UserModal, UserDetailDrawer, TableAction },
+  components: {BasicTable, PageWrapper, DeptTree, UserModal, UserDetailDrawer, TableAction},
   setup() {
-    const { hasPermission } = usePermission();
-    const { createMessage } = useMessage();
-    const [registerDetailDrawer, { openDrawer: openDetailDrawer }] = useDrawer();
-    const [registerModal, { openModal }] = useModal();
+    const {hasPermission} = usePermission();
+    const {createMessage} = useMessage();
+    const [registerDetailDrawer, {openDrawer: openDetailDrawer}] = useDrawer();
+    const [registerModal, {openModal}] = useModal();
     const searchInfo = reactive<Recordable>({});
-    const [registerTable, { reload }] = useTable({
+    const [registerTable, {reload}] = useTable({
       title: '用户列表',
       api: getUserList,
       rowKey: 'id',
@@ -94,7 +96,7 @@ export default defineComponent({
         width: 160,
         title: '操作',
         dataIndex: 'action',
-        slots: { customRender: 'action' },
+        slots: {customRender: 'action'},
       },
     });
 
@@ -112,7 +114,7 @@ export default defineComponent({
     }
 
     async function handleResetPassword(record: Recordable) {
-      const result = await resetPassword(record);
+      const result: ApiRes = await resetPassword(record);
       if (result) {
         createMessage.success('重置成功');
         await reload();
@@ -121,10 +123,12 @@ export default defineComponent({
 
     async function handleDelete(record: Recordable) {
       await deleteUser(record.id);
+      createMessage.success('操作成功');
       await reload();
     }
 
     function handleSuccess() {
+      createMessage.success('操作成功');
       reload();
     }
 
@@ -134,7 +138,7 @@ export default defineComponent({
     }
 
     function handleView(record: Recordable) {
-      openDetailDrawer(true, { record });
+      openDetailDrawer(true, {record});
     }
 
     return {

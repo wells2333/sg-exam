@@ -33,12 +33,14 @@ import { getBannerList, deleteBanner } from '/@/api/operation/banner';
 import { useModal } from '/@/components/Modal';
 import BannerModal from './BannerModal.vue';
 import { columns, searchFormSchema } from './banner.data';
+import {useMessage} from "/@/hooks/web/useMessage";
 
 export default defineComponent({
   name: 'BannerManagement',
   components: { BasicTable, BannerModal, TableAction },
   setup() {
     const [registerModal, { openModal }] = useModal();
+    const { createMessage } = useMessage();
     const [registerImageModal, { openModal: openImageModal }] = useModal();
     const [registerTable, { reload }] = useTable({
       title: '运营位列表',
@@ -80,9 +82,11 @@ export default defineComponent({
     }
     async function handleDelete(record: Recordable) {
       await deleteBanner(record.id);
+      createMessage.success('操作成功');
       await reload();
     }
     function handleSuccess() {
+      createMessage.success('操作成功');
       reload();
     }
     function handleUploadSuccess() {

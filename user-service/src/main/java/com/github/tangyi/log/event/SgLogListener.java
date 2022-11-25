@@ -2,6 +2,7 @@ package com.github.tangyi.log.event;
 
 import com.github.tangyi.common.model.Log;
 import com.github.tangyi.user.service.LogService;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.Async;
@@ -12,6 +13,7 @@ import org.springframework.scheduling.annotation.Async;
  * @author tangyi
  * @date 2019/3/12 23:59
  */
+@Configuration
 public class SgLogListener {
 
 	private final LogService logService;
@@ -20,11 +22,6 @@ public class SgLogListener {
 		this.logService = logService;
 	}
 
-	/**
-	 * 异步记录日志
-	 *
-	 * @param event event
-	 */
 	@Async
 	@Order
 	@EventListener(SgLogEvent.class)

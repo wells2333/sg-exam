@@ -56,7 +56,7 @@ public class SysFeedbackController extends BaseController {
 	 */
 	@PostMapping
 	@Operation(summary = "新增反馈信息")
-	@SgLog(value = "反馈信息", operationType = OperationType.INSERT)
+	@SgLog(value = "新增反馈信息", operationType = OperationType.INSERT)
 	public R<Boolean> add(@RequestBody @Valid SysFeedback sysFeedback) {
 		sysFeedback.setCommonValue();
 		return R.success(sysFeedbackService.insert(sysFeedback) > 0);
@@ -67,7 +67,7 @@ public class SysFeedbackController extends BaseController {
 	 */
 	@PutMapping("{id}")
 	@Operation(summary = "修改反馈信息")
-	@SgLog(value = "反馈信息", operationType = OperationType.UPDATE)
+	@SgLog(value = "修改反馈信息", operationType = OperationType.UPDATE)
 	public R<Boolean> update(@PathVariable("id") Long id, @RequestBody @Valid SysFeedback sysFeedback) {
 		return R.success(sysFeedbackService.update(sysFeedback) > 0);
 	}
@@ -77,7 +77,7 @@ public class SysFeedbackController extends BaseController {
 	 */
 	@DeleteMapping("{id}")
 	@Operation(summary = "删除反馈信息")
-	@SgLog(value = "反馈信息", operationType = OperationType.DELETE)
+	@SgLog(value = "删除反馈信息", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable("id") Long id) {
 		SysFeedback sysFeedback = sysFeedbackService.get(id);
 		sysFeedback.setCommonValue();

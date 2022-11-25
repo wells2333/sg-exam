@@ -13,6 +13,8 @@ import com.github.tangyi.exam.service.answer.AnswerService;
 import com.github.tangyi.exam.service.subject.ImportExportSubjectService;
 import com.github.tangyi.exam.service.subject.SubjectsService;
 import com.github.tangyi.exam.utils.SubjectUtil;
+import com.github.tangyi.log.annotation.SgLog;
+import com.github.tangyi.log.constants.OperationType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -65,6 +67,7 @@ public class SubjectsController extends BaseController {
 
 	@PostMapping
 	@Operation(summary = "创建题目", description = "创建题目")
+	@SgLog(value = "创建题目", operationType = OperationType.INSERT)
 	public R<SubjectDto> add(@RequestBody @Valid SubjectDto subject) {
 		subject.setCommonValue();
 		// 自定义ID
@@ -74,6 +77,7 @@ public class SubjectsController extends BaseController {
 
 	@PutMapping("{id}")
 	@Operation(summary = "更新题目信息", description = "根据题目id更新题目的基本信息")
+	@SgLog(value = "更新题目", operationType = OperationType.UPDATE)
 	public R<SubjectDto> update(@PathVariable Long id, @RequestBody @Valid SubjectDto subject) {
 		subject.setId(id);
 		subject.setCommonValue();
@@ -82,6 +86,7 @@ public class SubjectsController extends BaseController {
 
 	@DeleteMapping("{id}")
 	@Operation(summary = "删除题目", description = "根据ID删除题目")
+	@SgLog(value = "删除题目", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable Long id) {
 		subjectsService.physicalDelete(id);
 		return R.success(Boolean.TRUE);
@@ -102,6 +107,7 @@ public class SubjectsController extends BaseController {
 
 	@RequestMapping("import")
 	@Operation(summary = "导入题目", description = "导入题目")
+	@SgLog(value = "导入题目", operationType = OperationType.INSERT)
 	public R<Boolean> importSubject(Long examinationId, Long categoryId,
 			@Parameter(description = "要上传的文件", required = true) MultipartFile file) {
 		try {
@@ -119,6 +125,7 @@ public class SubjectsController extends BaseController {
 
 	@PostMapping("deleteAll")
 	@Operation(summary = "批量删除题目", description = "根据题目id批量删除题目")
+	@SgLog(value = "批量删除题目", operationType = OperationType.DELETE)
 	public R<Boolean> deleteAll(@RequestBody Long[] ids) {
 		return R.success(subjectsService.physicalDeleteAll(ids) > 0);
 	}

@@ -1,39 +1,34 @@
-import {ChapterListGetResultModel, ChapterListItem} from './model/systemModel';
 import {defHttp} from '/@/utils/http/axios';
-import {ExamService} from '/@/api/services';
+import {ApiRes} from "/@/api/constant";
+import {ChapterApi} from "/@/api/api";
 
-const Api = {
-  Base: ExamService + '/v1/chapter/',
-  CourseList: ExamService + '/v1/chapter/list'
-}
+export const getChapterList = (params?: object) =>
+  defHttp.get<ApiRes>({url: ChapterApi.CourseList, params});
 
-export const getChapterList = (params?: ChapterListItem) =>
-  defHttp.get<ChapterListGetResultModel>({url: Api.CourseList, params});
-
-export const createChapter = (params?: ChapterListItem
+export const createChapter = (params?: object
 ) => {
-  return defHttp.post<void>(
+  return defHttp.post<ApiRes>(
     {
-      url: Api.Base,
+      url: ChapterApi.Base,
       params,
     }
   );
 };
 
-export const updateChapter = (id: string, params?: ChapterListItem
+export const updateChapter = (id: string, params?: object
 ) => {
-  return defHttp.put<void>(
+  return defHttp.put<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: ChapterApi.Base + '/' + id,
       params,
     }
   );
 };
 
 export const deleteChapter = (id: string) => {
-  return defHttp.delete<void>(
+  return defHttp.delete<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: ChapterApi.Base + '/' + id,
     }
   );
 };

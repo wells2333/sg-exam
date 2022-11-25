@@ -14,6 +14,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -27,6 +28,7 @@ import java.util.Objects;
  * @date 2019/3/12 23:52
  */
 @Aspect
+@Configuration
 public class SgLogAspect {
 
 	private static final Logger logger = LoggerFactory.getLogger(SgLogAspect.class);
@@ -35,24 +37,26 @@ public class SgLogAspect {
 	public Object around(ProceedingJoinPoint point, SgLog log) throws Throwable {
 		String strClassName = point.getTarget().getClass().getName();
 		String strMethodName = point.getSignature().getName();
-		logger.info("[class]={},[method]={},[operationType]={}", strClassName, strMethodName, log.operationType());
-		com.github.tangyi.common.model.Log logVo = getLog();
+		String user = SysUtil.getUser();
+		logger.info("[sg-log] {}.{}, operator: {}, type: {}", strClassName, strMethodName, user, log.operationType());
+		com.github.tangyi.common.model.Log logVo = getLog(user);
 		logVo.setTitle(log.value());
 		// 发送异步日志事件
 		Long startTime = System.currentTimeMillis();
 		Object obj = point.proceed();
 		Long endTime = System.currentTimeMillis();
 		logVo.setTook(String.valueOf(endTime - startTime));
-		logVo.setCommonValue(SysUtil.getUser(), SysUtil.getTenantCode());
+		logVo.setCommonValue(user, SysUtil.getTenantCode());
 		SpringContextHolder.publishEvent(new SgLogEvent(logVo));
 		return obj;
 	}
 
-	public Log getLog() {
+	public Log getLog(String user) {
 		HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(
 				RequestContextHolder.getRequestAttributes())).getRequest();
 		Log sysLog = new Log();
-		sysLog.setCreator(Objects.requireNonNull(SysUtil.getUser()));
+		sysLog.setCreator(user);
+		sysLog.setOperator(user);
 		sysLog.setType(CommonConstant.STATUS_NORMAL);
 		sysLog.setIp(ServletUtil.getClientIP(request));
 		sysLog.setRequestUri(URLUtil.getPath(request.getRequestURI()));

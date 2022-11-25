@@ -1,8 +1,10 @@
 package com.github.tangyi.user.controller;
 
 
-import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.base.BaseController;
+import com.github.tangyi.common.model.R;
+import com.github.tangyi.log.annotation.SgLog;
+import com.github.tangyi.log.constants.OperationType;
 import com.github.tangyi.user.service.MobileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,6 +40,7 @@ public class MobileController extends BaseController {
 	 */
 	@GetMapping("sendSms/{mobile}")
 	@Operation(summary = "发送短信", description = "发送短信到指定的手机号")
+	@SgLog(value = "发送短信", operationType = OperationType.INSERT)
 	public R<Boolean> sendSms(@PathVariable String mobile) {
 		return mobileService.sendSms(mobile);
 	}

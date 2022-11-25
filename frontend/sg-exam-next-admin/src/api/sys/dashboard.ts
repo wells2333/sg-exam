@@ -1,21 +1,11 @@
 import {defHttp} from '/@/utils/http/axios';
-
-import {
-  DashboardParams,
-  DashboardGetResultModel
-} from './model/systemModel';
-
-import {UserService} from '/@/api/services';
-
-const Api = {
-  Dashboard: UserService + '/v1/dashboard',
-  Tendency: UserService + '/v1/dashboard/examRecordTendency'
-}
+import {ApiRes} from "/@/api/constant";
+import {DashboardApi} from "/@/api/api";
 
 export function getDashboardData() {
-  return defHttp.get<DashboardGetResultModel>({url: Api.Dashboard});
+  return defHttp.get<ApiRes>({url: DashboardApi.Dashboard});
 }
 
-export function getDashboardTendency(params?: DashboardParams) {
-  return defHttp.get<DashboardGetResultModel>({url: Api.Tendency, params});
+export function getDashboardTendency(params?: object) {
+  return defHttp.get<ApiRes>({url: DashboardApi.Tendency, params});
 }

@@ -1,43 +1,34 @@
-import {
-  DeptListItem,
-  DeptListGetResultModel,
-} from './model/systemModel';
+import {defHttp} from '/@/utils/http/axios';
+import {ApiRes} from "/@/api/constant";
+import {DeptApi} from "/@/api/api";
 
-import { defHttp } from '/@/utils/http/axios';
-import {UserService} from '/@/api/services';
+export const getDeptList = (params?: object) =>
+  defHttp.get<ApiRes>({url: DeptApi.DeptList, params});
 
-const Api = {
-  Base: UserService + '/v1/dept',
-  DeptList: UserService + '/v1/dept/deptList',
-}
-
-export const getDeptList = (params?: DeptListItem) =>
-  defHttp.get<DeptListGetResultModel>({ url: Api.DeptList, params });
-
-export const createDept = (params?: DeptListItem
+export const createDept = (params?: object
 ) => {
-  return defHttp.post<void>(
+  return defHttp.post<ApiRes>(
     {
-      url: Api.Base,
+      url: DeptApi.Base,
       params,
     }
   );
 };
 
-export const updateDept = (id: string, params?: DeptListItem
+export const updateDept = (id: string, params?: object
 ) => {
-  return defHttp.put<void>(
+  return defHttp.put<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: DeptApi.Base + '/' + id,
       params,
     }
   );
 };
 
 export const deleteDept = (id: string) => {
-  return defHttp.delete<void>(
+  return defHttp.delete<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: DeptApi.Base + '/' + id,
     }
   );
 };

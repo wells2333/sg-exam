@@ -7,6 +7,8 @@ import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.vo.AttachmentVo;
 import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.exam.service.KnowledgeService;
+import com.github.tangyi.log.annotation.SgLog;
+import com.github.tangyi.log.constants.OperationType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -102,6 +104,7 @@ public class KnowledgeController extends BaseController {
 
 	@DeleteMapping("{id}")
 	@Operation(summary = "删除知识", description = "根据ID删除知识")
+	@SgLog(value = "删除知识", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable Long id) {
 		boolean success = false;
 		Knowledge knowledge = knowledgeService.get(id);
@@ -117,6 +120,7 @@ public class KnowledgeController extends BaseController {
 
 	@PostMapping("deleteAll")
 	@Operation(summary = "批量删除知识", description = "根据知识id批量删除知识")
+	@SgLog(value = "批量删除知识", operationType = OperationType.DELETE)
 	public R<Boolean> deleteAll(@RequestBody Long[] ids) {
 		boolean success = false;
 		if (ArrayUtils.isNotEmpty(ids)) {

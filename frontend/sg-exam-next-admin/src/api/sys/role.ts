@@ -1,61 +1,50 @@
-import {
-  RoleListItem,
-  RoleListGetResultModel,
-} from './model/systemModel';
-
 import {defHttp} from '/@/utils/http/axios';
-import {UserService} from '/@/api/services';
+import {ApiRes} from "/@/api/constant";
+import {RoleApi} from "/@/api/api";
 
-const Api = {
-  Base: UserService + '/v1/role',
-  List: UserService + '/v1/role/roleList',
-  AllList: UserService + '/v1/role/allRoles',
-  RoleMenus: UserService + '/v1/role/roleMenus'
-}
+export const getRoleList = (params?: object) =>
+  defHttp.get<ApiRes>({url: RoleApi.List, params});
 
-export const getRoleList = (params?: RoleListItem) =>
-  defHttp.get<RoleListGetResultModel>({ url: Api.List, params });
+export const getAllRoleList = (params?: object) =>
+  defHttp.get<ApiRes>({url: RoleApi.AllList, params});
 
-export const getAllRoleList = (params?: RoleListItem) =>
-  defHttp.get<RoleListGetResultModel>({ url: Api.AllList, params });
+export const getRoleMenus = (id: string, params?: object) =>
+  defHttp.get<ApiRes>({url: RoleApi.RoleMenus + '/' + id, params});
 
-export const getRoleMenus = (id: string, params?: RoleListItem) =>
-  defHttp.get<RoleListGetResultModel>({ url: Api.RoleMenus + '/' + id, params });
-
-export const createRole = (params?: RoleListItem
+export const createRole = (params?: object
 ) => {
-  return defHttp.post<void>(
+  return defHttp.post<ApiRes>(
     {
-      url: Api.Base,
+      url: RoleApi.Base,
       params,
     }
   );
 };
 
-export const updateRole = (id: string, params?: RoleListItem
+export const updateRole = (id: string, params?: object
 ) => {
-  return defHttp.put<void>(
+  return defHttp.put<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: RoleApi.Base + '/' + id,
       params,
     }
   );
 };
 
-export const updateRoleStatus = (id: string, params?: RoleListItem
+export const updateRoleStatus = (id: string, params?: object
 ) => {
-  return defHttp.post<void>(
+  return defHttp.post<ApiRes>(
     {
-      url: Api.Base + '/setRoleStatus/' + id,
+      url: RoleApi.Base + '/setRoleStatus/' + id,
       params,
     }
   );
 };
 
 export const deleteRole = (id: string) => {
-  return defHttp.delete<void>(
+  return defHttp.delete<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: RoleApi.Base + '/' + id,
     }
   );
 };

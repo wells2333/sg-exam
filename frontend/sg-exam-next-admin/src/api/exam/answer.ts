@@ -1,23 +1,14 @@
-import {
-  AnswerListItem,
-  AnswerListGetResultModel,
-} from './model/systemModel';
+import {defHttp} from '/@/utils/http/axios';
+import {ApiRes} from "/@/api/constant";
+import {AnswerApi} from "/@/api/api";
 
-import { defHttp } from '/@/utils/http/axios';
-import {ExamService} from '/@/api/services';
+export const getAnswerList = (params?: object) =>
+  defHttp.get<ApiRes>({url: AnswerApi.AnswerList, params});
 
-const Api = {
-  AnswerList: ExamService + '/v1/answer/answerList',
-  Base: ExamService + '/v1/answer'
-}
-
-export const getAnswerList = (params?: AnswerListItem) =>
-  defHttp.get<AnswerListGetResultModel>({ url: Api.AnswerList, params });
-
-export const markAnswer = (params?: AnswerListItem) => {
+export const markAnswer = (params?: object) => {
   return defHttp.put<void>(
     {
-      url: Api.Base + '/mark',
+      url: AnswerApi.Base + '/mark',
       params,
     }
   );

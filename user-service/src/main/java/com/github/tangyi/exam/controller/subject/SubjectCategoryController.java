@@ -6,6 +6,8 @@ import com.github.tangyi.api.exam.model.SubjectCategory;
 import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.exam.service.subject.SubjectCategoryService;
+import com.github.tangyi.log.annotation.SgLog;
+import com.github.tangyi.log.constants.OperationType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 题目分类controller
@@ -33,8 +36,8 @@ public class SubjectCategoryController extends BaseController {
 	 */
 	@GetMapping(value = "categoryTree")
 	@Operation(summary = "获取分类列表")
-	public R<List<SubjectCategoryDto>> categoryTree() {
-		return R.success(categoryService.categoryTree());
+	public R<List<SubjectCategoryDto>> categoryTree(@RequestParam(required = false) Map<String, Object> condition) {
+		return R.success(categoryService.categoryTree(condition));
 	}
 
 	@GetMapping("/{id}")
@@ -45,6 +48,7 @@ public class SubjectCategoryController extends BaseController {
 
 	@PostMapping
 	@Operation(summary = "创建分类", description = "创建分类")
+	@SgLog(value = "创建分类", operationType = OperationType.INSERT)
 	public R<Boolean> add(@RequestBody @Valid SubjectCategory subjectCategory) {
 		subjectCategory.setCommonValue();
 		subjectCategory.setType(ExamSubjectConstant.PUBLIC_CATEGORY);
@@ -56,6 +60,7 @@ public class SubjectCategoryController extends BaseController {
 
 	@PutMapping("{id}")
 	@Operation(summary = "更新分类信息", description = "根据分类id更新分类的基本信息")
+	@SgLog(value = "更新分类信息", operationType = OperationType.UPDATE)
 	public R<Boolean> update(@PathVariable Long id, @RequestBody @Valid SubjectCategory subjectCategory) {
 		subjectCategory.setId(id);
 		subjectCategory.setCommonValue();
@@ -64,6 +69,7 @@ public class SubjectCategoryController extends BaseController {
 
 	@DeleteMapping("/{id}")
 	@Operation(summary = "删除分类", description = "根据ID删除分类")
+	@SgLog(value = "删除分类", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable Long id) {
 		SubjectCategory subjectCategory = new SubjectCategory();
 		subjectCategory.setId(id);

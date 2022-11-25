@@ -1,48 +1,37 @@
-import {
-  ExaminationListItem,
-  ExaminationListGetResultModel,
-  SubjectListItem,
-  SubjectListGetResultModel,
-} from './model/systemModel';
-import { defHttp } from '/@/utils/http/axios';
-import {ExamService} from '/@/api/services';
+import {defHttp} from '/@/utils/http/axios';
+import {ApiRes} from "/@/api/constant";
+import {ExaminationApi} from "/@/api/api";
 
-const Api = {
-  Base: ExamService + '/v1/examination',
-  ExaminationList: ExamService + '/v1/examination/examinationList',
-  SubjectList: ExamService + '/v1/examination/subjectList'
-}
+export const getExaminationList = (params?: object) =>
+  defHttp.get<ApiRes>({url: ExaminationApi.ExaminationList, params});
 
-export const getExaminationList = (params?: ExaminationListItem) =>
-  defHttp.get<ExaminationListGetResultModel>({ url: Api.ExaminationList, params });
+export const getExaminationSubjectList = (params?: object) =>
+  defHttp.get<ApiRes>({url: ExaminationApi.SubjectList, params});
 
-export const getExaminationSubjectList = (params?: SubjectListItem) =>
-  defHttp.get<SubjectListGetResultModel>({ url: Api.SubjectList, params });
-
-export const createExamination = (params?: ExaminationListItem
+export const createExamination = (params?: object
 ) => {
-  return defHttp.post<void>(
+  return defHttp.post<ApiRes>(
     {
-      url: Api.Base,
+      url: ExaminationApi.Base,
       params,
     }
   );
 };
 
-export const updateExamination = (id: string, params?: ExaminationListItem
+export const updateExamination = (id: string, params?: object
 ) => {
-  return defHttp.put<void>(
+  return defHttp.put<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: ExaminationApi.Base + '/' + id,
       params,
     }
   );
 };
 
 export const deleteExamination = (id: string) => {
-  return defHttp.delete<void>(
+  return defHttp.delete<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: ExaminationApi.Base + '/' + id,
     }
   );
 };
@@ -50,7 +39,7 @@ export const deleteExamination = (id: string) => {
 export const nexSubjectNo = (id?: string) => {
   return defHttp.get<string>(
     {
-      url: Api.Base + '/nexSubjectNo/' + id,
+      url: ExaminationApi.Base + '/nexSubjectNo/' + id,
     }
   );
 }

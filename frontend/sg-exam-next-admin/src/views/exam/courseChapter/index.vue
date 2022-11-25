@@ -2,7 +2,9 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button v-if="hasPermission(['exam:course:edit'])" type="primary" @click="handleCreate"> 新增 </a-button>
+        <a-button v-if="hasPermission(['exam:course:edit'])" type="primary" @click="handleCreate">
+          新增
+        </a-button>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -34,25 +36,25 @@
       </template>
     </BasicTable>
     <ChapterModal width="90%" @register="registerModal" @success="handleSuccess"/>
-    <SectionModal width="90%" @register="registerSectionModal" @success="handleSuccess"></SectionModal>
+    <SectionModal width="90%" @register="registerSectionModal"
+                  @success="handleSuccess"></SectionModal>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import {defineComponent, ref, unref} from 'vue';
 import {Divider} from 'ant-design-vue';
 import {useRoute} from 'vue-router';
 import {PageWrapper} from '/@/components/Page';
-import {useGo} from '/@/hooks/web/usePage';
-import {getChapterList} from '/@/api/exam/chapter';
+import {deleteChapter, getChapterList} from '/@/api/exam/chapter';
 import {Description} from '/@/components/Description/index';
 import {BasicTable, TableAction, useTable} from '/@/components/Table';
-import {searchFormSchema, columns} from './chapter.data';
-import {useMessage} from "/@/hooks/web/useMessage";
+import {columns, searchFormSchema} from './chapter.data';
 import ChapterModal from './ChapterModal.vue';
 import SectionModal from './SectionModal.vue';
 import {useModal} from '/@/components/Modal';
 import {usePermission} from '/@/hooks/web/usePermission';
+import {useMessage} from "/@/hooks/web/useMessage";
 
 export default defineComponent({
   name: 'CourseChapter',
@@ -67,6 +69,7 @@ export default defineComponent({
   },
   setup() {
     const {hasPermission} = usePermission();
+    const { createMessage } = useMessage();
     const [registerModal, {openModal}] = useModal();
     const [registerSectionModal, {openModal: openSectionModal}] = useModal();
     const route = useRoute();
@@ -94,7 +97,7 @@ export default defineComponent({
         width: 120,
         title: '操作',
         dataIndex: 'action',
-        slots: { customRender: 'action' },
+        slots: {customRender: 'action'},
         fixed: undefined,
       },
     });
@@ -105,26 +108,38 @@ export default defineComponent({
         isUpdate: true,
       });
     }
+
     function handleCreate() {
       openModal(true, {
         isUpdate: false,
       });
     }
-    function handleEdit() {
 
+    function handleEdit(record: Recordable) {
+      openModal(true, {
+        record,
+        isUpdate: true,
+      });
     }
-    function handleDelete() {
 
+    async function handleDelete(record: Recordable) {
+      await deleteChapter(record.id);
+      createMessage.success('操作成功');
+      await reload();
     }
+
     function handleSuccess() {
+      createMessage.success('操作成功');
       reload();
     }
+
     function handleSectionManage(record) {
       openSectionModal(true, {
         record,
         isUpdate: true,
       });
     }
+
     return {
       hasPermission,
       registerModal,

@@ -41,6 +41,7 @@ import {getSectionList, deleteSection} from "/@/api/exam/section";
 import {BasicTable, TableAction, useTable} from '/@/components/Table';
 import {usePermission} from '/@/hooks/web/usePermission';
 import SectionDataModal from './SectionDataModal.vue';
+import {useMessage} from "/@/hooks/web/useMessage";
 
 export default defineComponent({
   name: 'SectionModal',
@@ -54,6 +55,7 @@ export default defineComponent({
   emits: ['success', 'register'],
   setup(_) {
     const {hasPermission} = usePermission();
+    const { createMessage } = useMessage();
     const chapterId = ref<object>();
     // 列表
     const [registerTable, {reload}] = useTable({
@@ -115,10 +117,12 @@ export default defineComponent({
 
     async function handleDelete(record: Recordable) {
       await deleteSection(record.id);
+      createMessage.success('操作成功');
       await reload();
     }
 
     function handleSectionDataSuccess() {
+      createMessage.success('操作成功');
       reload();
     }
 

@@ -55,12 +55,14 @@ import {columns, searchFormSchema} from './examination.data';
 import {useDrawer} from "/@/components/Drawer";
 import {useGo} from "/@/hooks/web/usePage";
 import {usePermission} from '/@/hooks/web/usePermission';
+import {useMessage} from "/@/hooks/web/useMessage";
 
 export default defineComponent({
   name: 'ExaminationManagement',
   components: {BasicTable, ExaminationModal, ExaminationDetailDrawer, TableAction},
   setup() {
     const {hasPermission} = usePermission();
+    const { createMessage } = useMessage();
     const [registerDetailDrawer, {openDrawer: openDetailDrawer}] = useDrawer();
     const [registerModal, {openModal}] = useModal();
     const [registerExamImageModal] = useModal();
@@ -108,10 +110,12 @@ export default defineComponent({
 
     async function handleDelete(record: Recordable) {
       await deleteExamination(record.id);
+      createMessage.success('操作成功');
       await reload();
     }
 
     function handleSuccess() {
+      createMessage.success('操作成功');
       reload();
     }
 

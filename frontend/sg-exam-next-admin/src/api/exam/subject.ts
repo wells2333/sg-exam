@@ -1,46 +1,38 @@
-import {
-  SubjectListItem,
-  SubjectListGetResultModel,
-} from './model/systemModel';
-import { defHttp } from '/@/utils/http/axios';
-import {ExamService} from '/@/api/services';
+import {defHttp} from '/@/utils/http/axios';
+import {ApiRes} from "/@/api/constant";
+import {SubjectsApi} from "/@/api/api";
 
-const Api = {
-  Base: ExamService + '/v1/subjects',
-  SubjectList: ExamService + '/v1/subjects/subjectList',
-}
+export const getSubjectList = (params?: object) =>
+  defHttp.get<ApiRes | undefined>({url: SubjectsApi.SubjectList, params});
 
-export const getSubjectList = (params?: SubjectListItem) =>
-  defHttp.get<SubjectListGetResultModel | undefined>({ url: Api.SubjectList, params });
+export const getSubjectInfo = (id: string, params?: object) =>
+  defHttp.get<ApiRes>({url: SubjectsApi.Base + '/' + id, params});
 
-export const getSubjectInfo = (id: string, params?: SubjectListItem) =>
-  defHttp.get<SubjectListGetResultModel>({ url: Api.Base + '/' + id, params });
-
-export const createSubject = (params?: SubjectListItem
+export const createSubject = (params?: object
 ) => {
-  return defHttp.post<void>(
+  return defHttp.post<ApiRes>(
     {
-      url: Api.Base,
+      url: SubjectsApi.Base,
       params,
     }
   );
 };
 
-export const updateSubject = (id: string, params?: SubjectListItem
+export const updateSubject = (id: string, params?: object
 ) => {
-  return defHttp.put<void>(
+  return defHttp.put<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: SubjectsApi.Base + '/' + id,
       params,
     }
   );
 };
 
-export const deleteSubject = (id: string, params?: SubjectListItem
+export const deleteSubject = (id: string, params?: object
 ) => {
-  return defHttp.delete<void>(
+  return defHttp.delete<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: SubjectsApi.Base + '/' + id,
       params,
     }
   );
@@ -49,7 +41,7 @@ export const deleteSubject = (id: string, params?: SubjectListItem
 export const cateNexSubjectNo = (id?: string) => {
   return defHttp.get<string>(
     {
-      url: Api.Base + '/nexSubjectNo/' + id,
+      url: SubjectsApi.Base + '/nexSubjectNo/' + id,
     }
   );
 }

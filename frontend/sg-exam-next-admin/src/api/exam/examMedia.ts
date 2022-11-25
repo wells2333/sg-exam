@@ -1,11 +1,6 @@
-import {UserService} from '/@/api/services';
 import {defHttp} from '/@/utils/http/axios';
 import {UploadFileParams} from "/#/axios";
-
-export const Api = {
-  UploadVideo: UserService + 'v1/examMedia/uploadVideo',
-  UploadImage: UserService + 'v1/examMedia/uploadImage'
-}
+import {ExamMediaApi} from "/@/api/api";
 
 export function uploadVideo(
   params: UploadFileParams,
@@ -13,7 +8,7 @@ export function uploadVideo(
 ) {
   return defHttp.uploadFile(
     {
-      url: Api.UploadVideo,
+      url: ExamMediaApi.UploadVideo,
       onUploadProgress,
     },
     params,
@@ -26,7 +21,7 @@ export function uploadImage(
 ) {
   return defHttp.uploadFile(
     {
-      url: Api.UploadImage,
+      url: ExamMediaApi.UploadImage,
       onUploadProgress,
     },
     params,

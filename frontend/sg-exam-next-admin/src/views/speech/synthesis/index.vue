@@ -76,6 +76,7 @@ export default defineComponent({
     }
     async function handleDelete(record: Recordable) {
       await deleteSpeech(record.id);
+      createMessage.success('操作成功');
       await reload();
     }
     function handleSuccess() {

@@ -109,10 +109,12 @@ export default defineComponent({
 
     async function handleDelete(record: Recordable) {
       await deleteSubject(record.id);
+      createMessage.success('操作成功');
       await reload();
     }
 
     function handleSuccess() {
+      createMessage.success('操作成功');
       reload();
     }
 

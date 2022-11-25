@@ -47,12 +47,14 @@ import CourseImageModal from "./CourseImageModal.vue";
 import { columns, searchFormSchema } from './course.data';
 import { usePermission } from '/@/hooks/web/usePermission';
 import {useGo} from "/@/hooks/web/usePage";
+import {useMessage} from "/@/hooks/web/useMessage";
 
 export default defineComponent({
   name: 'CourseManagement',
   components: { BasicTable, CourseModal, CourseImageModal, TableAction },
   setup() {
     const { hasPermission } = usePermission();
+    const { createMessage } = useMessage();
     const [registerModal, { openModal }] = useModal();
     const [registerImageModal] = useModal();
     const go = useGo();
@@ -96,9 +98,11 @@ export default defineComponent({
     }
     async function handleDelete(record: Recordable) {
       await deleteCourse(record.id);
+      createMessage.success('操作成功');
       await reload();
     }
     function handleSuccess() {
+      createMessage.success('操作成功');
       reload();
     }
     function handleUploadSuccess() {

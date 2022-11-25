@@ -52,5 +52,6 @@ CREATE TABLE `exam_course_section` (
    `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
    `tenant_code` varchar(16) NOT NULL COMMENT '租户编号',
    `section_desc` varchar(255) DEFAULT NULL COMMENT '描述',
+   `video_name` varchar(255) DEFAULT NULL COMMENT '视频名称',
    PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='课程节表';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COMMENT='课程节表';

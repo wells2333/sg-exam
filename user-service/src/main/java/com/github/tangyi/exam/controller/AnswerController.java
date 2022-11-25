@@ -5,13 +5,15 @@ import com.github.tangyi.api.exam.dto.AnswerDto;
 import com.github.tangyi.api.exam.dto.RankInfoDto;
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.Answer;
+import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.SysUtil;
-import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.exam.service.ExaminationActionService;
 import com.github.tangyi.exam.service.RankInfoService;
 import com.github.tangyi.exam.service.answer.AnswerService;
 import com.github.tangyi.exam.service.subject.SubjectsService;
+import com.github.tangyi.log.annotation.SgLog;
+import com.github.tangyi.log.constants.OperationType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -59,6 +61,7 @@ public class AnswerController extends BaseController {
 
 	@PostMapping
 	@Operation(summary = "创建答题")
+	@SgLog(value = "新增答题", operationType = OperationType.INSERT)
 	public R<Boolean> add(@RequestBody @Valid Answer answer) {
 		answer.setCommonValue();
 		return R.success(answerService.insert(answer) > 0);
@@ -66,6 +69,7 @@ public class AnswerController extends BaseController {
 
 	@PutMapping("{id}")
 	@Operation(summary = "更新答题信息")
+	@SgLog(value = "更新答题", operationType = OperationType.UPDATE)
 	public R<Boolean> update(@PathVariable Long id, @RequestBody @Valid Answer answer) {
 		answer.setId(id);
 		answer.setCommonValue();
@@ -74,6 +78,7 @@ public class AnswerController extends BaseController {
 
 	@DeleteMapping("{id}")
 	@Operation(summary = "删除答题")
+	@SgLog(value = "删除答题", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable Long id) {
 		boolean success = false;
 		try {
@@ -90,6 +95,7 @@ public class AnswerController extends BaseController {
 
 	@PostMapping("save")
 	@Operation(summary = "保存答题，并返回下一题")
+	@SgLog(value = "保存答题，并返回下一题", operationType = OperationType.UPDATE)
 	public R<Boolean> save(@RequestBody @Valid Answer answer) {
 		return R.success(answerService.save(answer) > 0);
 	}
@@ -105,6 +111,7 @@ public class AnswerController extends BaseController {
 	 */
 	@PostMapping("saveAndNext")
 	@Operation(summary = "保存答题")
+	@SgLog(value = "保存答题", operationType = OperationType.UPDATE)
 	public R<SubjectDto> saveAndNext(@RequestBody AnswerDto answer, @RequestParam Integer type,
 			@RequestParam(required = false) Integer nextSubjectSortNo) {
 		return R.success(answerService.saveAndNext(answer, type, nextSubjectSortNo));
@@ -120,6 +127,7 @@ public class AnswerController extends BaseController {
 	 */
 	@PostMapping("saveAnswer")
 	@Operation(summary = "保存答题")
+	@SgLog(value = "保存答题", operationType = OperationType.UPDATE)
 	public R<Boolean> saveAnswer(@RequestBody AnswerDto answer) {
 		return R.success(answerService.save(answer, SysUtil.getUser(), SysUtil.getTenantCode()) > 0);
 	}
@@ -151,18 +159,21 @@ public class AnswerController extends BaseController {
 	 */
 	@PostMapping("submit")
 	@Operation(summary = "提交答卷")
+	@SgLog(value = "提交答卷", operationType = OperationType.UPDATE)
 	public R<Boolean> submit(@RequestBody Answer answer) {
 		return R.success(actionService.submitAsync(answer));
 	}
 
 	@PostMapping("submitAll")
 	@Operation(summary = "批量提交答题")
+	@SgLog(value = "批量提交答题", operationType = OperationType.UPDATE)
 	public R<Boolean> submitAll(@RequestBody List<AnswerDto> answers) {
 		return R.success(actionService.submitAll(answers));
 	}
 
 	@PutMapping("mark")
 	@Operation(summary = "批改答题")
+	@SgLog(value = "批改答题", operationType = OperationType.UPDATE)
 	public R<Boolean> markAnswer(@RequestBody @Valid Answer answer) {
 		answer.setCommonValue();
 		return R.success(answerService.updateScore(answer) > 0);

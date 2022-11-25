@@ -1,43 +1,34 @@
-import {
-  AttachGroupListItem,
-  AttachGroupListGetResultModel,
-} from './model/systemModel';
-
 import {defHttp} from '/@/utils/http/axios';
-import {UserService} from '/@/api/services';
+import {ApiRes} from "/@/api/constant";
+import {AttachmentGroupApi} from "/@/api/api";
 
-const Api = {
-  Base: UserService + '/v1/attachGroup',
-  GroupList: UserService + '/v1/attachGroup/groupList',
-}
+export const getAttachGroupList = (params?: object) =>
+  defHttp.get<ApiRes>({url: AttachmentGroupApi.GroupList, params});
 
-export const getAttachGroupList = (params?: AttachGroupListItem) =>
-  defHttp.get<AttachGroupListGetResultModel>({url: Api.GroupList, params});
-
-export const createAttachGroup = (params?: AttachGroupListItem
+export const createAttachGroup = (params?: object
 ) => {
-  return defHttp.post<void>(
+  return defHttp.post<ApiRes>(
     {
-      url: Api.Base,
+      url: AttachmentGroupApi.Base,
       params,
     }
   );
 };
 
-export const updateAttachGroup = (id: string, params?: AttachGroupListItem
+export const updateAttachGroup = (id: string, params?: object
 ) => {
-  return defHttp.put<void>(
+  return defHttp.put<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: AttachmentGroupApi.Base + '/' + id,
       params,
     }
   );
 };
 
 export const deleteAttachGroup = (id: string) => {
-  return defHttp.delete<void>(
+  return defHttp.delete<ApiRes>(
     {
-      url: Api.Base + '/' + id,
+      url: AttachmentGroupApi.Base + '/' + id,
     }
   );
 };

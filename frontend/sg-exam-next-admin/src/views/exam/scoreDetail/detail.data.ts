@@ -96,7 +96,7 @@ export const answerColumns: BasicColumn[] = [
   },
   {
     dataIndex: 'markStatus',
-    title: '批改状态',
+    title: '状态',
     width: 80,
     align: 'left',
     customRender:({ record }) => {
