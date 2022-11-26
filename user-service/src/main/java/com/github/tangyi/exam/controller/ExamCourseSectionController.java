@@ -1,6 +1,7 @@
 package com.github.tangyi.exam.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.github.tangyi.api.exam.dto.CourseSectionDto;
 import com.github.tangyi.api.exam.model.ExamCourseSection;
 import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.model.R;
@@ -43,6 +44,13 @@ public class ExamCourseSectionController extends BaseController {
 	@Operation(summary = "获取课程节详细信息")
 	public R<ExamCourseSection> get(@PathVariable("id") Long id) {
 		return R.success(examCourseSectionService.get(id));
+	}
+
+	@GetMapping(value = "/watchSection/{id}")
+	@Operation(summary = "查看课程节视频")
+	@SgLog(value = "查看课程节视频", operationType = OperationType.INSERT)
+	public R<CourseSectionDto> watchSection(@PathVariable("id") Long id) {
+		return R.success(examCourseSectionService.watchSection(id));
 	}
 
 	@PostMapping

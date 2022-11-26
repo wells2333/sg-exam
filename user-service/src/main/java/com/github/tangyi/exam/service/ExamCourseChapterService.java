@@ -11,6 +11,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import com.github.tangyi.constants.ExamCacheName;
 
+import java.util.List;
+
 /**
  * 课程章Service
  * @author tangyi
@@ -54,5 +56,9 @@ public class ExamCourseChapterService extends CrudService<ExamCourseChapterMappe
 	@CacheEvict(value = ExamCacheName.CHAPTER, allEntries = true)
 	public int deleteAll(Long[] ids) {
 		return super.deleteAll(ids);
+	}
+
+	public List<ExamCourseChapter> findChaptersByCourseId(Long courseId) {
+		return this.dao.findChaptersByCourseId(courseId);
 	}
 }

@@ -39,4 +39,12 @@ public class ExamMediaService {
 		}
 		return null;
 	}
+
+	public String imageUrl(Long id) {
+		return qiNiuService.getPreviewUrl(id);
+	}
+
+	public String videoUrl(Long id) {
+		return qiNiuService.getPreviewUrl(id);
+	}
 }

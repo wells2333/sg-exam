@@ -10,7 +10,7 @@
             <img :src="course.imageUrl" alt="">
             <div class="course-content">
               <h4>{{ course.courseName }}</h4>
-              <div class="meta d-flex align-items-center">
+              <div class="meta d-flex align-items-center" v-if="course.college">
                 <a href="#">{{ course.college }} & {{ course.major }}</a>
                 <span><i class="fa fa-circle" aria-hidden="true"></i></span>
                 <a href="#">{{ course.teacher }}</a>
@@ -83,7 +83,6 @@ export default {
       })
     },
     handleStartCourse (course) {
-      // messageWarn(this, '功能正在开发中！')
       this.$router.push({name: 'course-details', query: {courseId: course.id}})
     },
     scrollList () {

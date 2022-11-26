@@ -1,6 +1,7 @@
 package com.github.tangyi.exam.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.github.tangyi.api.exam.dto.CourseDetailDto;
 import com.github.tangyi.api.exam.model.Course;
 import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.model.R;
@@ -94,5 +95,11 @@ public class CourseController extends BaseController {
 			log.error("Delete course failed", e);
 		}
 		return R.success(success);
+	}
+
+	@GetMapping("/detail/{id}")
+	@Operation(summary = "获取课程详细信息")
+	public R<CourseDetailDto> getDetail(@PathVariable Long id) {
+		return R.success(courseService.getDetail(id));
 	}
 }

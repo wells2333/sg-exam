@@ -1,7 +1,7 @@
 import request from '@/router/axios'
-import { getRefreshToken } from '@/utils/auth'
+import {getRefreshToken} from '@/utils/auth'
 
-export function loginByUsername (identifier, credential, code, randomStr) {
+export function loginByUsername(identifier, credential, code, randomStr) {
   const grantType = 'password'
   const scope = 'read'
   return request({
@@ -19,7 +19,7 @@ export function loginByUsername (identifier, credential, code, randomStr) {
  * @param social
  * @param code
  */
-export function loginBySocial (social, code) {
+export function loginBySocial(social, code) {
   const grantType = 'mobile'
   const scope = 'read'
   return request({
@@ -32,7 +32,7 @@ export function loginBySocial (social, code) {
   })
 }
 
-export function registerByUsername (identifier, email, credential, code, randomStr) {
+export function registerByUsername(identifier, email, credential, code, randomStr) {
   return request({
     url: '/user-service/v1/user/anonymousUser/register',
     method: 'post',
@@ -41,14 +41,14 @@ export function registerByUsername (identifier, email, credential, code, randomS
   })
 }
 
-export function logout () {
+export function logout() {
   return request({
     url: '/user-service/v1/token/logout',
     method: 'get'
   })
 }
 
-export function getUserInfo (token) {
+export function getUserInfo(token) {
   return request({
     url: '/user-service/v1/user/info',
     method: 'get'
@@ -58,7 +58,7 @@ export function getUserInfo (token) {
 /**
  * 刷新token
  */
-export function refreshToken () {
+export function refreshToken() {
   //  grant_type为refresh_token
   const grantType = 'refresh_token'
   const scope = 'read'
@@ -66,9 +66,9 @@ export function refreshToken () {
   return request({
     url: '/user-service/oauth/token',
     headers: {
-      'Authorization': basicAuthorization
+      'Authorization': ''
     },
     method: 'post',
-    params: { grant_type: grantType, scope, refresh_token: refreshToken }
+    params: {grant_type: grantType, scope, refresh_token: refreshToken}
   })
 }

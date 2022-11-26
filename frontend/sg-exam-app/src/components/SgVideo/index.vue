@@ -23,10 +23,10 @@
 </template>
 <script>
 import 'video.js/dist/video-js.css'
-import { videoPlayer } from 'vue-video-player'
+import {videoPlayer} from 'vue-video-player'
 
 export default {
-  name:'SgVideo',
+  name: 'SgVideo',
   props: {
     src: {
       type: String
@@ -73,10 +73,13 @@ export default {
   },
   methods: {
     setSrc(src) {
-      this.playerOptions.sources = [{src}];
+      this.playerOptions.sources = [{src}]
     },
     play() {
       this.$refs.sgVideoPlayer.player.play()
+    },
+    pause() {
+      this.$refs.sgVideoPlayer.player.pause();
     },
     onPlayerPlay(player) {
 
@@ -120,6 +123,7 @@ export default {
   width: 400px;
   margin: 0 auto;
 }
+
 ::v-deep .video-player {
   .vjs-big-play-button {
     left: 50%;
@@ -127,7 +131,8 @@ export default {
     transform: translate(-50%, -50%);
   }
 }
-.video-player-box .video-js{
+
+.video-player-box .video-js {
   padding-top: 0 !important;
   position: relative;
   height: 400px;

@@ -51,12 +51,6 @@ public class ExamMediaController extends BaseController {
 		return R.success(Boolean.TRUE);
 	}
 
-	@Operation(summary = "获取视频URL")
-	@GetMapping("videoUrl/{id}")
-	public R<Boolean> videoUrl(@PathVariable Long id) {
-		return R.success(Boolean.TRUE);
-	}
-
 	@Operation(summary = "上传图片")
 	@PostMapping("uploadImage/{id}")
 	@SgLog(value = "上传图片", operationType = OperationType.UPLOAD)
@@ -75,7 +69,14 @@ public class ExamMediaController extends BaseController {
 
 	@Operation(summary = "获取图片URL")
 	@GetMapping("imageUrl/{id}")
-	public R<Boolean> imageUrl(@PathVariable Long id) {
-		return R.success(Boolean.TRUE);
+	public R<String> imageUrl(@PathVariable Long id) {
+		return R.success(examMediaService.imageUrl(id));
 	}
+
+	@Operation(summary = "获取视频URL")
+	@GetMapping("videoUrl/{id}")
+	public R<String> videoUrl(@PathVariable Long id) {
+		return R.success(examMediaService.videoUrl(id));
+	}
+
 }

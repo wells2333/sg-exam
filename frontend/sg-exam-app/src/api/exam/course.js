@@ -55,3 +55,10 @@ export function delAllObj (obj) {
     data: obj
   })
 }
+
+export function getCourseDetail (id) {
+  return request({
+    url: baseCourseUrl + 'detail/' + id,
+    method: 'get'
+  })
+}

@@ -43,8 +43,8 @@ const user = {
         // 根据用户名、密码、租户code登录
         loginByUsername(user.identifier, user.credential, user.code, user.randomStr).then(response => {
           const data = response.data
-          const {code, result} = data;
-          if (code === 0 ){
+          const {code, result} = data
+          if (code === 0) {
             setToken(result.token)
             setRefreshToken(result.token)
             commit('SET_TOKEN', result.token)

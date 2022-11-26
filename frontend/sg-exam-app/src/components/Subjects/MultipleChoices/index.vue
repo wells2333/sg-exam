@@ -4,14 +4,16 @@
       <div class="subject-title">
         {{ subjectInfo.sort }}
         <span class="subject-title-content" v-html="subjectInfo.subjectName"/>
-        <span class="subject-title-content" v-if="subjectInfo.score !== undefined && subjectInfo.score !== 0">&nbsp;({{subjectInfo.score}})分</span>
+        <span class="subject-title-content"
+              v-if="subjectInfo.score !== undefined && subjectInfo.score !== 0">&nbsp;({{ subjectInfo.score }})分</span>
       </div>
       <ul class="subject-options" v-for="option in options" :key="option.id">
         <li class="subject-option">
-          <input class="toggle" type="checkbox" :checked="isChecked(option.optionName)" :id="'option' + option.id" @change="toggleOption($event, option)">
+          <input class="toggle" type="checkbox" :checked="isChecked(option.optionName)"
+                 :id="'option' + option.id" @change="toggleOption($event, option)">
           <label :for="'option' + option.id">
             <span class="subject-option-prefix">{{ option.optionName }}&nbsp;</span>
-            <span v-html="option.optionContent" class="subject-option-prefix" />
+            <span v-html="option.optionContent" class="subject-option-prefix"/>
           </label>
         </li>
       </ul>
@@ -20,10 +22,11 @@
 </template>
 
 <script>
-import { isNotEmpty } from '@/utils/util'
+import {isNotEmpty} from '@/utils/util'
+
 export default {
   name: 'MultipleChoices',
-  data () {
+  data() {
     return {
       subjectCount: 0,
       subjectInfo: {
@@ -34,24 +37,23 @@ export default {
       userAnswer: []
     }
   },
-  watch: {
-
-  },
+  watch: {},
   props: {
     onChoice: {
-      function (){}
+      function() {
+      }
     }
   },
   methods: {
-    getAnswer () {
+    getAnswer() {
       return this.userAnswer.join(',')
     },
-    setAnswer (answer) {
+    setAnswer(answer) {
       if (isNotEmpty(answer)) {
         this.userAnswer = answer.split(',')
       }
     },
-    setSubjectInfo (subject, subjectCount) {
+    setSubjectInfo(subject, subjectCount) {
       this.subjectCount = subjectCount
       this.subjectInfo = subject
       if (subject.hasOwnProperty('options')) {
@@ -61,12 +63,12 @@ export default {
         this.setAnswer(subject.answer.answer)
       }
     },
-    getSubjectInfo () {
+    getSubjectInfo() {
       this.subjectInfo.options = this.options
       return this.subjectInfo
     },
     // 选中选项
-    toggleOption ($event, option) {
+    toggleOption($event, option) {
       if ($event.target.checked) {
         if (!this.userAnswer.includes(option.optionName)) {
           this.userAnswer.push(option.optionName)
@@ -76,7 +78,7 @@ export default {
       }
       this.onChoice(this.subjectInfo.sort)
     },
-    isChecked (optionName) {
+    isChecked(optionName) {
       return this.userAnswer.includes(optionName)
     }
   }
@@ -84,5 +86,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import "../../../assets/css/subject.scss";
+@import "../../../assets/css/subject.scss";
 </style>

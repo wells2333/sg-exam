@@ -14,12 +14,15 @@
       </el-col>
       <el-col :span="18">
         <div class="subject-box-card">
-          <div class="subject-exam-title">{{ exam.examinationName }}（共{{ cards.length }}题，合计{{ exam.totalScore }}分）
+          <div class="subject-exam-title">{{ exam.examinationName }}（共{{
+              cards.length
+            }}题，合计{{ exam.totalScore }}分）
           </div>
           <choices ref="choices" v-show="subject.type === 0" :onChoice="onChoiceFn"/>
           <short-answer ref="shortAnswer" v-show="subject.type === 1" :onChoice="onChoiceFn"/>
           <judgement ref="judgement" v-show="subject.type === 2" :onChoice="onChoiceFn"/>
-          <multiple-choices ref="multipleChoices" v-show="subject.type === 3" :onChoice="onChoiceFn"/>
+          <multiple-choices ref="multipleChoices" v-show="subject.type === 3"
+                            :onChoice="onChoiceFn"/>
           <s-video ref="sVideo" v-show="subject.type === 5" :onChoice="onChoiceFn"></s-video>
           <div class="subject-buttons">
             <el-button plain @click="last" :loading="loadingLast">上一题</el-button>
@@ -29,10 +32,15 @@
       </el-col>
     </el-row>
     <el-dialog title="答题卡" :visible.sync="dialogVisible" width="50%" top="10vh" center>
-      <div class="answer-card-title">{{ exam.examinationName }}（共{{ cards.length }}题，合计{{ exam.totalScore }}分）</div>
+      <div class="answer-card-title">{{ exam.examinationName }}（共{{
+          cards.length
+        }}题，合计{{ exam.totalScore }}分）
+      </div>
       <div class="answer-card-split"></div>
       <el-row class="answer-card-content">
-        <el-button :class="value.isAnswer ? 'answer-card-btn' : ''" circle v-for="(value, index) in cards" :key="index" @click="toSubject(value.subjectId, value.sort)">
+        <el-button :class="value.isAnswer ? 'answer-card-btn' : ''" circle
+                   v-for="(value, index) in cards" :key="index"
+                   @click="toSubject(value.subjectId, value.sort)">
           &nbsp;{{ value.sort }}&nbsp;
         </el-button>
       </el-row>
@@ -99,8 +107,8 @@ export default {
   },
   created() {
     if (this.exam === undefined || Object.keys(this.exam).length === 0) {
-      this.$router.push({name: 'exams', query: {redirect:true}})
-      return;
+      this.$router.push({name: 'exams', query: {redirect: true}})
+      return
     }
     const examInfo = this.$route.params.id
     if (isNotEmpty(examInfo)) {
@@ -119,7 +127,7 @@ export default {
   methods: {
     onChoiceFn(sort) {
       if (sort) {
-        this.cards[sort-1].isAnswer = true
+        this.cards[sort - 1].isAnswer = true
       }
     },
     goBack() {
@@ -203,7 +211,11 @@ export default {
       const answerId = isNotEmpty(answer) ? answer.id : ''
       saveAndNext(this.getAnswer(answerId), 0).then(response => {
         // 提交到后台
-        store.dispatch('SubmitExam', {examinationId, examRecordId, userId: userInfo.id}).then(() => {
+        store.dispatch('SubmitExam', {
+          examinationId,
+          examRecordId,
+          userId: userInfo.id
+        }).then(() => {
           messageSuccess(this, '提交成功')
           // 清空本地cache
           store.dispatch('ClearExam')
@@ -287,11 +299,11 @@ export default {
       }
     }
   },
-  beforeRouteLeave (to, from, next) {
+  beforeRouteLeave(to, from, next) {
     const {name, query} = to
     if (name === 'exam-record' || query.redirect) {
       next()
-      return;
+      return
     }
     this.$confirm('确认退出吗？', '提示', {
       confirmButtonText: '是',
@@ -302,7 +314,7 @@ export default {
     }).catch(() => {
       next(false)
     })
-  },
+  }
 }
 </script>
 

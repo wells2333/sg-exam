@@ -93,7 +93,7 @@ const exam = {
         name: 'cards',
         content: state.cards
       })
-    },
+    }
   }
 }
 
