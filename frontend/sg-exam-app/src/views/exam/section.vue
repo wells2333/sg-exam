@@ -77,7 +77,10 @@ export default {
 }
 </script>
 
-<style lang="scss" rel="stylesheet/scss" scoped>
+<style lang="scss" rel="stylesheet/scss">
+.section-content .sg-video-component .video-js {
+  height:400px !important;
+}
 .section-content {
   width: 100%;
   padding-top: 50px;

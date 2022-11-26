@@ -26,7 +26,7 @@
     CSSProperties,
   } from 'vue';
   import SvgIcon from './SvgIcon.vue';
-  import Iconify from '@purge-icons/generated';
+  import Iconify from '@iconify/iconify/dist/iconify';
   import { isString } from '/@/utils/is';
   import { propTypes } from '/@/utils/propTypes';
 

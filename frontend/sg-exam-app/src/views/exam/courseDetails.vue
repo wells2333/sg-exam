@@ -220,7 +220,7 @@ export default {
         }
       }).catch(error => {
         console.error(error)
-      });
+      })
     },
     buyCourse() {
       messageWarn(this, '功能正在开发中')
@@ -238,7 +238,7 @@ export default {
     handleSubmitEvaluate() {
       if (this.hasEvaluate) {
         messageWarn(this, '请勿重复提交')
-        return;
+        return
       }
       if (this.evaluate.evaluateContent === '') {
         this.evaluate.evaluateContent = '用户默认好评'
@@ -249,14 +249,14 @@ export default {
       }).then(res => {
         if (res.data.code === 0) {
           this.evaluate.evaluateContent = ''
-          this.hasEvaluate = true;
+          this.hasEvaluate = true
           messageSuccess(this, '提交成功')
           this.getEvaluateList()
         } else {
           messageWarn(this, '提交失败')
         }
       }).catch(error => {
-        console.error(error);
+        console.error(error)
       })
     }
   }

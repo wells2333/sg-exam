@@ -34,8 +34,8 @@ export const ExaminationApi = {
 }
 
 export const ExamMediaApi = {
-  UploadVideo: UserService + 'v1/examMedia/uploadVideo',
-  UploadImage: UserService + 'v1/examMedia/uploadImage'
+  UploadVideo: UserService + '/v1/examMedia/uploadVideo',
+  UploadImage: UserService + '/v1/examMedia/uploadImage'
 }
 
 export const ExamOptionApi = {

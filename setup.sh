@@ -80,6 +80,9 @@ function main() {
   build_f)
     build_frontend
     ;;
+  build_admin)
+      build_admin
+      ;;
   build)
     build_service
     ;;

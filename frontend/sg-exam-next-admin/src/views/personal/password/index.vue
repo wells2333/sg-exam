@@ -43,8 +43,7 @@ export default defineComponent({
           newPassword: passwordNew
         };
         const result = await updatePassword(params);
-        const { code } = result;
-        if (code === 0) {
+        if (result) {
           createMessage.success('保存成功');
         } else {
           createMessage.warn('保存失败');
