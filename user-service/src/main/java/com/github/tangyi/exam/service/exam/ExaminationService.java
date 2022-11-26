@@ -1,4 +1,4 @@
-package com.github.tangyi.exam.service;
+package com.github.tangyi.exam.service.exam;
 
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.dto.ExaminationDto;
@@ -18,6 +18,8 @@ import com.github.tangyi.common.utils.zxing.QRCodeUtils;
 import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.exam.enums.ExaminationTypeEnum;
 import com.github.tangyi.exam.mapper.ExaminationMapper;
+import com.github.tangyi.exam.service.ExaminationSubjectService;
+import com.github.tangyi.exam.service.course.CourseService;
 import com.github.tangyi.exam.service.data.ExamFavoriteService;
 import com.github.tangyi.exam.service.data.ExamStartCountService;
 import com.github.tangyi.exam.service.image.RandomImageService;

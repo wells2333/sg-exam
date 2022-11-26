@@ -17,6 +17,7 @@ import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.exam.enums.ExaminationTypeEnum;
 import com.github.tangyi.exam.excel.model.ExamRecordExcelModel;
 import com.github.tangyi.exam.mapper.ExamRecordMapper;
+import com.github.tangyi.exam.service.exam.ExaminationService;
 import com.github.tangyi.exam.utils.ExamRecordUtil;
 import com.github.tangyi.user.service.DeptService;
 import com.github.tangyi.user.service.UserService;

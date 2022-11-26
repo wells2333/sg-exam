@@ -1,7 +1,7 @@
 import { BasicColumn } from '/@/components/Table';
 import { FormSchema } from '/@/components/Table';
 import {h} from "vue";
-import {Image} from "ant-design-vue";
+import {Image, Rate} from "ant-design-vue";
 import {BasicUpload} from "/@/components/Upload";
 import {uploadImage} from "/@/api/exam/examMedia";
 
@@ -43,11 +43,6 @@ export const columns: BasicColumn[] = [
     align: 'left',
   },
   {
-    title: '创建时间',
-    dataIndex: 'createTime',
-    width: 180,
-  },
-  {
     title: '更新时间',
     dataIndex: 'updateTime',
     width: 180,
@@ -56,11 +51,7 @@ export const columns: BasicColumn[] = [
     title: '操作人',
     dataIndex: 'operator',
     width: 100,
-  },
-  {
-    title: '课程描述',
-    dataIndex: 'courseDescription',
-  },
+  }
 ];
 
 export const searchFormSchema: FormSchema[] = [
@@ -118,4 +109,53 @@ export const formSchema: FormSchema[] = [
     field: 'courseDescription',
     component: 'InputTextArea',
   },
+];
+
+export const evaluateColumns: BasicColumn[] = [
+  {
+    title: '课程',
+    dataIndex: 'courseName',
+    width: 160,
+    align: 'left',
+  },
+  {
+    title: '评价等级',
+    dataIndex: 'evaluateLevel',
+    width: 120,
+    align: 'left',
+    customRender: ({ record }) => {
+      return h(Rate, {
+        value: record.evaluateLevel,
+        disabled: true,
+        allowHalf: false,
+      });
+    },
+  },
+  {
+    title: '评价内容',
+    dataIndex: 'evaluateContent',
+    width: 200,
+    align: 'left',
+  },
+  {
+    title: '评价人',
+    dataIndex: 'operator',
+    width: 80,
+    align: 'left',
+  },
+  {
+    title: '提交时间',
+    dataIndex: 'createTime',
+    width: 160,
+    align: 'left',
+  },
+]
+
+export const evaluateSearchFormSchema: FormSchema[] = [
+  {
+    field: 'evaluateContent',
+    label: '评价内容',
+    component: 'Input',
+    colProps: { span: 8 },
+  }
 ];

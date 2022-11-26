@@ -70,7 +70,7 @@ export default {
       this.$refs.sectionVideo.setSrc(this.videoUrl)
     },
     goBack() {
-      this.$refs.sectionVideo.pause();
+      this.$refs.sectionVideo.pause()
       this.$router.go(-1)
     }
   }

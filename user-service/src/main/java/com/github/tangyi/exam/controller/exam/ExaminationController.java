@@ -6,7 +6,7 @@ import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.Examination;
 import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.model.R;
-import com.github.tangyi.exam.service.ExaminationService;
+import com.github.tangyi.exam.service.exam.ExaminationService;
 import com.github.tangyi.log.annotation.SgLog;
 import com.github.tangyi.log.constants.OperationType;
 import io.swagger.v3.oas.annotations.Operation;

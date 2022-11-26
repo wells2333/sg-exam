@@ -2,7 +2,9 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button v-if="hasPermission(['exam:course:add'])" type="primary" @click="handleCreate"> 新增课程 </a-button>
+        <a-button v-if="hasPermission(['exam:course:add'])" type="primary" @click="handleCreate">
+          新增课程
+        </a-button>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -11,6 +13,12 @@
               icon: 'ant-design:align-right-outlined',
               tooltip: '章节管理',
               onClick: handleEditChapter.bind(null, record),
+              auth: 'exam:course:edit'
+            },
+            {
+              icon: 'ant-design:star-outlined',
+              tooltip: '评价管理',
+              onClick: handleEditEvaluate.bind(null, record),
               auth: 'exam:course:edit'
             },
             {
@@ -33,32 +41,35 @@
         />
       </template>
     </BasicTable>
-    <CourseModal @register="registerModal" @success="handleSuccess" />
+    <CourseModal @register="registerModal" @success="handleSuccess"/>
     <CourseImageModal @register="registerImageModal" @success="handleUploadSuccess"/>
+    <EvaluateModal @register="registerEvaluateModal"/>
   </div>
 </template>
 <script lang="ts">
 import {defineComponent} from 'vue';
-import { BasicTable, useTable, TableAction } from '/@/components/Table';
-import { getCourseList, deleteCourse } from '/@/api/exam/course';
-import { useModal } from '/@/components/Modal';
+import {BasicTable, TableAction, useTable} from '/@/components/Table';
+import {deleteCourse, getCourseList} from '/@/api/exam/course';
+import {useModal} from '/@/components/Modal';
 import CourseModal from './CourseModal.vue';
-import CourseImageModal from "./CourseImageModal.vue";
-import { columns, searchFormSchema } from './course.data';
-import { usePermission } from '/@/hooks/web/usePermission';
+import CourseImageModal from './CourseImageModal.vue';
+import EvaluateModal from './EvaluateModal.vue';
+import {columns, searchFormSchema} from './course.data';
+import {usePermission} from '/@/hooks/web/usePermission';
 import {useGo} from "/@/hooks/web/usePage";
 import {useMessage} from "/@/hooks/web/useMessage";
 
 export default defineComponent({
   name: 'CourseManagement',
-  components: { BasicTable, CourseModal, CourseImageModal, TableAction },
+  components: {BasicTable, CourseModal, CourseImageModal, EvaluateModal, TableAction},
   setup() {
-    const { hasPermission } = usePermission();
-    const { createMessage } = useMessage();
-    const [registerModal, { openModal }] = useModal();
+    const {hasPermission} = usePermission();
+    const {createMessage} = useMessage();
+    const [registerModal, {openModal}] = useModal();
     const [registerImageModal] = useModal();
+    const [registerEvaluateModal, {openModal: openEvaluateModal}] = useModal();
     const go = useGo();
-    const [registerTable, { reload }] = useTable({
+    const [registerTable, {reload}] = useTable({
       title: '课程列表',
       api: getCourseList,
       columns,
@@ -74,10 +85,10 @@ export default defineComponent({
       showIndexColumn: false,
       canResize: false,
       actionColumn: {
-        width: 120,
+        width: 200,
         title: '操作',
         dataIndex: 'action',
-        slots: { customRender: 'action' },
+        slots: {customRender: 'action'},
         fixed: undefined,
       },
     });
@@ -87,35 +98,51 @@ export default defineComponent({
         isUpdate: false,
       });
     }
+
     function handleEdit(record: Recordable) {
       openModal(true, {
         record,
         isUpdate: true,
       });
     }
+
     function handleEditChapter(record: Recordable) {
       go('/exam/course_chapter/' + record.id);
     }
+
+    function handleEditEvaluate(record: Recordable) {
+      openEvaluateModal(true, {
+        record,
+        isUpdate: true,
+        courseId: record.id
+      });
+    }
+
     async function handleDelete(record: Recordable) {
       await deleteCourse(record.id);
       createMessage.success('操作成功');
       await reload();
     }
+
     function handleSuccess() {
       createMessage.success('操作成功');
       reload();
     }
+
     function handleUploadSuccess() {
       reload();
     }
+
     return {
       hasPermission,
       registerTable,
       registerModal,
       registerImageModal,
+      registerEvaluateModal,
       handleCreate,
       handleEdit,
       handleEditChapter,
+      handleEditEvaluate,
       handleDelete,
       handleSuccess,
       handleUploadSuccess,

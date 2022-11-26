@@ -53,4 +53,5 @@ public interface ExamCacheName {
 
 	String SECTION = "section";
 
+	String EVALUATE = "evaluate";
 }

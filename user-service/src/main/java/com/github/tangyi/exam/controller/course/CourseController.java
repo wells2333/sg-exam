@@ -1,4 +1,4 @@
-package com.github.tangyi.exam.controller;
+package com.github.tangyi.exam.controller.course;
 
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.dto.CourseDetailDto;
@@ -6,7 +6,7 @@ import com.github.tangyi.api.exam.model.Course;
 import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.SysUtil;
-import com.github.tangyi.exam.service.CourseService;
+import com.github.tangyi.exam.service.course.CourseService;
 import com.github.tangyi.log.annotation.SgLog;
 import com.github.tangyi.log.constants.OperationType;
 import io.swagger.v3.oas.annotations.Operation;

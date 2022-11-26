@@ -79,7 +79,7 @@ export default {
       this.$refs.sgVideoPlayer.player.play()
     },
     pause() {
-      this.$refs.sgVideoPlayer.player.pause();
+      this.$refs.sgVideoPlayer.player.pause()
     },
     onPlayerPlay(player) {
 

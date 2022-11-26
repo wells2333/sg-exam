@@ -1,4 +1,4 @@
-package com.github.tangyi.exam.service;
+package com.github.tangyi.exam.service.course;
 
 import com.github.tangyi.api.exam.dto.CourseSectionDto;
 import com.github.tangyi.api.exam.model.ExamCourseSection;

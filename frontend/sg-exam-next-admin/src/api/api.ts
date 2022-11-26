@@ -122,3 +122,8 @@ export const UserApi = {
   GetTicket: UserService + '/v1/wx/getTicket',
   OpenId: UserService + '/v1/wx/getOpenId',
 }
+
+export const ExamCourseEvaluateApi = {
+  Base: UserService + '/v1/evaluate',
+  ExamCourseEvaluateList: UserService + '/v1/evaluate/list',
+}

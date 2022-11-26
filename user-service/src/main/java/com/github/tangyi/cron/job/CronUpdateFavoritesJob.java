@@ -3,7 +3,7 @@ package com.github.tangyi.cron.job;
 import com.github.tangyi.api.exam.model.Examination;
 import com.github.tangyi.common.utils.EnvUtils;
 import com.github.tangyi.common.utils.StopWatchUtil;
-import com.github.tangyi.exam.service.ExaminationService;
+import com.github.tangyi.exam.service.exam.ExaminationService;
 import com.github.tangyi.exam.service.data.ExamFavoriteService;
 import com.github.tangyi.exam.service.data.ExamStartCountService;
 import lombok.AllArgsConstructor;

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tangyi.exam.mapper.ExamCourseEvaluateMapper">
+    <resultMap id="examCourseEvaluateResultMap" type="com.github.tangyi.api.exam.model.ExamCourseEvaluate">
+        <id column="id" property="id"/>
+        <result column="evaluate_content" property="evaluateContent"/>
+        <result column="user_id" property="userId"/>
+        <result column="evaluate_level" property="evaluateLevel"/>
+        <result column="creator" property="creator"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="operator" property="operator"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="BIT"/>
+        <result column="tenant_code" property="tenantCode"/>
+        <result column="course_id" property="courseId"/>
+    </resultMap>
+
+    <select id="findPage" resultMap="examCourseEvaluateResultMap">
+        SELECT * FROM exam_course_evaluate WHERE is_deleted = 0
+        <if test="params != null">
+            <if test="params.courseId != null and params.courseId != ''">
+                AND course_id = #{params.courseId}
+            </if>
+            <if test="params.evaluateContent != null and params.evaluateContent != ''">
+                and (evaluate_content like CONCAT('%',#{params.evaluateContent},'%'))
+            </if>
+            <if test="params.tenantCode != null and params.tenantCode != ''">
+                AND tenant_code = #{params.tenantCode}
+            </if>
+        </if>
+        <choose>
+            <when test="params.sortField != null and params.sortField != '' and params.sortOrder != null and params.sortOrder != ''">
+                ORDER BY #{params.sortField} #{params.sortOrder}
+            </when>
+            <otherwise>
+                ORDER BY update_time DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findList" resultMap="examCourseEvaluateResultMap">
+        SELECT * FROM exam_course_evaluate a WHERE a.is_deleted = 0 AND a.tenant_code = #{tenantCode}
+    </select>
+
+    <select id="findListById" resultMap="examCourseEvaluateResultMap">
+        SELECT * FROM exam_course_evaluate a WHERE a.id IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <delete id="delete">
+        UPDATE exam_course_evaluate SET is_deleted = 1 WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteAll">
+        UPDATE exam_course_evaluate SET is_deleted = 1 WHERE id IN
+        <foreach item="item" index="index" collection="ids" open="("
+                 separator="," close=")">#{item}
+        </foreach>
+    </delete>
+</mapper>
