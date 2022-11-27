@@ -1,5 +1,6 @@
 package com.github.tangyi.user.service;
 
+import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.user.constant.TenantConstant;
 import com.github.tangyi.api.user.model.Menu;
 import com.github.tangyi.api.user.model.Role;
@@ -10,10 +11,13 @@ import com.github.tangyi.constants.UserCacheName;
 import com.github.tangyi.user.mapper.TenantMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 
 /**
  * 租户Service
@@ -32,6 +36,8 @@ public class TenantService extends CrudService<TenantMapper, Tenant> {
 
 	private final CommonExecutorService commonExecutorService;
 
+	private final QiNiuService qiNiuService;
+
 	/**
 	 * 根据租户标识获取
 	 *
@@ -43,6 +49,19 @@ public class TenantService extends CrudService<TenantMapper, Tenant> {
 	@Cacheable(value = UserCacheName.TENANT, key = "#tenantCode")
 	public Tenant getByTenantCode(String tenantCode) {
 		return this.dao.getByTenantCode(tenantCode);
+	}
+
+	@Override
+	public PageInfo<Tenant> findPage(Map<String, Object> params, int pageNum, int pageSize) {
+		PageInfo<Tenant> page = super.findPage(params, pageNum, pageSize);
+		if (CollectionUtils.isNotEmpty(page.getList())) {
+			for (Tenant tenant : page.getList()) {
+				if (tenant.getImageId() != null) {
+					tenant.setImageUrl(qiNiuService.getPreviewUrl(tenant.getImageId()));
+				}
+			}
+		}
+		return page;
 	}
 
 	/**

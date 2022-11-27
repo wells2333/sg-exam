@@ -1,5 +1,5 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
+  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit" width="70%">
     <BasicForm @register="registerForm" />
   </BasicModal>
 </template>
@@ -36,6 +36,7 @@ export default defineComponent({
     async function handleSubmit() {
       try {
         const values = await validate();
+        debugger
         setModalProps({ confirmLoading: true });
         if (id) {
           await updateBanner(id, values);

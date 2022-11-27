@@ -51,8 +51,17 @@ public class Tenant extends BaseEntity<Tenant> {
 	private Long roleId;
 
 	/**
+	 * 图片ID
+	 */
+	@Column(name = "image_id")
+	private Long imageId;
+
+	/**
 	 * 菜单ID
 	 */
 	@Transient
 	private String menuIds;
+
+	@Transient
+	private String imageUrl;
 }

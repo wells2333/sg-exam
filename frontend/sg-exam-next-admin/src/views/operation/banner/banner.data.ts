@@ -1,7 +1,8 @@
-import { BasicColumn } from '/@/components/Table';
-import { FormSchema } from '/@/components/Table';
-import {h} from "vue";
+import {BasicColumn, FormSchema} from '/@/components/Table';
+import {h, unref} from "vue";
 import {Image, Tag} from "ant-design-vue";
+import {SgUpload} from "/@/components/SgUpload";
+import {uploadImage} from "/@/api/exam/examMedia";
 
 export const operationBannerColor = {
   0: 'green',
@@ -30,8 +31,8 @@ export const columns: BasicColumn[] = [
     style: {
       cursor: 'pointer'
     },
-    customRender: ({ record }) => {
-      return h(Image, { src: record.imageUrl, height: '40px', alt: record.courseName });
+    customRender: ({record}) => {
+      return h(Image, {src: record.imageUrl, height: '40px', alt: record.courseName});
     },
   },
   {
@@ -39,9 +40,9 @@ export const columns: BasicColumn[] = [
     title: '类型',
     width: 80,
     align: 'left',
-    customRender: ({ record }) => {
+    customRender: ({record}) => {
       const color = operationBannerColor[record.operationType];
-      return h(Tag, { color: color }, () => operationBannerName[record.operationType]);
+      return h(Tag, {color: color}, () => operationBannerName[record.operationType]);
     },
   },
   {
@@ -72,7 +73,7 @@ export const searchFormSchema: FormSchema[] = [
     field: 'operationName',
     label: '运营名称',
     component: 'Input',
-    colProps: { span: 8 },
+    colProps: {span: 8},
   }
 ];
 
@@ -90,17 +91,38 @@ export const formSchema: FormSchema[] = [
     defaultValue: 0,
     componentProps: {
       options: [
-        { label: '自定义', value: 0 },
-        { label: '课程', value: 1 },
-        { label: '考试', value: 2 },
+        {label: '自定义', value: 0},
+        {label: '课程', value: 1},
+        {label: '考试', value: 2},
       ],
     },
     required: true,
   },
   {
+    field: 'imageId',
+    label: '图片',
+    component: 'Input',
+    required: true,
+    render: ({model, field}) => {
+      return h(SgUpload, {
+        value: model[field],
+        api: uploadImage,
+        handleDone: (value) => {
+          if (value) {
+            model[field] = unref(value).id;
+            model['imageUrl'] = unref(value).url;
+          }
+        },
+      });
+    },
+    colProps: {span: 12},
+  },
+  {
     field: 'imageUrl',
     label: '图片URL',
-    component: 'Input'
+    component: 'Input',
+    required: true,
+    colProps: {span: 12}
   },
   {
     field: 'redirectUrl',

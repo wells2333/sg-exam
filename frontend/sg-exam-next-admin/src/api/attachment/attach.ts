@@ -26,7 +26,23 @@ export function uploadApi(
 }
 
 export const deleteAttachment = (id: string) => {
-  return defHttp.delete<void>(
+  return defHttp.delete<ApiRes>(
+    {
+      url: AttachmentApi.Base + '/' + id,
+    }
+  );
+};
+
+export const getPreviewUrl = (id: string) => {
+  return defHttp.get<ApiRes>(
+    {
+      url: AttachmentApi.Base + '/' + id + '/getPreviewUrl',
+    }
+  );
+};
+
+export const getAttachment = (id: string) => {
+  return defHttp.get<ApiRes>(
     {
       url: AttachmentApi.Base + '/' + id,
     }

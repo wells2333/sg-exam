@@ -1,11 +1,12 @@
 import { BasicColumn } from '/@/components/Table';
 import { FormSchema } from '/@/components/Table';
-import { h } from 'vue';
+import {h, unref} from 'vue';
 import {Image, Tag} from 'ant-design-vue';
 import { getAllCourses } from "/@/api/exam/course";
 import {DescItem} from "/@/components/Description";
 import {BasicUpload} from "/@/components/Upload";
 import {uploadImage} from "/@/api/exam/examMedia";
+import {SgUpload} from "/@/components/SgUpload";
 
 export const examColor = {
   0: 'green',
@@ -173,15 +174,12 @@ export const formSchema: FormSchema[] = [
     field: 'imageId',
     component: 'Input',
     render: ({ model, field }) => {
-      return h(BasicUpload, {
+      return h(SgUpload, {
         value: model[field],
-        maxSize: 20,
-        maxNumber: 1,
-        emptyHidePreview: true,
         api: uploadImage,
-        onChange: (value) => {
-          if (value && value.length > 0) {
-            model[field] = value[0].id;
+        handleDone: (value) => {
+          if (value) {
+            model[field] = unref(value).id;
           }
         },
       });

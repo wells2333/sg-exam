@@ -1,7 +1,9 @@
 import { BasicColumn } from '/@/components/Table';
 import { FormSchema } from '/@/components/Table';
-import { h } from 'vue';
-import { Tag } from 'ant-design-vue';
+import {h, unref} from 'vue';
+import {Image, Tag} from 'ant-design-vue';
+import {SgUpload} from "/@/components/SgUpload";
+import {uploadImage} from "/@/api/exam/examMedia";
 
 export const tenantStatus = {
   0: '待审核',
@@ -41,6 +43,18 @@ export const columns: BasicColumn[] = [
     dataIndex: 'tenantName',
     width: 160,
     align: 'left',
+  },
+  {
+    title: '图片',
+    dataIndex: 'imageUrl',
+    width: 160,
+    align: 'left',
+    style: {
+      cursor: 'pointer'
+    },
+    customRender: ({record}) => {
+      return h(Image, {src: record.imageUrl, height: '40px', alt: record.tenantName});
+    },
   },
   {
     title: '状态',
@@ -138,6 +152,23 @@ export const formSchema: FormSchema[] = [
       ],
     },
     required: true,
+  },
+  {
+    field: 'imageId',
+    label: '图片',
+    component: 'Input',
+    render: ({model, field}) => {
+      return h(SgUpload, {
+        value: model[field],
+        api: uploadImage,
+        handleDone: (value) => {
+          if (value) {
+            model[field] = unref(value).id;
+          }
+        },
+      });
+    },
+    colProps: {span: 12},
   },
   {
     label: '备注',

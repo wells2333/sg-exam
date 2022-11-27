@@ -49,7 +49,11 @@ function push_service() {
   echo "push service finished"
 }
 function start_service() {
-  echo "start to start service"
+  # pull image
+  echo "start to pull image"
+  docker-compose pull
+  echo "start to start service with config"
+  docker-compose config
   docker-compose up --remove-orphans --no-build -d
   echo "start service finished"
   # ps

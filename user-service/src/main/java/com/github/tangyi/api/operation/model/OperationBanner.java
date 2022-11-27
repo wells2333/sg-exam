@@ -32,6 +32,12 @@ public class OperationBanner extends BaseEntity<OperationBanner> {
 	private Integer operationType;
 
 	/**
+	 * 图片id
+	 */
+	@Column(name = "image_id")
+	private String imageId;
+
+	/**
 	 * 图片URL
 	 */
 	@Column(name = "image_url")
@@ -87,6 +93,14 @@ public class OperationBanner extends BaseEntity<OperationBanner> {
 
 	public void setOperationDesc(String operationDesc) {
 		this.operationDesc = operationDesc;
+	}
+
+	public String getImageId() {
+		return imageId;
+	}
+
+	public void setImageId(String imageId) {
+		this.imageId = imageId;
 	}
 
 	@Override

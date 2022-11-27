@@ -1,8 +1,8 @@
 import { BasicColumn } from '/@/components/Table';
 import { FormSchema } from '/@/components/Table';
-import {h} from "vue";
+import {h, unref} from "vue";
 import {Image, Rate} from "ant-design-vue";
-import {BasicUpload} from "/@/components/Upload";
+import {SgUpload} from "/@/components/SgUpload";
 import {uploadImage} from "/@/api/exam/examMedia";
 
 export const columns: BasicColumn[] = [
@@ -75,15 +75,13 @@ export const formSchema: FormSchema[] = [
     field: 'imageId',
     component: 'Input',
     render: ({ model, field }) => {
-      return h(BasicUpload, {
+      return h(SgUpload, {
         value: model[field],
-        maxSize: 20,
-        maxNumber: 1,
-        emptyHidePreview: true,
+        url: model['imageUrl'],
         api: uploadImage,
-        onChange: (value) => {
-          if (value && value.length > 0) {
-            model[field] = value[0].id;
+        handleDone: (value) => {
+          if (value) {
+            model[field] = unref(value).id;
           }
         },
       });

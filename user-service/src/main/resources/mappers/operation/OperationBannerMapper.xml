@@ -11,6 +11,7 @@
         <result column="tenant_code" property="tenantCode"/>
         <result column="operation_name" property="operationName"/>
         <result column="operation_type" property="operationType"/>
+        <result column="image_id" property="imageId"/>
         <result column="image_url" property="imageUrl"/>
         <result column="redirect_url" property="redirectUrl"/>
         <result column="operation_desc" property="operationDesc"/>

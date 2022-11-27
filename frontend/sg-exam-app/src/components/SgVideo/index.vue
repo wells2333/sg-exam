@@ -135,6 +135,6 @@ export default {
 .video-player-box .video-js {
   padding-top: 0 !important;
   position: relative;
-  height: 400px;
+  height: 400px !important;
 }
 </style>

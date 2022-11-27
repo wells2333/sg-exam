@@ -17,7 +17,7 @@
     </resultMap>
 
     <select id="findPage" resultMap="attachmentResultMap">
-        SELECT * FROM sys_attachment where is_deleted = 0
+        SELECT * FROM sys_attachment WHERE is_deleted = 0
         <if test="params != null">
             <if test="params.attachmentName != null and params.attachmentName != ''">
                 and (attachment_name like CONCAT('%',#{params.attachmentName},'%'))
@@ -60,17 +60,11 @@
     </select>
 
     <delete id="delete">
-        UPDATE sys_attachment SET
-        is_deleted = 1,
-        operator = #{operator} ,
-        update_time = #{updateTime, jdbcType=TIMESTAMP, javaType=java.util.Date}
-        WHERE ID = #{id}
+        DELETE FROM sys_attachment WHERE id = #{id}
     </delete>
 
     <delete id="deleteAll">
-        UPDATE sys_attachment SET
-        is_deleted = 1
-        WHERE id in
+        DELETE FROM sys_attachment WHERE id in
         <foreach item="item" index="index" collection="ids" open="("
                  separator="," close=")">#{item}
         </foreach>

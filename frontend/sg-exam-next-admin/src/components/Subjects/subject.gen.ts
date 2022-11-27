@@ -2,7 +2,7 @@ import {FormSchema} from "/@/components/Form";
 import {h, unref} from "vue";
 import {Tinymce} from "/@/components/Tinymce";
 import {BasicUpload} from "/@/components/Upload";
-import {uploadVideo} from "/@/api/exam/examMedia";
+import {uploadImage, uploadVideo} from "/@/api/exam/examMedia";
 import {
   addOptionBtnSlot,
   editorHeight,
@@ -11,6 +11,7 @@ import {
   tinymceToolbar,
   videoTypes
 } from './subject.constant';
+import {SgUpload} from "/@/components/SgUpload";
 
 export function emptySubject() {
   return {
@@ -326,19 +327,17 @@ export function genUploadVideoSchemas() {
       component: 'Input',
       required: false,
       render: ({model, field}) => {
-        return h(BasicUpload, {
+        return h(SgUpload, {
           value: model[field],
-          maxSize: 20,
-          maxNumber: 1,
-          emptyHidePreview: true,
           api: uploadVideo,
-          onChange: (value) => {
-            if (value && value.length > 0) {
-              model[field] = value[0].id;
-              model['videoName'] = value[0].attachName;
+          accept: videoTypes,
+          type: 'video',
+          handleDone: (value) => {
+            if (value && unref(value)) {
+              model[field] = unref(value).id;
+              model['videoName'] = unref(value).name;
             }
           },
-          accept: videoTypes
         });
       },
       colProps: {

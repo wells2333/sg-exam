@@ -8,6 +8,7 @@
         <result column="tenant_desc" property="tenantDesc"/>
         <result column="status" property="status"/>
         <result column="role_id" property="roleId"/>
+        <result column="image_id" property="imageId"/>
         <result column="creator" property="creator"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />

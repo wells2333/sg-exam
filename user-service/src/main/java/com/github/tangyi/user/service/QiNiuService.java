@@ -136,14 +136,21 @@ public class QiNiuService {
 	 */
 	@Cacheable(value = UserCacheName.ATTACHMENT_URL, key = "#id", unless = "#result == null")
 	public String getPreviewUrl(Long id) {
+		Attachment attachment = getPreviewAttachment(id);
+		return attachment != null ? attachment.getUrl() : null;
+	}
+
+	public Attachment getPreviewAttachment(Long id) {
 		Attachment attachment = attachmentService.get(id);
 		if (attachment != null) {
 			if (StringUtils.isEmpty(attachment.getUrl())) {
 				AttachGroup group = groupService.findByGroupCode(attachment.getGroupCode());
 				SgPreconditions.checkNull(group, "group does not exist");
-				return getDownloadUrl(getName(group.getGroupCode(), attachment.getAttachName()), group.getUrlExpire());
+				String url = getDownloadUrl(getName(group.getGroupCode(), attachment.getAttachName()),
+						group.getUrlExpire());
+				attachment.setUrl(url);
 			}
-			return attachment.getUrl();
+			return attachment;
 		}
 		return null;
 	}

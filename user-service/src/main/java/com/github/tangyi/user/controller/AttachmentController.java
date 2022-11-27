@@ -165,6 +165,12 @@ public class AttachmentController extends BaseController {
 		return R.success(qiNiuService.getPreviewUrl(id));
 	}
 
+	@GetMapping("/{id}/getPreviewAttachment")
+	@Operation(summary = "查询附件预览信息")
+	public R<Attachment> getPreviewAttachment(@PathVariable Long id) {
+		return R.success(qiNiuService.getPreviewAttachment(id));
+	}
+
 	/**
 	 * 是否支持预览
 	 *

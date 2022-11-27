@@ -163,16 +163,6 @@ export const userFormSchema: FormSchema[] = [
     required: true,
   },
   {
-    label: '电话',
-    field: 'phone',
-    component: 'Input'
-  },
-  {
-    label: '邮箱',
-    field: 'email',
-    component: 'Input'
-  },
-  {
     field: 'status',
     label: '状态',
     component: 'RadioButtonGroup',
@@ -184,6 +174,16 @@ export const userFormSchema: FormSchema[] = [
       ],
     },
     required: true,
+  },
+  {
+    label: '电话',
+    field: 'phone',
+    component: 'Input'
+  },
+  {
+    label: '邮箱',
+    field: 'email',
+    component: 'Input'
   },
   {
     label: '备注',

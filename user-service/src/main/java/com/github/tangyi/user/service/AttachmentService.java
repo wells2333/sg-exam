@@ -35,7 +35,7 @@ public class AttachmentService extends CrudService<AttachmentMapper, Attachment>
 
 	@Override
 	@Transactional
-	@CacheEvict(value = UserCacheName.ATTACHMENT, key = "#attachment.id")
+	@CacheEvict(value = {UserCacheName.ATTACHMENT, UserCacheName.ATTACHMENT_URL}, key = "#attachment.id")
 	public int delete(Attachment attachment) {
 		return super.delete(attachment);
 	}

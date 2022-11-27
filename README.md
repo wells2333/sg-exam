@@ -86,7 +86,7 @@
     </tr>
 </table>
 
-## 部署文档 & 操作手册 & 源码解析
+## 部署文档 & 操作手册 & 源码解析 & 视频教程
 
 [SG-EXAM-NEXT系列文章](https://mp.weixin.qq.com/s/oal9atlSQxfL4YOiLtYfuA)
 
