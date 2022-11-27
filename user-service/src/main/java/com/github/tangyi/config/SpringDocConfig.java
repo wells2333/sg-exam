@@ -7,7 +7,6 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import org.springdoc.core.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,26 +20,24 @@ public class SpringDocConfig {
 
 	private static final String SECURITY_SCHEME_NAME = "BearerAuth";
 
+	private static final String TENANT_CODE = "Tenant-Code";
+
 	public static final String NAME = "云面试";
 
 	@Bean
 	public OpenAPI openAPI() {
-		return new OpenAPI().info(new Info().title(NAME).description(NAME).version("v1.0.0")
+		return new OpenAPI().info(new Info().title(NAME).description(NAME).version("v5.0.0")
 						.license(new License().name("Apache 2.0").url("https://gitee.com/wells2333")))
 				.externalDocs(new ExternalDocumentation().description(NAME).url("https://www.yunmianshi.com/"))
-				.addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME)).components(
-						new Components().addSecuritySchemes(SECURITY_SCHEME_NAME,
+				.addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME).addList(TENANT_CODE))
+				.components(new Components()
+						// token header
+						.addSecuritySchemes(SECURITY_SCHEME_NAME,
 								new SecurityScheme().name(SECURITY_SCHEME_NAME).type(SecurityScheme.Type.HTTP)
-										.scheme("bearer").bearerFormat("JWT")));
-	}
-
-	@Bean
-	public GroupedOpenApi userApi() {
-		return GroupedOpenApi.builder().group("user").pathsToMatch("/user-service/**").build();
-	}
-
-	@Bean
-	public GroupedOpenApi examApi() {
-		return GroupedOpenApi.builder().group("exam").pathsToMatch("/exam-service/**").build();
+										.scheme("bearer").bearerFormat("JWT"))
+						// 租户标识header
+						.addSecuritySchemes(TENANT_CODE,
+								new SecurityScheme().name(TENANT_CODE).type(SecurityScheme.Type.APIKEY)
+										.in(SecurityScheme.In.HEADER)));
 	}
 }

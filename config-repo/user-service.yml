@@ -28,6 +28,12 @@ pagehelper:
   support-methods-arguments: true
   params: count=countSql
 
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui: /swagger-ui.html
+  packages-to-scan: com.github.tangyi.user.controller,com.github.tangyi.exam.controller
+
 # ===================================================================
 # 七牛云存储配置
 # ===================================================================
@@ -132,6 +138,11 @@ spring:
       connection-test-query: SELECT 1
   redis:
     host: redis
+
+# 生产环境关闭接口文档
+springdoc:
+  api-docs:
+    enabled: false
 
 # 系统配置
 sys:

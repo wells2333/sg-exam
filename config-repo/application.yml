@@ -54,7 +54,8 @@ ignore:
     - /**/error
     - /**/favicon.ico
     - /**/*swagger*/**
-    - /**/v3/api-docs/**
+    - /**/*api-docs*/**
+    - /**/v3/**
     - /**/csrf
     - /**/health
     - /**/metrics/**
