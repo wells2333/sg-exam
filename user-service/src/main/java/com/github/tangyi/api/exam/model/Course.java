@@ -62,4 +62,28 @@ public class Course extends BaseEntity<Course> {
 	 */
 	@Transient
 	private String imageUrl;
+
+	/**
+	 * 收费类型：0：免费，1：收费，默认免费
+	 */
+	@Column(name = "charge_type")
+	private Integer chargeType;
+
+	/**
+	 * 收费价格
+	 */
+	@Column(name = "charge_price")
+	private Double chargePrice;
+
+	/**
+	 * 难度等级，1~5，默认3
+	 */
+	@Column(name = "level")
+	private Integer level;
+
+	/**
+	 * 报名人数
+	 */
+	@Transient
+	private Integer memberCount;
 }

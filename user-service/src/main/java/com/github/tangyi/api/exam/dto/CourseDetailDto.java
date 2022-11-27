@@ -33,4 +33,14 @@ public class CourseDetailDto {
 	 * 课时
 	 */
 	private String learnHour;
+
+	/**
+	 * 学员数量
+	 */
+	private String memberCount;
+
+	/**
+	 * 用户是否已报名
+	 */
+	private Boolean isUserJoin;
 }

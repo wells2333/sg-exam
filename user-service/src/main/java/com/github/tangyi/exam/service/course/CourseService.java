@@ -5,10 +5,14 @@ import com.github.tangyi.api.exam.dto.CourseChapterDto;
 import com.github.tangyi.api.exam.dto.CourseDetailDto;
 import com.github.tangyi.api.exam.model.Course;
 import com.github.tangyi.api.exam.model.ExamCourseChapter;
+import com.github.tangyi.api.exam.model.ExamCourseMember;
 import com.github.tangyi.api.exam.model.ExamCourseSection;
 import com.github.tangyi.api.user.model.Attachment;
 import com.github.tangyi.common.constant.Group;
+import com.github.tangyi.common.constant.Status;
+import com.github.tangyi.common.exceptions.CommonException;
 import com.github.tangyi.common.service.CrudService;
+import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.exam.mapper.CourseMapper;
 import com.github.tangyi.exam.service.image.RandomImageService;
@@ -27,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -51,11 +54,15 @@ public class CourseService extends CrudService<CourseMapper, Course> {
 
 	private final ExamCourseSectionService sectionService;
 
+	private final ExamCourseMemberService memberService;
+
 	@Override
 	@Cacheable(value = ExamCacheName.COURSE, key = "#id")
 	public Course get(Long id) {
 		Course course = super.get(id);
-		Optional.ofNullable(course).ifPresent(c -> this.initImageUrl(Collections.singletonList(c)));
+		if (course != null) {
+			this.initCourseInfo(Collections.singletonList(course));
+		}
 		return course;
 	}
 
@@ -73,7 +80,8 @@ public class CourseService extends CrudService<CourseMapper, Course> {
 	public PageInfo<Course> findPage(Map<String, Object> params, int pageNum, int pageSize) {
 		PageInfo<Course> pageInfo = super.findPage(params, pageNum, pageSize);
 		if (CollectionUtils.isNotEmpty(pageInfo.getList())) {
-			this.initImageUrl(pageInfo.getList());
+			this.initCourseInfo(pageInfo.getList());
+
 		}
 		return pageInfo;
 	}
@@ -109,17 +117,22 @@ public class CourseService extends CrudService<CourseMapper, Course> {
 		return update;
 	}
 
-	public void initImageUrl(List<Course> courseList) {
+	public void initCourseInfo(List<Course> courses) {
 		try {
-			courseList.forEach(course -> {
+			ExamCourseMember member = new ExamCourseMember();
+			for (Course course : courses) {
+				// 图片
 				String imageUrl = null;
 				if (course.getImageId() != null && course.getImageId() != 0L) {
 					imageUrl = qiNiuService.getPreviewUrl(course.getImageId());
 				}
 				course.setImageUrl(StringUtils.getIfEmpty(imageUrl, randomImageService::randomImage));
-			});
+				// 报名人数
+				member.setCourseId(course.getId());
+				course.setMemberCount(memberService.findMemberCountByCourseId(member));
+			}
 		} catch (Exception e) {
-			log.error("initImageUrl failed", e);
+			log.error("initCourseInfo failed", e);
 		}
 	}
 
@@ -140,13 +153,19 @@ public class CourseService extends CrudService<CourseMapper, Course> {
 		dto.setChapters(chapters);
 		dto.setChapterSize(CollectionUtils.size(chapters) + "");
 		dto.setLearnHour(learnHour.get() + " 小时");
+		// 学员数量
+		ExamCourseMember member = new ExamCourseMember();
+		member.setCourseId(id);
+		member.setUserId(SysUtil.getUserId());
+		dto.setMemberCount(memberService.findMemberCountByCourseId(member) + "");
+		// 是否已报名
+		dto.setIsUserJoin(memberService.findMemberCountByCourseId(member) > 0);
 		return dto;
 	}
 
 	public List<CourseChapterDto> findChapters(Long id, AtomicLong learnHour) {
 		List<CourseChapterDto> chapterDtos = Lists.newArrayList();
 		List<ExamCourseChapter> chapters = chapterService.findChaptersByCourseId(id);
-
 		if (CollectionUtils.isNotEmpty(chapters)) {
 			for (ExamCourseChapter chapter : chapters) {
 				CourseChapterDto chapterDto = new CourseChapterDto();
@@ -169,5 +188,23 @@ public class CourseService extends CrudService<CourseMapper, Course> {
 			}
 		}
 		return sections;
+	}
+
+	@Transactional
+	public Boolean joinCourse(Long courseId, Long userId, String type) {
+		ExamCourseMember member = new ExamCourseMember();
+		member.setCourseId(courseId);
+		member.setUserId(userId);
+		// 报名
+		if (Status.OPEN.equals(type)) {
+			ExamCourseMember exist = memberService.findByCourseIdAndUserId(courseId, userId);
+			if (exist != null) {
+				throw new CommonException("不能重复加入");
+			}
+			return memberService.insert(member) > 0;
+		} else {
+			// 取消报名
+			return memberService.deleteByCourseIdAndUserId(member) > 0;
+		}
 	}
 }

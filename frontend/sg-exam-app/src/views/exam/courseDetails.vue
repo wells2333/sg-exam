@@ -7,10 +7,9 @@
           <div class="single-course-intro-content text-center">
             <div class="rate">
               <el-rate
-                v-model="value"
+                v-model="course.level"
                 disabled
-                text-color="#ff9900"
-                score-template="{value}">
+                text-color="#ff9900">
               </el-rate>
             </div>
             <h3>{{ course.courseName }}</h3>
@@ -20,7 +19,9 @@
               <span><i class="fa fa-circle" aria-hidden="true"></i></span>
               <a href="#">{{ course.college }} &amp; {{ course.major }}</a>
             </div>
-            <div class="price">免费</div>
+            <div class="price">{{ course.chargeType === 1 ? '收费' : '免费'}}
+              <h6 v-if="course.chargePrice > 0">{{ course.chargePrice }}</h6>
+            </div>
           </div>
         </div>
         <div class="single-course-content padding-80">
@@ -110,7 +111,7 @@
                   </span>
                   <div class="about-members mb-30">
                     <h4>报名学员</h4>
-                    <p>待开发</p>
+                    <p>已报名学员：{{detail.memberCount}}</p>
                   </div>
                 </el-tab-pane>
                 <el-tab-pane>
@@ -126,7 +127,7 @@
             </el-col>
             <el-col :span="6">
               <div class="course-sidebar">
-                <el-button type="primary" class="clever-btn mb-30 w-100" @click="buyCourse">购买课程
+                <el-button type="primary" class="clever-btn mb-30 w-100" @click="handleJoin">{{joinBtnText}}
                 </el-button>
                 <div class="sidebar-widget">
                   <h4>课程特色</h4>
@@ -140,8 +141,12 @@
                       <h6>{{ detail.chapterSize }}</h6>
                     </li>
                     <li>
+                      <h6><i class="el-icon-files"></i>学员数</h6>
+                      <h6>{{ detail.memberCount }}</h6>
+                    </li>
+                    <li>
                       <h6><i class="el-icon-files"></i>好评数</h6>
-                      <h6>{{evaluates.length}}</h6>
+                      <h6>{{ evaluates.length }}</h6>
                     </li>
                   </ul>
                 </div>
@@ -167,7 +172,7 @@
   </div>
 </template>
 <script>
-import {getCourseDetail} from '@/api/exam/course'
+import {getCourseDetail, joinCourse} from '@/api/exam/course'
 import {addObj, getEvaluateList} from '@/api/exam/courseEvaluate'
 import {messageSuccess, messageWarn} from '@/utils/util'
 
@@ -190,7 +195,8 @@ export default {
         price: '$20'
       }],
       evaluates: [],
-      hasEvaluate: false
+      hasEvaluate: false,
+      joinBtnText: ''
     }
   },
   created() {
@@ -204,6 +210,7 @@ export default {
       getCourseDetail(this.courseId).then(res => {
         this.detail = res.data.result
         this.course = res.data.result.course
+        this.joinBtnText = this.detail.isUserJoin === true ? '取消报名' : '报名'
         setTimeout(() => {
           this.loading = false
         }, 500)
@@ -229,6 +236,10 @@ export default {
 
     },
     handleClickSection(section) {
+      if (this.detail.isUserJoin !== true) {
+        messageWarn(this, '请先报名')
+        return;
+      }
       if (section.videoId === undefined || section.videoId === null) {
         messageWarn(this, '无视频内容')
         return
@@ -236,6 +247,10 @@ export default {
       this.$router.push({name: 'course-section', query: {sectionId: section.id}})
     },
     handleSubmitEvaluate() {
+      if (this.detail.isUserJoin !== true) {
+        messageWarn(this, '请先报名')
+        return;
+      }
       if (this.hasEvaluate) {
         messageWarn(this, '请勿重复提交')
         return
@@ -255,6 +270,27 @@ export default {
         } else {
           messageWarn(this, '提交失败')
         }
+      }).catch(error => {
+        console.error(error)
+      })
+    },
+    handleJoin() {
+      const type = this.detail.isUserJoin ? '0' : '1'
+      const text = this.detail.isUserJoin ? '取消报名' : '报名'
+      this.$confirm('确定' + text + '吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        joinCourse(this.courseId, type).then(res => {
+          if (res.data.result) {
+            messageSuccess(this, text + '成功')
+            this.getCourseInfo()
+          }
+        }).catch(error => {
+          console.error(error)
+          messageWarn(this, text + '失败')
+        })
       }).catch(error => {
         console.error(error)
       })

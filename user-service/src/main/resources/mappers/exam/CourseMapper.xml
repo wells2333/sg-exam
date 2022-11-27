@@ -9,6 +9,9 @@
         <result column="teacher" property="teacher"/>
         <result column="course_description" property="courseDescription"/>
         <result column="image_id" property="imageId"/>
+        <result column="charge_type" property="chargeType"/>
+        <result column="charge_price" property="chargePrice"/>
+        <result column="level" property="level"/>
         <result column="creator" property="creator"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>

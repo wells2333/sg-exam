@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.dto.CourseDetailDto;
 import com.github.tangyi.api.exam.model.Course;
 import com.github.tangyi.common.base.BaseController;
+import com.github.tangyi.common.constant.Status;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.exam.service.course.CourseService;
@@ -101,5 +102,13 @@ public class CourseController extends BaseController {
 	@Operation(summary = "获取课程详细信息")
 	public R<CourseDetailDto> getDetail(@PathVariable Long id) {
 		return R.success(courseService.getDetail(id));
+	}
+
+	@PostMapping("{id}/join")
+	@Operation(summary = "加入课程")
+	@SgLog(value = "加入课程", operationType = OperationType.INSERT)
+	public R<Boolean> joinCourse(@PathVariable Long id,
+			@RequestParam(required = false, defaultValue = Status.OPEN) String type) {
+		return R.success(courseService.joinCourse(id, SysUtil.getUserId(), type));
 	}
 }

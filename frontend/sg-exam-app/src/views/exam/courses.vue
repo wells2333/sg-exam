@@ -6,8 +6,8 @@
     <div class="content-container">
       <div class="course-card-list">
         <transition name="fade-transform" mode="out-in" v-for="course in courseList" :key="course.id">
-          <div class="single-popular-course mb-80" v-show="course.show">
-            <img :src="course.imageUrl" alt="">
+          <div class="single-popular-course mb-80" v-show="course.show" @click="handleStartCourse(course)">
+            <img :src="course.imageUrl" :alt="course.courseName">
             <div class="course-content">
               <h4>{{ course.courseName }}</h4>
               <div class="meta d-flex align-items-center" v-if="course.college">
@@ -15,19 +15,19 @@
                 <span><i class="fa fa-circle" aria-hidden="true"></i></span>
                 <a href="#">{{ course.teacher }}</a>
               </div>
-              <p>{{ course.courseDescription }}</p>
+              <p>{{ course.courseDescription | simpleStrFilter(20) }}</p>
             </div>
             <div class="seat-rating-fee d-flex justify-content-between">
               <div class="seat-rating h-100 d-flex align-items-center">
-                <div class="seat">
-                  <i class="el-icon-user-solid" aria-hidden="true"></i> 10
+                <div class="seat" title="已报名学员人数">
+                  <i class="el-icon-user-solid" aria-hidden="true"></i> {{course.memberCount}}
                 </div>
-                <div class="rating">
-                  <i class="el-icon-star-on" aria-hidden="true"></i> 4.5
+                <div class="rating" title="难度等级">
+                  <i class="el-icon-star-on" aria-hidden="true"></i> {{course.level}}
                 </div>
               </div>
-              <div class="course-fee h-100">
-                <a href="#" @click="handleStartCourse(course)">免费</a>
+              <div :class="course.chargeType === 0 ? 'course-fee h-100' : 'course-charge h-100'">
+                <a href="#">{{course.chargeType === 0 ? '免费' : '$' + course.chargePrice}}</a>
               </div>
             </div>
           </div>
@@ -37,7 +37,7 @@
       </div>
       <el-row style="text-align: center; margin-bottom: 50px;">
         <el-col :span="24">
-          <el-button type="default" @click="scrollList" :loading="loading" style="margin-bottom: 100px;">加载更多</el-button>
+          <el-button v-if="!isLastPage" type="default" @click="scrollList" :loading="loading" style="margin-bottom: 100px;">加载更多</el-button>
         </el-col>
       </el-row>
     </div>
@@ -46,6 +46,7 @@
 <script>
 import { courseList } from '@/api/exam/course'
 import { messageWarn, notifyFail } from '@/utils/util'
+import {simpleStrFilter} from '@/filters/index'
 
 export default {
   data () {
@@ -68,6 +69,7 @@ export default {
     this.getCourseList()
   },
   methods: {
+    simpleStrFilter: simpleStrFilter,
     // 加载课程列表
     getCourseList () {
       this.loading = true

@@ -452,12 +452,16 @@ img {
   background-color: $white-color;
   cursor: pointer;
   img {
+    height: 200px;
+    overflow: hidden;
     display: block;
     width: 100%;
     border-radius: 6px 6px 0 0;
   }
   .course-content {
     padding: 25px;
+    height: 140px;
+    overflow: hidden;
     h4 {
       margin-bottom: 5px;
     }
@@ -484,6 +488,8 @@ img {
     }
   }
   .seat-rating-fee {
+    position: absolute;
+    bottom: 0;
     display: inline-flex;
     width: 100%;
     height: 40px;
@@ -514,6 +520,25 @@ img {
         height: 40px;
         border-radius: 0 0 6px 0;
         background-color: #e3d21b;
+        text-align: center;
+        line-height: 40px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: $white-color;
+        letter-spacing: 0.75px;
+        &.free {
+          background-color: $bg-default;
+        }
+      }
+    }
+    .course-charge {
+      a {
+        display: inline-block;
+        width: 70px;
+        height: 40px;
+        border-radius: 0 0 6px 0;
+        background-color: #ee4f12;
         text-align: center;
         line-height: 40px;
         font-size: 12px;

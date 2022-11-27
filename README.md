@@ -53,24 +53,28 @@
 
 <table>
     <tr>
-        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/web_home.png" height="200"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/web_courses.png" height="200"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/web_course_detail.png" height="200"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/web_course_chapter.png" height="200"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/web_course_section.png" height="200"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/admin_course_evaluate.png" height="200"/></td>
         <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/web_1.png" height="200"/></td>
     </tr>
     <tr>
-        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/web_course_detail.png" height="200"/></td>
-        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/web_course_chapter.png" height="200"/></td>
-    </tr>
-    <tr>
-        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/web_course_section.png" height="200"/></td>
         <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/admin_course_evaluate.png" height="200"/></td>
-    </tr>
-    <tr>
         <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/admin_dashboard.png" height="200"/></td>
-        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/admin_exam_manage.png" height="200"/></td>
     </tr>
     <tr>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/admin_exam_manage.png" height="200"/></td>
         <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/admin_subject_detail.png" height="200"/></td>
+    </tr>
+    <tr>
         <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/admin_score_detail.png" height="200"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/admin_menus.png" height="200"/></td>
     </tr>
     <tr>
         <td>

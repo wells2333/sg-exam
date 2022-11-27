@@ -16,7 +16,13 @@
               auth: 'exam:course:edit'
             },
             {
-              icon: 'ant-design:star-outlined',
+              icon: 'ant-design:user-outlined',
+              tooltip: '学员管理',
+              onClick: handleEditMembers.bind(null, record),
+              auth: 'exam:course:edit'
+            },
+            {
+              icon: 'ant-design:like-outlined',
               tooltip: '评价管理',
               onClick: handleEditEvaluate.bind(null, record),
               auth: 'exam:course:edit'
@@ -44,6 +50,7 @@
     <CourseModal @register="registerModal" @success="handleSuccess"/>
     <CourseImageModal @register="registerImageModal" @success="handleUploadSuccess"/>
     <EvaluateModal @register="registerEvaluateModal"/>
+    <MemberModal @register="registerMemberModal"></MemberModal>
   </div>
 </template>
 <script lang="ts">
@@ -54,6 +61,7 @@ import {useModal} from '/@/components/Modal';
 import CourseModal from './CourseModal.vue';
 import CourseImageModal from './CourseImageModal.vue';
 import EvaluateModal from './EvaluateModal.vue';
+import MemberModal from './MemberModal.vue';
 import {columns, searchFormSchema} from './course.data';
 import {usePermission} from '/@/hooks/web/usePermission';
 import {useGo} from "/@/hooks/web/usePage";
@@ -61,13 +69,14 @@ import {useMessage} from "/@/hooks/web/useMessage";
 
 export default defineComponent({
   name: 'CourseManagement',
-  components: {BasicTable, CourseModal, CourseImageModal, EvaluateModal, TableAction},
+  components: {BasicTable, CourseModal, CourseImageModal, EvaluateModal, MemberModal, TableAction},
   setup() {
     const {hasPermission} = usePermission();
     const {createMessage} = useMessage();
     const [registerModal, {openModal}] = useModal();
     const [registerImageModal] = useModal();
     const [registerEvaluateModal, {openModal: openEvaluateModal}] = useModal();
+    const [registerMemberModal, {openModal: openMemberModal}] = useModal();
     const go = useGo();
     const [registerTable, {reload}] = useTable({
       title: '课程列表',
@@ -118,6 +127,14 @@ export default defineComponent({
       });
     }
 
+    function handleEditMembers(record: Recordable) {
+      openMemberModal(true, {
+        record,
+        isUpdate: true,
+        courseId: record.id
+      });
+    }
+
     async function handleDelete(record: Recordable) {
       await deleteCourse(record.id);
       createMessage.success('操作成功');
@@ -139,10 +156,12 @@ export default defineComponent({
       registerModal,
       registerImageModal,
       registerEvaluateModal,
+      registerMemberModal,
       handleCreate,
       handleEdit,
       handleEditChapter,
       handleEditEvaluate,
+      handleEditMembers,
       handleDelete,
       handleSuccess,
       handleUploadSuccess,

@@ -2,10 +2,10 @@
   <div :class="[prefixCls, { fullscreen }]">
     <div class="sg-upload">
       <div class="sg-upload-files">
-        <Image v-if="type === 'img' && file" style="width: 40px;height: 40px;cursor: pointer;overflow: hidden;" :src="file.url"/>
+        <Image v-if="type === 'img' && file" style="width: 40px;height: 40px;cursor: pointer;overflow: hidden;" :src="file.url" :alt="file.name"/>
         <a target="_blank" v-else-if="file">{{file.name}}</a>
         <Icon v-if="file" icon="ant-design:delete-outlined" class="sg-upload-del-btn"
-              @click="handleDelete"/>
+              @click="handleDelete" title="删除"/>
       </div>
       <div class="sg-upload-content">
         <Upload

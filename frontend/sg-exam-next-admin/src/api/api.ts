@@ -127,3 +127,8 @@ export const ExamCourseEvaluateApi = {
   Base: UserService + '/v1/evaluate',
   ExamCourseEvaluateList: UserService + '/v1/evaluate/list',
 }
+
+export const ExamCourseMemberApi = {
+  Base: UserService + '/v1/member',
+  ExamCourseMemberList: UserService + '/v1/member/list',
+}
