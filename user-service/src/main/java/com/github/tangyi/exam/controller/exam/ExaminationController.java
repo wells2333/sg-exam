@@ -2,6 +2,7 @@ package com.github.tangyi.exam.controller.exam;
 
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.dto.ExaminationDto;
+import com.github.tangyi.api.exam.dto.RandomSubjectDto;
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.Examination;
 import com.github.tangyi.common.base.BaseController;
@@ -17,6 +18,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -139,5 +141,19 @@ public class ExaminationController extends BaseController {
 	@Operation(summary = "获取下一题的序号")
 	public R<Integer> nexSubjectNo(@PathVariable Long id) {
 		return R.success(examinationService.nextSubjectNo(id));
+	}
+
+	@PostMapping("batchAddSubjects/{id}")
+	@Operation(summary = "批量添加题目")
+	@SgLog(value = "批量添加题目", operationType = OperationType.INSERT)
+	public R<Boolean> batchAddSubjects(@PathVariable Long id, @RequestBody List<SubjectDto> subjects) {
+		return R.success(examinationService.batchAddSubjects(id, subjects));
+	}
+
+	@PostMapping("randomAddSubjects/{id}")
+	@Operation(summary = "随机添加题目")
+	@SgLog(value = "随机添加题目", operationType = OperationType.INSERT)
+	public R<Boolean> randomAddSubjects(@PathVariable Long id, @RequestBody RandomSubjectDto params) {
+		return R.success(examinationService.randomAddSubjects(id, params));
 	}
 }

@@ -2,17 +2,18 @@ package com.github.tangyi.exam.service.exam;
 
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.dto.ExaminationDto;
+import com.github.tangyi.api.exam.dto.RandomSubjectDto;
 import com.github.tangyi.api.exam.dto.SimpleSubjectDto;
 import com.github.tangyi.api.exam.dto.SubjectDto;
-import com.github.tangyi.api.exam.model.Course;
-import com.github.tangyi.api.exam.model.Examination;
-import com.github.tangyi.api.exam.model.ExaminationSubject;
-import com.github.tangyi.api.exam.model.Subjects;
+import com.github.tangyi.api.exam.model.*;
+import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.constant.Group;
 import com.github.tangyi.common.constant.Status;
 import com.github.tangyi.common.properties.SysProperties;
 import com.github.tangyi.common.service.CrudService;
+import com.github.tangyi.common.utils.Id;
 import com.github.tangyi.common.utils.PageUtil;
+import com.github.tangyi.common.utils.StopWatchUtil;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.common.utils.zxing.QRCodeUtils;
 import com.github.tangyi.constants.ExamCacheName;
@@ -23,24 +24,25 @@ import com.github.tangyi.exam.service.course.CourseService;
 import com.github.tangyi.exam.service.data.ExamFavoriteService;
 import com.github.tangyi.exam.service.data.ExamStartCountService;
 import com.github.tangyi.exam.service.image.RandomImageService;
+import com.github.tangyi.exam.service.subject.SubjectCategoryService;
 import com.github.tangyi.exam.service.subject.SubjectsService;
 import com.github.tangyi.exam.utils.ExaminationUtil;
 import com.github.tangyi.user.service.QiNiuService;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 /**
@@ -69,6 +71,8 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	private final ExamStartCountService examStartCountService;
 
 	private final ExamFavoriteService examFavoriteService;
+
+	private final SubjectCategoryService subjectCategoryService;
 
 	@Override
 	@Cacheable(value = ExamCacheName.EXAMINATION, key = "#id")
@@ -279,7 +283,6 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		return Collections.emptyList();
 	}
 
-
 	/**
 	 * 根据考试ID查询题目id列表
 	 *
@@ -403,5 +406,95 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 			return ExaminationUtil.simpleSubject(sorted);
 		}
 		return Lists.newArrayList();
+	}
+
+	/**
+	 * 根据考试ID批量添加题目
+	 * @param id id
+	 * @param subjects subjects
+	 * @return Boolean
+	 */
+	@Transactional
+	public Boolean batchAddSubjects(Long id, List<SubjectDto> subjects) {
+		Integer nextNo = nextSubjectNo(id);
+		for (SubjectDto subject : subjects) {
+			subject.setId(null);
+			subject.setCategoryId(null);
+			subject.setCategoryName(null);
+			subject.setNewRecord(true);
+			subject.setCommonValue();
+			// 自定义ID
+			subject.setId(Id.nextId());
+			subject.setSort(nextNo++);
+			if (CollectionUtils.isNotEmpty(subject.getOptions())) {
+				for (SubjectOption option : subject.getOptions()) {
+					option.setId(null);
+					option.setSubjectChoicesId(null);
+				}
+			}
+			// 关联考试ID
+			subject.setExaminationId(id);
+			subjectsService.insert(subject);
+		}
+		return Boolean.TRUE;
+	}
+
+	@Transactional
+	public Boolean randomAddSubjects(Long id, RandomSubjectDto params) {
+		// 校验分类是否存在
+		SubjectCategory category = subjectCategoryService.get(params.getCategoryId());
+		SgPreconditions.checkNull(category, "题目分类不存在");
+		// 根据分类查询题目
+		List<SubjectDto> dtoList = subjectsService.findListByCategoryId(category.getId());
+		SgPreconditions.checkCollectionEmpty(dtoList, "该分类下的题目数量为空");
+		// 数量校验
+		Integer cnt = params.getSubjectCount();
+		SgPreconditions.checkBoolean(cnt > dtoList.size(), "分类下的题目数量不足" + cnt);
+		List<SubjectDto> result = randomAddSubject(dtoList, cnt);
+		if (CollectionUtils.isNotEmpty(result)) {
+			clearCurrentSubjects(id);
+			batchAddSubjects(id, result);
+		}
+		return Boolean.TRUE;
+	}
+
+	/**
+	 * 随机选取题目
+	 * @param dtoList dtoList
+	 * @param cnt cnt
+	 * @return List
+	 */
+	public List<SubjectDto> randomAddSubject(List<SubjectDto> dtoList, int cnt) {
+		StopWatch start = StopWatchUtil.start();
+		// 已经选取的题目ID，用于去重
+		Set<Long> idSet = Sets.newHashSetWithExpectedSize(cnt);
+		// 已经选取的题目
+		List<SubjectDto> result = Lists.newArrayListWithExpectedSize(cnt);
+		int itCnt = 0;
+		while (result.size() < cnt) {
+			itCnt++;
+			int index = ThreadLocalRandom.current().nextInt(dtoList.size()) - 1;
+			SubjectDto dto = dtoList.get(index);
+			if (!idSet.contains(dto.getId())) {
+				idSet.add(dto.getId());
+				result.add(dto);
+				log.info("select subject: {}，size: {}, target size: {}", dto.getId(), result.size(), cnt);
+			}
+		}
+		log.info("randomAddSubject success, itCnt: {}, took: {}", itCnt, StopWatchUtil.stop(start));
+		return result;
+	}
+
+	/**
+	 * 清空现有的题目
+	 */
+	@Transactional
+	public void clearCurrentSubjects(Long id) {
+		List<SimpleSubjectDto> subjects = allSubjects(id);
+		if (CollectionUtils.isNotEmpty(subjects)) {
+			for (SimpleSubjectDto subject : subjects) {
+				subjectsService.physicalDelete(subject.getId());
+			}
+		}
 	}
 }

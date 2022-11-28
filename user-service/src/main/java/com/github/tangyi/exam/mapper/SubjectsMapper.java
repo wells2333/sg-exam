@@ -19,7 +19,7 @@ public interface SubjectsMapper extends CrudMapper<Subjects> {
 
 	List<Subjects> findBySubjectIds(@Param("subjectIds") Long[] subjectIds);
 
-	Subjects findByCategoryId(Long categoryId);
+	List<Subjects> findByCategoryId(Long categoryId);
 
 	List<Subjects> findByCategoryIds(@Param("categoryIds") Long[] categoryIds);
 

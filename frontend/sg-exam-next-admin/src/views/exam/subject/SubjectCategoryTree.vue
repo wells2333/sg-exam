@@ -3,7 +3,6 @@
     <BasicTree
       title="题目分类"
       toolbar
-      search
       :clickRowToExpand="false"
       :treeData="treeData"
       :replaceFields="{ key: 'id', title: 'categoryName' }"

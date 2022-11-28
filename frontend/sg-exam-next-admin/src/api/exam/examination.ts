@@ -44,3 +44,22 @@ export const nexSubjectNo = (id?: string) => {
   );
 }
 
+
+export const batchAddSubjects = (id?: string, subjects?: Recordable[]) => {
+  return defHttp.post<ApiRes>(
+    {
+      url: ExaminationApi.Base + '/batchAddSubjects/' + id,
+      data: subjects
+    }
+  );
+}
+
+export const randomAddSubjects = (id?: string, params?: object) => {
+  return defHttp.post<ApiRes>(
+    {
+      url: ExaminationApi.Base + '/randomAddSubjects/' + id,
+      params: params
+    }
+  );
+}
+

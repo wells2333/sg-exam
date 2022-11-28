@@ -9,22 +9,16 @@
         <TableAction
           :actions="[
             {
-              icon: 'ant-design:eye-outlined',
-              tooltip: '查看详情',
-              onClick: handleView.bind(null, record),
-              auth: 'exam:exam:view'
+              icon: 'ant-design:align-left-outlined',
+              tooltip: '题目管理',
+              onClick: handleSubjects.bind(null, record),
+              auth: 'exam:exam:subject:add'
             },
             {
               icon: 'clarity:note-edit-line',
               tooltip: '编辑',
               onClick: handleEdit.bind(null, record),
               auth: 'exam:exam:edit'
-            },
-            {
-              icon: 'ant-design:align-left-outlined',
-              tooltip: '题目管理',
-              onClick: handleSubjects.bind(null, record),
-              auth: 'exam:exam:subject:add'
             },
             {
               icon: 'ant-design:delete-outlined',
@@ -40,7 +34,6 @@
         />
       </template>
     </BasicTable>
-    <ExaminationDetailDrawer @register="registerDetailDrawer"/>
     <ExaminationModal width="80%" @register="registerModal" @success="handleSuccess"/>
   </div>
 </template>
@@ -52,7 +45,6 @@ import {useModal} from '/@/components/Modal';
 import ExaminationModal from './ExaminationModal.vue';
 import ExaminationDetailDrawer from './ExaminationDetail.vue';
 import {columns, searchFormSchema} from './examination.data';
-import {useDrawer} from "/@/components/Drawer";
 import {useGo} from "/@/hooks/web/usePage";
 import {usePermission} from '/@/hooks/web/usePermission';
 import {useMessage} from "/@/hooks/web/useMessage";
@@ -63,7 +55,6 @@ export default defineComponent({
   setup() {
     const {hasPermission} = usePermission();
     const { createMessage } = useMessage();
-    const [registerDetailDrawer, {openDrawer: openDetailDrawer}] = useDrawer();
     const [registerModal, {openModal}] = useModal();
     const [registerExamImageModal] = useModal();
     const go = useGo();
@@ -90,10 +81,6 @@ export default defineComponent({
         fixed: undefined,
       },
     });
-
-    function handleView(record: Recordable) {
-      openDetailDrawer(true, {record});
-    }
 
     function handleCreate() {
       openModal(true, {
@@ -127,9 +114,7 @@ export default defineComponent({
       hasPermission,
       registerTable,
       registerModal,
-      registerDetailDrawer,
       registerExamImageModal,
-      handleView,
       handleCreate,
       handleEdit,
       handleSubjects,

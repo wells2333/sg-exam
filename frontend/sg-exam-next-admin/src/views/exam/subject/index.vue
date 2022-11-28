@@ -25,7 +25,6 @@
       </template>
     </BasicTable>
     <SubjectModal @register="registerModal" @success="handleSubjectDataSuccess"></SubjectModal>
-
   </PageWrapper>
 </template>
 <script lang="ts">

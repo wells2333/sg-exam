@@ -68,7 +68,9 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 	}
 
 	public PageInfo<SubjectDto> findPage(Map<String, Object> params, int pageNum, int pageSize, SubjectDto subjectDto) {
-		Optional.ofNullable(subjectDto.getCategoryId()).ifPresent(categoryId -> params.put("categoryId", categoryId));
+		if (subjectDto.getCategoryId() != null) {
+			params.put("categoryId", subjectDto.getCategoryId());
+		}
 		PageInfo<Subjects> pageInfo = findPage(params, pageNum, pageSize);
 		List<SubjectDto> dtoList = Lists.newArrayListWithExpectedSize(pageSize);
 		List<Long> categoryIds = Lists.newArrayList();
@@ -105,6 +107,24 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 				}
 			}
 		}
+	}
+
+	/**
+	 * 根据分类ID查询全部题目
+	 * @param categoryId categoryId
+	 * @return List
+	 */
+	public List<SubjectDto> findListByCategoryId(Long categoryId) {
+		List<Subjects> subjects = this.dao.findByCategoryId(categoryId);
+		if (CollectionUtils.isEmpty(subjects)) {
+			return Collections.emptyList();
+		}
+		List<SubjectDto> dtoList = Lists.newArrayListWithExpectedSize(subjects.size());
+		for (Subjects es : subjects) {
+			SubjectDto temp = subjectServiceFactory.service(es.getType()).getSubject(es.getSubjectId());
+			dtoList.add(temp);
+		}
+		return dtoList;
 	}
 
 	/**
@@ -358,7 +378,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 		return super.dao.findBySubjectIds(subjectIds);
 	}
 
-	public Subjects findByCategoryId(Long categoryId) {
+	public List<Subjects> findByCategoryId(Long categoryId) {
 		return super.dao.findByCategoryId(categoryId);
 	}
 

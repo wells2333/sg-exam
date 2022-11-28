@@ -16,7 +16,7 @@ export default defineComponent({
   setup(_, { emit }) {
     const isUpdate = ref(true);
     let id: string;
-    const [registerForm, { resetFields, setFieldsValue, updateSchema, validate }] = useForm({
+    const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
       labelWidth: 100,
       schemas: formSchema,
       showActionButtonGroup: false,
@@ -36,7 +36,6 @@ export default defineComponent({
     async function handleSubmit() {
       try {
         const values = await validate();
-        debugger
         setModalProps({ confirmLoading: true });
         if (id) {
           await updateBanner(id, values);
