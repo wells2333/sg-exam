@@ -1,6 +1,7 @@
 import {defHttp} from '/@/utils/http/axios';
 import {ApiRes} from "/@/api/constant";
 import {SubjectsApi} from "/@/api/api";
+import {UploadFileParams} from "/#/axios";
 
 export const getSubjectList = (params?: object) =>
   defHttp.get<ApiRes | undefined>({url: SubjectsApi.SubjectList, params});
@@ -43,5 +44,26 @@ export const cateNexSubjectNo = (id?: string) => {
     {
       url: SubjectsApi.Base + '/nexSubjectNo/' + id,
     }
+  );
+}
+
+export const getSubjectCountByCategoryId = (id?: string) => {
+  return defHttp.get<string>(
+    {
+      url: SubjectsApi.Base + '/getSubjectCountByCategoryId?categoryId=' + id,
+    }
+  );
+}
+
+export function uploadJSON(
+  params: UploadFileParams,
+  onUploadProgress: (progressEvent: ProgressEvent) => void,
+) {
+  return defHttp.uploadFile(
+    {
+      url: SubjectsApi.Base + '/importJson',
+      onUploadProgress,
+    },
+    params,
   );
 }

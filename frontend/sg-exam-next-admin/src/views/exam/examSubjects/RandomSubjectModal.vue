@@ -2,13 +2,18 @@
   <BasicModal v-bind="$attrs" @register="registerModal" title="组卷配置" @ok="handleSubmit"
               width="60%">
     <PageWrapper dense contentFullHeight fixedHeight contentClass="flex">
-      <SubjectCategoryTree class="w-1/5 xl:w-1/6" @select="handleSelectCategory"/>
-      <BasicForm @register="registerForm"/>
+      <SubjectCategoryTree ref="cateTreeRef" class="w-1/3 xl:w-1/3" @select="handleSelectCategory"/>
+      <div>
+        <div>
+          <p>该分类下的题目数量：{{subjectCnt}}</p>
+        </div>
+        <BasicForm @register="registerForm"/>
+      </div>
     </PageWrapper>
   </BasicModal>
 </template>
 <script lang="ts">
-import {defineComponent, ref} from 'vue';
+import {defineComponent, ref, unref} from 'vue';
 import {BasicModal, useModalInner} from '/@/components/Modal';
 import {BasicForm, useForm} from '/@/components/Form/index';
 import {useMessage} from "/@/hooks/web/useMessage";
@@ -16,6 +21,7 @@ import {formSchema} from "./random.data";
 import {PageWrapper} from '/@/components/Page';
 import SubjectCategoryTree from '../subject/SubjectCategoryTree.vue';
 import {randomAddSubjects} from "/@/api/exam/examination";
+import {getSubjectCountByCategoryId} from "/@/api/exam/subject";
 
 export default defineComponent({
   name: 'RandomSubjectModal',
@@ -28,7 +34,9 @@ export default defineComponent({
   emits: ['success', 'register'],
   setup(_, {emit}) {
     const {createMessage} = useMessage();
+    const cateTreeRef = ref<any>(undefined);
     const examinationId = ref<string>('');
+    const subjectCnt = ref<number>(0);
     const [registerForm, {resetFields, validate, setFieldsValue}] = useForm({
       labelWidth: 100,
       schemas: formSchema,
@@ -39,11 +47,19 @@ export default defineComponent({
       resetFields();
       setModalProps({confirmLoading: false});
       examinationId.value = data?.examinationId || null;
+      if (cateTreeRef.value !== undefined) {
+        unref(cateTreeRef).resetSelectedKeys();
+      }
     });
 
     async function handleSubmit() {
       try {
         const values = await validate();
+        const {subjectCount} = values;
+        if (subjectCount > subjectCnt.value) {
+          createMessage.error('题目数量超过' + subjectCnt.value);
+          return;
+        }
         setModalProps({confirmLoading: true});
         const res = await randomAddSubjects(examinationId.value, values);
         if (res) {
@@ -59,11 +75,20 @@ export default defineComponent({
       }
     }
 
-    function handleSelectCategory(categoryId = '') {
-      setFieldsValue({categoryId});
+    async function handleSelectCategory(categoryId = '') {
+      await setFieldsValue({categoryId});
+      // 根据分类ID查询题目数量
+      if (categoryId !== '') {
+        const res = await getSubjectCountByCategoryId(categoryId);
+        subjectCnt.value = Number(res);
+      } else {
+        subjectCnt.value = 0;
+      }
     }
 
     return {
+      cateTreeRef,
+      subjectCnt,
       registerForm,
       registerModal,
       handleSubmit,

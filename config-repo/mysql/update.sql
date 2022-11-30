@@ -26,3 +26,6 @@ ALTER TABLE `exam_course`
     ADD COLUMN `charge_type` tinyint(1) NULL COMMENT '收费类型：0：免费，1：收费',
     ADD COLUMN `charge_price` double(10,2) DEFAULT NULL COMMENT '收费价格',
     ADD COLUMN `level` tinyint(1) NULL DEFAULT 3 COMMENT '难度等级，1~5，默认3';
+
+INSERT INTO `sys_menu` VALUES (91, '查看题库', 'exam:subject:bank:view', NULL, 41, NULL, '1', '1', 'admin', '2022-11-30 22:42:14', 'admin', '2022-11-30 22:42:14', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
+INSERT INTO `sys_role_menu` VALUES (445, 2, 91, '', '2022-11-30 22:42:31', '', '2022-11-30 22:42:31', 0, '');

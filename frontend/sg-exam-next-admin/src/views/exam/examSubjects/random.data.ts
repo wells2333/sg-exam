@@ -10,7 +10,7 @@ export const formSchema: FormSchema[] = [
   },
   {
     field: 'subjectCount',
-    label: '题目数量',
+    label: '目标题目数量',
     component: 'InputNumber',
     required: true,
   }

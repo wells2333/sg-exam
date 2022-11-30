@@ -26,4 +26,6 @@ public interface SubjectsMapper extends CrudMapper<Subjects> {
 	List<Subjects> findByType(Integer type);
 
 	Integer findMaxSortByCategoryId(Long categoryId);
+
+	Integer findSubjectCountByCategoryId(Long categoryId);
 }

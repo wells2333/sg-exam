@@ -9,6 +9,7 @@ import com.github.tangyi.api.exam.model.*;
 import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.constant.Group;
 import com.github.tangyi.common.constant.Status;
+import com.github.tangyi.common.exceptions.CommonException;
 import com.github.tangyi.common.properties.SysProperties;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.Id;
@@ -473,7 +474,10 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		int itCnt = 0;
 		while (result.size() < cnt) {
 			itCnt++;
-			int index = ThreadLocalRandom.current().nextInt(dtoList.size()) - 1;
+			if (itCnt > 500) {
+				throw new CommonException("随机组卷失败，itCnt：" + itCnt);
+			}
+			int index = ThreadLocalRandom.current().nextInt(0, dtoList.size());
 			SubjectDto dto = dtoList.get(index);
 			if (!idSet.contains(dto.getId())) {
 				idSet.add(dto.getId());

@@ -109,6 +109,10 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 		}
 	}
 
+	public Integer findSubjectCountByCategoryId(Long categoryId) {
+		return this.dao.findSubjectCountByCategoryId(categoryId);
+	}
+
 	/**
 	 * 根据分类ID查询全部题目
 	 * @param categoryId categoryId

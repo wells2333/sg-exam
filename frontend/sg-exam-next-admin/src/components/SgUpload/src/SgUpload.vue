@@ -3,8 +3,8 @@
     <div class="sg-upload">
       <div class="sg-upload-files">
         <Image v-if="type === 'img' && file" style="width: 40px;height: 40px;cursor: pointer;overflow: hidden;" :src="file.url" :alt="file.name"/>
-        <a target="_blank" v-else-if="file">{{file.name}}</a>
-        <Icon v-if="file" icon="ant-design:delete-outlined" class="sg-upload-del-btn"
+        <a target="_blank" v-else-if="showFileList && file">{{file.name}}</a>
+        <Icon v-if="showFileList && file" icon="ant-design:delete-outlined" class="sg-upload-del-btn"
               @click="handleDelete" title="删除"/>
       </div>
       <div class="sg-upload-content">
@@ -14,6 +14,7 @@
           @change="handleChange"
           :action="uploadUrl"
           :customRequest="customRequest"
+          :before-upload="beforeUpload"
           :showUploadList="showUploadList"
           :accept="accept"
         >
@@ -49,6 +50,10 @@ export default defineComponent({
       type: Function,
       default: undefined
     },
+    handleFormData: {
+      type: Function,
+      default: undefined
+    },
     handleDone: {
       type: Function,
       default: undefined
@@ -79,7 +84,11 @@ export default defineComponent({
     uploadParams: {
       type: Object,
       default: undefined
-    }
+    },
+    showFileList: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: ['uploading', 'done', 'error'],
   setup(props, {emit}) {
@@ -115,7 +124,11 @@ export default defineComponent({
 
     async function customRequest(formData) {
       formData.filename = formData.file.name;
-      const {api} = props;
+      const {api, handleFormData} = props;
+      // 处理formData
+      if (handleFormData !== undefined && isFunction(handleFormData)) {
+        await props.handleFormData?.(formData);
+      }
       let result;
       if (api !== undefined && isFunction(api)) {
         result = await props.api?.(formData);
@@ -155,6 +168,10 @@ export default defineComponent({
       file.value = undefined;
     }
 
+    function beforeUpload(file: File) {
+
+    }
+
     watch(
       () => props.value,
       async (val: string, prevVal: string) => {
@@ -180,6 +197,7 @@ export default defineComponent({
       handleClickImg,
       handleDelete,
       resetFile,
+      beforeUpload,
     };
   },
 });

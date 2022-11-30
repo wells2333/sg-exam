@@ -27,7 +27,7 @@
     </BasicTable>
     <SubjectModal @register="registerModal" @success="handleSubjectDataSuccess"></SubjectModal>
     <SelectSubjectModal @register="registerSelectSubjectModal" @success="handleSelectSubjectSuccess"></SelectSubjectModal>
-    <RandomSubjectModal @register="registerRandomSubjectModal" @succecc="handleRandomSubjectSuccess"></RandomSubjectModal>
+    <RandomSubjectModal @register="registerRandomSubjectModal" @success="handleRandomSubjectSuccess"></RandomSubjectModal>
   </div>
 </template>
 <script lang="ts">

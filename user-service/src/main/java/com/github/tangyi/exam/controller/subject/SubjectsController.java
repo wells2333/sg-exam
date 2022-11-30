@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -63,6 +64,12 @@ public class SubjectsController extends BaseController {
 			@RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize,
 			SubjectDto subject) {
 		return R.success(subjectsService.findPage(condition, pageNum, pageSize, subject));
+	}
+
+	@GetMapping("getSubjectCountByCategoryId")
+	@Operation(summary = "获取题目数量")
+	public R<Integer> getSubjectCount(@RequestParam Long categoryId) {
+		return R.success(subjectsService.findSubjectCountByCategoryId(categoryId));
 	}
 
 	@PostMapping
@@ -109,18 +116,23 @@ public class SubjectsController extends BaseController {
 	@Operation(summary = "导入题目", description = "导入题目")
 	@SgLog(value = "导入题目", operationType = OperationType.INSERT)
 	public R<Boolean> importSubject(Long examinationId, Long categoryId,
-			@Parameter(description = "要上传的文件", required = true) MultipartFile file) {
-		try {
-			log.debug("Start import subject data, examinationId: {}, categoryId: {}", examinationId, categoryId);
-			if (StringUtils.isNotEmpty(file.getOriginalFilename()) && file.getOriginalFilename().endsWith(".txt")) {
-				return R.success(importExportSubjectService.importTxt(categoryId, file));
-			} else {
-				return R.success(ExcelToolUtil.readExcel(file.getInputStream(), SubjectExcelModel.class,
-						new SubjectImportListener(importExportSubjectService, examinationId, categoryId)));
-			}
-		} catch (Exception e) {
-			throw new CommonException(e, "import subject failed");
+			@Parameter(description = "要上传的文件", required = true) MultipartFile file) throws IOException {
+		log.debug("importSubject, examinationId: {}, categoryId: {}", examinationId, categoryId);
+		if (StringUtils.isNotEmpty(file.getOriginalFilename()) && file.getOriginalFilename().endsWith(".txt")) {
+			return R.success(importExportSubjectService.importTxt(categoryId, file));
+		} else {
+			return R.success(ExcelToolUtil.readExcel(file.getInputStream(), SubjectExcelModel.class,
+					new SubjectImportListener(importExportSubjectService, examinationId, categoryId)));
 		}
+	}
+
+	@PostMapping("importJson")
+	@Operation(summary = "导入JSON格式题目", description = "导入JSON格式题目")
+	@SgLog(value = "导入JSON格式题目", operationType = OperationType.INSERT)
+	public R<Boolean> importJSONSubject(Long categoryId,
+			@Parameter(description = "JSON格式题目", required = true) MultipartFile file) throws IOException {
+		log.debug("importJSONSubject, categoryId: {}", categoryId);
+		return R.success(importExportSubjectService.importJSONSubject(categoryId, file));
 	}
 
 	@PostMapping("deleteAll")

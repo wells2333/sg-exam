@@ -344,6 +344,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 			subjectOptionService.deleteBySubjectChoicesId(subjectOption);
 			String creator = SysUtil.getUser();
 			subjectChoices.getOptions().forEach(option -> {
+				option.setId(null);
 				option.setNewRecord(true);
 				option.setCommonValue(creator, subjectChoices.getTenantCode());
 				option.setSubjectChoicesId(subjectChoices.getId());

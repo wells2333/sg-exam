@@ -3,7 +3,8 @@
     <SubjectCategoryTree class="w-1/5 xl:w-1/6" @select="handleSelect"/>
     <BasicTable @register="registerTable" class="w-3/4 xl:w-4/5" :searchInfo="searchInfo">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate"> 新增题目</a-button>
+        <a-button v-if="hasPermission(['exam:subject:bank:add'])" type="primary" @click="handleCreate"> 手动添加</a-button>
+        <a-button v-if="hasPermission(['exam:subject:bank:import'])" type="primary" @click="handleImport"> 批量导入</a-button>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -11,10 +12,12 @@
             {
               icon: 'clarity:note-edit-line',
               onClick: handleEdit.bind(null, record),
+              auth: 'exam:subject:bank:edit',
             },
             {
               icon: 'ant-design:delete-outlined',
               color: 'error',
+              auth: 'exam:subject:bank:del',
               popConfirm: {
                 title: '是否确认删除',
                 confirm: handleDelete.bind(null, record),
@@ -25,6 +28,7 @@
       </template>
     </BasicTable>
     <SubjectModal @register="registerModal" @success="handleSubjectDataSuccess"></SubjectModal>
+    <ImportModal @register="registerImportModal" @success="handleImportSuccess"></ImportModal>
   </PageWrapper>
 </template>
 <script lang="ts">
@@ -36,13 +40,17 @@ import SubjectCategoryTree from './SubjectCategoryTree.vue';
 import {useModal} from '/@/components/Modal';
 import {columns, searchFormSchema} from './subject.data';
 import SubjectModal from "./SubjectModal.vue";
+import ImportModal from "./ImportModal.vue";
 import { useMessage } from '/@/hooks/web/useMessage';
+import {usePermission} from "/@/hooks/web/usePermission";
 
 export default defineComponent({
   name: 'SubjectManagement',
-  components: {BasicTable, PageWrapper, SubjectCategoryTree, TableAction, SubjectModal},
+  components: {BasicTable, PageWrapper, SubjectCategoryTree, TableAction, SubjectModal, ImportModal},
   setup() {
+    const {hasPermission} = usePermission();
     const [registerModal, { openModal }] = useModal();
+    const [registerImportModal, {openModal: openImportModal}] = useModal();
     const {createMessage} = useMessage();
     const searchInfo = reactive<Recordable>({});
     const [registerTable, {reload}] = useTable({
@@ -94,7 +102,7 @@ export default defineComponent({
 
     function handleEdit(record: Recordable) {
       const {categoryId} = searchInfo;
-      if (categoryId === undefined) {
+      if (categoryId === undefined || categoryId === '') {
         createMessage.warning('请选择题目分类');
         return;
       }
@@ -126,16 +134,35 @@ export default defineComponent({
       reload();
     }
 
+    function handleImport() {
+      const {categoryId} = searchInfo;
+      if (categoryId === undefined || categoryId === '') {
+        createMessage.warning('请选择题目分类');
+        return;
+      }
+      openImportModal(true, {
+        categoryId
+      });
+    }
+
+    function handleImportSuccess() {
+      reload();
+    }
+
     return {
+      hasPermission,
       registerTable,
       registerModal,
+      registerImportModal,
       handleCreate,
       handleEdit,
       handleDelete,
       handleSuccess,
       handleSelect,
       searchInfo,
-      handleSubjectDataSuccess
+      handleSubjectDataSuccess,
+      handleImport,
+      handleImportSuccess
     };
   },
 });

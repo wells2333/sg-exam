@@ -67,6 +67,10 @@
         SELECT max(a.sort) FROM exam_subjects a WHERE a.category_id = #{categoryId}
     </select>
 
+    <select id="findSubjectCountByCategoryId" resultType="Integer">
+        SELECT COUNT(1) FROM exam_subjects a WHERE a.category_id = #{categoryId}
+    </select>
+
     <delete id="physicalDelete">
         DELETE FROM exam_subjects WHERE id = #{id}
     </delete>

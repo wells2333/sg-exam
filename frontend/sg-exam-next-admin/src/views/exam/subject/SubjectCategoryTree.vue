@@ -1,6 +1,7 @@
 <template>
   <div class="m-4 mr-0 overflow-hidden bg-white">
     <BasicTree
+      ref="basicTreeRef"
       title="题目分类"
       toolbar
       :clickRowToExpand="false"
@@ -11,17 +12,18 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
-import { BasicTree, TreeItem } from '/@/components/Tree';
-import { getSubjectCategoryTree } from '/@/api/exam/subjectCategory';
+import {defineComponent, onMounted, ref, unref} from 'vue';
+import {BasicTree, TreeItem} from '/@/components/Tree';
+import {getSubjectCategoryTree} from '/@/api/exam/subjectCategory';
 
 export default defineComponent({
   name: 'SubjectCategoryTree',
-  components: { BasicTree },
-
+  components: {BasicTree},
   emits: ['select'],
-  setup(_, { emit }) {
+  setup(_, {emit}) {
     const treeData = ref<TreeItem[]>([]);
+    const basicTreeRef = ref<any>(undefined);
+
     async function fetch() {
       treeData.value = (await getSubjectCategoryTree()) as unknown as TreeItem[];
     }
@@ -30,10 +32,17 @@ export default defineComponent({
       emit('select', keys[0]);
     }
 
+    function resetSelectedKeys() {
+      const obj = unref(basicTreeRef);
+      if (obj) {
+        obj.setSelectedKeys([]);
+      }
+    }
+
     onMounted(() => {
       fetch();
     });
-    return { treeData, handleSelect };
+    return {basicTreeRef, treeData, handleSelect, resetSelectedKeys};
   },
 });
 </script>

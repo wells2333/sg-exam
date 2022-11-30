@@ -1,10 +1,12 @@
 package com.github.tangyi.exam.service.subject;
 
+import com.alibaba.fastjson.JSON;
 import com.github.tangyi.api.exam.constants.ExamSubjectConstant;
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.Answer;
 import com.github.tangyi.api.exam.model.ExaminationSubject;
 import com.github.tangyi.api.exam.model.SubjectOption;
+import com.github.tangyi.common.utils.Id;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.exam.service.ExaminationSubjectService;
 import com.google.common.collect.Lists;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -53,10 +56,16 @@ public class ImportExportSubjectService {
 		String creator = SysUtil.getUser(), tenantCode = SysUtil.getTenantCode();
 		// 暂时循环遍历保存
 		for (SubjectDto subject : subjects) {
-			if (examinationId != null) {subject.setExaminationId(examinationId);}
-			if (categoryId == null) {categoryId = ExamSubjectConstant.DEFAULT_CATEGORY_ID;}
+			if (examinationId != null) {
+				subject.setExaminationId(examinationId);
+			}
+			if (categoryId == null) {
+				categoryId = ExamSubjectConstant.DEFAULT_CATEGORY_ID;
+			}
 			subject.setCategoryId(categoryId);
 			if (subject.getId() == null) {
+				// 重新生成ID
+				subject.setId(Id.nextId());
 				subject.setCommonValue(creator, tenantCode);
 				list.add(subjectsService.insert(subject));
 			} else {
@@ -100,6 +109,34 @@ public class ImportExportSubjectService {
 			}
 		}
 		return subjects;
+	}
+
+	/**
+	 * 导入json格式
+	 * @param categoryId categoryId
+	 * @param file file
+	 * @return Boolean
+	 */
+	public Boolean importJSONSubject(Long categoryId, MultipartFile file) throws IOException {
+		try (InputStream inputStream = file.getInputStream()) {
+			String json = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+			List<SubjectDto> subjects = JSON.parseArray(json, SubjectDto.class);
+			if (CollectionUtils.isEmpty(subjects)) {
+				log.error("importJSONSubject, subjects is empty");
+				return Boolean.FALSE;
+			}
+			// 查询出最大的序号
+			int nextNo = subjectsService.nextSubjectNo(categoryId);
+			for (SubjectDto subject : subjects) {
+				subject.setId(null);
+				subject.setNewRecord(true);
+				subject.setSort(nextNo++);
+				subject.setUpdateTime(null);
+				subject.setIsDeleted(null);
+			}
+			importSubject(subjects, null, categoryId);
+		}
+		return Boolean.TRUE;
 	}
 
 	/**
