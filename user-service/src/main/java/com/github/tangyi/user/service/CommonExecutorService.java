@@ -28,6 +28,8 @@ public class CommonExecutorService {
 
 	private ListeningExecutorService submitExecutor;
 
+	private ListeningExecutorService importExecutor;
+
 	@PostConstruct
 	public void init() {
 		log.info("start to init common executor");
@@ -42,6 +44,10 @@ public class CommonExecutorService {
 		log.info("start to init submit exam executor");
 		this.submitExecutor = ExecutorUtils.newListeningExecutor("submit-exam-%d", coreSize, EXECUTOR_QUEUE_SIZE);
 		log.info("init submit exam executor finished, coreSize: {}", coreSize);
+
+		log.info("start to init import executor");
+		this.importExecutor = ExecutorUtils.newListeningExecutor("import-%d", coreSize, EXECUTOR_QUEUE_SIZE);
+		log.info("init import executor finished, coreSize: {}", coreSize);
 	}
 
 	public ListeningExecutorService getCommonExecutor() {
@@ -54,5 +60,9 @@ public class CommonExecutorService {
 
 	public ListeningExecutorService getSubmitExecutor() {
 		return submitExecutor;
+	}
+
+	public ListeningExecutorService getImportExecutor() {
+		return importExecutor;
 	}
 }

@@ -1,13 +1,13 @@
 package com.github.tangyi.exam.utils;
 
 import com.github.tangyi.api.exam.dto.SubjectDto;
+import com.github.tangyi.api.exam.model.SubjectOption;
 import com.github.tangyi.api.exam.model.Subjects;
 import com.github.tangyi.exam.enums.SubjectTypeEnum;
 import com.github.tangyi.exam.excel.model.SubjectExcelModel;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
@@ -34,10 +34,16 @@ public class SubjectUtil {
 			SubjectExcelModel subjectExcelModel = new SubjectExcelModel();
 			BeanUtils.copyProperties(subject, subjectExcelModel);
 			if (CollectionUtils.isNotEmpty(subject.getOptions())) {
-				List<String> optionString = subject.getOptions().stream()
-						.map(option -> "$$" + option.getOptionName() + "# " + option.getOptionContent())
-						.collect(Collectors.toList());
-				subjectExcelModel.setOptions(StringUtils.join(optionString, "\n"));
+				for (SubjectOption option : subject.getOptions()) {
+					switch (option.getOptionName()) {
+						case "A" -> subjectExcelModel.setOptionA(option.getOptionContent());
+						case "B" -> subjectExcelModel.setOptionB(option.getOptionContent());
+						case "C" -> subjectExcelModel.setOptionC(option.getOptionContent());
+						case "D" -> subjectExcelModel.setOptionD(option.getOptionContent());
+						default -> {
+						}
+					}
+				}
 			}
 			subjectExcelModel.setAnswer(subject.getAnswer().getAnswer());
 			subjectExcelModels.add(subjectExcelModel);

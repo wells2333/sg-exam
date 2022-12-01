@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper dense contentFullHeight fixedHeight contentClass="flex">
+  <PageWrapper dense contentClass="flex">
     <SubjectCategoryTree class="w-1/5 xl:w-1/6" @select="handleSelect"/>
     <BasicTable @register="registerTable" class="w-3/4 xl:w-4/5" :searchInfo="searchInfo">
       <template #toolbar>

@@ -146,23 +146,23 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 		dto.setId(subjectId);
 		Subjects subjects = new Subjects();
 		subjects.setNewRecord(true);
-		subjects.setCommonValue();
+		subjects.setCommonValue(dto.getCreator(), dto.getTenantCode());
 		subjects.setSubjectId(subjectId);
 		subjects.setCategoryId(dto.getCategoryId());
 		subjects.setType(dto.getType());
 		subjects.setSort(dto.getSort());
 		insert(subjects);
 		if (dto.getExaminationId() != null) {
-			insertEs(dto, subjectId);
+			insertEs(dto, subjectId, dto.getCreator(), dto.getTenantCode());
 		}
 		return dto;
 	}
 
 	@Transactional
-	public void insertEs(SubjectDto dto, Long subjectId) {
+	public void insertEs(SubjectDto dto, Long subjectId, String creator, String tenantCode) {
 		ExaminationSubject es = new ExaminationSubject();
 		es.setNewRecord(true);
-		es.setCommonValue();
+		es.setCommonValue(creator, tenantCode);
 		es.setSubjectId(subjectId);
 		es.setExaminationId(dto.getExaminationId());
 		es.setSort(dto.getSort());

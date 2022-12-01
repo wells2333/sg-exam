@@ -78,6 +78,9 @@ ignore:
     - /**/v1/sms/**
     - /**/v1/mobile/sendSms/**
     - /tool/**
+    - /v1/subjects/template/json
+    - /v1/subjects/template/excel
+    - /v1/subjects/exportDemoExcel
 
 logging:
   level:

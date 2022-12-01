@@ -9,7 +9,6 @@ import com.github.tangyi.api.exam.model.SubjectChoices;
 import com.github.tangyi.api.exam.model.SubjectOption;
 import com.github.tangyi.common.base.BaseEntity;
 import com.github.tangyi.common.service.CrudService;
-import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.exam.mapper.SubjectChoicesMapper;
 import com.github.tangyi.exam.service.ExaminationSubjectService;
@@ -342,11 +341,10 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 			SubjectOption subjectOption = new SubjectOption();
 			subjectOption.setSubjectChoicesId(subjectChoices.getId());
 			subjectOptionService.deleteBySubjectChoicesId(subjectOption);
-			String creator = SysUtil.getUser();
 			subjectChoices.getOptions().forEach(option -> {
 				option.setId(null);
 				option.setNewRecord(true);
-				option.setCommonValue(creator, subjectChoices.getTenantCode());
+				option.setCommonValue(subjectChoices.getCreator(), subjectChoices.getTenantCode());
 				option.setSubjectChoicesId(subjectChoices.getId());
 			});
 			// 批量插入

@@ -47,9 +47,21 @@ public class ExcelToolUtil {
 	 */
 	public static <T> void writeExcel(HttpServletRequest request, HttpServletResponse response, List<T> dataList,
 			Class<T> clazz) {
+		String fileName = DateUtils.localDateMillisToString(LocalDateTime.now());
+		writeExcel(request, response, dataList, clazz, fileName);
+	}
+
+	/**
+	 * 导出Excel
+	 * @param request request
+	 * @param response response
+	 * @param dataList 数据list
+	 * @param clazz clazz
+	 */
+	public static <T> void writeExcel(HttpServletRequest request, HttpServletResponse response, List<T> dataList,
+			Class<T> clazz, String fileName) {
 		// 获取fileName和sheetName
 		ExcelModel excelModel = clazz.getDeclaredAnnotation(ExcelModel.class);
-		String fileName = DateUtils.localDateMillisToString(LocalDateTime.now());
 		String sheetName = DEFAULT_SHEET_NAME;
 		if (excelModel != null) {
 			fileName = excelModel.value() + fileName;
@@ -72,8 +84,8 @@ public class ExcelToolUtil {
 			String fileName, String sheetName, Class<T> clazz) {
 		ExcelWriter excelWriter = null;
 		try {
-			excelWriter = EasyExcelFactory
-					.write(getOutputStream(fileName, request, response, ExcelTypeEnum.XLSX), clazz).build();
+			excelWriter = EasyExcelFactory.write(getOutputStream(fileName, request, response, ExcelTypeEnum.XLSX),
+					clazz).build();
 			WriteSheet writeSheet = EasyExcelFactory.writerSheet(sheetName).build();
 			excelWriter.write(dataList, writeSheet);
 		} finally {

@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.controller.subject;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.common.base.BaseController;
@@ -7,10 +8,9 @@ import com.github.tangyi.common.excel.ExcelToolUtil;
 import com.github.tangyi.common.exceptions.CommonException;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.Id;
-import com.github.tangyi.exam.excel.listener.SubjectImportListener;
 import com.github.tangyi.exam.excel.model.SubjectExcelModel;
 import com.github.tangyi.exam.service.answer.AnswerService;
-import com.github.tangyi.exam.service.subject.ImportExportSubjectService;
+import com.github.tangyi.exam.service.subject.SubjectImportExportService;
 import com.github.tangyi.exam.service.subject.SubjectsService;
 import com.github.tangyi.exam.utils.SubjectUtil;
 import com.github.tangyi.log.annotation.SgLog;
@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +50,7 @@ public class SubjectsController extends BaseController {
 
 	private final AnswerService answerService;
 
-	private final ImportExportSubjectService importExportSubjectService;
+	private final SubjectImportExportService subjectImportExportService;
 
 	@GetMapping("/{id}")
 	@Operation(summary = "获取题目信息", description = "根据题目id获取题目详细信息")
@@ -99,31 +100,27 @@ public class SubjectsController extends BaseController {
 		return R.success(Boolean.TRUE);
 	}
 
-	@PostMapping("export")
-	@Operation(summary = "导出题目", description = "根据分类id导出题目")
-	public void exportSubject(@RequestBody Long[] ids, @RequestParam(required = false) Long examinationId,
-			@RequestParam(required = false) Long categoryId, HttpServletRequest request, HttpServletResponse response) {
-		try {
-			List<SubjectDto> subjects = importExportSubjectService.export(ids, examinationId, categoryId);
-			ExcelToolUtil.writeExcel(request, response, SubjectUtil.convertToExcelModel(subjects),
-					SubjectExcelModel.class);
-		} catch (Exception e) {
-			throw new CommonException(e, "export subject failed");
-		}
+	@GetMapping("template/json")
+	@Operation(summary = "下载题目模板（JSON格式）")
+	public void downloadJSONTemplate(HttpServletResponse res) throws IOException {
+		List<SubjectDto> subjects = subjectImportExportService.demoSubjects();
+		byte[] data = JSON.toJSONString(subjects).getBytes(StandardCharsets.UTF_8);
+		res.reset();
+		res.addHeader("Access-Control-Allow-Origin", "*");
+		res.addHeader("Access-Control-Expose-Headers", "Content-Disposition");
+		res.setHeader("Content-Disposition", "attachment; filename=\"template.json\"");
+		res.addHeader("Content-Length", "" + data.length);
+		res.setContentType("application/octet-stream; charset=UTF-8");
+		IOUtils.write(data, res.getOutputStream());
 	}
 
-	@RequestMapping("import")
-	@Operation(summary = "导入题目", description = "导入题目")
-	@SgLog(value = "导入题目", operationType = OperationType.INSERT)
-	public R<Boolean> importSubject(Long examinationId, Long categoryId,
-			@Parameter(description = "要上传的文件", required = true) MultipartFile file) throws IOException {
-		log.debug("importSubject, examinationId: {}, categoryId: {}", examinationId, categoryId);
-		if (StringUtils.isNotEmpty(file.getOriginalFilename()) && file.getOriginalFilename().endsWith(".txt")) {
-			return R.success(importExportSubjectService.importTxt(categoryId, file));
-		} else {
-			return R.success(ExcelToolUtil.readExcel(file.getInputStream(), SubjectExcelModel.class,
-					new SubjectImportListener(importExportSubjectService, examinationId, categoryId)));
-		}
+	@GetMapping("template/excel")
+	@Operation(summary = "下载题目模板（EXCEL格式）")
+	public void downloadEXCELTemplate(HttpServletRequest req, HttpServletResponse res) {
+		List<SubjectDto> subjects = subjectImportExportService.demoSubjects();
+		String fileName = "template";
+		List<SubjectExcelModel> models = SubjectUtil.convertToExcelModel(subjects);
+		ExcelToolUtil.writeExcel(req, res, models, SubjectExcelModel.class, fileName);
 	}
 
 	@PostMapping("importJson")
@@ -132,7 +129,36 @@ public class SubjectsController extends BaseController {
 	public R<Boolean> importJSONSubject(Long categoryId,
 			@Parameter(description = "JSON格式题目", required = true) MultipartFile file) throws IOException {
 		log.debug("importJSONSubject, categoryId: {}", categoryId);
-		return R.success(importExportSubjectService.importJSONSubject(categoryId, file));
+		return R.success(subjectImportExportService.importJSONSubject(categoryId, file));
+	}
+
+	@PostMapping("importExcel")
+	@Operation(summary = "导入EXCEL格式题目", description = "导入EXCEL格式题目")
+	@SgLog(value = "导入EXCEL格式题目", operationType = OperationType.INSERT)
+	public R<Boolean> importExcelSubject(Long categoryId,
+			@Parameter(description = "EXCEL格式题目", required = true) MultipartFile file) throws IOException {
+		log.debug("importExcelSubject, categoryId: {}", categoryId);
+		return R.success(subjectImportExportService.importExcelSubject(categoryId, file));
+	}
+
+	@PostMapping("export")
+	@Operation(summary = "导出题目", description = "根据分类id导出题目")
+	public void exportSubject(@RequestBody Long[] ids, @RequestParam(required = false) Long examinationId,
+			@RequestParam(required = false) Long categoryId, HttpServletRequest request, HttpServletResponse response) {
+		try {
+			List<SubjectDto> subjects = subjectImportExportService.export(ids, examinationId, categoryId);
+			ExcelToolUtil.writeExcel(request, response, SubjectUtil.convertToExcelModel(subjects),
+					SubjectExcelModel.class);
+		} catch (Exception e) {
+			throw new CommonException(e, "export subject failed");
+		}
+	}
+
+	@GetMapping("exportDemoExcel")
+	@Operation(summary = "导出demo题库EXCEL文件")
+	public void ex(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		List<SubjectDto> subjects = subjectImportExportService.demoTxtSubjects();
+		ExcelToolUtil.writeExcel(request, response, SubjectUtil.convertToExcelModel(subjects), SubjectExcelModel.class);
 	}
 
 	@PostMapping("deleteAll")

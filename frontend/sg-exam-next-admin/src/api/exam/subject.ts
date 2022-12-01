@@ -67,3 +67,16 @@ export function uploadJSON(
     params,
   );
 }
+
+export function uploadEXCEL(
+  params: UploadFileParams,
+  onUploadProgress: (progressEvent: ProgressEvent) => void,
+) {
+  return defHttp.uploadFile(
+    {
+      url: SubjectsApi.Base + '/importExcel',
+      onUploadProgress,
+    },
+    params,
+  );
+}

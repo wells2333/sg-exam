@@ -1,7 +1,7 @@
 import {FormSchema} from "/@/components/Form";
 import {h, unref} from "vue";
 import {SgUpload} from "/@/components/SgUpload";
-import {uploadJSON} from "/@/api/exam/subject";
+import {uploadJSON, uploadEXCEL} from "/@/api/exam/subject";
 
 export const formSchema: FormSchema[] = [
   {
@@ -42,9 +42,10 @@ export const formSchema: FormSchema[] = [
     render: ({model, field}) => {
       return h(SgUpload, {
         value: model[field],
-        api: uploadJSON,
+        api: uploadEXCEL,
         type: 'excel',
-        accept: '.excel',
+        accept: '.xlsx',
+        showFileList: false,
         handleFormData: (formData) => {
           const {data} = formData;
           // 增加分类ID参数

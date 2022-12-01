@@ -4,13 +4,12 @@ import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.Answer;
 import com.github.tangyi.api.exam.model.SubjectOption;
 import com.github.tangyi.common.excel.AbstractExcelImportListener;
-import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.exam.excel.model.SubjectExcelModel;
-import com.github.tangyi.exam.service.subject.ImportExportSubjectService;
+import com.github.tangyi.exam.service.subject.SubjectImportExportService;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,63 +19,65 @@ import java.util.List;
  */
 public class SubjectImportListener extends AbstractExcelImportListener<SubjectExcelModel> {
 
-	private final ImportExportSubjectService importExportSubjectService;
+	private final SubjectImportExportService subjectImportExportService;
 
 	private final Long examinationId;
 
 	private final Long categoryId;
 
-	public SubjectImportListener(ImportExportSubjectService importExportSubjectService, Long examinationId,
-			Long categoryId) {
-		this.importExportSubjectService = importExportSubjectService;
+	private final String creator;
+
+	private final String tenantCode;
+
+	private final int nextNo;
+
+	public SubjectImportListener(SubjectImportExportService subjectImportExportService, Long examinationId,
+			Long categoryId, String creator, String tenantCode, int nextNo) {
+		this.subjectImportExportService = subjectImportExportService;
 		this.examinationId = examinationId;
 		this.categoryId = categoryId;
+		this.creator = creator;
+		this.tenantCode = tenantCode;
+		this.nextNo = nextNo;
 	}
 
 	@Override
-	public void saveData(List<SubjectExcelModel> subjectExcelModelList) {
-		logger.info("SaveData size: {}", subjectExcelModelList.size());
-		List<SubjectDto> subjects = new ArrayList<>();
-		String creator = SysUtil.getUser();
-		String tenantCode = SysUtil.getTenantCode();
-		subjectExcelModelList.forEach(subject -> {
-			SubjectDto subjectDto = new SubjectDto();
-			subjectDto.setCommonValue(creator, tenantCode);
-			BeanUtils.copyProperties(subject, subjectDto);
-			List<SubjectOption> subjectOptions = new ArrayList<>();
-			if (StringUtils.isNotBlank(subject.getOptions())) {
-				String[] options = subject.getOptions().split("\\$\\$");
-				// $$A# 测试测试
-				for (String option : options) {
-					if (StringUtils.isNotBlank(option)) {
-						String[] optionInfos = option.split("#");
-						if (optionInfos.length >= 2) {
-							// 去掉$$
-							String optionName = optionInfos[0].trim();
-							StringBuilder optionContent = new StringBuilder();
-							if (optionInfos.length > 2) {
-								for (int i = 1; i < optionInfos.length; i++) {
-									optionContent.append(optionInfos[i].trim());
-								}
-							} else {
-								optionContent = new StringBuilder(optionInfos[1].trim());
-							}
-							SubjectOption subjectOption = new SubjectOption();
-							subjectOption.setOptionName(optionName);
-							subjectOption.setOptionContent(optionContent.toString());
-							subjectOptions.add(subjectOption);
-						}
-					}
-				}
+	public void saveData(List<SubjectExcelModel> models) {
+		logger.info("saveData size: {}, creator: {}, tenantCode: {}", models.size(), creator, tenantCode);
+		List<SubjectDto> subjects = Lists.newArrayListWithExpectedSize(models.size());
+		int sort = this.nextNo;
+		for (SubjectExcelModel model : models) {
+			SubjectDto dto = new SubjectDto();
+			dto.setCommonValue(creator, tenantCode);
+			BeanUtils.copyProperties(model, dto);
+			dto.setSort(sort++);
+			List<SubjectOption> options = Lists.newArrayListWithExpectedSize(4);
+			if (StringUtils.isNotEmpty(model.getOptionA())) {
+				options.add(newOption("A", model.getOptionA(), 1));
 			}
-			subjectDto.setOptions(subjectOptions);
-
-			// 答案
+			if (StringUtils.isNotEmpty(model.getOptionB())) {
+				options.add(newOption("B", model.getOptionB(), 2));
+			}
+			if (StringUtils.isNotEmpty(model.getOptionC())) {
+				options.add(newOption("C", model.getOptionC(), 3));
+			}
+			if (StringUtils.isNotEmpty(model.getOptionD())) {
+				options.add(newOption("D", model.getOptionD(), 4));
+			}
+			dto.setOptions(options);
 			Answer answer = new Answer();
-			answer.setAnswer(subject.getAnswer());
-			subjectDto.setAnswer(answer);
-			subjects.add(subjectDto);
-		});
-		importExportSubjectService.importSubject(subjects, examinationId, categoryId);
+			answer.setAnswer(model.getAnswer());
+			dto.setAnswer(answer);
+			subjects.add(dto);
+		}
+		subjectImportExportService.importSubject(subjects, examinationId, categoryId, creator, tenantCode);
+	}
+
+	public SubjectOption newOption(String name, String content, int sort) {
+		SubjectOption option = new SubjectOption();
+		option.setOptionName(name);
+		option.setOptionContent(content);
+		option.setSort(sort);
+		return option;
 	}
 }

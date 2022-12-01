@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Servlet工具类
@@ -25,32 +26,28 @@ public class Servlets {
     public static String getDownName(HttpServletRequest request, String fileName) {
         String result = "";
         String httpUserAgent = request.getHeader("User-Agent");
-        try {
-            if (StringUtils.isNotEmpty(httpUserAgent)) {
-                String downloadName = URLEncoder.encode(fileName, "UTF-8");
-                httpUserAgent = httpUserAgent.toLowerCase();
-                if (httpUserAgent.contains("msie")) {
-                    result = "attachment;filename=\"" + downloadName + "\"";
-                } // Opera浏览器只能采用filename*
-                else if (httpUserAgent.contains("opera")) {
-                    result = "attachment;filename*=UTF-8''" + downloadName;
-                } else if (httpUserAgent.contains("trident") || httpUserAgent.contains("edge")) {
-                    result = "attachment;filename=\"" + URLEncoder.encode(fileName, "UTF-8");
-                }
-                // Chrome浏览器，只能采用MimeUtility编码或ISO编码的中文输出
-                else if (httpUserAgent.contains("applewebkit")) {
-                    result = "attachment;filename=\"" + downloadName + "\"";
-                }
-                // FireFox浏览器，可以使用MimeUtility或filename*或ISO编码的中文输出
-                else if (httpUserAgent.contains("mozilla")) {
-                    result = "attachment;filename*=UTF-8''" + downloadName;
-                } else {
-                    result = "attachment;filename=\"" + downloadName + "\"";
-                }
-            }
-        } catch (UnsupportedEncodingException e) {
-            result = "attachment;filename=\"" + fileName + "\"";
-        }
-        return result;
+		if (StringUtils.isNotEmpty(httpUserAgent)) {
+			String downloadName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+			httpUserAgent = httpUserAgent.toLowerCase();
+			if (httpUserAgent.contains("msie")) {
+				result = "attachment;filename=\"" + downloadName + "\"";
+			} // Opera浏览器只能采用filename*
+			else if (httpUserAgent.contains("opera")) {
+				result = "attachment;filename*=UTF-8''" + downloadName;
+			} else if (httpUserAgent.contains("trident") || httpUserAgent.contains("edge")) {
+				result = "attachment;filename=\"" + URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+			}
+			// Chrome浏览器，只能采用MimeUtility编码或ISO编码的中文输出
+			else if (httpUserAgent.contains("applewebkit")) {
+				result = "attachment;filename=\"" + downloadName + "\"";
+			}
+			// FireFox浏览器，可以使用MimeUtility或filename*或ISO编码的中文输出
+			else if (httpUserAgent.contains("mozilla")) {
+				result = "attachment;filename*=UTF-8''" + downloadName;
+			} else {
+				result = "attachment;filename=\"" + downloadName + "\"";
+			}
+		}
+		return result;
     }
 }

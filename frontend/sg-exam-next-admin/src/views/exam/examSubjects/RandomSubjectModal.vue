@@ -1,7 +1,7 @@
 <template>
   <BasicModal v-bind="$attrs" @register="registerModal" title="组卷配置" @ok="handleSubmit"
               width="60%">
-    <PageWrapper dense contentFullHeight fixedHeight contentClass="flex">
+    <PageWrapper dense contentClass="flex">
       <SubjectCategoryTree ref="cateTreeRef" class="w-1/3 xl:w-1/3" @select="handleSelectCategory"/>
       <div>
         <div>
