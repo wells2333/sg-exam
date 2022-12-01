@@ -31,7 +31,7 @@ public class EmbeddedRedisConfig {
 			redisServer.start();
 			log.info("start redis success");
 		} catch (Exception e) {
-			log.error("start redis server error: {}", e.getMessage());
+			log.error("start redis server error: {}", e.getMessage(), e);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 package com.github.tangyi.config;
 
 import com.github.tangyi.common.utils.EnvUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,11 +25,20 @@ import java.time.Duration;
 @Configuration
 public class RedisCacheConfig {
 
-	// 超时时间：2小时
-	public static final int DEFAULT_REDIS_CACHE_EXPIRE = EnvUtils.getInt("DEFAULT_REDIS_CACHE_EXPIRE", 2);
+	// 超时时间：24小时
+	public static final int DEFAULT_REDIS_CACHE_EXPIRE = EnvUtils.getInt("DEFAULT_REDIS_CACHE_EXPIRE", 24);
 
 	@Value("${spring.redis.host}")
 	private String redisHost;
+
+	@Value("${spring.redis.username}")
+	private String username;
+
+	@Value("${spring.redis.password}")
+	private String redisPassword;
+
+	@Value("${spring.redis.port:6379}")
+	private int port;
 
 	@Bean
 	@Primary
@@ -43,7 +53,14 @@ public class RedisCacheConfig {
 
 	@Bean
 	public LettuceConnectionFactory redisConnectionFactory() {
-		return new LettuceConnectionFactory(new RedisStandaloneConfiguration(redisHost, 6379));
+		RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(redisHost, port);
+		if (StringUtils.isNotEmpty(username)) {
+			configuration.setUsername(username);
+		}
+		if (StringUtils.isNotEmpty(redisPassword)) {
+			configuration.setPassword(redisPassword);
+		}
+		return new LettuceConnectionFactory(configuration);
 	}
 
 	@Bean

@@ -96,7 +96,7 @@ spring:
 
   datasource:
     # dev环境默认使用sg-exam-user-dev
-    url: jdbc:mysql://${SG_DB_USER_HOST:localhost}:${SG_DB_USER_POST:3306}/${SG_DB_USER_NAME:sg-exam-user-dev}?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8&allowMultiQueries=true
+    url: jdbc:mysql://${SG_DB_USER_HOST:localhost}:${SG_DB_USER_POST:3306}/${SG_DB_USER_NAME:sg-exam-user-dev}?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.jdbc.Driver
     username: ${SG_DB_USER_USERNAME:root}
@@ -111,6 +111,9 @@ spring:
       connection-test-query: SELECT 1
   redis:
     host: 127.0.0.1
+    username:
+    password:
+    port: 6379
 
 ---
 spring:
@@ -123,7 +126,7 @@ spring:
       # 单次请求的文件的总大小
       max-request-size: 100MB
   datasource:
-    url: jdbc:mysql://${SG_DB_USER_HOST}:${SG_DB_USER_POST}/sg-exam-user?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8&allowMultiQueries=true
+    url: jdbc:mysql://${SG_DB_USER_HOST}:${SG_DB_USER_POST}/sg-exam-user?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.jdbc.Driver
     username: ${SG_DB_USER_USERNAME:root}
@@ -138,6 +141,9 @@ spring:
       connection-test-query: SELECT 1
   redis:
     host: redis
+    username:
+    password:
+    port: 6379
 
 # 生产环境关闭接口文档
 springdoc:
