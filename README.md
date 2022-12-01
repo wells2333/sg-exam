@@ -49,6 +49,12 @@
 
 小程序提供考试、问卷、练习等功能
 
+## 部署文档 & 操作手册 & 源码解析 & 视频教程
+
+[SG-EXAM-NEXT系列文章](https://mp.weixin.qq.com/s/oal9atlSQxfL4YOiLtYfuA)
+
+Roadmap: [Roadmap](https://www.yuque.com/tangyi-5ldnl/paf15u/cwvtvfd0a07ozfk2?singleDoc#)
+
 ## 功能截图
 
 <table>
@@ -89,10 +95,6 @@
         </td>
     </tr>
 </table>
-
-## 部署文档 & 操作手册 & 源码解析 & 视频教程
-
-[SG-EXAM-NEXT系列文章](https://mp.weixin.qq.com/s/oal9atlSQxfL4YOiLtYfuA)
 
 ## 作者
 
