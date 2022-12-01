@@ -76,7 +76,11 @@ Roadmap: [Roadmap](https://www.yuque.com/tangyi-5ldnl/paf15u/cwvtvfd0a07ozfk2?si
     </tr>
     <tr>
         <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/admin_exam_manage.png" height="200"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/admin_subjects.png" height="200"/></td>
+    </tr>
+    <tr>
         <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/admin_subject_detail.png" height="200"/></td>
+        <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/admin_courses.png" height="200"/></td>
     </tr>
     <tr>
         <td><img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/admin_score_detail.png" height="200"/></td>
