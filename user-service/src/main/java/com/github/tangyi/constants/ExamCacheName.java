@@ -13,8 +13,6 @@ public interface ExamCacheName {
 
 	String SUBJECTS = "subjects";
 
-	String SUBJECT = "subject";
-
 	String SUBJECT_CHOICES = "subject:choices";
 
 	String SUBJECT_CHOICES_OPTION = "subject:choices:option";
@@ -49,9 +47,11 @@ public interface ExamCacheName {
 
 	String SUBJECT_FAVORITES = "subject:favorites";
 
-	String CHAPTER = "chapter";
+	String CHAPTER = "course:chapter";
 
-	String SECTION = "section";
+	String SECTION = "course:section";
 
-	String EVALUATE = "evaluate";
+	String EVALUATE = "course:evaluate";
+
+	String KNOWLEDGE_POINT = "knowledge:point";
 }

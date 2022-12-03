@@ -1,6 +1,5 @@
 <template>
   <div>
-    <fixed-header>
       <div class="header-area">
         <div class="clever-main-menu">
           <div class="classy-nav-container breakpoint-off">
@@ -62,7 +61,6 @@
           </div>
         </div>
       </div>
-    </fixed-header>
     <o-main ref="mainRef"></o-main>
   </div>
 </template>
@@ -71,11 +69,9 @@
 import OMain from './common/main'
 import { mapState } from 'vuex'
 import { isNotEmpty, messageWarn } from '@/utils/util'
-import FixedHeader from 'vue-fixed-header'
 
 export default {
   components: {
-    FixedHeader,
     OMain
   },
   computed: {

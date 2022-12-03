@@ -3,11 +3,11 @@ export const editorHeight = 120;
 export const videoTypes = ['mp4'];
 
 export const tinymcePlugins = [
-  'advlist anchor autolink autosave code codesample  directionality  fullscreen hr insertdatetime link lists media nonbreaking noneditable pagebreak paste preview save searchreplace tabfocus  template  textpattern visualblocks visualchars',
+  'image imagetools advlist anchor autolink autosave code codesample  directionality  fullscreen hr insertdatetime link lists media nonbreaking noneditable pagebreak paste preview save searchreplace tabfocus  template  textpattern visualblocks visualchars',
 ];
 
 export const tinymceToolbar = [
-  'fontsizeselect bold italic underline strikethrough blockquote subscript superscript link  preview insertdatetime forecolor backcolor fullscreen'
+  'fontsizeselect bold italic underline strikethrough blockquote subscript superscript link  preview insertdatetime forecolor backcolor fullscreen image'
 ];
 
 export const optionPrefix = 'options.';

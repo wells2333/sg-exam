@@ -1,37 +1,52 @@
 <template>
   <div>
-    <transition name="fade-transform" mode="out-in">
-      <div class="section-content" v-show="!loading">
-        <el-row>
-          <el-col :span="6">
+    <div class="section-content">
+      <el-row>
+        <el-col :span="6">
+          <transition name="el-fade-in">
             <div class="section-title mb-30 sidebar-widget">
-              <h4>{{ section.title }}</h4>
-              <ul class="features-list">
-                <li>
-                  <h6><i class="el-icon-alarm-clock"></i>时长</h6>
-                  <h6>{{ section.learnHour }}小时</h6>
-                </li>
-                <li>
-                  <h6><i class="el-icon-user"></i>人数</h6>
-                  <h6>400人</h6>
-                </li>
-              </ul>
+              <div v-for="chapter in detail.chapters" :key="chapter.chapter.id">
+                <div class="chapter-container">
+                  <p>{{ chapter.chapter.title }}</p>
+                  <div class="section-container" @click="handleClickSection(section)"
+                       v-for="section in chapter.sections" :key="section.id">
+                    <p
+                      :class="section.id === sectionId ? 'section-title-selected section-title' : 'section-title' ">
+                      {{ section.title }}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-          </el-col>
-          <el-col :span="18">
-            <div class="section-video">
-              <sg-video ref="sectionVideo"></sg-video>
+          </transition>
+        </el-col>
+        <el-col :span="18" style="padding-left: 20px;">
+          <transition name="el-fade-in">
+            <div v-show="!loading">
+              <div>
+                <div class="section-detail-title">
+                  <h3>{{ section.title }}</h3>
+                </div>
+                <div v-if="contentType === 0 && videoUrl !== null" class="section-video">
+                  <sg-video ref="sectionVideo"></sg-video>
+                  <div class="section-video-content">
+                    <div v-html="section.content"></div>
+                  </div>
+                </div>
+                <div v-else-if="contentType === 1" v-html="section.content"></div>
+              </div>
+              <div class="section-button">
+                <el-button type="primary" class="clever-btn mb-30 w-10" @click="goBack">返回
+                </el-button>
+              </div>
             </div>
-            <div class="section-button">
-              <el-button type="primary" class="clever-btn mb-30 w-10" @click="goBack">返回</el-button>
-            </div>
-          </el-col>
-        </el-row>
-      </div>
-    </transition>
+          </transition>
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 <script>
+import {getCourseDetail} from '@/api/exam/course'
 import {watchSection} from '@/api/exam/section'
 import SgVideo from '@/components/SgVideo'
 
@@ -42,35 +57,64 @@ export default {
   data() {
     return {
       loading: true,
+      courseId: '',
       sectionId: '',
       section: {},
-      videoUrl: 'https://cdn.yunmianshi.com/exam/video/%E6%9C%8D%E5%8A%A1%E6%9B%B4%E6%96%B0.mp4?e=1669444324&token=8-9rcJPtTrLOJP4fLNWXy_qwiLVc3Exu52iuGlxt:gvg4YWPvNnGldvX9p5JjbmmEHPU='
+      videoUrl: null,
+      detail: {},
+      contentType: 0,
+      clickSectionId: null
     }
   },
   created() {
+    this.courseId = this.$route.query.courseId
     this.sectionId = this.$route.query.sectionId
-    this.watchSection(this.sectionId)
+    this.getCourseDetail(this.courseId);
+    this.getSection(this.sectionId)
   },
   methods: {
-    watchSection(id) {
+    getCourseDetail(courseId) {
+      getCourseDetail(courseId).then(res => {
+        this.detail = res.data.result
+      }).catch(error => {
+        console.error(error)
+      })
+    },
+    getSection(id) {
       this.loading = true
       watchSection(id).then(res => {
-        this.section = res.data.result.section
         this.videoUrl = res.data.result.videoUrl
-        this.updateVideoUrl()
+        this.contentType = res.data.result.section.contentType
         setTimeout(() => {
+          this.section = res.data.result.section
           this.loading = false
-        }, 500)
+          if (this.videoUrl !== null) {
+            this.updateVideoUrl()
+          }
+        }, 200)
       }).catch(error => {
         console.error(error)
         this.loading = false
       })
     },
     updateVideoUrl() {
-      this.$refs.sectionVideo.setSrc(this.videoUrl)
+      if (this.$refs.sectionVideo) {
+        this.$refs.sectionVideo.setSrc(this.videoUrl)
+      }
+    },
+    handleClickSection(sec) {
+      // 重复点击
+      if (this.clickSectionId !== null && this.clickSectionId === sec.id) {
+        return
+      }
+      this.sectionId = sec.id
+      this.clickSectionId = sec.id
+      this.getSection(this.sectionId)
     },
     goBack() {
-      this.$refs.sectionVideo.pause()
+      if (this.$refs.sectionVideo) {
+        this.$refs.sectionVideo.pause()
+      }
       this.$router.go(-1)
     }
   }
@@ -79,26 +123,49 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss" scoped>
 .section-content .sg-video-component .video-js {
-  height:400px !important;
-}
-.section-content {
-  width: 100%;
-  padding-top: 50px;
-  padding-bottom: 50px;
+  height: 400px !important;
 }
 
+.section-content {
+  width: 100%;
+  padding-top: 16px;
+}
+
+.section-detail-title {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.chapter-container {
+  cursor: pointer;
+}
 .section-title {
-  margin: 30px;
+  margin-left: 10px;
+  cursor: pointer;
 }
 
 .section-button {
   margin-top: 50px;
   text-align: center;
 }
+
 .sg-video-component {
   width: 100%;
 }
+
 .section-video {
-  margin-right: 30px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.section-title:hover, .section-learn-hour:hover {
+  color: #409EFF;
+}
+
+.section-title-selected {
+  color: #409EFF;
+}
+.section-video-content {
+  padding-top: 20px;
 }
 </style>

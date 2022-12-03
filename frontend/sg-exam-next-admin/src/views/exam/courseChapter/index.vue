@@ -49,9 +49,9 @@ import {PageWrapper} from '/@/components/Page';
 import {deleteChapter, getChapterList} from '/@/api/exam/chapter';
 import {Description} from '/@/components/Description/index';
 import {BasicTable, TableAction, useTable} from '/@/components/Table';
-import {columns, searchFormSchema} from './chapter.data';
-import ChapterModal from './ChapterModal.vue';
-import SectionModal from './SectionModal.vue';
+import {columns, searchFormSchema} from './chapter/chapter.data';
+import ChapterModal from './chapter/ChapterModal.vue';
+import SectionModal from './section/SectionModal.vue';
 import {useModal} from '/@/components/Modal';
 import {usePermission} from '/@/hooks/web/usePermission';
 import {useMessage} from "/@/hooks/web/useMessage";
@@ -156,4 +156,8 @@ export default defineComponent({
 });
 </script>
 
-<style></style>
+<style lang="less">
+.ant-modal-wrap .ant-modal {
+  top: 20px;
+}
+</style>

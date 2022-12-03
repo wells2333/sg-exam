@@ -28,6 +28,10 @@
     name: 'TinymceImageUpload',
     components: { Upload },
     props: {
+      uploadUrl: {
+        type: String,
+        default: UserService + 'v1/attachment/upload'
+      },
       fullscreen: {
         type: Boolean,
       },
@@ -85,7 +89,6 @@
       return {
         prefixCls,
         handleChange,
-        uploadUrl: UserService + 'v1/attachment/upload',
         customRequest,
         t,
         getButtonProps,

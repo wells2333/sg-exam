@@ -82,6 +82,12 @@ public class Course extends BaseEntity<Course> {
 	private Integer level;
 
 	/**
+	 * 简短版描述
+	 */
+	@Column(name = "simple_desc")
+	private String simpleDesc;
+
+	/**
 	 * 报名人数
 	 */
 	@Transient

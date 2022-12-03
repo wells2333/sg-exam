@@ -1,6 +1,6 @@
 <template>
   <div>
-    <transition name="fade-transform" mode="out-in">
+    <transition name="el-fade-in">
       <div v-show="!loading">
         <div class="single-course-intro d-flex align-items-center justify-content-center"
              :style="'background-image: url(' + course.imageUrl + ');'">
@@ -35,16 +35,16 @@
                   <div class="clever-description">
                     <div class="about-course mb-30">
                       <h4>课程介绍</h4>
-                      <p>{{ course.courseDescription }}</p>
+                      <p v-html="course.courseDescription"></p>
                     </div>
                   </div>
                 </el-tab-pane>
                 <el-tab-pane name="chapter">
                   <span slot="label">
-                    <el-button type="default" class="course-content-btn">课程目录</el-button>
+                    <el-button type="default" class="course-content-btn">课程章节</el-button>
                   </span>
                   <div class="about-curriculum mb-30">
-                    <h4>课程目录</h4>
+                    <h4>课程章节</h4>
                     <transition name="fade-transform" mode="out-in"
                                 v-for="chapter in detail.chapters" :key="chapter.chapter.id">
                       <div class="chapter-container">
@@ -120,7 +120,7 @@
                   </span>
                   <div class="about-review mb-30">
                     <h4>学习交流</h4>
-                    <p>待开发</p>
+                    <p></p>
                   </div>
                 </el-tab-pane>
               </el-tabs>
@@ -229,27 +229,20 @@ export default {
         console.error(error)
       })
     },
-    buyCourse() {
-      messageWarn(this, '功能正在开发中')
-    },
     handleClick(tab, event) {
 
     },
     handleClickSection(section) {
       if (this.detail.isUserJoin !== true) {
         messageWarn(this, '请先报名')
-        return;
-      }
-      if (section.videoId === undefined || section.videoId === null) {
-        messageWarn(this, '无视频内容')
         return
       }
-      this.$router.push({name: 'course-section', query: {sectionId: section.id}})
+      this.$router.push({name: 'course-section', query: {sectionId: section.id, courseId: this.courseId}})
     },
     handleSubmitEvaluate() {
       if (this.detail.isUserJoin !== true) {
         messageWarn(this, '请先报名')
-        return;
+        return
       }
       if (this.hasEvaluate) {
         messageWarn(this, '请勿重复提交')
@@ -300,10 +293,6 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
-.rate {
-  margin-bottom: 12px;
-}
-
 .course-content-btn {
   display: inline-block;
   height: 40px;

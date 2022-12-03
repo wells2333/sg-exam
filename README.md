@@ -53,7 +53,7 @@
 
 [SG-EXAM-NEXT](https://mp.weixin.qq.com/s?__biz=Mzg2Mjg2OTcyNA==&amp;mid=2247484080&amp;idx=1&amp;sn=85d5bd3a9d03b710903076ab14b20e92&amp;chksm=ce000303f9778a15c0b7afd21fd82aad685f13eb09a0dafa2c8fad97b6eacd9585dd738a0f0a&token=755573063&lang=zh_CN#rd)
 
-Roadmap: [Roadmap](https://www.yuque.com/tangyi-5ldnl/paf15u/cwvtvfd0a07ozfk2?singleDoc#)
+功能规划: [Roadmap](https://www.yuque.com/tangyi-5ldnl/paf15u/cwvtvfd0a07ozfk2?singleDoc#)
 
 ## 功能截图
 

@@ -7,6 +7,7 @@
       v-if="showImageUpload"
       v-show="editorRef"
       :disabled="disabled"
+      :uploadUrl="uploadUrl"
     />
     <textarea
       :id="tinymceId"
@@ -46,12 +47,13 @@
   import 'tinymce/plugins/searchreplace';
   import 'tinymce/plugins/spellchecker';
   import 'tinymce/plugins/tabfocus';
-  // import 'tinymce/plugins/table';
   import 'tinymce/plugins/template';
   import 'tinymce/plugins/textpattern';
   import 'tinymce/plugins/visualblocks';
   import 'tinymce/plugins/visualchars';
   import 'tinymce/plugins/wordcount';
+  import 'tinymce/plugins/image';
+  import 'tinymce/plugins/imagetools';
 
   import {
     defineComponent,
@@ -72,6 +74,7 @@
   import { isNumber } from '/@/utils/is';
   import { useLocale } from '/@/locales/useLocale';
   import { useAppStore } from '/@/store/modules/app';
+  import {UserService} from "/@/api/services";
 
   const tinymceProps = {
     options: {
@@ -106,6 +109,10 @@
     showImageUpload: {
       type: Boolean,
       default: true,
+    },
+    uploadUrl: {
+      type: String,
+      default: UserService + 'v1/attachment/upload'
     },
   };
 
@@ -158,6 +165,8 @@
           language_url: publicPath + 'resource/tinymce/langs/' + langName.value + '.js',
           language: langName.value,
           branding: false,
+          imagetools_cors_hosts: ["www.tinymce.com", "codepen.io"],
+          imagetools_toolbar: 'rotateleft rotateright | flipv fliph | editimage imageoptions',
           default_link_target: '_blank',
           link_title: false,
           object_resizing: false,
@@ -248,12 +257,9 @@
       }
 
       function setValue(editor: Recordable, val: string, prevVal?: string) {
-        if (
-          editor &&
-          typeof val === 'string' &&
-          val !== prevVal &&
-          val !== editor.getContent({ format: attrs.outputFormat })
-        ) {
+        if (val === '' || val == null) {
+          editor.setContent('');
+        } else if (editor && val !== prevVal && val !== editor.getContent({ format: attrs.outputFormat })) {
           editor.setContent(val);
         }
       }

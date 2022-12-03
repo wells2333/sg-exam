@@ -15,7 +15,7 @@
                 <span><i class="fa fa-circle" aria-hidden="true"></i></span>
                 <a href="#">{{ course.teacher }}</a>
               </div>
-              <p>{{ course.courseDescription | simpleStrFilter(20) }}</p>
+              <p>{{ course.simpleDesc | simpleStrFilter(20) }}</p>
             </div>
             <div class="seat-rating-fee d-flex justify-content-between">
               <div class="seat-rating h-100 d-flex align-items-center">

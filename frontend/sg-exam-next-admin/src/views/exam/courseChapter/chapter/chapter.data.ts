@@ -11,15 +11,15 @@ export const searchFormSchema: FormSchema[] = [
 
 export const columns: BasicColumn[] = [
   {
-    title: '标题',
-    dataIndex: 'title',
-    width: 300,
+    dataIndex: 'sort',
+    title: '序号',
+    width: 50,
     align: 'left',
   },
   {
-    dataIndex: 'sort',
-    title: '序号',
-    width: 60,
+    title: '标题',
+    dataIndex: 'title',
+    width: 300,
     align: 'left',
   },
   {

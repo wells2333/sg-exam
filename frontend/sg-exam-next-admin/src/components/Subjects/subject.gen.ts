@@ -1,8 +1,7 @@
 import {FormSchema} from "/@/components/Form";
 import {h, unref} from "vue";
 import {Tinymce} from "/@/components/Tinymce";
-import {BasicUpload} from "/@/components/Upload";
-import {uploadImage, uploadVideo} from "/@/api/exam/examMedia";
+import {uploadVideo} from "/@/api/exam/examMedia";
 import {
   addOptionBtnSlot,
   editorHeight,

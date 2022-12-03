@@ -10,6 +10,12 @@
         <TableAction
           :actions="[
             {
+              icon: 'ant-design:align-right-outlined',
+              tooltip: '知识点管理',
+              onClick: handlePointManage.bind(null, record),
+              auth: 'exam:course:edit'
+            },
+            {
               icon: 'clarity:note-edit-line',
               tooltip: '编辑',
               onClick: handleEdit.bind(null, record),
@@ -29,7 +35,8 @@
         />
       </template>
     </BasicTable>
-    <SectionDataModal width="60%" @register="registerSectionDataModal" @success="handleSectionDataSuccess"></SectionDataModal>
+    <SectionDataModal width="80%" @register="registerSectionDataModal" @success="handleSectionDataSuccess"></SectionDataModal>
+    <PointModal width="70%" @register="registerPointModal" @success="handlePointSuccess"></PointModal>
   </BasicModal>
 </template>
 <script lang="ts">
@@ -41,6 +48,7 @@ import {getSectionList, deleteSection} from "/@/api/exam/section";
 import {BasicTable, TableAction, useTable} from '/@/components/Table';
 import {usePermission} from '/@/hooks/web/usePermission';
 import SectionDataModal from './SectionDataModal.vue';
+import PointModal from '../point/PointModal.vue';
 import {useMessage} from "/@/hooks/web/useMessage";
 
 export default defineComponent({
@@ -50,7 +58,8 @@ export default defineComponent({
     BasicForm,
     BasicTable,
     TableAction,
-    SectionDataModal
+    SectionDataModal,
+    PointModal
   },
   emits: ['success', 'register'],
   setup(_) {
@@ -59,7 +68,7 @@ export default defineComponent({
     const chapterId = ref<object>();
     // 列表
     const [registerTable, {reload}] = useTable({
-      title: '章列表',
+      title: '节列表',
       api: (arg) => {
         const params = {chapterId: unref(chapterId)};
         Object.assign(params, arg);
@@ -93,7 +102,10 @@ export default defineComponent({
       setModalProps({confirmLoading: false});
     });
 
+    // 章节弹框
     const [registerSectionDataModal, { openModal: openSectionDataModal }] = useModal();
+    // 知识点弹框
+    const [registerPointModal, { openModal: openPointModal }] = useModal();
 
     async function handleSubmit() {
       closeModal();
@@ -126,16 +138,30 @@ export default defineComponent({
       reload();
     }
 
+    function handlePointManage(record: Recordable) {
+      openPointModal(true, {
+        record,
+        isUpdate: true,
+      });
+    }
+
+    function handlePointSuccess() {
+
+    }
+
     return {
       hasPermission,
       registerModal,
       registerTable,
       registerSectionDataModal,
+      registerPointModal,
       handleSubmit,
       handleCreate,
       handleEdit,
       handleDelete,
-      handleSectionDataSuccess
+      handleSectionDataSuccess,
+      handlePointManage,
+      handlePointSuccess
     };
   },
 });

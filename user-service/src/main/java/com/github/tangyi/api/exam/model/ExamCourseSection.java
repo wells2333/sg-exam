@@ -67,6 +67,18 @@ public class ExamCourseSection extends BaseEntity<ExamCourseSection> {
 	@Column(name = "video_name")
 	private String videoName;
 
+	/**
+	 * 内容类型
+	 */
+	@Column(name = "content_type")
+	private Integer contentType;
+
+	/**
+	 * 节内容
+	 */
+	@Column(name = "content")
+	private String content;
+
 	public void setTitle(String title) {
 		this.title = title;
 	}
@@ -121,6 +133,22 @@ public class ExamCourseSection extends BaseEntity<ExamCourseSection> {
 
 	public void setVideoName(String videoName) {
 		this.videoName = videoName;
+	}
+
+	public Integer getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(Integer contentType) {
+		this.contentType = contentType;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
 	}
 
 	@Override

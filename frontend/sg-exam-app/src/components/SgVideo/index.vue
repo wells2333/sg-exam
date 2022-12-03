@@ -1,6 +1,7 @@
 <template>
   <div class="sg-video-component">
     <video-player
+      v-show="dataSrc !== undefined"
       class="video-player-box"
       ref="sgVideoPlayer"
       :options="playerOptions"
@@ -40,6 +41,7 @@ export default {
   },
   data() {
     return {
+      dataSrc: undefined,
       playerOptions: {
         autoplay: false,
         muted: false,
@@ -73,6 +75,7 @@ export default {
   },
   methods: {
     setSrc(src) {
+      this.dataSrc = src
       this.playerOptions.sources = [{src}]
     },
     play() {

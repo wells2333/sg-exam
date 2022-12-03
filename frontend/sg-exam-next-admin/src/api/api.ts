@@ -134,3 +134,8 @@ export const ExamCourseMemberApi = {
   Base: UserService + '/v1/member',
   ExamCourseMemberList: UserService + '/v1/member/list',
 }
+
+export const ExamCourseKnowledgePointApi = {
+  Base: UserService + '/v1/knowledgePoint',
+  ExamCourseKnowledgePointList: UserService + '/v1/knowledgePoint/list',
+}

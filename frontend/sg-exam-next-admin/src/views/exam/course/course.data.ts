@@ -3,6 +3,13 @@ import {h, unref} from "vue";
 import {Image, Rate, Tag} from "ant-design-vue";
 import {SgUpload} from "/@/components/SgUpload";
 import {uploadImage} from "/@/api/exam/examMedia";
+import {Tinymce} from "/@/components/Tinymce";
+import {
+  editorHeight,
+  tinymcePlugins,
+  tinymceToolbar
+} from "/@/components/Subjects/subject.constant";
+import {ExamMediaApi} from "/@/api/api";
 
 export const columns: BasicColumn[] = [
   {
@@ -159,9 +166,28 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    label: '课程描述',
-    field: 'courseDescription',
+    field: 'simpleDesc',
+    label: '简短描述',
     component: 'InputTextArea',
+  },
+  {
+    label: '详细描述',
+    field: 'courseDescription',
+    component: 'Input',
+    render: ({model, field}) => {
+      return h(Tinymce, {
+        value: model[field],
+        height: editorHeight,
+        plugins: tinymcePlugins,
+        toolbar: tinymceToolbar,
+        height: 150,
+        // 指定上传URL
+        uploadUrl: ExamMediaApi.UploadImage,
+        onChange: (value: string) => {
+          model[field] = value;
+        },
+      });
+    },
   },
 ];
 
