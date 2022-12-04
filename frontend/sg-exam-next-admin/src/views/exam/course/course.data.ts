@@ -46,7 +46,7 @@ export const columns: BasicColumn[] = [
   {
     dataIndex: 'chargeType',
     title: '类型',
-    width: 100,
+    width: 70,
     align: 'left',
     customRender: ({record}) => {
       const chargeType = record.chargeType;
@@ -62,14 +62,29 @@ export const columns: BasicColumn[] = [
   {
     dataIndex: 'chargePrice',
     title: '价格',
-    width: 100,
+    width: 80,
     align: 'left',
   },
   {
-    dataIndex: 'teacher',
-    title: '老师',
-    width: 100,
+    dataIndex: 'courseStatus',
+    title: '状态',
+    width: 70,
     align: 'left',
+    customRender: ({record}) => {
+      const courseStatus = record.courseStatus;
+      let color = 'green';
+      let text = '上架中';
+      if (courseStatus !== null && courseStatus === 1) {
+        color = 'blue';
+        text = '已下架';
+      }
+      return h(Tag, {color: color}, () => text);
+    },
+  },
+  {
+    title: '老师',
+    dataIndex: 'teacher',
+    width: 100,
   },
   {
     title: '更新时间',
@@ -100,6 +115,20 @@ export const formSchema: FormSchema[] = [
     required: true,
   },
   {
+    field: 'courseStatus',
+    label: '状态',
+    component: 'RadioButtonGroup',
+    defaultValue: 0,
+    componentProps: {
+      options: [
+        { label: '上架中', value: 0 },
+        { label: '已下架', value: 1 },
+      ],
+    },
+    required: true,
+    colProps: { span: 12 },
+  },
+  {
     field: 'chargeType',
     label: '类型',
     component: 'RadioButtonGroup',
@@ -127,6 +156,14 @@ export const formSchema: FormSchema[] = [
     component: 'InputNumber',
     defaultValue: 0,
     required: true,
+    colProps: { span: 12 },
+  },
+  {
+    field: 'sort',
+    label: '排序',
+    component: 'InputNumber',
+    required: true,
+    defaultValue: 100,
     colProps: { span: 12 },
   },
   {

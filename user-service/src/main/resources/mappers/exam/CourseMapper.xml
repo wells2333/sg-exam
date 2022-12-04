@@ -13,6 +13,8 @@
         <result column="charge_price" property="chargePrice"/>
         <result column="level" property="level"/>
         <result column="simple_desc" property="simpleDesc"/>
+        <result column="sort" property="sort"/>
+        <result column="course_status" property="courseStatus"/>
         <result column="creator" property="creator"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
@@ -31,18 +33,11 @@
                 and (course_name like CONCAT('%',#{params.courseName},'%'))
             </if>
         </if>
-        <choose>
-            <when test="params.sortField != null and params.sortField != '' and params.sortOrder != null and params.sortOrder != ''">
-                order by #{params.sortField} #{params.sortOrder}
-            </when>
-            <otherwise>
-                order by update_time desc
-            </otherwise>
-        </choose>
+        ORDER BY sort ASC
     </select>
 
     <select id="findList" resultMap="courseResultMap">
-        SELECT * FROM exam_course a WHERE a.is_deleted = 0 and a.tenant_code = #{tenantCode}
+        SELECT * FROM exam_course a WHERE a.is_deleted = 0 and a.tenant_code = #{tenantCode} ORDER BY sort ASC
     </select>
 
     <select id="findListById" resultMap="courseResultMap">

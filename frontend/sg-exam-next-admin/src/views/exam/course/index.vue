@@ -86,7 +86,7 @@ export default defineComponent({
         labelWidth: 120,
         schemas: searchFormSchema,
       },
-      pagination: false,
+      pagination: true,
       striped: false,
       useSearchForm: true,
       showTableSetting: true,

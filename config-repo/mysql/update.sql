@@ -58,3 +58,10 @@ ALTER TABLE `exam_course`
 
 ALTER TABLE `exam_course`
     ADD COLUMN `simple_desc` varchar(255) NULL COMMENT '简短的描述';
+
+-- ----------------------------
+-- 2022年12月04日21:43:36
+-- ----------------------------
+ALTER TABLE `exam_course`
+    ADD COLUMN `sort` int NOT NULL DEFAULT 100 COMMENT '排序号',
+ADD COLUMN `course_status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '课程状态：0：上架，1：下架';

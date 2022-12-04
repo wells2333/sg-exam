@@ -88,6 +88,18 @@ public class Course extends BaseEntity<Course> {
 	private String simpleDesc;
 
 	/**
+	 * 排序号
+	 */
+	@Column(name = "sort")
+	private int sort;
+
+	/**
+	 * 课程状态，0：上架，1：下架
+	 */
+	@Column(name = "course_status")
+	private int courseStatus;
+
+	/**
 	 * 报名人数
 	 */
 	@Transient

@@ -1009,15 +1009,9 @@ INSERT INTO `sys_menu` VALUES (63, '工作台', NULL, '/dashboard/workbench', 1,
 
 INSERT INTO `sys_menu` VALUES (64, '成绩详情', NULL, '/exam/score_detail/:id', 28, NULL, '8', '0', 'admin', '2022-04-12 13:35:12', 'admin', '2022-11-13 11:48:52', 0, 'exam/scoreDetail/index', 0, 0, NULL, 'gitee', 1, '', '/exam/score');
 INSERT INTO `sys_menu` VALUES (65, '题目详情', NULL, '/exam/subject_detail/:id', 28, NULL, '6', '0', 'admin', '2022-04-05 09:54:38', 'admin', '2022-11-13 11:48:52', 0, 'exam/subject/SubjectDetail', 0, 0, NULL, 'gitee', 1, '', '/exam/subject');
-INSERT INTO `sys_menu` VALUES (66, '分类管理', NULL, '/exam/category', 28, NULL, '1', '0', 'admin', '2022-04-08 22:45:09', 'admin', '2022-11-13 11:48:52', 0, 'exam/category/index', 0, 0, NULL, 'gitee', 0, '', '');
 
 INSERT INTO `sys_menu` VALUES (67, '操作日志', 'sys:log', '/sys/log', 3, NULL, '11', '0', 'admin', '2022-11-20 14:16:34', 'admin', '2022-11-20 14:16:34', 0, 'sys/log/index', 0, 0, NULL, 'gitee', 0, '', '');
 INSERT INTO `sys_menu` VALUES (68, '查看操作日志', 'sys:log:view', NULL, 67, NULL, '1', '1', 'admin', '2022-11-20 14:20:58', 'admin', '2022-11-20 14:20:58', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
-
-INSERT INTO `sys_menu` VALUES (69, '查看题目分类', 'exam:category:view', NULL, 66, NULL, '1', '1', 'admin', '2022-11-20 18:37:07', 'admin', '2022-11-20 18:37:07', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
-INSERT INTO `sys_menu` VALUES (70, '新增题目分类', 'exam:category:add', NULL, 66, NULL, '2', '1', 'admin', '2022-11-20 18:37:31', 'admin', '2022-11-20 18:37:31', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
-INSERT INTO `sys_menu` VALUES (71, '编辑题目分类', 'exam:category:edit', NULL, 66, NULL, '3', '1', 'admin', '2022-11-20 18:37:53', 'admin', '2022-11-20 18:37:53', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
-INSERT INTO `sys_menu` VALUES (72, '删除题目分类', 'exam:category:del', NULL, 66, NULL, '4', '1', 'admin', '2022-11-20 18:38:13', 'admin', '2022-11-20 18:38:13', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
 INSERT INTO `sys_menu` VALUES (73, '查看考试', 'exam:exam:view', NULL, 33, NULL, '1', '1', 'admin', '2022-11-20 18:44:51', 'admin', '2022-11-20 18:44:51', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
 INSERT INTO `sys_menu` VALUES (74, '编辑考试', 'exam:exam:edit', NULL, 33, NULL, '2', '1', 'admin', '2022-11-20 18:45:11', 'admin', '2022-11-20 18:45:11', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
 INSERT INTO `sys_menu` VALUES (75, '查看成绩', 'exam:examRecord:view', NULL, 50, NULL, '1', '1', 'admin', '2022-11-20 18:47:23', 'admin', '2022-11-20 18:47:23', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
@@ -1103,7 +1097,6 @@ INSERT INTO `sys_role_menu` VALUES (62, 1, 62, NULL, '2022-05-18 22:38:51', '', 
 INSERT INTO `sys_role_menu` VALUES (63, 1, 63, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
 INSERT INTO `sys_role_menu` VALUES (64, 1, 64, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
 INSERT INTO `sys_role_menu` VALUES (65, 1, 65, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
-INSERT INTO `sys_role_menu` VALUES (66, 1, 66, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
 
 INSERT INTO `sys_role_menu` VALUES (67, 2, 1, '', '2022-11-13 13:26:11', '', '2022-11-13 13:26:11', 0, '');
 INSERT INTO `sys_role_menu` VALUES (68, 2, 2, '', '2022-11-13 13:26:11', '', '2022-11-13 13:26:11', 0, '');
@@ -1113,10 +1106,6 @@ INSERT INTO `sys_role_menu` VALUES (72, 2, 60, '', '2022-11-20 14:46:39', '', '2
 
 INSERT INTO `sys_role_menu` VALUES (73, 1, 67, '', '2022-11-13 13:26:11', '', '2022-11-13 13:26:11', 0, '');
 INSERT INTO `sys_role_menu` VALUES (74, 1, 68, '', '2022-11-13 13:26:11', '', '2022-11-13 13:26:11', 0, '');
-INSERT INTO `sys_role_menu` VALUES (75, 1, 69, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
-INSERT INTO `sys_role_menu` VALUES (76, 1, 70, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
-INSERT INTO `sys_role_menu` VALUES (77, 1, 71, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
-INSERT INTO `sys_role_menu` VALUES (78, 1, 72, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
 INSERT INTO `sys_role_menu` VALUES (79, 1, 73, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
 INSERT INTO `sys_role_menu` VALUES (80, 1, 74, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
 INSERT INTO `sys_role_menu` VALUES (81, 1, 75, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
@@ -1146,7 +1135,6 @@ INSERT INTO `sys_role_menu` VALUES (131, 2, 10, '', '2022-11-20 19:13:28', '', '
 INSERT INTO `sys_role_menu` VALUES (132, 2, 20, '', '2022-11-20 19:13:28', '', '2022-11-20 19:13:28', 0, '');
 INSERT INTO `sys_role_menu` VALUES (133, 2, 4, '', '2022-11-20 19:13:28', '', '2022-11-20 19:13:28', 0, '');
 INSERT INTO `sys_role_menu` VALUES (134, 2, 67, '', '2022-11-20 19:13:28', '', '2022-11-20 19:13:28', 0, '');
-INSERT INTO `sys_role_menu` VALUES (135, 2, 66, '', '2022-11-20 19:13:28', '', '2022-11-20 19:13:28', 0, '');
 INSERT INTO `sys_role_menu` VALUES (136, 2, 28, '', '2022-11-20 19:13:28', '', '2022-11-20 19:13:28', 0, '');
 INSERT INTO `sys_role_menu` VALUES (137, 2, 33, '', '2022-11-20 19:13:28', '', '2022-11-20 19:13:28', 0, '');
 INSERT INTO `sys_role_menu` VALUES (138, 2, 50, '', '2022-11-20 19:13:28', '', '2022-11-20 19:13:28', 0, '');
@@ -1182,6 +1170,8 @@ INSERT INTO `sys_attachment_group` VALUES (4, '其它', 'other', 000000000021474
 INSERT INTO `sys_attachment_group` VALUES (5, '语音合成', 'speech', 00000000002147483647, 'admin', '2022-06-18 13:33:29', 'admin', '2022-07-02 21:00:45', 0, 'gitee', '语音合成');
 INSERT INTO `sys_attachment_group` VALUES (6, '默认分组', 'default', 00000000002147483647, 'admin', '2022-07-02 20:26:48', 'admin', '2022-07-02 21:00:51', 0, 'gitee', '默认分组');
 INSERT INTO `sys_attachment_group` VALUES (7, '默认图片', 'default_image', 00000000002147483647, 'admin', '2022-07-02 22:05:36', 'admin', '2022-07-02 22:05:36', 0, 'gitee', '默认图片');
+INSERT INTO `sys_attachment_group` VALUES (8, '考务视频', 'exam/video', 00000000002147483647, 'admin', '2022-12-04 22:38:13', 'admin', '2022-12-04 22:38:13', 0, 'gitee', '考务视频');
+INSERT INTO `sys_attachment_group` VALUES (9, '考务图片', 'exam/image', 00000000002147483647, 'admin', '2022-12-04 22:38:30', 'admin', '2022-12-04 22:38:30', 0, 'gitee', '考务图片');
 
 -- ----------------------------
 -- 小程序首页运营位

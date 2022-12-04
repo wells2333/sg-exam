@@ -96,7 +96,7 @@ export default {
       query: {
         sort: 'id',
         order: ' asc',
-        pageNum: 1,
+        page: 1,
         pageSize: 6,
         examinationName: '',
         status: 0
@@ -129,7 +129,7 @@ export default {
     if (this.$route.query.query !== '') {
       this.query.examinationName = this.$route.query.query
     }
-    this.query.pageNum = 1
+    this.query.page = 1
     // 加载考试列表
     this.getExamList()
   },
@@ -160,7 +160,7 @@ export default {
       }
       this.loading = true
       setTimeout(() => {
-        this.query.pageNum++
+        this.query.page++
         fetchList(this.query).then(response => {
           const { total, isLastPage, list } = response.data.result
           this.updateExamList(list)
@@ -213,7 +213,7 @@ export default {
       return getAttachmentPreviewUrl(this.sysConfig, avatar)
     },
     submitForm () {
-      this.query.pageNum = 1
+      this.query.page = 1
       this.getExamList()
     },
     resetForm () {
@@ -237,7 +237,7 @@ export default {
       this.getExamList()
     },
     handleCurrentChange (val) {
-      this.query.pageNum = val
+      this.query.page = val
       this.getExamList()
     },
     updateExamList (list) {

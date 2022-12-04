@@ -69,7 +69,7 @@ export default {
   created() {
     this.courseId = this.$route.query.courseId
     this.sectionId = this.$route.query.sectionId
-    this.getCourseDetail(this.courseId);
+    this.getCourseDetail(this.courseId)
     this.getSection(this.sectionId)
   },
   methods: {

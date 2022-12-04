@@ -1,12 +1,12 @@
 <template>
   <div>
     <div class="clever-category bg-img" style="background-image: url(static/img/bg-img/bg2.jpg);">
-      <h3>艺术 & 设计</h3>
+      <h3>热门课程</h3>
     </div>
     <div class="content-container">
       <div class="course-card-list">
         <transition name="fade-transform" mode="out-in" v-for="course in courseList" :key="course.id">
-          <div class="single-popular-course mb-80" v-show="course.show" @click="handleStartCourse(course)">
+          <div class="single-popular-course" v-show="course.show" @click="handleStartCourse(course)">
             <img :src="course.imageUrl" :alt="course.courseName">
             <div class="course-content">
               <h4>{{ course.courseName }}</h4>
@@ -57,8 +57,8 @@ export default {
       query: {
         sort: 'id',
         order: ' asc',
-        pageNum: 1,
-        pageSize: 3,
+        page: 1,
+        pageSize: 6,
         courseName: '',
         status: 0
       },
@@ -98,7 +98,7 @@ export default {
       }
       this.loading = true
       setTimeout(() => {
-        this.query.pageNum++
+        this.query.page++
         courseList(this.query).then(response => {
           const { total, isLastPage, list } = response.data.result
           this.updateCourseList(list)
@@ -136,7 +136,7 @@ export default {
       for (let i = 0; i < list.length; i++) {
         setTimeout(() => {
           list[i].show = true
-        }, 250 + (100 * i))
+        }, 150 + (100 * i))
       }
     }
   }
@@ -188,7 +188,7 @@ export default {
   .single-popular-course {
     width: 30%;
     position: relative;
-    margin-bottom: 100px;
+    margin-bottom: 40px;
     border-radius: 6px;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
     .card-item-snapshoot {

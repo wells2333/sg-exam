@@ -42,7 +42,11 @@ export default defineComponent({
     onMounted(() => {
       fetch();
     });
-    return {basicTreeRef, treeData, handleSelect, resetSelectedKeys};
+
+    function reloadTree() {
+      fetch();
+    }
+    return {basicTreeRef, treeData, handleSelect, resetSelectedKeys, reloadTree};
   },
 });
 </script>

@@ -48,6 +48,7 @@ public class SubjectImportListener extends AbstractExcelImportListener<SubjectEx
 		int sort = this.nextNo;
 		for (SubjectExcelModel model : models) {
 			SubjectDto dto = new SubjectDto();
+			dto.setNewRecord(true);
 			dto.setCommonValue(creator, tenantCode);
 			BeanUtils.copyProperties(model, dto);
 			dto.setSort(sort++);

@@ -344,7 +344,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 			subjectChoices.getOptions().forEach(option -> {
 				option.setId(null);
 				option.setNewRecord(true);
-				option.setCommonValue(subjectChoices.getCreator(), subjectChoices.getTenantCode());
+				option.setCommonValue(subjectChoices.getOperator(), subjectChoices.getTenantCode());
 				option.setSubjectChoicesId(subjectChoices.getId());
 			});
 			// 批量插入

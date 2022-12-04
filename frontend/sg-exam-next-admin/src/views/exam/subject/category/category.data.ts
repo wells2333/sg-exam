@@ -40,11 +40,6 @@ export const columns: BasicColumn[] = [
     align: 'left',
   },
   {
-    title: '创建时间',
-    dataIndex: 'createTime',
-    width: 180,
-  },
-  {
     title: '更新时间',
     dataIndex: 'updateTime',
     width: 180,
