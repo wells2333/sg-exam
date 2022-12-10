@@ -7,6 +7,10 @@
         <result column="sort" property="sort"/>
         <result column="section_id" property="sectionId"/>
         <result column="content" property="content"/>
+        <result column="learn_hour" property="learnHour"/>
+        <result column="video_id" property="videoId"/>
+        <result column="video_name" property="videoName"/>
+        <result column="content_type" property="contentType"/>
         <result column="creator" property="creator"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="operator" property="operator"/>
@@ -43,7 +47,7 @@
     </select>
 
     <select id="findListBySectionId" resultMap="examCourseKnowledgePointResultMap">
-        SELECT * FROM exam_course_knowledge_point a WHERE a.section_id = #{sectionId} ORDER BY sort ASC
+        SELECT * FROM exam_course_knowledge_point a WHERE a.section_id = #{sectionId} AND a.is_deleted = 0 ORDER BY sort ASC
     </select>
 
     <delete id="delete">

@@ -72,6 +72,7 @@ ignore:
     - /**/wx/getQrCode
     - /**/wx/getOpenId
     - /**/**/currentTime
+    - /**/login
     - /**/mobile/login
     - /**/wx/login
     - /**/h2/**

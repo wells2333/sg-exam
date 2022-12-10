@@ -65,3 +65,9 @@ ALTER TABLE `exam_course`
 ALTER TABLE `exam_course`
     ADD COLUMN `sort` int NOT NULL DEFAULT 100 COMMENT '排序号',
 ADD COLUMN `course_status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '课程状态：0：上架，1：下架';
+
+ALTER TABLE `exam_course_knowledge_point`
+    ADD COLUMN `learn_hour` int NULL DEFAULT NULL COMMENT '学习时长',
+    ADD COLUMN `video_id` bigint NULL DEFAULT NULL COMMENT '视频ID',
+    ADD COLUMN `video_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '视频名称',
+    ADD COLUMN `content_type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '节内容类型，0：视频，1：图文' AFTER `video_name`;

@@ -33,6 +33,7 @@ dependencies {
     implementation 'com.github.kstyrc:embedded-redis:0.6'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'com.github.stefanbirkner:system-rules:1.19.0'
 }
 
 test {

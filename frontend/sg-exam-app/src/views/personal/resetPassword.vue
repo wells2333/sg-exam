@@ -108,7 +108,6 @@ export default {
       this.$refs['form'].validate((valid) => {
         if (valid) {
           updatePassword(this.userInfo).then(response => {
-            debugger
             if (response.data.result) {
               notifySuccess(this, '修改成功')
               this.$router.push({ path: '/login' })
@@ -124,8 +123,6 @@ export default {
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" rel="stylesheet/scss" scoped>
   #password {
     margin-bottom: 20px;

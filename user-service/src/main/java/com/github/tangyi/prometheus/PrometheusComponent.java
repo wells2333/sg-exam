@@ -43,7 +43,7 @@ public class PrometheusComponent implements ApplicationContextAware {
 		reqGauge = Gauge.build().name("rest_in_progress_req").labelNames("path", "method").help("正在处理的请求数")
 				.register(registry);
 		reqLatencyHistogram = Histogram.build().labelNames("path", "method", "code")
-				.name("demo_rest_requests_latency_seconds_histogram").help("请求耗时分布").register(registry);
+				.name("rest_req_latency_seconds_histogram").help("请求耗时分布").register(registry);
 	}
 
 	public static PrometheusComponent getInstance() {

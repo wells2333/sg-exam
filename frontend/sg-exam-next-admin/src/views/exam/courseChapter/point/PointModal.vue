@@ -27,7 +27,7 @@
         />
       </template>
     </BasicTable>
-    <PointDataModal @register="registerPointDataModal" @success="handleSuccess"/>
+    <PointDataModal width="75%" @register="registerPointDataModal" @success="handleSuccess"/>
   </BasicModal>
 </template>
 <script lang="ts">

@@ -27,13 +27,13 @@
                     <el-menu-item index="u-source" @click="open('https://gitee.com/wells2333/sg-exam')">
                       源码地址
                     </el-menu-item>
-                    <el-menu-item index="u-deploy" @click="open('https://www.kancloud.cn/tangyi/sg-exam/1322870')">
+                    <el-menu-item index="u-deploy" @click="open('https://mp.weixin.qq.com/s?__biz=Mzg2Mjg2OTcyNA==&amp;mid=2247484080&amp;idx=1&amp;sn=85d5bd3a9d03b710903076ab14b20e92&amp;chksm=ce000303f9778a15c0b7afd21fd82aad685f13eb09a0dafa2c8fad97b6eacd9585dd738a0f0a&token=755573063&lang=zh_CN#rd')">
                       部署文档
                     </el-menu-item>
                     <el-menu-item index="c-log" @click="open('https://gitee.com/wells2333/sg-exam/blob/master/CHANGELOG.md')">
                       更新日志
                     </el-menu-item>
-                    <el-menu-item index="u-admin" @click="open('http://two.404forever.com:81/')">
+                    <el-menu-item index="u-admin" @click="openAdmin()">
                       管理后台
                     </el-menu-item>
                   </el-submenu>
@@ -88,6 +88,9 @@ export default {
     }
   },
   methods: {
+    openAdmin () {
+      window.open(window.location.origin + '/admin')
+    },
     // 导航栏切换
     open (path) {
       if (path.startsWith('http')) {

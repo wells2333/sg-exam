@@ -1,6 +1,7 @@
 package com.github.tangyi.exam.controller.course;
 
 import com.github.pagehelper.PageInfo;
+import com.github.tangyi.api.exam.dto.KnowledgePointDto;
 import com.github.tangyi.api.exam.model.ExamCourseKnowledgePoint;
 import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.model.R;
@@ -40,9 +41,15 @@ public class ExamCourseKnowledgePointController extends BaseController {
 	}
 
 	@GetMapping(value = "/{id}")
-	@Operation(summary = "获取章节知识点详细信息")
+	@Operation(summary = "获取章节知识点信息")
 	public R<ExamCourseKnowledgePoint> get(@PathVariable("id") Long id) {
 		return R.success(examCourseKnowledgePointService.get(id));
+	}
+
+	@GetMapping(value = "/detail/{id}")
+	@Operation(summary = "获取章节知识点详细信息")
+	public R<KnowledgePointDto> getDetail(@PathVariable("id") Long id) {
+		return R.success(examCourseKnowledgePointService.getDetail(id));
 	}
 
 	@PostMapping

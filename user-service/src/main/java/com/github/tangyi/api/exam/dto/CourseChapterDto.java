@@ -22,5 +22,5 @@ public class CourseChapterDto {
 	/**
 	 * 节列表
 	 */
-	private List<ExamCourseSection> sections;
+	private List<CourseSectionDto> sections;
 }

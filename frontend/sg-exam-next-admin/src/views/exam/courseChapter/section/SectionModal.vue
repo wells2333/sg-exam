@@ -35,8 +35,8 @@
         />
       </template>
     </BasicTable>
-    <SectionDataModal width="80%" @register="registerSectionDataModal" @success="handleSectionDataSuccess"></SectionDataModal>
-    <PointModal width="70%" @register="registerPointModal" @success="handlePointSuccess"></PointModal>
+    <SectionDataModal width="85%" @register="registerSectionDataModal" @success="handleSectionDataSuccess"></SectionDataModal>
+    <PointModal width="80%" @register="registerPointModal" @success="handlePointSuccess"></PointModal>
   </BasicModal>
 </template>
 <script lang="ts">

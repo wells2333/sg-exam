@@ -1,5 +1,5 @@
 import {BasicColumn, FormSchema} from '/@/components/Table';
-import {h} from "vue";
+import {h, unref} from "vue";
 import {Tinymce} from "/@/components/Tinymce";
 import {
   editorHeight,
@@ -7,6 +7,9 @@ import {
   tinymceToolbar
 } from "/@/components/Subjects/subject.constant";
 import {ExamMediaApi} from "/@/api/api";
+import {Tag} from "ant-design-vue";
+import {uploadVideo} from "/@/api/exam/examMedia";
+import {SgUpload} from "/@/components/SgUpload";
 
 export const columns: BasicColumn[] = [
   {
@@ -22,9 +25,29 @@ export const columns: BasicColumn[] = [
     align: 'left',
   },
   {
-    title: '创建时间',
-    dataIndex: 'createTime',
-    width: 180,
+    title: '学习时长',
+    dataIndex: 'learnHour',
+    width: 80,
+  },
+  {
+    dataIndex: 'contentType',
+    title: '内容类型',
+    width: 100,
+    align: 'left',
+    customRender: ({record}) => {
+      const contentType = record.contentType;
+      let color = 'green';
+      let text = '视频';
+      if (contentType !== null && contentType === 1) {
+        color = 'blue';
+        text = '图文';
+      }
+      return h(Tag, {color: color}, () => text);
+    },
+  },
+  {
+    title: '视频名称',
+    dataIndex: 'videoName',
   },
   {
     title: '更新时间',
@@ -80,5 +103,50 @@ export const formSchema: FormSchema[] = [
     component: 'InputNumber',
     required: true,
     defaultValue: 100
-  }
+  },
+  {
+    field: 'learnHour',
+    label: '学习时长',
+    component: 'InputNumber',
+    required: true,
+    defaultValue: 1
+  },
+  {
+    field: 'contentType',
+    label: '内容类型',
+    component: 'RadioButtonGroup',
+    defaultValue: 0,
+    componentProps: {
+      options: [
+        { label: '视频', value: 0 },
+        { label: '图文', value: 1 },
+      ],
+    },
+    required: true,
+    colProps: { span: 12 },
+  },
+  {
+    label: '上传视频',
+    field: 'videoId',
+    component: 'Input',
+    render: ({model, field}) => {
+      return h(SgUpload, {
+        value: model[field],
+        api: uploadVideo,
+        type: 'video',
+        handleDone: (value) => {
+          if (value) {
+            model[field] = unref(value).id;
+            model['videoName'] = unref(value).name;
+          }
+        },
+      });
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'videoName',
+    label: '视频名称',
+    component: 'Input'
+  },
 ];

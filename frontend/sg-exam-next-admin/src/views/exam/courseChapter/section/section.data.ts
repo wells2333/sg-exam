@@ -1,6 +1,5 @@
 import {BasicColumn, FormSchema} from '/@/components/Table';
-import {h} from "vue";
-import {BasicUpload} from "/@/components/Upload";
+import {h, unref} from "vue";
 import {uploadVideo} from "/@/api/exam/examMedia";
 import {Tag} from "ant-design-vue";
 import {Tinymce} from "/@/components/Tinymce";
@@ -10,13 +9,14 @@ import {
   tinymceToolbar
 } from "/@/components/Subjects/subject.constant";
 import {ExamMediaApi} from "/@/api/api";
+import {SgUpload} from "/@/components/SgUpload";
 
 export const searchFormSchema: FormSchema[] = [
   {
     field: 'title',
     label: '标题',
     component: 'Input',
-    colProps: { span: 8 },
+    colProps: {span: 8},
   }
 ];
 
@@ -101,12 +101,12 @@ export const formSchema: FormSchema[] = [
     defaultValue: 0,
     componentProps: {
       options: [
-        { label: '视频', value: 0 },
-        { label: '图文', value: 1 },
+        {label: '视频', value: 0},
+        {label: '图文', value: 1},
       ],
     },
     required: true,
-    colProps: { span: 12 },
+    colProps: {span: 12},
   },
   {
     field: 'content',
@@ -134,22 +134,20 @@ export const formSchema: FormSchema[] = [
     label: '上传视频',
     field: 'videoId',
     component: 'Input',
-    render: ({ model, field }) => {
-      return h(BasicUpload, {
+    render: ({model, field}) => {
+      return h(SgUpload, {
         value: model[field],
-        maxSize: 20,
-        maxNumber: 1,
-        emptyHidePreview: true,
         api: uploadVideo,
-        onChange: (value) => {
-          if (value && value.length > 0) {
-            model[field] = value[0].id;
-            model['videoName'] = value[0].attachName;
+        type: 'video',
+        handleDone: (value) => {
+          if (value) {
+            model[field] = unref(value).id;
+            model['videoName'] = unref(value).name;
           }
         },
       });
     },
-    colProps: { span: 12 },
+    colProps: {span: 12},
   },
   {
     field: 'videoName',

@@ -269,7 +269,6 @@ export const uploadVideoSchemas: FormSchema[] = [
         emptyHidePreview: true,
         api: uploadVideo,
         onChange: (value) => {
-          debugger
           if (value && value.length > 0) {
             model[field] = value[0].id;
             model['videoName'] = value[0].attachName;

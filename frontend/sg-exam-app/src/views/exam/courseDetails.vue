@@ -19,7 +19,7 @@
               <span><i class="fa fa-circle" aria-hidden="true"></i></span>
               <a href="#">{{ course.college }} &amp; {{ course.major }}</a>
             </div>
-            <div class="price">{{ course.chargeType === 1 ? '收费' : '免费'}}
+            <div class="price">{{ course.chargeType === 1 ? '收费' : '免费' }}
               <h6 v-if="course.chargePrice > 0">{{ course.chargePrice }}</h6>
             </div>
           </div>
@@ -49,13 +49,27 @@
                                 v-for="chapter in detail.chapters" :key="chapter.chapter.id">
                       <div class="chapter-container">
                         <p>{{ chapter.chapter.title }}</p>
-                        <div class="section-container" @click="handleClickSection(section)"
-                             v-for="section in chapter.sections" :key="section.id">
-                          <p class="section-title">{{ section.title }}
+                        <div class="section-container"
+                             v-for="section in chapter.sections" :key="section.section.id">
+                          <p class="section-title" @click="handleClickSection(section.section)">
+                            {{ section.section.title }}
                             <span class="section-learn-hour">
-                              <i class="el-icon-caret-right"></i>&nbsp;{{ section.learnHour }}小时
+                              <i class="el-icon-caret-right"></i>&nbsp;{{
+                                section.section.learnHour
+                              }}小时
                             </span>
                           </p>
+                          <div class="point-container" v-for="point in section.points"
+                               :key="point.id">
+                            <p class="point-title" @click="handleClickPoint(section.section, point)">
+                              {{ point.title }}
+                              <span class="section-learn-hour">
+                              <i class="el-icon-caret-right"></i>&nbsp;{{
+                                  point.learnHour
+                                }}小时
+                            </span>
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </transition>
@@ -111,7 +125,7 @@
                   </span>
                   <div class="about-members mb-30">
                     <h4>报名学员</h4>
-                    <p>已报名学员：{{detail.memberCount}}</p>
+                    <p>已报名学员：{{ detail.memberCount }}</p>
                   </div>
                 </el-tab-pane>
                 <el-tab-pane>
@@ -127,7 +141,8 @@
             </el-col>
             <el-col :span="6">
               <div class="course-sidebar">
-                <el-button type="primary" class="clever-btn mb-30 w-100" @click="handleJoin">{{joinBtnText}}
+                <el-button type="primary" class="clever-btn mb-30 w-100" @click="handleJoin">
+                  {{ joinBtnText }}
                 </el-button>
                 <div class="sidebar-widget">
                   <h4>课程特色</h4>
@@ -237,7 +252,20 @@ export default {
         messageWarn(this, '请先报名')
         return
       }
-      this.$router.push({name: 'course-section', query: {sectionId: section.id, courseId: this.courseId}})
+      this.$router.push({
+        name: 'course-section',
+        query: {sectionId: section.id, courseId: this.courseId}
+      })
+    },
+    handleClickPoint(section, point) {
+      if (this.detail.isUserJoin !== true) {
+        messageWarn(this, '请先报名')
+        return
+      }
+      this.$router.push({
+        name: 'course-section',
+        query: {sectionId: section.id, courseId: this.courseId, pointId: point.id}
+      })
     },
     handleSubmitEvaluate() {
       if (this.detail.isUserJoin !== true) {
@@ -310,7 +338,6 @@ export default {
   margin-right: 10px;
   margin-bottom: 10px;
 }
-
 .clever-btn {
   display: inline-block;
   min-width: 160px;
@@ -329,37 +356,40 @@ export default {
   -webkit-transition-duration: 300ms;
   transition-duration: 300ms;
 }
-
 .my-content-container {
   margin-top: 0;
 }
-
 .section-title {
-  margin-left: 30px;
+  margin-left: 16px;
   font-size: 14px;
   cursor: pointer;
 }
-
 .section-title:hover, .section-learn-hour:hover {
   color: #409EFF;
 }
-
 .section-learn-hour {
   float: right;
   color: rgba(0, 0, 0, .3);
 }
-
 .user-evaluate-item {
   margin-top: 20px;
 }
-
 .user-evaluate-item-content {
   margin-top: 10px;
 }
-
 .user-evaluate-item-time {
   font-size: 12px;
   margin-top: 8px;
   color: rgba(0, 0, 0, .3);
+}
+.point-container {
+  margin-left: 32px;
+}
+.point-title {
+  font-size: 14px;
+  cursor: pointer;
+}
+.point-title:hover {
+  color: #409EFF;
 }
 </style>

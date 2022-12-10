@@ -7,7 +7,7 @@ spring.application.name: user-service
 # Mybatis
 mybatis:
   type-aliases-package: com.github.tangyi.api.user.model,com.github.tangyi.api.exam.model,com.github.tangyi.api.operation.model
-  mapper-locations: classpath*:mappers/**/*.xml
+  mapper-locations: classpath*:mappers/*.xml,classpath*:mappers/**/*.xml
   configuration:
     map-underscore-to-camel-case: true
 

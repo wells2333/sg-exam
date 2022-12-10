@@ -3,6 +3,7 @@ package com.github.tangyi.exam.service.course;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.dto.CourseChapterDto;
 import com.github.tangyi.api.exam.dto.CourseDetailDto;
+import com.github.tangyi.api.exam.dto.CourseSectionDto;
 import com.github.tangyi.api.exam.model.Course;
 import com.github.tangyi.api.exam.model.ExamCourseChapter;
 import com.github.tangyi.api.exam.model.ExamCourseMember;
@@ -53,6 +54,8 @@ public class CourseService extends CrudService<CourseMapper, Course> {
 	private final ExamCourseChapterService chapterService;
 
 	private final ExamCourseSectionService sectionService;
+
+	private final ExamCourseKnowledgePointService knowledgePointService;
 
 	private final ExamCourseMemberService memberService;
 
@@ -169,7 +172,7 @@ public class CourseService extends CrudService<CourseMapper, Course> {
 		if (CollectionUtils.isNotEmpty(chapters)) {
 			for (ExamCourseChapter chapter : chapters) {
 				CourseChapterDto chapterDto = new CourseChapterDto();
-				List<ExamCourseSection> sections = findSections(chapter, learnHour);
+				List<CourseSectionDto> sections = findSections(chapter, learnHour);
 				chapterDto.setChapter(chapter);
 				chapterDto.setSections(sections);
 				chapterDtos.add(chapterDto);
@@ -178,16 +181,21 @@ public class CourseService extends CrudService<CourseMapper, Course> {
 		return chapterDtos;
 	}
 
-	private List<ExamCourseSection> findSections(ExamCourseChapter chapter, AtomicLong learnHour) {
+	private List<CourseSectionDto> findSections(ExamCourseChapter chapter, AtomicLong learnHour) {
+		List<CourseSectionDto> dtoList = Lists.newArrayList();
 		List<ExamCourseSection> sections = sectionService.findSectionsByChapterId(chapter.getId());
 		if (CollectionUtils.isNotEmpty(sections)) {
 			for (ExamCourseSection section : sections) {
 				if (section.getLearnHour() != null) {
 					learnHour.addAndGet(section.getLearnHour());
 				}
+				CourseSectionDto dto = new CourseSectionDto();
+				dto.setSection(section);
+				dto.setPoints(knowledgePointService.getPoints(section.getId()));
+				dtoList.add(dto);
 			}
 		}
-		return sections;
+		return dtoList;
 	}
 
 	@Transactional

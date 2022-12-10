@@ -9,12 +9,10 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotBlank;
 
 /**
  * 章节知识点 exam_course_knowledge_point
- * 
+ *
  * @author tangyi
  * @date 2022-12-02
  */
@@ -23,66 +21,123 @@ import javax.validation.constraints.NotBlank;
 @EqualsAndHashCode(callSuper = true)
 public class ExamCourseKnowledgePoint extends BaseEntity<ExamCourseKnowledgePoint> {
 
-    /**
-     * 知识点标题
-     */
-    @Column(name = "title")
-    private String title;
+	/**
+	 * 知识点标题
+	 */
+	@Column(name = "title")
+	private String title;
 
-    /**
-     * 序号
-     */
-    @JsonSerialize(using = ToStringSerializer.class)
-    @Column(name = "sort")
-    private Long sort;
+	/**
+	 * 序号
+	 */
+	@JsonSerialize(using = ToStringSerializer.class)
+	@Column(name = "sort")
+	private Long sort;
 
-    /**
-     * 节ID
-     */
-    @JsonSerialize(using = ToStringSerializer.class)
-    @Column(name = "section_id")
-    private Long sectionId;
+	/**
+	 * 节ID
+	 */
+	@JsonSerialize(using = ToStringSerializer.class)
+	@Column(name = "section_id")
+	private Long sectionId;
 
-    /**
-     * 知识点内容
-     */
-    @Column(name = "content")
-    private String content;
+	/**
+	 * 知识点内容
+	 */
+	@Column(name = "content")
+	private String content;
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	/**
+	 * 学习时长
+	 */
+	@Column(name = "learn_hour")
+	private int learnHour;
 
-    public String getTitle() {
-        return title;
-    }
+	/**
+	 * 视频ID
+	 */
+	@JsonSerialize(using = ToStringSerializer.class)
+	@Column(name = "video_id")
+	private Long videoId;
 
-    public void setSort(Long sort) {
-        this.sort = sort;
-    }
+	/**
+	 * 视频名称
+	 */
+	@Column(name = "video_name")
+	private String videoName;
 
-    public Long getSort() {
-        return sort;
-    }
+	/**
+	 * 内容类型
+	 */
+	@Column(name = "content_type")
+	private Integer contentType;
 
-    public void setSectionId(Long sectionId) {
-        this.sectionId = sectionId;
-    }
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-    public Long getSectionId() {
-        return sectionId;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+	public void setSort(Long sort) {
+		this.sort = sort;
+	}
 
-    public String getContent() {
-        return content;
-    }
+	public Long getSort() {
+		return sort;
+	}
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
-    }
+	public void setSectionId(Long sectionId) {
+		this.sectionId = sectionId;
+	}
+
+	public Long getSectionId() {
+		return sectionId;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public int getLearnHour() {
+		return learnHour;
+	}
+
+	public void setLearnHour(int learnHour) {
+		this.learnHour = learnHour;
+	}
+
+	public Long getVideoId() {
+		return videoId;
+	}
+
+	public void setVideoId(Long videoId) {
+		this.videoId = videoId;
+	}
+
+	public String getVideoName() {
+		return videoName;
+	}
+
+	public void setVideoName(String videoName) {
+		this.videoName = videoName;
+	}
+
+	public Integer getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(Integer contentType) {
+		this.contentType = contentType;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 }

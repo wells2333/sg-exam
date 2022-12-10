@@ -37,10 +37,8 @@ public class PrometheusInterceptor extends HandlerInterceptorAdapter {
 		// 每秒http请求量: sum(rate(rest_req_total[1m])
 		// 请求topk的url:  topk(10, sum(rest_req_total) by (path))
 		PrometheusComponent.getInstance().counter().labels(uri, method, String.valueOf(status)).inc();
-
 		// 请求完毕，计数器-1
 		PrometheusComponent.getInstance().gauge().labels(uri, method).dec();
-
 		// 直方图统计
 		Histogram.Timer timer = timerThreadLocal.get();
 		if (timer != null) {
