@@ -1,10 +1,9 @@
 <template>
   <AtMessage/>
   <view>
-    <view class="exam-item flex-col" v-for="item in exams">
+    <view class="exam-item box-show-item flex-col" v-for="item in exams">
       <exam-item :item="item"></exam-item>
     </view>
-    <at-load-more :status="loadMoreStatus" moreBtnStyle="size=5px;"></at-load-more>
   </view>
 </template>
 
@@ -14,13 +13,11 @@ import examApi from '../../api/exam.api';
 import {ExamItem} from '../../components/exam-item';
 import api from "../../api/api";
 import {filterLogin} from "../../utils/filter";
+import Taro from "@tarojs/taro";
 
 export default {
   components: {
     'exam-item': ExamItem
-  },
-  onLoad() {
-    filterLogin();
   },
   onPullDownRefresh() {
 
@@ -32,7 +29,7 @@ export default {
     const hasNextPageRef = ref<boolean>(true);
     const nextPageRef = ref<number>(1);
     const loadMoreStatus = ref<string>('more');
-
+    const pageNumRef = ref<number>(1);
     async function fetch() {
       if (!unref(hasNextPageRef)) {
         loadMoreStatus.value = 'noMore';
@@ -50,10 +47,11 @@ export default {
         });
         const {code, result} = res
         if (code === 0) {
-          const {list, hasNextPage, nextPage} = result;
+          const {list, hasNextPage, nextPage, pageNum} = result;
           exams.value = [...exams.value, ...list];
           hasNextPageRef.value = hasNextPage;
           nextPageRef.value = nextPage;
+          pageNumRef.value = pageNum;
         }
       } finally {
         loadMoreStatus.value = hasNextPageRef.value ? 'more' : 'noMore';
@@ -65,17 +63,14 @@ export default {
     });
     return {
       exams,
-      loadMoreStatus
+      loadMoreStatus,
+      pageNumRef
     }
   }
 }
 </script>
 
 <style>
-page {
-  background: #EEF0F0;
-}
-
 .flex-col {
   display: flex;
   flex-direction: column;

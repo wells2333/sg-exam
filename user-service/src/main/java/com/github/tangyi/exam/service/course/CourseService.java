@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.service.course;
 
+import com.beust.jcommander.internal.Maps;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.dto.CourseChapterDto;
 import com.github.tangyi.api.exam.dto.CourseDetailDto;
@@ -69,6 +70,23 @@ public class CourseService extends CrudService<CourseMapper, Course> {
 		return course;
 	}
 
+	public List<Course> popularCourses() {
+		PageInfo<Course> page = this.findPage(Maps.newHashMap(), 1, 10);
+		if (CollectionUtils.isNotEmpty(page.getList())) {
+			return page.getList();
+		}
+		return Lists.newArrayList();
+	}
+
+	@Override
+	public PageInfo<Course> findPage(Map<String, Object> params, int pageNum, int pageSize) {
+		PageInfo<Course> pageInfo = super.findPage(params, pageNum, pageSize);
+		if (CollectionUtils.isNotEmpty(pageInfo.getList())) {
+			this.initCourseInfo(pageInfo.getList());
+		}
+		return pageInfo;
+	}
+
 	@Override
 	@Transactional
 	public int insert(Course course) {
@@ -77,16 +95,6 @@ public class CourseService extends CrudService<CourseMapper, Course> {
 			course.setImageId(qiNiuService.createRandomImage(Group.DEFAULT));
 		}
 		return super.insert(course);
-	}
-
-	@Override
-	public PageInfo<Course> findPage(Map<String, Object> params, int pageNum, int pageSize) {
-		PageInfo<Course> pageInfo = super.findPage(params, pageNum, pageSize);
-		if (CollectionUtils.isNotEmpty(pageInfo.getList())) {
-			this.initCourseInfo(pageInfo.getList());
-
-		}
-		return pageInfo;
 	}
 
 	@Override
@@ -162,7 +170,7 @@ public class CourseService extends CrudService<CourseMapper, Course> {
 		member.setUserId(SysUtil.getUserId());
 		dto.setMemberCount(memberService.findMemberCountByCourseId(member) + "");
 		// 是否已报名
-		dto.setIsUserJoin(memberService.findMemberCountByCourseId(member) > 0);
+		dto.setIsUserJoin(memberService.findByCourseIdAndUserId(id, SysUtil.getUserId()) != null);
 		return dto;
 	}
 

@@ -43,7 +43,7 @@
 
 项目分前台网站、后台管理、小程序三部分，前台、小程序主要提供考试功能，后台提供基础管理、考试管理功能。
 
-前台主要提供在线考试、在线学习功能
+前台主要提供在线考试、课程学习、练习等功能
 
 后台管理分为：首页Dashboard、系统管理、考务管理、运营管理、语音合成、附件管理、个人管理
 
@@ -91,8 +91,8 @@
            <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp_1.png" height="200"/>
            <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp_2.jpeg" height="200"/>
            <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp_3.png" height="200"/>
-           <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp_5.jpeg" height="200"/>
-           <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp_4.jpeg" height="200"/>
+           <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp_6.jpeg" height="200"/>
+           <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp_7.jpeg" height="200"/>
         </td>
         <td> 
            <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/monitor_1.png" height="200"/>

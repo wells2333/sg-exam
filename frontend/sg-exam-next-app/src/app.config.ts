@@ -10,7 +10,11 @@ export default defineAppConfig({
       'pages/user/index',
       'pages/share/index',
       'pages/about/index',
-      'pages/favorite/index'
+      'pages/favorite/index',
+      'pages/exam/index',
+      'pages/course/index',
+      'pages/course_detail/index',
+      'pages/course_section/index'
   ],
   window: {
     backgroundTextStyle: 'light',

@@ -19,9 +19,6 @@
               {{ tag }}
             </at-tag>
           </view>
-          <view class="exam-time">
-            <text>{{ item.startTime === null ? "-" : item.startTime.substr(0, 16) }}</text>
-          </view>
         </view>
       </view>
     </view>
@@ -121,19 +118,4 @@ export default defineComponent({
   background-color: #FFF;
 }
 
-.exam-item-favorites {
-  margin-right: 8px;
-  display: inline-flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.exam-item-favorites-item {
-  margin-left: 12px;
-}
-
-.exam-item-favorites-text {
-  color: #AAAAAA;
-  font-size: 14px;
-}
 </style>

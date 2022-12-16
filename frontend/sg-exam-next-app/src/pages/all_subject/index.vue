@@ -14,7 +14,7 @@
       </view>
       <view class="subject-title">
         <text class="subject-title-content">{{ item.sort }}.&nbsp;</text>
-        <span class="subject-title-content" v-html="item.subjectName"></span>
+        <wxparse class="subject-title-content" :html="item.subjectName" key={Math.random()} />
       </view>
       <view>
         <view v-if="item.type === 0">

@@ -5,6 +5,7 @@ import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.constant.ApiMsg;
 import com.github.tangyi.common.constant.CommonConstant;
 import com.github.tangyi.common.constant.SecurityConstant;
+import com.github.tangyi.common.exceptions.CommonException;
 import com.github.tangyi.common.model.CustomUserDetails;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.model.UserToken;
@@ -62,7 +63,7 @@ public class OncePerRequestTokenFilter extends OncePerRequestFilter {
 			try {
 				parseToken(request);
 				filterChain.doFilter(request, response);
-			} catch (TokenExpireException e) {
+			} catch (CommonException e) {
 				RUtil.out(response, R.error(ApiMsg.KEY_TOKEN, e.getMessage()));
 			}
 		} else {

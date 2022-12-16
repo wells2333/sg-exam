@@ -26,7 +26,7 @@
         <view v-for="(item, index) in detail.answers">
           <view class="subject-title">
               <text class="subject-title-content">{{ index + 1 }}. &nbsp;</text>
-              <span class="subject-title-content" v-html="item.subject.subjectName"></span>
+              <wxparse class="subject-title-content" :html="item.subject.subjectName" key={Math.random()} />
           </view>
           <view>
             <view>
@@ -60,7 +60,7 @@
               <text>解析：</text>
             </view>
             <view>
-              <span class="answer-text-value" v-html="item.subject.analysis"></span>
+              <wxparse class="answer-text-value" :html="item.subject.analysis" key={Math.random()} />
             </view>
           </view>
         </view>

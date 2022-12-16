@@ -3,7 +3,7 @@
     <view class="avatar-container flex-row">
       <at-avatar class="avatar" :circle="true" size="large" :image="avatar"/>
       <view class="flex-col">
-        <text class="userName">白炽灯</text>
+        <text class="userName">{{userInfo.name}}</text>
         <text class="userDesc">2017年加入，我要好好学习天天向上~</text>
       </view>
     </view>

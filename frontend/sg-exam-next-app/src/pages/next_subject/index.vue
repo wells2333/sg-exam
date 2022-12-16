@@ -17,7 +17,7 @@
       </view>
       <view class="subject-title">
         <text class="subject-title-content">{{ subject.sort }}.&nbsp;</text>
-        <span class="subject-title-content" v-html="subject.subjectName"></span>
+        <wxparse class="subject-title-content" :html="subject.subjectName" key={Math.random()} />
       </view>
       <view>
         <view v-if="subject.type === 0">

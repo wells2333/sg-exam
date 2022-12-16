@@ -8,6 +8,7 @@ import com.github.tangyi.common.security.TokenManager;
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +31,7 @@ public class TokenController extends BaseController {
 	@GetMapping("validToken")
 	public R<Boolean> validToken(HttpServletRequest request) {
 		UserToken userToken = parseUserToken(request);
-		return R.success(tokenManager.tokenExist(userToken));
+		return R.success(userToken != null && tokenManager.tokenExist(userToken));
 	}
 
 	@GetMapping("logout")
@@ -44,6 +45,9 @@ public class TokenController extends BaseController {
 
 	public UserToken parseUserToken(HttpServletRequest request) {
 		String authorization = request.getHeader(SecurityConstant.AUTHORIZATION);
+		if (StringUtils.isEmpty(authorization)) {
+			return null;
+		}
 		String token = authorization.substring(SecurityConstant.BEARER.length());
 		Claims claims = tokenManager.getTokenBody(token);
 		UserToken userToken = new UserToken();

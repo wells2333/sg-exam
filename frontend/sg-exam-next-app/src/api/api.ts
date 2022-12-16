@@ -8,7 +8,7 @@ export const PROD_HOST = 'https://www.yunmianshi.com';
 
 export const TENANT_CODE = `gitee`
 
-export const USER_SERVICE = `${TEST_HOST}/user-service`
+export const USER_SERVICE = `${PROD_HOST}/user-service`
 
 interface result<T = any> {
     code: number

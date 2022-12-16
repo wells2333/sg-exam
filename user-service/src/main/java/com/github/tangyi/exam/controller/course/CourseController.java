@@ -57,6 +57,12 @@ public class CourseController extends BaseController {
 		return R.success(courseService.findAllList(course));
 	}
 
+	@GetMapping("popularCourses")
+	@Operation(summary = "获取热门课程列表")
+	public R<List<Course>> popularCourses() {
+		return R.success(courseService.popularCourses());
+	}
+
 	@PostMapping
 	@Operation(summary = "创建课程")
 	@SgLog(value = "新增课程", operationType = OperationType.INSERT)

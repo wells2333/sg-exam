@@ -53,14 +53,14 @@ sms:
 
 # 微信配置
 wx:
-  appId: ${WX_APP_ID:wx87175f7067feb659}
-  appSecret: ${WX_APP_SECRET:834954a1f60dd0790f7343174bd5c908}
+  appId: ${WX_APP_ID:test}
+  appSecret: ${WX_APP_SECRET:test}
   grantType: ${WX_GRANT_TYPE:authorization_code}
 
 # 微信h5登录配置
 wxh5:
-  appId: ${WXH5_APP_ID:wx1412e746e8e39bf2}
-  appSecret: ${WXH5_APP_SECRET:7e6e1766b7a9af22a876a8a4e426d17c}
+  appId: ${WXH5_APP_ID:test}
+  appSecret: ${WXH5_APP_SECRET:test}
   token: 123456
 
 # 系统配置
@@ -96,7 +96,7 @@ spring:
 
   datasource:
     # dev环境默认使用sg-exam-user-dev
-    url: jdbc:mysql://${SG_DB_USER_HOST:localhost}:${SG_DB_USER_POST:3306}/${SG_DB_USER_NAME:sg-exam-user-dev}?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+    url: jdbc:mysql://${SG_DB_USER_HOST:localhost}:${SG_DB_USER_POST:3306}/${SG_DB_USER_NAME:sg-exam-user-dev}?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&allowPublicKeyRetrieval=true
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.jdbc.Driver
     username: ${SG_DB_USER_USERNAME:root}
@@ -126,7 +126,7 @@ spring:
       # 单次请求的文件的总大小
       max-request-size: 100MB
   datasource:
-    url: jdbc:mysql://${SG_DB_USER_HOST}:${SG_DB_USER_POST}/sg-exam-user?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+    url: jdbc:mysql://${SG_DB_USER_HOST}:${SG_DB_USER_POST}/sg-exam-user?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&allowPublicKeyRetrieval=true
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.jdbc.Driver
     username: ${SG_DB_USER_USERNAME:root}

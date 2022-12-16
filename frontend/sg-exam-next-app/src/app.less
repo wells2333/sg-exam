@@ -5,6 +5,10 @@ page {
   height: 100%;
 }
 
+.bg-white {
+  background-color: white;
+}
+
 .round-btn {
   padding: 0 10px;
   margin-right: 10px;
@@ -23,11 +27,11 @@ page {
   justify-content: center;
 }
 
-.exam-img {
+.exam-img, .course-img {
   width: 100%;
   height: 160px;
 }
-.exam-img-top {
+.exam-img-top, .course-img-top {
   position: absolute;
   width: 40px;
   top: 0;
@@ -40,39 +44,63 @@ page {
 .exam-img-top-text {
 
 }
-.exam-img-bottom {
+.exam-img-bottom, .course-img-bottom {
   width: 100%;
   position: absolute;
   bottom: 70px;
   color: white;
   background-image: linear-gradient(0deg, rgba(34, 34, 34, 1), rgba(34, 34, 34, 0));
 }
-.exam-item-bottom {
+.exam-item-bottom, .course-item-bottom {
   display: flex;
   justify-content: space-between;
   margin: 4px 8px 8px 8px;
 }
-.exam-title {
+.exam-title, .course-title {
   display: block;
 }
-.exam-desc {
+.exam-desc, .course-desc {
   display: block;
   padding-left: 10px;
   padding-bottom: 6px;
   font-size: 16px;
 }
-.exam-time {
-  color: gray;
-  font-size: 15px;
-}
-.exam-item-bottom-first-tag {
+.exam-item-bottom-first-tag, .course-item-bottom-first-tag {
   margin-left: 0 !important;
 }
 
-.exam-item-bottom-tag {
+.exam-item-bottom-tag, .course-item-bottom-tag {
   margin-left: 8px;
+  margin-top: 3px;
 }
 
-.bg-white {
-  background-color: white;
+.exam-item-favorites, .course-item-favorites {
+  margin-right: 8px;
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.exam-item-favorites-item, .course-item-favorites-item {
+  margin-left: 12px;
+}
+
+.exam-item-favorites-text, .course-item-favorites-text {
+  color: #AAAAAA;
+  font-size: 14px;
+  margin-left: 2px;
+}
+
+.course-simple-desc {
+  font-size: 14px;
+  color: gray;
+  margin-top: 6px;
+}
+
+.box-show-item {
+  box-shadow: 0 3px 8px rgb(0 0 0 / 15%);
+}
+
+.mb-bottom-20 {
+  margin-bottom: 20px;
 }

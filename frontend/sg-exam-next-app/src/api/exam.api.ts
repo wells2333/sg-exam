@@ -44,6 +44,38 @@ class examApi {
     async favoriteExam(userId: string, examinationId: string, type: string) {
         return api.fetchExam<Sg.ExamInfo>("/v1/favoriteExam/favoriteExam/" + examinationId + "?userId=" + userId + "&type=" + type, {}, "POST");
     }
+
+    async courseList(params: object) {
+        return api.fetchExam<Sg.ExamInfo>("/v1/course/courseList", params, "GET");
+    }
+
+    async popularCourses() {
+        return api.fetchExam<Sg.ExamInfo>("/v1/course/popularCourses", {}, "GET");
+    }
+
+    async courseDetail(id: string) {
+        return api.fetchExam<Sg.ExamInfo>("/v1/course/detail/" + id, {}, "GET");
+    }
+
+    async joinCourse(id: string|undefined, type: string) {
+        return api.fetchExam<Sg.ExamInfo>("/v1/course/" + id + "/join?type=" + type, {}, "POST");
+    }
+
+    async courseEvaluate(id: string|undefined, params: object) {
+        return api.fetchExam<Sg.ExamInfo>("/v1/evaluate/list?courseId=" + id, params, "GET");
+    }
+
+    async addEvaluate(data: object) {
+        return api.fetchExam<Sg.ExamInfo>("/v1/evaluate", data, "POST");
+    }
+
+    async getSectionDetail(id: string) {
+        return api.fetchExam<Sg.ExamInfo>("/v1/section/watchSection/" + id, {}, "GET");
+    }
+
+    async getPointDetail(id: string) {
+        return api.fetchExam<Sg.ExamInfo>("/v1/knowledgePoint/detail/" + id, {}, "GET");
+    }
 }
 
 export default new examApi()
