@@ -91,8 +91,8 @@
            <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp_1.png" height="200"/>
            <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp_2.jpeg" height="200"/>
            <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp_3.png" height="200"/>
-           <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp_6.jpeg" height="200"/>
-           <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp_7.jpeg" height="200"/>
+           <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp_6.png" height="200"/>
+           <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp_7.png" height="200"/>
         </td>
         <td> 
            <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/monitor_1.png" height="200"/>
