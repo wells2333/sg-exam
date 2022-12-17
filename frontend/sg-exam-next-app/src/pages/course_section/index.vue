@@ -15,7 +15,7 @@
               <video class="section-video-content" v-if="videoUrl !== undefined" :src="videoUrl"></video>
             </view>
             <view class="at-article__section">
-              <wxparse :html="pointDetail.content" key={Math.random()} />
+              <wxparse :html="pointDetail.content" key={Math.random()}></wxparse>
             </view>
           </view>
         </view>
@@ -23,7 +23,9 @@
       <view v-if="sectionDetail !== undefined">
         <view class="at-article__h3">{{ sectionDetail.section.title }}</view>
         <view class='at-article__info'>
-          更新时间：{{ sectionDetail.section.updateTime }}&nbsp;&nbsp;&nbsp;&nbsp;学习时长：{{ sectionDetail.section.learnHour }}小时
+          更新时间：{{ sectionDetail.section.updateTime }}&nbsp;&nbsp;&nbsp;&nbsp;学习时长：{{
+            sectionDetail.section.learnHour
+          }}小时
         </view>
         <view class="at-article__content">
           <view class="section-content">
@@ -31,7 +33,7 @@
               <video class="section-video-content" v-if="videoUrl !== undefined" :src="videoUrl"></video>
             </view>
             <view class="at-article__section">
-              <wxparse :html="sectionDetail.section.content" key={Math.random()} />
+              <wxparse :html="sectionDetail.section.content" key={Math.random()}></wxparse>
             </view>
           </view>
         </view>
@@ -44,7 +46,6 @@
 import Taro from "@tarojs/taro";
 import {onMounted, ref, unref} from 'vue';
 import examApi from '../../api/exam.api';
-import {filterLogin} from "../../utils/filter";
 
 export default {
   setup() {

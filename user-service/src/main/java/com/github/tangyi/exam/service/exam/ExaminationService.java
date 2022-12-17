@@ -22,8 +22,7 @@ import com.github.tangyi.exam.enums.ExaminationTypeEnum;
 import com.github.tangyi.exam.mapper.ExaminationMapper;
 import com.github.tangyi.exam.service.ExaminationSubjectService;
 import com.github.tangyi.exam.service.course.CourseService;
-import com.github.tangyi.exam.service.data.ExamFavoriteService;
-import com.github.tangyi.exam.service.data.ExamStartCountService;
+import com.github.tangyi.exam.service.fav.ExamFavoritesService;
 import com.github.tangyi.exam.service.image.RandomImageService;
 import com.github.tangyi.exam.service.subject.SubjectCategoryService;
 import com.github.tangyi.exam.service.subject.SubjectsService;
@@ -61,24 +60,33 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 
 	private final ExaminationSubjectService examinationSubjectService;
 
-	private final CourseService courseService;
-
 	private final SysProperties sysProperties;
 
 	private final QiNiuService qiNiuService;
 
-	private final RandomImageService randomImageService;
-
-	private final ExamStartCountService examStartCountService;
-
-	private final ExamFavoriteService examFavoriteService;
-
 	private final SubjectCategoryService subjectCategoryService;
+
+	private final CourseService courseService;
+
+	private final ExamFavoritesService examFavoritesService;
+
+	private final RandomImageService randomImageService;
 
 	@Override
 	@Cacheable(value = ExamCacheName.EXAMINATION, key = "#id")
 	public Examination get(Long id) {
 		return super.get(id);
+	}
+
+	public ExaminationDto getDetail(Long id) {
+		Examination examination = super.get(id);
+		List<Course> courses = courseService.findListById(
+				Collections.singletonList(examination.getId()).toArray(Long[]::new));
+		return toDto(examination, courses);
+	}
+
+	public List<Long> findAllIds() {
+		return this.dao.findAllIds();
 	}
 
 	/**
@@ -119,42 +127,63 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		if (CollectionUtils.isNotEmpty(page.getList())) {
 			List<ExaminationDto> dtoList = toDtoList(page.getList());
 			if (Status.OPEN.equals(params.get("favorite"))) {
-				examStartCountService.findExamStartCount(dtoList);
-				examFavoriteService.findUserFavorites(dtoList);
-				examFavoriteService.findExamFavCount(dtoList);
+				examFavoritesService.findExamStartCounts(dtoList);
+				examFavoritesService.findUserFavorites(dtoList);
+				examFavoritesService.findFavCount(dtoList);
 			}
 			pageInfo.setList(dtoList);
 		}
 		return pageInfo;
 	}
 
-	public PageInfo<ExaminationDto> findUserFavoritesByPage(Map<String, Object> params, int pageNum, int pageSize) {
+	public PageInfo<?> findUserFavoritesPage(PageInfo<ExamUserFav> page) {
 		PageInfo<ExaminationDto> pageInfo = new PageInfo<>();
-		List<Long> examIds = examFavoriteService.findUserFavoritesExamIds();
-		if (CollectionUtils.isNotEmpty(examIds)) {
-			List<Examination> examinations = this.dao.findListById(examIds.toArray(Long[]::new));
-			List<ExaminationDto> dtoList = toDtoList(examinations);
-			for (ExaminationDto dto : dtoList) {
-				dto.setFavorite(true);
-			}
-			pageInfo.setList(dtoList);
+		BeanUtils.copyProperties(page, pageInfo);
+		List<Long> examIds = page.getList().stream().map(ExamUserFav::getTargetId).collect(Collectors.toList());
+		List<Examination> examinations = findListById(examIds.toArray(Long[]::new));
+		List<ExaminationDto> dtoList = toDtoList(examinations);
+		for (ExaminationDto dto : dtoList) {
+			dto.setFavorite(true);
 		}
+		examFavoritesService.findExamStartCounts(dtoList);
+		examFavoritesService.findFavCount(dtoList);
+		pageInfo.setList(dtoList);
 		return pageInfo;
 	}
 
 	public List<ExaminationDto> toDtoList(List<Examination> examinations) {
 		List<Course> courses = courseService.findListById(
 				examinations.stream().map(Examination::getCourseId).distinct().toArray(Long[]::new));
-		return examinations.stream().map(exam -> {
-			ExaminationDto dto = new ExaminationDto();
-			BeanUtils.copyProperties(exam, dto);
-			// 设置考试所属课程
-			courses.stream().filter(tempCourse -> tempCourse.getId().equals(exam.getCourseId())).findFirst()
-					.ifPresent(dto::setCourse);
-			initExaminationImage(dto);
-			dto.setTypeLabel(ExaminationTypeEnum.matchByValue(dto.getType()).getName());
-			return dto;
-		}).collect(Collectors.toList());
+		return examinations.stream().map(exam -> toDto(exam, courses)).collect(Collectors.toList());
+	}
+
+	public ExaminationDto toDto(Examination exam, List<Course> courses) {
+		ExaminationDto dto = new ExaminationDto();
+		BeanUtils.copyProperties(exam, dto);
+		// 设置考试所属课程
+		courses.stream().filter(tempCourse -> tempCourse.getId().equals(exam.getCourseId())).findFirst()
+				.ifPresent(dto::setCourse);
+		initExaminationImage(dto);
+		dto.setTypeLabel(ExaminationTypeEnum.matchByValue(dto.getType()).getName());
+		return dto;
+	}
+
+	/**
+	 * 获取考试封面
+	 *
+	 * @param examinationDto examinationDto
+	 * @author tangyi
+	 * @date 2020/03/12 22:32:30
+	 */
+	public void initExaminationImage(ExaminationDto examinationDto) {
+		try {
+			if (examinationDto.getImageId() != null && examinationDto.getImageId() != 0L) {
+				String imageUrl = qiNiuService.getPreviewUrl(examinationDto.getImageId());
+				examinationDto.setImageUrl(StringUtils.getIfEmpty(imageUrl, randomImageService::randomImage));
+			}
+		} catch (Exception e) {
+			log.error("initExaminationImage failed", e);
+		}
 	}
 
 	/**
@@ -306,24 +335,6 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	 */
 	public int findExamUserCount(Examination examination) {
 		return this.dao.findExamUserCount(examination);
-	}
-
-	/**
-	 * 获取考试封面
-	 *
-	 * @param examinationDto examinationDto
-	 * @author tangyi
-	 * @date 2020/03/12 22:32:30
-	 */
-	public void initExaminationImage(ExaminationDto examinationDto) {
-		try {
-			if (examinationDto.getImageId() != null && examinationDto.getImageId() != 0L) {
-				String imageUrl = qiNiuService.getPreviewUrl(examinationDto.getImageId());
-				examinationDto.setImageUrl(StringUtils.getIfEmpty(imageUrl, randomImageService::randomImage));
-			}
-		} catch (Exception e) {
-			log.error("initExaminationImage failed", e);
-		}
 	}
 
 	/**

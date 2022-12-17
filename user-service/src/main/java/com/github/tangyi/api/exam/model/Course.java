@@ -104,4 +104,16 @@ public class Course extends BaseEntity<Course> {
 	 */
 	@Transient
 	private Integer memberCount;
+
+	/**
+	 * 是否收藏
+	 */
+	@Transient
+	private boolean favorite;
+
+	/**
+	 * 收藏人数
+	 */
+	@Transient
+	private Long favCount;
 }

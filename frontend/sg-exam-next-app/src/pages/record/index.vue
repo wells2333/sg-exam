@@ -118,7 +118,8 @@ export default {
 
     function goToDetails($event, item) {
       const recordId = unref(item).id;
-      Taro.navigateTo({url: `/pages/answer/index?recordId=${recordId}`});
+      const examinationId = unref(item).examinationId;
+      Taro.navigateTo({url: `/pages/answer/index?recordId=${recordId}&examinationId=${examinationId}`});
     }
 
     function getTypeTag(item) {

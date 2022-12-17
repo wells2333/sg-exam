@@ -12,8 +12,10 @@
           circular='false'
           autoplay='false'
           indicatorDots='true'>
-        <swiper-item v-for="(item, idx) in bannerUrls" :key="idx">
-          <image :src="item" class="banner-swiper-image"/>
+        <swiper-item v-for="(item, idx) in banners" :key="idx">
+          <view @click="handleClickBanner(item)">
+            <image :src="item.imageUrl" class="banner-swiper-image"/>
+          </view>
         </swiper-item>
       </swiper>
     </view>
@@ -23,18 +25,19 @@
     <AtGrid @click="handleGridClick" :data="homeGridData"/>
     <view class="home-view-tips">热门课程</view>
     <view class="popular-course-item box-show-item mb-bottom-20" v-for="course in courses">
-      <course-item :item="course" @click="handleClickCourse"></course-item>
+      <course-item :item="course" @click="handleClickCourse" @fav="handleFav"></course-item>
     </view>
   </view>
 </template>
 <script lang="ts">
-import {onMounted, ref} from 'vue';
+import {ref} from 'vue';
 import examApi from '../../api/exam.api';
 import operationApi from '../../api/operation.api';
 import Taro from "@tarojs/taro";
 import {shardMessage} from '../../constant/constant';
 import {filterLogin} from "../../utils/filter";
 import {CourseItem} from '../../components/course-item';
+import {successMessage} from "../../utils/util";
 
 export default {
   components: {
@@ -45,19 +48,16 @@ export default {
     // 搜索栏
     let searchValue = ref<string>("");
     // 运营位图片
-    const bannerUrls = ref<any>([]);
+    const banners = ref<any>([]);
     // 热门课程
     const courses = ref<any>([]);
 
     async function fetchBanners() {
-      const res = await operationApi.bannerList();
+      banners.value = [];
+      const res = await operationApi.bannerList({});
       const {code, result} = res;
-      if (code == 0 && result && result.list) {
-        const imageUrls = [];
-        result.list.forEach(e => {
-          imageUrls.push(e.imageUrl);
-        });
-        bannerUrls.value = imageUrls;
+      if (code == 0 && result && result.list && result.list.length > 0) {
+        banners.value = [...result.list];
       }
     }
 
@@ -69,6 +69,7 @@ export default {
     }
 
     async function fetchPopularCourses() {
+      courses.value = [];
       const res = await examApi.popularCourses();
       const {code, result} = res;
       if (code === 0) {
@@ -123,35 +124,55 @@ export default {
       Taro.navigateTo({url: "/pages/course_detail/index?courseId=" + course.id})
     }
 
+    function handleClickBanner(item) {
+      const {redirectUrl} = item;
+      if (redirectUrl === null || redirectUrl === '') {
+        return;
+      }
+      if (redirectUrl.startsWith('http')) {
+        Taro.navigateTo({url: "/pages/webview/index?url=" + redirectUrl})
+      } else {
+        Taro.navigateTo({url: redirectUrl});
+      }
+    }
+
+    function handleFav(item) {
+      const text = item.favorite ? '收藏' : '取消收藏';
+      successMessage(text + '成功');
+    }
+
     function init() {
       fetchBanners();
       fetchPopularCourses();
     }
 
-    onMounted( () => {
-      filterLogin().then(() => {
-        init();
-      }).catch(() => {
-        const indexUrl = '/pages/index/index';
-        Taro.reLaunch({url: indexUrl});
-      });
-    });
     return {
       current,
       homeGridData,
       searchValue,
       courses,
-      bannerUrls,
+      banners,
       init,
       handleSearchChange,
       handleSearch,
       handleGridClick,
-      handleClickCourse
+      handleClickCourse,
+      handleClickBanner,
+      handleFav
     };
+  },
+  onLoad() {
+    filterLogin().then(() => {}).catch(() => {
+      const indexUrl = '/pages/index/index';
+      Taro.reLaunch({url: indexUrl});
+    });
+  },
+  onShow() {
+    this.init();
   },
   onPullDownRefresh() {
     try {
-      init();
+      this.init();
     } finally {
       Taro.stopPullDownRefresh();
     }
@@ -180,6 +201,7 @@ export default {
   width: 100%;
   height: 120px;
   margin-bottom: 4px;
+  cursor: pointer;
 }
 
 .banner-swiper-image {

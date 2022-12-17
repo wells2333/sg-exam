@@ -1,3 +1,5 @@
+import Taro from "@tarojs/taro";
+
 /**
  * 生成随机len位数字
  */
@@ -66,4 +68,20 @@ export const getDuration = (start, end) => {
     } else {
         return seconds + "秒";
     }
+}
+
+export const successMessage = (msg: string = '操作成功') => {
+    Taro.atMessage({
+        message: msg,
+        type: 'success',
+        duration: '500'
+    });
+}
+
+export const warnMessage = (msg: string = '操作失败') => {
+    Taro.atMessage({
+        message: msg,
+        type: 'warning',
+        duration: '500'
+    });
 }

@@ -78,8 +78,6 @@ CREATE TABLE `exam_examination` (
   `sort` int(10) unsigned zerofill NOT NULL COMMENT '排序',
   `tags` varchar(255) DEFAULT '' COMMENT '标签，多个逗号分隔',
   `answer_type` tinyint(1) unsigned zerofill NOT NULL DEFAULT '0' COMMENT '答题模式，0：展示全部题目，1：上一题、下一题模式',
-  `start_count` bigint(20) unsigned zerofill DEFAULT NULL COMMENT '考试次数',
-  `favorites_count` bigint(20) unsigned zerofill DEFAULT NULL COMMENT '收藏次数',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `idx_exam_id` (`examination_name`) COMMENT '考试名称',
   KEY `idx_type` (`type`)
@@ -1182,7 +1180,7 @@ INSERT INTO `operation_banner` VALUES (2, 'admin', '2022-11-12 12:43:24', 'admin
 -- ----------------------------
 -- 考试
 -- ----------------------------
-INSERT INTO `exam_examination` VALUES (1, '语文考试', 0, '语文考试', '2022-11-13 14:22:02', '2023-11-20 14:22:02', 25, 0, 3, 1, '语文考试 https://www.zgshici.com/etagid224722b0/', 'admin', '2022-11-13 14:22:55', 'admin', '2022-11-13 14:22:55', 0, 'gitee', 0000000001, '语文', 0, NULL, NULL);
+INSERT INTO `exam_examination` VALUES (1, '语文考试', 0, '语文考试', '2022-11-13 14:22:02', '2023-11-20 14:22:02', 25, 0, 3, 1, '语文考试 https://www.zgshici.com/etagid224722b0/', 'admin', '2022-11-13 14:22:55', 'admin', '2022-11-13 14:22:55', 0, 'gitee', 0000000001, '语文', 0);
 
 -- ----------------------------
 -- 题目

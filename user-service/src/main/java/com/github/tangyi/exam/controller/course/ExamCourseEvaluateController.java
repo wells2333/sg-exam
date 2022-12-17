@@ -3,6 +3,7 @@ package com.github.tangyi.exam.controller.course;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.model.Course;
 import com.github.tangyi.api.exam.model.ExamCourseEvaluate;
+import com.github.tangyi.api.user.model.User;
 import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.SysUtil;
@@ -10,6 +11,7 @@ import com.github.tangyi.exam.service.course.CourseService;
 import com.github.tangyi.exam.service.course.ExamCourseEvaluateService;
 import com.github.tangyi.log.annotation.SgLog;
 import com.github.tangyi.log.constants.OperationType;
+import com.github.tangyi.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -36,6 +38,8 @@ public class ExamCourseEvaluateController extends BaseController {
 	private final ExamCourseEvaluateService examCourseEvaluateService;
 
 	private final CourseService courseService;
+
+	private final UserService userService;
 
 	@GetMapping("/list")
 	@Operation(summary = "查询课程评价列表")
@@ -66,7 +70,12 @@ public class ExamCourseEvaluateController extends BaseController {
 	@SgLog(value = "新增课程评价", operationType = OperationType.INSERT)
 	public R<Boolean> add(@RequestBody @Valid ExamCourseEvaluate examCourseEvaluate) {
 		examCourseEvaluate.setCommonValue();
-		examCourseEvaluate.setUserId(SysUtil.getUserId());
+		Long userId = SysUtil.getUserId();
+		examCourseEvaluate.setUserId(userId);
+		User user = userService.get(userId);
+		if (user != null) {
+			examCourseEvaluate.setOperatorName(user.getName());
+		}
 		return R.success(examCourseEvaluateService.insert(examCourseEvaluate) > 0);
 	}
 

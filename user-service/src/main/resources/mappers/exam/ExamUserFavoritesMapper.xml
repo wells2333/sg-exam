@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.github.tangyi.exam.mapper.ExamExaminationFavoritesMapper">
-    <resultMap id="examExaminationFavoritesResultMap" type="com.github.tangyi.api.exam.model.ExamExaminationFavorites">
+<mapper namespace="com.github.tangyi.exam.mapper.UserFavMapper">
+    <resultMap id="examUserFavoritesResultMap" type="com.github.tangyi.api.exam.model.ExamUserFav">
         <id column="id" property="id"/>
         <result column="creator" property="creator"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
@@ -9,15 +9,19 @@
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
         <result column="is_deleted" property="isDeleted" jdbcType="BIT"/>
         <result column="tenant_code" property="tenantCode"/>
-        <result column="examination_id" property="examinationId"/>
+        <result column="target_id" property="targetId"/>
         <result column="user_id" property="userId"/>
+        <result column="target_type" property="targetType"/>
     </resultMap>
 
-    <select id="findPage" resultMap="examExaminationFavoritesResultMap">
-        SELECT * FROM exam_examination_favorites WHERE is_deleted = 0
+    <select id="findPage" resultMap="examUserFavoritesResultMap">
+        SELECT * FROM exam_user_favorites WHERE is_deleted = 0
         <if test="params != null">
             <if test="params.userId != null and params.userId != ''">
                 AND user_id = #{params.userId}
+            </if>
+            <if test="params.targetType != null and params.targetType != ''">
+                AND target_type = #{params.targetType}
             </if>
             <if test="params.tenantCode != null and params.tenantCode != ''">
                 AND tenant_code = #{params.tenantCode}
@@ -33,53 +37,33 @@
         </choose>
     </select>
 
-    <select id="findList" resultMap="examExaminationFavoritesResultMap">
-        SELECT *
-        FROM exam_examination_favorites a
-        WHERE a.is_deleted = 0
-          AND a.tenant_code = #{tenantCode}
+    <select id="findList" resultMap="examUserFavoritesResultMap">
+        SELECT * FROM exam_user_favorites a WHERE a.is_deleted = 0 AND a.tenant_code = #{tenantCode}
     </select>
 
-    <select id="findListById" resultMap="examExaminationFavoritesResultMap">
-        SELECT * FROM exam_examination_favorites a WHERE a.id IN
+    <select id="findListById" resultMap="examUserFavoritesResultMap">
+        SELECT * FROM exam_user_favorites a WHERE a.id IN
         <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
     </select>
 
-    <select id="findUserFavorites" resultMap="examExaminationFavoritesResultMap">
-        SELECT *
-        FROM exam_examination_favorites a
-        WHERE a.is_deleted = 0
-          AND a.user_id = #{userId}
+    <select id="getByUserIdAndTarget" resultMap="examUserFavoritesResultMap">
+        SELECT * FROM exam_user_favorites a WHERE user_id = #{userId} AND target_id = #{targetId} AND target_type = #{targetType}
     </select>
 
-    <select id="getByUserIdAndExaminationId" resultMap="examExaminationFavoritesResultMap">
-        SELECT *
-        FROM exam_examination_favorites a
-        WHERE a.is_deleted = 0
-          AND a.user_id = #{userId}
-          AND a.examination_id = #{examinationId}
-    </select>
+    <delete id="deleteByUserIdAndTarget">
+        DELETE FROM exam_user_favorites WHERE user_id = #{userId} AND target_id = #{targetId} AND target_type = #{targetType}
+    </delete>
 
     <delete id="delete">
-        DELETE
-        FROM exam_examination_favorites
-        WHERE id = #{id}
+        DELETE FROM exam_user_favorites WHERE id = #{id}
     </delete>
 
     <delete id="deleteAll">
-        DELETE
-        FROM exam_examination_favorites WHERE id IN
+        DELETE FROM exam_user_favorites WHERE id IN
         <foreach item="item" index="index" collection="ids" open="("
                  separator="," close=")">#{item}
         </foreach>
-    </delete>
-
-    <delete id="deleteByUserIdAndExaminationId">
-        DELETE
-        FROM exam_examination_favorites
-        WHERE user_id = #{userId}
-          AND examination_id = #{examinationId}
     </delete>
 </mapper>

@@ -93,6 +93,7 @@ export default {
       duration: '-'
     });
     const recordId = ref<string>('');
+    const examinationId = ref<string>('');
     const score = ref<string>('-');
     const rate = ref<string>('-');
 
@@ -101,6 +102,7 @@ export default {
       try {
         const params = currentInstance.router.params;
         recordId.value = params.recordId;
+        examinationId.value = params.examinationId;
         const detailResult = await recordApi.recordDetails(recordId.value);
         const {code, result} = detailResult
         if (code === 0) {
@@ -118,7 +120,7 @@ export default {
     }
 
     function handleTryAgain() {
-      Taro.reLaunch({url: "/pages/home/index"});
+      Taro.navigateTo({url: "/pages/exam_detail/index?id=" + examinationId.value})
     }
 
     function getOptionColor(answer, subject) {

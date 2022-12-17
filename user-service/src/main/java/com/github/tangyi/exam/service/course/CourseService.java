@@ -5,10 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.dto.CourseChapterDto;
 import com.github.tangyi.api.exam.dto.CourseDetailDto;
 import com.github.tangyi.api.exam.dto.CourseSectionDto;
-import com.github.tangyi.api.exam.model.Course;
-import com.github.tangyi.api.exam.model.ExamCourseChapter;
-import com.github.tangyi.api.exam.model.ExamCourseMember;
-import com.github.tangyi.api.exam.model.ExamCourseSection;
+import com.github.tangyi.api.exam.model.*;
 import com.github.tangyi.api.user.model.Attachment;
 import com.github.tangyi.common.constant.Group;
 import com.github.tangyi.common.constant.Status;
@@ -17,6 +14,7 @@ import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.exam.mapper.CourseMapper;
+import com.github.tangyi.exam.service.fav.CourseFavoritesService;
 import com.github.tangyi.exam.service.image.RandomImageService;
 import com.github.tangyi.user.service.AttachmentService;
 import com.github.tangyi.user.service.QiNiuService;
@@ -25,6 +23,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -34,6 +33,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 /**
  * 课程service
@@ -60,6 +60,8 @@ public class CourseService extends CrudService<CourseMapper, Course> {
 
 	private final ExamCourseMemberService memberService;
 
+	private final CourseFavoritesService courseFavoritesService;
+
 	@Override
 	@Cacheable(value = ExamCacheName.COURSE, key = "#id")
 	public Course get(Long id) {
@@ -70,12 +72,15 @@ public class CourseService extends CrudService<CourseMapper, Course> {
 		return course;
 	}
 
+	public List<Long> findAllIds() {
+		return this.dao.findAllIds();
+	}
+
 	public List<Course> popularCourses() {
 		PageInfo<Course> page = this.findPage(Maps.newHashMap(), 1, 10);
-		if (CollectionUtils.isNotEmpty(page.getList())) {
-			return page.getList();
-		}
-		return Lists.newArrayList();
+		courseFavoritesService.findUserFavorites(page.getList());
+		courseFavoritesService.findFavCount(page.getList());
+		return page.getList();
 	}
 
 	@Override
@@ -84,6 +89,20 @@ public class CourseService extends CrudService<CourseMapper, Course> {
 		if (CollectionUtils.isNotEmpty(pageInfo.getList())) {
 			this.initCourseInfo(pageInfo.getList());
 		}
+		return pageInfo;
+	}
+
+	public PageInfo<?> findUserFavoritesPage(PageInfo<ExamUserFav> page) {
+		PageInfo<Course> pageInfo = new PageInfo<>();
+		BeanUtils.copyProperties(page, pageInfo);
+		List<Long> ids = page.getList().stream().map(ExamUserFav::getTargetId).collect(Collectors.toList());
+		List<Course> courses = findListById(ids.toArray(Long[]::new));
+		this.initCourseInfo(courses);
+		for (Course course : courses) {
+			course.setFavorite(true);
+		}
+		courseFavoritesService.findFavCount(courses);
+		pageInfo.setList(courses);
 		return pageInfo;
 	}
 

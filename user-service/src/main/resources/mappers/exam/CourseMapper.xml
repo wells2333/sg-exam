@@ -36,6 +36,12 @@
         ORDER BY sort ASC
     </select>
 
+    <select id="findAllIds" resultType="java.lang.Long">
+        SELECT a.id
+        FROM exam_course a
+        WHERE a.is_deleted = 0
+    </select>
+
     <select id="findList" resultMap="courseResultMap">
         SELECT * FROM exam_course a WHERE a.is_deleted = 0 and a.tenant_code = #{tenantCode} ORDER BY sort ASC
     </select>

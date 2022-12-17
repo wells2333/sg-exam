@@ -6,6 +6,7 @@
         <result column="evaluate_content" property="evaluateContent"/>
         <result column="user_id" property="userId"/>
         <result column="evaluate_level" property="evaluateLevel"/>
+        <result column="operator_name" property="operatorName"/>
         <result column="creator" property="creator"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="operator" property="operator"/>

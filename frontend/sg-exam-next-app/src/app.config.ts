@@ -12,9 +12,11 @@ export default defineAppConfig({
       'pages/about/index',
       'pages/favorite/index',
       'pages/exam/index',
+      'pages/exam_detail/index',
       'pages/course/index',
       'pages/course_detail/index',
-      'pages/course_section/index'
+      'pages/course_section/index',
+      'pages/webview/index'
   ],
   window: {
     backgroundTextStyle: 'light',

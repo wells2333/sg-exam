@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -111,12 +112,12 @@ public class Examination extends BaseEntity<Examination> {
 	/**
 	 * 考试次数
 	 */
-	@Column(name = "start_count")
+	@Transient
 	private Long startCount;
 
 	/**
 	 * 收藏次数
 	 */
-	@Column(name = "favorites_count")
+	@Transient
 	private Long favoritesCount;
 }

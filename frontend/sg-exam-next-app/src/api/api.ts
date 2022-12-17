@@ -1,7 +1,5 @@
 import Taro from "@tarojs/taro"
 
-export const DEV_HOST = 'http://127.0.0.1:9183';
-
 export const TEST_HOST = 'http://192.168.100.16:9183';
 
 export const PROD_HOST = 'https://www.yunmianshi.com';

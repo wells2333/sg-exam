@@ -26,24 +26,16 @@
         </view>
       </at-tabs-pane>
     </at-tabs>
-
-    <at-load-more v-if="pageNumRef !== 1 || (pageNumRef === 1 && exams.length === 0)" :status="loadMoreStatus" moreBtnStyle="size=5px;"></at-load-more>
-    <at-modal :isOpened="isOpenedStartModal" title="" confirm-text="确定" cancel-text="取消"
-              content="确定开始吗？"
-              @close="handleCloseStartModal"
-              @cancel="handleCancelStartModal"
-              @confirm="handleConfirmStartModal"
-    ></at-modal>
+    <at-load-more v-if="pageNumRef !== 1 || (pageNumRef === 1 && exams.length === 0)" :status="loadMoreStatus"
+                  moreBtnStyle="size=5px;"></at-load-more>
   </view>
 </template>
 <script lang="ts">
 import {onMounted, ref, unref} from 'vue';
-import api from "../../api/api";
 import examApi from '../../api/exam.api';
 import Taro from "@tarojs/taro";
 import {ExamItem} from '../../components/exam-item';
 import {examTypeTagList, shardMessage} from '../../constant/constant';
-import {filterLogin} from "../../utils/filter";
 
 export default {
   components: {
@@ -63,10 +55,9 @@ export default {
     let searchValue = ref<string>("");
     const hasNextPageRef = ref<boolean>(true);
     const nextPageRef = ref<number>(1);
-    const isOpenedStartModal = ref<boolean>(false);
-    const startItem = ref<any>(undefined);
     const loadMoreStatus = ref<string>('more');
     const pageNumRef = ref<number>(1);
+
     async function fetch(type, examinationName = "", append = true) {
       if (!unref(hasNextPageRef)) {
         loadMoreStatus.value = 'noMore';
@@ -103,61 +94,7 @@ export default {
     }
 
     function handleStart(item) {
-      isOpenedStartModal.value = true;
-      startItem.value = item;
-    }
-
-    function handleCloseStartModal() {
-      isOpenedStartModal.value = false;
-    }
-
-    function handleCancelStartModal() {
-      isOpenedStartModal.value = false;
-    }
-
-    async function handleConfirmStartModal() {
-      try {
-        await Taro.showLoading({title: '加载中'});
-        const {id} = api.getUserInfo();
-        if (!id) {
-          Taro.showToast({title: '请先登录', icon: 'error', duration: 1500});
-          return;
-        }
-        const startResult = await examApi.startExam(unref(startItem).id, id);
-        if (startResult && startResult.code === 1) {
-          Taro.showToast({title: startResult.message, icon: 'error', duration: 1500});
-          return;
-        }
-        const {code, result, message} = startResult;
-        if (code !== 0) {
-          Taro.showToast({title: message, icon: 'error', duration: 1500});
-          return;
-        }
-        const {examination, examRecord, subjectDto, total, cards} = result;
-        if (examination) {
-          api.setExamination(examination);
-        }
-        if (subjectDto) {
-          api.setSubject(subjectDto);
-        }
-        if (cards) {
-          api.setCards(cards);
-        }
-        if (examRecord) {
-          api.setExamRecord(examRecord);
-        }
-        const {answerType} = examination;
-        if (answerType === 0) {
-          // 展示所有题目
-          Taro.navigateTo({url: "/pages/all_subject/index?recordId=" + examRecord.id + "&examinationId=" + examRecord.examinationId + "&total=" + total})
-        } else if (answerType === 1) {
-          // 上一题、下一题模式
-          Taro.navigateTo({url: "/pages/next_subject/index?recordId=" + examRecord.id + "&examinationId=" + examRecord.examinationId + "&total=" + total})
-        }
-      } finally {
-        handleCloseStartModal();
-        await Taro.hideLoading();
-      }
+      Taro.navigateTo({url: "/pages/exam_detail/index?id=" + item.id})
     }
 
     function handleTabClick(value) {
@@ -217,10 +154,6 @@ export default {
       tagsList: examTypeTagList,
       current,
       searchValue,
-      isOpenedStartModal,
-      handleCloseStartModal,
-      handleCancelStartModal,
-      handleConfirmStartModal,
       handleStart,
       handleTabClick,
       handleSearchChange,

@@ -1,4 +1,5 @@
 <template>
+  <AtMessage/>
   <view class="fixed-top">
     <view class="subject-exam-title bg-white">
       <view style="display: flex; justify-content: space-between">
@@ -13,11 +14,13 @@
   <view class="fixed-top-next subject-box">
     <view class="subject-content bg-white">
       <view class="subject-type-label">
-        <text>{{ subject.typeLabel }}</text>
+        <at-tag size="small" type="primary">{{ subject.typeLabel }}</at-tag>
+        <at-icon v-if="examination.type !== 0" @click="handleFavSubject(subject)" value="star-2" size='10'
+                 :color="subject.favorite === true ? '#FFC82C': '#AAAAAA'"></at-icon>
       </view>
       <view class="subject-title">
         <text class="subject-title-content">{{ subject.sort }}.&nbsp;</text>
-        <wxparse class="subject-title-content" :html="subject.subjectName" key={Math.random()} />
+        <wxparse class="subject-title-content" :html="subject.subjectName" key={Math.random()}></wxparse>
       </view>
       <view>
         <view v-if="subject.type === 0">
@@ -52,7 +55,7 @@
         </view>
         <view v-else-if="subject.type === 5">
           <subject-video ref="videoRef" :subject="subject"
-                     @update-selected="handleChoiceSelectedChange"></subject-video>
+                         @update-selected="handleChoiceSelectedChange"></subject-video>
         </view>
       </view>
     </view>
@@ -78,7 +81,8 @@
     <at-modal-content>
       <view class="card-box">
         <view class="card-item" v-for="card in cards">
-          <at-button class="card-item-btn" :type="getCardItemType(card)" :circle="true" @click="handleClickCardSubject(card.sort)">
+          <at-button class="card-item-btn" :type="getCardItemType(card)" :circle="true"
+                     @click="handleClickCardSubject(card.sort)">
             {{ card.sort }}
           </at-button>
         </view>
@@ -100,7 +104,7 @@ import {onMounted, ref, unref} from 'vue';
 import Taro from "@tarojs/taro";
 import examApi from '../../api/exam.api';
 import api from '../../api/api';
-import {parseRes, getDuration} from '../../utils/util';
+import {getDuration, parseRes, successMessage} from '../../utils/util';
 import {initRecorderManager, playAudio, pleaseStartRecord, startRecordAudio, stopRecordAudio} from "./audio";
 import {Choice} from '../../components/subject/choice/index';
 import {Judgement} from '../../components/subject/judgement/index';
@@ -374,6 +378,18 @@ export default {
       });
     }
 
+    async function handleFavSubject(item) {
+      item.favorite = !item.favorite;
+      const type = item.favorite ? '1' : '0';
+      const text = item.favorite ? '收藏' : '取消收藏';
+      const {id} = await api.getUserInfo();
+      const res = await examApi.favoriteSubject(id, item.id, type);
+      const {code} = res;
+      if (code === 0) {
+        successMessage(text + '成功');
+      }
+    }
+
     onMounted(() => {
       refreshDuration();
       fetch();
@@ -421,7 +437,8 @@ export default {
       handleClickCardSubject,
       getCardItemType,
       handleCloseSubmitModal,
-      handleConfirmSubmitModal
+      handleConfirmSubmitModal,
+      handleFavSubject
     }
   },
   toback() {
@@ -435,13 +452,19 @@ page {
   background-color: rgba(242, 244, 248, 1);
 }
 
-.at-tag--primary{
+.at-tag--primary {
   color: #E65D05;
   border-color: #E65D05;
   background-color: #FFF;
   font-weight: bold;
 }
+
 .at-checkbox::after {
   display: none;
+}
+
+.subject-type-label {
+  display: flex;
+  justify-content: space-between;
 }
 </style>

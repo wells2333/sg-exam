@@ -8,7 +8,6 @@ import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.*;
 import com.github.tangyi.common.vo.UserVo;
-import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.exam.enums.ExaminationTypeEnum;
 import com.github.tangyi.exam.handler.AnswerHandleResult;
 import com.github.tangyi.exam.service.ExamRecordService;
@@ -16,7 +15,7 @@ import com.github.tangyi.exam.service.ExaminationSubjectService;
 import com.github.tangyi.exam.service.RankInfoService;
 import com.github.tangyi.exam.service.answer.AnswerHandleService;
 import com.github.tangyi.exam.service.answer.AnswerService;
-import com.github.tangyi.exam.service.data.RedisCounterService;
+import com.github.tangyi.exam.service.fav.ExamFavoritesService;
 import com.github.tangyi.exam.service.subject.SubjectsService;
 import com.github.tangyi.exam.utils.AnswerHandlerUtil;
 import com.github.tangyi.exam.utils.SubjectUtil;
@@ -63,13 +62,13 @@ public class ExaminationActionService {
 
 	private final CommonExecutorService commonExecutorService;
 
-	private final RedisCounterService redisCounterService;
+	private final ExamFavoritesService examFavoritesService;
 
 	public ExaminationActionService(ExaminationService examinationService,
 			ExaminationSubjectService examinationSubjectService, ExamRecordService examRecordService,
 			SubjectsService subjectsService, AnswerService answerService, AnswerHandleService answerHandleService,
 			RankInfoService rankInfoService, CommonExecutorService commonExecutorService,
-			RedisCounterService redisCounterService) {
+			ExamFavoritesService examFavoritesService) {
 		this.examinationService = examinationService;
 		this.examinationSubjectService = examinationSubjectService;
 		this.examRecordService = examRecordService;
@@ -78,7 +77,7 @@ public class ExaminationActionService {
 		this.answerHandleService = answerHandleService;
 		this.rankInfoService = rankInfoService;
 		this.commonExecutorService = commonExecutorService;
-		this.redisCounterService = redisCounterService;
+		this.examFavoritesService = examFavoritesService;
 	}
 
 	/**
@@ -154,7 +153,7 @@ public class ExaminationActionService {
 			}).collect(Collectors.toList());
 			dto.setCards(cards);
 		}
-		redisCounterService.incrCount(ExamCacheName.EXAMINATION_START_COUNT, examinationId);
+		examFavoritesService.incrStartCount(examinationId);
 		return dto;
 	}
 

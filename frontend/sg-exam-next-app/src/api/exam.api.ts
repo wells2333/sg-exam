@@ -6,12 +6,16 @@ class examApi {
         return api.fetchExam<Sg.ExamInfo>("/v1/examination/examinationList", data, "GET")
     }
 
+    async examinationDetail(id: string|undefined) {
+        return api.fetchExam<Sg.ExamInfo>("/v1/examination/" + id + "/detail", {}, "GET")
+    }
+
     async userFavorites(data) {
-        return api.fetchExam<Sg.ExamInfo>("/v1/examination/userFavorites", data, "GET")
+        return api.fetchExam<Sg.ExamInfo>("/v1/favorites/user/favorites", data, "GET")
     }
 
     // 开始考试
-    async startExam(examinationId: string, userId: string) {
+    async startExam(examinationId: string|undefined, userId: string) {
         return api.fetchExam<Sg.ExamInfo>("/v1/examRecord/start", {
             examinationId,
             userId
@@ -41,8 +45,16 @@ class examApi {
         return api.fetchExam<Sg.ExamInfo>("/v1/examRecord/duration?startTime=" + startTime, {}, "GET")
     }
 
-    async favoriteExam(userId: string, examinationId: string, type: string) {
-        return api.fetchExam<Sg.ExamInfo>("/v1/favoriteExam/favoriteExam/" + examinationId + "?userId=" + userId + "&type=" + type, {}, "POST");
+    async favoriteExam(userId: string, id: string, type: string) {
+        return api.fetchExam<Sg.ExamInfo>("/v1/favorites/favExam/" + id + "?userId=" + userId + "&type=" + type, {}, "POST");
+    }
+
+    async favoriteCourse(userId: string, id: string, type: string) {
+        return api.fetchExam<Sg.ExamInfo>("/v1/favorites/favCourse/" + id + "?userId=" + userId + "&type=" + type, {}, "POST");
+    }
+
+    async favoriteSubject(userId: string, id: string, type: string) {
+        return api.fetchExam<Sg.ExamInfo>("/v1/favorites/favSubject/" + id + "?userId=" + userId + "&type=" + type, {}, "POST");
     }
 
     async courseList(params: object) {

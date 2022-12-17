@@ -1,4 +1,5 @@
 <template>
+  <AtMessage/>
   <view class="fixed-top">
     <view class="subject-exam-title bg-white">
       <view>{{ examination.examinationName }}({{ examination.totalScore }}分)</view>
@@ -8,13 +9,14 @@
     </view>
   </view>
   <view class="fixed-top-next subject-box">
-    <view class="subject-content bg-white" v-for="(item, index) in subjects">
+    <view class="subject-content bg-white" v-for="(item, index) in subjects" :key="index">
       <view class="subject-type-label">
-        <text>{{ item.typeLabel }}</text>
+        <at-tag size="small" type="primary">{{ item.typeLabel }}</at-tag>
+        <at-icon v-if="examination.type !== 0" @click="handleFavSubject(item)" value="star-2" size='10' :color="item.favorite === true ? '#FFC82C': '#AAAAAA'"></at-icon>
       </view>
       <view class="subject-title">
         <text class="subject-title-content">{{ item.sort }}.&nbsp;</text>
-        <wxparse class="subject-title-content" :html="item.subjectName" key={Math.random()} />
+        <wxparse class="subject-title-content" :html="item.subjectName" key={Math.random()}></wxparse>
       </view>
       <view>
         <view v-if="item.type === 0">
@@ -54,7 +56,7 @@ import api from "../../api/api";
 import {Choice} from '../../components/subject/choice/index';
 import {Judgement} from '../../components/subject/judgement/index';
 import {ShortAnswer} from '../../components/subject/shortAnswer/index';
-import {allSubjectData} from './data';
+import {successMessage} from "../../utils/util";
 
 export default {
   components: {
@@ -75,14 +77,13 @@ export default {
     const refs = ref<any>([]);
 
     async function fetch() {
-      Taro.showLoading({title: '加载中'})
       try {
+        Taro.showLoading({title: '加载中'});
         examination.value = api.getExamination();
         const params = currentInstance.router.params;
         recordId.value = params.recordId;
         examinationId.value = params.examinationId;
         const subjectResult = await examApi.allSubjects(examinationId.value);
-        // const subjectResult = allSubjectData;
         if (subjectResult && subjectResult.code === 0) {
           subjects.value = subjectResult.result;
         }
@@ -150,8 +151,8 @@ export default {
     }
 
     async function handleConfirmSubmitModal() {
-      Taro.showLoading({title: '提交中'});
       try {
+        Taro.showLoading({title: '提交中'});
         const data = ref<any>([]);
         unref(subjects).forEach(subject => {
           let {id, answerValue} = subject;
@@ -172,9 +173,21 @@ export default {
       return ref<any>(item);
     }
 
+    async function handleFavSubject(item) {
+      item.favorite = !item.favorite;
+      const type = item.favorite ? '1' : '0';
+      const text = item.favorite ? '收藏' : '取消收藏';
+      const {id} = await api.getUserInfo();
+      const res = await examApi.favoriteSubject(id, item.id, type);
+      const {code} = res;
+      if (code === 0) {
+        successMessage(text + '成功');
+      }
+    }
+
     onMounted(() => {
       fetch();
-    })
+    });
     return {
       subjects,
       percentage,
@@ -193,7 +206,8 @@ export default {
       handleChoiceSelectedChange,
       handleCloseSubmitModal,
       handleConfirmSubmitModal,
-      refItem
+      refItem,
+      handleFavSubject
     }
   }
 }
@@ -203,6 +217,7 @@ export default {
 page {
   background-color: rgba(242, 244, 248, 1);
 }
+
 .subject-exam-title {
   font-size: 18px;
   line-height: 25px;
@@ -214,7 +229,13 @@ page {
   padding: 10px;
   background-color: white;
 }
+
 .at-checkbox::after {
   display: none;
+}
+
+.subject-type-label {
+  display: flex;
+  justify-content: space-between;
 }
 </style>

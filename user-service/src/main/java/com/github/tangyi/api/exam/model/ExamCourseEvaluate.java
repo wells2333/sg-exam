@@ -48,6 +48,9 @@ public class ExamCourseEvaluate extends BaseEntity<ExamCourseEvaluate> {
 	@Column(name = "course_id")
 	private Long courseId;
 
+	@Column(name = "operator_name")
+	private String operatorName;
+
 	/**
 	 * 课程名称
 	 */
@@ -92,6 +95,14 @@ public class ExamCourseEvaluate extends BaseEntity<ExamCourseEvaluate> {
 
 	public void setCourseName(String courseName) {
 		this.courseName = courseName;
+	}
+
+	public String getOperatorName() {
+		return operatorName;
+	}
+
+	public void setOperatorName(String operatorName) {
+		this.operatorName = operatorName;
 	}
 
 	@Override

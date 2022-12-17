@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DuplicateKeyException;
@@ -90,6 +91,20 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 		}
 		initCategoryInfo(categoryIds, dtoList);
 		return PageUtil.newPageInfo(pageInfo, dtoList);
+	}
+
+	public PageInfo<?> findUserFavoritesPage(PageInfo<ExamUserFav> page) {
+		PageInfo<SubjectDto> pageInfo = new PageInfo<>();
+		BeanUtils.copyProperties(page, pageInfo);
+		List<Long> ids = page.getList().stream().map(ExamUserFav::getTargetId).collect(Collectors.toList());
+		List<SubjectDto> list = Lists.newArrayListWithExpectedSize(ids.size());
+		for (Long id : ids) {
+			SubjectDto subject = getSubject(id);
+			subject.setFavorite(true);
+			list.add(subject);
+		}
+		pageInfo.setList(list);
+		return pageInfo;
 	}
 
 	public void initCategoryInfo(List<Long> categoryIds, List<SubjectDto> subjects) {

@@ -4,4 +4,7 @@ export default {
     enableShareAppMessage: true,
     enableShareTimeline: true,
     backgroundTextStyle: 'dark',
+    usingComponents: {
+        wxparse: '../../components/wxparse/index'
+    }
 } as Taro.PageConfig

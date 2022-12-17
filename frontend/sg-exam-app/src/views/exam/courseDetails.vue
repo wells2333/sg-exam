@@ -101,7 +101,7 @@
                       <div class="user-evaluate-item" v-for="e in evaluates" :key="e.id">
                         <el-row>
                           <el-col :span="3">
-                            {{ e.operator }}
+                            {{ e.operatorName }}
                           </el-col>
                           <el-col :span="21">
                             <div>

@@ -52,7 +52,8 @@ export default defineComponent({
     }
   },
   emits: [
-    'start'
+    'start',
+    'fav'
   ],
   setup(props, {emit}) {
     const tags = ref<any>([]);
@@ -90,8 +91,9 @@ export default defineComponent({
       Taro.atMessage({
         message: message,
         type: 'info',
-        duration: 800
+        duration: 500
       });
+      emit('fav', props.item);
     }
 
     function handleStart() {

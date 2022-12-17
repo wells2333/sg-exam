@@ -37,9 +37,14 @@ public class ExaminationController extends BaseController {
 	private final ExaminationService examinationService;
 
 	@GetMapping("/{id}")
-	@Operation(summary = "获取考试信息", description = "根据考试id获取考试详细信息")
+	@Operation(summary = "获取考试信息", description = "根据考试id获取考试信息")
 	public R<Examination> examination(@PathVariable Long id) {
 		return R.success(examinationService.get(id));
+	}
+	@GetMapping("/{id}/detail")
+	@Operation(summary = "获取考试详细信息", description = "根据考试id获取考试详细信息")
+	public R<ExaminationDto> detail(@PathVariable Long id) {
+		return R.success(examinationService.getDetail(id));
 	}
 
 	@GetMapping("/anonymousUser/{id}")
@@ -54,14 +59,6 @@ public class ExaminationController extends BaseController {
 			@RequestParam(value = PAGE, required = false, defaultValue = PAGE_DEFAULT) int pageNum,
 			@RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize) {
 		return R.success(examinationService.examinationList(condition, pageNum, pageSize));
-	}
-
-	@GetMapping("userFavorites")
-	@Operation(summary = "获取用户收藏列表")
-	public R<PageInfo<ExaminationDto>> userFavorites(@RequestParam Map<String, Object> condition,
-			@RequestParam(value = PAGE, required = false, defaultValue = PAGE_DEFAULT) int pageNum,
-			@RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize) {
-		return R.success(examinationService.findUserFavoritesByPage(condition, pageNum, pageSize));
 	}
 
 	/**

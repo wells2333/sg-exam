@@ -127,4 +127,9 @@ public class SubjectDto extends BaseEntity<SubjectDto> {
 	 * 视频名称
 	 */
 	private String videoName;
+
+	/**
+	 * 是否已收藏
+	 */
+	private boolean favorite;
 }

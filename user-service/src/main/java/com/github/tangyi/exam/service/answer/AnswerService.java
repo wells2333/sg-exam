@@ -262,6 +262,8 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
 				subject.setExaminationRecordId(recordId);
 				subject.setTotal(subjectCount);
 				subject.setHasMore(subjectCount != null && es.getSort() < subjectCount);
+
+				// TODO 收藏
 			}
 		}
 		return subject;

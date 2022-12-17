@@ -40,19 +40,32 @@ public class SysUtil {
 		return getAuthentication().getName();
 	}
 
+	public static CustomUserDetails getUserDetails() {
+		JwtAuthenticationToken authenticationToken = (JwtAuthenticationToken) getAuthentication();
+		if (authenticationToken != null) {
+			return (CustomUserDetails) authenticationToken.getPrincipal();
+		}
+		return null;
+	}
+
 	/**
 	 * 获取当前用户的userId
 	 * @return Long
 	 */
 	public static Long getUserId() {
-		JwtAuthenticationToken authenticationToken = (JwtAuthenticationToken) getAuthentication();
-		if (authenticationToken != null) {
-			CustomUserDetails details = (CustomUserDetails) authenticationToken.getPrincipal();
-			if (details != null) {
-				return details.getId();
-			}
+		CustomUserDetails details = getUserDetails();
+		if (details != null) {
+			return details.getId();
 		}
 		return null;
+	}
+
+	public static String getUserName() {
+		CustomUserDetails details = getUserDetails();
+		if (details != null) {
+			return details.getUsername();
+		}
+		return "";
 	}
 
 	public static Collection<? extends GrantedAuthority> getAuthorities() {

@@ -11,10 +11,9 @@
 
 <script lang="ts">
 import Taro from "@tarojs/taro";
-import {onMounted, ref} from 'vue';
+import {ref} from 'vue';
 import examApi from '../../api/exam.api';
 import {CourseItem} from '../../components/course-item';
-import {filterLogin} from "../../utils/filter";
 
 export default {
   components: {
@@ -47,10 +46,10 @@ export default {
       Taro.navigateTo({url: "/pages/course_detail/index?courseId=" + course.id})
     }
 
-    onMounted(() => {
-      fetch();
-    });
-    return {searchValue, courseList, handleSearch, handleSearchChange, handleClickCourse}
+    return {fetch, searchValue, courseList, handleSearch, handleSearchChange, handleClickCourse}
+  },
+  onShow() {
+    this.fetch();
   }
 }
 </script>

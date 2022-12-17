@@ -67,7 +67,7 @@
               <view class="course-evaluates">
                 <view v-for="item in evaluates">
                   <at-flex class="course-flex">
-                    <at-flex-item :size="3" class="course-evaluate-operator">{{ item.operator }}</at-flex-item>
+                    <at-flex-item :size="3" class="course-evaluate-operator">{{ item.operatorName }}</at-flex-item>
                     <at-flex-item :size="10">
                       <at-rate class="course-flex-item" :value="item.evaluateLevel" size="small"></at-rate>
                       <text class="course-flex-item">{{ item.evaluateContent }}</text>
@@ -170,12 +170,13 @@ export default {
           await fetchEvaluate();
           setTimeout(() => {
             isSubmitted.value = false;
-          }, 5000);
+          }, 3000);
         } else {
           Taro.atMessage({
             message: '提交失败',
             type: 'warning',
           });
+          isSubmitted.value = false;
         }
       } else {
         Taro.atMessage({
