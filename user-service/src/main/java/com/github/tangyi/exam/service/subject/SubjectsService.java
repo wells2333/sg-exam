@@ -26,7 +26,10 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -58,9 +61,13 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 	public SubjectDto getSubject(Long id) {
 		Subjects subjects = this.findBySubjectId(id);
 		if (subjects != null) {
-			return subjectServiceFactory.service(subjects.getType()).getSubject(subjects.getSubjectId());
+			return getSubject(subjects.getSubjectId(), subjects.getType());
 		}
 		return null;
+	}
+
+	public SubjectDto getSubject(Long subjectId, Integer type) {
+		return subjectServiceFactory.service(type).getSubject(subjectId);
 	}
 
 	@Cacheable(cacheNames = ExamCacheName.SUBJECTS, key = "#subjectId")
@@ -133,17 +140,17 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 	 * @param categoryId categoryId
 	 * @return List
 	 */
-	public List<SubjectDto> findListByCategoryId(Long categoryId) {
-		List<Subjects> subjects = this.dao.findByCategoryId(categoryId);
-		if (CollectionUtils.isEmpty(subjects)) {
-			return Collections.emptyList();
-		}
-		List<SubjectDto> dtoList = Lists.newArrayListWithExpectedSize(subjects.size());
-		for (Subjects es : subjects) {
-			SubjectDto temp = subjectServiceFactory.service(es.getType()).getSubject(es.getSubjectId());
-			dtoList.add(temp);
-		}
-		return dtoList;
+	public List<Subjects> findListByCategoryId(Long categoryId) {
+		return this.dao.findByCategoryId(categoryId);
+	}
+
+	/**
+	 * 根据分类ID查询全部题目
+	 * @param categoryId categoryId
+	 * @return List
+	 */
+	public List<Subjects> findIdAndTypeByCategoryId(Long categoryId) {
+		return this.dao.findIdAndTypeByCategoryId(categoryId);
 	}
 
 	/**

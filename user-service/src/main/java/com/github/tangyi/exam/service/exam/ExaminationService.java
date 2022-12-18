@@ -387,8 +387,6 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 
 	/**
 	 * 查询下一题的序号
-	 * @param examinationId examinationId
-	 * @return Integer
 	 */
 	public Integer nextSubjectNo(Long examinationId) {
 		return examinationSubjectService.nextSubjectNo(examinationId);
@@ -396,8 +394,6 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 
 	/**
 	 * 根据考试ID查询全部题目，不返回题目的答案
-	 * @param examinationId examinationId
-	 * @return List
 	 */
 	@Cacheable(value = ExamCacheName.EXAM_ALL_SUBJECT, key = "#examinationId")
 	public List<SimpleSubjectDto> allSubjects(Long examinationId) {
@@ -422,9 +418,6 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 
 	/**
 	 * 根据考试ID批量添加题目
-	 * @param id id
-	 * @param subjects subjects
-	 * @return Boolean
 	 */
 	@Transactional
 	public Boolean batchAddSubjects(Long id, List<SubjectDto> subjects) {
@@ -457,12 +450,12 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		SubjectCategory category = subjectCategoryService.get(params.getCategoryId());
 		SgPreconditions.checkNull(category, "题目分类不存在");
 		// 根据分类查询题目
-		List<SubjectDto> dtoList = subjectsService.findListByCategoryId(category.getId());
-		SgPreconditions.checkCollectionEmpty(dtoList, "该分类下的题目数量为空");
+		List<Subjects> subjects = subjectsService.findIdAndTypeByCategoryId(category.getId());
+		SgPreconditions.checkCollectionEmpty(subjects, "该分类下的题目数量为空");
 		// 数量校验
 		Integer cnt = params.getSubjectCount();
-		SgPreconditions.checkBoolean(cnt > dtoList.size(), "分类下的题目数量不足" + cnt);
-		List<SubjectDto> result = randomAddSubject(dtoList, cnt);
+		SgPreconditions.checkBoolean(cnt > subjects.size(), "分类下的题目数量不足" + cnt);
+		List<SubjectDto> result = randomAddSubject(subjects, cnt);
 		if (CollectionUtils.isNotEmpty(result)) {
 			clearCurrentSubjects(id);
 			batchAddSubjects(id, result);
@@ -472,37 +465,37 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 
 	/**
 	 * 随机选取题目
-	 * @param dtoList dtoList
-	 * @param cnt cnt
-	 * @return List
 	 */
-	public List<SubjectDto> randomAddSubject(List<SubjectDto> dtoList, int cnt) {
+	public List<SubjectDto> randomAddSubject(List<Subjects> subjects, int cnt) {
 		StopWatch start = StopWatchUtil.start();
 		// 已经选取的题目ID，用于去重
 		Set<Long> idSet = Sets.newHashSetWithExpectedSize(cnt);
 		// 已经选取的题目
-		List<SubjectDto> result = Lists.newArrayListWithExpectedSize(cnt);
+		List<Subjects> tmpSubjects = Lists.newArrayListWithExpectedSize(cnt);
 		int itCnt = 0;
-		while (result.size() < cnt) {
+		while (tmpSubjects.size() < cnt) {
 			itCnt++;
 			if (itCnt > 500) {
 				throw new CommonException("随机组卷失败，itCnt：" + itCnt);
 			}
-			int index = ThreadLocalRandom.current().nextInt(0, dtoList.size());
-			SubjectDto dto = dtoList.get(index);
-			if (!idSet.contains(dto.getId())) {
-				idSet.add(dto.getId());
-				result.add(dto);
-				log.info("select subject: {}，size: {}, target size: {}", dto.getId(), result.size(), cnt);
+			int index = ThreadLocalRandom.current().nextInt(0, subjects.size());
+			Subjects tmp = subjects.get(index);
+			if (!idSet.contains(tmp.getId())) {
+				idSet.add(tmp.getId());
+				tmpSubjects.add(tmp);
+				log.info("select subject: {}，size: {}, target size: {}", tmp.getId(), tmpSubjects.size(), cnt);
 			}
+		}
+
+		List<SubjectDto> result = Lists.newArrayListWithExpectedSize(cnt);
+		for (Subjects sub : tmpSubjects) {
+			SubjectDto temp = subjectsService.getSubject(sub.getSubjectId(), sub.getType());
+			result.add(temp);
 		}
 		log.info("randomAddSubject success, itCnt: {}, took: {}", itCnt, StopWatchUtil.stop(start));
 		return result;
 	}
 
-	/**
-	 * 清空现有的题目
-	 */
 	@Transactional
 	public void clearCurrentSubjects(Long id) {
 		List<SimpleSubjectDto> subjects = allSubjects(id);
