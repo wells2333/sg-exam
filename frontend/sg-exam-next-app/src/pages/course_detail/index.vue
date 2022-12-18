@@ -5,7 +5,7 @@
     <view class="course-detail-info">
       <text>{{ courseInfo.courseName }}</text>
       <at-tag class="course-charge-type" type="primary" size="small">{{
-          courseInfo.chargeType === 0 ? '免费' : '收费'
+          courseInfo.chargeType === 0 ? '免费' : '$' + courseInfo.chargePrice
         }}
       </at-tag>
       <at-rate class="course-detail-item-info" :value="courseInfo.level" size="small"></at-rate>
@@ -239,9 +239,18 @@ export default {
       return true;
     }
 
-    onMounted(() => {
-      fetch();
-      fetchEvaluate();
+    async function init() {
+      try {
+        Taro.showLoading();
+        await fetch();
+        await fetchEvaluate();
+      } finally {
+        Taro.hideLoading();
+      }
+    }
+
+    onMounted( () => {
+      init();
     });
 
     return {
@@ -255,6 +264,7 @@ export default {
       evaluateRateValue,
       isOpenedJoinModal,
       joinText,
+      init,
       handleTabClick,
       handleEvaluateValueChange,
       handleEvaluateRateValueChange,
@@ -265,7 +275,14 @@ export default {
       handleCloseJoinModal,
       handleConfirmJoinModal
     }
-  }
+  },
+  onPullDownRefresh() {
+    try {
+      this.init();
+    } finally {
+      Taro.stopPullDownRefresh();
+    }
+  },
 }
 </script>
 

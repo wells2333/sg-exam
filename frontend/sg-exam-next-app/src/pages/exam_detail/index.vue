@@ -64,6 +64,7 @@ import Taro from "@tarojs/taro";
 import {onMounted, ref} from 'vue';
 import examApi from '../../api/exam.api';
 import api from "../../api/api";
+import {warnMessage} from "../../utils/util";
 
 export default {
   setup() {
@@ -98,17 +99,17 @@ export default {
         await Taro.showLoading({title: '加载中'});
         const {id} = api.getUserInfo();
         if (!id) {
-          Taro.showToast({title: '请先登录', icon: 'error', duration: 1500});
+          warnMessage('请先登录', 3000);
           return;
         }
         const startResult = await examApi.startExam(examId, id);
         if (startResult && startResult.code === 1) {
-          Taro.showToast({title: startResult.message, icon: 'error', duration: 1500});
+          warnMessage(startResult.message, 3000);
           return;
         }
         const {code, result, message} = startResult;
         if (code !== 0) {
-          Taro.showToast({title: message, icon: 'error', duration: 1500});
+          warnMessage(message, 3000);
           return;
         }
         const {examination, examRecord, subjectDto, total, cards} = result;
@@ -138,19 +139,36 @@ export default {
       }
     }
 
+    async function init() {
+      try {
+        Taro.showLoading();
+        await fetch();
+      } finally {
+        Taro.hideLoading();
+      }
+    }
+
     onMounted(() => {
-      fetch();
+      init();
     });
 
     return {
       examInfo,
       isOpenedStartModal,
+      init,
       handleClickStart,
       handleCloseStartModal,
       handleCancelStartModal,
       handleConfirmStartModal
     }
-  }
+  },
+  onPullDownRefresh() {
+    try {
+      this.init();
+    } finally {
+      Taro.stopPullDownRefresh();
+    }
+  },
 }
 
 </script>

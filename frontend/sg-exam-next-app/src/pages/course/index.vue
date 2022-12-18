@@ -1,4 +1,5 @@
 <template>
+  <AtMessage/>
   <view>
     <at-search-bar :value="searchValue" @action-click="handleSearch" @change="handleSearchChange" placeholder="搜索"/>
     <view class="course-list">
@@ -11,7 +12,7 @@
 
 <script lang="ts">
 import Taro from "@tarojs/taro";
-import {ref} from 'vue';
+import {onMounted, ref} from 'vue';
 import examApi from '../../api/exam.api';
 import {CourseItem} from '../../components/course-item';
 
@@ -46,11 +47,27 @@ export default {
       Taro.navigateTo({url: "/pages/course_detail/index?courseId=" + course.id})
     }
 
-    return {fetch, searchValue, courseList, handleSearch, handleSearchChange, handleClickCourse}
+    async function init() {
+      try {
+        Taro.showLoading();
+        await fetch();
+      } finally {
+        Taro.hideLoading();
+      }
+    }
+    onMounted(() => {
+      init();
+    });
+
+    return {init, fetch, searchValue, courseList, handleSearch, handleSearchChange, handleClickCourse}
   },
-  onShow() {
-    this.fetch();
-  }
+  onPullDownRefresh() {
+    try {
+      this.init();
+    } finally {
+      Taro.stopPullDownRefresh();
+    }
+  },
 }
 </script>
 

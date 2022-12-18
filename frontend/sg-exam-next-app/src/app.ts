@@ -1,5 +1,6 @@
 import {createApp} from 'vue';
 import {createUI} from 'taro-ui-vue3';
+import './base.less';
 import './app.less';
 import './assert/styles/subject.less';
 import './assert/styles/answer.less';

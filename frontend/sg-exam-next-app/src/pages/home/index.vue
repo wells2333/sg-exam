@@ -30,7 +30,7 @@
   </view>
 </template>
 <script lang="ts">
-import {ref} from 'vue';
+import {onMounted, ref} from 'vue';
 import examApi from '../../api/exam.api';
 import operationApi from '../../api/operation.api';
 import Taro from "@tarojs/taro";
@@ -141,10 +141,18 @@ export default {
       successMessage(text + '成功');
     }
 
-    function init() {
-      fetchBanners();
-      fetchPopularCourses();
+    async function init() {
+      try {
+        Taro.showLoading();
+        await fetchBanners();
+      } finally {
+        Taro.hideLoading();
+      }
     }
+
+    onMounted(() => {
+      init();
+    });
 
     return {
       current,
@@ -158,7 +166,8 @@ export default {
       handleGridClick,
       handleClickCourse,
       handleClickBanner,
-      handleFav
+      handleFav,
+      fetchPopularCourses
     };
   },
   onLoad() {
@@ -168,11 +177,12 @@ export default {
     });
   },
   onShow() {
-    this.init();
+    this.fetchPopularCourses();
   },
   onPullDownRefresh() {
     try {
       this.init();
+      this.fetchPopularCourses();
     } finally {
       Taro.stopPullDownRefresh();
     }

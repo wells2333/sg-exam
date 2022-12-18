@@ -1,36 +1,32 @@
 <template>
-  <view @click="handleStart">
-    <image class="exam-img" :src="item.imageUrl">
-      <view class="exam-img-top">
-        <text class="exam-img-top-text">{{ item.typeLabel }}</text>
-      </view>
-    </image>
-  </view>
-  <view class="exam-item-bottom">
+  <view>
     <view @click="handleStart">
-      <view>
-        <text class="exam-title">{{ item.examinationName }}</text>
-      </view>
-      <view>
-        <view>
-          <view>
-            <at-tag :class="index === 0 ? 'exam-item-bottom-first-tag exam-item-bottom-tag' : 'exam-item-bottom-tag'"
-                    type="primary" :circle="true" size="small" v-for="(tag, index) in tags">
-              {{ tag }}
-            </at-tag>
-          </view>
+      <image class="card-item-img" :src="item.imageUrl">
+        <view class="card-item-img-top">
+          <text class="card-item-img-top-text">{{ item.typeLabel }}</text>
+        </view>
+      </image>
+    </view>
+    <view class="card-item-bottom" @click="handleStart">
+      <h4 class="card-title">{{ item.examinationName }}</h4>
+      <at-tag :class="index === 0 ? 'card-item-bottom-first-tag card-item-bottom-tag' : 'card-item-bottom-tag'"
+              type="primary" :circle="true" size="small" v-for="(tag, index) in tags">
+        {{ tag }}
+      </at-tag>
+    </view>
+    <view class="card-item-bottom-fixed">
+      <view class="card-item-favorites">
+        <view class="card-item-favorites-item">
+          <at-icon value='edit' size='10' color='#AAAAAA'></at-icon>
+          <text class="card-item-favorites-text">{{ startCount }}</text>
+        </view>
+        <view class="card-item-favorites-item" @click="handleFavoriteExam">
+          <at-icon value='star-2' size='10' :color="favorite === true ? '#FFC82C' : '#AAAAAA'"></at-icon>
+          <text class="card-item-favorites-text">{{ favoriteCount }}</text>
         </view>
       </view>
-    </view>
-    <view class="exam-item-favorites">
-      <view class="exam-item-favorites-item" @click="handleStart">
-        <at-icon value='edit' size='10' color='#AAAAAA'></at-icon>
-        <text class="exam-item-favorites-text">{{ startCount }}</text>
-      </view>
-      <view class="exam-item-favorites-item" @click="handleFavoriteExam">
-        <at-icon v-if='favorite' value='star-2' size='10' color='#FFC82C'></at-icon>
-        <at-icon v-else value='star-2' size='10' color='#AAAAAA'></at-icon>
-        <text class="exam-item-favorites-text">{{ favoriteCount }}</text>
+      <view>
+        <a href="#" @click="handleStart">查看</a>
       </view>
     </view>
   </view>
@@ -42,6 +38,7 @@ import Taro from "@tarojs/taro";
 import {transformToArray} from "../../../utils/util";
 import examApi from "../../../api/exam.api";
 import api from "../../../api/api";
+import {successMessage} from "../../../utils/util";
 
 export default defineComponent({
   name: 'ExamItem',
@@ -88,11 +85,7 @@ export default defineComponent({
       }
       const {id} = api.getUserInfo();
       await examApi.favoriteExam(id, props.item.id, type);
-      Taro.atMessage({
-        message: message,
-        type: 'info',
-        duration: 500
-      });
+      successMessage(message);
       emit('fav', props.item);
     }
 

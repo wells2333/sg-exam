@@ -96,13 +96,22 @@ export default {
       }
     }
 
-    onMounted(() => {
-      getCourseDetail();
-      if (pointId.value !== undefined) {
-        getPoint();
-      } else {
-        getSection();
+    async function init() {
+      try {
+        Taro.showLoading();
+        await getCourseDetail();
+        if (pointId.value !== undefined) {
+          await getPoint();
+        } else {
+          await getSection();
+        }
+      } finally {
+        Taro.hideLoading();
       }
+    }
+
+    onMounted(() => {
+      init();
     });
     return {
       courseDetail,
@@ -110,7 +119,14 @@ export default {
       pointDetail,
       videoUrl
     }
-  }
+  },
+  onPullDownRefresh() {
+    try {
+      this.init();
+    } finally {
+      Taro.stopPullDownRefresh();
+    }
+  },
 }
 </script>
 

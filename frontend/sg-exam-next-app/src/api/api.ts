@@ -1,12 +1,9 @@
 import Taro from "@tarojs/taro"
+import domain from "./domain";
 
-export const TEST_HOST = 'http://192.168.100.16:9183';
+export const TENANT_CODE = `gitee`;
 
-export const PROD_HOST = 'https://www.yunmianshi.com';
-
-export const TENANT_CODE = `gitee`
-
-export const USER_SERVICE = `${PROD_HOST}/user-service`
+export const USER_SERVICE = domain.getBaseUrl() + "/user-service";
 
 interface result<T = any> {
     code: number

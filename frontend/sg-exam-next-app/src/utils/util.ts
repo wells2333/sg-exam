@@ -70,18 +70,18 @@ export const getDuration = (start, end) => {
     }
 }
 
-export const successMessage = (msg: string = '操作成功') => {
+export const successMessage = (msg: string = '操作成功', duration: number = 800) => {
     Taro.atMessage({
         message: msg,
         type: 'success',
-        duration: '500'
+        duration: duration
     });
 }
 
-export const warnMessage = (msg: string = '操作失败') => {
+export const warnMessage = (msg: string = '操作失败', duration: number = 800) => {
     Taro.atMessage({
         message: msg,
         type: 'warning',
-        duration: '500'
+        duration: duration
     });
 }

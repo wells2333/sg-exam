@@ -1,31 +1,31 @@
 <template>
-  <view class="course-item-container">
+  <view class="card-item-container">
     <view @click="handleStart">
-      <image class="course-img" :src="item.imageUrl">
-        <view class="course-img-top">
-          <text class="course-img-top-text">{{ item.typeLabel }}</text>
+      <image class="card-item-img" :src="item.imageUrl">
+        <view class="card-item-img-top">
+          <text class="card-item-img-top-text">{{ item.typeLabel }}</text>
         </view>
       </image>
     </view>
-    <view class="course-item-bottom">
-      <view @click="handleStart">
-        <view>
-          <text class="course-title">{{ item.courseName }}</text>
+    <view class="card-item-bottom">
+      <h4 class="card-title">{{ item.courseName }}</h4>
+      <view class="card-simple-desc">
+        <p v-if="item.simpleDesc !== null" >{{item.simpleDesc}}</p>
+      </view>
+    </view>
+    <view class="card-item-bottom-fixed">
+      <view class="card-item-favorites">
+        <view class="card-item-favorites-item">
+          <at-icon value='user' size='10' color='#AAAAAA'></at-icon>
+          <text class="card-item-favorites-text">{{ memberCount }}</text>
         </view>
-        <view class="course-simple-desc">
-          <text v-if="item.simpleDesc !== null" >{{item.simpleDesc}}</text>
+        <view class="card-item-favorites-item" @click="handleFavorite">
+          <at-icon value='star-2' size='10' :color=" favorite ? '#FFC82C' : '#AAAAAA' "></at-icon>
+          <text class="card-item-favorites-text">{{ favCount }}</text>
         </view>
       </view>
-      <view class="course-item-favorites">
-        <view class="course-item-favorites-item">
-          <at-icon value='user' size='10' color='#AAAAAA'></at-icon>
-          <text class="course-item-favorites-text">{{ memberCount }}</text>
-        </view>
-        <view class="course-item-favorites-item" @click="handleFavorite">
-          <at-icon v-if='favorite' value='star-2' size='10' color='#FFC82C'></at-icon>
-          <at-icon v-else value='star-2' size='10' color='#AAAAAA'></at-icon>
-          <text class="course-item-favorites-text">{{ favCount }}</text>
-        </view>
+      <view>
+        <a href="#" @click="handleStart" :class="item.chargeType === 0 ? 'charge-free' : 'charge-free charge-no-free'">{{item.chargeType === 0 ? '免费' : '$' + item.chargePrice}}</a>
       </view>
     </view>
   </view>
@@ -37,6 +37,7 @@ import {transformToArray} from "../../../utils/util";
 import api from "../../../api/api";
 import examApi from "../../../api/exam.api";
 import Taro from "@tarojs/taro";
+import {successMessage} from "../../../utils/util";
 
 export default defineComponent({
   name: 'CourseItem',
@@ -87,11 +88,7 @@ export default defineComponent({
       }
       const {id} = api.getUserInfo();
       await examApi.favoriteCourse(id, props.item.id, type);
-      Taro.atMessage({
-        message: message,
-        type: 'info',
-        duration: 500
-      });
+      successMessage(message);
       emit('fav', props.item);
     }
 
@@ -112,10 +109,5 @@ export default defineComponent({
   color: #78A4F4;
   border-color: #78A4F4;
   background-color: #FFF;
-}
-.course-item-container {
-  border-radius: 6px;
-  overflow: hidden;
-  position: relative;
 }
 </style>

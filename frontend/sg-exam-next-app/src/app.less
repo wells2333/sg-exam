@@ -1,37 +1,15 @@
-page {
-  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica,
-  Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei',
-  sans-serif;
-  height: 100%;
+.card-item-container {
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
 }
 
-.bg-white {
-  background-color: white;
-}
-
-.round-btn {
-  padding: 0 10px;
-  margin-right: 10px;
-  border-radius: 999px;
-}
-
-.flex-row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.flex-col {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.exam-img, .course-img {
+.card-item-img {
   width: 100%;
   height: 160px;
 }
-.exam-img-top, .course-img-top {
+
+.card-item-img-top {
   position: absolute;
   width: 40px;
   top: 0;
@@ -41,66 +19,110 @@ page {
   text-align: center;
   border-bottom-right-radius: 6px;
 }
-.exam-img-top-text {
+
+.card-item-img-top-text {
 
 }
-.exam-img-bottom, .course-img-bottom {
-  width: 100%;
-  position: absolute;
-  bottom: 70px;
-  color: white;
-  background-image: linear-gradient(0deg, rgba(34, 34, 34, 1), rgba(34, 34, 34, 0));
-}
-.exam-item-bottom, .course-item-bottom {
-  display: flex;
-  justify-content: space-between;
-  margin: 4px 8px 8px 8px;
-}
-.exam-title, .course-title {
+
+.card-title {
+  margin: 10px;
   display: block;
+  color: rgba(0,0,0,.8);
+  line-height: 1.3;
+  font-weight: 700;
 }
-.exam-desc, .course-desc {
+
+.card-simple-desc {
+  color: rgba(0,0,0,.4);
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 400;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  margin-top: 0;
+}
+
+.card-desc {
   display: block;
   padding-left: 10px;
   padding-bottom: 6px;
   font-size: 16px;
 }
-.exam-item-bottom-first-tag, .course-item-bottom-first-tag {
-  margin-left: 0 !important;
+
+.card-item-bottom-first-tag {
+
 }
 
-.exam-item-bottom-tag, .course-item-bottom-tag {
-  margin-left: 8px;
-  margin-top: 3px;
+.card-item-bottom-tag {
+  margin-left: 10px;
+  margin-bottom: 10px;
 }
 
-.exam-item-favorites, .course-item-favorites {
-  margin-right: 8px;
-  display: inline-flex;
+.card-item-bottom-fixed {
   justify-content: space-between;
+  display: flex;
+  bottom: 0;
+  width: 100%;
+  height: 40px;
+  background-color: #f7f7f7;
+  border-radius: 0 0 6px 6px;
+}
+
+.card-item-bottom-fixed a {
+  display: inline-block;
+  width: 70px;
+  height: 40px;
+  border-radius: 0 0 6px 0;
+  background-color: #78A4FA;
+  text-align: center;
+  line-height: 40px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fff;
+  letter-spacing: .75px;
+}
+
+.card-item-favorites {
+  font-size: 12px;
+  color: rgba(0, 0, 0, .3);
+  font-weight: 600;
+  height: 100%;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
 }
 
-.exam-item-favorites-item, .course-item-favorites-item {
-  margin-left: 12px;
+.card-item-favorites-item {
+  display: inline-block;
+  padding: 0 20px;
+  border-right: 1px solid #ebebeb;
+  height: 100%;
+  line-height: 40px;
 }
 
-.exam-item-favorites-text, .course-item-favorites-text {
+.card-item-favorites-text {
   color: #AAAAAA;
   font-size: 14px;
   margin-left: 2px;
 }
 
-.course-simple-desc {
+.card-simple-desc {
   font-size: 14px;
   color: gray;
   margin-top: 6px;
 }
 
-.box-show-item {
-  box-shadow: 0 3px 8px rgb(0 0 0 / 15%);
+.charge-free {
+  text-align: center;
+  line-height: 40px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fff;
+  letter-spacing: .75px;
 }
 
-.mb-bottom-20 {
-  margin-bottom: 20px;
+.charge-no-free {
+  background-color: #ee4f12 !important;
 }

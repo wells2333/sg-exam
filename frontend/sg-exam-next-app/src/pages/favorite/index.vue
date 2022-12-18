@@ -18,16 +18,30 @@
           </view>
           <view>
             <view v-if="item.type === 0">
-              <choice :subject="refItem(item)"></choice>
+              <choice :subject="refItem(item)" :disabled="true" :answer="item.answer !== undefined ? item.answer.answer: undefined"></choice>
             </view>
             <view v-else-if="item.type === 3">
-              <choice :subject="refItem(item)" :multi="true"></choice>
+              <choice :subject="refItem(item)" :multi="true" :disabled="true" :answer="item.answer !== undefined ? item.answer.answer: undefined"></choice>
             </view>
             <view v-else-if="item.type === 1">
-              <short-answer></short-answer>
+              <short-answer :disabled="true" :answer="item.answer !== undefined ? item.answer.answer: undefined"></short-answer>
             </view>
             <view v-else-if="item.type === 4">
-              <judgement :subject="refItem(item)"></judgement>
+              <judgement :subject="refItem(item)" :disabled="true" :answer="item.answer !== undefined ? item.answer.answer: undefined"></judgement>
+            </view>
+          </view>
+          <view class="answer-text">
+            <text>参考答案：</text>
+            <text class="answer-text-value">
+              {{ item.answer !== undefined ? item.answer.answer : '' }}
+            </text>
+          </view>
+          <view class="answer-text answer-text-analysis">
+            <view>
+              <text>解析：</text>
+            </view>
+            <view>
+              <wxparse class="answer-text-value" :html="item.analysis" key={Math.random()} />
             </view>
           </view>
         </view>
@@ -199,7 +213,7 @@ export default {
 }
 
 .exam-item {
-  margin: 8px 6px 8px 6px;
+  margin: 16px 6px 16px 6px;
   background: white;
   border-radius: 6px;
   overflow: hidden;

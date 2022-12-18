@@ -8,7 +8,6 @@
           <view class="item-cont">
             <view class="flex-row">
               <text class="item-name">{{ item.examinationName }}</text>
-              <at-tag :circle="true" size="small" type="primary" class="item-type">{{ item.typeLabel }}</at-tag>
             </view>
             <text class="item-time">{{ item.startTime }}</text>
           </view>
@@ -23,7 +22,6 @@
           <view class="item-cont">
             <view class="flex-row">
               <text class="item-name">{{ item.examinationName }}</text>
-              <at-tag :circle="true" size="small" type="primary" class="item-type">{{ item.typeLabel }}</at-tag>
             </view>
             <text class="item-time">{{ item.startTime }}</text>
           </view>
@@ -38,7 +36,6 @@
           <view class="item-cont">
             <view class="flex-row">
               <text class="item-name">{{ item.examinationName }}</text>
-              <at-tag :circle="true" size="small" type="primary" class="item-type">{{ item.typeLabel }}</at-tag>
             </view>
             <text class="item-time">{{ item.startTime }}</text>
           </view>
@@ -53,7 +50,6 @@
           <view class="item-cont">
             <view class="flex-row">
               <text class="item-name">{{ item.examinationName }}</text>
-              <at-tag :circle="true" size="small" type="primary" class="item-type">{{ item.typeLabel }}</at-tag>
             </view>
             <text class="item-time">{{ item.startTime }}</text>
           </view>
@@ -75,7 +71,13 @@ import {examTypeTagList} from '../../constant/constant';
 
 export default {
   setup() {
-    const current = ref<number>(0);
+    const currentInstance = Taro.getCurrentInstance();
+    const params = currentInstance.router.params;
+    let type = 0;
+    if (params.type !== undefined) {
+      type = Number(params.type);
+    }
+    const current = ref<number>(type);
     let records = ref<any>([]);
     const loading = ref<boolean>(false);
     const hasNextPageRef = ref<boolean>(true);
@@ -111,10 +113,6 @@ export default {
         loading.value = false;
       }
     }
-
-    onMounted(() => {
-      fetch(unref(current));
-    });
 
     function goToDetails($event, item) {
       const recordId = unref(item).id;
@@ -162,12 +160,26 @@ export default {
       records.value = [];
     }
 
+    async function init() {
+      try {
+        Taro.showLoading();
+        resetPage();
+        await fetch(unref(current), "", false);
+      } finally {
+        Taro.hideLoading();
+      }
+    }
+    onMounted(() => {
+      init();
+    });
+
     return {
       loading,
       searchValue,
       tagsList: examTypeTagList,
       current,
       records,
+      init,
       goToDetails,
       getTypeTag,
       handleTabClick,
@@ -180,8 +192,7 @@ export default {
   },
   onPullDownRefresh() {
     try {
-      this.resetPage();
-      this.fetch(unref(this.current), "", false);
+      this.init();
     } finally {
       Taro.stopPullDownRefresh();
     }

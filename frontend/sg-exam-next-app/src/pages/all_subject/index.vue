@@ -164,7 +164,7 @@ export default {
         Taro.hideLoading();
         handleCloseSubmitModal();
         setTimeout(() => {
-          Taro.redirectTo({url: "/pages/answer/index?recordId=" + recordId.value})
+          Taro.redirectTo({url: "/pages/record/index?type=" + examination.value.type})
         }, 500);
       }
     }

@@ -371,7 +371,7 @@ export default {
         submitLoading.value = false;
         Taro.showToast({title: '提交成功'});
         setTimeout(() => {
-          Taro.redirectTo({url: "/pages/record/index"})
+          Taro.redirectTo({url: "/pages/record/index?type=" + examination.value.type})
         }, 1000);
       }).catch(() => {
         Taro.showToast({title: '提交失败', icon: 'error'});

@@ -1,6 +1,6 @@
 {
   "name": "sg-exam-next-app",
-  "version": "1.0.0",
+  "version": "5.0.5",
   "private": true,
   "description": "sg-exam-next-app",
   "templateInfo": {
@@ -31,7 +31,7 @@
     "Android >= 4.1",
     "ios >= 8"
   ],
-  "author": "",
+  "author": "tangyi",
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.7.7",

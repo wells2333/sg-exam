@@ -201,7 +201,7 @@ export default {
 }
 
 .exam-item {
-  margin: 8px 10px 8px 10px;
+  margin: 16px 10px 16px 10px;
   background: white;
   border-radius: 6px;
   overflow: hidden;
