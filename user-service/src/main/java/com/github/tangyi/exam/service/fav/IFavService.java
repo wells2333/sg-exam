@@ -4,11 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- *
- * @author tangyi
- * @date 2022/12/17 12:02 下午
- */
 public interface IFavService {
 
 	/**

@@ -21,11 +21,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-/**
- * 语音合成
- * @author tangyi
- * @date 2022/6/6 10:10 下午
- */
 @Slf4j
 @Service
 @AllArgsConstructor

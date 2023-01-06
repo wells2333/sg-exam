@@ -31,11 +31,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * 用户收藏
- * @author tangyi
- * @date 2022-12-17
- */
 @Slf4j
 @Service
 @AllArgsConstructor

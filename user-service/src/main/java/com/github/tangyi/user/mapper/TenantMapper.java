@@ -4,12 +4,6 @@ import com.github.tangyi.api.user.model.Tenant;
 import com.github.tangyi.common.base.CrudMapper;
 import org.springframework.stereotype.Repository;
 
-/**
- * 租户Mapper
- *
- * @author tangyi
- * @date 2019/5/22 22:50
- */
 @Repository
 public interface TenantMapper extends CrudMapper<Tenant> {
 

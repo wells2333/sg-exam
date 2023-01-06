@@ -12,12 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * 用户工具类
- *
- * @author tangyi
- * @date 2018/11/26 22:32
- */
 public class UserUtils {
 
 	private UserUtils() {

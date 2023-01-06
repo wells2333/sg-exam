@@ -21,23 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * 题目分类service
- *
- * @author tangyi
- * @date 2018/12/4 21:56
- */
 @Service
 public class SubjectCategoryService extends CrudService<SubjectCategoryMapper, SubjectCategory> {
 
-	/**
-	 * 查找题目分类
-	 *
-	 * @param id id
-	 * @return SubjectCategory
-	 * @author tangyi
-	 * @date 2019/1/3 14:21
-	 */
 	@Override
 	@Cacheable(value = ExamCacheName.SUBJECT_CATE, key = "#id")
 	public SubjectCategory get(Long id) {
@@ -51,14 +37,6 @@ public class SubjectCategoryService extends CrudService<SubjectCategoryMapper, S
 		return super.insert(entity);
 	}
 
-	/**
-	 * 更新题目分类
-	 *
-	 * @param subjectCategory subjectCategory
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/1/3 14:21
-	 */
 	@Override
 	@Transactional
 	@CacheEvict(value = {ExamCacheName.SUBJECT_CATE, ExamCacheName.SUBJECT_CATE_TREE}, allEntries = true)
@@ -66,14 +44,6 @@ public class SubjectCategoryService extends CrudService<SubjectCategoryMapper, S
 		return super.update(subjectCategory);
 	}
 
-	/**
-	 * 删除题目分类
-	 *
-	 * @param subjectCategory subjectCategory
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/1/3 14:21
-	 */
 	@Override
 	@Transactional
 	@CacheEvict(value = {ExamCacheName.SUBJECT_CATE, ExamCacheName.SUBJECT_CATE_TREE}, allEntries = true)
@@ -81,14 +51,6 @@ public class SubjectCategoryService extends CrudService<SubjectCategoryMapper, S
 		return super.delete(subjectCategory);
 	}
 
-	/**
-	 * 批量删除题目分类
-	 *
-	 * @param ids ids
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/1/3 14:23
-	 */
 	@Override
 	@Transactional
 	@CacheEvict(value = {ExamCacheName.SUBJECT_CATE, ExamCacheName.SUBJECT_CATE_TREE}, allEntries = true)
@@ -96,13 +58,6 @@ public class SubjectCategoryService extends CrudService<SubjectCategoryMapper, S
 		return super.deleteAll(ids);
 	}
 
-	/**
-	 * 返回树形分类集合
-	 *
-	 * @return List
-	 * @author tangyi
-	 * @date 2018/12/04 22:03
-	 */
 	@Cacheable(value = ExamCacheName.SUBJECT_CATE_TREE, key = "'tree'", condition = "#condition == null || #condition.isEmpty()")
 	public List<SubjectCategoryDto> categoryTree(Map<String, Object> condition) {
 		SubjectCategory subjectCategory = new SubjectCategory();

@@ -8,12 +8,6 @@ import org.springframework.beans.BeanUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 菜单工具类
- *
- * @author tangyi
- * @date 2018/10/28 15:57
- */
 public class MenuUtil {
 
 	private MenuUtil() {

@@ -17,23 +17,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * @author tangyi
- * @date 2018/8/26 22:47
- */
 @AllArgsConstructor
 @Service
 public class RoleMenuService extends CrudService<RoleMenuMapper, RoleMenu> {
 
 	private final RoleMenuMapper roleMenuMapper;
 
-	/**
-	 * @param roleId  roleId
-	 * @param menuIds menuIds
-	 * @return int
-	 * @author tangyi
-	 * @date 2018/10/28 14:29
-	 */
 	@Transactional
 	@CacheEvict(value = {UserCacheName.MENU, UserCacheName.USER_MENU}, allEntries = true)
 	public int saveRoleMenus(Long roleId, String menuIds) {
@@ -45,13 +34,6 @@ public class RoleMenuService extends CrudService<RoleMenuMapper, RoleMenu> {
 		return saveRoleMenus(roleId, menuIdList);
 	}
 
-	/**
-	 * @param role  role
-	 * @param menus 菜单ID集合
-	 * @return int
-	 * @author tangyi
-	 * @date 2018/10/28 14:29
-	 */
 	@Transactional
 	@CacheEvict(value = {UserCacheName.MENU, UserCacheName.USER_MENU}, allEntries = true)
 	public int saveRoleMenus(Long role, List<Long> menus) {
@@ -70,51 +52,19 @@ public class RoleMenuService extends CrudService<RoleMenuMapper, RoleMenu> {
 		return update;
 	}
 
-	/**
-	 * 批量保存
-	 *
-	 * @param roleMenus roleMenus
-	 * @return int
-	 * @author tangyi
-	 * @date 2018/10/30 19:59
-	 */
 	@Transactional
 	public int insertBatch(List<RoleMenu> roleMenus) {
 		return roleMenuMapper.insertBatch(roleMenus);
 	}
 
-	/**
-	 * 根据roleId查询
-	 *
-	 * @param roleId roleId
-	 * @return List
-	 * @author tangyi
-	 * @date 2019/09/02 22:22:12
-	 */
 	public List<RoleMenu> getByRoleId(Long roleId) {
 		return roleMenuMapper.getByRoleId(roleId);
 	}
 
-	/**
-	 * 根据menuId查询
-	 *
-	 * @param roleMenu roleMenu
-	 * @return List
-	 * @author tangyi
-	 * @date 2019-09-14 15:49
-	 */
 	public List<RoleMenu> getByMenuId(RoleMenu roleMenu) {
 		return roleMenuMapper.getByMenuId(roleMenu);
 	}
 
-	/**
-	 * 根据menuId列表查询
-	 *
-	 * @param roleMenus roleMenus
-	 * @return List
-	 * @author tangyi
-	 * @date 2019-09-14 16:00
-	 */
 	public List<RoleMenu> getByMenuIds(List<RoleMenu> roleMenus) {
 		return roleMenuMapper.getByMenuIds(roleMenus);
 	}

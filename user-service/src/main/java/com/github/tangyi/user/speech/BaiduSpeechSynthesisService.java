@@ -11,11 +11,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
 
-/**
- *
- * @author tangyi
- * @date 2022/7/16 5:25 下午
- */
 @Service
 public class BaiduSpeechSynthesisService {
 

@@ -25,11 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-/**
- *
- * @author tangyi
- * @date 2022/7/2 1:36 下午
- */
 @Slf4j
 @Service
 @AllArgsConstructor
@@ -126,14 +121,6 @@ public class QiNiuService {
 		return !Group.DEFAULT.equals(attachment.getGroupCode());
 	}
 
-	/**
-	 * 获取附件的预览地址
-	 *
-	 * @param id id
-	 * @return String
-	 * @author tangyi
-	 * @date 2019/06/21 17:45
-	 */
 	@Cacheable(value = UserCacheName.ATTACHMENT_URL, key = "#id", unless = "#result == null")
 	public String getPreviewUrl(Long id) {
 		Attachment attachment = getPreviewAttachment(id);

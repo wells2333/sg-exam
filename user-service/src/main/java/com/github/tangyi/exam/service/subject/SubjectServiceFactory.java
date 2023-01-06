@@ -21,11 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- *
- * @author tangyi
- * @date 2022/4/13 8:15 下午
- */
 @Slf4j
 @Getter
 @Component

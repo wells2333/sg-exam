@@ -22,14 +22,6 @@ public class StudentService extends CrudService<StudentMapper, Student> {
 
     private final UserStudentService userStudentService;
 
-    /**
-     * 新增学生
-     *
-     * @param studentDto studentDto
-     * @return int
-     * @author tangyi
-     * @date 2019/07/10 18:18:04
-     */
     @Transactional
     public int add(StudentDto studentDto) {
         String currentUser = SysUtil.getUser(), tenantCode = SysUtil.getTenantCode();

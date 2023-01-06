@@ -22,10 +22,6 @@ public class AnswerHandleService {
 
 	/**
 	 * 自动判分
-	 * @param distinctAnswer distinctAnswer
-	 * @return AnswerHandleResult
-	 * @author tangyi
-	 * @date 2020/03/15 16:21
 	 */
 	public AnswerHandleResult handleAll(Map<Integer, List<Answer>> distinctAnswer) {
 		List<AnswerHandleResult> results = Lists.newArrayListWithExpectedSize(distinctAnswer.size());

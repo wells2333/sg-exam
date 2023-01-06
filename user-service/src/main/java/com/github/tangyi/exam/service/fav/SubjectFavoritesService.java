@@ -14,11 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * 题目收藏
- * @author tangyi
- * @date 2022/12/17 11:32 上午
- */
 @Slf4j
 @Service
 @AllArgsConstructor

@@ -76,13 +76,6 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
 		return this.dao.findByRecordIdAndSubjectId(answer);
 	}
 
-	/**
-	 * 根据考试记录ID、题目ID批量查找答题
-	 *
-	 * @return Answer
-	 * @author tangyi
-	 * @date 2019/01/21 19:41
-	 */
 	public List<Answer> batchFindByRecordIdAndSubjectId(Long recordId, Long[] subjectIds) {
 		return this.dao.batchFindByRecordIdAndSubjectId(recordId, subjectIds);
 	}
@@ -207,9 +200,6 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
 	 * @param subjectId       subjectId
 	 * @param recordId    recordId
 	 * @param type        -1：当前题目，0：下一题，1：上一题
-	 * @return SubjectDto
-	 * @author tangyi
-	 * @date 2019/04/30 17:10
 	 */
 	@Transactional
 	public SubjectDto subjectAnswer(Long subjectId, Long recordId, Integer type, Integer nextSubjectSortNo) {
@@ -315,14 +305,6 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
 
 	/**
 	 * 获取错题列表
-	 *
-	 * @param pageNum  pageNum
-	 * @param pageSize pageSize
-	 * @param recordId recordId
-	 * @param answer   answer
-	 * @return List
-	 * @author tangyi
-	 * @date 2020/02/19 22:50
 	 */
 	public PageInfo<AnswerDto> answerListInfo(String pageNum, String pageSize, Long recordId, Answer answer) {
 		List<AnswerDto> answerDtos = new ArrayList<>();

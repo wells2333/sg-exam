@@ -35,15 +35,6 @@ public class SmsService {
 		}
 	}
 
-
-	/**
-	 * 发送短信
-	 *
-	 * @param smsDto smsDto
-	 * @return SendSmsResponseBody
-	 * @author tangyi
-	 * @date 2019/06/22 13:28
-	 */
 	public SendSmsResponseBody sendSms(SmsDto smsDto) {
 		SendSmsRequest sendSmsRequest = new SendSmsRequest().setSignName(smsProperties.getSignName())
 				.setTemplateCode(smsProperties.getTemplateCode()).setPhoneNumbers(smsDto.getReceiver())

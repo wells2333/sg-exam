@@ -18,11 +18,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * 课程收藏
- * @author tangyi
- * @date 2022/12/17 11:32 上午
- */
 @Slf4j
 @Service
 @AllArgsConstructor

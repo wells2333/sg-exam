@@ -8,10 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * @author tangyi
- * @date 2018/8/26 14:55
- */
 @AllArgsConstructor
 @Service
 public class UserRoleService extends CrudService<UserRoleMapper, UserRole> {
@@ -38,14 +34,6 @@ public class UserRoleService extends CrudService<UserRoleMapper, UserRole> {
         return userRoleMapper.getByUserIds(userIds);
     }
 
-    /**
-     * 批量插入
-     *
-     * @param userRoles userRoles
-     * @return int
-     * @author tangyi
-     * @date 2019-09-03 13:13
-     */
     public int insertBatch(List<UserRole> userRoles) {
         return userRoleMapper.insertBatch(userRoles);
     }

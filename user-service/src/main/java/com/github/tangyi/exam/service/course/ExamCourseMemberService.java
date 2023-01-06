@@ -16,11 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * 课程学员Service
- * @author tangyi
- * @date 2022-11-27
- */
 @Slf4j
 @Service
 @AllArgsConstructor

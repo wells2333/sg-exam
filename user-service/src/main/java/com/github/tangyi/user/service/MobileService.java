@@ -16,12 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * 手机管理Service
- *
- * @author tangyi
- * @date 2019/07/02 09:35
- */
 @Slf4j
 @AllArgsConstructor
 @Service
@@ -33,14 +27,6 @@ public class MobileService {
 
 	private SmsService smsService;
 
-	/**
-	 * 发送短信
-	 *
-	 * @param mobile     mobile
-	 * @return R
-	 * @author tangyi
-	 * @date 2019/07/02 09:36:52
-	 */
 	@SuppressWarnings("unchecked")
 	public R<Boolean> sendSms(String mobile) {
 		String key = CommonConstant.DEFAULT_CODE_KEY + mobile;

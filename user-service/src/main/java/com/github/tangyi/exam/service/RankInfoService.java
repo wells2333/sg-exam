@@ -18,11 +18,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * 排行榜
- * @author tangyi
- * @date 2022/4/14 6:26 下午
- */
 @Slf4j
 @Service
 @AllArgsConstructor
@@ -32,10 +27,6 @@ public class RankInfoService {
 
 	/**
 	 * 获取排名数据
-	 * @param recordId recordId
-	 * @return List
-	 * @author tangyi
-	 * @date 2019/12/8 23:36
 	 */
 	public List<RankInfoDto> getRankInfo(Long recordId) {
 		List<RankInfoDto> rankInfos = new ArrayList<>();
@@ -76,9 +67,6 @@ public class RankInfoService {
 	/**
 	 * 更新排名信息
 	 * 基于Redis的sort set数据结构
-	 * @param record record
-	 * @author tangyi
-	 * @date 2019/12/8 23:21
 	 */
 	public void updateRank(ExaminationRecord record) {
 		redisTemplate.opsForZSet().add(AnswerConstant.CACHE_PREFIX_RANK + record.getExaminationId(),

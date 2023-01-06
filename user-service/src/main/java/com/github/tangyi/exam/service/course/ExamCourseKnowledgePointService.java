@@ -18,11 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * 章节知识点Service
- * @author tangyi
- * @date 2022-12-02
- */
 @Slf4j
 @Service
 @AllArgsConstructor

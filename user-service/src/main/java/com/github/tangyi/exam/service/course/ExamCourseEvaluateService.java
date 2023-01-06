@@ -11,11 +11,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * 课程评价Service
- * @author tangyi
- * @date 2022-11-26
- */
 @Slf4j
 @Service
 @AllArgsConstructor
