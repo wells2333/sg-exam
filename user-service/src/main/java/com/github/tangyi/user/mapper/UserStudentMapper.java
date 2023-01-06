@@ -6,12 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-/**
- * 用户学生Mapper
- *
- * @author tangyi
- * @date 2019/07/09 15:57
- */
 @Repository
 public interface UserStudentMapper extends CrudMapper<UserStudent> {
 

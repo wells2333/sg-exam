@@ -12,10 +12,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * @author tangyi
- * @date 2018/10/30 20:55
- */
 @Slf4j
 @AllArgsConstructor
 @Service

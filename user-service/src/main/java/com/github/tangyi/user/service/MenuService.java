@@ -31,12 +31,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * 菜单service
- *
- * @author tangyi
- * @date 2018/8/26 22:45
- */
 @Slf4j
 @Service
 public class MenuService extends CrudService<MenuMapper, Menu> {
@@ -183,11 +177,6 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 
 	/**
 	 * 更新菜单，区分租户本身的菜单和默认租户的菜单
-	 *
-	 * @param menu menu
-	 * @return int
-	 * @author tangyi
-	 * @date 2018/10/30 20:19
 	 */
 	@Override
 	@Transactional

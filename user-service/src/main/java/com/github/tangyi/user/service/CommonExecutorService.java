@@ -8,11 +8,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
-/**
- * 通用线程池
- * @author tangyi
- * @date 2022/5/20 1:13 下午
- */
 @Slf4j
 @Service
 public class CommonExecutorService {
