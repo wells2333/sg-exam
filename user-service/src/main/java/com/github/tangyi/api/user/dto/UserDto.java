@@ -23,12 +23,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * userDto
- *
- * @author tangyi
- * @date 2018/8/26 14:36
- */
 @Data
 @Slf4j
 @ToString

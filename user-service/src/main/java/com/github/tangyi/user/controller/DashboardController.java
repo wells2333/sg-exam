@@ -19,9 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 后台首页数据展示
- *
- * @author tangyi
- * @date 2019-03-01 13:54
  */
 @AllArgsConstructor
 @Tag(name = "后台首页数据展示")
@@ -37,10 +34,6 @@ public class DashboardController extends BaseController {
 
 	/**
 	 * 获取管控台首页数据
-	 *
-	 * @return R
-	 * @author tangyi
-	 * @date 2019/3/1 13:55
 	 */
 	@GetMapping
 	@Operation(summary = "后台首页数据展示", description = "后台首页数据展示")
@@ -71,9 +64,6 @@ public class DashboardController extends BaseController {
 
 	/**
 	 * 过去一周考试记录数
-	 * @return R
-	 * @author tangyi
-	 * @date 2020/1/31 6:08 下午
 	 */
 	@GetMapping("examRecordTendency")
 	@Operation(summary = "过去一周考试记录数", description = "过去一周考试记录数")

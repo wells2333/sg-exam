@@ -18,11 +18,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * 统计多选题
- * @author tangyi
- * @date 2020/1/19 10:02 上午
- */
 @Slf4j
 @AllArgsConstructor
 @Component
@@ -38,14 +33,6 @@ public class MultipleChoicesAnswerHandler extends AbstractAnswerHandler {
 		return true;
 	}
 
-	/**
-	 * 判断选项是否正确
-	 *
-	 * @param answer  answer
-	 * @param subject subject
-	 * @author tangyi
-	 * @date 2020/02/19 23:23
-	 */
 	public void judgeOptionRight(Answer answer, SubjectDto subject) {
 		//		String userAnswer = answer.getAnswer();
 		//		String correctAnswer = subject.getAnswer().getAnswer();

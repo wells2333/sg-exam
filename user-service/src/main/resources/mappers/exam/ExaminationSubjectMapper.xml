@@ -22,6 +22,10 @@
         SELECT * FROM exam_examination_subject a WHERE a.examination_id = #{examinationId} and a.subject_id = #{subjectId}
     </select>
 
+    <select id="findMinSortByExaminationId" resultMap="examinationSubjectResultMap">
+        SELECT a.subject_id, a.sort FROM exam_examination_subject a WHERE a.examination_id = #{examinationId} ORDER BY sort ASC LIMIT 1
+    </select>
+
     <select id="findByExaminationIdAndSort" resultMap="examinationSubjectResultMap">
         SELECT * FROM exam_examination_subject a WHERE a.examination_id = #{examinationId} and a.sort = #{sort}
     </select>
@@ -44,7 +48,7 @@
                 and examination_id = #{params.examinationId}
             </if>
         </if>
-        order by sort ASC
+        ORDER BY sort ASC
     </select>
 
     <select id="findListBySubjectId" resultMap="examinationSubjectResultMap">
@@ -63,17 +67,14 @@
         WHERE a.subject_id <![CDATA[<]]> #{subjectId} AND a.examination_id = #{examinationId} ORDER BY sort DESC LIMIT 1
     </select>
 
-    <!-- 物理删除 -->
     <delete id="delete">
         DELETE FROM exam_examination_subject WHERE id = #{id}
     </delete>
 
-    <!-- 物理删除 -->
     <delete id="deleteBySubjectId">
         DELETE FROM exam_examination_subject WHERE subject_id = #{subjectId}
     </delete>
 
-    <!-- 物理删除 -->
     <delete id="deleteAll">
         DELETE FROM exam_examination_subject WHERE id in
         <foreach item="item" index="index" collection="ids" open="("

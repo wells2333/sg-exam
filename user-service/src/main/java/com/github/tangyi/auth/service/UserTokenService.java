@@ -23,11 +23,6 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-/**
- *
- * @author tangyi
- * @date 2022/5/2 10:04 上午
- */
 @Slf4j
 @Service
 @AllArgsConstructor

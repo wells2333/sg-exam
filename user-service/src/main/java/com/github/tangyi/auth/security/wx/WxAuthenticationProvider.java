@@ -14,10 +14,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.SpringSecurityMessageSource;
 import org.springframework.security.core.userdetails.UserDetails;
 
-/**
- * @author tangyi
- * @date 2019/07/05 19:34
- */
 @Slf4j
 @Data
 public class WxAuthenticationProvider implements AuthenticationProvider {

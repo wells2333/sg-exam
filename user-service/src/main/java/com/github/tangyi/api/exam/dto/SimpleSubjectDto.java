@@ -7,12 +7,6 @@ import lombok.Data;
 
 import java.util.List;
 
-/**
- *
- *
- * @author tangyi
- * @date 2022/4/14 1:25 下午
- */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SimpleSubjectDto {

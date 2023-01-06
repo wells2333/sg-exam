@@ -9,13 +9,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 
-/**
- *
- * 校验租户
- *
- * @author tangyi
- * @date 2019-11-12 20:14
- */
 @AllArgsConstructor
 @Aspect
 @Component

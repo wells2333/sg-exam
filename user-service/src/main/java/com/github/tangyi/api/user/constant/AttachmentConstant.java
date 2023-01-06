@@ -1,9 +1,5 @@
 package com.github.tangyi.api.user.constant;
 
-/**
- * @author tangyi
- * @date 2019/07/06 16:16
- */
 public class AttachmentConstant {
 
     /**

@@ -6,6 +6,7 @@ import com.github.tangyi.api.exam.model.SubjectCategory;
 import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.exam.service.subject.SubjectCategoryService;
+import com.github.tangyi.exam.service.subject.SubjectsService;
 import com.github.tangyi.log.annotation.SgLog;
 import com.github.tangyi.log.constants.OperationType;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,13 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-/**
- * 题目分类controller
- *
- * @author tangyi
- * @date 2018/12/4 21:57
- */
 @AllArgsConstructor
 @Tag(name = "题库分类信息管理")
 @RestController
@@ -31,13 +27,25 @@ public class SubjectCategoryController extends BaseController {
 
 	private final SubjectCategoryService categoryService;
 
-	/**
-	 * 返回树形分类集合
-	 */
+	private final SubjectsService subjectsService;
+
 	@GetMapping(value = "categoryTree")
 	@Operation(summary = "获取分类列表")
 	public R<List<SubjectCategoryDto>> categoryTree(@RequestParam(required = false) Map<String, Object> condition) {
 		return R.success(categoryService.categoryTree(condition));
+	}
+
+	@GetMapping(value = "categoryTreeWithSubjectCnt")
+	@Operation(summary = "获取分类列表和对应的题目数量")
+	public R<List<SubjectCategoryDto>> categoryTreeWithSubjectCnt(
+			@RequestParam(required = false) Map<String, Object> condition) {
+		List<SubjectCategoryDto> tree = categoryService.categoryTree(condition);
+		List<Long> ids = tree.stream().map(SubjectCategoryDto::getId).collect(Collectors.toList());
+		Map<Long, Integer> map = subjectsService.findSubjectCountByCategoryIds(ids);
+		for (SubjectCategoryDto dto : tree) {
+			dto.setSubjectCnt(map.get(dto.getId()));
+		}
+		return R.success(tree);
 	}
 
 	@GetMapping("/{id}")

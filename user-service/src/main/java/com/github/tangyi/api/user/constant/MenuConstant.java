@@ -1,9 +1,5 @@
 package com.github.tangyi.api.user.constant;
 
-/**
- * @author tangyi
- * @date 2018/10/28 15:48
- */
 public class MenuConstant {
 
     /**

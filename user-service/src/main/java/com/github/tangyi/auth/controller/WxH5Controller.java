@@ -16,8 +16,6 @@ import java.util.Map;
 
 /**
  * wx h5扫码登录逻辑
- * @author tangyi
- * @date 2022/10/28 11:10 下午
  */
 @Slf4j
 @RestController

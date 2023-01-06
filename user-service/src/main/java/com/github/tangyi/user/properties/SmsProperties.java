@@ -7,9 +7,6 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * 短信相关配置
- *
- * @author tangyi
- * @date 2019/6/22 13:31
  */
 @Data
 @Configuration

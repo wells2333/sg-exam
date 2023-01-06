@@ -10,12 +10,6 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.Column;
 import javax.persistence.Table;
 
-/**
- * 考试题目关联
- *
- * @author tangyi
- * @date 2019/6/16 13:46
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)

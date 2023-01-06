@@ -30,11 +30,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.stream.Stream;
 
-/**
- * 认证
- * @author tangyi
- * @date 2022/5/1 3:16 下午
- */
 @Slf4j
 public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
 

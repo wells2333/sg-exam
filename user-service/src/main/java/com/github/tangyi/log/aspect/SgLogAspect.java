@@ -21,12 +21,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
-/**
- * 日志切面，异步记录日志
- *
- * @author tangyi
- * @date 2019/3/12 23:52
- */
 @Aspect
 @Configuration
 public class SgLogAspect {

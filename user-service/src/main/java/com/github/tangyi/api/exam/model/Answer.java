@@ -12,9 +12,6 @@ import java.util.Date;
 
 /**
  * 答题
- *
- * @author tangyi
- * @date 2018/11/8 20:59
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

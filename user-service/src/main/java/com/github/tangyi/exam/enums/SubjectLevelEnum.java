@@ -5,8 +5,6 @@ import lombok.Getter;
 
 /**
  * 题目难度级别
- * @author tangyi
- * @date 2019/12/10 18:18
  */
 @Getter
 @AllArgsConstructor

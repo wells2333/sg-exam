@@ -11,12 +11,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 
-/**
- * 课程
- *
- * @author tangyi
- * @date 2018/11/8 20:43
- */
 @Data
 @Table(name = "exam_course")
 @EqualsAndHashCode(callSuper = true)

@@ -12,12 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- *
- *
- * @author tangyi
- * @date 2022/6/25 11:12 上午
- */
 @Component
 public class SubjectSpeechConverter implements ISubjectConverter<SubjectSpeech> {
 

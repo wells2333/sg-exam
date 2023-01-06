@@ -14,6 +14,7 @@ import com.github.tangyi.exam.mapper.SubjectChoicesMapper;
 import com.github.tangyi.exam.service.ExaminationSubjectService;
 import com.github.tangyi.exam.service.subject.converter.SubjectChoicesConverter;
 import com.github.tangyi.exam.utils.AnswerHandlerUtil;
+import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
@@ -24,12 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 选择题service
- *
- * @author tangyi
- * @date 2018/11/8 21:23
  */
 @AllArgsConstructor
 @Service
@@ -42,14 +41,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 
 	private final SubjectChoicesConverter subjectChoicesConverter;
 
-	/**
-	 * 查找题目
-	 *
-	 * @param id id
-	 * @return SubjectChoices
-	 * @author tangyi
-	 * @date 2019/1/3 14:24
-	 */
 	@Override
 	@Cacheable(value = ExamCacheName.SUBJECT_CHOICES, key = "#id")
 	public SubjectChoices get(Long id) {
@@ -63,40 +54,16 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		return subject;
 	}
 
-	/**
-	 * 根据考试ID查询题目数
-	 *
-	 * @param subjectChoices subjectChoices
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/01/23 20:19
-	 */
 	int getExaminationTotalSubject(SubjectChoices subjectChoices) {
 		return 0;
 	}
 
-	/**
-	 * 新增
-	 *
-	 * @param subjectChoices subjectChoices
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/01/23 20:03
-	 */
 	@Override
 	@Transactional
 	public int insert(SubjectChoices subjectChoices) {
 		return super.insert(subjectChoices);
 	}
 
-	/**
-	 * 更新题目
-	 *
-	 * @param subjectChoices subjectChoices
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/1/3 14:24
-	 */
 	@Override
 	@Transactional
 	@CacheEvict(value = ExamCacheName.SUBJECT_CHOICES, key = "#subjectChoices.id")
@@ -105,15 +72,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		return super.update(subjectChoices);
 	}
 
-	/**
-	 * 根据ID查询
-	 *
-	 * @param examinationId  examinationId
-	 * @param subjectChoices subjectChoices
-	 * @return SubjectChoices
-	 * @author tangyi
-	 * @date 2019-09-14 16:47
-	 */
 	public SubjectChoices getByCurrentId(Long examinationId, SubjectChoices subjectChoices) {
 		ExaminationSubject examinationSubject = new ExaminationSubject();
 		examinationSubject.setExaminationId(examinationId);
@@ -127,12 +85,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 
 	/**
 	 * 根据上一题ID查询下一题
-	 *
-	 * @param examinationId  examinationId
-	 * @param subjectChoices subjectChoices
-	 * @return SubjectChoices
-	 * @author tangyi
-	 * @date 2019-09-14 16:47
 	 */
 	public SubjectChoices getByPreviousId(Long examinationId, SubjectChoices subjectChoices) {
 		ExaminationSubject examinationSubject = new ExaminationSubject();
@@ -147,12 +99,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 
 	/**
 	 * 根据当前题目ID查询上一题
-	 *
-	 * @param examinationId  examinationId
-	 * @param subjectChoices subjectChoices
-	 * @return SubjectChoices
-	 * @author tangyi
-	 * @date 2019/10/07 20:40:16
 	 */
 	public SubjectChoices getPreviousByCurrentId(Long examinationId, SubjectChoices subjectChoices) {
 		ExaminationSubject examinationSubject = new ExaminationSubject();
@@ -165,14 +111,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		return this.getSubjectChoicesById(examinationSubject.getSubjectId());
 	}
 
-	/**
-	 * 删除题目
-	 *
-	 * @param subjectChoices subjectChoices
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/1/3 14:24
-	 */
 	@Override
 	@Transactional
 	@CacheEvict(value = ExamCacheName.SUBJECT_CHOICES, key = "#subjectChoices.id")
@@ -184,14 +122,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		return update;
 	}
 
-	/**
-	 * 物理删除
-	 *
-	 * @param subjectChoices subjectChoices
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/06/16 22:44
-	 */
 	@Transactional
 	@CacheEvict(value = ExamCacheName.SUBJECT_CHOICES, key = "#subjectChoices.id")
 	public int physicalDelete(SubjectChoices subjectChoices) {
@@ -202,14 +132,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		return update;
 	}
 
-	/**
-	 * 批量删除题目
-	 *
-	 * @param ids ids
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/1/3 14:24
-	 */
 	@Override
 	@Transactional
 	@CacheEvict(value = ExamCacheName.SUBJECT_CHOICES, allEntries = true)
@@ -223,14 +145,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		return update;
 	}
 
-	/**
-	 * 物理批量删除
-	 *
-	 * @param ids ids
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/06/16 22:44
-	 */
 	@Transactional
 	@CacheEvict(value = ExamCacheName.SUBJECT_CHOICES, allEntries = true)
 	public int physicalDeleteAll(Long[] ids) {
@@ -243,13 +157,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		return update;
 	}
 
-	/**
-	 * 删除题目的选项和与考试的关联
-	 *
-	 * @param subjectId subjectId
-	 * @author tangyi
-	 * @date 2019/06/16 22:09
-	 */
 	@Transactional
 	public void deleteOptionAndRelation(Long subjectId) {
 		// 删除选项
@@ -257,23 +164,14 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		option.setSubjectChoicesId(subjectId);
 		subjectOptionService.deleteBySubjectChoicesId(option);
 		// 删除关联关系
-		ExaminationSubject examinationSubject = new ExaminationSubject();
-		examinationSubject.setSubjectId(subjectId);
-		examinationSubjectService.deleteBySubjectId(examinationSubject);
+		ExaminationSubject es = new ExaminationSubject();
+		es.setSubjectId(subjectId);
+		examinationSubjectService.deleteBySubjectId(es);
 	}
 
-	/**
-	 * 根据ID查询
-	 *
-	 * @param id id
-	 * @return SubjectDto
-	 * @author tangyi
-	 * @date 2019/06/16 17:36
-	 */
 	@Override
 	public SubjectDto getSubject(Long id) {
 		SubjectChoices subject = this.get(id);
-		// 查找选项信息
 		if (subject != null) {
 			SubjectOption subjectOption = new SubjectOption();
 			subjectOption.setSubjectChoicesId(subject.getId());
@@ -283,15 +181,38 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		return subjectChoicesConverter.toDto(subject);
 	}
 
+	@Override
+	public List<SubjectDto> getSubjects(List<Long> ids) {
+		List<SubjectChoices> choices = Lists.newArrayListWithExpectedSize(ids.size());
+		for (Long id : ids) {
+			SubjectChoices choice = this.get(id);
+			if (choice != null) {
+				choices.add(choice);
+			}
+		}
+		List<Long> idList = choices.stream().map(SubjectChoices::getId).collect(Collectors.toList());
+		List<SubjectOption> optionList = subjectOptionService.getBySubjectChoicesIds(idList);
+		Map<Long, List<SubjectOption>> map = Maps.newHashMap();
+		if (CollectionUtils.isNotEmpty(optionList)) {
+			for (SubjectOption option : optionList) {
+				map.computeIfAbsent(option.getSubjectChoicesId(), s -> Lists.newArrayListWithExpectedSize(5))
+						.add(option);
+			}
+		}
+		List<SubjectDto> list = Lists.newArrayListWithExpectedSize(choices.size());
+		for (SubjectChoices choice : choices) {
+			choice.setOptions(map.get(choice.getId()));
+			list.add(subjectChoicesConverter.toDto(choice));
+		}
+		return list;
+	}
+
 	/**
 	 * 根据上一题ID查询下一题
 	 *
 	 * @param examinationId examinationId
 	 * @param previousId    previousId
 	 * @param nextType      0：下一题，1：上一题
-	 * @return SubjectDto
-	 * @author tangyi
-	 * @date 2019/09/14 16:35
 	 */
 	@Override
 	@Transactional
@@ -308,14 +229,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		return subjectChoicesConverter.toDto(subjectChoices);
 	}
 
-	/**
-	 * 保存
-	 *
-	 * @param subjectDto subjectDto
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/06/16 17:50
-	 */
 	@Override
 	@Transactional
 	public BaseEntity<SubjectChoices> insertSubject(SubjectDto subjectDto) {
@@ -329,12 +242,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		return subjectChoices;
 	}
 
-	/**
-	 * 保存选项
-	 * @param subjectChoices subjectChoices
-	 * @author tangyi
-	 * @date 2020/01/17 22:30:48
-	 */
 	@Transactional
 	public void insertOptions(SubjectChoices subjectChoices) {
 		if (CollectionUtils.isNotEmpty(subjectChoices.getOptions())) {
@@ -352,14 +259,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		}
 	}
 
-	/**
-	 * 更新，包括更新选项
-	 *
-	 * @param subjectDto subjectDto
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/06/16 17:50
-	 */
 	@Override
 	@Transactional
 	@CacheEvict(value = ExamCacheName.SUBJECT_CHOICES, key = "#subjectDto.id")
@@ -371,14 +270,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		return this.update(subjectChoices);
 	}
 
-	/**
-	 * 删除
-	 *
-	 * @param subjectDto subjectDto
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/06/16 17:50
-	 */
 	@Override
 	@Transactional
 	@CacheEvict(value = ExamCacheName.SUBJECT_CHOICES, key = "#subjectDto.id")
@@ -388,14 +279,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		return this.delete(subjectChoices);
 	}
 
-	/**
-	 * 物理删除
-	 *
-	 * @param subjectDto subjectDto
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/06/16 22:50
-	 */
 	@Override
 	@Transactional
 	@CacheEvict(value = ExamCacheName.SUBJECT_CHOICES, key = "#subjectDto.id")
@@ -405,14 +288,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		return this.physicalDelete(subjectChoices);
 	}
 
-	/**
-	 * 批量删除
-	 *
-	 * @param ids ids
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/06/16 17:50
-	 */
 	@Override
 	@Transactional
 	@CacheEvict(value = ExamCacheName.SUBJECT_CHOICES, allEntries = true)
@@ -420,14 +295,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		return this.deleteAll(ids);
 	}
 
-	/**
-	 * 物理删除
-	 *
-	 * @param ids ids
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/06/16 22:51
-	 */
 	@Override
 	@Transactional
 	@CacheEvict(value = ExamCacheName.SUBJECT_CHOICES, allEntries = true)
@@ -435,14 +302,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		return this.physicalDeleteAll(ids);
 	}
 
-	/**
-	 * 查询列表
-	 *
-	 * @param subjectDto subjectDto
-	 * @return List
-	 * @author tangyi
-	 * @date 2019/06/16 18:16
-	 */
 	@Override
 	public List<SubjectDto> findSubjectList(SubjectDto subjectDto) {
 		SubjectChoices subjectChoices = new SubjectChoices();
@@ -450,15 +309,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		return subjectChoicesConverter.toDto(this.findList(subjectChoices), true);
 	}
 
-	/**
-	 * 查询分页列表
-	 *
-	 * @param pageInfo   pageInfo
-	 * @param subjectDto subjectDto
-	 * @return PageInfo
-	 * @author tangyi
-	 * @date 2019/06/16 18:16
-	 */
 	@Override
 	public PageInfo<SubjectDto> findSubjectPage(PageInfo pageInfo, SubjectDto subjectDto) {
 		SubjectChoices subjectChoices = new SubjectChoices();
@@ -479,14 +329,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		return subjectDtoPageInfo;
 	}
 
-	/**
-	 * 根据ID批量查询
-	 *
-	 * @param ids ids
-	 * @return List
-	 * @author tangyi
-	 * @date 2019/06/16 18:16
-	 */
 	@Override
 	public List<SubjectDto> findSubjectListById(Long[] ids) {
 		return subjectChoicesConverter.toDto(this.findListById(ids), true);
@@ -494,11 +336,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 
 	/**
 	 * 根据题目ID查询题目信息和选项
-	 *
-	 * @param subjectId subjectId
-	 * @return SubjectChoices
-	 * @author tangyi
-	 * @date 2019/10/07 21:03:43
 	 */
 	private SubjectChoices getSubjectChoicesById(Long subjectId) {
 		SubjectChoices subjectChoices = this.get(subjectId);

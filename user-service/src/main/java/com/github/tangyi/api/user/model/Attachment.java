@@ -10,9 +10,6 @@ import javax.persistence.Transient;
 
 /**
  * 附件信息
- *
- * @author tangyi
- * @date 2018/10/30 20:47
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

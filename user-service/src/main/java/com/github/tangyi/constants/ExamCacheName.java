@@ -1,10 +1,5 @@
 package com.github.tangyi.constants;
 
-/**
- *
- * @author tangyi
- * @date 2022/7/2 3:12 下午
- */
 public interface ExamCacheName {
 
 	String COURSE = "course";

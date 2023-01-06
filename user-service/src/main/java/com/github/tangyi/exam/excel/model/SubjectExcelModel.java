@@ -10,11 +10,6 @@ import com.github.tangyi.exam.excel.converter.SubjectLevelConverter;
 import com.github.tangyi.exam.excel.converter.SubjectTypeConverter;
 import lombok.Data;
 
-/**
- * 题目信息
- * @author tangyi
- * @date 2019/12/10 18:03
- */
 @Data
 @ExcelModel("题目信息")
 @ContentRowHeight(18)

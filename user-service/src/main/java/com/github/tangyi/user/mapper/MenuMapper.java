@@ -7,12 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-/**
- * 菜单mapper
- *
- * @author tangyi
- * @date 2018/8/26 22:34
- */
 @Repository
 public interface MenuMapper extends CrudMapper<Menu> {
 

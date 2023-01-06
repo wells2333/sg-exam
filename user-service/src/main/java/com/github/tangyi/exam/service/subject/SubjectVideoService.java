@@ -9,6 +9,7 @@ import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.exam.mapper.SubjectVideoMapper;
 import com.github.tangyi.exam.service.subject.converter.SubjectVideoConverter;
 import com.github.tangyi.user.service.QiNiuService;
+import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
@@ -44,6 +45,18 @@ public class SubjectVideoService extends CrudService<SubjectVideoMapper, Subject
 			dto.setVideoUrl(qiNiuService.getPreviewUrl(dto.getVideoId()));
 		}
 		return dto;
+	}
+
+	@Override
+	public List<SubjectDto> getSubjects(List<Long> ids) {
+		List<SubjectDto> list = Lists.newArrayListWithExpectedSize(ids.size());
+		for (Long id : ids) {
+			SubjectDto dto = getSubject(id);
+			if (dto != null) {
+				list.add(dto);
+			}
+		}
+		return list;
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.common.base.BaseController;
+import com.github.tangyi.common.constant.CommonConstant;
 import com.github.tangyi.common.excel.ExcelToolUtil;
 import com.github.tangyi.common.exceptions.CommonException;
 import com.github.tangyi.common.model.R;
@@ -30,15 +31,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-/**
- * 题目controller
- *
- * @author tangyi
- * @date 2018/11/8 21:29
- */
 @Slf4j
 @AllArgsConstructor
 @Tag(name = "题目信息管理")
@@ -71,6 +68,14 @@ public class SubjectsController extends BaseController {
 	@Operation(summary = "获取题目数量")
 	public R<Integer> getSubjectCount(@RequestParam Long categoryId) {
 		return R.success(subjectsService.findSubjectCountByCategoryId(categoryId));
+	}
+
+	@GetMapping("getSubjectCountByCategoryIds")
+	@Operation(summary = "批量获取题目数量")
+	public R<Map<Long, Integer>> getSubjectCounts(@RequestParam String categoryIds) {
+		List<Long> list = Arrays.stream(categoryIds.split(CommonConstant.COMMA)).distinct().map(Long::valueOf)
+				.collect(Collectors.toList());
+		return R.success(subjectsService.findSubjectCountByCategoryIds(list));
 	}
 
 	@PostMapping
@@ -175,9 +180,6 @@ public class SubjectsController extends BaseController {
 	 * @param examRecordId examRecordId
 	 * @param userId       userId
 	 * @param type     -1：当前题目，0：下一题，1：上一题
-	 * @return R
-	 * @author tangyi
-	 * @date 2019/01/16 22:25
 	 */
 	@GetMapping("subjectAnswer")
 	@Operation(summary = "查询题目和答题", description = "根据题目id查询题目和答题")
@@ -195,9 +197,6 @@ public class SubjectsController extends BaseController {
 	 * @param examRecordId examRecordId
 	 * @param userId       userId
 	 * @param type     -1：当前题目，0：下一题，1：上一题
-	 * @return R
-	 * @author tangyi
-	 * @date 2019/01/16 22:25
 	 */
 	@GetMapping("anonymousUser/subjectAnswer")
 	@Operation(summary = "查询题目和答题", description = "根据题目id查询题目和答题")

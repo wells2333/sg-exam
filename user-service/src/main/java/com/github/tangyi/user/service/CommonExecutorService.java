@@ -26,6 +26,8 @@ public class CommonExecutorService {
 
 	private ListeningExecutorService examExecutor;
 
+	private ListeningExecutorService subjectExecutor;
+
 	private ListeningExecutorService submitExecutor;
 
 	private ListeningExecutorService importExecutor;
@@ -40,6 +42,10 @@ public class CommonExecutorService {
 		log.info("start to init exam executor");
 		this.examExecutor = ExecutorUtils.newListeningExecutor("exam-%d", coreSize, EXECUTOR_QUEUE_SIZE);
 		log.info("init exam executor finished, coreSize: {}", coreSize);
+
+		log.info("start to init subject executor");
+		this.subjectExecutor = ExecutorUtils.newListeningExecutor("subject-%d", coreSize, EXECUTOR_QUEUE_SIZE);
+		log.info("init subject executor finished, coreSize: {}", coreSize);
 
 		log.info("start to init submit exam executor");
 		this.submitExecutor = ExecutorUtils.newListeningExecutor("submit-exam-%d", coreSize, EXECUTOR_QUEUE_SIZE);
@@ -64,5 +70,9 @@ public class CommonExecutorService {
 
 	public ListeningExecutorService getImportExecutor() {
 		return importExecutor;
+	}
+
+	public ListeningExecutorService getSubjectExecutor() {
+		return subjectExecutor;
 	}
 }

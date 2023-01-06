@@ -9,8 +9,6 @@ import com.github.tangyi.exam.enums.SubjectLevelEnum;
 
 /**
  * 题目难度级别
- * @author tangyi
- * @date 2019/12/10 18:24
  */
 public class SubjectLevelConverter implements Converter<Integer> {
 

@@ -10,9 +10,6 @@ import javax.persistence.Table;
 
 /**
  * 代码生成 gen_table
- *
- * @author tangyi
- * @date 2022-11-21
  */
 @Data
 @Table(name = "gen_table")

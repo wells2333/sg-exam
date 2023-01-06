@@ -23,13 +23,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 
-/**
- *
- * 处理登录成功事件
- *
- * @author tangyi
- * @date 2019-11-11 23:48
- */
 @Slf4j
 @AllArgsConstructor
 @Component
@@ -73,14 +66,6 @@ public class LoginSuccessListener implements ApplicationListener<CustomAuthentic
 		}
 	}
 
-	/**
-	 * 异步记录登录日志
-	 *
-	 * @param logInfo logInfo
-	 * @param userDto userDto
-	 * @author tangyi
-	 * @date 2019/05/30 23:30
-	 */
 	@Async
 	public void saveLoginInfo(Log logInfo, UserDto userDto) {
 		try {
@@ -91,14 +76,6 @@ public class LoginSuccessListener implements ApplicationListener<CustomAuthentic
 		}
 	}
 
-	/**
-	 *
-	 * 获取当前request
-	 *
-	 * @return ServletRequestAttributes
-	 * @author tangyi
-	 * @date 2019-11-12 00:15
-	 */
 	private static ServletRequestAttributes currentRequestAttributes() {
 		try {
 			RequestAttributes requestAttr = RequestContextHolder.currentRequestAttributes();

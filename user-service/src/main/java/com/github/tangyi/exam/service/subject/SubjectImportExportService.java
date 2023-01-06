@@ -38,12 +38,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- *
- * @author tangyi
- * @date 2022/4/14 6:55 下午
- */
 @Slf4j
 @Service
 @AllArgsConstructor
@@ -55,15 +49,6 @@ public class SubjectImportExportService {
 
 	private final CommonExecutorService commonExecutorService;
 
-	/**
-	 * 导入题目
-	 *
-	 * @param subjects      subjects
-	 * @param examinationId examinationId
-	 * @param categoryId    categoryId
-	 * @author tangyi
-	 * @date 2019/06/17 14:39
-	 */
 	@Transactional
 	public void importSubject(List<SubjectDto> subjects, Long examinationId, Long categoryId, String creator,
 			String tenantCode) {

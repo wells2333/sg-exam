@@ -10,8 +10,7 @@ import lombok.EqualsAndHashCode;
 import org.springframework.beans.BeanUtils;
 
 /**
- * @author tangyi
- * @date 2018-10-25 12:49
+ *
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

@@ -1,9 +1,9 @@
 package com.github.tangyi.common.utils.executor;
 
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.common.util.concurrent.*;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
  * @author tangyi
  * @date 2021/3/1 7:42 下午
  */
+@Slf4j
 public class ExecutorUtils {
 
 	public static ThreadPoolExecutor newExecutor(String threadName, int corePoolSize, int queueCapacity) {
@@ -25,5 +26,13 @@ public class ExecutorUtils {
 			int queueCapacity) {
 		ThreadPoolExecutor threadPoolExecutor = newExecutor(threadName, corePoolSize, queueCapacity);
 		return MoreExecutors.listeningDecorator(threadPoolExecutor);
+	}
+
+	public static void waitFutures(List<ListenableFuture<?>> futures) {
+		try {
+			Futures.allAsList(futures).get();
+		} catch (Exception e) {
+			log.error("waitFutures failed", e);
+		}
 	}
 }

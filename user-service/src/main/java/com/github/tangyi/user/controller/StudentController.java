@@ -19,12 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-/**
- * 学生管理Controller
- *
- * @author tangyi
- * @date 2019/07/09 15:29
- */
 @Slf4j
 @AllArgsConstructor
 @Tag(name = "学生管理")

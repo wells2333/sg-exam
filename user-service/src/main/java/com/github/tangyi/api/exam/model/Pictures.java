@@ -9,9 +9,6 @@ import javax.persistence.Table;
 
 /**
  * 图片表
- *
- * @author tangyi
- * @date 2019/6/16 13:52
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

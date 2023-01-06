@@ -16,12 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * 发送短信接口
- *
- * @author tangyi
- * @date 2019/6/22 12:59
- */
 @Slf4j
 @AllArgsConstructor
 @Tag(name = "发送短信")
@@ -31,14 +25,6 @@ public class SmsController extends BaseController {
 
 	private final SmsService smsService;
 
-	/**
-	 * 发送短信
-	 *
-	 * @param smsDto smsDto
-	 * @return R
-	 * @author tangyi
-	 * @date 2019/06/22 13:12
-	 */
 	@PostMapping("sendSms")
 	@Operation(summary = "发送短信")
 	@SgLog(value = "发送短信", operationType = OperationType.INSERT)

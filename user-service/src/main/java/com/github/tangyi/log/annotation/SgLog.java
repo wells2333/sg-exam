@@ -4,12 +4,6 @@ import com.github.tangyi.log.constants.OperationType;
 
 import java.lang.annotation.*;
 
-/**
- * 日志注解
- *
- * @author tangyi
- * @date 2019/3/12 23:50
- */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

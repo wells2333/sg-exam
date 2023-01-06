@@ -1,9 +1,5 @@
 package com.github.tangyi.api.exam.constants;
 
-/**
- * @author tangyi
- * @date 2019/4/30 17:17
- */
 public class ExamSubjectConstant {
 
 	/**

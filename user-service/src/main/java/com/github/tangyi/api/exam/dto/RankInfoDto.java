@@ -7,8 +7,6 @@ import lombok.Data;
 
 /**
  * 排名详情
- * @author tangyi
- * @date 2019/12/8 23:33
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)

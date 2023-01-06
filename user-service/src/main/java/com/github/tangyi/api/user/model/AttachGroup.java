@@ -7,11 +7,6 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.Column;
 import javax.persistence.Table;
 
-/**
- *
- * @author tangyi
- * @date 2022/4/16 3:17 下午
- */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "sys_attachment_group")

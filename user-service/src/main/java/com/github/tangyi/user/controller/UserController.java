@@ -46,10 +46,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * @author tangyi
- * @date 2018-08-25 16:20
- */
 @Slf4j
 @AllArgsConstructor
 @Tag(name = "用户信息管理")

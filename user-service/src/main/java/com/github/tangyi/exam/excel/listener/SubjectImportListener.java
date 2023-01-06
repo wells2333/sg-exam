@@ -12,11 +12,6 @@ import org.springframework.beans.BeanUtils;
 
 import java.util.List;
 
-/**
- * 题目导入
- * @author tangyi
- * @date 2019/12/10 20:52
- */
 public class SubjectImportListener extends AbstractExcelImportListener<SubjectExcelModel> {
 
 	private final SubjectImportExportService subjectImportExportService;

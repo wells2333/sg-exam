@@ -12,9 +12,6 @@ import javax.persistence.Table;
 
 /**
  * 章节知识点 exam_course_knowledge_point
- *
- * @author tangyi
- * @date 2022-12-02
  */
 @Data
 @Table(name = "exam_course_knowledge_point")

@@ -9,11 +9,6 @@ import lombok.Data;
 
 import java.util.Date;
 
-/**
- *
- * @author tangyi
- * @date 2022/12/9 10:06 下午
- */
 @Data
 public class KnowledgePointDto {
 

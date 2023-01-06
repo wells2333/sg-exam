@@ -35,12 +35,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-/**
- * 课程service
- *
- * @author tangyi
- * @date 2018/11/8 21:18
- */
 @Slf4j
 @Service
 @AllArgsConstructor

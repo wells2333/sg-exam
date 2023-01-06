@@ -12,12 +12,6 @@ import lombok.EqualsAndHashCode;
 import java.util.Date;
 import java.util.List;
 
-/**
- * 考试记录DTO
- *
- * @author tangyi
- * @date 2018-12-26 16:26
- */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)

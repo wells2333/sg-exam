@@ -11,9 +11,6 @@ import java.util.List;
 
 /**
  * 选择题
- *
- * @author tangyi
- * @date 2018/11/8 20:53
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

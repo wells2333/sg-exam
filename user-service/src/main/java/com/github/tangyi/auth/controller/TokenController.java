@@ -15,11 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- *
- * @author tangyi
- * @date 2022/5/1 9:51 下午
- */
 @Slf4j
 @RestController
 @RequestMapping("/v1/token")

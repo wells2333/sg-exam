@@ -7,10 +7,6 @@ import com.github.tangyi.common.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/**
- * @author tangyi
- * @date 2019/1/1 22:04
- */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)

@@ -15,9 +15,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 /**
  * 手机登录配置
- *
- * @author tangyi
- * @date 2019/6/22 21:26
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

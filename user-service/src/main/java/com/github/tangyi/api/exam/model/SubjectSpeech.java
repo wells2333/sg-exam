@@ -8,8 +8,6 @@ import javax.persistence.Table;
 
 /**
  * 语音题目
- * @author tangyi
- * @date 2022/6/23 1:33 下午
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

@@ -6,12 +6,6 @@ import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 
-/**
- * 学生
- *
- * @author tangyi
- * @date 2019/07/09 15:08
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class Student extends BaseEntity<Student> {

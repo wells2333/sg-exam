@@ -12,9 +12,6 @@ import javax.persistence.Table;
 
 /**
  * 反馈信息 sys_feedback
- *
- * @author tangyi
- * @date 2022-08-16
  */
 @Data
 @Table(name = "sys_feedback")

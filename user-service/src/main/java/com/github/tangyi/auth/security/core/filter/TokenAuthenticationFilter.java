@@ -24,11 +24,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * 授权
- * @author tangyi
- * @date 2022/5/1 3:40 下午
- */
 public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
 
 	private final TokenManager tokenManager;

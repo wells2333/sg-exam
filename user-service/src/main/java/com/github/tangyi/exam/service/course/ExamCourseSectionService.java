@@ -17,8 +17,6 @@ import java.util.List;
 
 /**
  * 课程节Service
- * @author tangyi
- * @date 2022-11-21
  */
 @Slf4j
 @Service

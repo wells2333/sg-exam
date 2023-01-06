@@ -5,11 +5,6 @@ import com.github.tangyi.exam.enums.SubjectTypeEnum;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-/**
- *
- * @author tangyi
- * @date 2022/4/11 8:52 下午
- */
 @Component
 @AllArgsConstructor
 public class AnswerHandlerFactory {

@@ -19,12 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
-/**
- * 租户Service
- *
- * @author tangyi
- * @date 2019/5/22 22:51
- */
 @Slf4j
 @AllArgsConstructor
 @Service
@@ -38,14 +32,6 @@ public class TenantService extends CrudService<TenantMapper, Tenant> {
 
 	private final QiNiuService qiNiuService;
 
-	/**
-	 * 根据租户标识获取
-	 *
-	 * @param tenantCode tenantCode
-	 * @return Tenant
-	 * @author tangyi
-	 * @date 2019/05/26 10:28
-	 */
 	@Cacheable(value = UserCacheName.TENANT, key = "#tenantCode")
 	public Tenant getByTenantCode(String tenantCode) {
 		return this.dao.getByTenantCode(tenantCode);
@@ -66,11 +52,6 @@ public class TenantService extends CrudService<TenantMapper, Tenant> {
 
 	/**
 	 * 新增租户，自动初始化租户管理员账号
-	 *
-	 * @param tenant tenant
-	 * @return int
-	 * @author tangyi
-	 * @date 2019-09-02 11:41
 	 */
 	@Transactional
 	public int add(Tenant tenant) {
@@ -102,14 +83,6 @@ public class TenantService extends CrudService<TenantMapper, Tenant> {
 		});
 	}
 
-	/**
-	 * 更新
-	 *
-	 * @param tenant tenant
-	 * @return Tenant
-	 * @author tangyi
-	 * @date 2019/05/26 10:28
-	 */
 	@Override
 	@Transactional
 	@CacheEvict(value = UserCacheName.TENANT, key = "#tenant.tenantCode")
@@ -117,14 +90,6 @@ public class TenantService extends CrudService<TenantMapper, Tenant> {
 		return super.update(tenant);
 	}
 
-	/**
-	 * 删除
-	 *
-	 * @param tenant tenant
-	 * @return Tenant
-	 * @author tangyi
-	 * @date 2019/05/26 10:28
-	 */
 	@Override
 	@Transactional
 	@CacheEvict(value = UserCacheName.TENANT, key = "#tenant.tenantCode")
@@ -139,14 +104,6 @@ public class TenantService extends CrudService<TenantMapper, Tenant> {
 		return super.delete(tenant);
 	}
 
-	/**
-	 * 删除
-	 *
-	 * @param ids ids
-	 * @return Tenant
-	 * @author tangyi
-	 * @date 2019/05/26 10:37
-	 */
 	@Override
 	@Transactional
 	@CacheEvict(value = UserCacheName.TENANT, allEntries = true)
@@ -154,12 +111,6 @@ public class TenantService extends CrudService<TenantMapper, Tenant> {
 		return super.deleteAll(ids);
 	}
 
-	/**
-	 * 查询单位数量
-	 * @return Integer
-	 * @author tangyi
-	 * @date 2019/12/18 5:09 下午
-	 */
 	public Integer tenantCount() {
 		return this.dao.tenantCount();
 	}

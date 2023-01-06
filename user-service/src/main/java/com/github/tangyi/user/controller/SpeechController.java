@@ -22,11 +22,6 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Map;
 
-/**
- * 语音合成
- * @author tangyi
- * @date 2022/6/7 8:54 上午
- */
 @Slf4j
 @AllArgsConstructor
 @Tag(name = "语音合成")

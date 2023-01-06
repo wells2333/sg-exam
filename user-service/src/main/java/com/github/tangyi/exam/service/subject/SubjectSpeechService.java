@@ -12,6 +12,7 @@ import com.github.tangyi.exam.mapper.SubjectSpeechMapper;
 import com.github.tangyi.exam.service.subject.converter.SubjectSpeechConverter;
 import com.github.tangyi.user.service.QiNiuService;
 import com.github.tangyi.user.service.SpeechSynthesisService;
+import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -55,6 +56,18 @@ public class SubjectSpeechService extends CrudService<SubjectSpeechMapper, Subje
 			}
 		}
 		return dto;
+	}
+
+	@Override
+	public List<SubjectDto> getSubjects(List<Long> ids) {
+		List<SubjectDto> list = Lists.newArrayListWithExpectedSize(ids.size());
+		for (Long id : ids) {
+			SubjectDto dto = getSubject(id);
+			if (dto != null) {
+				list.add(dto);
+			}
+		}
+		return list;
 	}
 
 	@Override

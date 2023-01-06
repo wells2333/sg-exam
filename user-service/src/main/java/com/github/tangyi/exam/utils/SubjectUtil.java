@@ -15,13 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * 题目工具类
- *
- * @author tangyi
- * @version V1.0
- * @date 2018-11-28 12:56
- */
 @Slf4j
 public class SubjectUtil {
 

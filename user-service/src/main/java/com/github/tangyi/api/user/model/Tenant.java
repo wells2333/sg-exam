@@ -9,12 +9,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 
-/**
- * 租户
- *
- * @author tangyi
- * @date 2019/5/22 22:44
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Table(name = "sys_tenant")

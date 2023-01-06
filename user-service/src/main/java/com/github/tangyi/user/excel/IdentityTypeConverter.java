@@ -7,10 +7,6 @@ import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
 import com.github.tangyi.api.user.enums.IdentityType;
 
-/**
- * @author tangyi
- * @date 2019/12/10 15:04
- */
 public class IdentityTypeConverter implements Converter<Integer> {
 
 	@Override

@@ -9,12 +9,6 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.Column;
 import javax.persistence.Table;
 
-/**
- * 角色菜单关联
- *
- * @author tangyi
- * @date 2018/8/26 22:24
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Table(name = "sys_role_menu")

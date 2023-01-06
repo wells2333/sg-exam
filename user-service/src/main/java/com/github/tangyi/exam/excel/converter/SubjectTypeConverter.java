@@ -9,8 +9,6 @@ import com.github.tangyi.exam.enums.SubjectTypeEnum;
 
 /**
  * 题目类型
- * @author tangyi
- * @date 2019/12/10 18:10
  */
 public class SubjectTypeConverter implements Converter<Integer> {
 

@@ -15,10 +15,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.SpringSecurityMessageSource;
 import org.springframework.security.core.userdetails.UserDetails;
 
-/**
- * @author tangyi
- * @date 2019/6/22 21:00
- */
 @Slf4j
 @Data
 public class MobileAuthenticationProvider implements AuthenticationProvider {

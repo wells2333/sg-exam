@@ -15,11 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 
-/**
- *
- * @author tangyi
- * @date 2022/5/18 1:13 下午
- */
 @Slf4j
 @AllArgsConstructor
 @Service

@@ -11,10 +11,6 @@ import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
-/**
- * @author tangyi
- * @date 2019/1/9 20:58
- */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)

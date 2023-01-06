@@ -10,11 +10,6 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
 
-/**
- *
- * @author tangyi
- * @date 2022/4/5 9:14 上午
- */
 public class ExaminationUtil {
 
 	public static ExaminationSubject createEs(Long examinationId, Long subjectId) {

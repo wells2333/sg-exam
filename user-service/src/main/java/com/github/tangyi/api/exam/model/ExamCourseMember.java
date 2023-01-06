@@ -14,9 +14,6 @@ import javax.validation.constraints.NotBlank;
 
 /**
  * 课程学员 exam_course_member
- * 
- * @author tangyi
- * @date 2022-11-27
  */
 @Data
 @Table(name = "exam_course_member")

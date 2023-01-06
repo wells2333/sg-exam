@@ -11,12 +11,6 @@ import org.apache.commons.beanutils.BeanUtils;
 
 import java.util.Date;
 
-/**
- * 菜单dto
- *
- * @author tangyi
- * @date 2018-09-13 20:39
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Slf4j

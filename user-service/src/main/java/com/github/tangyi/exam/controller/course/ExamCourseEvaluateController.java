@@ -22,12 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Map;
 
-/**
- * 课程评价Controller
- *
- * @author tangyi
- * @date 2022-11-26
- */
 @Slf4j
 @RestController
 @AllArgsConstructor

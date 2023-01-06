@@ -15,12 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Map;
 
-/**
- * 日志controller
- *
- * @author tangyi
- * @date 2018/10/31 20:48
- */
 @Slf4j
 @AllArgsConstructor
 @Tag(name = "日志信息管理")

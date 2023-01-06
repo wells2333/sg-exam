@@ -1,11 +1,5 @@
 package com.github.tangyi.api.user.constant;
 
-/**
- * 用户学生常量
- *
- * @author tangyi
- * @date 2019-07-25 13:08
- */
 public class UserStudentConstant {
 
     /**

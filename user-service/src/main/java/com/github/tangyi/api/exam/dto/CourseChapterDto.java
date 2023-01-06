@@ -6,11 +6,6 @@ import lombok.Data;
 
 import java.util.List;
 
-/**
- *
- * @author tangyi
- * @date 2022/11/26 11:38 上午
- */
 @Data
 public class CourseChapterDto {
 

@@ -4,11 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.util.*;
 
-/**
- *
- * @author tangyi
- * @date 2020/8/15 2:44 下午
- */
 public class ParameterRequestWrapper extends HttpServletRequestWrapper {
 
 	private final Map<String, String[]> params = new HashMap<>();

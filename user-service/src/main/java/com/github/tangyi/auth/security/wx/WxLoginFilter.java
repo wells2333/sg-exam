@@ -31,9 +31,6 @@ import java.io.InputStream;
 
 /**
  * 微信登录filter，登录时支持传入用户的资料，如姓名、电话、性别等
- *
- * @author tangyi
- * @date 2019/07/05 19:32
  */
 @Slf4j
 public class WxLoginFilter extends AbstractAuthenticationProcessingFilter {

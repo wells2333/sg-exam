@@ -7,12 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-/**
- * 微信Service
- *
- * @author tangyi
- * @date 2019/07/05 20:33
- */
 @Slf4j
 @AllArgsConstructor
 @Service
@@ -22,11 +16,6 @@ public class WxSessionService {
 
 	/**
 	 * 根据code获取WxSession
-	 *
-	 * @param code code
-	 * @return WxSession
-	 * @author tangyi
-	 * @date 2019/07/06 14:01:13
 	 */
 	public WxSession code2Session(String code) {
 		WxSession session = null;

@@ -10,11 +10,6 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- *
- * @author tangyi
- * @date 2022/4/8 8:16 下午
- */
 @Configuration
 public class SpringDocConfig {
 

@@ -16,6 +16,7 @@ import com.github.tangyi.exam.service.RankInfoService;
 import com.github.tangyi.exam.service.answer.AnswerHandleService;
 import com.github.tangyi.exam.service.answer.AnswerService;
 import com.github.tangyi.exam.service.fav.ExamFavoritesService;
+import com.github.tangyi.exam.service.subject.SubjectServiceFactory;
 import com.github.tangyi.exam.service.subject.SubjectsService;
 import com.github.tangyi.exam.utils.AnswerHandlerUtil;
 import com.github.tangyi.exam.utils.SubjectUtil;
@@ -37,11 +38,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- *
- * @author tangyi
- * @date 2022/4/14 6:43 下午
- */
 @Slf4j
 @Service
 public class ExaminationActionService {
@@ -53,6 +49,8 @@ public class ExaminationActionService {
 	private final ExamRecordService examRecordService;
 
 	private final SubjectsService subjectsService;
+
+	private final SubjectServiceFactory subjectServiceFactory;
 
 	private final AnswerService answerService;
 
@@ -66,13 +64,14 @@ public class ExaminationActionService {
 
 	public ExaminationActionService(ExaminationService examinationService,
 			ExaminationSubjectService examinationSubjectService, ExamRecordService examRecordService,
-			SubjectsService subjectsService, AnswerService answerService, AnswerHandleService answerHandleService,
-			RankInfoService rankInfoService, CommonExecutorService commonExecutorService,
-			ExamFavoritesService examFavoritesService) {
+			SubjectsService subjectsService, SubjectServiceFactory subjectServiceFactory, AnswerService answerService,
+			AnswerHandleService answerHandleService, RankInfoService rankInfoService,
+			CommonExecutorService commonExecutorService, ExamFavoritesService examFavoritesService) {
 		this.examinationService = examinationService;
 		this.examinationSubjectService = examinationSubjectService;
 		this.examRecordService = examRecordService;
 		this.subjectsService = subjectsService;
+		this.subjectServiceFactory = subjectServiceFactory;
 		this.answerService = answerService;
 		this.answerHandleService = answerHandleService;
 		this.rankInfoService = rankInfoService;
@@ -80,14 +79,6 @@ public class ExaminationActionService {
 		this.examFavoritesService = examFavoritesService;
 	}
 
-	/**
-	 * 开始考试
-	 *
-	 * @param examRecord examRecord
-	 * @return StartExamDto
-	 * @author tangyi
-	 * @date 2019/04/30 23:06
-	 */
 	@Transactional
 	public StartExamDto start(ExaminationRecord examRecord) {
 		SgPreconditions.checkNull(examRecord.getExaminationId(), "参数校验失败，考试id为空");
@@ -96,17 +87,6 @@ public class ExaminationActionService {
 				SysUtil.getTenantCode());
 	}
 
-	/**
-	 * 开始考试
-	 *
-	 * @param userId userId
-	 * @param identifier identifier
-	 * @param examinationId examinationId
-	 * @param tenantCode tenantCode
-	 * @return StartExamDto
-	 * @author tangyi
-	 * @date 2019/04/30 23:06
-	 */
 	@Transactional
 	public StartExamDto start(Long userId, String identifier, Long examinationId, String tenantCode) {
 		StartExamDto dto = new StartExamDto();
@@ -157,15 +137,6 @@ public class ExaminationActionService {
 		return dto;
 	}
 
-	/**
-	 * 开始考试
-	 *
-	 * @param examinationId examinationId
-	 * @param identifier identifier
-	 * @return StartExamDto
-	 * @author tangyi
-	 * @date 2020/3/21 5:51 下午
-	 */
 	@Transactional
 	public StartExamDto anonymousUserStart(Long examinationId, String identifier) {
 		String tenantCode = SysUtil.getTenantCode();
@@ -180,11 +151,6 @@ public class ExaminationActionService {
 
 	/**
 	 * 提交答卷，自动统计选择题得分
-	 *
-	 * @param recordId recordId
-	 * @param operator operator
-	 * @author tangyi
-	 * @date 2018/12/26 14:09
 	 */
 	@Transactional
 	public Boolean submit(Long recordId, String operator, String tenantCode) {
@@ -219,10 +185,6 @@ public class ExaminationActionService {
 
 	/**
 	 * 异步提交
-	 * @param answer answer
-	 * @return boolean
-	 * @author tangyi
-	 * @date 2019/05/03 14:35
 	 */
 	@Transactional
 	public boolean submitAsync(Answer answer) {
@@ -292,10 +254,6 @@ public class ExaminationActionService {
 
 	/**
 	 * 移动端提交答题
-	 * @param examinationId examinationId
-	 * @return R
-	 * @author tangyi
-	 * @date 2020/03/15 16:08
 	 */
 	@Transactional
 	public boolean anonymousUserSubmit(Long examinationId, String identifier, List<SubjectDto> subjectDtos) {
@@ -357,9 +315,6 @@ public class ExaminationActionService {
 
 	/**
 	 *  分类题目
-	 * @param subjectIds subjectIds
-	 * @param answers answers
-	 * @return Map
 	 */
 	public Map<Integer, List<Answer>> distinctAnswer(Long[] subjectIds, List<Answer> answers) {
 		List<Subjects> subjects = subjectsService.findBySubjectIds(subjectIds);
@@ -369,10 +324,6 @@ public class ExaminationActionService {
 
 	/**
 	 * 成绩详情
-	 * @param id id
-	 * @return ExaminationRecordDto
-	 * @author tangyi
-	 * @date 2020/2/21 9:26 上午
 	 */
 	public ExamRecordDetailsDto details(Long id) {
 		ExaminationRecord record = examRecordService.get(id);
@@ -413,24 +364,26 @@ public class ExaminationActionService {
 		if (CollectionUtils.isEmpty(answers)) {
 			return list;
 		}
-		List<ExaminationSubject> ess = examinationService.findListByExaminationId(examRecord.getExaminationId());
-		if (CollectionUtils.isEmpty(ess)) {
+		Map<Long, Answer> answerMap = answers.stream().collect(Collectors.toMap(Answer::getSubjectId, e -> e));
+		List<ExaminationSubject> esList = examinationService.findListByExaminationId(examRecord.getExaminationId());
+		if (CollectionUtils.isEmpty(esList)) {
 			return list;
 		}
-		for (ExaminationSubject es : ess) {
+		List<Long> subjectIds = esList.stream().map(ExaminationSubject::getSubjectId).collect(Collectors.toList());
+		Collection<SubjectDto> dtoList = subjectsService.getSubjects(subjectIds);
+		Map<Long, SubjectDto> map = dtoList.stream().collect(Collectors.toMap(SubjectDto::getId, e -> e));
+		for (ExaminationSubject es : esList) {
 			CardDto card = new CardDto();
 			card.setSort(es.getSort());
 			card.setSubjectId(es.getSubjectId());
 			cards.add(card);
-			for (Answer answer : answers) {
-				if (answer.getSubjectId().equals(es.getSubjectId())) {
-					AnswerDto dto = new AnswerDto();
-					BeanUtils.copyProperties(answer, dto);
-					dto.setSubject(subjectsService.getSubject(answer.getSubjectId()));
-					dto.setDuration(DateUtils.duration(answer.getStartTime(), answer.getEndTime()));
-					list.add(dto);
-					break;
-				}
+			Answer answer = answerMap.get(es.getSubjectId());
+			if (answer != null) {
+				AnswerDto dto = new AnswerDto();
+				BeanUtils.copyProperties(answer, dto);
+				dto.setSubject(map.get(answer.getSubjectId()));
+				dto.setDuration(DateUtils.duration(answer.getStartTime(), answer.getEndTime()));
+				list.add(dto);
 			}
 		}
 		return list;
@@ -438,9 +391,6 @@ public class ExaminationActionService {
 
 	/**
 	 * 异步提交
-	 * @param recordId recordId
-	 * @param userCode userCode
-	 * @param tenantCode tenantCode
 	 */
 	public void submitAsync(Long recordId, String userCode, String tenantCode) {
 		StopWatch watch = StopWatchUtil.start();

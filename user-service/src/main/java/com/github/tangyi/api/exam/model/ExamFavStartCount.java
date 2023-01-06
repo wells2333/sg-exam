@@ -12,9 +12,6 @@ import javax.persistence.Table;
 
 /**
  * 收藏、开始数量 exam_fav_start_count
- *
- * @author tangyi
- * @date 2022-12-17
  */
 @Data
 @Table(name = "exam_fav_start_count")

@@ -7,13 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
-/**
- *
- * 处理登录失败事件
- *
- * @author tangyi
- * @date 2019-11-11 23:52
- */
 @Slf4j
 @AllArgsConstructor
 @Component

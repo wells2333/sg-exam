@@ -2,11 +2,6 @@ package com.github.tangyi.exam.handler;
 
 import lombok.Data;
 
-/**
- * 计算结果
- * @author tangyi
- * @date 2019/12/8 9:56 下午
- */
 @Data
 public class AnswerHandleResult {
 

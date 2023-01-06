@@ -17,12 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Map;
 
-/**
- * 章节知识点Controller
- *
- * @author tangyi
- * @date 2022-12-02
- */
 @Slf4j
 @RestController
 @AllArgsConstructor

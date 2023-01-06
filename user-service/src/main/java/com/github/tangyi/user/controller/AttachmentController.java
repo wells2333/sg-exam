@@ -39,12 +39,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * 附件信息管理
- *
- * @author tangyi
- * @date 2018/10/30 20:45
- */
 @Slf4j
 @AllArgsConstructor
 @Tag(name = "附件信息管理")
@@ -86,13 +80,6 @@ public class AttachmentController extends BaseController {
 		return R.success(qiNiuService.upload(file, groupCode, SysUtil.getUser(), SysUtil.getTenantCode()));
 	}
 
-	/**
-	 * 获取下载链接
-	 *
-	 * @param id id
-	 * @author tangyi
-	 * @date 2018/10/30 22:26
-	 */
 	@GetMapping("getDownloadUrl")
 	@Operation(summary = "获取下载链接")
 	@SgLog(value = "获取下载链接", operationType = OperationType.PREVIEW)
@@ -104,13 +91,6 @@ public class AttachmentController extends BaseController {
 		return R.success(attachment.getUrl());
 	}
 
-	/**
-	 * 下载文件
-	 *
-	 * @param id id
-	 * @author tangyi
-	 * @date 2018/10/30 22:26
-	 */
 	@GetMapping("download")
 	@Operation(summary = "下载附件", description = "根据ID下载附件")
 	@SgLog(value = "下载文件", operationType = OperationType.DOWNLOAD)
@@ -171,14 +151,6 @@ public class AttachmentController extends BaseController {
 		return R.success(qiNiuService.getPreviewAttachment(id));
 	}
 
-	/**
-	 * 是否支持预览
-	 *
-	 * @param id id
-	 * @return R
-	 * @author tangyi
-	 * @date 2019/06/19 15:47
-	 */
 	@GetMapping("/{id}/canPreview")
 	@Operation(summary = "判断附件是否支持预览")
 	public R<Boolean> canPreview(@PathVariable Long id) {
@@ -187,14 +159,6 @@ public class AttachmentController extends BaseController {
 				attachment.getAttachType()));
 	}
 
-	/**
-	 * 预览附件
-	 *
-	 * @param response response
-	 * @param id       id
-	 * @author tangyi
-	 * @date 2019/06/19 15:47
-	 */
 	@GetMapping("/preview")
 	@Operation(summary = "预览附件")
 	public void preview(HttpServletResponse response, @RequestParam Long id) throws Exception {

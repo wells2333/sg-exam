@@ -9,10 +9,6 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * @author tangyi
- * @date 2019/4/30 16:54
- */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class StartExamDto implements Serializable {

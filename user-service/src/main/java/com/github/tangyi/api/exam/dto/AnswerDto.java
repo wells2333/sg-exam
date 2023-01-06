@@ -11,10 +11,6 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * @author tangyi
- * @date 2019/6/18 15:02
- */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AnswerDto implements Serializable {

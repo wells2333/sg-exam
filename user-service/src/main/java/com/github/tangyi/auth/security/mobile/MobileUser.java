@@ -5,10 +5,6 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * @author tangyi
- * @date 2019/08/04 13:28
- */
 @Data
 public class MobileUser implements Serializable {
 

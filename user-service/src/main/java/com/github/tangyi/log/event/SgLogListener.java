@@ -7,12 +7,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.Async;
 
-/**
- * 异步监听日志事件
- *
- * @author tangyi
- * @date 2019/3/12 23:59
- */
 @Configuration
 public class SgLogListener {
 

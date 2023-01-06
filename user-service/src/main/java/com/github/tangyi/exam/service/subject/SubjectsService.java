@@ -8,13 +8,18 @@ import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.exceptions.CommonException;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.PageUtil;
+import com.github.tangyi.common.utils.executor.ExecutorUtils;
 import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.exam.enums.SubjectTypeEnum;
 import com.github.tangyi.exam.mapper.SubjectsMapper;
 import com.github.tangyi.exam.service.ExaminationSubjectService;
 import com.github.tangyi.exam.service.subject.converter.*;
 import com.github.tangyi.exam.utils.SubjectUtil;
+import com.github.tangyi.user.service.CommonExecutorService;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -26,17 +31,12 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
-/**
- *
- * @author tangyi
- * @date 2022/4/13 2:03 下午
- */
 @AllArgsConstructor
 @Slf4j
 @Service
@@ -44,7 +44,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 
 	private final SubjectServiceFactory subjectServiceFactory;
 
-	private final ExaminationSubjectService examinationSubjectService;
+	private final ExaminationSubjectService esService;
 
 	private final SubjectCategoryService subjectCategoryService;
 
@@ -58,12 +58,29 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 
 	private final SubjectVideoConverter subjectVideoConverter;
 
+	private final CommonExecutorService commonExecutorService;
+
+	/**
+	 * 根据单个题目ID查询题目信息，会有缓存
+	 */
 	public SubjectDto getSubject(Long id) {
 		Subjects subjects = this.findBySubjectId(id);
 		if (subjects != null) {
 			return getSubject(subjects.getSubjectId(), subjects.getType());
 		}
 		return null;
+	}
+
+	/**
+	 * 批量查询题目信息，无缓存
+	 */
+	public Collection<SubjectDto> getSubjects(List<Long> ids) {
+		List<Subjects> subjects = this.findBySubjectIds(ids.toArray(new Long[0]));
+		return subjectServiceFactory.batchGetSubjects(subjects);
+	}
+
+	public Collection<SubjectDto> getSubjectsBySubjects(List<Subjects> subjects) {
+		return subjectServiceFactory.batchGetSubjects(subjects);
 	}
 
 	public SubjectDto getSubject(Long subjectId, Integer type) {
@@ -82,14 +99,11 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 		PageInfo<Subjects> pageInfo = findPage(params, pageNum, pageSize);
 		List<SubjectDto> dtoList = Lists.newArrayListWithExpectedSize(pageSize);
 		List<Long> categoryIds = Lists.newArrayList();
-		List<Subjects> subjects = pageInfo.getList();
-		if (CollectionUtils.isNotEmpty(subjects)) {
-			for (Subjects es : subjects) {
-				SubjectDto temp = subjectServiceFactory.service(es.getType()).getSubject(es.getSubjectId());
-				dtoList.add(temp);
-				if (temp.getCategoryId() != null) {
-					categoryIds.add(temp.getCategoryId());
-				}
+		Collection<SubjectDto> list = getSubjectsBySubjects(pageInfo.getList());
+		for (SubjectDto dto : list) {
+			dtoList.add(dto);
+			if (dto.getCategoryId() != null) {
+				categoryIds.add(dto.getCategoryId());
 			}
 		}
 		// 按序号排序
@@ -104,13 +118,13 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 		PageInfo<SubjectDto> pageInfo = new PageInfo<>();
 		BeanUtils.copyProperties(page, pageInfo);
 		List<Long> ids = page.getList().stream().map(ExamUserFav::getTargetId).collect(Collectors.toList());
-		List<SubjectDto> list = Lists.newArrayListWithExpectedSize(ids.size());
-		for (Long id : ids) {
-			SubjectDto subject = getSubject(id);
-			subject.setFavorite(true);
-			list.add(subject);
+		Collection<SubjectDto> list = getSubjects(ids);
+		if (CollectionUtils.isNotEmpty(list)) {
+			for (SubjectDto sub : list) {
+				sub.setFavorite(true);
+			}
+			pageInfo.setList(Lists.newArrayList(list));
 		}
-		pageInfo.setList(list);
 		return pageInfo;
 	}
 
@@ -122,17 +136,37 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 		if (CollectionUtils.isEmpty(categories)) {
 			return;
 		}
+		Map<Long, SubjectCategory> map = categories.stream().collect(Collectors.toMap(SubjectCategory::getId, e -> e));
 		for (SubjectDto subject : subjects) {
-			for (SubjectCategory category : categories) {
-				if (Objects.equals(subject.getCategoryId(), category.getId())) {
-					subject.setCategoryName(category.getCategoryName());
-				}
+			SubjectCategory category = map.get(subject.getCategoryId());
+			if (category != null) {
+				subject.setCategoryName(category.getCategoryName());
 			}
 		}
 	}
 
 	public Integer findSubjectCountByCategoryId(Long categoryId) {
 		return this.dao.findSubjectCountByCategoryId(categoryId);
+	}
+
+	/**
+	 * 并发根据类目ID查询题目数量
+	 */
+	public Map<Long, Integer> findSubjectCountByCategoryIds(List<Long> categoryIds) {
+		Map<Long, Integer> map = Maps.newConcurrentMap();
+		ListeningExecutorService executor = commonExecutorService.getSubjectExecutor();
+		List<ListenableFuture<?>> futures = Lists.newArrayListWithExpectedSize(categoryIds.size());
+		for (Long categoryId : categoryIds) {
+			ListenableFuture<?> future = executor.submit(() -> {
+				Integer cnt = findSubjectCountByCategoryId(categoryId);
+				if (cnt != null) {
+					map.put(categoryId, cnt);
+				}
+			});
+			futures.add(future);
+		}
+		ExecutorUtils.waitFutures(futures);
+		return map;
 	}
 
 	/**
@@ -153,14 +187,6 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 		return this.dao.findIdAndTypeByCategoryId(categoryId);
 	}
 
-	/**
-	 * 保存
-	 *
-	 * @param dto dto
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/06/16 17:59
-	 */
 	@Transactional
 	public SubjectDto insert(SubjectDto dto) {
 		BaseEntity<?> entity = subjectServiceFactory.service(dto.getType()).insertSubject(dto);
@@ -189,20 +215,12 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 		es.setExaminationId(dto.getExaminationId());
 		es.setSort(dto.getSort());
 		try {
-			examinationSubjectService.insert(es);
+			esService.insert(es);
 		} catch (DuplicateKeyException e) {
 			throw new CommonException("序号重复，请修改题目序号");
 		}
 	}
 
-	/**
-	 * 更新
-	 *
-	 * @param subjectDto subjectDto
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/06/16 18:01
-	 */
 	@Transactional
 	@CacheEvict(cacheNames = ExamCacheName.SUBJECTS, key = "#subjectDto.id")
 	public SubjectDto update(SubjectDto subjectDto) {
@@ -211,18 +229,10 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 			return this.insert(subjectDto);
 		}
 		// 更新题目序号
-		examinationSubjectService.updateSort(subjectDto.getExaminationId(), subjectDto.getId(), subjectDto.getSort());
+		esService.updateSort(subjectDto.getExaminationId(), subjectDto.getId(), subjectDto.getSort());
 		return subjectDto;
 	}
 
-	/**
-	 * 物理删除
-	 *
-	 * @param id id
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/06/16 22:51
-	 */
 	@Transactional
 	@CacheEvict(cacheNames = ExamCacheName.SUBJECTS, key = "#id")
 	public int physicalDelete(Long id) {
@@ -235,36 +245,23 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 			this.dao.deleteByPrimaryKey(subjects.getId());
 			ExaminationSubject examinationSubject = new ExaminationSubject();
 			examinationSubject.setSubjectId(subjectDto.getId());
-			return examinationSubjectService.deleteBySubjectId(examinationSubject);
+			return esService.deleteBySubjectId(examinationSubject);
 		}
 		return -1;
 	}
 
 	/**
 	 * 查询第一题
-	 *
-	 * @param examinationId examinationId
-	 * @return SubjectDto
-	 * @author tangyi
-	 * @date 2019/10/13 18:36:58
 	 */
 	public SubjectDto findFirstSubjectByExaminationId(Long examinationId) {
-		// 第一题
-		ExaminationSubject es = new ExaminationSubject();
-		es.setExaminationId(examinationId);
-		// 根据考试ID查询考试题目管理关系，题目ID递增
-		List<ExaminationSubject> subjects = examinationSubjectService.findList(es);
-		SgPreconditions.checkCollectionEmpty(subjects, "该考试未录入题目");
-		subjects = subjects.stream().sorted(Comparator.comparing(ExaminationSubject::getSort))
-				.collect(Collectors.toList());
 		// 第一题的ID
-		es = subjects.get(0);
-		// 根据题目ID，类型获取题目的详细信息
+		ExaminationSubject es = esService.findMinSortByExaminationId(examinationId);
+		SgPreconditions.checkNull(es, "该考试未录入题目");
 		SubjectDto dto = this.getSubject(es.getSubjectId());
 		// 题目数量
-		Integer subjectCount = examinationSubjectService.findSubjectCount(examinationId);
+		Integer subjectCount = esService.findSubjectCount(examinationId);
 		dto.setTotal(subjectCount);
-		dto.setHasMore(subjectCount != null && es.getSort() < subjectCount);
+		dto.setHasMore(subjectCount != null && dto.getSort() < subjectCount);
 		return dto;
 	}
 
@@ -274,9 +271,6 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 	 * @param examinationId     examinationId
 	 * @param previousSubjectId previousSubjectId
 	 * @param nextType          0：下一题，1：上一题
-	 * @return SubjectDto
-	 * @author tangyi
-	 * @date 2019/06/18 13:49
 	 */
 	@Transactional
 	public SubjectDto getNextByCurrentIdAndType(Long examinationId, Long previousSubjectId, Integer nextType) {
@@ -286,11 +280,6 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 
 	/**
 	 * 根据关系列表查询对应的题目的详细信息
-	 *
-	 * @param subjects subjects
-	 * @return List
-	 * @author tangyi
-	 * @date 2019/06/17 10:54
 	 */
 	public List<SubjectDto> findSubjectDtoList(List<Subjects> subjects) {
 		return findSubjectDtoList(subjects, false);
@@ -298,12 +287,6 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 
 	/**
 	 * 根据关系列表查询对应的题目的详细信息
-	 *
-	 * @param subjects subjects
-	 * @param findOptions         findOptions
-	 * @return List
-	 * @author tangyi
-	 * @date 2019/06/17 11:54
 	 */
 	public List<SubjectDto> findSubjectDtoList(List<Subjects> subjects, boolean findOptions) {
 		return findSubjectDtoList(subjects, findOptions, true);
@@ -311,13 +294,6 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 
 	/**
 	 * 根据关系列表查询对应的题目的详细信息
-	 *
-	 * @param subjects subjects
-	 * @param findOptions         findOptions
-	 * @param findAnswer          findAnswer
-	 * @return List
-	 * @author tangyi
-	 * @date 2019/06/17 11:54
 	 */
 	public List<SubjectDto> findSubjectDtoList(List<Subjects> subjects, boolean findOptions, boolean findAnswer) {
 		Map<String, Long[]> idMap = SubjectUtil.groupByType(subjects);
@@ -376,14 +352,6 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> {
 		return dtoList;
 	}
 
-	/**
-	 * 物理批量删除
-	 *
-	 * @param ids ids
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/06/16 22:52
-	 */
 	@Transactional
 	public int physicalDeleteAll(Long[] ids) {
 		if (ArrayUtils.isNotEmpty(ids)) {

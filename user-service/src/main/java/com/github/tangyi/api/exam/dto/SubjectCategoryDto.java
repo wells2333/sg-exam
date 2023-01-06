@@ -8,10 +8,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.beans.BeanUtils;
 
-/**
- * @author tangyi
- * @date 2018/12/4 22:04
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class SubjectCategoryDto extends TreeEntity<SubjectCategoryDto> {
@@ -37,6 +33,8 @@ public class SubjectCategoryDto extends TreeEntity<SubjectCategoryDto> {
 	private Long parentId;
 
 	private Integer type;
+
+	private Integer subjectCnt;
 
 	public SubjectCategoryDto(SubjectCategory subjectCategory) {
 		BeanUtils.copyProperties(subjectCategory, this);

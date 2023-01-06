@@ -13,11 +13,6 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * 选择题
- * @author tangyi
- * @date 2019/12/8 21:57
- */
 @Slf4j
 @AllArgsConstructor
 @Component
@@ -40,11 +35,6 @@ public class ChoicesAnswerHandler extends AbstractAnswerHandler {
 
 	/**
 	 * 判断选项是否正确
-	 *
-	 * @param answer  answer
-	 * @param subject subject
-	 * @author tangyi
-	 * @date 2020/02/19 23:23
 	 */
 	@Override
 	public void judgeOptionRight(Answer answer, SubjectDto subject) {

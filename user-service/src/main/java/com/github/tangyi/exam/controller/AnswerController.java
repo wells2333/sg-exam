@@ -24,12 +24,6 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 答题controller
- *
- * @author tangyi
- * @date 2018/11/8 21:24
- */
 @Slf4j
 @AllArgsConstructor
 @Tag(name = "答题信息管理")
@@ -105,9 +99,6 @@ public class AnswerController extends BaseController {
 	 *
 	 * @param answer          answer
 	 * @param type        0：下一题，1：上一题，2：提交
-	 * @return R
-	 * @author tangyi
-	 * @date 2019/04/30 18:06
 	 */
 	@PostMapping("saveAndNext")
 	@Operation(summary = "保存答题")
@@ -119,11 +110,6 @@ public class AnswerController extends BaseController {
 
 	/**
 	 * 保存答题
-	 *
-	 * @param answer          answer
-	 * @return R
-	 * @author tangyi
-	 * @date 2019/04/30 18:06
 	 */
 	@PostMapping("saveAnswer")
 	@Operation(summary = "保存答题")
@@ -138,9 +124,6 @@ public class AnswerController extends BaseController {
 	 * @param examinationId       examinationId
 	 * @param subjectId          subjectId
 	 * @param nextType          0：下一题，1：上一题
-	 * @return R
-	 * @author tangyi
-	 * @date 2019/04/30 18:06
 	 */
 	@GetMapping("nextSubject")
 	@Operation(summary = "获取下一题")
@@ -149,14 +132,6 @@ public class AnswerController extends BaseController {
 		return R.success(subjectsService.getNextByCurrentIdAndType(examinationId, subjectId, nextType));
 	}
 
-	/**
-	 * 提交答卷
-	 *
-	 * @param answer answer
-	 * @return R
-	 * @author tangyi
-	 * @date 2018/12/24 20:44
-	 */
 	@PostMapping("submit")
 	@Operation(summary = "提交答卷")
 	@SgLog(value = "提交答卷", operationType = OperationType.UPDATE)
@@ -182,12 +157,6 @@ public class AnswerController extends BaseController {
 	/**
 	 * 答题列表，包括题目的详情
 	 * 支持查询正确、错误类型的题目
-	 *
-	 * @param recordId recordId
-	 * @param answer   answer
-	 * @return PageInfo
-	 * @author tangyi
-	 * @date 2019/06/18 19:16
 	 */
 	@GetMapping("record/{recordId}/answerListInfo")
 	@Operation(summary = "获取答题信息列表")
@@ -204,9 +173,6 @@ public class AnswerController extends BaseController {
 	 * @param recordId        recordId
 	 * @param currentSubjectId   currentSubjectId
 	 * @param nextType        0：下一题，1：上一题
-	 * @return R
-	 * @author tangyi
-	 * @date 2019/06/18 22:50
 	 */
 	@GetMapping("record/{recordId}/answerInfo")
 	@Operation(summary = "答题详情")
@@ -217,10 +183,6 @@ public class AnswerController extends BaseController {
 
 	/**
 	 * 获取排名数据，成绩由高到底排序，返回姓名、头像、分数信息
-	 * @param recordId recordId
-	 * @return R
-	 * @author tangyi
-	 * @date 2019/12/8 23:32
 	 */
 	@GetMapping("record/{recordId}/rankInfo")
 	@Operation(summary = "排名列表")

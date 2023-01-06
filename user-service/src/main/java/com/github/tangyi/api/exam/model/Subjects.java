@@ -9,11 +9,6 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.Column;
 import javax.persistence.Table;
 
-/**
- *
- * @author tangyi
- * @date 2022/4/13 1:46 下午
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Table(name = "exam_subjects")

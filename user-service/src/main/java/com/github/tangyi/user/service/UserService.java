@@ -47,12 +47,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-/**
- * 用户service实现
- *
- * @author tangyi
- * @date 2018-08-25 16:17
- */
 @AllArgsConstructor
 @Slf4j
 @Service
@@ -78,9 +72,6 @@ public class UserService extends CrudService<UserMapper, User> {
 
 	private final UserAuthsService userAuthsService;
 
-	/**
-	 * 新增用户
-	 */
 	@Transactional
 	public int createUser(UserDto userDto) {
 		userDto.setTenantCode(SysUtil.getTenantCode());
@@ -142,13 +133,6 @@ public class UserService extends CrudService<UserMapper, User> {
 
 	/**
 	 * 根据用户唯一标识获取用户详细信息
-	 *
-	 * @param identityType identityType
-	 * @param identifier   identifier
-	 * @param tenantCode   tenantCode
-	 * @return UserVo
-	 * @author tangyi
-	 * @date 2019/07/03 13:00:39
 	 */
 	@Cacheable(value = UserCacheName.USER_VO, key = "#identifier")
 	public UserVo findUserByIdentifier(Integer identityType, String identifier, String tenantCode) {
@@ -189,11 +173,6 @@ public class UserService extends CrudService<UserMapper, User> {
 
 	/**
 	 * 获取用户信息，包括头像、角色、权限信息
-	 *
-	 * @param userVo userVo
-	 * @return User
-	 * @author tangyi
-	 * @date 2018/9/11 23:44
 	 */
 	@Cacheable(value = UserCacheName.USER_DTO, key = "#userVo.identifier")
 	public UserInfoDto findUserInfo(UserVo userVo) {
@@ -227,13 +206,6 @@ public class UserService extends CrudService<UserMapper, User> {
 
 	/**
 	 * 根据指定角色集合，查询用户权限数组
-	 *
-	 * @param user       user
-	 * @param identifier identifier
-	 * @param roles      roles
-	 * @return Set
-	 * @author tangyi
-	 * @date 2019/07/04 00:14:44
 	 */
 	@Cacheable(value = UserCacheName.USER_PERMISSION, key = "#identifier")
 	public Set<String> getUserPermissions(User user, String identifier, List<Role> roles) {
@@ -260,14 +232,6 @@ public class UserService extends CrudService<UserMapper, User> {
 				Sets.newHashSet();
 	}
 
-	/**
-	 * 获取用户的角色
-	 *
-	 * @param userAuths userAuths
-	 * @return List
-	 * @author tangyi
-	 * @date 2019/07/03 12:03:17
-	 */
 	@Cacheable(value = UserCacheName.USER_ROLE, key = "#userAuths.identifier")
 	public List<Role> getUserRoles(UserAuths userAuths) {
 		List<UserRole> userRoles = userRoleMapper.getByUserId(userAuths.getUserId());
@@ -277,14 +241,6 @@ public class UserService extends CrudService<UserMapper, User> {
 		return Lists.newArrayList();
 	}
 
-	/**
-	 * 批量查询用户的角色
-	 *
-	 * @param users users
-	 * @return List
-	 * @author tangyi
-	 * @date 2019/07/03 12:13:38
-	 */
 	public List<Role> getUsersRoles(List<User> users) {
 		List<UserRole> userRoles = userRoleMapper.getByUserIds(
 				users.stream().map(User::getId).collect(Collectors.toList()));
@@ -294,14 +250,6 @@ public class UserService extends CrudService<UserMapper, User> {
 		return Lists.newArrayList();
 	}
 
-	/**
-	 * 更新用户
-	 * @param id id
-	 * @param userDto userDto
-	 * @return int
-	 * @author tangyi
-	 * @date 2018/8/26 15:15
-	 */
 	@Transactional
 	@CacheEvict(value = {UserCacheName.USER, UserCacheName.USER_ROLE, UserCacheName.USER_PERMISSION,
 			UserCacheName.USER_AUTHS}, key = "#userDto.identifier")
@@ -323,12 +271,6 @@ public class UserService extends CrudService<UserMapper, User> {
 		return Boolean.TRUE;
 	}
 
-	/**
-	 * 更新用户基本信息
-	 *
-	 * @param user user
-	 * @return int
-	 */
 	@Transactional
 	@CacheEvict(value = {UserCacheName.USER, UserCacheName.USER_VO, UserCacheName.USER_DTO, UserCacheName.USER_ROLE,
 			UserCacheName.USER_PERMISSION, UserCacheName.USER_AUTHS}, key = "#userAuths.identifier")
@@ -337,14 +279,6 @@ public class UserService extends CrudService<UserMapper, User> {
 		return this.dao.updateByPrimaryKeySelective(user);
 	}
 
-	/**
-	 * 更新密码
-	 *
-	 * @param userDto userDto
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/07/03 12:26:24
-	 */
 	@Transactional
 	@CacheEvict(value = {UserCacheName.USER, UserCacheName.USER_VO, UserCacheName.USER_DTO, UserCacheName.USER_ROLE,
 			UserCacheName.USER_PERMISSION, UserCacheName.USER_AUTHS}, key = "#userDto.identifier")
@@ -362,26 +296,10 @@ public class UserService extends CrudService<UserMapper, User> {
 		}
 	}
 
-	/**
-	 * 更新头像
-	 *
-	 * @param file file
-	 * @return Attachment
-	 * @author tangyi
-	 * @date 2019/06/21 18:14
-	 */
 	public Attachment uploadAvatar(MultipartFile file) throws IOException {
 		return qiNiuService.upload(file, AttachTypeEnum.AVATAR.getValue(), SysUtil.getUser(), SysUtil.getTenantCode());
 	}
 
-	/**
-	 * 更新头像
-	 *
-	 * @param userDto userDto
-	 * @return String
-	 * @author tangyi
-	 * @date 2019/06/21 18:14
-	 */
 	@Transactional
 	@CacheEvict(value = {UserCacheName.USER, UserCacheName.USER_VO, UserCacheName.USER_DTO, UserCacheName.USER_ROLE,
 			UserCacheName.USER_PERMISSION, UserCacheName.USER_AUTHS}, key = "#userDto.identifier")
@@ -399,16 +317,6 @@ public class UserService extends CrudService<UserMapper, User> {
 		return qiNiuService.getPreviewUrl(userDto.getAvatarId());
 	}
 
-	/**
-	 * 查询账号是否存在
-	 *
-	 * @param identityType identityType
-	 * @param identifier   identifier
-	 * @param tenantCode   tenantCode
-	 * @return boolean
-	 * @author tangyi
-	 * @date 2019/07/03 13:23:10
-	 */
 	public boolean checkIdentifierIsExist(Integer identityType, String identifier, String tenantCode) {
 		UserAuths userAuths = new UserAuths();
 		userAuths.setIdentifier(identifier);
@@ -417,26 +325,12 @@ public class UserService extends CrudService<UserMapper, User> {
 		return userAuthsService.getByIdentifier(userAuths) != null;
 	}
 
-	/**
-	 * 保存验证码
-	 *
-	 * @param random    random
-	 * @param imageCode imageCode
-	 * @author tangyi
-	 * @date 2018/9/14 20:12
-	 */
 	public void saveImageCode(String random, String imageCode) {
 		redisTemplate.opsForValue()
 				.set(CommonConstant.DEFAULT_CODE_KEY + random, imageCode, SecurityConstant.DEFAULT_IMAGE_EXPIRE,
 						TimeUnit.SECONDS);
 	}
 
-	/**
-	 * 删除用户
-	 *
-	 * @param userAuths userAuths
-	 * @return int
-	 */
 	@Transactional
 	@CacheEvict(value = {UserCacheName.USER, UserCacheName.USER_VO, UserCacheName.USER_DTO, UserCacheName.USER_ROLE,
 			UserCacheName.USER_PERMISSION, UserCacheName.USER_AUTHS}, key = "#userAuths.identifier")
@@ -447,14 +341,6 @@ public class UserService extends CrudService<UserMapper, User> {
 		return super.delete(user);
 	}
 
-	/**
-	 * 批量删除用户
-	 *
-	 * @param ids ids
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/07/04 11:44:45
-	 */
 	@Transactional
 	@Override
 	@CacheEvict(value = {UserCacheName.USER, UserCacheName.USER_VO, UserCacheName.USER_DTO, UserCacheName.USER_ROLE,
@@ -474,26 +360,10 @@ public class UserService extends CrudService<UserMapper, User> {
 		return super.deleteAll(ids);
 	}
 
-	/**
-	 * 查询用户数量
-	 *
-	 * @param userVo userVo
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/05/09 22:10
-	 */
 	public Integer userCount(UserVo userVo) {
 		return this.dao.userCount(userVo);
 	}
 
-	/**
-	 * 用户头像
-	 *
-	 * @param userInfoDto userInfoDto
-	 * @param user        user
-	 * @author tangyi
-	 * @date 2019/06/21 17:49
-	 */
 	private void getUserAvatar(UserInfoDto userInfoDto, User user) {
 		try {
 			if (user.getAvatarId() != null && user.getAvatarId() != 0L) {
@@ -506,14 +376,6 @@ public class UserService extends CrudService<UserMapper, User> {
 		}
 	}
 
-	/**
-	 * 重置密码
-	 *
-	 * @param userDto userDto
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/07/03 13:27:39
-	 */
 	@Transactional
 	@CacheEvict(value = {UserCacheName.USER, UserCacheName.USER_VO, UserCacheName.USER_DTO, UserCacheName.USER_ROLE,
 			UserCacheName.USER_PERMISSION, UserCacheName.USER_AUTHS}, key = "#userDto.identifier")
@@ -525,14 +387,6 @@ public class UserService extends CrudService<UserMapper, User> {
 		return userAuthsService.update(userAuths) > 0;
 	}
 
-	/**
-	 * 注册
-	 *
-	 * @param userDto userDto
-	 * @return boolean
-	 * @author tangyi
-	 * @date 2019/07/03 13:30:03
-	 */
 	@Transactional
 	@CacheEvict(value = {UserCacheName.USER, UserCacheName.USER_VO, UserCacheName.USER_DTO, UserCacheName.USER_ROLE,
 			UserCacheName.USER_PERMISSION, UserCacheName.USER_AUTHS}, key = "#userDto.identifier")
@@ -577,14 +431,6 @@ public class UserService extends CrudService<UserMapper, User> {
 		return success;
 	}
 
-	/**
-	 * 解密密码
-	 *
-	 * @param encoded encoded
-	 * @return String
-	 * @author tangyi
-	 * @date 2019/07/05 12:39:13
-	 */
 	private String decryptCredential(String encoded, Integer identityType) {
 		// 返回默认密码
 		if (StringUtils.isBlank(encoded)) {
@@ -605,16 +451,6 @@ public class UserService extends CrudService<UserMapper, User> {
 		return encoded;
 	}
 
-	/**
-	 * 分配默认角色
-	 *
-	 * @param user user
-	 * @param tenantCode tenantCode
-	 * @param identifier identifier
-	 * @return boolean
-	 * @author tangyi
-	 * @date 2019/07/04 11:30:27
-	 */
 	@Transactional
 	public boolean defaultRole(User user, String tenantCode, String identifier) {
 		// 设置默认的租户标识
@@ -632,14 +468,6 @@ public class UserService extends CrudService<UserMapper, User> {
 		return false;
 	}
 
-	/**
-	 * 根据用户id批量查询UserVo
-	 *
-	 * @param ids ids
-	 * @return List
-	 * @author tangyi
-	 * @date 2019/07/03 13:59:32
-	 */
 	public List<UserVo> findUserVoListById(Long[] ids) {
 		List<UserVo> userVos = Lists.newArrayListWithExpectedSize(ids.length);
 		List<User> users = this.findListById(ids);
@@ -656,18 +484,6 @@ public class UserService extends CrudService<UserMapper, User> {
 		return userVos;
 	}
 
-	/**
-	 * 组装用户数据，包括账号、部门、角色
-	 *
-	 * @param tempUser      tempUser
-	 * @param userAuths     userAuths
-	 * @param deptList      deptList
-	 * @param userRoles     userRoles
-	 * @param finalRoleList finalRoleList
-	 * @return UserDto
-	 * @author tangyi
-	 * @date 2019/07/03 22:35:50
-	 */
 	public UserDto getUserDtoByUserAndUserAuths(User tempUser, List<UserAuths> userAuths, List<Dept> deptList,
 			List<UserRole> userRoles, List<Role> finalRoleList) {
 		UserDto userDto = new UserDto(tempUser);
@@ -701,14 +517,6 @@ public class UserService extends CrudService<UserMapper, User> {
 		return userDto;
 	}
 
-	/**
-	 * 导入用户
-	 *
-	 * @param userInfoDtos userInfoDtos
-	 * @return boolean
-	 * @author tangyi
-	 * @date 2019/07/04 12:46:01
-	 */
 	@Transactional
 	@CacheEvict(value = {UserCacheName.USER, UserCacheName.USER_VO, UserCacheName.USER_DTO, UserCacheName.USER_ROLE,
 			UserCacheName.USER_PERMISSION, UserCacheName.USER_AUTHS}, allEntries = true)
@@ -745,21 +553,10 @@ public class UserService extends CrudService<UserMapper, User> {
 		return true;
 	}
 
-	/**
-	 * 加密
-	 *
-	 * @param credential 明文
-	 * @return 密文
-	 */
 	public String encodeCredential(String credential) {
 		return encoder.encode(credential);
 	}
 
-	/**
-	 * 获取用户头像地址
-	 * @param users users
-	 * @return Map
-	 */
 	public Map<Long, String> findUserAvatarUrl(List<User> users) {
 		Map<Long, String> result = Maps.newHashMapWithExpectedSize(users.size());
 		for (User user : users) {

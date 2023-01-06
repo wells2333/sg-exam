@@ -12,12 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * 系统配置controller
- *
- * @author tangyi
- * @date 2019-02-28 17:29
- */
 @AllArgsConstructor
 @Tag(name = "系统配置信息管理")
 @RestController
@@ -26,13 +20,6 @@ public class SysConfigController extends BaseController {
 
 	private final SysProperties sysProperties;
 
-	/**
-	 * 获取系统配置
-	 *
-	 * @return R
-	 * @author tangyi
-	 * @date 2019/2/28 17:31
-	 */
 	@GetMapping
 	@Operation(summary = "获取系统配置", description = "获取系统配置")
 	public R<SysConfigDto> getSysConfig() {

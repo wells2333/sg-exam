@@ -6,9 +6,6 @@ import lombok.EqualsAndHashCode;
 
 /**
  * 考试权限
- *
- * @author tangyi
- * @date 2019-07-16 14:01
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

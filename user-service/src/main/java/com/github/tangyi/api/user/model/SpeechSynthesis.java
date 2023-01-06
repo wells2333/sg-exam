@@ -8,12 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-/**
- *
- *
- * @author tangyi
- * @date 2022/6/15 1:18 下午
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Table(name = "sys_speech_synthesis")

@@ -40,12 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * 答题service
- *
- * @author tangyi
- * @date 2018/11/8 21:17
- */
 @Slf4j
 @AllArgsConstructor
 @Service
@@ -77,11 +71,6 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
 
 	/**
 	 * 根据考试记录ID、题目ID查找答题
-	 *
-	 * @param answer answer
-	 * @return Answer
-	 * @author tangyi
-	 * @date 2019/01/21 19:41
 	 */
 	public Answer findByRecordIdAndSubjectId(Answer answer) {
 		return this.dao.findByRecordIdAndSubjectId(answer);
@@ -108,11 +97,6 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
 
 	/**
 	 * 更新答题总分
-	 *
-	 * @param answer answer
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/1/3 14:27
 	 */
 	@Transactional
 	@CacheEvict(value = ExamCacheName.ANSWER, key = "#answer.id")
@@ -181,9 +165,6 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
 	 *
 	 * @param answerDto       answerDto
 	 * @param type            0：下一题，1：上一题
-	 * @return SubjectDto
-	 * @author tangyi
-	 * @date 2019/05/01 11:42
 	 */
 	@Transactional
 	public SubjectDto saveAndNext(AnswerDto answerDto, Integer type, Integer nextSubjectSortNo) {
@@ -197,13 +178,6 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
 
 	/**
 	 * 保存答题
-	 *
-	 * @param answerDto       answerDto
-	 * @param userCode       userCode
-	 * @param tenantCode       tenantCode
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/05/01 11:42
 	 */
 	@Transactional
 	public int save(AnswerDto answerDto, String userCode, String tenantCode) {
@@ -287,13 +261,6 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
 
 	/**
 	 * 答题详情
-	 *
-	 * @param recordId         recordId
-	 * @param currentSubjectId currentSubjectId
-	 * @param nextType         nextType
-	 * @return AnswerDto
-	 * @author tangyi
-	 * @date 2019/06/18 23:05
 	 */
 	public AnswerDto answerInfo(Long recordId, Long currentSubjectId, Integer nextType) {
 		ExaminationRecord record = examRecordService.get(recordId);
@@ -396,10 +363,6 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
 
 	/**
 	 * 根据examRecordId查询
-	 * @param examRecordId examRecordId
-	 * @return List
-	 * @author tangyi
-	 * @date 2020/2/21 1:08 下午
 	 */
 	public List<Answer> findListByExamRecordId(Long examRecordId) {
 		return this.dao.findListByExamRecordId(examRecordId);

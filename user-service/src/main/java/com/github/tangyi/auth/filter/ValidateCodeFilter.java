@@ -20,12 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * 验证码过滤器
- *
- * @author tangyi
- * @date 2019/3/18 16:40
- */
 @Component
 @AllArgsConstructor
 public class ValidateCodeFilter extends OncePerRequestFilter {

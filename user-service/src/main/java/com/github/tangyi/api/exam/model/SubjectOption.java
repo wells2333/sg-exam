@@ -11,9 +11,6 @@ import javax.persistence.Table;
 
 /**
  * 选择题的选项
- *
- * @author tangyi
- * @date 2018/11/8 20:53
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

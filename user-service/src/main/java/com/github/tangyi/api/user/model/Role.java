@@ -9,12 +9,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 
-/**
- * 角色
- *
- * @author tangyi
- * @date 2018-08-25 13:58
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Table(name = "sys_role")

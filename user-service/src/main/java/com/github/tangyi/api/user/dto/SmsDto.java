@@ -4,10 +4,6 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * @author tangyi
- * @date 2019/6/22 13:07
- */
 @Data
 public class SmsDto implements Serializable {
 

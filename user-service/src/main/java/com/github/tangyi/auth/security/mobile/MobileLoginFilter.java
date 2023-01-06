@@ -30,9 +30,6 @@ import java.io.InputStream;
 
 /**
  * 手机登录filter
- *
- * @author tangyi
- * @date 2019/6/22 21:15
  */
 @Slf4j
 public class MobileLoginFilter extends AbstractAuthenticationProcessingFilter {

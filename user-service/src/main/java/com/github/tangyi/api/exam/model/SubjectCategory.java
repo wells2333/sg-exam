@@ -12,9 +12,6 @@ import javax.validation.constraints.NotBlank;
 
 /**
  * 题目分类
- *
- * @author tangyi
- * @date 2018-12-04 11:18
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

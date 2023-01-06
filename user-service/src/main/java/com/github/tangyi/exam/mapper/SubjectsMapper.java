@@ -7,11 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-/**
- *
- * @author tangyi
- * @date 2022/4/13 1:57 下午
- */
 @Repository
 public interface SubjectsMapper extends CrudMapper<Subjects> {
 

@@ -9,13 +9,13 @@ import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.common.utils.TreeUtil;
 import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.exam.mapper.SubjectCategoryMapper;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -111,14 +111,13 @@ public class SubjectCategoryService extends CrudService<SubjectCategoryMapper, S
 		if (categoryName != null) {
 			subjectCategory.setCategoryName(categoryName.toString());
 		}
-		List<SubjectCategory> subjectCategoryList = findList(subjectCategory);
-		if (CollectionUtils.isNotEmpty(subjectCategoryList)) {
-			List<SubjectCategoryDto> subjectCategorySetTreeList = subjectCategoryList.stream()
-					.map(SubjectCategoryDto::new).distinct().collect(Collectors.toList());
-			return TreeUtil.buildTree(
-					CollUtil.sort(subjectCategorySetTreeList, Comparator.comparingInt(SubjectCategoryDto::getSort)),
+		List<SubjectCategory> categories = findList(subjectCategory);
+		if (CollectionUtils.isNotEmpty(categories)) {
+			List<SubjectCategoryDto> list = categories.stream().map(SubjectCategoryDto::new).distinct()
+					.collect(Collectors.toList());
+			return TreeUtil.buildTree(CollUtil.sort(list, Comparator.comparingInt(SubjectCategoryDto::getSort)),
 					CommonConstant.ROOT);
 		}
-		return new ArrayList<>();
+		return Lists.newArrayList();
 	}
 }

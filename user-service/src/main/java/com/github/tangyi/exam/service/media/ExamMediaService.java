@@ -11,11 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-/**
- *
- * @author tangyi
- * @date 2022/11/8 8:40 下午
- */
 @Slf4j
 @Service
 @AllArgsConstructor

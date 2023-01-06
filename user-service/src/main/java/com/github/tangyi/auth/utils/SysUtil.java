@@ -13,21 +13,11 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 
-/**
- * 系统工具类
- *
- * @author tangyi
- * @date 2018-09-13 20:50
- */
 @Slf4j
 public class SysUtil {
 
 	/**
 	 * 获取当前登录的用户名
-	 *
-	 * @return String
-	 * @author tangyi
-	 * @date 2019/03/17 11:46
 	 */
 	public static String getUser() {
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -42,8 +32,6 @@ public class SysUtil {
 
 	/**
 	 * 获取系统编号
-	 *
-	 * @return String
 	 */
 	public static String getSysCode() {
 		return SecurityConstant.SYS_CODE;
@@ -51,8 +39,6 @@ public class SysUtil {
 
 	/**
 	 * 获取租户编号
-	 *
-	 * @return String
 	 */
 	public static String getTenantCode() {
 		String tenantCode = TenantContextHolder.getTenantCode();
@@ -67,8 +53,6 @@ public class SysUtil {
 
 	/**
 	 * 获取当前登录的租户code
-	 *
-	 * @return String
 	 */
 	private static String getCurrentUserTenantCode() {
 		String tenantCode = "";
@@ -77,10 +61,6 @@ public class SysUtil {
 
 	/**
 	 * 获取当前用户的授权信息
-	 *
-	 * @return Authentication
-	 * @author tangyi
-	 * @date 2019/03/17 19:18
 	 */
 	public static Authentication getCurrentAuthentication() {
 		return SecurityContextHolder.getContext().getAuthentication();
@@ -88,10 +68,6 @@ public class SysUtil {
 
 	/**
 	 * 获取当前登录用户的授权信息
-	 *
-	 * @return Object
-	 * @author tangyi
-	 * @date 2019/03/17 11:48
 	 */
 	public static Object getCurrentPrincipal() {
 		return SecurityContextHolder.getContext().getAuthentication().getPrincipal();

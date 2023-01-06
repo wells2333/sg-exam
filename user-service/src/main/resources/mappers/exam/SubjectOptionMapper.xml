@@ -15,9 +15,15 @@
         <result column="tenant_code" property="tenantCode"/>
     </resultMap>
 
-    <!-- 根据题目ID查询 -->
     <select id="getBySubjectChoicesId" resultMap="subjectOptionResultMap">
         SELECT * FROM exam_subject_option a WHERE a.subject_choices_id = #{subjectChoicesId} and a.is_deleted = 0
+    </select>
+
+    <select id="getBySubjectChoicesIds" resultMap="subjectOptionResultMap">
+        SELECT * FROM exam_subject_option a WHERE a.is_deleted = 0 AND a.subject_choices_id IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
     </select>
 
     <select id="findPage" resultMap="subjectOptionResultMap">

@@ -30,11 +30,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
-/**
- *
- * @author tangyi
- * @date 2022/10/30 4:04 下午
- */
 @Slf4j
 @Service
 public class WxH5Service {

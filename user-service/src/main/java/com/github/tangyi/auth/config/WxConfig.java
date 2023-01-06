@@ -9,12 +9,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * 微信相关配置
- *
- * @author tangyi
- * @date 2019/07/05 20:29
- */
 @Configuration
 @AllArgsConstructor
 public class WxConfig {

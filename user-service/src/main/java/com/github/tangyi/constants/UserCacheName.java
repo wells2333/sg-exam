@@ -1,10 +1,5 @@
 package com.github.tangyi.constants;
 
-/**
- *
- * @author tangyi
- * @date 2022/7/2 2:32 下午
- */
 public interface UserCacheName {
 
 	String TENANT = "tenant";

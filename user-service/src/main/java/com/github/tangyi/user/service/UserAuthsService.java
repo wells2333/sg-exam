@@ -14,78 +14,32 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * 用户授权Service
- *
- * @author tangyi
- * @date 2019/07/03 11:45
- */
 @AllArgsConstructor
 @Slf4j
 @Service
 public class UserAuthsService extends CrudService<UserAuthsMapper, UserAuths> {
 
-	/**
-	 * 根据唯一标识、tenantCode查询
-	 *
-	 * @param userAuths userAuths
-	 * @return UserAuths
-	 * @author tangyi
-	 * @date 2019/07/03 11:52:27
-	 */
 	@Cacheable(value = UserCacheName.USER_AUTHS, key = "#userAuths.identifier")
 	public UserAuths getByIdentifier(UserAuths userAuths) {
 		return this.dao.getByIdentifier(userAuths);
 	}
 
-	/**
-	 * 根据用户批量查询用户权限
-	 *
-	 * @param userList userList
-	 * @return List
-	 * @author tangyi
-	 * @date 2019/07/03 21:58:31
-	 */
 	public List<UserAuths> getListByUsers(List<User> userList) {
 		return this.dao.getListByUserIds(userList.stream().map(User::getId).distinct().toArray(Long[]::new));
 	}
 
-	/**
-	 * 根据唯一标识删除
-	 *
-	 * @param userAuths userAuths
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/07/04 11:39:50
-	 */
 	@Transactional
 	@CacheEvict(value = UserCacheName.USER_AUTHS, key = "#userAuths.identifier")
 	public int deleteByIdentifier(UserAuths userAuths) {
 		return this.dao.deleteByIdentifier(userAuths);
 	}
 
-	/**
-	 * 根据用户ID删除
-	 *
-	 * @param userAuths userAuths
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/07/04 11:42:50
-	 */
 	@Transactional
 	@CacheEvict(value = UserCacheName.USER_AUTHS, allEntries = true)
 	public int deleteByUserId(UserAuths userAuths) {
 		return this.dao.deleteByUserId(userAuths);
 	}
 
-	/**
-	 * 批量插入
-	 *
-	 * @param userAuths userAuths
-	 * @return int
-	 * @author tangyi
-	 * @date 2019-09-03 13:07
-	 */
 	@Transactional
 	@CacheEvict(value = UserCacheName.USER_AUTHS, allEntries = true)
 	public int insertBatch(List<UserAuths> userAuths) {

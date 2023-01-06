@@ -4,12 +4,6 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * 微信用户的基本信息
- *
- * @author tangyi
- * @date 2019/07/06 15:58
- */
 @Data
 public class WxUser implements Serializable {
 

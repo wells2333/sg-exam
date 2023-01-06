@@ -7,12 +7,6 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * 答题卡
- *
- * @author tangyi
- * @date 2019/10/10 21:23
- */
 @Data
 public class AnswerCartDto implements Serializable {
 

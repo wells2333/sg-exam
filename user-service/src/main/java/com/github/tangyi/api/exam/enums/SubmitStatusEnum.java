@@ -1,9 +1,5 @@
 package com.github.tangyi.api.exam.enums;
 
-/**
- * @author tangyi
- * @date 2019/10/22 21:44
- */
 public enum SubmitStatusEnum {
 
     NOT_SUBMITTED("未提交", 0),

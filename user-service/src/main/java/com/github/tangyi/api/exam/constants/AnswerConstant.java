@@ -1,11 +1,5 @@
 package com.github.tangyi.api.exam.constants;
 
-/**
- * 答题常量
- *
- * @author tangyi
- * @date 2019/6/18 16:49
- */
 public class AnswerConstant {
 
     /**

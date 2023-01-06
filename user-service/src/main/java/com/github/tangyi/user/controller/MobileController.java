@@ -15,12 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * 手机管理Controller
- *
- * @author tangyi
- * @date 2019/07/02 09:34
- */
 @Slf4j
 @AllArgsConstructor
 @Tag(name = "手机管理")
@@ -30,14 +24,6 @@ public class MobileController extends BaseController {
 
 	private final MobileService mobileService;
 
-	/**
-	 * 发送短信
-	 *
-	 * @param mobile     mobile
-	 * @return R
-	 * @author tangyi
-	 * @date 2019/07/02 09:49:05
-	 */
 	@GetMapping("sendSms/{mobile}")
 	@Operation(summary = "发送短信", description = "发送短信到指定的手机号")
 	@SgLog(value = "发送短信", operationType = OperationType.INSERT)

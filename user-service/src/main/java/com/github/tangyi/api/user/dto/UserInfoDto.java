@@ -12,10 +12,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-/**
- * @author tangyi
- * @date 2018-09-13 17:18
- */
 @Data
 public class UserInfoDto implements Serializable {
 

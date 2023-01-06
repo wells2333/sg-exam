@@ -46,6 +46,10 @@ public class SubjectOptionService extends CrudService<SubjectOptionMapper, Subje
 		return this.dao.getBySubjectChoicesId(subjectOption);
 	}
 
+	public List<SubjectOption> getBySubjectChoicesIds(List<Long> ids) {
+		return this.dao.getBySubjectChoicesIds(ids);
+	}
+
 	/**
 	 * 新增
 	 *

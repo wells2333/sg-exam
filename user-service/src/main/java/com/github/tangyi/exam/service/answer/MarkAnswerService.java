@@ -16,8 +16,6 @@ import java.util.List;
 
 /**
  * 批改
- * @author tangyi
- * @date 2022/4/14 6:25 下午
  */
 @Slf4j
 @Service
@@ -30,11 +28,6 @@ public class MarkAnswerService {
 
 	/**
 	 * 完成批改
-	 *
-	 * @param recordId recordId
-	 * @return Boolean
-	 * @author tangyi
-	 * @date 2019/06/19 14:44
 	 */
 	@Transactional
 	public Boolean complete(Long recordId) {

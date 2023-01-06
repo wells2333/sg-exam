@@ -12,11 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- *
- * @author tangyi
- * @date 2022/6/25 12:07 下午
- */
 @Component
 public class SubjectVideoConverter implements ISubjectConverter<SubjectVideo> {
 

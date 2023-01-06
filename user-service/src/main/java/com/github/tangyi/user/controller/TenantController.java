@@ -24,9 +24,6 @@ import java.util.Optional;
 
 /**
  * 租户管理Controller
- *
- * @author tangyi
- * @date 2019/5/22 22:52
  */
 @Slf4j
 @AllArgsConstructor

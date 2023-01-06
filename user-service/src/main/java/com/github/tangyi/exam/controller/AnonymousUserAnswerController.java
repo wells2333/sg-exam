@@ -15,11 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- *
- * @author tangyi
- * @date 2022/4/14 1:38 下午
- */
 @Slf4j
 @AllArgsConstructor
 @Tag(name = "匿名答题信息管理")
@@ -31,13 +26,6 @@ public class AnonymousUserAnswerController extends BaseController {
 
 	private final ExaminationActionService actionService;
 
-	/**
-	 * 移动端提交答题
-	 * @param examinationId examinationId
-	 * @return R
-	 * @author tangyi
-	 * @date 2020/03/15 16:08
-	 */
 	@PostMapping("anonymousUser/submitAll/{examinationId}")
 	@Operation(summary = "提交答题")
 	public R<Boolean> anonymousUserSubmitAll(@PathVariable Long examinationId, @RequestParam String identifier,
@@ -50,9 +38,6 @@ public class AnonymousUserAnswerController extends BaseController {
 	 *
 	 * @param answer          answer
 	 * @param nextType        0：下一题，1：上一题，2：提交
-	 * @return R
-	 * @author tangyi
-	 * @date 2019/04/30 18:06
 	 */
 	@PostMapping("anonymousUser/saveAndNext")
 	@Operation(summary = "保存答题")
@@ -61,14 +46,6 @@ public class AnonymousUserAnswerController extends BaseController {
 		return R.success(answerService.saveAndNext(answer, nextType, nextSubjectSortNo));
 	}
 
-	/**
-	 * 提交答卷
-	 *
-	 * @param answer answer
-	 * @return R
-	 * @author tangyi
-	 * @date 2018/12/24 20:44
-	 */
 	@PostMapping("anonymousUser/submit")
 	@Operation(summary = "提交答卷")
 	public R<Boolean> anonymousUserSubmit(@RequestBody Answer answer) {

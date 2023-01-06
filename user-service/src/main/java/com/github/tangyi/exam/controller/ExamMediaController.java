@@ -16,8 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 内容（图片、视频）
- * @author tangyi
- * @date 2022/11/7 10:38 下午
  */
 @Slf4j
 @AllArgsConstructor

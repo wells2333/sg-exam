@@ -14,12 +14,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * 学生Service
- *
- * @author tangyi
- * @date 2019/07/09 15:28
- */
 @AllArgsConstructor
 @Service
 public class StudentService extends CrudService<StudentMapper, Student> {

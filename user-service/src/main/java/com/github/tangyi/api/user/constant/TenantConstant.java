@@ -2,10 +2,6 @@ package com.github.tangyi.api.user.constant;
 
 import com.github.tangyi.common.utils.EnvUtils;
 
-/**
- * @author tangyi
- * @date 2019/5/27 10:25
- */
 public class TenantConstant {
 
 	public static final String DEFAULT_TENANT_CODE = EnvUtils.getValue("DEFAULT_TENANT_CODE", "gitee");

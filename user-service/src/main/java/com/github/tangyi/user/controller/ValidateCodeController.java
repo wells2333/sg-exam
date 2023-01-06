@@ -21,9 +21,6 @@ import java.util.Properties;
 
 /**
  * 验证码
- *
- * @author tangyi
- * @date 2018-09-14-19:24
  */
 @Slf4j
 @AllArgsConstructor
@@ -38,10 +35,6 @@ public class ValidateCodeController extends BaseController {
 
 	/**
 	 * 生成验证码
-	 *
-	 * @param random random
-	 * @author tangyi
-	 * @date 2018/9/14 20:13
 	 */
 	@Operation(summary = "生成验证码", description = "生成验证码")
 	@GetMapping("/{random}")

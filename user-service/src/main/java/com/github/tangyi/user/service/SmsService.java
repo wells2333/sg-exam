@@ -12,10 +12,6 @@ import com.github.tangyi.user.properties.SmsProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-/**
- * @author tangyi
- * @date 2019/6/22 13:23
- */
 @Slf4j
 @Service
 public class SmsService {

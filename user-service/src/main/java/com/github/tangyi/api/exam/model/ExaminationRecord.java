@@ -13,12 +13,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
-/**
- * 考试记录
- *
- * @author tangyi
- * @date 2018/11/8 21:05
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Table(name = "exam_examination_record")

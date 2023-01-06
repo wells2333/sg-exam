@@ -8,9 +8,6 @@ import lombok.Getter;
 
 /**
  * 题目类型枚举
- *
- * @author tangyi
- * @date 2019/6/16 16:22
  */
 @Getter
 @AllArgsConstructor

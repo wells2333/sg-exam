@@ -12,11 +12,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * 首页运营位Service
- * @author tangyi
- * @date 2022-11-12
- */
 @Slf4j
 @Service
 @AllArgsConstructor

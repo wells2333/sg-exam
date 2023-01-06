@@ -6,26 +6,26 @@ import com.github.tangyi.exam.service.course.CourseService;
 import com.github.tangyi.exam.service.exam.ExaminationService;
 import com.github.tangyi.exam.service.fav.CourseFavoritesService;
 import com.github.tangyi.exam.service.fav.ExamFavoritesService;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-/**
- *
- * @author tangyi
- * @date 2022/8/19 1:51 下午
- */
 @Slf4j
 @Component
-@AllArgsConstructor
 public class CronUpdateFavoritesJob {
 
 	public static final String IS_UPDATE_FAV = EnvUtils.getValue("IS_UPDATE_FAV", "true");
+
+	// 2分钟失效
+	public static final long CRON_JOB_LOCK_EXPIRE = EnvUtils.getLong("CRON_JOB_LOCK_EXPIRE", 120);
+
+	public static final String CRON_JOB_LOCK = "cron_job_lock";
 
 	private final ExaminationService examinationService;
 
@@ -35,23 +35,65 @@ public class CronUpdateFavoritesJob {
 
 	private final CourseFavoritesService courseFavoritesService;
 
-	@Scheduled(cron = "*/30 * * * * ?")
-	public void updateExamFavorites() {
-		if (Boolean.parseBoolean(IS_UPDATE_FAV)) {
-			StopWatch watch = StopWatchUtil.start();
-			// 考试
-			List<Long> examIds = examinationService.findAllIds();
-			if (CollectionUtils.isNotEmpty(examIds)) {
-				examFavoritesService.updateStartCount(examIds);
-				examFavoritesService.updateFavorite(examIds);
-				log.info("update exam favorites finished, took={}", StopWatchUtil.stop(watch));
-			}
-			// 课程
-			List<Long> courseIds = courseService.findAllIds();
-			if (CollectionUtils.isNotEmpty(courseIds)) {
-				courseFavoritesService.updateStartCount(courseIds);
-				courseFavoritesService.updateFavorite(courseIds);
+	private final RedisTemplate<String, Long> redisTemplate;
+
+	public CronUpdateFavoritesJob(ExaminationService examinationService, ExamFavoritesService examFavoritesService,
+			CourseService courseService, CourseFavoritesService courseFavoritesService,
+			RedisTemplate<String, Long> redisTemplate) {
+		this.examinationService = examinationService;
+		this.examFavoritesService = examFavoritesService;
+		this.courseService = courseService;
+		this.courseFavoritesService = courseFavoritesService;
+		this.redisTemplate = redisTemplate;
+	}
+
+	private volatile boolean initialized;
+
+	private volatile boolean update;
+
+	public void init() {
+		Long value = redisTemplate.opsForValue().increment(CRON_JOB_LOCK);
+		if (value != null && value.equals(1L)) {
+			update = true;
+			if (Boolean.TRUE.equals(redisTemplate.expire(CRON_JOB_LOCK, CRON_JOB_LOCK_EXPIRE, TimeUnit.SECONDS))) {
+				log.info("cron job lock expire success");
+			} else {
+				log.error("cron job lock expire failed");
 			}
 		}
+		initialized = true;
+	}
+
+	@Scheduled(cron = "*/30 * * * * ?")
+	public void updateExamFavorites() {
+		if (!initialized) {
+			init();
+		}
+		if (Boolean.parseBoolean(IS_UPDATE_FAV) && update) {
+			try {
+				doUpdateExamFavorites();
+			} catch (Exception e) {
+				log.error("doUpdateExamFavorites failed", e);
+			}
+		}
+	}
+
+	public void doUpdateExamFavorites() {
+		StopWatch watch = StopWatchUtil.start();
+		log.info("start to update exam fav");
+		// 考试
+		List<Long> examIds = examinationService.findAllIds();
+		if (CollectionUtils.isNotEmpty(examIds)) {
+			examFavoritesService.updateStartCount(examIds);
+			examFavoritesService.updateFavorite(examIds);
+			log.info("update exam fav finished, took={}", StopWatchUtil.stop(watch));
+		}
+		// 课程
+		List<Long> courseIds = courseService.findAllIds();
+		if (CollectionUtils.isNotEmpty(courseIds)) {
+			courseFavoritesService.updateStartCount(courseIds);
+			courseFavoritesService.updateFavorite(courseIds);
+		}
+		log.info("update exam fav finished");
 	}
 }

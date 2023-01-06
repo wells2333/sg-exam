@@ -18,9 +18,6 @@ import java.util.List;
 
 /**
  * 部门管理
- *
- * @author tangyi
- * @date 2018/8/26 0026 22:49
  */
 @AllArgsConstructor
 @Tag(name = "部门管理")

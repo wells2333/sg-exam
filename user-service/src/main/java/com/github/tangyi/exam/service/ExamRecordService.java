@@ -39,12 +39,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * 考试记录service
- *
- * @author tangyi
- * @date 2018/11/8 21:20
- */
 @Slf4j
 @AllArgsConstructor
 @Service
@@ -56,29 +50,12 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 
 	private final DeptService deptService;
 
-	/**
-	 * 查询考试记录
-	 *
-	 * @param id id
-	 * @return ExamRecord
-	 * @author tangyi
-	 * @date 2019/1/3 14:10
-	 */
 	@Override
 	@Cacheable(value = ExamCacheName.EXAM_RECORD, key = "#id")
 	public ExaminationRecord get(Long id) {
 		return super.get(id);
 	}
 
-	/**
-	 * 获取分页数据
-	 *
-	 * @param pageNum    pageNum
-	 * @param pageSize   pageSize
-	 * @return PageInfo
-	 * @author tangyi
-	 * @date 2018/11/10 21:33
-	 */
 	public PageInfo<ExaminationRecordDto> examRecordList(Map<String, Object> condition, int pageNum, int pageSize) {
 		PageInfo<ExaminationRecordDto> pageInfo = new PageInfo<>();
 		PageInfo<ExaminationRecord> recordPageInfo = this.findPage(condition, pageNum, pageSize);
@@ -129,26 +106,12 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 		return list;
 	}
 
-	/**
-	 * 根据用户ID获取考试记录
-	 * @param userId userId
-	 * @param condition condition
-	 * @return List
-	 */
 	public PageInfo<ExaminationRecordDto> getUserExamRecords(Long userId, Map<String, Object> condition, int pageNum,
 			int pageSize) {
 		this.commonPageParam(condition, pageNum, pageSize);
 		return new PageInfo<>(toRecordDto(this.dao.getByUserId(userId, condition)));
 	}
 
-	/**
-	 * 更新考试记录
-	 *
-	 * @param examRecord examRecord
-	 * @return ExamRecord
-	 * @author tangyi
-	 * @date 2019/1/3 14:10
-	 */
 	@Override
 	@Transactional
 	@CacheEvict(value = ExamCacheName.EXAM_RECORD, key = "#examRecord.id")
@@ -156,40 +119,16 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 		return super.update(examRecord);
 	}
 
-	/**
-	 * 删除考试记录
-	 *
-	 * @param examRecord examRecord
-	 * @return ExamRecord
-	 * @author tangyi
-	 * @date 2019/1/3 14:10
-	 */
 	@Override
 	@Transactional
 	public int insert(ExaminationRecord examRecord) {
 		return super.insert(examRecord);
 	}
 
-	/**
-	 * 根据用户id、考试id查找
-	 *
-	 * @param examRecord examRecord
-	 * @return List
-	 * @author tangyi
-	 * @date 2018/12/26 13:58
-	 */
 	public List<ExaminationRecord> getByUserIdAndExaminationId(ExaminationRecord examRecord) {
 		return this.dao.getByUserIdAndExaminationId(examRecord);
 	}
 
-	/**
-	 * 批量删除
-	 *
-	 * @param ids ids
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/1/3 14:11
-	 */
 	@Override
 	@Transactional
 	@CacheEvict(value = ExamCacheName.EXAM_RECORD, allEntries = true)
@@ -197,63 +136,40 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 		return super.deleteAll(ids);
 	}
 
-	/**
-	 * 获取用户、部门相关信息
-	 * @param examRecordDtoList examRecordDtoList
-	 * @param userIds userIds
-	 */
-	public void fillExamUserInfo(List<ExaminationRecordDto> examRecordDtoList, Long[] userIds) {
-		List<UserVo> userVos = userService.findUserVoListById(userIds);
-		// 查询部门信息
-		List<DeptVo> deptVos = deptService.findById(
-				userVos.stream().map(UserVo::getDeptId).distinct().toArray(Long[]::new));
-		examRecordDtoList.forEach(tempExamRecordDto -> {
-			// 查询、设置用户信息
-			userVos.stream().filter(tempUserVo -> tempExamRecordDto.getUserId().equals(tempUserVo.getId())).findFirst()
-					.ifPresent(vo -> {
-						tempExamRecordDto.setUserName(vo.getName());
-						// 查询、设置部门信息
-						if (CollectionUtils.isNotEmpty(deptVos)) {
-							deptVos.stream().filter(tempDept -> tempDept.getId().equals(vo.getDeptId())).findFirst()
-									.ifPresent(examRecordDtoDeptVo -> tempExamRecordDto.setDeptName(
-											examRecordDtoDeptVo.getDeptName()));
-						}
-					});
+	public void fillExamUserInfo(List<ExaminationRecordDto> list, Long[] userIds) {
+		Map<Long, UserVo> userMap = userService.findUserVoListById(userIds).stream()
+				.collect(Collectors.toMap(UserVo::getId, e -> e));
+		List<Long> deptIds = userMap.values().stream().map(UserVo::getDeptId).distinct().collect(Collectors.toList());
+		List<DeptVo> deptVos = deptService.findById(deptIds.toArray(Long[]::new));
+		Map<Long, DeptVo> deptMap = Maps.newHashMap();
+		if (CollectionUtils.isNotEmpty(deptVos)) {
+			for (DeptVo dept : deptVos) {
+				deptMap.put(dept.getId(), dept);
+			}
+		}
+		list.forEach(dto -> {
+			UserVo user = userMap.get(dto.getUserId());
+			if (user != null) {
+				dto.setUserName(user.getName());
+				DeptVo dept = deptMap.get(user.getDeptId());
+				if (dept != null) {
+					dto.setDeptName(dept.getDeptName());
+				}
+			}
 		});
 	}
 
-	/**
-	 * 查询考试记录数
-	 * @param examinationRecord examinationRecord
-	 * @return int
-	 * @author tangyi
-	 * @date 2020/1/31 5:17 下午
-	 */
 	public int findExaminationRecordCount(ExaminationRecord examinationRecord) {
 		return this.dao.findExaminationRecordCount(examinationRecord);
 	}
 
 	/**
-	 *
 	 * 根据时间范围查询考试记录数
-	 * @param start start
-	 * @return List
-	 * @author tangyi
-	 * @date 2020/1/31 10:17 下午
 	 */
 	public Integer findExaminationRecordCountByDate(Date start, Date end) {
 		return this.dao.findExaminationRecordCountByDate(start, end);
 	}
 
-	/**
-	 * 导出
-	 *
-	 * @param ids ids
-	 * @param request request
-	 * @param response response
-	 * @author tangyi
-	 * @date 2018/12/31 22:28
-	 */
 	public void exportExamRecord(Long[] ids, HttpServletRequest request, HttpServletResponse response) {
 		try {
 			List<ExaminationRecord> examRecordList;
@@ -309,10 +225,6 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 
 	/**
 	 * 查询参与考试人数
-	 *
-	 * @return ExaminationDashboardDto
-	 * @author tangyi
-	 * @date 2019/10/27 20:07:38
 	 */
 	public ExaminationDashboardDto findExamDashboardData(String tenantCode) {
 		ExaminationDashboardDto dashboardDto = new ExaminationDashboardDto();
@@ -331,14 +243,9 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 
 	/**
 	 * 查询过去n天的考试记录数据
-	 * @param tenantCode tenantCode
-	 * @param pastDays pastDays
-	 * @return ExaminationDashboardDto
-	 * @author tangyi
-	 * @date 2020/1/31 5:46 下午
 	 */
 	public ExaminationDashboardDto findExamRecordTendency(String tenantCode, int pastDays) {
-		ExaminationDashboardDto dashboardDto = new ExaminationDashboardDto();
+		ExaminationDashboardDto dto = new ExaminationDashboardDto();
 		Examination examination = new Examination();
 		examination.setCommonValue(SysUtil.getUser(), tenantCode);
 		Map<String, String> tendencyMap = new LinkedHashMap<>();
@@ -351,8 +258,8 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 			Integer count = findExaminationRecordCountByDate(startDate, endDate);
 			tendencyMap.put(start.format(DateUtils.FORMATTER_DAY), count == null ? "0" : String.valueOf(count));
 		}
-		dashboardDto.setExamRecordDate(Lists.newArrayList(tendencyMap.keySet()));
-		dashboardDto.setExamRecordData(Lists.newArrayList(tendencyMap.values()));
-		return dashboardDto;
+		dto.setExamRecordDate(Lists.newArrayList(tendencyMap.keySet()));
+		dto.setExamRecordData(Lists.newArrayList(tendencyMap.values()));
+		return dto;
 	}
 }

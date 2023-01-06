@@ -9,11 +9,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * 统计成绩
- * @author tangyi
- * @date 2019/12/8 9:56 下午
- */
 public interface IAnswerHandler {
 
 	String TRUE = Boolean.TRUE.toString();

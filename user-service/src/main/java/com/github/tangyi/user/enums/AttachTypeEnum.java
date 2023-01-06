@@ -2,12 +2,6 @@ package com.github.tangyi.user.enums;
 
 import lombok.Getter;
 
-/**
- * 附件类型
- *
- * @author tangyi
- * @date 2020/04/05 14:01
- */
 @Getter
 public enum AttachTypeEnum {
 

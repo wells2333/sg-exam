@@ -19,9 +19,6 @@ import java.util.Map;
 
 /**
  * 课程节Controller
- *
- * @author tangyi
- * @date 2022-11-21
  */
 @Slf4j
 @RestController

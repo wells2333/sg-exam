@@ -21,12 +21,6 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 角色controller
- *
- * @author tangyi
- * @date 2018/8/26 22:50
- */
 @Slf4j
 @AllArgsConstructor
 @Tag(name = "角色信息管理")

@@ -13,11 +13,6 @@ import lombok.Data;
 
 import java.util.Date;
 
-/**
- * 考试记录
- * @author tangyi
- * @date 2019/12/10 17:41
- */
 @Data
 @ExcelModel("考试记录")
 @ContentRowHeight(18)

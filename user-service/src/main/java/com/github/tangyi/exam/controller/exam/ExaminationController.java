@@ -21,12 +21,6 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 考试controller
- *
- * @author tangyi
- * @date 2018/11/8 21:26
- */
 @Slf4j
 @AllArgsConstructor
 @Tag(name = "考试信息管理")
@@ -61,16 +55,6 @@ public class ExaminationController extends BaseController {
 		return R.success(examinationService.examinationList(condition, pageNum, pageSize));
 	}
 
-	/**
-	 * 根据考试ID获取题目分页数据
-	 *
-	 * @param pageNum    pageNum
-	 * @param pageSize   pageSize
-	 * @param subjectDto subjectDto
-	 * @return PageInfo
-	 * @author tangyi
-	 * @date 2019/6/16 15:45
-	 */
 	@RequestMapping("subjectList")
 	@Operation(summary = "获取题目列表")
 	public R<PageInfo<SubjectDto>> subjectList(@RequestParam Map<String, Object> condition,
@@ -80,14 +64,6 @@ public class ExaminationController extends BaseController {
 		return R.success(examinationService.findSubjectPageById(subjectDto, condition, pageNum, pageSize));
 	}
 
-	/**
-	 * 创建
-	 *
-	 * @param examinationDto examinationDto
-	 * @return R
-	 * @author tangyi
-	 * @date 2018/11/10 21:14
-	 */
 	@PostMapping
 	@Operation(summary = "创建考试", description = "创建考试")
 	@SgLog(value = "创建考试", operationType = OperationType.INSERT)

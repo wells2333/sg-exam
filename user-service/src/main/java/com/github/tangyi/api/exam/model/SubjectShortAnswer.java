@@ -8,9 +8,6 @@ import javax.persistence.Table;
 
 /**
  * 简答题
- *
- * @author tangyi
- * @date 2018/11/8 20:53
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

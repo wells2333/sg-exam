@@ -18,9 +18,6 @@ import javax.validation.constraints.NotBlank;
 
 /**
  * 消息 sys_message
- * 
- * @author tangyi
- * @date 2022-08-16
  */
 @Data
 @Table(name = "sys_message")

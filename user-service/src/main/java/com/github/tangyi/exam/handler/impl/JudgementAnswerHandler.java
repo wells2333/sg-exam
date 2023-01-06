@@ -12,11 +12,6 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * 判断题
- * @author tangyi
- * @date 2019/12/8 22:01
- */
 @Slf4j
 @AllArgsConstructor
 @Component

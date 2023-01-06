@@ -13,9 +13,6 @@ import javax.persistence.Transient;
 
 /**
  * 课程评价 exam_course_evaluate
- *
- * @author tangyi
- * @date 2022-11-26
  */
 @Data
 @Table(name = "exam_course_evaluate")

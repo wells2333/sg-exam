@@ -1,10 +1,5 @@
 package com.github.tangyi.log.constants;
 
-/**
- *
- * @author tangyi
- * @date 2022/7/19 1:19 下午
- */
 public enum OperationType {
 
 	/**

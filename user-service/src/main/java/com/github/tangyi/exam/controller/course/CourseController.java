@@ -21,12 +21,6 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 课程controller
- *
- * @author tangyi
- * @date 2018/11/8 21:25
- */
 @Slf4j
 @AllArgsConstructor
 @Tag(name = "课程信息管理")

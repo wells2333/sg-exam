@@ -5,8 +5,6 @@ import lombok.Getter;
 
 /**
  * 提交状态
- * @author tangyi
- * @date 2019/12/10 17:53
  */
 @Getter
 @AllArgsConstructor

@@ -7,12 +7,6 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.Column;
 import javax.persistence.Table;
 
-/**
- * 用户角色关系
- *
- * @author tangyi
- * @date 2018/8/26 09:29
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Table(name = "sys_user_role")

@@ -12,11 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- *
- * @author tangyi
- * @date 2022/6/25 11:08 上午
- */
 @Component
 public class SubjectShortAnswerConverter implements ISubjectConverter<SubjectShortAnswer> {
 

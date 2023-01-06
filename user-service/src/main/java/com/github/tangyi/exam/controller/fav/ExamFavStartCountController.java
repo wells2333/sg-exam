@@ -16,12 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Map;
 
-/**
- * 收藏、开始数量Controller
- *
- * @author tangyi
- * @date 2022-12-17
- */
 @Slf4j
 @RestController
 @AllArgsConstructor

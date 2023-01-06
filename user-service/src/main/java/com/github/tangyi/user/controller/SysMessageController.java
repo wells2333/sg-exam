@@ -18,9 +18,6 @@ import java.util.Map;
 
 /**
  * 消息Controller
- *
- * @author tangyi
- * @date 2022-08-16
  */
 @Slf4j
 @RestController

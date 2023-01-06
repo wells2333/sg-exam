@@ -9,11 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * 工具类
- * @author tangyi
- * @date 2019/12/8 22:42
- */
 public class AnswerHandlerUtil {
 
 	private static final String REGEX_COMMA = "^,*|,*$";

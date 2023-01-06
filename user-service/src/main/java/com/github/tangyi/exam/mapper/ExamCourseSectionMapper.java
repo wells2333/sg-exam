@@ -6,12 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-/**
- * 课程节Mapper
- *
- * @author tangyi
- * @date 2022-11-21
- */
 @Repository
 public interface ExamCourseSectionMapper extends CrudMapper<ExamCourseSection> {
 

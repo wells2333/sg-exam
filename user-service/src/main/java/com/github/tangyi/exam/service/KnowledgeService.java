@@ -9,12 +9,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * 知识库service
- *
- * @author tangyi
- * @date 2019/1/1 15:09
- */
 @Service
 public class KnowledgeService extends CrudService<KnowledgeMapper, Knowledge> {
 
@@ -24,14 +18,6 @@ public class KnowledgeService extends CrudService<KnowledgeMapper, Knowledge> {
 		return super.get(id);
 	}
 
-	/**
-	 * 更新知识库信息
-	 *
-	 * @param knowledge knowledge
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/1/1 15:10
-	 */
 	@Override
 	@Transactional
 	@CacheEvict(value = ExamCacheName.KNOWLEDGE, key = "#knowledge.id")
@@ -39,14 +25,6 @@ public class KnowledgeService extends CrudService<KnowledgeMapper, Knowledge> {
 		return super.update(knowledge);
 	}
 
-	/**
-	 * 删除知识库信息
-	 *
-	 * @param knowledge knowledge
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/1/1 15:10
-	 */
 	@Override
 	@Transactional
 	@CacheEvict(value = ExamCacheName.KNOWLEDGE, key = "#knowledge.id")
@@ -54,14 +32,6 @@ public class KnowledgeService extends CrudService<KnowledgeMapper, Knowledge> {
 		return super.delete(knowledge);
 	}
 
-	/**
-	 * 批量删除
-	 *
-	 * @param ids ids
-	 * @return int
-	 * @author tangyi
-	 * @date 2019/1/3 14:15
-	 */
 	@Override
 	@Transactional
 	@CacheEvict(value = ExamCacheName.KNOWLEDGE, allEntries = true)

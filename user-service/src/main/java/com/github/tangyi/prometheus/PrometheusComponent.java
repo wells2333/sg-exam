@@ -11,8 +11,6 @@ import org.springframework.stereotype.Component;
 
 /**
  * 自定义埋点上报
- * @author tangyi
- * @date 2022/6/2 9:22 上午
  */
 @Component
 public class PrometheusComponent implements ApplicationContextAware {

@@ -10,9 +10,9 @@ import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.DateUtils;
 import com.github.tangyi.common.utils.StopWatchUtil;
 import com.github.tangyi.exam.service.ExamRecordService;
+import com.github.tangyi.exam.service.answer.MarkAnswerService;
 import com.github.tangyi.exam.service.exam.ExaminationActionService;
 import com.github.tangyi.exam.service.exam.ExaminationService;
-import com.github.tangyi.exam.service.answer.MarkAnswerService;
 import com.github.tangyi.log.annotation.SgLog;
 import com.github.tangyi.log.constants.OperationType;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,12 +33,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 考试记录controller
- *
- * @author tangyi
- * @date 2018/11/8 21:27
- */
 @Slf4j
 @AllArgsConstructor
 @Tag(name = "考试记录信息管理")
@@ -139,9 +133,6 @@ public class ExamRecordController extends BaseController {
 		return R.success(examRecordService.findExamRecordTendency(tenantCode, pastDays));
 	}
 
-	/**
-	 * 开始考试
-	 */
 	@PostMapping("start")
 	@Operation(summary = "开始考试")
 	@SgLog(value = "开始考试", operationType = OperationType.INSERT)
@@ -173,56 +164,28 @@ public class ExamRecordController extends BaseController {
 		return R.success(examinationService.allSubjects(id));
 	}
 
-	/**
-	 * 获取全部题目
-	 * @param subjectDto subjectDto
-	 * @return R
-	 * @author tangyi
-	 * @date 2020/3/12 1:00 下午
-	 */
 	@RequestMapping("anonymousUser/allSubjectList")
 	@Operation(summary = "获取全部题目列表")
 	public R<List<SubjectDto>> allSubjectList(SubjectDto subjectDto) {
 		return R.success(examinationService.allSubjectList(subjectDto));
 	}
 
-	/**
-	 * 根据考试ID查询题目id列表
-	 *
-	 * @param examinationId examinationId
-	 * @return R
-	 * @author tangyi
-	 * @date 2019/06/18 14:31
-	 */
 	@GetMapping("/{examinationId}/subjectIds")
+	@Operation(summary = "根据考试ID查询题目id列表")
 	public R<List<ExaminationSubject>> findExaminationSubjectIds(@PathVariable Long examinationId) {
 		List<ExaminationSubject> subjects = examinationService.findListByExaminationId(examinationId);
 		subjects.forEach(BaseEntity::clearCommonValue);
 		return R.success(subjects);
 	}
 
-	/**
-	 * 根据考试ID查询题目id列表
-	 *
-	 * @param examinationId examinationId
-	 * @return R
-	 * @author tangyi
-	 * @date 2019/06/18 14:31
-	 */
 	@GetMapping("/anonymousUser/{examinationId}/subjectIds")
+	@Operation(summary = "根据考试ID查询题目id列表")
 	public R<List<ExaminationSubject>> anonymousUserFindExaminationSubjectIds(@PathVariable Long examinationId) {
 		List<ExaminationSubject> subjects = examinationService.findListByExaminationId(examinationId);
 		subjects.forEach(BaseEntity::clearCommonValue);
 		return R.success(subjects);
 	}
 
-	/**
-	 * 根据考试ID生成二维码
-	 * @param examinationId examinationId
-	 * @param response response
-	 * @author tangyi
-	 * @date 2020/3/15 1:16 下午
-	 */
 	@Operation(summary = "生成二维码", description = "生成二维码")
 	@GetMapping("anonymousUser/generateQrCode/{examinationId}")
 	public void produceCode(@PathVariable Long examinationId, HttpServletResponse response) throws Exception {
@@ -235,13 +198,6 @@ public class ExamRecordController extends BaseController {
 		}
 	}
 
-	/**
-	 * 根据考试ID生成二维码
-	 * @param examinationId examinationId
-	 * @param response response
-	 * @author tangyi
-	 * @date 2020/3/21 5:38 下午
-	 */
 	@Operation(summary = "生成二维码(v2)", description = "生成二维码(v2)")
 	@GetMapping("anonymousUser/generateQrCode/v2/{examinationId}")
 	public void produceCodeV2(@PathVariable Long examinationId, HttpServletResponse response) throws Exception {

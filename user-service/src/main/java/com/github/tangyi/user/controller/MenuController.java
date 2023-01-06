@@ -34,12 +34,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * 菜单controller
- *
- * @author tangyi
- * @date 2018/8/26 22:48
- */
 @Slf4j
 @AllArgsConstructor
 @Tag(name = "菜单信息管理")

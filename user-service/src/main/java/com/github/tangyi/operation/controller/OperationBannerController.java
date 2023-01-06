@@ -18,9 +18,6 @@ import java.util.Map;
 
 /**
  * 首页运营位Controller
- *
- * @author tangyi
- * @date 2022-11-12
  */
 @Slf4j
 @RestController

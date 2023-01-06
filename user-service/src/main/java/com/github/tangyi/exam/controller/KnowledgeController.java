@@ -21,12 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.*;
 
-/**
- * 知识库controller
- *
- * @author tangyi
- * @date 2019/1/1 15:11
- */
 @Slf4j
 @AllArgsConstructor
 @Tag(name = "知识库信息管理")

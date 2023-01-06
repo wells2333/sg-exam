@@ -16,11 +16,6 @@ import javax.annotation.PostConstruct;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-/**
- *
- * @author tangyi
- * @date 2022/3/31 1:38 下午
- */
 @Slf4j
 @AllArgsConstructor
 @Tag(name = "选项信息管理")

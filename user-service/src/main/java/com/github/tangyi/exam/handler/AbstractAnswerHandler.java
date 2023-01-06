@@ -15,11 +15,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * 统计成绩
- * @author tangyi
- * @date 2020/1/19 10:07 上午
- */
 public abstract class AbstractAnswerHandler implements IAnswerHandler {
 
 	@Override

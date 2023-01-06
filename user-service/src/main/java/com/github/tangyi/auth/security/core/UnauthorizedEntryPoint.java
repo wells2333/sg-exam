@@ -12,11 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * 未授权处理
- * @author tangyi
- * @date 2022/5/1 3:04 下午
- */
 @Slf4j
 public class UnauthorizedEntryPoint implements AuthenticationEntryPoint {
 

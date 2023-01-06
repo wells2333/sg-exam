@@ -34,4 +34,9 @@ public class EnvUtils {
 		String val = getValue(key);
 		return val == null ? defaultVal : Integer.parseInt(val);
 	}
+
+	public static long getLong(String key, long defaultVal) {
+		String val = getValue(key);
+		return val == null ? defaultVal : Long.parseLong(val);
+	}
 }

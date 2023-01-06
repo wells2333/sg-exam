@@ -26,12 +26,6 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * 获取用户信息
- *
- * @author tangyi
- * @date 2019-03-14 14:36
- */
 @AllArgsConstructor
 @Service("userDetailsService")
 public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
@@ -136,14 +130,6 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 				userVo.getUserId(), start, LoginTypeEnum.WECHAT);
 	}
 
-	/**
-	 * 获取用户权限
-	 *
-	 * @param userVo userVo
-	 * @return Set
-	 * @author tangyi
-	 * @date 2019/03/17 14:41
-	 */
 	private Set<GrantedAuthority> getAuthority(UserVo userVo) {
 		return userVo.getRoleList().stream().map(role -> new GrantedAuthorityImpl(role.getRoleCode().toUpperCase()))
 				.collect(Collectors.toSet());

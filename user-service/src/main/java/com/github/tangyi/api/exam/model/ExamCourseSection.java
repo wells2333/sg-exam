@@ -12,9 +12,6 @@ import javax.persistence.Table;
 
 /**
  * 课程节 exam_course_section
- *
- * @author tangyi
- * @date 2022-11-21
  */
 @Data
 @Table(name = "exam_course_section")

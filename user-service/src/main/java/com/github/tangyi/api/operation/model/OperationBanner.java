@@ -10,9 +10,6 @@ import javax.persistence.Table;
 
 /**
  * 首页运营位 exam_operation_banner
- *
- * @author tangyi
- * @date 2022-11-12
  */
 @Data
 @Table(name = "operation_banner")

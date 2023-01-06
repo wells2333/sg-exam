@@ -9,8 +9,6 @@ import com.github.tangyi.exam.enums.SubmitStatusEnum;
 
 /**
  * 提交状态
- * @author tangyi
- * @date 2019/12/10 17:49
  */
 public class SubmitStatusConverter implements Converter<Integer> {
 

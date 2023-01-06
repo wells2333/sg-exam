@@ -2,56 +2,24 @@ package com.github.tangyi.exam.mapper;
 
 import com.github.tangyi.api.exam.model.SubjectOption;
 import com.github.tangyi.common.base.CrudMapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-/**
- * 选择题Mapper
- *
- * @author tangyi
- * @date 2019/6/16 14:55
- */
 @Repository
 public interface SubjectOptionMapper extends CrudMapper<SubjectOption> {
 
-    /**
-     * 根据题目ID查找
-     *
-     * @param subjectOption subjectOption
-     * @return List
-     * @author tangyi
-     * @date 2019/6/16 14:55
-     */
-    List<SubjectOption> getBySubjectChoicesId(SubjectOption subjectOption);
+	List<SubjectOption> getBySubjectChoicesId(SubjectOption subjectOption);
 
-    /**
-     * 批量保存
-     *
-     * @param subjectOptionList subjectOptionList
-     * @return int
-     * @author tangyi
-     * @date 2019/6/16 14:55
-     */
-    int insertBatch(List<SubjectOption> subjectOptionList);
+	/**
+	 * 根据选择题ID批量查询
+	 */
+	List<SubjectOption> getBySubjectChoicesIds(@Param("ids") List<Long> ids);
 
-    /**
-     * 根据选择题ID删除
-     *
-     * @param subjectOption subjectOption
-     * @return int
-     * @author tangyi
-     * @date 2019/06/16 21:54
-     */
-    int deleteBySubjectChoicesId(SubjectOption subjectOption);
+	int insertBatch(List<SubjectOption> subjectOptionList);
 
-    /**
-     * 物理批量删除
-     *
-     * @param ids ids
-     * @return int
-     * @author tangyi
-     * @date 2019/06/16 22:40
-     */
-    int physicalDeleteAll(Long[] ids);
+	int deleteBySubjectChoicesId(SubjectOption subjectOption);
+
+	int physicalDeleteAll(Long[] ids);
 }

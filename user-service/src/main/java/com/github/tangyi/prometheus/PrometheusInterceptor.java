@@ -8,8 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * 埋点拦截器
- * @author tangyi
- * @date 2022/6/2 9:30 上午
  */
 public class PrometheusInterceptor extends HandlerInterceptorAdapter {
 

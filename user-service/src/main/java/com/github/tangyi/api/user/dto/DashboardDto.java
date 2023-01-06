@@ -9,9 +9,6 @@ import java.util.List;
 
 /**
  * DashboardDto
- *
- * @author tangyi
- * @date 2019-03-01 13:56
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_EMPTY)

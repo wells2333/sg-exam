@@ -15,12 +15,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
-/**
- * 考试
- *
- * @author tangyi
- * @date 2018/11/8 20:47
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Table(name = "exam_examination")

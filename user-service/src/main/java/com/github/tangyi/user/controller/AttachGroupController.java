@@ -20,9 +20,6 @@ import java.util.Map;
 
 /**
  * 附件分组管理
- *
- * @author tangyi
- * @date 2018/10/30 20:45
  */
 @Slf4j
 @AllArgsConstructor

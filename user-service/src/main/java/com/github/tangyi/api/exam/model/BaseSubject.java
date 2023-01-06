@@ -9,11 +9,6 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 
-/**
- *
- * @author tangyi
- * @date 2022/6/25 10:56 上午
- */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class BaseSubject<T> extends BaseEntity<T> {

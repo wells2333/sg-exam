@@ -7,12 +7,6 @@ import org.springframework.beans.BeanUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 考试记录工具类
- *
- * @author tangyi
- * @date 2018/12/31 22:35
- */
 public class ExamRecordUtil {
 
 	private ExamRecordUtil() {

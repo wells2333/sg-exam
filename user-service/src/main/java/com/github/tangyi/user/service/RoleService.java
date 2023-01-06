@@ -14,12 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * 角色service
- *
- * @author tangyi
- * @date 2018/8/26 14:16
- */
 @AllArgsConstructor
 @Service
 public class RoleService extends CrudService<RoleMapper, Role> {

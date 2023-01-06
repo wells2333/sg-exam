@@ -8,10 +8,6 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * @author tangyi
- * @date 2019/07/10 18:07
- */
 @Data
 public class StudentDto implements Serializable {
 

@@ -32,12 +32,6 @@ import org.springframework.security.web.context.request.async.WebAsyncManagerInt
 
 import java.util.Set;
 
-/**
- * Spring Security配置
- *
- * @author tangyi
- * @date 2019-03-14 14:35
- */
 @Slf4j
 @Configuration
 @EnableWebSecurity

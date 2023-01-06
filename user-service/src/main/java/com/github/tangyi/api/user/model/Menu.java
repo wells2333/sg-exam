@@ -8,12 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
-/**
- * 菜单
- *
- * @author tangyi
- * @date 2018/8/26 22:21
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Table(name = "sys_menu")

@@ -13,12 +13,6 @@ import javax.validation.constraints.Pattern;
 import java.util.Date;
 import java.util.List;
 
-/**
- * 用户基本信息
- *
- * @author tangyi
- * @date 2018-08-25 15:30
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Table(name = "sys_user")

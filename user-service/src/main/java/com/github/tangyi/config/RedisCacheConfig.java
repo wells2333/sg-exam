@@ -17,11 +17,6 @@ import org.springframework.data.redis.serializer.*;
 
 import java.time.Duration;
 
-/**
- *
- * @author tangyi
- * @date 2022/7/2 2:16 下午
- */
 @Configuration
 public class RedisCacheConfig {
 

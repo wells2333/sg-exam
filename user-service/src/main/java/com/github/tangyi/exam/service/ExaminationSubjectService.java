@@ -12,12 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 考试题目关联service
- *
- * @author tangyi
- * @date 2019/6/16 15:38
- */
 @AllArgsConstructor
 @Service
 public class ExaminationSubjectService extends CrudService<ExaminationSubjectMapper, ExaminationSubject> {
@@ -58,6 +52,10 @@ public class ExaminationSubjectService extends CrudService<ExaminationSubjectMap
 	 */
 	public ExaminationSubject findByExaminationIdAndSubjectId(ExaminationSubject examinationSubject) {
 		return this.dao.findByExaminationIdAndSubjectId(examinationSubject);
+	}
+
+	public ExaminationSubject findMinSortByExaminationId(Long examinationId) {
+		return this.dao.findMinSortByExaminationId(examinationId);
 	}
 
 	/**
