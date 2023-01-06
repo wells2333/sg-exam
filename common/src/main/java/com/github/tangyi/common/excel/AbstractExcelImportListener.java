@@ -10,8 +10,6 @@ import java.util.List;
 
 /**
  * 封装简单数据导入的逻辑，解析3000条刷一次数据库
- * @author tangyi
- * @date 2019/12/10 16:48
  */
 public abstract class AbstractExcelImportListener<T> extends AnalysisEventListener<T> {
 

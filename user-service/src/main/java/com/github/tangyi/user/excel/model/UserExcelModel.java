@@ -14,11 +14,6 @@ import lombok.Data;
 
 import java.util.Date;
 
-/**
- * 用户Excel Model
- * @author tangyi
- * @date 2019/12/9 19:08
- */
 @Data
 @ExcelModel("用户信息")
 @ContentRowHeight(18)

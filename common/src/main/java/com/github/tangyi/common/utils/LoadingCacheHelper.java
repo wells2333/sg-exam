@@ -20,9 +20,6 @@ import java.util.concurrent.TimeUnit;
  * 用法：
  * 1. LoadingCacheHelper.getInstance().getOrDefault(SimpleCacheLoader.class, "key", "defaultValue");
  * 2. LoadingCacheHelper.getInstance().get(SimpleCacheLoader.class, "key");
- *
- * @author tangyi
- * @date 2019-11-25 16:38
  */
 @Slf4j
 public class LoadingCacheHelper {

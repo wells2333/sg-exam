@@ -5,12 +5,6 @@ import com.github.tangyi.common.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/**
- * logVo
- *
- * @author tangyi
- * @date 2019-01-05 17:07
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class LogVo extends BaseEntity<LogVo> {

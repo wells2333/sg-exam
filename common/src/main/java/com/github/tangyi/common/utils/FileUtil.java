@@ -5,23 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 
-/**
- * 文件工具类
- *
- * @author tangyi
- * @date 2018/10/30 22:05
- */
 @Slf4j
 public class FileUtil {
 
-	/**
-	 * 获取文件后缀名
-	 *
-	 * @param fileName fileName
-	 * @return String
-	 * @author tangyi
-	 * @date 2018/10/30 22:05
-	 */
 	public static String getFileNameEx(String fileName) {
 		if ((fileName != null) && (fileName.length() > 0)) {
 			int dot = fileName.lastIndexOf('.');

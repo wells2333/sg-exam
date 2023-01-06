@@ -6,11 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-/**
- *
- * @author tangyi
- * @date 2022/7/18 3:57 下午
- */
 @Repository
 public interface GenTableColumnMapper extends CrudMapper<GenTableColumn> {
 

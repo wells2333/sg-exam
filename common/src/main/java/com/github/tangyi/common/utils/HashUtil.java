@@ -2,11 +2,6 @@ package com.github.tangyi.common.utils;
 
 import org.apache.lucene.util.StringHelper;
 
-/**
- *
- * @author tangyi
- * @date 2022/11/13 2:05 下午
- */
 public class HashUtil {
 
 	public static int hash(String routing) {

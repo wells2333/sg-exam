@@ -3,11 +3,6 @@ package com.github.tangyi.common.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/**
- * 性别枚举
- * @author tangyi
- * @date 2019/12/10 14:23
- */
 @Getter
 @AllArgsConstructor
 public enum GenderEnum {

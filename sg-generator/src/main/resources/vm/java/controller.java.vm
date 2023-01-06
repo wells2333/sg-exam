@@ -20,12 +20,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import com.github.tangyi.api.${moduleName}.model.${ClassName};
 import com.github.tangyi.${moduleName}.service.${ClassName}Service;
 
-/**
- * ${functionName}Controller
- * 
- * @author ${author}
- * @date ${datetime}
- */
 @Slf4j
 @RestController
 @AllArgsConstructor

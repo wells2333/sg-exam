@@ -9,12 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- *
- *
- * @author tangyi
- * @date 2022/7/18 4:00 下午
- */
 @Service
 public class GenTableColumnServiceImpl implements IGenTableColumnService {
 

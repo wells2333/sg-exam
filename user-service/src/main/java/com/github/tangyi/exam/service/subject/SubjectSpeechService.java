@@ -23,11 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * 语音题目
- * @author tangyi
- * @date 2022/6/23 1:31 下午
- */
 @Slf4j
 @Service
 @AllArgsConstructor

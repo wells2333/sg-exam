@@ -7,21 +7,8 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-/**
- * 反射工具类
- *
- * @author tangyi
- * @date 2018-08-25 17:28
- */
 public class ReflectionUtil {
 
-    /**
-     * 获取泛型
-     *
-     * @param clazz
-     * @param index
-     * @return
-     */
     public static Class getClassGenricType(final Class clazz, int index) {
         Type genType = clazz.getGenericSuperclass();
         if (!(genType instanceof ParameterizedType)) {
@@ -36,7 +23,6 @@ public class ReflectionUtil {
         }
         return (Class) params[index];
     }
-
 
     /**
      * 直接读取对象属性值, 无视private/protected修饰符, 不经过getter函数.
@@ -75,7 +61,6 @@ public class ReflectionUtil {
         return null;
     }
 
-
     /**
      * 改变private/protected的成员变量为public，尽量不调用实际改动的语句，避免JDK的SecurityManager抱怨。
      */
@@ -85,7 +70,6 @@ public class ReflectionUtil {
             field.setAccessible(true);
         }
     }
-
 
     /**
      * 直接设置对象属性值, 无视private/protected修饰符, 不经过setter函数.

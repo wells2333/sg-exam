@@ -6,11 +6,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-/**
- *
- * @author tangyi
- * @date 2022/5/1 6:24 下午
- */
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
 	private final UserDetails userDetails;

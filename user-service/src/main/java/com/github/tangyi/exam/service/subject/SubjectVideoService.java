@@ -19,11 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * 视频题目
- * @author tangyi
- * @date 2022/6/23 1:31 下午
- */
 @Service
 @AllArgsConstructor
 public class SubjectVideoService extends CrudService<SubjectVideoMapper, SubjectVideo> implements ISubjectService {

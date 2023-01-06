@@ -1,11 +1,5 @@
 package com.github.tangyi.common.utils;
 
-/**
- * ThreadLocal保存租户code
- *
- * @author tangyi
- * @date 2019/5/28 20:54
- */
 public class TenantContextHolder {
 
     private static final ThreadLocal<String> CONTEXT = new ThreadLocal<>();

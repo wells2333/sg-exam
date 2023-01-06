@@ -35,12 +35,6 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-/**
- *
- *
- * @author tangyi
- * @date 2022/7/18 3:59 下午
- */
 @Slf4j
 @Service
 @AllArgsConstructor

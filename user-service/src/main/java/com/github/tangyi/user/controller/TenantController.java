@@ -22,9 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-/**
- * 租户管理Controller
- */
 @Slf4j
 @AllArgsConstructor
 @Tag(name = "租户信息管理")

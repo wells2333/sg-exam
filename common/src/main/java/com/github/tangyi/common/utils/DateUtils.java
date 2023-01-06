@@ -9,12 +9,6 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-/**
- * 日期工具类
- *
- * @author tangyi
- * @date 2019/4/28 16:03
- */
 @Slf4j
 public class DateUtils {
 

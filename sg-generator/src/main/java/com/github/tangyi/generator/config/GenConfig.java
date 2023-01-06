@@ -6,11 +6,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * 读取代码生成相关配置
- * @author tangyi
- * @date 2022/7/18 3:51 下午
- */
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "gen")

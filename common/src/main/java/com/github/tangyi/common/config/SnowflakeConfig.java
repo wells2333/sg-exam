@@ -6,11 +6,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- *
- * @author tangyi
- * @date 2022/11/19 10:26 上午
- */
 @Configuration
 @AllArgsConstructor
 public class SnowflakeConfig {

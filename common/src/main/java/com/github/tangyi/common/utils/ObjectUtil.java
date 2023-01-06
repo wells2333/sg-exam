@@ -2,10 +2,6 @@ package com.github.tangyi.common.utils;
 
 import java.util.Objects;
 
-/**
- * @author tangyi
- * @date 2018/11/26 22:47
- */
 public class ObjectUtil {
 
 	/**

@@ -5,12 +5,6 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Crud Mapper
- *
- * @author tangyi
- * @date 2018-08-24 18:59
- */
 public interface CrudMapper<T> extends BaseCrudMapper<T> {
 
 	/**

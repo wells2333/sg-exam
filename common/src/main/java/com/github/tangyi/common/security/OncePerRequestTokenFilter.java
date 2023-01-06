@@ -33,11 +33,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-/**
- * 解析token
- * @author tangyi
- * @date 2022/5/1 4:40 下午
- */
 @Slf4j
 public class OncePerRequestTokenFilter extends OncePerRequestFilter {
 

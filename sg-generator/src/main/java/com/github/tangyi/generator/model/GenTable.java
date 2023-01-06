@@ -9,12 +9,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
-/**
- *
- *
- * @author tangyi
- * @date 2022/7/18 3:53 下午
- */
 public class GenTable extends BaseEntity<GenTable> {
 
 	/** 编号 */

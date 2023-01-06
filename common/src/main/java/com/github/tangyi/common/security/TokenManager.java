@@ -16,11 +16,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-/**
- *
- * @author tangyi
- * @date 2022/5/1 2:27 下午
- */
 @Slf4j
 @Component
 public class TokenManager {

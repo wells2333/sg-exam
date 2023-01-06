@@ -9,12 +9,6 @@ import org.springframework.security.core.userdetails.User;
 
 import java.util.Collection;
 
-/**
- * 用户信息
- *
- * @author tangyi
- * @date 2019/5/28 21:13
- */
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)

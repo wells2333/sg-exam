@@ -46,11 +46,6 @@ public class SubjectUtil {
 
 	/**
 	 * 遍历关系集合，按类型分组题目ID，返回map
-	 *
-	 * @param subjects subjects
-	 * @return Map
-	 * @author tangyi
-	 * @date 2019/06/17 10:43
 	 */
 	public static Map<String, Long[]> groupByType(List<Subjects> subjects) {
 		Map<String, Long[]> idMap = Maps.newHashMapWithExpectedSize(4);

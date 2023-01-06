@@ -1,11 +1,5 @@
 package com.github.tangyi.generator.constants;
 
-/**
- *
- *
- * @author tangyi
- * @date 2022/7/18 3:56 下午
- */
 public class GenConstants {
 
 	/** 单表（增删改查） */

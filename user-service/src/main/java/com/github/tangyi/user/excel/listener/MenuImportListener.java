@@ -9,11 +9,6 @@ import org.springframework.beans.BeanUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 菜单导入
- * @author tangyi
- * @date 2019/12/10 17:22
- */
 public class MenuImportListener extends AbstractExcelImportListener<MenuExcelModel> {
 
 	private MenuService menuService;

@@ -8,11 +8,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-/**
- *
- * @author tangyi
- * @date 2021/3/1 7:42 下午
- */
 @Slf4j
 public class ExecutorUtils {
 

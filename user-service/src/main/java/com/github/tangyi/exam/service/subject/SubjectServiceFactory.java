@@ -41,11 +41,6 @@ public class SubjectServiceFactory {
 
 	/**
 	 * 根据题目类型返回对应的BaseSubjectService
-	 *
-	 * @param type type
-	 * @return BaseSubjectService
-	 * @author tangyi
-	 * @date 2019/06/16 17:34
 	 */
 	public ISubjectService service(Integer type) {
 		if (SubjectTypeEnum.CHOICES.getValue().equals(type) || SubjectTypeEnum.MULTIPLE_CHOICES.getValue()

@@ -2,12 +2,6 @@ package com.github.tangyi.common.constant;
 
 import com.github.tangyi.common.utils.EnvUtils;
 
-/**
- * 公用常量
- *
- * @author tangyi
- * @date 2018-08-23 12:00
- */
 public class CommonConstant {
 
 	/**

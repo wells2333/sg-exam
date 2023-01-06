@@ -12,10 +12,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 
-/**
- * @author tangyi
- * @date 2018/11/26 22:29
- */
 public class MapUtil {
 
     /**
@@ -192,7 +188,6 @@ public class MapUtil {
         }
         return null;
     }
-
 
     /**
      * JavaBean集合对象转化成Map集合对象

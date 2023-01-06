@@ -11,11 +11,6 @@ import org.apache.velocity.VelocityContext;
 
 import java.util.*;
 
-/**
- * 模板处理工具类
- *
- * @author ruoyi
- */
 public class VelocityUtils {
 
 	private static final String PROJECT_PATH = "main/java";

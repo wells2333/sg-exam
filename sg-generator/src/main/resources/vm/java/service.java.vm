@@ -11,11 +11,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import com.github.tangyi.constants.${ModuleName}CacheName;
 
-/**
- * ${functionName}Service
- * @author ${author}
- * @date ${datetime}
- */
 @Slf4j
 @Service
 @AllArgsConstructor

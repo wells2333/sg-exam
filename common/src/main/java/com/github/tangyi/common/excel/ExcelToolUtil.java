@@ -22,11 +22,6 @@ import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * excel导入导出工具类
- * @author tangyi
- * @date 2018/11/26 22:20
- */
 @Slf4j
 public class ExcelToolUtil {
 

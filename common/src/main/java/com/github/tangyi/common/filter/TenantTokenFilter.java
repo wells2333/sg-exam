@@ -13,12 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * 获取请求里的租户code
- *
- * @author tangyi
- * @date 2019/5/28 22:53
- */
 @Slf4j
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)

@@ -1,10 +1,5 @@
 package com.github.tangyi.common.utils;
 
-/**
- *
- * @author tangyi
- * @date 2022/3/19 2:24 下午
- */
 public class EnvUtils {
 
 	public static String getValue(String key, String defaultVal) {

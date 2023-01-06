@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Map;
 
-/**
- * 消息Controller
- */
 @Slf4j
 @RestController
 @AllArgsConstructor

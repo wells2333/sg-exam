@@ -9,11 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 
-/**
- *
- * @author tangyi
- * @date 2022/3/23 4:48 下午
- */
 public class SgPreconditions {
 
 	public static void checkNull(Object obj, String msg) {

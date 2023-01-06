@@ -17,11 +17,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-/**
- *
- * @author tangyi
- * @date 2022/12/17 3:04 下午
- */
 @Slf4j
 @Component
 @AllArgsConstructor

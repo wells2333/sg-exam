@@ -7,11 +7,6 @@ import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
 import com.github.tangyi.common.enums.StatusEnum;
 
-/**
- * 状态转换
- * @author tangyi
- * @date 2019/12/10 14:33
- */
 public class StatusConverter implements Converter<Integer> {
 
 	@Override

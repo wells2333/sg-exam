@@ -8,11 +8,6 @@ import com.alibaba.excel.converters.longconverter.LongStringConverter;
 import com.github.tangyi.common.excel.annotation.ExcelModel;
 import lombok.Data;
 
-/**
- * 菜单Excel Model
- * @author tangyi
- * @date 2019/12/9 19:12
- */
 @Data
 @ExcelModel("菜单信息")
 @ContentRowHeight(18)

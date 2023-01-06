@@ -5,8 +5,6 @@ import java.util.Map;
 
 /**
  * 封装常用的业务错误码和提示信息
- * @author tangyi
- * @date 2019/12/11 17:35
  */
 public class ApiMsg {
 

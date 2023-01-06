@@ -43,14 +43,6 @@ public class AnswerHandlerUtil {
 		return str;
 	}
 
-	/**
-	 * 分类答题
-	 *
-	 * @param answers answers
-	 * @return Map
-	 * @author tangyi
-	 * @date 2019/06/18 16:32
-	 */
 	public static Map<Integer, List<Answer>> distinctAnswer(List<Answer> answers, Map<Long, Integer> typeMap) {
 		Map<Integer, List<Answer>> map = Maps.newHashMap();
 		map.putAll(answers.stream()

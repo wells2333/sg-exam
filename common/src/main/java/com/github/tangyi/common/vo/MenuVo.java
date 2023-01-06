@@ -4,10 +4,6 @@ import com.github.tangyi.common.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/**
- * @author tangyi
- * @date 2018-08-28 20:40
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class MenuVo extends BaseEntity<MenuVo> {

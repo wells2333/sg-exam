@@ -1,9 +1,5 @@
 package com.github.tangyi.common.constant;
 
-/**
- * @author tangyi
- * @date 2018-08-25 14:08
- */
 public class SecurityConstant {
 
     /**

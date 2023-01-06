@@ -8,9 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 
-/**
- * Created by tangyi on 2017/3/14.
- */
 @Slf4j
 public class JsonMapper extends ObjectMapper {
 

@@ -5,12 +5,6 @@ import com.github.tangyi.generator.model.GenTable;
 import java.util.List;
 import java.util.Map;
 
-/**
- *
- *
- * @author tangyi
- * @date 2022/7/18 3:58 下午
- */
 public interface IGenTableService {
 
 	/**

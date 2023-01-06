@@ -17,9 +17,6 @@ import javax.validation.constraints.NotBlank;
 
 /**
  * ${functionName} ${tableName}
- * 
- * @author ${author}
- * @date ${datetime}
  */
 #if($table.crud || $table.sub)
 #set($Entity="BaseEntity")

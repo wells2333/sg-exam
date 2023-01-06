@@ -4,10 +4,6 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * @author tangyi
- * @date 2019/07/05 15:05
- */
 @Data
 public class SysConfigDto implements Serializable {
 

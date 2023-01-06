@@ -11,10 +11,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
-/**
- * @author tangyi
- * @date 2019/3/12 23:45
- */
 public class ClassUtils extends org.springframework.util.ClassUtils {
 
     private static final ParameterNameDiscoverer PARAMETERNAMEDISCOVERER = new DefaultParameterNameDiscoverer();

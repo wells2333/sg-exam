@@ -15,10 +15,6 @@ import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * @author tangyi
- * @date 2018-08-24 18:58
- */
 @Data
 @NoArgsConstructor
 public class BaseEntity<T> implements Serializable {

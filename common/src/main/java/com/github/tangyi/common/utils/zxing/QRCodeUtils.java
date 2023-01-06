@@ -11,12 +11,6 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
-/**
- * 二维码工具类
- *
- * @author tangyi
- * @date 2019/3/22 15:24
- */
 public class QRCodeUtils {
 
 	// 二维码尺寸

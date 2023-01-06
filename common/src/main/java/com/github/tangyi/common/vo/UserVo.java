@@ -7,12 +7,6 @@ import lombok.EqualsAndHashCode;
 import java.util.Date;
 import java.util.List;
 
-/**
- * 用户Vo
- *
- * @author tangyi
- * @date 2018-08-25 13:57
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class UserVo extends BaseEntity<UserVo> {

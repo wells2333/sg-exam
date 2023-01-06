@@ -18,9 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Map;
 
-/**
- * 附件分组管理
- */
 @Slf4j
 @AllArgsConstructor
 @Tag(name = "附件分组管理")

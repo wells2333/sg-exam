@@ -4,12 +4,6 @@ import com.github.tangyi.common.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/**
- * 附件VO
- *
- * @author tangyi
- * @date 2019/1/1 20:40
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class AttachmentVo extends BaseEntity<AttachmentVo> {

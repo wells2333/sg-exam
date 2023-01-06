@@ -5,11 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.constraints.NotBlank;
 
-/**
- *
- * @author tangyi
- * @date 2022/7/18 3:55 下午
- */
 public class GenTableColumn extends BaseEntity<GenTableColumn> {
 	/** 编号 */
 	private Long columnId;

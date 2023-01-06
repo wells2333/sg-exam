@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * 部门管理
- */
 @AllArgsConstructor
 @Tag(name = "部门管理")
 @RestController

@@ -7,11 +7,6 @@ import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
 import com.github.tangyi.common.enums.GenderEnum;
 
-/**
- * 性别转换
- * @author tangyi
- * @date 2019/12/10 14:16
- */
 public class GenderConverter implements Converter<Integer> {
 
 	@Override

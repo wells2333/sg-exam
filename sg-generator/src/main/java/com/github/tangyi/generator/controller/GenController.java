@@ -24,12 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- *
- *
- * @author tangyi
- * @date 2022/7/18 4:01 下午
- */
 @Tag(name = "代码生成Table管理")
 @AllArgsConstructor
 @RestController

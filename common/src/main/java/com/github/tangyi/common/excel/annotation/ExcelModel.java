@@ -2,10 +2,6 @@ package com.github.tangyi.common.excel.annotation;
 
 import java.lang.annotation.*;
 
-/**
- * @author tangyi
- * @date 2019/12/10 16:04
- */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited

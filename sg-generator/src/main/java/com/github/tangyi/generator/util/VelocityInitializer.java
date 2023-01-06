@@ -5,11 +5,6 @@ import org.apache.velocity.app.Velocity;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
-/**
- * VelocityEngine工厂
- *
- * @author ruoyi
- */
 public class VelocityInitializer {
 	/**
 	 * 初始化vm方法

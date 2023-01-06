@@ -12,12 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-/**
- * okHttp工具类
- *
- * @author tangyi
- * @date 2018-09-07 20:31
- */
 public class OkHttpUtil {
 
 	private static final Logger logger = LoggerFactory.getLogger(OkHttpUtil.class);
@@ -49,41 +43,14 @@ public class OkHttpUtil {
 		return instance;
 	}
 
-	/**
-	 * get请求
-	 *
-	 * @param url    url
-	 * @param header header
-	 * @return String
-	 * @author tangyi
-	 * @date 2018/9/7 20:37
-	 */
 	public String get(String url, Map<String, Object> header) throws Exception {
 		return getResponseBody(url, header).string();
 	}
 
-	/**
-	 * get请求获取响应体
-	 *
-	 * @param url    url
-	 * @param header header
-	 * @return String
-	 * @author tangyi
-	 * @date 2018/9/11 10:24
-	 */
 	public ResponseBody getResponseBody(String url, Map<String, Object> header) throws Exception {
 		return getResponse(url, header).body();
 	}
 
-	/**
-	 * 获取响应对象
-	 *
-	 * @param url    url
-	 * @param header header
-	 * @return String
-	 * @author tangyi
-	 * @date 2018/10/11 11:11
-	 */
 	public Response getResponse(String url, Map<String, Object> header) throws Exception {
 		Request.Builder builder = new Request.Builder().url(url).get();
 		for (String key : header.keySet())
@@ -91,15 +58,6 @@ public class OkHttpUtil {
 		return okHttpClient.newCall(builder.build()).execute();
 	}
 
-	/**
-	 * post请求
-	 *
-	 * @param header header
-	 * @param data   data
-	 * @return String
-	 * @author tangyi
-	 * @date 2018/9/9 10:32
-	 */
 	public String postJson(String url, Map<String, Object> header, Map<String, Object> data) {
 		try {
 			MediaType mediaType = MediaType.parse("application/json");
@@ -115,15 +73,6 @@ public class OkHttpUtil {
 		return null;
 	}
 
-	/**
-	 * post请求
-	 *
-	 * @param header header
-	 * @param object object
-	 * @return String
-	 * @author tangyi
-	 * @date 2018/9/9 10:32
-	 */
 	public String postJson(String url, Map<String, Object> header, Object object) {
 		try {
 			MediaType mediaType = MediaType.parse("application/json");
@@ -139,15 +88,6 @@ public class OkHttpUtil {
 		return null;
 	}
 
-	/**
-	 * post请求
-	 *
-	 * @param header header
-	 * @param data   data
-	 * @return String
-	 * @author tangyi
-	 * @date 2018/9/9 10:32
-	 */
 	public String postForm(String url, Map<String, Object> header, Map<String, Object> data) throws Exception {
 		logger.debug("post data:{}", data);
 		FormBody.Builder formBuilder = new FormBody.Builder();
@@ -159,14 +99,6 @@ public class OkHttpUtil {
 		return okHttpClient.newCall(builder.build()).execute().body().string();
 	}
 
-	/**
-	 * post请求
-	 *
-	 * @param header header
-	 * @return String
-	 * @author tangyi
-	 * @date 2018/9/15 10:36
-	 */
 	public String postFile(String url, Map<String, Object> header, String filePath) throws Exception {
 		Request.Builder builder = new Request.Builder().url(url)
 				.post(RequestBody.create(MediaType.parse("application/octet-stream"), new File(filePath)));
@@ -178,15 +110,6 @@ public class OkHttpUtil {
 		return response.body().string();
 	}
 
-	/**
-	 * put 请求，用于上传文件
-	 *
-	 * @param header header
-	 * @param file   file
-	 * @return String
-	 * @author tangyi
-	 * @date 2018/9/9 10:32
-	 */
 	public String put(String url, Map<String, Object> header, String file) throws Exception {
 		RequestBody body = RequestBody.create(MediaType.parse("application/octet-stream"), new File(file));
 		Request.Builder builder = new Request.Builder().url(url).put(body);
@@ -198,15 +121,6 @@ public class OkHttpUtil {
 		return response.body().string();
 	}
 
-	/**
-	 * 上传字节数组
-	 *
-	 * @param header header
-	 * @param bytes  bytes
-	 * @return String
-	 * @author tangyi
-	 * @date 2018/9/14 17:14
-	 */
 	public String putBytes(String url, Map<String, Object> header, byte[] bytes) throws Exception {
 		RequestBody body = RequestBody.create(MediaType.parse("application/octet-stream"), bytes);
 		Request.Builder builder = new Request.Builder().url(url).put(body);
@@ -218,15 +132,6 @@ public class OkHttpUtil {
 		return response.body().string();
 	}
 
-	/**
-	 * 上传流
-	 *
-	 * @param header      header
-	 * @param inputStream inputStream
-	 * @return String
-	 * @author tangyi
-	 * @date 2019/1/15 16:49
-	 */
 	public String putStream(String url, Map<String, Object> header, InputStream inputStream) throws Exception {
 		RequestBody body = OkHttpRequestBodyUtil.create(MediaType.parse("application/octet-stream"), inputStream);
 		Request.Builder builder = new Request.Builder().url(url).put(body);
@@ -238,15 +143,6 @@ public class OkHttpUtil {
 		return response.body().string();
 	}
 
-	/**
-	 * patch请求
-	 *
-	 * @param header header
-	 * @param data   data
-	 * @return String
-	 * @author tangyi
-	 * @date 2018/9/9 10:49
-	 */
 	public String patch(String url, Map<String, Object> header, Map<String, Object> data) throws Exception {
 		logger.debug("patch data:{}", data);
 		MediaType mediaType = MediaType.parse("application/json");
@@ -257,28 +153,10 @@ public class OkHttpUtil {
 		return okHttpClient.newCall(builder.build()).execute().body().string();
 	}
 
-	/**
-	 * 删除请求
-	 *
-	 * @param url    url
-	 * @param header header
-	 * @return String
-	 * @author tangyi
-	 * @date 2018/9/11 10:28
-	 */
 	public String delete(String url, Map<String, Object> header) throws Exception {
 		return deleteResponse(url, header).body().string();
 	}
 
-	/**
-	 * 删除请求
-	 *
-	 * @param url    url
-	 * @param header header
-	 * @return String
-	 * @author tangyi
-	 * @date 2018/9/12 15:15
-	 */
 	public Response deleteResponse(String url, Map<String, Object> header) throws Exception {
 		Request.Builder builder = new Request.Builder().url(url).delete();
 		for (String key : header.keySet())
@@ -286,12 +164,6 @@ public class OkHttpUtil {
 		return okHttpClient.newCall(builder.build()).execute();
 	}
 
-	/**
-	 * @param data data
-	 * @return JSONObject
-	 * @author tangyi
-	 * @date 2018/9/4 20:24
-	 */
 	private JSONObject mapToJSONObject(Map<String, Object> data) {
 		JSONObject jsonObject = new JSONObject();
 		for (String key : data.keySet()) {

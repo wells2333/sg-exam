@@ -5,11 +5,6 @@ import org.apache.commons.lang3.time.StopWatch;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-/**
- * 统计耗时工具类
- * @author tangyi
- * @date 2022/6/2 9:12 上午
- */
 public class StopWatchUtil {
 
 	public static StopWatch start() {

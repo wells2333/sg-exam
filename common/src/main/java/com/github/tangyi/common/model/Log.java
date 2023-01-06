@@ -8,12 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
-/**
- * 日志
- *
- * @author tangyi
- * @date 2018/10/31 20:29
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Table(name = "sys_log")

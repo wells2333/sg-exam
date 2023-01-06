@@ -8,12 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 分页查询工具类
- *
- * @author tangyi
- * @date 2018/12/4 20:16
- */
 public class PageUtil implements PageConstant {
 
 	public static void copyProperties(PageInfo<?> source, PageInfo<?> target) {

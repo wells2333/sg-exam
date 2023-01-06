@@ -27,12 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * 全局异常处理
- *
- * @author tangyi
- * @date 2019/05/25 15:36
- */
 @Slf4j
 @RestControllerAdvice
 public class CustomGlobalExceptionHandler {

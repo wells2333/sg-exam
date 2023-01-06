@@ -19,9 +19,6 @@ import java.awt.image.BufferedImage;
 import java.util.Map;
 import java.util.Properties;
 
-/**
- * 验证码
- */
 @Slf4j
 @AllArgsConstructor
 @Tag(name = "生成验证码")

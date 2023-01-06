@@ -4,12 +4,6 @@ import cn.hutool.core.text.StrFormatter;
 import io.jsonwebtoken.lang.Objects;
 import org.apache.commons.lang3.StringUtils;
 
-/**
- *
- *
- * @author tangyi
- * @date 2022/7/18 4:14 下午
- */
 public class StringUtil {
 
 	/** 空字符串 */

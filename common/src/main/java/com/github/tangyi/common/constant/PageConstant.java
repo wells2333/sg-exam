@@ -8,11 +8,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- *
- * @author tangyi
- * @date 2022/3/23 1:36 下午
- */
 public interface PageConstant {
 
 	String CONDITION = "condition";

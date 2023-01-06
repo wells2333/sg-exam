@@ -10,19 +10,8 @@ import okio.Source;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * @author tangyi
- * @version V1.0
- * @date 2018-09-09 10:14
- */
 public class OkHttpRequestBodyUtil {
 
-    /**
-     * @param
-     * @return
-     * @author tangyi
-     * @date 2018/9/9 10:22
-     */
     public static RequestBody create(final MediaType mediaType, final InputStream inputStream) {
         return new RequestBody() {
             @Override

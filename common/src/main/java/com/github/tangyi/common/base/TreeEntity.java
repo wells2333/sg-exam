@@ -6,12 +6,6 @@ import lombok.EqualsAndHashCode;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 树形实体
- *
- * @author tangyi
- * @date 2018-09-13 20:40
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public abstract class TreeEntity<T> extends BaseEntity<T> {

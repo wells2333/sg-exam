@@ -10,23 +10,12 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-/**
- * 以静态变量保存Spring ApplicationContext
- *
- * @author tangyi
- * @date 2018-08-24 19:04
- */
 @Service
 @Lazy(false)
 public class SpringContextHolder implements ApplicationContextAware, DisposableBean {
 
     private static ApplicationContext applicationContext = null;
 
-    /**
-     * 获取applicationContext
-     *
-     * @return
-     */
     public static ApplicationContext getApplicationContext() {
 		SgPreconditions.checkNull(applicationContext, "applicationContext为空");
         return applicationContext;
@@ -42,11 +31,6 @@ public class SpringContextHolder implements ApplicationContextAware, DisposableB
         SpringContextHolder.applicationContext = applicationContext;
     }
 
-    /**
-     * 发布事件
-     *
-     * @param event
-     */
     public static void publishEvent(ApplicationEvent event) {
         if (applicationContext == null) {
             return;

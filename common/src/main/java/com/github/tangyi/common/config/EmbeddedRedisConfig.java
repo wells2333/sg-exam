@@ -9,8 +9,6 @@ import javax.annotation.PostConstruct;
 
 /**
  * 内嵌Redis，用于dev环境
- * @author tangyi
- * @date 2020/8/4 11:19 下午
  */
 @Configuration
 @Profile("dev")

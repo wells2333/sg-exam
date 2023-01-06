@@ -9,11 +9,6 @@ import org.springframework.beans.BeanUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 处理导入用户数据
- * @author tangyi
- * @date 2019/12/10 16:34
- */
 public class UserImportListener extends AbstractExcelImportListener<UserExcelModel> {
 
 	private UserService userService;

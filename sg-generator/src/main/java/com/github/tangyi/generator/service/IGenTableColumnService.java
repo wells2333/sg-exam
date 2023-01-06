@@ -4,12 +4,6 @@ import com.github.tangyi.generator.model.GenTableColumn;
 
 import java.util.List;
 
-/**
- *
- *
- * @author tangyi
- * @date 2022/7/18 3:59 下午
- */
 public interface IGenTableColumnService {
 
 	/**

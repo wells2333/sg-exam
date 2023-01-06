@@ -5,12 +5,6 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * 封装返回数据
- *
- * @author tangyi
- * @date 2019/3/17 12:08
- */
 @Data
 public class R<T> implements Serializable {
 

@@ -10,12 +10,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Collection;
 
-/**
- * 系统工具类
- *
- * @author tangyi
- * @date 2018-09-13 20:50
- */
 @Slf4j
 public class SysUtil {
 
@@ -29,13 +23,6 @@ public class SysUtil {
 		return SecurityContextHolder.getContext().getAuthentication();
 	}
 
-	/**
-	 * 获取当前登录的用户名
-	 *
-	 * @return String
-	 * @author tangyi
-	 * @date 2019/03/17 11:46
-	 */
 	public static String getUser() {
 		return getAuthentication().getName();
 	}
@@ -48,10 +35,6 @@ public class SysUtil {
 		return null;
 	}
 
-	/**
-	 * 获取当前用户的userId
-	 * @return Long
-	 */
 	public static Long getUserId() {
 		CustomUserDetails details = getUserDetails();
 		if (details != null) {
@@ -72,11 +55,6 @@ public class SysUtil {
 		return getAuthentication().getAuthorities();
 	}
 
-	/**
-	 * 获取租户编号
-	 *
-	 * @return String
-	 */
 	public static String getTenantCode() {
 		String tenantCode = TenantContextHolder.getTenantCode();
 		if (StringUtils.isBlank(tenantCode)) {

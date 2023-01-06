@@ -3,12 +3,6 @@ package com.github.tangyi.common.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/**
- * 登录类型
- *
- * @author tangyi
- * @date 2019/07/02 09:45
- */
 @Getter
 @AllArgsConstructor
 public enum LoginTypeEnum {

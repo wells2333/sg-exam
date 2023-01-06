@@ -3,11 +3,6 @@ package com.github.tangyi.common.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/**
- * 状态枚举
- * @author tangyi
- * @date 2019/12/10 14:32
- */
 @Getter
 @AllArgsConstructor
 public enum StatusEnum {

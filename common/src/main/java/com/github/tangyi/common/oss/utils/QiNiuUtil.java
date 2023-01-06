@@ -20,12 +20,6 @@ import org.apache.commons.lang3.time.StopWatch;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-/**
- * 七牛云
- *
- * @author tangyi
- * @date 2019/12/8 20:25
- */
 @Slf4j
 public class QiNiuUtil {
 

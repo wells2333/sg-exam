@@ -8,12 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-/**
- * 日志拦截器
- *
- * @author tangyi
- * @date 2018-09-12 17:03
- */
 public class LogInterceptor implements Interceptor {
 
     private static Logger logger = LoggerFactory.getLogger(LogInterceptor.class);

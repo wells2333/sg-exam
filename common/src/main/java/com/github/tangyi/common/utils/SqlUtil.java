@@ -7,11 +7,6 @@ import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * mysql to h2
- * @author tangyi
- * @date 2020/8/5 4:33 下午
- */
 public class SqlUtil {
 
 	@SuppressWarnings(value={"uncheck","deprecation"})

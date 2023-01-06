@@ -5,11 +5,6 @@ import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/**
- *
- * @author tangyi
- * @date 2022/5/1 8:39 下午
- */
 @Data
 public class UserToken implements Serializable {
 

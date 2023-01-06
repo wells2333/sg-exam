@@ -12,10 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-/**
- * @author tangyi
- * @date 2019-10-08 12:03
- */
 @Slf4j
 public class RUtil {
 

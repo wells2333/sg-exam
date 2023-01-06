@@ -14,10 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author tangyi
- * @date 2018-08-25 17:22
- */
 public abstract class CrudService<D extends CrudMapper<T>, T extends BaseEntity<T>> extends BaseService {
 
 	@Autowired
