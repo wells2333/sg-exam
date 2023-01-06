@@ -88,11 +88,6 @@ public class UserController extends BaseController {
 
 	/**
 	 * 根据用户唯一标识获取用户详细信息
-	 *
-	 * @param identifier   identifier
-	 * @param identityType identityType
-	 * @param tenantCode   tenantCode
-	 * @return R
 	 */
 	@GetMapping("anonymousUser/findUserByIdentifier/{identifier}")
 	@Operation(summary = "获取用户信息", description = "根据用户name获取用户详细信息")
@@ -101,13 +96,6 @@ public class UserController extends BaseController {
 		return R.success(userService.findUserByIdentifier(identityType, identifier, tenantCode));
 	}
 
-	/**
-	 * 获取分页数据
-	 *
-	 * @param pageNum  pageNum
-	 * @param pageSize pageSize
-	 * @return PageInfo
-	 */
 	@GetMapping("userList")
 	@Operation(summary = "获取用户列表")
 	public R<PageInfo<UserDto>> list(@RequestParam Map<String, Object> condition,
@@ -127,7 +115,6 @@ public class UserController extends BaseController {
 					users.stream().map(User::getId).collect(Collectors.toList()));
 			// 查找角色
 			List<Role> finalRoleList = userService.getUsersRoles(users);
-
 			// 头像
 			Map<Long, String> avatarUrlMap = userService.findUserAvatarUrl(users);
 			users.forEach(tempUser -> {
@@ -156,12 +143,6 @@ public class UserController extends BaseController {
 		return R.success(userService.updateUser(id, userDto));
 	}
 
-	/**
-	 * 更新用户的基本信息
-	 *
-	 * @param userDto userDto
-	 * @return R
-	 */
 	@PutMapping("updateInfo")
 	@Operation(summary = "更新用户基本信息", description = "根据用户id更新用户的基本信息")
 	@SgLog(value = "更新用户基本信息", operationType = OperationType.UPDATE)
@@ -191,12 +172,6 @@ public class UserController extends BaseController {
 		return R.success(userService.uploadAvatar(file));
 	}
 
-	/**
-	 * 更新头像
-	 *
-	 * @param userDto userDto
-	 * @return R
-	 */
 	@PostMapping("updateAvatar")
 	@Operation(summary = "更新用户头像")
 	@SgLog(value = "更新用户头像", operationType = OperationType.UPDATE)
@@ -214,9 +189,6 @@ public class UserController extends BaseController {
 		return R.success(userService.delete(user, userAuths) > 0);
 	}
 
-	/**
-	 * 导出
-	 */
 	@PostMapping("export")
 	@Operation(summary = "导出用户", description = "根据用户id导出用户")
 	@SgLog(value = "导出用户", operationType = OperationType.EXPORT)
@@ -250,23 +222,13 @@ public class UserController extends BaseController {
 		}
 	}
 
-	/**
-	 * 导入数据
-	 *
-	 * @param file file
-	 * @return R
-	 */
 	@PostMapping("import")
 	@Operation(summary = "导入数据", description = "导入数据")
 	@SgLog(value = "导入用户", operationType = OperationType.IMPORT)
-	public R<Boolean> importUser(@Parameter(description = "要上传的文件", required = true) MultipartFile file,
-			HttpServletRequest request) {
-		try {
-			return R.success(ExcelToolUtil.readExcel(file.getInputStream(), UserExcelModel.class,
-					new UserImportListener(userService)));
-		} catch (Exception e) {
-			throw new CommonException(e, "import user failed");
-		}
+	public R<Boolean> importUser(@Parameter(description = "要上传的文件", required = true) MultipartFile file)
+			throws IOException {
+		return R.success(ExcelToolUtil.readExcel(file.getInputStream(), UserExcelModel.class,
+				new UserImportListener(userService)));
 	}
 
 	@PostMapping("deleteAll")
@@ -276,24 +238,12 @@ public class UserController extends BaseController {
 		return R.success(ArrayUtils.isNotEmpty(ids) ? userService.deleteAll(ids) > 0 : Boolean.FALSE);
 	}
 
-	/**
-	 * 根据ID查询
-	 *
-	 * @param ids ids
-	 * @return R
-	 */
 	@PostMapping(value = "findById")
 	@Operation(summary = "根据ID查询用户", description = "根据ID查询用户")
 	public R<List<UserVo>> findById(@RequestBody Long[] ids) {
 		return R.success(userService.findUserVoListById(ids));
 	}
 
-	/**
-	 * 注册
-	 *
-	 * @param userDto userDto
-	 * @return R
-	 */
 	@Operation(summary = "注册", description = "注册")
 	@PostMapping("anonymousUser/register")
 	@SgLog(value = "注册用户", operationType = OperationType.INSERT)
@@ -301,14 +251,6 @@ public class UserController extends BaseController {
 		return R.success(userService.register(userDto));
 	}
 
-	/**
-	 * 检查账号是否存在
-	 *
-	 * @param identityType identityType
-	 * @param identifier   identifier
-	 * @param tenantCode   tenantCode
-	 * @return R
-	 */
 	@Operation(summary = "检查账号是否存在", description = "检查账号是否存在")
 	@GetMapping("anonymousUser/checkExist/{identifier}")
 	public R<Boolean> checkExist(@PathVariable("identifier") String identifier, @RequestParam Integer identityType,
@@ -316,12 +258,7 @@ public class UserController extends BaseController {
 		return R.success(userService.checkIdentifierIsExist(identityType, identifier, tenantCode));
 	}
 
-	/**
-	 * 查询用户数量
-	 *
-	 * @param userVo userVo
-	 * @return R
-	 */
+	@Operation(summary = "查询用户数量")
 	@PostMapping("userCount")
 	public R<Integer> userCount(UserVo userVo) {
 		return R.success(userService.userCount(userVo));
@@ -334,12 +271,6 @@ public class UserController extends BaseController {
 		return R.success(userService.resetPassword(userDto));
 	}
 
-	/**
-	 * 更新用户的基本信息
-	 *
-	 * @param userDto userDto
-	 * @return R
-	 */
 	@PutMapping("anonymousUser/updateLoginInfo")
 	@Operation(summary = "更新用户登录信息", description = "根据用户id更新用户的登录信息")
 	public R<Boolean> updateLoginInfo(@RequestBody UserDto userDto) {

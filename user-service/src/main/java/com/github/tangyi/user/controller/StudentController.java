@@ -3,14 +3,13 @@ package com.github.tangyi.user.controller;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.user.dto.StudentDto;
 import com.github.tangyi.api.user.model.Student;
-import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.base.BaseController;
+import com.github.tangyi.common.model.R;
 import com.github.tangyi.user.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,42 +50,25 @@ public class StudentController extends BaseController {
 	@PutMapping
 	@Operation(summary = "更新学生信息", description = "根据学生id更新学生的基本信息")
 	public R<Boolean> update(@RequestBody @Valid StudentDto studentDto) {
-		try {
-			Student student = new Student();
-			BeanUtils.copyProperties(studentDto, student);
-			student.setId(studentDto.getId());
-			student.setCommonValue();
-			return R.success(studentService.update(student) > 0);
-		} catch (Exception e) {
-			log.error("Update student info failed", e);
-		}
-		return R.success(Boolean.FALSE);
+		Student student = new Student();
+		BeanUtils.copyProperties(studentDto, student);
+		student.setId(studentDto.getId());
+		student.setCommonValue();
+		return R.success(studentService.update(student) > 0);
 	}
 
 	@DeleteMapping("/{id}")
 	@Operation(summary = "删除学生", description = "根据ID删除学生")
 	public R<Boolean> delete(@PathVariable Long id) {
-		try {
-			Student student = studentService.get(id);
-			student.setCommonValue();
-			studentService.delete(student);
-		} catch (Exception e) {
-			log.error("Delete student info failed", e);
-		}
-		return R.success(Boolean.FALSE);
+		Student student = studentService.get(id);
+		student.setCommonValue();
+		return R.success(studentService.delete(student) > 0);
 	}
 
 	@PostMapping("deleteAll")
 	@Operation(summary = "批量删除学生", description = "根据学生id批量删除学生")
 	public R<Boolean> deleteAll(@RequestBody Long[] ids) {
-		boolean success = false;
-		try {
-			if (ArrayUtils.isNotEmpty(ids))
-				success = studentService.deleteAll(ids) > 0;
-		} catch (Exception e) {
-			log.error("Delete student info failed", e);
-		}
-		return R.success(success);
+		return R.success(studentService.deleteAll(ids) > 0);
 	}
 
 	@RequestMapping(value = "findById", method = RequestMethod.POST)

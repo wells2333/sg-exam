@@ -30,9 +30,6 @@ public class ValidateCodeController extends BaseController {
 
 	private final UserService userService;
 
-	/**
-	 * 生成验证码
-	 */
 	@Operation(summary = "生成验证码", description = "生成验证码")
 	@GetMapping("/{random}")
 	public void produceCode(@PathVariable String random,

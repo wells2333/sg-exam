@@ -6,7 +6,6 @@ import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.constant.CommonConstant;
 import com.github.tangyi.common.excel.ExcelToolUtil;
-import com.github.tangyi.common.exceptions.CommonException;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.Id;
 import com.github.tangyi.exam.excel.model.SubjectExcelModel;
@@ -150,13 +149,8 @@ public class SubjectsController extends BaseController {
 	@Operation(summary = "导出题目", description = "根据分类id导出题目")
 	public void exportSubject(@RequestBody Long[] ids, @RequestParam(required = false) Long examinationId,
 			@RequestParam(required = false) Long categoryId, HttpServletRequest request, HttpServletResponse response) {
-		try {
-			List<SubjectDto> subjects = subjectImportExportService.export(ids, examinationId, categoryId);
-			ExcelToolUtil.writeExcel(request, response, SubjectUtil.convertToExcelModel(subjects),
-					SubjectExcelModel.class);
-		} catch (Exception e) {
-			throw new CommonException(e, "export subject failed");
-		}
+		List<SubjectDto> subjects = subjectImportExportService.export(ids, examinationId, categoryId);
+		ExcelToolUtil.writeExcel(request, response, SubjectUtil.convertToExcelModel(subjects), SubjectExcelModel.class);
 	}
 
 	@GetMapping("exportDemoExcel")

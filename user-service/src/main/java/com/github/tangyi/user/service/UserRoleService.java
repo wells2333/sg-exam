@@ -14,22 +14,10 @@ public class UserRoleService extends CrudService<UserRoleMapper, UserRole> {
 
     private final UserRoleMapper userRoleMapper;
 
-    /**
-     * 根据用户ID查询
-     *
-     * @param userId 用户ID
-     * @return List
-     */
     public List<UserRole> getByUserId(Long userId) {
         return userRoleMapper.getByUserId(userId);
     }
 
-    /**
-     * 根据用户ID查询
-     *
-     * @param userIds 用户ID
-     * @return List
-     */
     public List<UserRole> getByUserIds(List<Long> userIds) {
         return userRoleMapper.getByUserIds(userIds);
     }

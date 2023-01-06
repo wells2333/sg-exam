@@ -8,9 +8,9 @@ import com.github.tangyi.api.exam.model.Answer;
 import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.SysUtil;
-import com.github.tangyi.exam.service.exam.ExaminationActionService;
 import com.github.tangyi.exam.service.RankInfoService;
 import com.github.tangyi.exam.service.answer.AnswerService;
+import com.github.tangyi.exam.service.exam.ExaminationActionService;
 import com.github.tangyi.exam.service.subject.SubjectsService;
 import com.github.tangyi.log.annotation.SgLog;
 import com.github.tangyi.log.constants.OperationType;
@@ -74,17 +74,12 @@ public class AnswerController extends BaseController {
 	@Operation(summary = "删除答题")
 	@SgLog(value = "删除答题", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable Long id) {
-		boolean success = false;
-		try {
-			Answer answer = answerService.get(id);
-			if (answer != null) {
-				answer.setCommonValue();
-				success = answerService.delete(answer) > 0;
-			}
-		} catch (Exception e) {
-			log.error("delete answer failed", e);
+		Answer answer = answerService.get(id);
+		if (answer != null) {
+			answer.setCommonValue();
+			return R.success(answerService.delete(answer) > 0);
 		}
-		return R.success(success);
+		return R.success(Boolean.FALSE);
 	}
 
 	@PostMapping("save")

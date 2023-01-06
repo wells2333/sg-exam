@@ -122,23 +122,12 @@ public class MenuController extends BaseController {
 		return menuService.findPage(condition, pageNum, pageSize);
 	}
 
-	/**
-	 * 根据角色查找菜单
-	 *
-	 * @param role       角色标识
-	 * @param tenantCode 租户标识
-	 */
 	@GetMapping("anonymousUser/findMenuByRole/{role}")
 	@Operation(summary = "根据角色查找菜单", description = "根据角色id获取角色菜单")
 	public R<List<Menu>> findMenuByRole(@PathVariable String role, @RequestParam @NotBlank String tenantCode) {
 		return R.success(menuService.findMenuByRole(role, tenantCode));
 	}
 
-	/**
-	 * 查询所有菜单
-	 *
-	 * @param tenantCode 租户标识
-	 */
 	@GetMapping("anonymousUser/findAllMenu")
 	@Operation(summary = "查询所有菜单", description = "查询所有菜单")
 	public R<List<Menu>> findAllMenu(@RequestParam @NotBlank String tenantCode) {
@@ -147,11 +136,6 @@ public class MenuController extends BaseController {
 		return R.success(menuService.findAllList(menu));
 	}
 
-	/**
-	 * 根据角色查找菜单
-	 *
-	 * @param roleCode 角色code
-	 */
 	@GetMapping("roleTree/{roleCode}")
 	@Operation(summary = "根据角色查找菜单", description = "根据角色code获取角色菜单")
 	public List<String> roleTree(@PathVariable String roleCode) {

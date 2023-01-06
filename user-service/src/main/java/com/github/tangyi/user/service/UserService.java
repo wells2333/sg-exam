@@ -176,7 +176,6 @@ public class UserService extends CrudService<UserMapper, User> {
 	 */
 	@Cacheable(value = UserCacheName.USER_DTO, key = "#userVo.identifier")
 	public UserInfoDto findUserInfo(UserVo userVo) {
-		// 返回结果
 		UserInfoDto userInfoDto = new UserInfoDto();
 		String tenantCode = userVo.getTenantCode();
 		String identifier = userVo.getIdentifier();
@@ -341,8 +340,8 @@ public class UserService extends CrudService<UserMapper, User> {
 		return super.delete(user);
 	}
 
-	@Transactional
 	@Override
+	@Transactional
 	@CacheEvict(value = {UserCacheName.USER, UserCacheName.USER_VO, UserCacheName.USER_DTO, UserCacheName.USER_ROLE,
 			UserCacheName.USER_PERMISSION, UserCacheName.USER_AUTHS}, allEntries = true)
 	public int deleteAll(Long[] ids) {
@@ -395,7 +394,6 @@ public class UserService extends CrudService<UserMapper, User> {
 		if (userDto.getIdentityType() == null) {
 			userDto.setIdentityType(IdentityType.PASSWORD.getValue());
 		}
-		// 解密
 		String password = decryptCredential(userDto.getCredential(), userDto.getIdentityType());
 		User user = new User();
 		BeanUtils.copyProperties(userDto, user);
@@ -412,9 +410,7 @@ public class UserService extends CrudService<UserMapper, User> {
 				user.setAvatarId(attachment.getId());
 			}
 		}
-		// 保存用户基本信息
 		if (this.insert(user) > 0) {
-			// 保存账号信息
 			UserAuths userAuths = new UserAuths();
 			userAuths.setCommonValue(userDto.getIdentifier(), user.getTenantCode());
 			userAuths.setUserId(user.getId());
@@ -441,7 +437,6 @@ public class UserService extends CrudService<UserMapper, User> {
 				.equals(identityType)) {
 			return encoded;
 		}
-		// 解密密码
 		try {
 			encoded = AesUtil.decryptAES(encoded, sysProperties.getKey()).trim();
 			log.info("decrypt result: {}", encoded);
@@ -453,7 +448,6 @@ public class UserService extends CrudService<UserMapper, User> {
 
 	@Transactional
 	public boolean defaultRole(User user, String tenantCode, String identifier) {
-		// 设置默认的租户标识
 		if (StringUtils.isEmpty(tenantCode)) {
 			tenantCode = TenantConstant.DEFAULT_TENANT_CODE;
 		}
@@ -494,7 +488,6 @@ public class UserService extends CrudService<UserMapper, User> {
 		}
 		// 设置部门信息
 		if (CollectionUtils.isNotEmpty(deptList)) {
-			// 用户所属部门
 			deptList.stream().filter(tempDept -> tempDept.getId().equals(tempUser.getDeptId())).findFirst()
 					.ifPresent(userDept -> {
 						userDto.setDeptId(userDept.getId());

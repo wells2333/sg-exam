@@ -25,9 +25,6 @@ public class SysNewsController extends BaseController {
 
 	private final SysNewsService sysNewsService;
 
-	/**
-	 * 查询新闻列表
-	 */
 	@GetMapping("/list")
 	@Operation(summary = "查询新闻列表")
 	public R<PageInfo<SysNews>> list(@RequestParam Map<String, Object> condition,
@@ -36,18 +33,12 @@ public class SysNewsController extends BaseController {
 		return R.success(sysNewsService.findPage(condition, pageNum, pageSize));
 	}
 
-	/**
-	 * 获取新闻详细信息
-	 */
 	@GetMapping(value = "/{id}")
 	@Operation(summary = "获取新闻详细信息")
 	public R<SysNews> get(@PathVariable("id") Long id) {
 		return R.success(sysNewsService.get(id));
 	}
 
-	/**
-	 * 新增新闻
-	 */
 	@PostMapping
 	@Operation(summary = "新增新闻")
 	@SgLog(value = "新闻", operationType = OperationType.INSERT)
@@ -56,9 +47,6 @@ public class SysNewsController extends BaseController {
 		return R.success(sysNewsService.insert(sysNews) > 0);
 	}
 
-	/**
-	 * 修改新闻
-	 */
 	@PutMapping("{id}")
 	@Operation(summary = "修改新闻")
 	@SgLog(value = "新闻", operationType = OperationType.UPDATE)
@@ -66,9 +54,6 @@ public class SysNewsController extends BaseController {
 		return R.success(sysNewsService.update(sysNews) > 0);
 	}
 
-	/**
-	 * 删除新闻
-	 */
 	@DeleteMapping("{id}")
 	@Operation(summary = "删除新闻")
 	@SgLog(value = "新闻", operationType = OperationType.DELETE)

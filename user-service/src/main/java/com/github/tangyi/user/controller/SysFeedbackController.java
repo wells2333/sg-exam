@@ -25,9 +25,6 @@ public class SysFeedbackController extends BaseController {
 
 	private final SysFeedbackService sysFeedbackService;
 
-	/**
-	 * 查询反馈信息列表
-	 */
 	@GetMapping("/list")
 	@Operation(summary = "查询反馈信息列表")
 	public R<PageInfo<SysFeedback>> list(@RequestParam Map<String, Object> condition,
@@ -36,18 +33,12 @@ public class SysFeedbackController extends BaseController {
 		return R.success(sysFeedbackService.findPage(condition, pageNum, pageSize));
 	}
 
-	/**
-	 * 获取反馈信息详细信息
-	 */
 	@GetMapping(value = "/{id}")
 	@Operation(summary = "获取反馈信息详细信息")
 	public R<SysFeedback> get(@PathVariable("id") Long id) {
 		return R.success(sysFeedbackService.get(id));
 	}
 
-	/**
-	 * 新增反馈信息
-	 */
 	@PostMapping
 	@Operation(summary = "新增反馈信息")
 	@SgLog(value = "新增反馈信息", operationType = OperationType.INSERT)
@@ -56,9 +47,6 @@ public class SysFeedbackController extends BaseController {
 		return R.success(sysFeedbackService.insert(sysFeedback) > 0);
 	}
 
-	/**
-	 * 修改反馈信息
-	 */
 	@PutMapping("{id}")
 	@Operation(summary = "修改反馈信息")
 	@SgLog(value = "修改反馈信息", operationType = OperationType.UPDATE)
@@ -66,9 +54,6 @@ public class SysFeedbackController extends BaseController {
 		return R.success(sysFeedbackService.update(sysFeedback) > 0);
 	}
 
-	/**
-	 * 删除反馈信息
-	 */
 	@DeleteMapping("{id}")
 	@Operation(summary = "删除反馈信息")
 	@SgLog(value = "删除反馈信息", operationType = OperationType.DELETE)

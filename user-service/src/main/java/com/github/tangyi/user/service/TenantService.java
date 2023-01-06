@@ -63,10 +63,6 @@ public class TenantService extends CrudService<TenantMapper, Tenant> {
 		return update;
 	}
 
-	/**
-	 * 异步初始化
-	 * @param tenant tenant
-	 */
 	public void asyncInit(Tenant tenant) {
 		String identifier = SysUtil.getUser();
 		commonExecutorService.getCommonExecutor().execute(() -> {

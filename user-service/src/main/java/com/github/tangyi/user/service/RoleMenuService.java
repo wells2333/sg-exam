@@ -29,9 +29,8 @@ public class RoleMenuService extends CrudService<RoleMenuMapper, RoleMenu> {
 		if (StringUtils.isEmpty(menuIds)) {
 			return -1;
 		}
-		List<Long> menuIdList = Stream.of(menuIds.split(CommonConstant.COMMA)).map(Long::parseLong)
-				.collect(Collectors.toList());
-		return saveRoleMenus(roleId, menuIdList);
+		return saveRoleMenus(roleId,
+				Stream.of(menuIds.split(CommonConstant.COMMA)).map(Long::parseLong).collect(Collectors.toList()));
 	}
 
 	@Transactional

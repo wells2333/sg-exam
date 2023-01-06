@@ -87,15 +87,7 @@ public class CourseController extends BaseController {
 	@Operation(summary = "批量删除课程")
 	@SgLog(value = "批量删除课程", operationType = OperationType.DELETE)
 	public R<Boolean> deleteAllCourses(@RequestBody Long[] ids) {
-		boolean success = false;
-		try {
-			if (ArrayUtils.isNotEmpty(ids)) {
-				success = courseService.deleteAll(ids) > 0;
-			}
-		} catch (Exception e) {
-			log.error("Delete course failed", e);
-		}
-		return R.success(success);
+		return R.success(courseService.deleteAll(ids) > 0);
 	}
 
 	@GetMapping("/detail/{id}")

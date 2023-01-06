@@ -17,11 +17,6 @@ public class MenuUtil {
 		return MenuConstant.MENU_TYPE_PERMISSION.equals(menu.getType());
 	}
 
-	/**
-	 * 转换对象
-	 * @param menus menus
-	 * @return List
-	 */
 	public static List<MenuExcelModel> convertToExcelModel(List<Menu> menus) {
 		List<MenuExcelModel> menuExcelModels = new ArrayList<>(menus.size());
 		menus.forEach(menu -> {

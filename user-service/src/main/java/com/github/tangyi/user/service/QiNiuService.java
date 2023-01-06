@@ -129,17 +129,15 @@ public class QiNiuService {
 
 	public Attachment getPreviewAttachment(Long id) {
 		Attachment attachment = attachmentService.get(id);
-		if (attachment != null) {
-			if (StringUtils.isEmpty(attachment.getUrl())) {
-				AttachGroup group = groupService.findByGroupCode(attachment.getGroupCode());
-				SgPreconditions.checkNull(group, "group does not exist");
+		if (attachment != null && StringUtils.isEmpty(attachment.getUrl())) {
+			AttachGroup group = groupService.findByGroupCode(attachment.getGroupCode());
+			if (group != null) {
 				String url = getDownloadUrl(getName(group.getGroupCode(), attachment.getAttachName()),
 						group.getUrlExpire());
 				attachment.setUrl(url);
 			}
-			return attachment;
 		}
-		return null;
+		return attachment;
 	}
 
 	@Transactional

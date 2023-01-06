@@ -63,7 +63,6 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 			Collection<? extends GrantedAuthority> authorities = SysUtil.getAuthorities();
 			if (CollectionUtils.isNotEmpty(authorities)) {
 				List<Role> roleList = authorities.stream()
-						// 按角色过滤
 						.filter(authority -> authority.getAuthority() != null && authority.getAuthority()
 								.startsWith(MenuConstant.ROLE_PREFIX)).map(authority -> {
 							Role role = new Role();
@@ -77,12 +76,6 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 		return toMenuDto(userMenus, type, buildTree);
 	}
 
-	/**
-	 * 根据租户标识查询
-	 * @param tenantCode tenantCode
-	 * @param buildTree buildTree
-	 * @return List
-	 */
 	@Cacheable(value = UserCacheName.TENANT_MENU, key = "#tenantCode")
 	public List<MenuDto> findDefaultTenantMenu(String tenantCode, boolean buildTree) {
 		Menu condition = new Menu();
@@ -111,22 +104,11 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 		return Lists.newArrayList();
 	}
 
-	/**
-	 * 根据角色查找菜单
-	 *
-	 * @param role       角色标识
-	 */
 	@Cacheable(value = UserCacheName.ROLE_MENU, key = "#role")
 	public List<Menu> findMenuByRole(String role, String tenantCode) {
 		return menuMapper.findByRole(role, tenantCode);
 	}
 
-	/**
-	 * 批量并发查询菜单
-	 *
-	 * @param roleList   roleList
-	 * @param tenantCode tenantCode
-	 */
 	private List<Menu> finMenuByRoleList(List<Role> roleList, String tenantCode) {
 		List<ListenableFuture<List<Menu>>> futures = Lists.newArrayListWithExpectedSize(roleList.size());
 		for (Role role : roleList) {
@@ -156,9 +138,6 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 		return menus;
 	}
 
-	/**
-	 * 查询全部菜单
-	 */
 	@Override
 	@Cacheable(value = UserCacheName.ALL_MENU, key = "#menu.tenantCode")
 	public List<Menu> findAllList(Menu menu) {
@@ -216,9 +195,6 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 		return this.dao.deleteByTenantCode(menu);
 	}
 
-	/**
-	 * 返回树形菜单集合
-	 */
 	public List<MenuDto> menuTree(String tenantCode) {
 		Menu condition = new Menu();
 		condition.setTenantCode(tenantCode);
@@ -231,9 +207,6 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 		return new ArrayList<>();
 	}
 
-	/**
-	 * 复制菜单树
-	 */
 	@Transactional
 	public int copyMenuTree(Long[] menuIds, Role role, String identifier, String tenantCode) {
 		AtomicInteger counter = new AtomicInteger(0);
@@ -277,7 +250,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 		}
 	}
 
-	public Menu toMenu(MenuDto dto, String identifier, String tenantCode) {
+	private Menu toMenu(MenuDto dto, String identifier, String tenantCode) {
 		Menu menu = new Menu();
 		BeanUtils.copyProperties(dto, menu);
 		menu.setNewRecord(true);

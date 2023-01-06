@@ -94,17 +94,12 @@ public class ExamRecordController extends BaseController {
 	@Operation(summary = "删除考试记录", description = "根据ID删除考试记录")
 	@SgLog(value = "删除考试记录", operationType = OperationType.DELETE)
 	public R<Boolean> deleteExamRecord(@PathVariable Long id) {
-		boolean success = false;
-		try {
-			ExaminationRecord examRecord = examRecordService.get(id);
-			if (examRecord != null) {
-				examRecord.setCommonValue();
-				success = examRecordService.delete(examRecord) > 0;
-			}
-		} catch (Exception e) {
-			log.error("Delete examRecord failed", e);
+		ExaminationRecord examRecord = examRecordService.get(id);
+		if (examRecord != null) {
+			examRecord.setCommonValue();
+			return R.success(examRecordService.delete(examRecord) > 0);
 		}
-		return R.success(success);
+		return R.success(Boolean.FALSE);
 	}
 
 	@PostMapping("export")

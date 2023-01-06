@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
@@ -31,37 +32,38 @@ public class CustomApplicationListener implements ApplicationListener<ContextRef
 	private final FavStartCountService favStartCountService;
 
 	@Override
-	public void onApplicationEvent(ContextRefreshedEvent event) {
-		// 异步重新初始化
-		new Thread(this::initStartAndFavCount).start();
+	public void onApplicationEvent(@NotNull ContextRefreshedEvent event) {
+		new Thread(this::init).start();
 	}
 
-	public void initStartAndFavCount() {
+	private void init() {
 		try {
 			StopWatch start = StopWatchUtil.start();
-			List<Long> examIds = examinationService.findAllIds();
-			if (CollectionUtils.isNotEmpty(examIds)) {
-				for (Long examId : examIds) {
-					ExamFavStartCount count = favStartCountService.findByTarget(examId, UserFavConstant.FAV_TYPE_EXAM);
-					setStartAndFavCount(count);
-				}
-			}
-
-			List<Long> courseIds = courseService.findAllIds();
-			if (CollectionUtils.isNotEmpty(courseIds)) {
-				for (Long courseId : courseIds) {
-					ExamFavStartCount count = favStartCountService.findByTarget(courseId,
-							UserFavConstant.FAV_TYPE_COURSE);
-					setStartAndFavCount(count);
-				}
-			}
+			doInit();
 			log.info("init start and fav count success, took: {}", StopWatchUtil.stop(start));
 		} catch (Exception e) {
 			log.error("init start and fav count failed", e);
 		}
 	}
 
-	public void setStartAndFavCount(ExamFavStartCount count) {
+	private void doInit() {
+		List<Long> examIds = examinationService.findAllIds();
+		if (CollectionUtils.isNotEmpty(examIds)) {
+			for (Long examId : examIds) {
+				ExamFavStartCount count = favStartCountService.findByTarget(examId, UserFavConstant.FAV_TYPE_EXAM);
+				setStartAndFavCount(count);
+			}
+		}
+		List<Long> courseIds = courseService.findAllIds();
+		if (CollectionUtils.isNotEmpty(courseIds)) {
+			for (Long courseId : courseIds) {
+				ExamFavStartCount count = favStartCountService.findByTarget(courseId, UserFavConstant.FAV_TYPE_COURSE);
+				setStartAndFavCount(count);
+			}
+		}
+	}
+
+	private void setStartAndFavCount(ExamFavStartCount count) {
 		if (count != null) {
 			userFavService.setStartCount(count.getTargetId(), count.getTargetType(), count.getStartCount());
 			userFavService.setFavCount(count.getTargetId(), count.getTargetType(), count.getFavCount());

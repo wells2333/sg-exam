@@ -25,9 +25,6 @@ public class SysMessageController extends BaseController {
 
 	private final SysMessageService sysMessageService;
 
-	/**
-	 * 查询消息列表
-	 */
 	@GetMapping("/list")
 	@Operation(summary = "查询消息列表")
 	public R<PageInfo<SysMessage>> list(@RequestParam Map<String, Object> condition,
@@ -36,18 +33,12 @@ public class SysMessageController extends BaseController {
 		return R.success(sysMessageService.findPage(condition, pageNum, pageSize));
 	}
 
-	/**
-	 * 获取消息详细信息
-	 */
 	@GetMapping(value = "/{id}")
 	@Operation(summary = "获取消息详细信息")
 	public R<SysMessage> get(@PathVariable("id") Long id) {
 		return R.success(sysMessageService.get(id));
 	}
 
-	/**
-	 * 新增消息
-	 */
 	@PostMapping
 	@Operation(summary = "新增消息")
 	@SgLog(value = "消息", operationType = OperationType.INSERT)
@@ -56,9 +47,6 @@ public class SysMessageController extends BaseController {
 		return R.success(sysMessageService.insert(sysMessage) > 0);
 	}
 
-	/**
-	 * 修改消息
-	 */
 	@PutMapping("{id}")
 	@Operation(summary = "修改消息")
 	@SgLog(value = "消息", operationType = OperationType.UPDATE)
@@ -66,9 +54,6 @@ public class SysMessageController extends BaseController {
 		return R.success(sysMessageService.update(sysMessage) > 0);
 	}
 
-	/**
-	 * 删除消息
-	 */
 	@DeleteMapping("{id}")
 	@Operation(summary = "删除消息")
 	@SgLog(value = "消息", operationType = OperationType.DELETE)

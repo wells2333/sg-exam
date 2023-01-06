@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -35,6 +34,7 @@ public class ExaminationController extends BaseController {
 	public R<Examination> examination(@PathVariable Long id) {
 		return R.success(examinationService.get(id));
 	}
+
 	@GetMapping("/{id}/detail")
 	@Operation(summary = "获取考试详细信息", description = "根据考试id获取考试详细信息")
 	public R<ExaminationDto> detail(@PathVariable Long id) {
@@ -83,31 +83,19 @@ public class ExaminationController extends BaseController {
 	@Operation(summary = "删除考试", description = "根据ID删除考试")
 	@SgLog(value = "删除考试", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable Long id) {
-		boolean success = false;
-		try {
-			Examination examination = examinationService.get(id);
-			if (examination != null) {
-				examination.setCommonValue();
-				success = examinationService.delete(examination) > 0;
-			}
-		} catch (Exception e) {
-			log.error("Delete examination failed", e);
+		Examination examination = examinationService.get(id);
+		if (examination != null) {
+			examination.setCommonValue();
+			return R.success(examinationService.delete(examination) > 0);
 		}
-		return R.success(success);
+		return R.success(Boolean.FALSE);
 	}
 
 	@PostMapping("deleteAll")
 	@Operation(summary = "批量删除考试", description = "根据考试id批量删除考试")
 	@SgLog(value = "删除考试", operationType = OperationType.DELETE)
 	public R<Boolean> deleteAll(@RequestBody Long[] ids) {
-		boolean success = false;
-		try {
-			if (ArrayUtils.isNotEmpty(ids))
-				success = examinationService.deleteAll(ids) > 0;
-		} catch (Exception e) {
-			log.error("Delete examination failed", e);
-		}
-		return R.success(success);
+		return R.success(examinationService.deleteAll(ids) > 0);
 	}
 
 	@GetMapping("nexSubjectNo/{id}")

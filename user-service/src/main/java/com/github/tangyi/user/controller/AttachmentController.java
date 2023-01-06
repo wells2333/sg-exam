@@ -129,12 +129,11 @@ public class AttachmentController extends BaseController {
 		R<List<AttachmentVo>> returnT = null;
 		List<Attachment> attachmentList = attachmentService.findListById(ids);
 		if (CollectionUtils.isNotEmpty(attachmentList)) {
-			List<AttachmentVo> voList = attachmentList.stream().map(temp -> {
+			returnT = R.success(attachmentList.stream().map(temp -> {
 				AttachmentVo vo = new AttachmentVo();
 				BeanUtils.copyProperties(temp, vo);
 				return vo;
-			}).collect(Collectors.toList());
-			returnT = R.success(voList);
+			}).collect(Collectors.toList()));
 		}
 		return returnT;
 	}

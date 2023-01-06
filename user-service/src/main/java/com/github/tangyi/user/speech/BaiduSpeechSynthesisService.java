@@ -38,8 +38,6 @@ public class BaiduSpeechSynthesisService {
 
 	/**
 	 * 语音合成
-	 * @param text text
-	 * @return byte
 	 */
 	public byte[] synthesis(String text) {
 		HashMap<String, Object> options = Maps.newHashMap();

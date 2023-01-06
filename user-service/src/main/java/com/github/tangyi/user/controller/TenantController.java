@@ -37,9 +37,6 @@ public class TenantController extends BaseController {
 		return R.success(tenantService.get(id));
 	}
 
-	/**
-	 * 根据租户标识获取
-	 */
 	@GetMapping("anonymousUser/findTenantByTenantCode/{tenantCode}")
 	public R<Tenant> findTenantByTenantCode(@PathVariable String tenantCode) {
 		return R.success(tenantService.getByTenantCode(tenantCode));

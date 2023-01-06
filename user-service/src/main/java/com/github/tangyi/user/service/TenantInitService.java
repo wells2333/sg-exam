@@ -32,8 +32,6 @@ public class TenantInitService {
 
 	/**
 	 * 初始化管理员账号和权限
-	 * @param tenant tenant
-	 * @return boolean
 	 */
 	@Transactional
 	public Role initTenant(Tenant tenant, String identifier) {
@@ -52,13 +50,11 @@ public class TenantInitService {
 
 	@Transactional
 	public User initTenantAuth(Tenant tenant, String identifier) {
-		// 用户基本信息
 		User user = new User();
 		user.setCommonValue(identifier, tenant.getTenantCode());
 		user.setStatus(CommonConstant.STATUS_NORMAL);
 		user.setName(tenant.getTenantName());
 		if (userService.insert(user) > 0) {
-			// 用户账号
 			UserAuths userAuths = new UserAuths();
 			userAuths.setCommonValue(identifier, tenant.getTenantCode());
 			userAuths.setUserId(user.getId());
