@@ -24,15 +24,10 @@ public class SmsService {
 
 	public SmsService(SmsProperties smsProperties) throws Exception {
 		this.smsProperties = smsProperties;
-		try {
-			Config config = new Config().setAccessKeyId(smsProperties.getAppKey())
-					.setAccessKeySecret(smsProperties.getAppSecret());
-			config.endpoint = SMS_ENDPOINT;
-			this.client = new com.aliyun.dysmsapi20170525.Client(config);
-		} catch (Exception e) {
-			log.error("init sms client failed", e);
-			throw e;
-		}
+		Config config = new Config().setAccessKeyId(smsProperties.getAppKey())
+				.setAccessKeySecret(smsProperties.getAppSecret());
+		config.endpoint = SMS_ENDPOINT;
+		this.client = new com.aliyun.dysmsapi20170525.Client(config);
 	}
 
 	public SendSmsResponseBody sendSms(SmsDto smsDto) {
@@ -45,7 +40,7 @@ public class SmsService {
 			log.info("send sms success, mobile: {}, response: {}", smsDto.getReceiver(), JSON.toJSONString(body));
 			return body;
 		} catch (Exception e) {
-			throw new CommonException(e, "send message failed: " + e.getMessage());
+			throw new CommonException(e, "failed to send sms");
 		}
 	}
 }

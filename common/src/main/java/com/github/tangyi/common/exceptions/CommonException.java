@@ -1,7 +1,10 @@
 package com.github.tangyi.common.exceptions;
 
+import java.io.Serial;
+
 public class CommonException extends RuntimeException {
 
+	@Serial
     private static final long serialVersionUID = 1L;
 
     public CommonException() {

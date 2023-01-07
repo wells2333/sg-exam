@@ -11,16 +11,6 @@ public class TenantConstant {
      */
     public static final Integer PENDING_AUDIT = 0;
 
-    /**
-     * 审核通过
-     */
-    public static final Integer APPROVAL = 1;
-
-    /**
-     * 审核不通过
-     */
-    public static final Integer AUDIT_FAIL = 2;
-
 	public static final Integer NOT_INIT = 0;
 
 	public static final Integer INIT_ING = 1;

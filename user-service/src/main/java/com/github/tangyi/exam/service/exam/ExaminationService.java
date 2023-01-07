@@ -12,11 +12,11 @@ import com.github.tangyi.common.constant.Status;
 import com.github.tangyi.common.exceptions.CommonException;
 import com.github.tangyi.common.properties.SysProperties;
 import com.github.tangyi.common.service.CrudService;
-import com.github.tangyi.common.utils.Id;
+import com.github.tangyi.common.utils.SnowFlakeId;
 import com.github.tangyi.common.utils.PageUtil;
 import com.github.tangyi.common.utils.StopWatchUtil;
 import com.github.tangyi.common.utils.SysUtil;
-import com.github.tangyi.common.utils.zxing.QRCodeUtils;
+import com.github.tangyi.common.utils.QRCodeUtils;
 import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.exam.enums.ExaminationTypeEnum;
 import com.github.tangyi.exam.mapper.ExaminationMapper;
@@ -351,7 +351,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 			subject.setNewRecord(true);
 			subject.setCommonValue();
 			// 自定义ID
-			subject.setId(Id.nextId());
+			subject.setId(SnowFlakeId.newId());
 			subject.setSort(nextNo++);
 			if (CollectionUtils.isNotEmpty(subject.getOptions())) {
 				for (SubjectOption option : subject.getOptions()) {

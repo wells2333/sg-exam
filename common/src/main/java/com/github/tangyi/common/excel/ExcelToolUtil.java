@@ -27,54 +27,26 @@ public class ExcelToolUtil {
 
 	private static final String DEFAULT_SHEET_NAME = "sheet1";
 
-	/**
-	 * 私有构造方法，禁止实例化
-	 */
 	private ExcelToolUtil() {
 	}
 
-	/**
-	 * 导出Excel
-	 * @param request request
-	 * @param response response
-	 * @param dataList 数据list
-	 * @param clazz clazz
-	 */
 	public static <T> void writeExcel(HttpServletRequest request, HttpServletResponse response, List<T> dataList,
 			Class<T> clazz) {
 		String fileName = DateUtils.localDateMillisToString(LocalDateTime.now());
 		writeExcel(request, response, dataList, clazz, fileName);
 	}
 
-	/**
-	 * 导出Excel
-	 * @param request request
-	 * @param response response
-	 * @param dataList 数据list
-	 * @param clazz clazz
-	 */
 	public static <T> void writeExcel(HttpServletRequest request, HttpServletResponse response, List<T> dataList,
 			Class<T> clazz, String fileName) {
-		// 获取fileName和sheetName
 		ExcelModel excelModel = clazz.getDeclaredAnnotation(ExcelModel.class);
 		String sheetName = DEFAULT_SHEET_NAME;
 		if (excelModel != null) {
 			fileName = excelModel.value() + fileName;
 			sheetName = excelModel.sheets()[0];
 		}
-		// 导出
 		writeExcel(request, response, dataList, fileName, sheetName, clazz);
 	}
 
-	/**
-	 * 导出Excel
-	 * @param request request
-	 * @param response response
-	 * @param dataList 数据list
-	 * @param fileName 文件名
-	 * @param sheetName sheet 名
-	 * @param clazz clazz
-	 */
 	public static <T> void writeExcel(HttpServletRequest request, HttpServletResponse response, List<T> dataList,
 			String fileName, String sheetName, Class<T> clazz) {
 		ExcelWriter excelWriter = null;
@@ -89,18 +61,9 @@ public class ExcelToolUtil {
 		}
 	}
 
-	/**
-	 * 获取OutputStream
-	 * @param fileName fileName
-	 * @param request request
-	 * @param response response
-	 * @param excelTypeEnum excelTypeEnum
-	 * @return OutputStream
-	 */
 	private static OutputStream getOutputStream(String fileName, HttpServletRequest request,
 			HttpServletResponse response, ExcelTypeEnum excelTypeEnum) {
 		try {
-			// 设置响应头，处理浏览器间的中文乱码问题
 			response.addHeader(HttpHeaders.CONTENT_DISPOSITION,
 					Servlets.getDownName(request, fileName + excelTypeEnum.getValue()));
 			return response.getOutputStream();
@@ -109,13 +72,6 @@ public class ExcelToolUtil {
 		}
 	}
 
-	/**
-	 * 导入Excel
-	 * @param inputStream inputStream
-	 * @param clazz clazz
-	 * @param listener listener
-	 * @return boolean
-	 */
 	public static <T> Boolean readExcel(InputStream inputStream, Class<T> clazz, AnalysisEventListener<T> listener) {
 		Boolean success = Boolean.TRUE;
 		ExcelReader excelReader = null;
@@ -124,7 +80,7 @@ public class ExcelToolUtil {
 			ReadSheet readSheet = EasyExcelFactory.readSheet(0).build();
 			excelReader.read(readSheet);
 		} catch (Exception e) {
-			log.error("Read com.github.tangyi.exam.excel error: {}", e.getMessage(), e);
+			log.error("failed to read excel", e);
 			success = Boolean.FALSE;
 		} finally {
 			if (excelReader != null)

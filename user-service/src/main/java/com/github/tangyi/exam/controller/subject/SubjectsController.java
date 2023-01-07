@@ -7,7 +7,7 @@ import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.constant.CommonConstant;
 import com.github.tangyi.common.excel.ExcelToolUtil;
 import com.github.tangyi.common.model.R;
-import com.github.tangyi.common.utils.Id;
+import com.github.tangyi.common.utils.SnowFlakeId;
 import com.github.tangyi.exam.excel.model.SubjectExcelModel;
 import com.github.tangyi.exam.service.answer.AnswerService;
 import com.github.tangyi.exam.service.subject.SubjectImportExportService;
@@ -83,7 +83,7 @@ public class SubjectsController extends BaseController {
 	public R<SubjectDto> add(@RequestBody @Valid SubjectDto subject) {
 		subject.setCommonValue();
 		// 自定义ID
-		subject.setId(Id.nextId());
+		subject.setId(SnowFlakeId.newId());
 		return R.success(subjectsService.insert(subject));
 	}
 

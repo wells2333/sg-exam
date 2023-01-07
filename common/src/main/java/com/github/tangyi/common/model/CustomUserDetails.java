@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
+import java.io.Serial;
 import java.util.Collection;
 
 @Getter
@@ -14,53 +15,31 @@ import java.util.Collection;
 @EqualsAndHashCode(callSuper = false)
 public class CustomUserDetails extends User {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 租户标识
-	 */
 	private String tenantCode;
 
-	/**
-	 * userId
-	 */
 	private Long id;
 
-	/**
-	 * 开始授权时间
-	 */
-	private long start;
+	private long startNanoTime;
 
-	/**
-	 * 登录类型
-	 */
 	private LoginTypeEnum loginType;
 
-	public CustomUserDetails(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities,
-			String tenantCode) {
+	public CustomUserDetails(Long id, String username, String password,
+			Collection<? extends GrantedAuthority> authorities, String tenantCode) {
 		super(username, password, authorities);
 		this.id = id;
 		this.tenantCode = tenantCode;
 	}
 
-	/**
-	 * 构造方法
-	 *
-	 * @param username    username
-	 * @param password    password
-	 * @param enabled     enabled
-	 * @param authorities authorities
-	 * @param tenantCode  tenantCode
-	 * @param start       start
-	 * @param loginType   loginType
-	 */
 	public CustomUserDetails(String username, String password, boolean enabled,
-			Collection<? extends GrantedAuthority> authorities, String tenantCode, Long id, long start,
+			Collection<? extends GrantedAuthority> authorities, String tenantCode, Long id, long startNanoTime,
 			LoginTypeEnum loginType) {
 		super(username, password, enabled, true, true, true, authorities);
 		this.tenantCode = tenantCode;
 		this.id = id;
-		this.start = start;
+		this.startNanoTime = startNanoTime;
 		this.loginType = loginType;
 	}
 }

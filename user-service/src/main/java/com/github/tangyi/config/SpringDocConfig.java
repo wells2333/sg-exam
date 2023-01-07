@@ -1,5 +1,6 @@
 package com.github.tangyi.config;
 
+import com.github.tangyi.common.utils.EnvUtils;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -17,7 +18,7 @@ public class SpringDocConfig {
 
 	private static final String TENANT_CODE = "Tenant-Code";
 
-	public static final String NAME = "云面试";
+	private static final String NAME = EnvUtils.getValue("DOC_NAME", "云面试");
 
 	@Bean
 	public OpenAPI openAPI() {
@@ -25,14 +26,10 @@ public class SpringDocConfig {
 						.license(new License().name("Apache 2.0").url("https://gitee.com/wells2333")))
 				.externalDocs(new ExternalDocumentation().description(NAME).url("https://www.yunmianshi.com/"))
 				.addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME).addList(TENANT_CODE))
-				.components(new Components()
-						// token header
-						.addSecuritySchemes(SECURITY_SCHEME_NAME,
-								new SecurityScheme().name(SECURITY_SCHEME_NAME).type(SecurityScheme.Type.HTTP)
-										.scheme("bearer").bearerFormat("JWT"))
-						// 租户标识header
-						.addSecuritySchemes(TENANT_CODE,
-								new SecurityScheme().name(TENANT_CODE).type(SecurityScheme.Type.APIKEY)
-										.in(SecurityScheme.In.HEADER)));
+				.components(new Components().addSecuritySchemes(SECURITY_SCHEME_NAME,
+						new SecurityScheme().name(SECURITY_SCHEME_NAME).type(SecurityScheme.Type.HTTP).scheme("bearer")
+								.bearerFormat("JWT")).addSecuritySchemes(TENANT_CODE,
+						new SecurityScheme().name(TENANT_CODE).type(SecurityScheme.Type.APIKEY)
+								.in(SecurityScheme.In.HEADER)));
 	}
 }

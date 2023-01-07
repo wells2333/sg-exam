@@ -1,4 +1,4 @@
-package com.github.tangyi.common.utils.executor;
+package com.github.tangyi.common.utils;
 
 import com.google.common.util.concurrent.*;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ public class ExecutorUtils {
 		try {
 			Futures.allAsList(futures).get();
 		} catch (Exception e) {
-			log.error("waitFutures failed", e);
+			log.error("failed to waitFutures", e);
 		}
 	}
 }

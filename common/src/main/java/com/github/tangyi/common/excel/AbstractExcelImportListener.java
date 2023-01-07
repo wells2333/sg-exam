@@ -23,7 +23,7 @@ public abstract class AbstractExcelImportListener<T> extends AnalysisEventListen
 	/**
 	 * 需要导入的数据
 	 */
-	private List<T> dataList = new ArrayList<>();
+	private final List<T> dataList = new ArrayList<>();
 
 	@Override
 	public void invoke(T dataModel, AnalysisContext context) {

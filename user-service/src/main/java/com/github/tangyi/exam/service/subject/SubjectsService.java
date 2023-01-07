@@ -8,7 +8,7 @@ import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.exceptions.CommonException;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.PageUtil;
-import com.github.tangyi.common.utils.executor.ExecutorUtils;
+import com.github.tangyi.common.utils.ExecutorUtils;
 import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.exam.enums.SubjectTypeEnum;
 import com.github.tangyi.exam.mapper.SubjectsMapper;

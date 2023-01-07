@@ -20,6 +20,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @Aspect
 @Configuration
@@ -29,35 +30,35 @@ public class SgLogAspect {
 
 	@Around("@annotation(log)")
 	public Object around(ProceedingJoinPoint point, SgLog log) throws Throwable {
-		String strClassName = point.getTarget().getClass().getName();
-		String strMethodName = point.getSignature().getName();
+		String className = point.getTarget().getClass().getName();
+		String methodName = point.getSignature().getName();
 		String user = SysUtil.getUser();
-		logger.info("[sg-log] {}.{}, operator: {}, type: {}", strClassName, strMethodName, user, log.operationType());
-		com.github.tangyi.common.model.Log logVo = getLog(user);
-		logVo.setTitle(log.value());
-		// 发送异步日志事件
-		Long startTime = System.currentTimeMillis();
+		String tenantCode = SysUtil.getTenantCode();
+		logger.info("[sys-log] {}.{}, operator: {}, type: {}", className, methodName, user, log.operationType());
+		com.github.tangyi.common.model.Log vo = getLog(user);
+		vo.setTitle(log.value());
+		long start = System.nanoTime();
 		Object obj = point.proceed();
-		Long endTime = System.currentTimeMillis();
-		logVo.setTook(String.valueOf(endTime - startTime));
-		logVo.setCommonValue(user, SysUtil.getTenantCode());
-		SpringContextHolder.publishEvent(new SgLogEvent(logVo));
+		long end = System.nanoTime();
+		vo.setTook(String.valueOf(TimeUnit.NANOSECONDS.toMillis(end - start)));
+		vo.setCommonValue(user, tenantCode);
+		SpringContextHolder.publishEvent(new SgLogEvent(vo));
 		return obj;
 	}
 
-	public Log getLog(String user) {
+	private Log getLog(String user) {
 		HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(
 				RequestContextHolder.getRequestAttributes())).getRequest();
-		Log sysLog = new Log();
-		sysLog.setCreator(user);
-		sysLog.setOperator(user);
-		sysLog.setType(CommonConstant.STATUS_NORMAL);
-		sysLog.setIp(ServletUtil.getClientIP(request));
-		sysLog.setRequestUri(URLUtil.getPath(request.getRequestURI()));
-		sysLog.setMethod(request.getMethod());
-		sysLog.setUserAgent(request.getHeader("user-agent"));
-		sysLog.setParams(HttpUtil.toParams(request.getParameterMap()));
-		sysLog.setServiceId("user-service");
-		return sysLog;
+		Log log = new Log();
+		log.setCreator(user);
+		log.setOperator(user);
+		log.setType(CommonConstant.STATUS_NORMAL);
+		log.setIp(ServletUtil.getClientIP(request));
+		log.setRequestUri(URLUtil.getPath(request.getRequestURI()));
+		log.setMethod(request.getMethod());
+		log.setUserAgent(request.getHeader("user-agent"));
+		log.setParams(HttpUtil.toParams(request.getParameterMap()));
+		log.setServiceId("user-service");
+		return log;
 	}
 }

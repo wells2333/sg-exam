@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.lang.NonNullApi;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,12 +23,12 @@ public class SpringContextHolder implements ApplicationContextAware, DisposableB
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         applicationContext = null;
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         SpringContextHolder.applicationContext = applicationContext;
     }
 

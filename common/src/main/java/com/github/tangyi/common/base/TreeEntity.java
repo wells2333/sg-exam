@@ -3,6 +3,7 @@ package com.github.tangyi.common.base;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,31 +11,17 @@ import java.util.List;
 @Data
 public abstract class TreeEntity<T> extends BaseEntity<T> {
 
-    private static final long serialVersionUID = 7265456426423066026L;
+    @Serial
+	private static final long serialVersionUID = 7265456426423066026L;
 
-    /**
-     * code
-     */
     protected String code;
 
-    /**
-     * 父节点
-     */
     protected T parent;
 
-    /**
-     * 父节点id
-     */
     protected Long parentId;
 
-    /**
-     * 排序号
-     */
     protected Integer sort;
 
-    /**
-     * 子节点
-     */
     protected List<TreeEntity> children = new ArrayList<>();
 
     public void add(TreeEntity node) {

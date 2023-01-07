@@ -48,10 +48,7 @@ public class BaiduSpeechSynthesisService {
 		options.put("per", BAIDU_PER);
 		// 调用接口
 		TtsResponse res = client.synthesis(text, "zh", 1, options);
-		if (res.getResult() == null) {
-			return res.getData();
-		}
-		return null;
+		return res.getResult() == null ? res.getData(): null;
 	}
 
 	public void synthesisAndUpLoad(String text, SynthesisHandlerContext context) {

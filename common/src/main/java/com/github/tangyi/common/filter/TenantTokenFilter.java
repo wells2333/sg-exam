@@ -1,7 +1,7 @@
 package com.github.tangyi.common.filter;
 
 import com.github.tangyi.common.constant.CommonConstant;
-import com.github.tangyi.common.utils.TenantContextHolder;
+import com.github.tangyi.common.utils.TenantHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.Ordered;
@@ -23,15 +23,14 @@ public class TenantTokenFilter implements Filter {
 			throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
-		// 获取请求头里的TENANT_CODE
 		String tenantCode = request.getHeader(CommonConstant.TENANT_CODE_HEADER);
 		if (StringUtils.isBlank(tenantCode)) {
 			tenantCode = request.getParameter(CommonConstant.TENANT_CODE);
 		}
 		if (StringUtils.isNotEmpty(tenantCode)) {
-			TenantContextHolder.setTenantCode(tenantCode);
+			TenantHolder.setTenantCode(tenantCode);
 		}
 		filterChain.doFilter(request, response);
-		TenantContextHolder.clear();
+		TenantHolder.clear();
 	}
 }

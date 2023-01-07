@@ -7,11 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.io.Serial;
 
 @Slf4j
 public class JsonMapper extends ObjectMapper {
 
-    private static final long serialVersionUID = 1L;
+    @Serial
+	private static final long serialVersionUID = 1L;
 
     private static JsonMapper mapper;
 
@@ -60,7 +62,6 @@ public class JsonMapper extends ObjectMapper {
         return JsonMapper.getInstance().fromJson(jsonString, javaType);
     }
 
-
     public JavaType createCollectionType(Class<?> collectionClass, Class<?>... elementClasses) {
         return this.getTypeFactory().constructParametricType(collectionClass, elementClasses);
     }
@@ -75,7 +76,6 @@ public class JsonMapper extends ObjectMapper {
         return this;
     }
 
-
     public static String toJsonString(Object object) {
         return JsonMapper.getInstance().toJson(object);
     }
@@ -83,5 +83,4 @@ public class JsonMapper extends ObjectMapper {
     public static Object fromJsonString(String jsonString, Class<?> clazz) {
         return JsonMapper.getInstance().fromJson(jsonString, clazz);
     }
-
 }

@@ -5,7 +5,7 @@ import com.github.tangyi.auth.security.core.event.CustomAuthenticationSuccessEve
 import com.github.tangyi.auth.security.core.user.CustomUserDetailsService;
 import com.github.tangyi.common.exceptions.TenantNotFoundException;
 import com.github.tangyi.common.utils.SpringContextHolder;
-import com.github.tangyi.common.utils.TenantContextHolder;
+import com.github.tangyi.common.utils.TenantHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -74,7 +74,7 @@ public class CustomUserDetailsAuthenticationProvider extends AbstractUserDetails
 			throws AuthenticationException, TenantNotFoundException {
 		UserDetails loadedUser;
 		try {
-			String tenantCode = TenantContextHolder.getTenantCode();
+			String tenantCode = TenantHolder.getTenantCode();
 			String principal = authentication.getPrincipal().toString();
 			loadedUser = this.userDetailsService.loadUserByIdentifierAndTenantCode(tenantCode, principal);
 		} catch (UsernameNotFoundException notFound) {

@@ -1,6 +1,6 @@
 package com.github.tangyi.common.utils;
 
-public class TenantContextHolder {
+public class TenantHolder {
 
     private static final ThreadLocal<String> CONTEXT = new ThreadLocal<>();
 

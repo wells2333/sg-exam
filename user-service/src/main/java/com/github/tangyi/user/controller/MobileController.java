@@ -28,6 +28,6 @@ public class MobileController extends BaseController {
 	@Operation(summary = "发送短信", description = "发送短信到指定的手机号")
 	@SgLog(value = "发送短信", operationType = OperationType.INSERT)
 	public R<Boolean> sendSms(@PathVariable String mobile) {
-		return mobileService.sendSms(mobile);
+		return mobileService.sendVerificationCode(mobile);
 	}
 }

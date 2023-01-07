@@ -72,7 +72,7 @@ public class TenantService extends CrudService<TenantMapper, Tenant> {
 				tenant.setInitStatus(TenantConstant.INIT_SUCCESS);
 			} catch (Exception e) {
 				tenant.setInitStatus(TenantConstant.INIT_FAILED);
-				log.error("async init tenant failed", e);
+				log.error("failed to async init tenant", e);
 			} finally {
 				update(tenant);
 			}

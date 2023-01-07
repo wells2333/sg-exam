@@ -12,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -19,6 +20,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class BaseEntity<T> implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
@@ -50,9 +52,6 @@ public class BaseEntity<T> implements Serializable {
 	@Column(name = "is_deleted")
 	private Boolean isDeleted;
 
-	/**
-	 * 租户编号
-	 */
 	@Column(name = "tenant_code")
 	protected String tenantCode;
 

@@ -12,7 +12,7 @@ import com.github.tangyi.common.enums.LoginTypeEnum;
 import com.github.tangyi.common.exceptions.TenantNotFoundException;
 import com.github.tangyi.common.model.CustomUserDetails;
 import com.github.tangyi.common.utils.DateUtils;
-import com.github.tangyi.common.utils.TenantContextHolder;
+import com.github.tangyi.common.utils.TenantHolder;
 import com.github.tangyi.common.vo.UserVo;
 import com.github.tangyi.user.service.UserService;
 import lombok.AllArgsConstructor;
@@ -36,8 +36,8 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		long start = System.currentTimeMillis();
-		UserVo userVo = userService.findUserByIdentifier(null, username, TenantContextHolder.getTenantCode());
+		long start = System.nanoTime();
+		UserVo userVo = userService.findUserByIdentifier(null, username, TenantHolder.getTenantCode());
 		if (userVo == null) {
 			throw new UsernameNotFoundException("user does not exist");
 		}
@@ -50,7 +50,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 	@Override
 	public UserDetails loadUserByIdentifierAndTenantCode(String tenantCode, String username)
 			throws UsernameNotFoundException, TenantNotFoundException {
-		long start = System.currentTimeMillis();
+		long start = System.nanoTime();
 		UserVo userVo = userService.findUserByIdentifier(null, username, tenantCode);
 		if (userVo == null) {
 			throw new UsernameNotFoundException("user does not exist");
@@ -63,7 +63,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 	@Override
 	public UserDetails loadUserBySocialAndTenantCode(String tenantCode, String social, MobileUser mobileUser)
 			throws UsernameNotFoundException {
-		long start = System.currentTimeMillis();
+		long start = System.nanoTime();
 		UserVo userVo = userService.findUserByIdentifier(IdentityType.PHONE_NUMBER.getValue(), social, tenantCode);
 		// 第一次登录
 		if (userVo == null) {

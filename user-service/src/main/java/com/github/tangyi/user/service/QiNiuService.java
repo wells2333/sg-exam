@@ -8,7 +8,7 @@ import com.github.tangyi.common.oss.utils.QiNiuUtil;
 import com.github.tangyi.common.properties.SysProperties;
 import com.github.tangyi.common.utils.FileUtil;
 import com.github.tangyi.common.utils.SysUtil;
-import com.github.tangyi.common.utils.image.RandomImageUtil;
+import com.github.tangyi.common.utils.RandomImageUtil;
 import com.github.tangyi.constants.UserCacheName;
 import com.github.tangyi.user.constants.AttachConstant;
 import com.github.tangyi.user.enums.AttachTypeEnum;
@@ -69,7 +69,7 @@ public class QiNiuService {
 		SgPreconditions.checkNull(attachment.getGroupCode(), "group code must not null");
 		// groupCode作为目录
 		String fileName = getName(attachment.getGroupCode(), attachment.getAttachName());
-		String result = QiNiuUtil.getInstance().upload(bytes, fileName);
+		String result = QiNiuUtil.upload(bytes, fileName);
 		attachment.setUploadResult(result);
 		// 生成默认的访问链接
 		attachment.setUrl(getDownloadUrl(fileName, AttachConstant.DEFAULT_EXPIRE));
@@ -88,7 +88,7 @@ public class QiNiuService {
 		if (attachmentService.delete(attachment) > 0 && attachment.getGroupCode() != null) {
 			AttachGroup group = groupService.findByGroupCode(attachment.getGroupCode());
 			if (group != null) {
-				return QiNiuUtil.getInstance().delete(getName(group.getGroupCode(), attachment.getAttachName()));
+				return QiNiuUtil.delete(getName(group.getGroupCode(), attachment.getAttachName()));
 			}
 		}
 		return false;
@@ -114,7 +114,7 @@ public class QiNiuService {
 		if (expire <= 0) {
 			expire = AttachConstant.DEFAULT_EXPIRE;
 		}
-		return QiNiuUtil.getInstance().getDownloadUrl(fileName, expire);
+		return QiNiuUtil.getDownloadUrl(fileName, expire);
 	}
 
 	public boolean isNotDefaultGroup(Attachment attachment) {

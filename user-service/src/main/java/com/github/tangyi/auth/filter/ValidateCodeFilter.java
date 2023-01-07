@@ -72,7 +72,7 @@ public class ValidateCodeFilter extends OncePerRequestFilter {
 		if (StrUtil.isBlank(randomStr)) {
 			randomStr = request.getParameter("mobile");
 		}
-		String key = CommonConstant.DEFAULT_CODE_KEY + randomStr;
+		String key = CommonConstant.VERIFICATION_CODE_KEY + randomStr;
 		// 验证码过期
 		if (Boolean.FALSE.equals(redisTemplate.hasKey(key))) {
 			throw new ValidateCodeExpiredException(SecurityConstant.EXPIRED_ERROR);

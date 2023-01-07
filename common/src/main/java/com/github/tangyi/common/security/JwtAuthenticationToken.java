@@ -10,13 +10,9 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
 	private final UserDetails userDetails;
 
-	private final TokenManager tokenManager;
-
-	public JwtAuthenticationToken(UserDetails userDetails, Collection<? extends GrantedAuthority> authorities,
-			TokenManager tokenManager) {
+	public JwtAuthenticationToken(UserDetails userDetails, Collection<? extends GrantedAuthority> authorities) {
 		super(authorities);
 		this.userDetails = userDetails;
-		this.tokenManager = tokenManager;
 	}
 
 	@Override

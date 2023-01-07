@@ -1,6 +1,6 @@
 package com.github.tangyi.user.service;
 
-import com.github.tangyi.api.user.constant.MenuConstant;
+import com.github.tangyi.api.user.constant.UserServiceConstant;
 import com.github.tangyi.api.user.enums.IdentityType;
 import com.github.tangyi.api.user.model.*;
 import com.github.tangyi.common.constant.CommonConstant;
@@ -40,7 +40,7 @@ public class TenantInitService {
 		User user = initTenantAuth(tenant, identifier);
 		Role role = initTenantRole(user, tenant, identifier);
 		if (role == null) {
-			throw new CommonException("init tenant role failed, tenantCode: " + tenant.getTenantCode());
+			throw new CommonException("failed to init tenant role, tenantCode: " + tenant.getTenantCode());
 		}
 		initTenantMenu(tenant, role, identifier);
 		log.info("init tenant auth success, tenantCode: {}, took: {}", tenant.getTenantCode(),
@@ -67,7 +67,7 @@ public class TenantInitService {
 				return user;
 			}
 		}
-		log.error("init tenant auth failed, tenantCode: {}", tenant.getTenantCode());
+		log.error("failed to init tenant auth, tenantCode: {}", tenant.getTenantCode());
 		return null;
 	}
 
@@ -79,7 +79,7 @@ public class TenantInitService {
 		Role role = new Role();
 		String tenantCode = tenant.getTenantCode();
 		role.setCommonValue(identifier, tenantCode);
-		role.setRoleCode(MenuConstant.ROLE_PREFIX + tenantCode);
+		role.setRoleCode(UserServiceConstant.ROLE_PREFIX + tenantCode);
 		// 角色名称，默认：管理员_${tenantName}
 		role.setRoleName("管理员_" + tenant.getTenantName());
 		if (roleService.insert(role) > 0) {
@@ -92,7 +92,7 @@ public class TenantInitService {
 				return role;
 			}
 		}
-		log.error("init tenant role failed, tenantCode: {}", tenantCode);
+		log.error("failed to init tenant role, tenantCode: {}", tenantCode);
 		return null;
 	}
 

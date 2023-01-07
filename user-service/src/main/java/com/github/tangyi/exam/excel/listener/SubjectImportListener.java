@@ -14,7 +14,7 @@ import java.util.List;
 
 public class SubjectImportListener extends AbstractExcelImportListener<SubjectExcelModel> {
 
-	private final SubjectImportExportService subjectImportExportService;
+	private final SubjectImportExportService importExportService;
 
 	private final Long examinationId;
 
@@ -26,9 +26,9 @@ public class SubjectImportListener extends AbstractExcelImportListener<SubjectEx
 
 	private final int nextNo;
 
-	public SubjectImportListener(SubjectImportExportService subjectImportExportService, Long examinationId,
+	public SubjectImportListener(SubjectImportExportService importExportService, Long examinationId,
 			Long categoryId, String creator, String tenantCode, int nextNo) {
-		this.subjectImportExportService = subjectImportExportService;
+		this.importExportService = importExportService;
 		this.examinationId = examinationId;
 		this.categoryId = categoryId;
 		this.creator = creator;
@@ -66,7 +66,7 @@ public class SubjectImportListener extends AbstractExcelImportListener<SubjectEx
 			dto.setAnswer(answer);
 			subjects.add(dto);
 		}
-		subjectImportExportService.importSubject(subjects, examinationId, categoryId, creator, tenantCode);
+		importExportService.importSubject(subjects, examinationId, categoryId, creator, tenantCode);
 	}
 
 	public SubjectOption newOption(String name, String content, int sort) {

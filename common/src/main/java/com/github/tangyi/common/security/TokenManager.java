@@ -75,8 +75,6 @@ public class TokenManager {
 	/**
 	 * 保存token到Redis
 	 * key: user_token_${userId}_${tokenId}
-	 * @param userToken userToken
-	 * @param expire expire
 	 */
 	@SuppressWarnings("unchecked")
 	public boolean saveToken(UserToken userToken, int expire) {
@@ -91,9 +89,6 @@ public class TokenManager {
 
 	/**
 	 * 从Redis获取token信息
-	 * @param userId userId
-	 * @param id id
-	 * @return UserToken
 	 */
 	public UserToken getToken(String userId, String id) {
 		return (UserToken) redisTemplate.opsForValue().get(TOKEN_KEY_PREFIX + userId + "_" + id);
@@ -101,8 +96,6 @@ public class TokenManager {
 
 	/**
 	 * 设置超时时间
-	 * @param userToken userToken
-	 * @param expire expire
 	 */
 	@SuppressWarnings("unchecked")
 	public void expireToken(UserToken userToken, int expire) {
@@ -111,8 +104,6 @@ public class TokenManager {
 
 	/**
 	 * token 是否存在
-	 * @param userToken userToken
-	 * @return boolean
 	 */
 	@SuppressWarnings("unchecked")
 	public boolean tokenExist(UserToken userToken) {
@@ -121,7 +112,6 @@ public class TokenManager {
 
 	/**
 	 * 删除token
-	 * @param userToken userToken
 	 */
 	@SuppressWarnings("unchecked")
 	public void deleteToken(UserToken userToken) {

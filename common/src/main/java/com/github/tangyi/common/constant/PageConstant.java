@@ -10,8 +10,6 @@ import java.util.stream.Stream;
 
 public interface PageConstant {
 
-	String CONDITION = "condition";
-
 	String PAGE = "page";
 
 	String PAGE_SIZE = "pageSize";

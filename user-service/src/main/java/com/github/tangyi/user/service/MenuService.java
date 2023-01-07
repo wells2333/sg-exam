@@ -1,7 +1,7 @@
 package com.github.tangyi.user.service;
 
 import cn.hutool.core.collection.CollUtil;
-import com.github.tangyi.api.user.constant.MenuConstant;
+import com.github.tangyi.api.user.constant.UserServiceConstant;
 import com.github.tangyi.api.user.dto.MenuDto;
 import com.github.tangyi.api.user.model.Menu;
 import com.github.tangyi.api.user.model.Role;
@@ -47,32 +47,23 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 		this.executorService = executorService;
 	}
 
-	/**
-	 * 返回用户的树形菜单集合
-	 */
-	@Cacheable(value = UserCacheName.USER_MENU, key = "#type + '_' + #identifier + '_' + #buildTree")
-	public List<MenuDto> findUserMenu(Byte type, String identifier, String tenantCode, boolean buildTree) {
-		List<Menu> userMenus = null;
-		// 超级管理员
-		if (SysUtil.isAdmin(identifier)) {
-			Menu condition = new Menu();
-			condition.setTenantCode(tenantCode);
-			condition.setType(type);
-			userMenus = findAllList(condition);
-		} else {
-			Collection<? extends GrantedAuthority> authorities = SysUtil.getAuthorities();
-			if (CollectionUtils.isNotEmpty(authorities)) {
-				List<Role> roleList = authorities.stream()
-						.filter(authority -> authority.getAuthority() != null && authority.getAuthority()
-								.startsWith(MenuConstant.ROLE_PREFIX)).map(authority -> {
-							Role role = new Role();
-							role.setRoleCode(authority.getAuthority());
-							return role;
-						}).collect(Collectors.toList());
-				// 根据角色code查找菜单
-				userMenus = finMenuByRoleList(roleList, tenantCode);
-			}
+	public List<MenuDto> menuTree(String tenantCode) {
+		Menu menu = new Menu();
+		menu.setTenantCode(tenantCode);
+		Stream<Menu> menuStream = findAllList(menu).stream();
+		if (Optional.ofNullable(menuStream).isPresent()) {
+			List<MenuDto> menuDtoList = menuStream.map(MenuDto::new).collect(Collectors.toList());
+			return TreeUtil.buildTree(CollUtil.sort(menuDtoList, Comparator.comparingInt(MenuDto::getSort)),
+					CommonConstant.ROOT);
 		}
+		return Collections.emptyList();
+	}
+
+	@Cacheable(value = UserCacheName.USER_MENU, key = "#type + '_' + #identifier + '_' + #buildTree")
+	public List<MenuDto> findUserMenuTree(Byte type, String identifier, String tenantCode, boolean buildTree) {
+		List<Menu> userMenus = SysUtil.isAdmin(identifier) ?
+				findAdminMenus(type, tenantCode) :
+				findUserMenus(tenantCode);
 		return toMenuDto(userMenus, type, buildTree);
 	}
 
@@ -83,59 +74,9 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 		return toMenuDto(findAllList(condition), null, buildTree);
 	}
 
-	public List<MenuDto> toMenuDto(List<Menu> menus, Byte type, boolean buildTree) {
-		List<MenuDto> menuDtoList = Lists.newArrayList();
-		if (CollectionUtils.isNotEmpty(menus)) {
-			for (Menu menu : menus) {
-				if (type != null) {
-					if (type.equals(menu.getType())) {
-						menuDtoList.add(new MenuDto(menu));
-					}
-				} else {
-					menuDtoList.add(new MenuDto(menu));
-				}
-			}
-			CollUtil.sort(menuDtoList, Comparator.comparingInt(MenuDto::getSort));
-			if (buildTree) {
-				return TreeUtil.buildTree(menuDtoList, CommonConstant.ROOT);
-			}
-			return menuDtoList;
-		}
-		return Lists.newArrayList();
-	}
-
 	@Cacheable(value = UserCacheName.ROLE_MENU, key = "#role")
 	public List<Menu> findMenuByRole(String role, String tenantCode) {
 		return menuMapper.findByRole(role, tenantCode);
-	}
-
-	private List<Menu> finMenuByRoleList(List<Role> roleList, String tenantCode) {
-		List<ListenableFuture<List<Menu>>> futures = Lists.newArrayListWithExpectedSize(roleList.size());
-		for (Role role : roleList) {
-			ListenableFuture<List<Menu>> future = executorService.getCommonExecutor().submit(() -> {
-				try {
-					return findMenuByRole(role.getRoleCode(), tenantCode);
-				} catch (Exception e) {
-					log.error("findMenuByRole failed", e);
-					return Lists.newArrayList();
-				}
-			});
-			futures.add(future);
-		}
-		List<Menu> menus = Lists.newArrayList();
-		try {
-			List<List<Menu>> result = Futures.allAsList(futures).get(1000, TimeUnit.MILLISECONDS);
-			if (CollectionUtils.isNotEmpty(result)) {
-				for (List<Menu> menuList : result) {
-					if (CollectionUtils.isNotEmpty(menuList)) {
-						menus.addAll(menuList);
-					}
-				}
-			}
-		} catch (Exception e) {
-			log.error("finMenuByRoleList failed", e);
-		}
-		return menus;
 	}
 
 	@Override
@@ -195,18 +136,6 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 		return this.dao.deleteByTenantCode(menu);
 	}
 
-	public List<MenuDto> menuTree(String tenantCode) {
-		Menu condition = new Menu();
-		condition.setTenantCode(tenantCode);
-		Stream<Menu> menuStream = findAllList(condition).stream();
-		if (Optional.ofNullable(menuStream).isPresent()) {
-			List<MenuDto> menuDtoList = menuStream.map(MenuDto::new).collect(Collectors.toList());
-			return TreeUtil.buildTree(CollUtil.sort(menuDtoList, Comparator.comparingInt(MenuDto::getSort)),
-					CommonConstant.ROOT);
-		}
-		return new ArrayList<>();
-	}
-
 	@Transactional
 	public int copyMenuTree(Long[] menuIds, Role role, String identifier, String tenantCode) {
 		AtomicInteger counter = new AtomicInteger(0);
@@ -214,8 +143,8 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 		if (CollectionUtils.isEmpty(menus)) {
 			return counter.get();
 		}
-		List<MenuDto> menuDtoList = menus.stream().map(MenuDto::new).collect(Collectors.toList());
-		List<MenuDto> tree = TreeUtil.buildTree(CollUtil.sort(menuDtoList, Comparator.comparingInt(MenuDto::getSort)),
+		List<MenuDto> list = menus.stream().map(MenuDto::new).collect(Collectors.toList());
+		List<MenuDto> tree = TreeUtil.buildTree(CollUtil.sort(list, Comparator.comparingInt(MenuDto::getSort)),
 				CommonConstant.ROOT);
 		for (MenuDto oneDto : tree) {
 			Menu oneMenu = toMenu(oneDto, identifier, tenantCode);
@@ -250,15 +179,6 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 		}
 	}
 
-	private Menu toMenu(MenuDto dto, String identifier, String tenantCode) {
-		Menu menu = new Menu();
-		BeanUtils.copyProperties(dto, menu);
-		menu.setNewRecord(true);
-		menu.setCommonValue(identifier, tenantCode);
-		menu.setId(null);
-		return menu;
-	}
-
 	/**
 	 * 保存菜单
 	 */
@@ -273,5 +193,83 @@ public class MenuService extends CrudService<MenuMapper, Menu> {
 			roleMenuService.insert(roleMenu);
 			counter.incrementAndGet();
 		}
+	}
+
+	private List<Menu> findMenuByRoleList(List<Role> roleList, String tenantCode) {
+		List<ListenableFuture<List<Menu>>> futures = Lists.newArrayListWithExpectedSize(roleList.size());
+		for (Role role : roleList) {
+			ListenableFuture<List<Menu>> future = executorService.getCommonExecutor().submit(() -> {
+				try {
+					return findMenuByRole(role.getRoleCode(), tenantCode);
+				} catch (Exception e) {
+					log.error("failed to findMenuByRole", e);
+					return Lists.newArrayList();
+				}
+			});
+			futures.add(future);
+		}
+		List<Menu> menus = Lists.newArrayList();
+		try {
+			List<List<Menu>> result = Futures.allAsList(futures).get(1000, TimeUnit.MILLISECONDS);
+			if (CollectionUtils.isNotEmpty(result)) {
+				for (List<Menu> menuList : result) {
+					if (CollectionUtils.isNotEmpty(menuList)) {
+						menus.addAll(menuList);
+					}
+				}
+			}
+		} catch (Exception e) {
+			log.error("failed to findMenuByRoleList", e);
+		}
+		return menus;
+	}
+
+	private List<Menu> findAdminMenus(Byte type, String tenantCode) {
+		Menu condition = new Menu();
+		condition.setTenantCode(tenantCode);
+		condition.setType(type);
+		return findAllList(condition);
+	}
+
+	private List<Menu> findUserMenus(String tenantCode) {
+		Collection<? extends GrantedAuthority> authorities = SysUtil.getAuthorities();
+		if (CollectionUtils.isNotEmpty(authorities)) {
+			return Collections.emptyList();
+		}
+		List<Role> roleList = authorities.stream()
+				.filter(authority -> authority.getAuthority() != null && authority.getAuthority()
+						.startsWith(UserServiceConstant.ROLE_PREFIX)).map(authority -> {
+					Role role = new Role();
+					role.setRoleCode(authority.getAuthority());
+					return role;
+				}).collect(Collectors.toList());
+		return findMenuByRoleList(roleList, tenantCode);
+	}
+
+	private List<MenuDto> toMenuDto(List<Menu> menus, Byte type, boolean buildTree) {
+		if (CollectionUtils.isEmpty(menus)) {
+			return Collections.emptyList();
+		}
+		List<MenuDto> list = Lists.newArrayListWithExpectedSize(menus.size());
+		for (Menu menu : menus) {
+			if (type != null) {
+				if (type.equals(menu.getType())) {
+					list.add(new MenuDto(menu));
+				}
+			} else {
+				list.add(new MenuDto(menu));
+			}
+		}
+		CollUtil.sort(list, Comparator.comparingInt(MenuDto::getSort));
+		return buildTree ? TreeUtil.buildTree(list, CommonConstant.ROOT) : list;
+	}
+
+	private Menu toMenu(MenuDto dto, String identifier, String tenantCode) {
+		Menu menu = new Menu();
+		BeanUtils.copyProperties(dto, menu);
+		menu.setNewRecord(true);
+		menu.setCommonValue(identifier, tenantCode);
+		menu.setId(null);
+		return menu;
 	}
 }

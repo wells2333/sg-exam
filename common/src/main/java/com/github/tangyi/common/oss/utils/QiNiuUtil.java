@@ -23,23 +23,10 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class QiNiuUtil {
 
-	private static class QiNiuUtilInstance {
-		public static QiNiuUtil instance = new QiNiuUtil();
+	private QiNiuUtil() {
 	}
 
-	public static QiNiuUtil getInstance() {
-		return QiNiuUtilInstance.instance;
-	}
-
-	public QiNiuUtil() {
-	}
-
-	/**
-	 * 获取七牛云token
-	 *
-	 * @return String
-	 */
-	public String getQiNiuToken() {
+	public static String getQiNiuToken() {
 		return getAuth().uploadToken(getQiNiuConfig().getBucket());
 	}
 
@@ -50,7 +37,7 @@ public class QiNiuUtil {
 	 * @param fileName    文件名 默认不指定key的情况下，以文件内容的hash值作为文件名
 	 * @return String
 	 */
-	public String upload(byte[] uploadBytes, String fileName) {
+	public static String upload(byte[] uploadBytes, String fileName) {
 		StopWatch watch = StopWatchUtil.start();
 		try {
 			QiNiuConfig qiNiuConfig = getQiNiuConfig();
@@ -68,58 +55,46 @@ public class QiNiuUtil {
 
 	/**
 	 * 获取图片url
-	 *
-	 * @param fileName fileName
-	 * @return String
 	 */
-	public String getDownloadUrl(String fileName) throws Exception {
+	public static String getDownloadUrl(String fileName) throws Exception {
 		return getDownloadUrl(fileName, getQiNiuConfig().getExpire());
 	}
 
 	/**
 	 * 获取图片url
-	 *
-	 * @param fileName fileName
-	 * @return String
 	 */
-	public String getDownloadUrl(String fileName, int expire) {
+	public static String getDownloadUrl(String fileName, int expire) {
 		QiNiuConfig qiNiuConfig = getQiNiuConfig();
 		String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8).replace("+", "%20");
 		String publicUrl = String.format("%s/%s", qiNiuConfig.getDomainOfBucket(), encodedFileName);
 		return getAuth().privateDownloadUrl(publicUrl, expire);
 	}
 
-	/**
-	 * 删除附件
-	 *
-	 * @param fileName fileName
-	 * @return boolean
-	 */
-	public boolean delete(String fileName) throws QiniuException {
+	public static boolean delete(String fileName) throws QiniuException {
 		log.info("start to delete attachment, fileName={}", fileName);
 		getBucketManager(getAuth(), new Configuration(Region.region2())).delete(getQiNiuConfig().getBucket(), fileName);
 		log.info("delete attachment success, fileName={}", fileName);
 		return Boolean.TRUE;
 	}
 
-	public QiNiuConfig getQiNiuConfig() {
+	private static QiNiuConfig getQiNiuConfig() {
 		return SpringContextHolder.getApplicationContext().getBean(QiNiuConfig.class);
 	}
 
-	public Auth getAuth() {
+	private static Auth getAuth() {
 		QiNiuConfig qiNiuConfig = getQiNiuConfig();
 		if (StringUtils.isNotBlank(qiNiuConfig.getAccessKey()) && StringUtils.isNotBlank(qiNiuConfig.getSecretKey())) {
 			return Auth.create(qiNiuConfig.getAccessKey(), qiNiuConfig.getSecretKey());
 		}
-		return null;
+		throw new IllegalArgumentException("QiNiu Auth is null, please check your qiNiuConfig");
 	}
 
-	public UploadManager getUploadManager() {
+	private static UploadManager getUploadManager() {
 		Configuration config = new Configuration(Region.autoRegion());
 		return new UploadManager(config);
 	}
 
-	public BucketManager getBucketManager(Auth auth, Configuration config) {
+	private static BucketManager getBucketManager(Auth auth, Configuration config) {
 		return new BucketManager(auth, config);
 	}
 }

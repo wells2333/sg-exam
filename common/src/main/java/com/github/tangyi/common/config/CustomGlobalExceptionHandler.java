@@ -31,14 +31,6 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class CustomGlobalExceptionHandler {
 
-	/**
-	 * 处理参数校验异常
-	 *
-	 * @param ex      ex
-	 * @param headers headers
-	 * @param status  status
-	 * @return ResponseEntity
-	 */
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<Object> validationBodyException(MethodArgumentNotValidException ex, HttpHeaders headers,
 			HttpStatus status) {
@@ -49,33 +41,18 @@ public class CustomGlobalExceptionHandler {
 		return new ResponseEntity<>(responseBean, headers, status);
 	}
 
-	/**
-	 * 参数类型转换错误
-	 */
 	@ExceptionHandler(HttpMessageConversionException.class)
 	public ResponseEntity<R<String>> parameterTypeException(HttpMessageConversionException e) {
 		log.error("parameterTypeException", e);
 		return new ResponseEntity<>(R.error(e.getMessage()), HttpStatus.OK);
 	}
 
-	/**
-	 * 处理CommonException
-	 *
-	 * @param e e
-	 * @return ResponseEntity
-	 */
 	@ExceptionHandler(CommonException.class)
 	public ResponseEntity<R<String>> handleCommonException(Exception e) {
 		log.error("handleCommonException", e);
 		return new ResponseEntity<>(R.error(e.getMessage()), HttpStatus.OK);
 	}
 
-	/**
-	 * 捕获@Validate校验抛出的异常
-	 *
-	 * @param e e
-	 * @return ResponseEntity
-	 */
 	@ExceptionHandler(BindException.class)
 	public ResponseEntity<Object> validExceptionHandler(BindException e) {
 		log.error("validExceptionHandler", e);
@@ -115,12 +92,6 @@ public class CustomGlobalExceptionHandler {
 		return new ResponseEntity<>(R.error(e.getMessage()), HttpStatus.OK);
 	}
 
-	/**
-	 * 提取Validator产生的异常错误
-	 *
-	 * @param bindingResult bindingResult
-	 * @return Exception
-	 */
 	private Exception parseBindingResult(BindingResult bindingResult) {
 		Map<String, String> map = new HashMap<>();
 		for (FieldError error : bindingResult.getFieldErrors()) {

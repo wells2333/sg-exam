@@ -103,7 +103,7 @@ public class OncePerRequestTokenFilter extends OncePerRequestFilter {
 			}
 			CustomUserDetails details = new CustomUserDetails(Long.valueOf(userId), identify, "", authorities,
 					tenantCode);
-			JwtAuthenticationToken authentication = new JwtAuthenticationToken(details, authorities, tokenManager);
+			JwtAuthenticationToken authentication = new JwtAuthenticationToken(details, authorities);
 			authentication.setAuthenticated(true);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		}

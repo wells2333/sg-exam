@@ -22,6 +22,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @AllArgsConstructor
@@ -45,7 +46,8 @@ public class LoginSuccessListener implements ApplicationListener<CustomAuthentic
 			Log logInfo = new Log();
 			logInfo.setTitle("用户登录");
 			logInfo.setCommonValue(username, tenantCode);
-			logInfo.setTook(String.valueOf(System.currentTimeMillis() - customUserDetails.getStart()));
+			logInfo.setTook(String.valueOf(
+					TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - customUserDetails.getStartNanoTime())));
 			logInfo.setType(CommonConstant.STATUS_NORMAL);
 			ServletRequestAttributes requestAttributes = currentRequestAttributes();
 			if (requestAttributes != null) {
@@ -56,7 +58,7 @@ public class LoginSuccessListener implements ApplicationListener<CustomAuthentic
 				logInfo.setIp(request.getRemoteAddr());
 				logInfo.setUserAgent(request.getHeader(HttpHeaders.USER_AGENT));
 			}
-			logInfo.setServiceId(ServiceConstant.AUTH_SERVICE);
+			logInfo.setServiceId(ServiceConstant.USER_SERVICE);
 			// 记录日志和登录时间
 			UserDto userDto = new UserDto(null);
 			userDto.setId(customUserDetails.getId());

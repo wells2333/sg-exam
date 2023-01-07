@@ -42,7 +42,7 @@ public class CustomApplicationListener implements ApplicationListener<ContextRef
 			doInit();
 			log.info("init start and fav count success, took: {}", StopWatchUtil.stop(start));
 		} catch (Exception e) {
-			log.error("init start and fav count failed", e);
+			log.error("failed to init start and fav count", e);
 		}
 	}
 

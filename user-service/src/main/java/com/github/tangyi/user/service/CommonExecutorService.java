@@ -1,7 +1,7 @@
 package com.github.tangyi.user.service;
 
 import com.github.tangyi.common.utils.EnvUtils;
-import com.github.tangyi.common.utils.executor.ExecutorUtils;
+import com.github.tangyi.common.utils.ExecutorUtils;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

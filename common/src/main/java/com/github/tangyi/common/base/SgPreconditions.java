@@ -34,10 +34,4 @@ public class SgPreconditions {
 			throw new CommonException(msg);
 		}
 	}
-
-	public static void checkR(R<?> r, String msg) {
-		if (!RUtil.isSuccess(r)) {
-			throw new ServiceException(msg);
-		}
-	}
 }

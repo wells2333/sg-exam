@@ -38,7 +38,7 @@ public class SqlUtil {
 		int inc = 0;
 		Pattern pattern = Pattern.compile("(?<=KEY )(.*?)(?= \\()");
 		Matcher matcher = pattern.matcher(content);
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		while (matcher.find()) {
 			matcher.appendReplacement(sb, matcher.group() + inc++);
 		}

@@ -20,12 +20,12 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class CronUpdateFavoritesJob {
 
-	public static final String IS_UPDATE_FAV = EnvUtils.getValue("IS_UPDATE_FAV", "true");
+	private static final String IS_UPDATE_FAV = EnvUtils.getValue("IS_UPDATE_FAV", "true");
 
 	// 2分钟失效
-	public static final long CRON_JOB_LOCK_EXPIRE = EnvUtils.getLong("CRON_JOB_LOCK_EXPIRE", 120);
+	private static final long CRON_JOB_LOCK_EXPIRE = EnvUtils.getLong("CRON_JOB_LOCK_EXPIRE", 120);
 
-	public static final String CRON_JOB_LOCK = "cron_job_lock";
+	private static final String CRON_JOB_LOCK = "cron_job_lock";
 
 	private final ExaminationService examinationService;
 

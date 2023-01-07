@@ -2,7 +2,6 @@ package com.github.tangyi.user.service;
 
 import cn.hutool.core.util.RandomUtil;
 import com.aliyun.dysmsapi20170525.models.SendSmsResponseBody;
-import com.github.tangyi.api.user.constant.SmsConstant;
 import com.github.tangyi.api.user.dto.SmsDto;
 import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.constant.CommonConstant;
@@ -21,29 +20,32 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class MobileService {
 
-	public static final int VALIDATE_CODE_SIZE = Integer.parseInt(EnvUtils.getValue("VALIDATE_CODE_SIZE", "4"));
+	private static final int VERIFICATION_CODE_SIZE = Integer.parseInt(EnvUtils.getValue("VERIFICATION_CODE_SIZE", "4"));
+
+	private static final String SMS_TEMPLATE = "{\"code\":\"%s\"}";
 
 	private final RedisTemplate redisTemplate;
 
 	private SmsService smsService;
 
 	@SuppressWarnings("unchecked")
-	public R<Boolean> sendSms(String mobile) {
-		String key = CommonConstant.DEFAULT_CODE_KEY + mobile;
-		String code = RandomUtil.randomNumbers(VALIDATE_CODE_SIZE);
-		log.debug("generate validate code success: {}, {}", mobile, code);
+	public R<Boolean> sendVerificationCode(String mobile) {
+		String key = CommonConstant.VERIFICATION_CODE_KEY + mobile;
+		String code = RandomUtil.randomNumbers(VERIFICATION_CODE_SIZE);
+		log.info("generate verification code success: {}, {}", mobile, code);
 		redisTemplate.opsForValue().set(key, code, SecurityConstant.DEFAULT_SMS_EXPIRE, TimeUnit.SECONDS);
-		// 发送短信验证码
-		SmsDto smsDto = new SmsDto();
-		smsDto.setReceiver(mobile);
-		smsDto.setContent(String.format(SmsConstant.SMS_TEMPLATE, code));
-		SendSmsResponseBody body = smsService.sendSms(smsDto);
-		SgPreconditions.checkNull(body, "send sms response body is null");
-		if (!"OK".equals(body.getCode())) {
-			log.error("send sms failed, mobile: {}, code: {}, message: {}", mobile, body.getCode(), body.getMessage());
+		SmsDto dto = new SmsDto();
+		dto.setReceiver(mobile);
+		dto.setContent(String.format(SMS_TEMPLATE, code));
+		SendSmsResponseBody body = smsService.sendSms(dto);
+		SgPreconditions.checkNull(body, "send verification code response is null");
+		boolean isOk = "OK".equals(body.getCode());
+		if (isOk) {
+			log.info("send verification code success: {}", body.getMessage());
 		} else {
-			log.info("send validate success: {}", body.getMessage());
+			log.error("failed to send verification code, mobile: {}, code: {}, message: {}", mobile, body.getCode(),
+					body.getMessage());
 		}
-		return R.success(Boolean.TRUE);
+		return R.success(isOk);
 	}
 }

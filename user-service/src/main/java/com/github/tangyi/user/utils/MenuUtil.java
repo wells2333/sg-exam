@@ -1,6 +1,6 @@
 package com.github.tangyi.user.utils;
 
-import com.github.tangyi.api.user.constant.MenuConstant;
+import com.github.tangyi.api.user.constant.UserServiceConstant;
 import com.github.tangyi.api.user.model.Menu;
 import com.github.tangyi.user.excel.model.MenuExcelModel;
 import org.springframework.beans.BeanUtils;
@@ -14,7 +14,7 @@ public class MenuUtil {
 	}
 
 	public static boolean isPermission(Menu menu) {
-		return MenuConstant.MENU_TYPE_PERMISSION.equals(menu.getType());
+		return UserServiceConstant.MENU_TYPE_PERMISSION.equals(menu.getType());
 	}
 
 	public static List<MenuExcelModel> convertToExcelModel(List<Menu> menus) {

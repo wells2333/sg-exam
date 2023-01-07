@@ -6,9 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 
 public class StringUtil {
 
-	/** 空字符串 */
-	private static final String NULLSTR = "";
-
 	/** 下划线 */
 	private static final char SEPARATOR = '_';
 
@@ -66,7 +63,6 @@ public class StringUtil {
 		}
 		return result.toString();
 	}
-
 
 	/**
 	 * 格式化文本, {} 表示占位符<br>

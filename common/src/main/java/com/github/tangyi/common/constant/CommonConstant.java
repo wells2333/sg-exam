@@ -2,43 +2,24 @@ package com.github.tangyi.common.constant;
 
 import com.github.tangyi.common.utils.EnvUtils;
 
-public class CommonConstant {
+public interface CommonConstant {
 
-	/**
-	 * 正常
-	 */
-	public static final Integer STATUS_NORMAL = 0;
+	String DEFAULT_PASSWORD = EnvUtils.getValue("DEFAULT_PASSWORD", "123456");
 
-	/**
-	 * 正常状态
-	 */
-	public static final Integer DEL_FLAG_NORMAL = 0;
+	Integer STATUS_NORMAL = 0;
 
-	/**
-	 * 默认密码
-	 */
-	public static final String DEFAULT_PASSWORD = EnvUtils.getValue("DEFAULT_PASSWORD", "123456");
+	Integer DEL_FLAG_NORMAL = 0;
 
-	/**
-	 * 保存code的前缀
-	 */
-	public static final String DEFAULT_CODE_KEY = "DEFAULT_CODE_KEY_";
+	String VERIFICATION_CODE_KEY = "VERIFICATION_CODE_KEY_";
 
-	/**
-	 * 密码类型
-	 */
-	public static final String GRANT_TYPE_PASSWORD = "password";
+	String GRANT_TYPE_PASSWORD = "password";
 
-	public static final String TENANT_CODE_HEADER = "Tenant-Code";
+	String TENANT_CODE_HEADER = "Tenant-Code";
 
-	public static final String CACHE_EXPIRE = "CACHE_EXPIRE";
+	Long ROOT = -1L;
 
-	public static final Long ROOT = -1L;
+	String COMMA = ",";
 
-	public static final String BASE_PACKAGE = "com.github.tangyi";
-
-	public static final String COMMA = ",";
-
-	public static final String TENANT_CODE = "tenantCode";
+	String TENANT_CODE = "tenantCode";
 }
 

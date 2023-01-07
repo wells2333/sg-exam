@@ -1,4 +1,4 @@
-package com.github.tangyi.common.utils.zxing;
+package com.github.tangyi.common.utils;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -29,8 +29,6 @@ public class QRCodeUtils {
 	 * @param width    二维码宽度
 	 * @param height   二维码高度
 	 * @param filePath 图片保存路径
-	 * @throws WriterException
-	 * @throws IOException
 	 */
 	public static void generateQRCodeImage(String text, int width, int height, String filePath)
 			throws WriterException, IOException {

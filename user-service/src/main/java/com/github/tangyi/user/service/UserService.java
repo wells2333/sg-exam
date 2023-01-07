@@ -1,7 +1,7 @@
 package com.github.tangyi.user.service;
 
-import com.github.tangyi.api.user.constant.MenuConstant;
 import com.github.tangyi.api.user.constant.TenantConstant;
+import com.github.tangyi.api.user.constant.UserServiceConstant;
 import com.github.tangyi.api.user.dto.UserDto;
 import com.github.tangyi.api.user.dto.UserInfoDto;
 import com.github.tangyi.api.user.enums.IdentityType;
@@ -199,7 +199,8 @@ public class UserService extends CrudService<UserMapper, User> {
 		// 头像信息
 		getUserAvatar(userInfoDto, user);
 		// 用户的菜单
-		userInfoDto.setMenus(menuService.findUserMenu(MenuConstant.MENU_TYPE_MENU, identifier, tenantCode, true));
+		userInfoDto.setMenus(
+				menuService.findUserMenuTree(UserServiceConstant.MENU_TYPE_MENU, identifier, tenantCode, true));
 		return userInfoDto;
 	}
 
@@ -213,7 +214,7 @@ public class UserService extends CrudService<UserMapper, User> {
 		if (SysUtil.isAdmin(identifier)) {
 			Menu condition = new Menu();
 			condition.setTenantCode(user.getTenantCode());
-			condition.setType(MenuConstant.MENU_TYPE_PERMISSION);
+			condition.setType(UserServiceConstant.MENU_TYPE_PERMISSION);
 			menuList = menuService.findList(condition);
 		} else {
 			if (CollectionUtils.isNotEmpty(roles)) {
@@ -326,7 +327,7 @@ public class UserService extends CrudService<UserMapper, User> {
 
 	public void saveImageCode(String random, String imageCode) {
 		redisTemplate.opsForValue()
-				.set(CommonConstant.DEFAULT_CODE_KEY + random, imageCode, SecurityConstant.DEFAULT_IMAGE_EXPIRE,
+				.set(CommonConstant.VERIFICATION_CODE_KEY + random, imageCode, SecurityConstant.DEFAULT_IMAGE_EXPIRE,
 						TimeUnit.SECONDS);
 	}
 

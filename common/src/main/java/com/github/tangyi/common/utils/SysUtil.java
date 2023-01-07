@@ -13,7 +13,7 @@ import java.util.Collection;
 @Slf4j
 public class SysUtil {
 
-	public static final String ADMIN_IDENTIFIER = EnvUtils.getValue("ADMIN_IDENTIFIER", "admin");
+	private static final String ADMIN_IDENTIFIER = EnvUtils.getValue("ADMIN_IDENTIFIER", "admin");
 
 	public static boolean isAdmin(String identifier) {
 		return ADMIN_IDENTIFIER.equals(identifier);
@@ -56,7 +56,7 @@ public class SysUtil {
 	}
 
 	public static String getTenantCode() {
-		String tenantCode = TenantContextHolder.getTenantCode();
+		String tenantCode = TenantHolder.getTenantCode();
 		if (StringUtils.isBlank(tenantCode)) {
 			throw new IllegalArgumentException("tenant code is blank");
 		}

@@ -1,8 +1,8 @@
 package com.github.tangyi.user.controller;
 
 import com.github.pagehelper.PageInfo;
-import com.github.tangyi.api.user.constant.MenuConstant;
 import com.github.tangyi.api.user.constant.TenantConstant;
+import com.github.tangyi.api.user.constant.UserServiceConstant;
 import com.github.tangyi.api.user.dto.MenuDto;
 import com.github.tangyi.api.user.model.Menu;
 import com.github.tangyi.common.base.BaseController;
@@ -50,7 +50,7 @@ public class MenuController extends BaseController {
 	@Operation(summary = "获取当前用户的菜单列表")
 	public R<List<MenuDto>> userMenu() {
 		return R.success(
-				menuService.findUserMenu(MenuConstant.MENU_TYPE_MENU, SysUtil.getUser(), SysUtil.getTenantCode(),
+				menuService.findUserMenuTree(UserServiceConstant.MENU_TYPE_MENU, SysUtil.getUser(), SysUtil.getTenantCode(),
 						true));
 	}
 
@@ -60,7 +60,7 @@ public class MenuController extends BaseController {
 	@GetMapping(value = "userPermissions")
 	@Operation(summary = "获取当前用户的权限编码")
 	public R<Set<String>> userPermissions() {
-		List<MenuDto> dtoList = menuService.findUserMenu(MenuConstant.MENU_TYPE_PERMISSION, SysUtil.getUser(),
+		List<MenuDto> dtoList = menuService.findUserMenuTree(UserServiceConstant.MENU_TYPE_PERMISSION, SysUtil.getUser(),
 				SysUtil.getTenantCode(), false);
 		return R.success(CollectionUtils.isNotEmpty(dtoList) ?
 				dtoList.stream().map(MenuDto::getPermission).collect(Collectors.toSet()) :

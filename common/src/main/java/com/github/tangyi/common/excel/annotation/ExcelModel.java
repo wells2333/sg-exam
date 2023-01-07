@@ -13,10 +13,6 @@ public @interface ExcelModel {
 	 */
 	String value() default "";
 
-	/**
-	 * 页名
-	 * @return String
-	 */
 	String[] sheets() default {"sheet1"};
 
 }

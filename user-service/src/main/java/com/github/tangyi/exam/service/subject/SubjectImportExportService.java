@@ -7,7 +7,7 @@ import com.github.tangyi.api.exam.model.Answer;
 import com.github.tangyi.api.exam.model.ExaminationSubject;
 import com.github.tangyi.api.exam.model.SubjectOption;
 import com.github.tangyi.common.excel.ExcelToolUtil;
-import com.github.tangyi.common.utils.Id;
+import com.github.tangyi.common.utils.SnowFlakeId;
 import com.github.tangyi.common.utils.StopWatchUtil;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.exam.enums.SubjectLevelEnum;
@@ -64,7 +64,7 @@ public class SubjectImportExportService {
 			subject.setCategoryId(categoryId);
 			if (subject.getId() == null) {
 				// 重新生成ID
-				subject.setId(Id.nextId());
+				subject.setId(SnowFlakeId.newId());
 				subject.setCommonValue(creator, tenantCode);
 				subjectsService.insert(subject);
 			} else {

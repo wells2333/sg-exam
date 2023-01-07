@@ -2,7 +2,7 @@ package com.github.tangyi.exam.service.subject;
 
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.Subjects;
-import com.github.tangyi.common.utils.executor.ExecutorUtils;
+import com.github.tangyi.common.utils.ExecutorUtils;
 import com.github.tangyi.exam.enums.SubjectTypeEnum;
 import com.github.tangyi.user.service.CommonExecutorService;
 import com.google.common.collect.Lists;

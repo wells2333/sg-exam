@@ -20,8 +20,4 @@ public class HashUtil {
 	public static int hash(byte[] bytes, int offset, int length) {
 		return StringHelper.murmurhash3_x86_32(bytes, offset, length, 0);
 	}
-
-	public static int getShardId(String id, int size) {
-		return getShardId(id + "", size);
-	}
 }

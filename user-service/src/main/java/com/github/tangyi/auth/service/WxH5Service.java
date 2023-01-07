@@ -11,7 +11,7 @@ import com.github.tangyi.auth.security.wx.WxUser;
 import com.github.tangyi.common.model.CustomUserDetails;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.EnvUtils;
-import com.github.tangyi.common.utils.TenantContextHolder;
+import com.github.tangyi.common.utils.TenantHolder;
 import com.github.tangyi.common.utils.okhttp.OkHttpUtil;
 import com.github.tangyi.common.vo.UserVo;
 import com.github.tangyi.user.service.UserService;
@@ -150,7 +150,7 @@ public class WxH5Service {
 		if (messageType.equals("event")) {
 			// 设置租户code
 			String tenantCode = SecurityConstant.DEFAULT_TENANT_CODE;
-			TenantContextHolder.setTenantCode(tenantCode);
+			TenantHolder.setTenantCode(tenantCode);
 			// 先根据openid从查询出用户信息
 			UserVo userVo = userService.findUserByIdentifier(IdentityType.WE_CHAT.getValue(), fromUser, tenantCode);
 			// 没有该用户

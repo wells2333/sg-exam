@@ -1,7 +1,7 @@
 package com.github.tangyi.auth.utils;
 
 import com.github.tangyi.auth.constant.SecurityConstant;
-import com.github.tangyi.common.utils.TenantContextHolder;
+import com.github.tangyi.common.utils.TenantHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.util.encoders.Base64;
@@ -41,7 +41,7 @@ public class SysUtil {
 	 * 获取租户编号
 	 */
 	public static String getTenantCode() {
-		String tenantCode = TenantContextHolder.getTenantCode();
+		String tenantCode = TenantHolder.getTenantCode();
 		if (StringUtils.isBlank(tenantCode)) {
 			tenantCode = getCurrentUserTenantCode();
 		}

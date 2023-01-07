@@ -293,7 +293,9 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
 		if (handler.hasOption()) {
 			handler.judgeOptionRight(userAnswer, subjectDto);
 		} else {
-			handler.judgeRight(userAnswer, subjectDto);
+			IAnswerHandler.JudgeContext judgeContext = new IAnswerHandler.JudgeContext(
+					new IAnswerHandler.HandleContext(), subjectDto, userAnswer);
+			handler.judgeRight(judgeContext);
 		}
 		R<List<UserVo>> r = null;
 		if (RUtil.isSuccess(r) && CollectionUtils.isNotEmpty(r.getResult())) {
@@ -330,7 +332,9 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> {
 				if (handler.hasOption()) {
 					handler.judgeOptionRight(tempAnswer, subjectDto);
 				} else {
-					handler.judgeRight(tempAnswer, subjectDto);
+					IAnswerHandler.JudgeContext judgeContext = new IAnswerHandler.JudgeContext(
+							new IAnswerHandler.HandleContext(), subjectDto, tempAnswer);
+					handler.judgeRight(judgeContext);
 				}
 				return answerDto;
 			}).collect(Collectors.toList());

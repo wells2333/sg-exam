@@ -36,7 +36,7 @@ public class RoleMenuService extends CrudService<RoleMenuMapper, RoleMenu> {
 	@Transactional
 	@CacheEvict(value = {UserCacheName.MENU, UserCacheName.USER_MENU}, allEntries = true)
 	public int saveRoleMenus(Long role, List<Long> menus) {
-		int update = -1;
+		int update = 0;
 		if (CollectionUtils.isNotEmpty(menus)) {
 			roleMenuMapper.deleteByRoleId(role);
 			List<RoleMenu> roleMenus = new ArrayList<>();
