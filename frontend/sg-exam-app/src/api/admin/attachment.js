@@ -1,6 +1,6 @@
 import request from '@/router/axios'
 
-const baseAttachmentUrl = '/user-service/v1/attachment/'
+const baseAttachmentUrl = '/sg-user-service/v1/attachment/'
 
 export function attachmentList () {
   return request({

@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+}
+
+group 'com.github.tangyi'
+version '5.0.6'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(project(':sg-common'))
+    implementation 'com.alibaba:fastjson:1.2.70'
+    implementation 'javax.persistence:persistence-api:1.0'
+}

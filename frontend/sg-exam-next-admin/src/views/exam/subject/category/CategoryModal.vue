@@ -4,7 +4,7 @@
                 @ok="handleSubmitCategory">
       <BasicTable @register="registerTable" @fetch-success="onFetchSuccess">
         <template #toolbar>
-          <a-button v-if="hasPermission(['exam:category:add'])" type="primary"
+          <a-button v-if="hasPermission(['exam:subject:category:add'])" type="primary"
                     @click="handleCreate"> 新增分类
           </a-button>
         </template>

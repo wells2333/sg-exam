@@ -3,7 +3,7 @@ import domain from "./domain";
 
 export const TENANT_CODE = `gitee`;
 
-export const USER_SERVICE = domain.getBaseUrl() + "/user-service";
+export const USER_SERVICE = domain.getBaseUrl() + "/sg-user-service";
 
 interface result<T = any> {
     code: number

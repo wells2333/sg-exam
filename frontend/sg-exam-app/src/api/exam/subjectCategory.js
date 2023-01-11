@@ -1,6 +1,6 @@
 import request from '@/router/axios'
 
-const baseSubjectCategoryUrl = '/user-service/v1/subjectCategory/'
+const baseSubjectCategoryUrl = '/sg-user-service/v1/subjectCategory/'
 
 export function fetchTree (query) {
   return request({

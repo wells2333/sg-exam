@@ -5,7 +5,7 @@ export function loginByUsername(identifier, credential, code, randomStr) {
   const grantType = 'password'
   const scope = 'read'
   return request({
-    url: '/user-service/login',
+    url: '/sg-user-service/login',
     headers: {
       'Tenant-Code': 'gitee'
     },
@@ -23,7 +23,7 @@ export function loginBySocial(social, code) {
   const grantType = 'mobile'
   const scope = 'read'
   return request({
-    url: '/user-service/mobile/login',
+    url: '/sg-user-service/mobile/login',
     headers: {
       'Tenant-Code': 'gitee'
     },
@@ -34,7 +34,7 @@ export function loginBySocial(social, code) {
 
 export function registerByUsername(identifier, email, credential, code, randomStr) {
   return request({
-    url: '/user-service/v1/user/anonymousUser/register',
+    url: '/sg-user-service/v1/user/anonymousUser/register',
     method: 'post',
     params: {identifier, email, credential, randomStr, code},
     data: {identifier, email, credential}
@@ -43,14 +43,14 @@ export function registerByUsername(identifier, email, credential, code, randomSt
 
 export function logout() {
   return request({
-    url: '/user-service/v1/token/logout',
+    url: '/sg-user-service/v1/token/logout',
     method: 'get'
   })
 }
 
 export function getUserInfo(token) {
   return request({
-    url: '/user-service/v1/user/info',
+    url: '/sg-user-service/v1/user/info',
     method: 'get'
   })
 }
@@ -64,7 +64,7 @@ export function refreshToken() {
   const scope = 'read'
   const refreshToken = getRefreshToken()
   return request({
-    url: '/user-service/oauth/token',
+    url: '/sg-user-service/oauth/token',
     headers: {
       'Authorization': ''
     },

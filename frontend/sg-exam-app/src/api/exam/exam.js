@@ -1,6 +1,6 @@
 import request from '@/router/axios'
 
-const baseExaminationUrl = '/user-service/v1/examination/'
+const baseExaminationUrl = '/sg-user-service/v1/examination/'
 
 export function fetchList (query) {
   return request({

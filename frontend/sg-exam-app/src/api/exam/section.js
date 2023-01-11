@@ -1,6 +1,6 @@
 import request from '@/router/axios'
 
-const baseCourseUrl = '/user-service/v1/section/'
+const baseCourseUrl = '/sg-user-service/v1/section/'
 
 export function getSection (id) {
   return request({

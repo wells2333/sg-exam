@@ -172,7 +172,7 @@ export default {
         loading: false,
         passwordType: 'password',
         code: {
-          src: '/user-service/v1/code',
+          src: '/sg-user-service/v1/code',
           value: '',
           len: 4,
           type: 'image'
@@ -201,7 +201,7 @@ export default {
         loading: false,
         passwordType: 'password',
         code: {
-          src: '/user-service/v1/code',
+          src: '/sg-user-service/v1/code',
           value: '',
           len: 4,
           type: 'image'
@@ -242,14 +242,14 @@ export default {
       this.login.form.randomStr = randomLenNum(this.login.code.len, true)
       this.login.code.type === 'text'
         ? (this.login.code.value = randomLenNum(this.login.code.len))
-        : (this.login.code.src = `/user-service/v1/code/${this.login.form.randomStr}?tenantCode=` + getTenantCode())
+        : (this.login.code.src = `/sg-user-service/v1/code/${this.login.form.randomStr}?tenantCode=` + getTenantCode())
     },
     refreshRegisterCode () {
       this.register.form.code = ''
       this.register.form.randomStr = randomLenNum(this.register.code.len, true)
       this.register.code.type === 'text'
         ? (this.register.code.value = randomLenNum(this.register.code.len))
-        : (this.register.code.src = `/user-service/v1/code/${this.register.form.randomStr}?tenantCode=` + getTenantCode())
+        : (this.register.code.src = `/sg-user-service/v1/code/${this.register.form.randomStr}?tenantCode=` + getTenantCode())
     },
     handleLogin () {
       if (getToken()) {

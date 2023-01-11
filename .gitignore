@@ -1,6 +1,4 @@
 /.gradle/
-user-service/build/
-sg-generator/build/
 !gradle/wrapper/gradle-wrapper.jar
 
 ### STS ###
@@ -29,16 +27,20 @@ bin
 .DS_Store
 ML-labb
 istio-1.5.*
-/logs/
 
 **/package-lock.json
 **/*.log
 **/*.bin
 **/*.lock
-**/api/build/
-**/common/build/
-/frontend/sg-exam-next-app/node_modules/
-/frontend/sg-exam-next-app/dist/
-/frontend/sg-exam-next-app/yarn.lock
-/config-repo/env/user-service.env
-/data/
+logs
+data
+sg-api/build/
+sg-common/build/
+sg-generator/build/
+sg-job/build/
+sg-user-service/build/
+sg-exam-service/build/
+frontend/sg-exam-next-app/node_modules/
+frontend/sg-exam-next-app/dist/
+frontend/sg-exam-next-app/yarn.lock
+config-repo/env/sg-user-service.env

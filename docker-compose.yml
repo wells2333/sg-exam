@@ -1,9 +1,9 @@
 version: '2.1'
 
 services:
-  next-app:
+  sg-next-app:
     build: frontend
-    image: ${SG_EXAM_REGISTRY}/next-app:${SG_EXAM_VERSION}
+    image: ${SG_EXAM_REGISTRY}/sg-next-app:${SG_EXAM_VERSION}
     networks:
       - my-network
     ports:
@@ -13,13 +13,13 @@ services:
       - ./config-repo/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./config-repo/nginx/cert:/etc/nginx/cert
 
-  user-service:
-    build: user-service
-    image: ${SG_EXAM_REGISTRY}/user-service:${SG_EXAM_VERSION}
+  sg-user-service:
+    build: sg-user-service
+    image: ${SG_EXAM_REGISTRY}/sg-user-service:${SG_EXAM_VERSION}
     mem_limit: 8g
     networks:
       - my-network
-    env_file: config-repo/env/user-service.env
+    env_file: config-repo/env/sg-user-service.env
     ports:
       - "9183:80"
       - "4004:4004"

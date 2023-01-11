@@ -58,7 +58,7 @@
                     :show-file-list="false"
                     :on-success="handleAvatarSuccess"
                     :before-upload="beforeAvatarUpload"
-                    action="user-service/v1/user/uploadAvatar"
+                    action="sg-user-service/v1/user/uploadAvatar"
                     :headers="headers"
                     :data="params"
                     class="avatar-uploader">

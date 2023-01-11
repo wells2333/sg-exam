@@ -1,6 +1,6 @@
 import request from '@/router/axios'
 
-const baseTenantUrl = '/user-service/v1/mobile/'
+const baseTenantUrl = '/sg-user-service/v1/mobile/'
 
 export function sendSms (mobile) {
   return request({

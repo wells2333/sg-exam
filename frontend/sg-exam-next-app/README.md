@@ -1,6 +1,6 @@
 
 ```
-yarn dev:weapp
+export NODE_OPTIONS=--openssl-legacy-provider && yarn dev:weapp
 ```
 
 ```

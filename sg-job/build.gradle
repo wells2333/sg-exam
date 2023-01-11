@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+}
+
+group 'com.github.tangyi'
+version '5.0.6'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(project(':sg-api'))
+    implementation(project(':sg-common'))
+}
+
+test {
+    useJUnitPlatform()
+}

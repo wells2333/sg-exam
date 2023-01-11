@@ -13,15 +13,15 @@ const EXAM_SERVICE_PORT = process.env.EXAM_SERVICE_PORT || '9184'
 // 转发配置
 module.exports = {
   proxyList: {
-    '/user-service': {
+    '/sg-user-service': {
       target: 'http://' + USER_SERVICE_HOST + ':' + USER_SERVICE_PORT,
       changeOrigin: true
     },
-    '/exam-service': {
+    '/sg-exam-service': {
       target: 'http://' + EXAM_SERVICE_HOST + ':' + EXAM_SERVICE_PORT,
       changeOrigin: true
     },
-    '/auth-service': {
+    '/sg-auth-service': {
       target: 'http://' + AUTH_SERVICE_HOST + ':' + AUTH_SERVICE_PORT,
       changeOrigin: true
     }

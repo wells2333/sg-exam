@@ -3,14 +3,14 @@ plugins {
 }
 
 group 'com.github.tangyi'
-version '5.0.4'
+version '5.0.6'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation(project(':common'))
+    implementation(project(':sg-common'))
     implementation 'org.apache.velocity:velocity-engine-core:2.3'
     implementation 'com.alibaba:fastjson:1.2.70'
     implementation 'tk.mybatis:mapper-spring-boot-starter:4.2.1'

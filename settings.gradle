@@ -1,5 +1,8 @@
 rootProject.name = 'sg-exam-next'
-include ':common'
+include 'sg-api'
+include 'sg-common'
+include 'sg-job'
 include 'sg-generator'
-include ':user-service'
+include 'sg-user-service'
+include 'sg-exam-service'
 

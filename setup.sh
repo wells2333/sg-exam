@@ -1,4 +1,33 @@
 #!/bin/bash
+set -e
+set -x
+function update_version() {
+  local version="$1"
+  echo "$version"
+  sed -i "" "s/version = '[0-9].[0-9].[0-9]'/version = '$version'/" build.gradle
+  sed -i "" "s/version=[0-9].[0-9].[0-9]/version=$version/" gradle.properties
+  sed -i "" "s/SG_EXAM_VERSION=[0-9].[0-9].[0-9]/SG_EXAM_VERSION=$version/" .env
+  sed -i "" "s/version-[0-9].[0-9].[0-9]/version-$version/" README.md
+  cd sg-api && updateBuild "$version"
+  cd ../sg-common && updateBuild "$version"
+  cd ../sg-exam-service && updateBuild "$version"
+  cd ../sg-generator && updateBuild "$version"
+  cd ../sg-job && updateBuild "$version"
+  cd ../sg-user-service && updateBuild "$version"
+  cd ../frontend
+  cd sg-exam-app && updatePackageJson "$version"
+  cd ../sg-exam-next-admin && updatePackageJson "$version"
+  cd ../sg-exam-next-app && updatePackageJson "$version"
+  cd ../.. && pwd
+}
+function updateBuild() {
+  local version="$1"
+  sed -i "" "s/version '[0-9].[0-9].[0-9]'/version '$version'/" build.gradle
+}
+function updatePackageJson() {
+    local version="$1"
+    sed -i "" "s/\"version\": \"[0-9].[0-9].[0-9]\"/\"version\": \"$version\"/" package.json
+}
 function build_web() {
   # build web
   echo "start to build web"
@@ -36,10 +65,11 @@ function build_service() {
   # build service
   echo "start to build service"
   chmod 764 gradlew
+  ./gradlew clean
   ./gradlew build
   echo "build service finished, start to build image"
   echo "start to build service image"
-  docker-compose build --parallel
+  docker-compose build
   echo "build service image finished"
 }
 
@@ -69,7 +99,7 @@ function stop_service() {
 }
 
 function logs() {
-  docker logs "$(docker ps |grep 'user-service'|awk '{print $1}')" -f --tail=100
+  docker logs "$(docker ps |grep 'sg-user-service'|awk '{print $1}')" -f --tail=100
 }
 
 function main() {
@@ -79,14 +109,15 @@ function main() {
     exit 0
   fi
   local cmd="$1"
+  local version="$2"
   shift
   case "${cmd}" in
   build_f)
     build_frontend
     ;;
   build_admin)
-      build_admin
-      ;;
+    build_admin
+    ;;
   build)
     build_service
     ;;
@@ -105,6 +136,9 @@ function main() {
     ;;
   logs)
     logs
+    ;;
+  v)
+    update_version "$version"
     ;;
   esac
 }

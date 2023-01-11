@@ -27,6 +27,10 @@ class examApi {
         return api.fetchExam<Sg.ExamInfo>("/v1/examRecord/allSubjects/" + recordId, {}, "GET")
     }
 
+    async getSubjects(params: object) {
+        return api.fetchExam<Sg.ExamInfo>("/v1/subjects/subjectList", params, "GET")
+    }
+
     async saveAndNext(data: object, type: string, nextSubjectSortNo: string = '') {
         return api.fetchExam<Sg.ExamInfo>("/v1/answer/saveAndNext?type=" + type + '&nextSubjectSortNo=' + nextSubjectSortNo, data, "POST")
     }
@@ -87,6 +91,10 @@ class examApi {
 
     async getPointDetail(id: string) {
         return api.fetchExam<Sg.ExamInfo>("/v1/knowledgePoint/detail/" + id, {}, "GET");
+    }
+
+    async categoryTreeWithSubjectCnt() {
+        return api.fetchExam<Sg.ExamInfo>("/v1/subjectCategory/categoryTreeWithSubjectCnt", {}, "GET");
     }
 }
 

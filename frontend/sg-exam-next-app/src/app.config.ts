@@ -16,6 +16,8 @@ export default defineAppConfig({
       'pages/course/index',
       'pages/course_detail/index',
       'pages/course_section/index',
+      'pages/subjects/index',
+      'pages/subjects_list/index',
       'pages/webview/index'
   ],
   window: {
@@ -38,10 +40,16 @@ export default defineAppConfig({
                 "selectedIconPath": "assert/home_selected.png"
             },
             {
+                "pagePath": "pages/subjects/index",
+                "text": "题库",
+                "iconPath": "assert/subjects.png",
+                "selectedIconPath": "assert/subjects_selected.png"
+            },
+            {
                 "pagePath": "pages/user/index",
                 "text": "我的",
                 "iconPath": "assert/user.png",
-                "selectedIconPath": "assert/user_select.png"
+                "selectedIconPath": "assert/user_selected.png"
             }
         ]
     },

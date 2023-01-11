@@ -64,7 +64,7 @@
 import {getCourseDetail} from '@/api/exam/course'
 import {watchSection} from '@/api/exam/section'
 import SgVideo from '@/components/SgVideo'
-import {getKnowledgePointDetail} from "../../api/exam/point";
+import {getKnowledgePointDetail} from '../../api/exam/point'
 
 export default {
   components: {
@@ -115,13 +115,13 @@ export default {
       if (id === undefined) {
         return
       }
-      this.stopVideo();
+      this.stopVideo()
       this.loading = true
       watchSection(id).then(res => {
         this.contentType = res.data.result.section.contentType
         this.videoUrl = res.data.result.videoUrl
         setTimeout(() => {
-          const {title, content, operator, updateTime } = res.data.result.section
+          const { title, content, operator, updateTime } = res.data.result.section
           this.section = res.data.result.section
           this.title = title
           this.content = content
@@ -139,7 +139,7 @@ export default {
       if (id === undefined) {
         return
       }
-      this.stopVideo();
+      this.stopVideo()
       this.loading = true
       getKnowledgePointDetail(id).then(res => {
         const {title, videoUrl, contentType, content, operator, updateTime} = res.data.result

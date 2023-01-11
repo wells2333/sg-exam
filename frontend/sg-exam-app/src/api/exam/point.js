@@ -1,6 +1,6 @@
 import request from '@/router/axios'
 
-const baseCourseUrl = '/user-service/v1/knowledgePoint/'
+const baseCourseUrl = '/sg-user-service/v1/knowledgePoint/'
 
 export function getKnowledgePoint (id) {
   return request({

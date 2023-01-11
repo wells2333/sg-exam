@@ -1,6 +1,14 @@
 sg-exam Releases
 ------------
 
+## Version 5.0.6 (2023-01-14)
+
+改进：
+
+- 代码模块拆分成sg-api、sg-common、sg-exam-service、sg-generator、sg-job、sg-user-service
+- 增加升级版本号脚本，用法：sh ./setup.sh v 5.0.6
+- 删除无效注释
+
 ## Version v5.0.5 (2022-12-17)
 
 改进：

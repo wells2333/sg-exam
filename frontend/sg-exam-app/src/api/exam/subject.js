@@ -1,6 +1,6 @@
 import request from '@/router/axios'
 
-const baseSubjectUrl = '/user-service/v1/subject/'
+const baseSubjectUrl = '/sg-user-service/v1/subject/'
 
 export function subjectList () {
   return request({

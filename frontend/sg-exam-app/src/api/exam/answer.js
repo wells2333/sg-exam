@@ -1,6 +1,6 @@
 import request from '@/router/axios'
 
-const baseAnswerUrl = '/user-service/v1/answer/'
+const baseAnswerUrl = '/sg-user-service/v1/answer/'
 
 export function fetchAnswerList (query) {
   return request({

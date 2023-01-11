@@ -45,11 +45,8 @@ export default {
   },
   setup() {
     const current = ref<number>(0);
-    // 搜索栏
     let searchValue = ref<string>("");
-    // 运营位图片
     const banners = ref<any>([]);
-    // 热门课程
     const courses = ref<any>([]);
 
     async function fetchBanners() {
@@ -203,44 +200,6 @@ export default {
 </script>
 
 <style>
-.banner-swiper-view {
-  background-color: #FFF;
-}
-
-.banner-swiper {
-  width: 100%;
-  height: 120px;
-  margin-bottom: 4px;
-  cursor: pointer;
-}
-
-.banner-swiper-image {
-  width: 100%;
-  overflow: hidden;
-}
-
-.home-view {
-  margin: 10px;
-}
-
-.home-view-tips {
-  font-size: 15px;
-  color: #6a6a77;
-  margin-bottom: 10px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.home-view-tips::before {
-  display: inline-block;
-  content: "";
-  width: 4px;
-  height: 20px;
-  background-color: #6190E8;
-  margin-right: 4px;
-}
-
 .popular-course-item {
   background: white;
   border-radius: 6px;

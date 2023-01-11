@@ -76,21 +76,22 @@ ALTER TABLE `exam_course_knowledge_point`
 -- 2022年12月17日11:04:34
 -- ----------------------------
 CREATE TABLE `exam_user_favorites` (
-   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
    `creator` varchar(128) NOT NULL DEFAULT '' COMMENT '创建人',
    `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
    `operator` varchar(128) DEFAULT NULL COMMENT '修改人',
    `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
    `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
    `tenant_code` varchar(16) NOT NULL COMMENT '租户编号',
-   `target_id` bigint NOT NULL COMMENT '目标ID',
-   `user_id` bigint NOT NULL COMMENT '用户ID',
+   `target_id` bigint(20) NOT NULL COMMENT '目标ID',
+   `user_id` bigint(20) NOT NULL COMMENT '用户ID',
    `target_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '类型ID，0：考试，1：题目，2：课程',
    PRIMARY KEY (`id`),
+   UNIQUE KEY `idx_unique` (`user_id`,`target_id`,`target_type`),
    KEY `idx_user_id` (`user_id`) USING BTREE COMMENT '用户ID索引',
    KEY `idx_target_id` (`target_id`) USING BTREE COMMENT '目标ID索引',
    KEY `idx_target_type` (`target_type`) USING BTREE COMMENT '目标ID类型索引'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='用户收藏表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='用户收藏表';
 
 CREATE TABLE `exam_fav_start_count` (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',

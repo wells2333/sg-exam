@@ -1,0 +1,157 @@
+server:
+  port: 80
+  servlet:
+    context-path: /sg-user-service
+spring.application.name: sg-user-service
+
+# Mybatis
+mybatis:
+  type-aliases-package: com.github.tangyi.api.user.model,com.github.tangyi.api.exam.model,com.github.tangyi.api.operation.model
+  mapper-locations: classpath*:mappers/*.xml,classpath*:mappers/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+# Mapper
+mapper:
+  mappers: tk.mybatis.mapper.common.Mapper
+  identity: MYSQL
+  style: camelhumpAndUppercase
+  before: true
+  not-empty: false
+  safe-delete: true
+  safe-update: true
+  check-example-entity-class: true
+
+# page helper
+pagehelper:
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui: /swagger-ui.html
+  packages-to-scan: com.github.tangyi.user.controller,com.github.tangyi.exam.controller
+
+# ===================================================================
+# 七牛云存储配置
+# ===================================================================
+qiniu:
+  access-key: ${QINIU_ACCEESS_KEY:xxxxx}
+  secret-key: ${QINIU_SECRET_KEY:xxxxx}
+  bucket: ${QINIU_BUCKET:sg-exam}
+  domain-of-bucket: ${QINIU_DOMAIN:www.sg-exam.com}
+  expire: 3600  # 链接超时时间，单位秒，默认一小时
+
+# 短信配置
+sms:
+  appKey: ${SMS_APP_KEY:test}
+  appSecret: ${SMS_APP_SECRET:test}
+  signName: ${SMS_SIGN_NAME:test}
+  templateCode: ${SMS_TEMP_CODE:SMS_171192294}
+
+# 微信配置
+wx:
+  appId: ${WX_APP_ID:test}
+  appSecret: ${WX_APP_SECRET:test}
+  grantType: ${WX_GRANT_TYPE:authorization_code}
+
+# 微信h5登录配置
+wxh5:
+  appId: ${WXH5_APP_ID:test}
+  appSecret: ${WXH5_APP_SECRET:test}
+  token: 123456
+
+# 系统配置
+sys:
+  cacheExpire: 86400 # 缓存失效时间，单位秒，默认一天
+  defaultImageType: .jpeg
+  defaultImageCount: 30
+
+gen:
+  # 作者
+  author: tangyi
+  # 默认生成包路径 system 需改成自己的模块名称 如 system monitor tool
+  packageName: com.github.tangyi.exam
+  # 生成文件路径
+  genDir: /Users/tangyi/generate
+  # 自动去除表前缀，默认是false
+  autoRemovePre: true
+  # 表前缀（生成类名不会包含表前缀，多个用逗号分隔）
+  tablePrefix:
+
+---
+server:
+  port: 9183
+spring:
+  profiles: dev
+# 默认使用内置h2
+#  datasource:
+#    dataSourceClassName: org.h2.Driver
+#    url: jdbc:h2:mem:testdb;MODE=MYSQL
+#    initialize: true
+#    username: sa
+#    password:SgSecurityConfig
+
+  datasource:
+    # dev环境默认使用sg-exam-user-dev
+    url: jdbc:mysql://${SG_DB_USER_HOST:localhost}:${SG_DB_USER_POST:3306}/${SG_DB_USER_NAME:sg-exam-user-dev}?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&allowPublicKeyRetrieval=true
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    username: ${SG_DB_USER_USERNAME:root}
+    password: ${SG_DB_USER_PASSWORD:123456}
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 15
+      auto-commit: true
+      idle-timeout: 30000
+      max-lifetime: 500000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+  redis:
+    host: 127.0.0.1
+    username:
+    password:
+    port: 6379
+
+---
+spring:
+  profiles: docker
+  port: 80
+  servlet:
+    multipart:
+      # 单个文件的大小
+      max-file-size: 10MB
+      # 单次请求的文件的总大小
+      max-request-size: 100MB
+  datasource:
+    url: jdbc:mysql://${SG_DB_USER_HOST}:${SG_DB_USER_POST}/sg-exam-user?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&allowPublicKeyRetrieval=true
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    username: ${SG_DB_USER_USERNAME:root}
+    password: ${SG_DB_USER_PASSWORD:123456}
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 15
+      auto-commit: true
+      idle-timeout: 30000
+      max-lifetime: 500000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+  redis:
+    host: redis
+    username:
+    password:
+    port: 6379
+
+# 生产环境关闭接口文档
+springdoc:
+  api-docs:
+    enabled: false
+
+# 系统配置
+sys:
+  cacheExpire: 86400 # 缓存失效时间，单位秒，默认一天
+  imageUrl: https://cdn.yunmianshi.com/images/default/%s.jpeg
+  imageCount: 30
