@@ -14,7 +14,7 @@ import com.github.tangyi.constants.${ModuleName}CacheName;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class ${ClassName}Service extends CrudService<${ClassName}Mapper, ${ClassName}> implements ${ModuleName}CacheName {
+public class ${ClassName}Service extends CrudService<${ClassName}Mapper, ${ClassName}> implements I${ClassName}Service,${ModuleName}CacheName {
 
 	@Override
 	@Cacheable(value = ${ModuleName}CacheName.${businessNameUpper}, key = "#id")

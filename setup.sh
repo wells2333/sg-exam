@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 set -x
+
 function update_version() {
   local version="$1"
   echo "$version"
@@ -20,14 +21,17 @@ function update_version() {
   cd ../sg-exam-next-app && updatePackageJson "$version"
   cd ../.. && pwd
 }
+
 function updateBuild() {
   local version="$1"
   sed -i "" "s/version '[0-9].[0-9].[0-9]'/version '$version'/" build.gradle
 }
+
 function updatePackageJson() {
     local version="$1"
     sed -i "" "s/\"version\": \"[0-9].[0-9].[0-9]\"/\"version\": \"$version\"/" package.json
 }
+
 function build_web() {
   # build web
   echo "start to build web"
@@ -37,6 +41,7 @@ function build_web() {
   cd ../..
   echo "build web finished"
 }
+
 function build_admin() {
   # build admin
   echo "start to build admin"
@@ -46,6 +51,7 @@ function build_admin() {
   cd ../..
   echo "build admin finished"
 }
+
 function build_app() {
   # build app
   echo "start to build app"
@@ -55,6 +61,7 @@ function build_app() {
   cd ../..
   echo "build app finished"
 }
+
 function build_frontend() {
   build_web
   build_admin

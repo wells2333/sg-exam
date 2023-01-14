@@ -54,11 +54,6 @@ public class ValidateCodeFilter extends OncePerRequestFilter {
 		}
 	}
 
-	/**
-	 * 校验验证码
-	 *
-	 * @param request request
-	 */
 	@SuppressWarnings({"unchecked"})
 	private void checkCode(HttpServletRequest request) throws InvalidValidateCodeException {
 		// 验证码

@@ -1,0 +1,8 @@
+package ${basePackage}.api.${moduleName}.service;
+
+import com.github.tangyi.api.${moduleName}.model.${ClassName};
+import com.github.tangyi.common.service.ICrudService;
+
+public interface I${ClassName}Service extends ICrudService<${ClassName}> {
+
+}

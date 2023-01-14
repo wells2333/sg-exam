@@ -35,7 +35,7 @@ public interface IQiNiuService {
 
 	Attachment getPreviewAttachment(Long id);
 
-	Long createRandomImage(String groupCode);
+	Long randomImage(String groupCode);
 
 
 }

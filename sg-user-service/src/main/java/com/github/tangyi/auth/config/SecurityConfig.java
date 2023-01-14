@@ -85,7 +85,6 @@ public class SecurityConfig {
 				.authorizeRequests()
 				.antMatchers(ignoreUrls.toArray(String[]::new)).permitAll().anyRequest()
 				.authenticated();
-		log.info("ignore urls: {}", ignoreUrls);
 		http.authenticationProvider(authProvider());
 		AuthenticationManager authenticationManager = authenticationManagerFactoryBean.getObject();
 		http.addFilter(new TokenLoginFilter(authenticationManager, userTokenService, sysProperties));
@@ -103,9 +102,6 @@ public class SecurityConfig {
 		return new BCryptPasswordEncoder();
 	}
 
-	/**
-	 * 认证Provider，提供获取用户信息、认证、授权等功能
-	 */
 	@Bean
 	public AuthenticationProvider authProvider() {
 		return new CustomUserDetailsAuthenticationProvider(encoder(), userDetailsService);
@@ -114,37 +110,14 @@ public class SecurityConfig {
 	/**
 	 * 配置手机号登录
 	 * 采用懒加载是因为只有认证授权服务需要手机登录的相关配置
-	 *
-	 * @return MobileSecurityConfigurer
 	 */
 	@Bean
 	public MobileSecurityConfigurer mobileSecurityConfigurer(@Lazy CustomUserDetailsService userDetailsService) {
 		MobileSecurityConfigurer mobileSecurityConfigurer = new MobileSecurityConfigurer();
-		//mobileSecurityConfigurer.setMobileLoginSuccessHandler(mobileLoginSuccessHandler(encoder, objectMapper));
 		mobileSecurityConfigurer.setUserDetailsService(userDetailsService);
 		return mobileSecurityConfigurer;
 	}
 
-	/**
-	 * 手机登录成功后的处理
-	 *
-	 * @return AuthenticationSuccessHandler
-	 */
-	//    @Bean
-	//    public AuthenticationSuccessHandler mobileLoginSuccessHandler(
-	//			PasswordEncoder encoder, ObjectMapper objectMapper) {
-	//        return MobileLoginSuccessHandler.builder()
-	//                .objectMapper(objectMapper)
-	//                .clientDetailsService(clientDetailsService)
-	//                .passwordEncoder(encoder)
-	//                .defaultAuthorizationServerTokenServices(defaultAuthorizationServerTokenServices).build();
-	//    }
-
-	/**
-	 * 配置微信登录
-	 *
-	 * @return WxSecurityConfigurer
-	 */
 	@Bean
 	public WxSecurityConfigurer wxSecurityConfigurer(@Lazy CustomUserDetailsService userDetailsService) {
 		WxSecurityConfigurer wxSecurityConfigurer = new WxSecurityConfigurer();

@@ -35,7 +35,6 @@ public class LoginSuccessListener implements ApplicationListener<CustomAuthentic
 
 	@Override
 	public void onApplicationEvent(CustomAuthenticationSuccessEvent event) {
-		// 登录成功后的处理
 		UserDetails userDetails = event.getUserDetails();
 		if (userDetails instanceof CustomUserDetails) {
 			CustomUserDetails customUserDetails = (CustomUserDetails) userDetails;
@@ -54,12 +53,10 @@ public class LoginSuccessListener implements ApplicationListener<CustomAuthentic
 				HttpServletRequest request = requestAttributes.getRequest();
 				logInfo.setMethod(request.getMethod());
 				logInfo.setRequestUri(request.getRequestURI());
-				// 获取ip、浏览器信息
 				logInfo.setIp(request.getRemoteAddr());
 				logInfo.setUserAgent(request.getHeader(HttpHeaders.USER_AGENT));
 			}
 			logInfo.setServiceId(ServiceConstant.USER_SERVICE);
-			// 记录日志和登录时间
 			UserDto userDto = new UserDto(null);
 			userDto.setId(customUserDetails.getId());
 			userDto.setIdentifier(username);
@@ -74,7 +71,7 @@ public class LoginSuccessListener implements ApplicationListener<CustomAuthentic
 			logService.save(logInfo);
 			userService.updateLoginInfo(userDto);
 		} catch (Exception e) {
-			log.error("save login info failed", e);
+			log.error("Failed to save login info", e);
 		}
 	}
 

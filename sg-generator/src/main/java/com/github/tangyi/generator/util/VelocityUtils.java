@@ -74,6 +74,7 @@ public class VelocityUtils {
 		List<String> templates = new ArrayList<String>();
 		templates.add("vm/java/model.java.vm");
 		templates.add("vm/java/controller.java.vm");
+		templates.add("vm/java/iservice.java.vm");
 		templates.add("vm/java/service.java.vm");
 		templates.add("vm/java/mapper.java.vm");
 		templates.add("vm/java/constants.java.vm");
@@ -110,6 +111,8 @@ public class VelocityUtils {
 		}
 		if (template.contains("mapper.java.vm")) {
 			fileName = StringUtil.format("{}/{}/mapper/{}Mapper.java", javaPath, moduleName, className);
+		} else if (template.contains("iservice.java.vm")) {
+			fileName = StringUtil.format("{}/api/{}/service/I{}Service.java", javaPath, moduleName, className);
 		} else if (template.contains("service.java.vm")) {
 			fileName = StringUtil.format("{}/{}/service/{}Service.java", javaPath, moduleName, className);
 		} else if (template.contains("controller.java.vm")) {

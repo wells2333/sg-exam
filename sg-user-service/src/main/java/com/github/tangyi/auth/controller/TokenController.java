@@ -38,7 +38,7 @@ public class TokenController extends BaseController {
 		return R.success(Boolean.TRUE);
 	}
 
-	public UserToken parseUserToken(HttpServletRequest request) {
+	private UserToken parseUserToken(HttpServletRequest request) {
 		String authorization = request.getHeader(SecurityConstant.AUTHORIZATION);
 		if (StringUtils.isEmpty(authorization)) {
 			return null;

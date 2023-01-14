@@ -13,9 +13,6 @@ import org.springframework.context.annotation.Configuration;
 @AllArgsConstructor
 public class WxConfig {
 
-    /**
-     * 微信的配置，如appId，appSecret，sessionHost
-     */
     private final WxProperties wxProperties;
 
     @Bean

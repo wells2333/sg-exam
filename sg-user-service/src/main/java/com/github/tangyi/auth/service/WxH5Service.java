@@ -82,10 +82,6 @@ public class WxH5Service {
 		return JSONObject.parseObject(result);
 	}
 
-	/**
-	 * 获取二维码的ticket
-	 * @return Map
-	 */
 	public Map<String, Object> getTicket() {
 		String accessToken = getAccessToken();
 		String url = WX_API_TICKET_URL + accessToken;
@@ -129,11 +125,6 @@ public class WxH5Service {
 		}
 	}
 
-	/**
-	 * 回调方法
-	 * @param req req
-	 * @return JSONObject
-	 */
 	public R<Object> callback(HttpServletRequest req, HttpServletResponse res) throws Exception {
 		WxMpXmlMessage message = WxMpXmlMessage.fromXml(req.getInputStream());
 		String messageType = message.getMsgType();

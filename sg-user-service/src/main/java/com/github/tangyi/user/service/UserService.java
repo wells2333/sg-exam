@@ -48,9 +48,9 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
 @Slf4j
 @Service
+@AllArgsConstructor
 public class UserService extends CrudService<UserMapper, User> implements IUserService {
 
 	private static final PasswordEncoder encoder = new BCryptPasswordEncoder();

@@ -85,9 +85,6 @@ public class UserTokenService {
 
 	/**
 	 * 生成token，并保存到Redis
-	 * @param req req
-	 * @param res res
-	 * @param details details
 	 */
 	public Map<String, Object> generateAndSaveToken(HttpServletRequest req, HttpServletResponse res,
 			CustomUserDetails details) {

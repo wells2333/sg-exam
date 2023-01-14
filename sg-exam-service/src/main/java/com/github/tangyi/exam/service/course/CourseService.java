@@ -106,7 +106,7 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 	public int insert(Course course) {
 		// 没有上传图片，使用默认图片
 		if (course.getImageId() == null) {
-			course.setImageId(qiNiuService.createRandomImage(Group.DEFAULT));
+			course.setImageId(qiNiuService.randomImage(Group.DEFAULT));
 		}
 		return super.insert(course);
 	}

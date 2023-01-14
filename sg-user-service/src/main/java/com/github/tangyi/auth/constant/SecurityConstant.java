@@ -22,16 +22,6 @@ public class SecurityConstant {
      */
     public static final String DEFAULT_TENANT_CODE = "gitee";
 
-    /**
-     * 租户编号
-     */
-    public static final String TENANT_CODE = "tenantCode";
-
-    /**
-     * JSON 资源
-     */
-    public static final String CONTENT_TYPE = "application/json; charset=utf-8";
-
 	/**
 	 * 登录URL
 	 */

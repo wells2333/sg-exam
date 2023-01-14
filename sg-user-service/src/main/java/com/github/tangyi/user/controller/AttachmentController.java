@@ -179,6 +179,6 @@ public class AttachmentController extends BaseController {
 	@GetMapping("/createRandomImage")
 	@Operation(summary = "生成默认图片")
 	public R<Long> createRandomImage(@RequestParam String groupCode) {
-		return R.success(qiNiuService.createRandomImage(groupCode));
+		return R.success(qiNiuService.randomImage(groupCode));
 	}
 }

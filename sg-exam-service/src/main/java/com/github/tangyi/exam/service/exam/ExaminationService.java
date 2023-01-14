@@ -90,7 +90,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		examination.setCommonValue();
 		// 初始化图片
 		if (examination.getImageId() == null) {
-			examination.setImageId(qiNiuService.createRandomImage(Group.DEFAULT));
+			examination.setImageId(qiNiuService.randomImage(Group.DEFAULT));
 		}
 		return super.insert(examination);
 	}

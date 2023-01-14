@@ -14,9 +14,6 @@ public class WxSessionService {
 
 	private final WxMaService wxMaService;
 
-	/**
-	 * 根据code获取WxSession
-	 */
 	public WxSession code2Session(String code) {
 		WxSession session = null;
 		try {

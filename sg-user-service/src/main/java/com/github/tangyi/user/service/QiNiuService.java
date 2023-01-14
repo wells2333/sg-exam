@@ -142,7 +142,7 @@ public class QiNiuService implements IQiNiuService {
 	}
 
 	@Transactional
-	public Long createRandomImage(String groupCode) {
+	public Long randomImage(String groupCode) {
 		String name = RandomImageUtil.randomImage(sysProperties.getDefaultImageCount(),
 				sysProperties.getDefaultImageType());
 		String url = getDownloadUrl(getName(AttachTypeEnum.DEFAULT_IMAGE.getValue(), name),
@@ -154,7 +154,7 @@ public class QiNiuService implements IQiNiuService {
 		attachment.setAttachName(FileUtil.getFileNameFromUrl(url));
 		attachment.setGroupCode(groupCode);
 		attachmentService.insert(attachment);
-		log.info("random image url, groupCode: {}, url: {}, id: {}", groupCode, attachment.getUrl(),
+		log.info("random image, groupCode: {}, url: {}, id: {}", groupCode, attachment.getUrl(),
 				attachment.getId());
 		return attachment.getId();
 	}
