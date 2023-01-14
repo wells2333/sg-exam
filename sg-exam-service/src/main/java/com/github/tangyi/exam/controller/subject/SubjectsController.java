@@ -12,6 +12,7 @@ import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.SnowFlakeId;
 import com.github.tangyi.exam.excel.model.SubjectExcelModel;
 import com.github.tangyi.exam.service.answer.AnswerService;
+import com.github.tangyi.exam.service.fav.SubjectFavoritesService;
 import com.github.tangyi.exam.service.subject.SubjectImportExportService;
 import com.github.tangyi.exam.service.subject.SubjectsService;
 import com.github.tangyi.exam.utils.ExamUtil;
@@ -31,6 +32,7 @@ import javax.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -48,10 +50,17 @@ public class SubjectsController extends BaseController {
 
 	private final SubjectImportExportService subjectImportExportService;
 
+	private final SubjectFavoritesService subjectFavoritesService;
+
 	@GetMapping("/{id}")
 	@Operation(summary = "获取题目信息", description = "根据题目id获取题目详细信息")
-	public R<SubjectDto> subject(@PathVariable Long id) {
-		return R.success(subjectsService.getSubject(id));
+	public R<SubjectDto> subject(@PathVariable Long id,
+			@RequestParam(value = "findFav", required = false, defaultValue = "false") boolean findFav) {
+		SubjectDto dto = subjectsService.getSubject(id);
+		if (dto != null && findFav) {
+			subjectFavoritesService.findUserFavorites(Collections.singletonList(dto));
+		}
+		return R.success(dto);
 	}
 
 	@GetMapping("subjectList")
@@ -59,8 +68,9 @@ public class SubjectsController extends BaseController {
 	public R<PageInfo<SubjectDto>> list(@RequestParam Map<String, Object> condition,
 			@RequestParam(value = PAGE, required = false, defaultValue = PAGE_DEFAULT) int pageNum,
 			@RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize,
+			@RequestParam(value = "findFav", required = false, defaultValue = "false") boolean findFav,
 			SubjectDto subject) {
-		return R.success(subjectsService.findPage(condition, pageNum, pageSize, subject));
+		return R.success(subjectsService.findPage(condition, pageNum, pageSize, findFav, subject));
 	}
 
 	@GetMapping("getSubjectCountByCategoryId")

@@ -104,10 +104,24 @@ export default {
     return {
       banners,
       gridData,
+      init,
       handleClickBanner,
       handleClickCate
     }
-  }
+  },
+  onPullDownRefresh() {
+    try {
+      this.init();
+    } finally {
+      Taro.stopPullDownRefresh();
+    }
+  },
+  onReachBottom() {
+    try {
+    } finally {
+      Taro.stopPullDownRefresh();
+    }
+  },
 }
 </script>
 

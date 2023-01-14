@@ -15,6 +15,7 @@ import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.exam.enums.SubjectType;
 import com.github.tangyi.exam.mapper.SubjectsMapper;
 import com.github.tangyi.exam.service.ExaminationSubjectService;
+import com.github.tangyi.exam.service.fav.SubjectFavoritesService;
 import com.github.tangyi.exam.service.subject.converter.*;
 import com.github.tangyi.exam.utils.ExamUtil;
 import com.google.common.collect.Lists;
@@ -38,9 +39,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
 @Slf4j
 @Service
+@AllArgsConstructor
 public class SubjectsService extends CrudService<SubjectsMapper, Subjects> implements ISubjectsService {
 
 	private final SubjectServiceFactory subjectServiceFactory;
@@ -58,6 +59,8 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 	private final SubjectSpeechConverter subjectSpeechConverter;
 
 	private final SubjectVideoConverter subjectVideoConverter;
+
+	private final SubjectFavoritesService subjectFavoritesService;
 
 	private final IExecutorService executorService;
 
@@ -93,7 +96,8 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 		return super.dao.findBySubjectId(subjectId);
 	}
 
-	public PageInfo<SubjectDto> findPage(Map<String, Object> params, int pageNum, int pageSize, SubjectDto subjectDto) {
+	public PageInfo<SubjectDto> findPage(Map<String, Object> params, int pageNum, int pageSize, boolean findFav,
+			SubjectDto subjectDto) {
 		if (subjectDto.getCategoryId() != null) {
 			params.put("categoryId", subjectDto.getCategoryId());
 		}
@@ -107,11 +111,13 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 				categoryIds.add(dto.getCategoryId());
 			}
 		}
-		// 按序号排序
 		if (CollectionUtils.isNotEmpty(dtoList)) {
 			dtoList = dtoList.stream().sorted(Comparator.comparing(SubjectDto::getSort)).collect(Collectors.toList());
 		}
 		initCategoryInfo(categoryIds, dtoList);
+		if (findFav) {
+			subjectFavoritesService.findUserFavorites(dtoList);
+		}
 		return PageUtil.newPageInfo(pageInfo, dtoList);
 	}
 
@@ -127,23 +133,6 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 			pageInfo.setList(Lists.newArrayList(list));
 		}
 		return pageInfo;
-	}
-
-	public void initCategoryInfo(List<Long> categoryIds, List<SubjectDto> subjects) {
-		if (CollectionUtils.isEmpty(categoryIds)) {
-			return;
-		}
-		List<SubjectCategory> categories = subjectCategoryService.findListById(categoryIds.toArray(new Long[0]));
-		if (CollectionUtils.isEmpty(categories)) {
-			return;
-		}
-		Map<Long, SubjectCategory> map = categories.stream().collect(Collectors.toMap(SubjectCategory::getId, e -> e));
-		for (SubjectDto subject : subjects) {
-			SubjectCategory category = map.get(subject.getCategoryId());
-			if (category != null) {
-				subject.setCategoryName(category.getCategoryName());
-			}
-		}
 	}
 
 	public Integer findSubjectCountByCategoryId(Long categoryId) {
@@ -388,5 +377,22 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 	public Integer nextSubjectNo(Long categoryId) {
 		Integer no = this.dao.findMaxSortByCategoryId(categoryId);
 		return no == null ? 1 : no + 1;
+	}
+
+	private void initCategoryInfo(List<Long> categoryIds, List<SubjectDto> subjects) {
+		if (CollectionUtils.isEmpty(categoryIds)) {
+			return;
+		}
+		List<SubjectCategory> categories = subjectCategoryService.findListById(categoryIds.toArray(new Long[0]));
+		if (CollectionUtils.isEmpty(categories)) {
+			return;
+		}
+		Map<Long, SubjectCategory> map = categories.stream().collect(Collectors.toMap(SubjectCategory::getId, e -> e));
+		for (SubjectDto subject : subjects) {
+			SubjectCategory category = map.get(subject.getCategoryId());
+			if (category != null) {
+				subject.setCategoryName(category.getCategoryName());
+			}
+		}
 	}
 }

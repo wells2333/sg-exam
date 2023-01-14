@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.service.fav;
 
+import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.ExamUserFav;
 import com.github.tangyi.api.exam.service.ISubjectFavoritesService;
 import com.github.tangyi.common.service.CrudService;
@@ -9,6 +10,7 @@ import com.github.tangyi.exam.constants.UserFavConstant;
 import com.github.tangyi.exam.mapper.UserFavMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,6 +33,18 @@ public class SubjectFavoritesService extends CrudService<UserFavMapper, ExamUser
 	@Override
 	public Set<Long> findUserFavorites() {
 		return userFavService.findUserFavoritesIds(SysUtil.getUserId(), FAV_TYPE_SUBJECT);
+	}
+
+	public void findUserFavorites(List<SubjectDto> list) {
+		if (CollectionUtils.isEmpty(list)) {
+			return;
+		}
+		Set<Long> favIds = findUserFavorites();
+		if (CollectionUtils.isNotEmpty(favIds)) {
+			for (SubjectDto dto : list) {
+				dto.setFavorite(favIds.contains(dto.getId()));
+			}
+		}
 	}
 
 	@Override

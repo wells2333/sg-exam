@@ -18,6 +18,7 @@ export default defineAppConfig({
       'pages/course_section/index',
       'pages/subjects/index',
       'pages/subjects_list/index',
+      'pages/subjects_detail/index',
       'pages/webview/index'
   ],
   window: {

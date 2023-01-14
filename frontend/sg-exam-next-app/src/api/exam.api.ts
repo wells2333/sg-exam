@@ -31,6 +31,10 @@ class examApi {
         return api.fetchExam<Sg.ExamInfo>("/v1/subjects/subjectList", params, "GET")
     }
 
+    async getSubjectDetail(id: string, findFav: boolean = false) {
+        return api.fetchExam<Sg.ExamInfo>("/v1/subjects/" + id + "?findFav=" + findFav, {}, "GET")
+    }
+
     async saveAndNext(data: object, type: string, nextSubjectSortNo: string = '') {
         return api.fetchExam<Sg.ExamInfo>("/v1/answer/saveAndNext?type=" + type + '&nextSubjectSortNo=' + nextSubjectSortNo, data, "POST")
     }

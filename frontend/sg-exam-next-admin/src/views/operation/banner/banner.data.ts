@@ -102,7 +102,6 @@ export const formSchema: FormSchema[] = [
     field: 'imageId',
     label: '图片',
     component: 'Input',
-    required: true,
     render: ({model, field}) => {
       return h(SgUpload, {
         value: model[field],
@@ -121,7 +120,6 @@ export const formSchema: FormSchema[] = [
     field: 'imageUrl',
     label: '图片URL',
     component: 'Input',
-    required: true,
     colProps: {span: 12}
   },
   {
