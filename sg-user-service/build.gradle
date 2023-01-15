@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.github.tangyi'
-version '5.0.6'
+version '5.0.7'
 
 repositories {
     mavenCentral()

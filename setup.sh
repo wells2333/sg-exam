@@ -57,7 +57,7 @@ function build_app() {
   echo "start to build app"
   # shellcheck disable=SC2164
   cd frontend/sg-exam-next-app
-  yarn build:weapp
+  export NODE_OPTIONS=--openssl-legacy-provider && yarn build:weapp
   cd ../..
   echo "build app finished"
 }
@@ -85,6 +85,7 @@ function push_service() {
   docker-compose push
   echo "push service finished"
 }
+
 function start_service() {
   # pull image
   echo "start to pull image"
