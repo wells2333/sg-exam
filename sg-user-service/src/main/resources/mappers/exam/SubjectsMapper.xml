@@ -41,6 +41,10 @@
         SELECT * FROM exam_subjects a WHERE a.subject_id = #{subjectId}
     </select>
 
+    <select id="findByCategoryIdAndSort" resultMap="subjectTypeResultMap">
+        SELECT * FROM exam_subjects a WHERE a.category_id = #{categoryId} AND a.sort = #{sort}
+    </select>
+
     <select id="findBySubjectIds" resultMap="subjectTypeResultMap">
         SELECT * FROM exam_subjects a WHERE a.subject_id IN
         <foreach item="item" index="index" collection="subjectIds" open="("

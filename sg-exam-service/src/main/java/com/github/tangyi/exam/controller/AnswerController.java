@@ -13,6 +13,7 @@ import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.exam.service.RankInfoService;
 import com.github.tangyi.exam.service.exam.ExaminationActionService;
+import com.github.tangyi.exam.service.fav.SubjectFavoritesService;
 import com.github.tangyi.exam.service.subject.SubjectsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +40,8 @@ public class AnswerController extends BaseController {
 	private final ExaminationActionService actionService;
 
 	private final RankInfoService rankInfoService;
+
+	private final SubjectFavoritesService subjectFavoritesService;
 
 	@GetMapping("/{id}")
 	@Operation(summary = "获取答题信息")
@@ -120,6 +124,22 @@ public class AnswerController extends BaseController {
 	public R<SubjectDto> nextSubject(@RequestParam Long examinationId, @RequestParam Long subjectId,
 			@RequestParam Integer nextType) {
 		return R.success(subjectsService.getNextByCurrentIdAndType(examinationId, subjectId, nextType));
+	}
+
+	/**
+	 * 根据分类ID获取下一题
+	 * @param nextType          0：下一题，1：上一题
+	 */
+	@GetMapping("nextSubjectByCategoryId")
+	@Operation(summary = "根据分类ID获取下一题")
+	public R<SubjectDto> nextSubjectByCategoryId(@RequestParam Long categoryId, @RequestParam Long subjectId,
+			@RequestParam Integer nextType,
+			@RequestParam(value = "findFav", required = false, defaultValue = "false") boolean findFav) {
+		SubjectDto dto = subjectsService.nextSubjectByCategoryId(categoryId, subjectId, nextType);
+		if (dto != null && findFav) {
+			subjectFavoritesService.findUserFavorites(Collections.singletonList(dto));
+		}
+		return R.success(dto);
 	}
 
 	@PostMapping("submit")

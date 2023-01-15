@@ -155,8 +155,6 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> implements 
 
 	/**
 	 * 保存答题，返回下一题/上一题的信息
-	 *
-	 * @param answerDto       answerDto
 	 * @param type            0：下一题，1：上一题
 	 */
 	@Transactional
@@ -190,12 +188,8 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> implements 
 		}
 	}
 
-
 	/**
 	 * 查询题目和答题
-	 *
-	 * @param subjectId       subjectId
-	 * @param recordId    recordId
 	 * @param type        -1：当前题目，0：下一题，1：上一题
 	 */
 	@Transactional

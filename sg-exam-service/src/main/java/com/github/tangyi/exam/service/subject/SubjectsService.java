@@ -1,6 +1,7 @@
 package com.github.tangyi.exam.service.subject;
 
 import com.github.pagehelper.PageInfo;
+import com.github.tangyi.api.exam.constants.AnswerConstant;
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.*;
 import com.github.tangyi.api.exam.service.IExecutorService;
@@ -170,8 +171,6 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 
 	/**
 	 * 根据分类ID查询全部题目
-	 * @param categoryId categoryId
-	 * @return List
 	 */
 	public List<Subjects> findIdAndTypeByCategoryId(Long categoryId) {
 		return this.dao.findIdAndTypeByCategoryId(categoryId);
@@ -214,11 +213,9 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 	@Transactional
 	@CacheEvict(cacheNames = ExamCacheName.SUBJECTS, key = "#subjectDto.id")
 	public SubjectDto update(SubjectDto subjectDto) {
-		// 更新题目信息
 		if ((subjectServiceFactory.service(getSubjectType(subjectDto.getId())).updateSubject(subjectDto)) == 0) {
 			return this.insert(subjectDto);
 		}
-		// 更新题目序号
 		esService.updateSort(subjectDto.getExaminationId(), subjectDto.getId(), subjectDto.getSort());
 		return subjectDto;
 	}
@@ -255,17 +252,23 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 		return dto;
 	}
 
-	/**
-	 * 根据上一题ID查找
-	 *
-	 * @param examinationId     examinationId
-	 * @param previousSubjectId previousSubjectId
-	 * @param nextType          0：下一题，1：上一题
-	 */
-	@Transactional
 	public SubjectDto getNextByCurrentIdAndType(Long examinationId, Long previousSubjectId, Integer nextType) {
 		return subjectServiceFactory.service(getSubjectType(previousSubjectId))
 				.getNextByCurrentIdAndType(examinationId, previousSubjectId, nextType);
+	}
+
+	public SubjectDto nextSubjectByCategoryId(Long categoryId, Long currentSubjectId, Integer nextType) {
+		Subjects subjects = this.findBySubjectId(currentSubjectId);
+		if (subjects != null) {
+			Integer sort = Math.max(0,
+					AnswerConstant.NEXT.equals(nextType) ? subjects.getSort() + 1 : subjects.getSort() - 1);
+			Subjects nextSubjects = this.dao.findByCategoryIdAndSort(categoryId, sort);
+			if (nextSubjects != null) {
+				return subjectServiceFactory.service(getSubjectType(nextSubjects.getSubjectId()))
+						.getSubject(nextSubjects.getSubjectId());
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -352,12 +355,6 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 		return 1;
 	}
 
-	public int getSubjectType(Long subjectId) {
-		Subjects subjects = this.findBySubjectId(subjectId);
-		SgPreconditions.checkNull(subjects, "subjects is null");
-		return subjects.getType();
-	}
-
 	public List<Subjects> findBySubjectIds(Long[] subjectIds) {
 		return super.dao.findBySubjectIds(subjectIds);
 	}
@@ -394,5 +391,11 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 				subject.setCategoryName(category.getCategoryName());
 			}
 		}
+	}
+
+	private int getSubjectType(Long subjectId) {
+		Subjects subjects = this.findBySubjectId(subjectId);
+		SgPreconditions.checkNull(subjects, "subjects is null");
+		return subjects.getType();
 	}
 }

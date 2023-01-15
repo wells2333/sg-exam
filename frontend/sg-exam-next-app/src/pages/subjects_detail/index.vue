@@ -5,7 +5,6 @@
       <view class="subject-content bg-white">
         <view class="subject-detail-type-label subject-list-item-label">
           <at-tag size="small" type="primary">{{ subject.typeLabel }}</at-tag>
-          <AtIcon value='star-2' size='8' :color="subject.favorite === true ? '#FFC82C': '#AAAAAA'" @click="handleFavSubject(subject)"></AtIcon>
         </view>
         <view class="subject-title">
           <wxparse class="subject-title-content" :html="subject.subjectName" key={Math.random()}></wxparse>
@@ -45,19 +44,31 @@
         </view>
       </view>
     </view>
+
+    <view class="submit-btn">
+      <view class="submit-btn-item">
+        <AtButton type="primary" :circle="true" @click="handleNext('1')">上一题</AtButton>
+      </view>
+      <view class="submit-btn-item">
+        <AtButton type="primary" :circle="true" @click="handleNext('0')">下一题</AtButton>
+      </view>
+    </view>
+    <AtFab class="fav-fab" v-if="subject !== undefined" @click="handleFavSubject(subject)">
+      <text class="at-fab__icon at-icon at-icon-star-2" :class="subject.favorite ? 'fav-fab-fav' : ''"></text>
+    </AtFab>
   </view>
 </template>
 
 <script lang="ts">
 import Taro from "@tarojs/taro";
-import {onMounted, ref} from 'vue';
+import {onMounted, ref, unref} from 'vue';
 import examApi from '../../api/exam.api';
 import {Choice} from '../../components/subject/choice/index';
 import {Judgement} from '../../components/subject/judgement/index';
 import {ShortAnswer} from '../../components/subject/shortAnswer/index';
 import {SubjectVideo} from '../../components/subject/video/index';
 import api from "../../api/api";
-import {successMessage} from "../../utils/util";
+import {successMessage, warnMessage} from "../../utils/util";
 
 export default {
   components: {
@@ -68,13 +79,18 @@ export default {
   },
   setup() {
     const params = Taro.getCurrentInstance().router.params;
-    const subjectId = params.id;
+    const subjectId = ref<string>(params.id);
     const subject = ref<object>(undefined);
+    const choiceRef = ref<any>(undefined);
+    const multiChoiceRef = ref<any>(undefined);
+    const judgementRef = ref<any>(undefined);
+    const shortAnswerRef = ref<any>(undefined);
+    const videoRef = ref<any>(undefined);
 
     async function fetch() {
       await Taro.showLoading();
       try {
-        const res = await examApi.getSubjectDetail(subjectId, true);
+        const res = await examApi.getSubjectDetail(subjectId.value, true);
         const {code, result} = res;
         if (code === 0) {
           subject.value = result;
@@ -100,14 +116,60 @@ export default {
       }
     }
 
+    async function handleNext(nextType: string = '0') {
+      await Taro.showLoading();
+      try {
+        const res = await examApi.getNextSubjectByCategoryId(subject.value.categoryId, subject.value.id, nextType);
+        if (res.code === 0) {
+          if (res.result !== null) {
+            subject.value = res.result;
+            updateSubjectRef();
+          } else {
+            warnMessage('无更多数据');
+          }
+        }
+      } finally {
+        Taro.hideLoading();
+      }
+    }
+
+    function updateSubjectRef() {
+      if (subject !== undefined) {
+        const type = subject.value.type;
+        let ref = undefined;
+        if (type === 0) {
+          ref = choiceRef;
+        } else if (type === 1) {
+          ref = shortAnswerRef;
+        } else if (type === 2) {
+          ref = judgementRef;
+        } else if (type === 3) {
+          ref = multiChoiceRef;
+        } else if (type === 5) {
+          ref = videoRef;
+        }
+        if (ref != undefined) {
+          setTimeout(() => {
+            ref.value.update(subject);
+          }, 50);
+        }
+      }
+    }
+
     onMounted(() => {
       init();
     });
 
     return {
       subject,
+      choiceRef,
+      multiChoiceRef,
+      judgementRef,
+      shortAnswerRef,
+      videoRef,
       init,
-      handleFavSubject
+      handleFavSubject,
+      handleNext
     }
   },
   onPullDownRefresh() {
@@ -124,5 +186,12 @@ export default {
 .subject-detail-type-label {
   display: flex;
   justify-content: space-between;
+}
+.fav-fab {
+  float: right;
+  margin-right: 10px;
+}
+.fav-fab .fav-fab-fav::before {
+  color: #FFC82C;
 }
 </style>

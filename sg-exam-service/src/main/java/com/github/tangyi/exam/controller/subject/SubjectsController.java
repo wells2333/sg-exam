@@ -179,27 +179,18 @@ public class SubjectsController extends BaseController {
 
 	/**
 	 * 查询题目和答题
-	 *
-	 * @param subjectId    subjectId
-	 * @param examRecordId examRecordId
-	 * @param userId       userId
 	 * @param type     -1：当前题目，0：下一题，1：上一题
 	 */
 	@GetMapping("subjectAnswer")
 	@Operation(summary = "查询题目和答题", description = "根据题目id查询题目和答题")
 	public R<SubjectDto> subjectAnswer(@RequestParam("subjectId") @NotBlank Long subjectId,
-			@RequestParam("examRecordId") @NotBlank Long examRecordId,
-			@RequestParam(value = "userId", required = false) String userId, @RequestParam Integer type,
+			@RequestParam("examRecordId") @NotBlank Long examRecordId, @RequestParam Integer type,
 			@RequestParam(required = false) Integer nextSubjectSortNo) {
 		return R.success(answerService.subjectAnswer(subjectId, examRecordId, type, nextSubjectSortNo));
 	}
 
 	/**
 	 * 查询题目和答题
-	 *
-	 * @param subjectId    subjectId
-	 * @param examRecordId examRecordId
-	 * @param userId       userId
 	 * @param type     -1：当前题目，0：下一题，1：上一题
 	 */
 	@GetMapping("anonymousUser/subjectAnswer")

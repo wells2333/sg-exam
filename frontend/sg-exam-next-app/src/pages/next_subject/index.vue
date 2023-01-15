@@ -268,24 +268,27 @@ export default {
       }
       let loading = type === '1' ? preLoading : nextLoading;
       loading.value = true;
-      const {userId} = api.getUserInfo();
-      const res = await examApi.saveAndNext({
-        userId: userId,
-        examRecordId: recordId.value,
-        subjectId: subject.value.id,
-        answer: subject.value.answerValue
-      }, type, nextSubjectSortNo);
-      const result = parseRes(res);
-      if (result) {
-        subject.value = result;
-        subject.value.answerValue = result.answer.answer;
-        hasMore.value = result.hasMore;
-        updateSubjectRef();
-      } else {
-        hasMore.value = false;
-        Taro.showToast({title: '无更多数据'});
+      try {
+        const {userId} = api.getUserInfo();
+        const res = await examApi.saveAndNext({
+          userId: userId,
+          examRecordId: recordId.value,
+          subjectId: subject.value.id,
+          answer: subject.value.answerValue
+        }, type, nextSubjectSortNo);
+        const result = parseRes(res);
+        if (result) {
+          subject.value = result;
+          subject.value.answerValue = result.answer.answer;
+          hasMore.value = result.hasMore;
+          updateSubjectRef();
+        } else {
+          hasMore.value = false;
+          Taro.showToast({title: '无更多数据'});
+        }
+      } finally {
+        loading.value = false;
       }
-      loading.value = false;
     }
 
     function updateSubjectRef() {

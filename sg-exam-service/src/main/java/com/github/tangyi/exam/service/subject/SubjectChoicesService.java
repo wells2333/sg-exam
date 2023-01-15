@@ -207,13 +207,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		return list;
 	}
 
-	/**
-	 * 根据上一题ID查询下一题
-	 *
-	 * @param examinationId examinationId
-	 * @param previousId    previousId
-	 * @param nextType      0：下一题，1：上一题
-	 */
 	@Override
 	@Transactional
 	public SubjectDto getNextByCurrentIdAndType(Long examinationId, Long previousId, Integer nextType) {
