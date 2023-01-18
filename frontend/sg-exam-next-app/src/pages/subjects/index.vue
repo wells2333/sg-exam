@@ -25,7 +25,7 @@
         <view class="home-item" v-for="(item, idx) in gridData" :key="idx" @click="handleClickCate(item)">
           <view class="home-item-left">
             <text>{{item.value}}</text>
-            <at-tag class="label" type="primary" size="small" :circle="true">共{{item.subjectCnt}}题</at-tag>
+            <at-tag class="label" type="primary" size="small">共{{item.subjectCnt}}题</at-tag>
           </view>
           <AtIcon class="home-item-right" value='chevron-right' size='8' color='#346FC2'></AtIcon>
         </view>

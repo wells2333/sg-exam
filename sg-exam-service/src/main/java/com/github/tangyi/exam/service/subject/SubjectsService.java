@@ -2,12 +2,14 @@ package com.github.tangyi.exam.service.subject;
 
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.constants.AnswerConstant;
+import com.github.tangyi.api.exam.dto.SubjectCategoryDto;
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.*;
 import com.github.tangyi.api.exam.service.IExecutorService;
 import com.github.tangyi.api.exam.service.ISubjectsService;
 import com.github.tangyi.common.base.BaseEntity;
 import com.github.tangyi.common.base.SgPreconditions;
+import com.github.tangyi.common.base.TreeEntity;
 import com.github.tangyi.common.exceptions.CommonException;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.ExecutorUtils;
@@ -16,6 +18,7 @@ import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.exam.enums.SubjectType;
 import com.github.tangyi.exam.mapper.SubjectsMapper;
 import com.github.tangyi.exam.service.ExaminationSubjectService;
+import com.github.tangyi.exam.service.data.SubjectViewCounterService;
 import com.github.tangyi.exam.service.fav.SubjectFavoritesService;
 import com.github.tangyi.exam.service.subject.converter.*;
 import com.github.tangyi.exam.utils.ExamUtil;
@@ -34,10 +37,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -63,17 +63,27 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 
 	private final SubjectFavoritesService subjectFavoritesService;
 
+	private final SubjectViewCounterService subjectViewCounterService;
+
 	private final IExecutorService executorService;
 
 	/**
 	 * 根据单个题目ID查询题目信息，会有缓存
 	 */
 	public SubjectDto getSubject(Long id) {
+		return getSubject(id, false);
+	}
+
+	public SubjectDto getSubject(Long id, boolean isView) {
+		SubjectDto dto = null;
 		Subjects subjects = this.findBySubjectId(id);
 		if (subjects != null) {
-			return getSubject(subjects.getSubjectId(), subjects.getType());
+			dto = getSubject(subjects.getSubjectId(), subjects.getType());
+			if (dto != null && isView) {
+				dto.setViews(subjectViewCounterService.viewSubject(id) + "");
+			}
 		}
-		return null;
+		return dto;
 	}
 
 	/**
@@ -98,7 +108,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 	}
 
 	public PageInfo<SubjectDto> findPage(Map<String, Object> params, int pageNum, int pageSize, boolean findFav,
-			SubjectDto subjectDto) {
+			boolean findView, SubjectDto subjectDto) {
 		if (subjectDto.getCategoryId() != null) {
 			params.put("categoryId", subjectDto.getCategoryId());
 		}
@@ -118,6 +128,9 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 		initCategoryInfo(categoryIds, dtoList);
 		if (findFav) {
 			subjectFavoritesService.findUserFavorites(dtoList);
+		}
+		if (findView) {
+			subjectViewCounterService.getSubjectsView(dtoList);
 		}
 		return PageUtil.newPageInfo(pageInfo, dtoList);
 	}
@@ -140,24 +153,9 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 		return this.dao.findSubjectCountByCategoryId(categoryId);
 	}
 
-	/**
-	 * 并发根据类目ID查询题目数量
-	 */
-	public Map<Long, Integer> findSubjectCountByCategoryIds(List<Long> categoryIds) {
-		Map<Long, Integer> map = Maps.newConcurrentMap();
-		ListeningExecutorService executor = executorService.getSubjectExecutor();
-		List<ListenableFuture<?>> futures = Lists.newArrayListWithExpectedSize(categoryIds.size());
-		for (Long categoryId : categoryIds) {
-			ListenableFuture<?> future = executor.submit(() -> {
-				Integer cnt = findSubjectCountByCategoryId(categoryId);
-				if (cnt != null) {
-					map.put(categoryId, cnt);
-				}
-			});
-			futures.add(future);
-		}
-		ExecutorUtils.waitFutures(futures);
-		return map;
+	public void findAndFillSubjectCnt(List<SubjectCategoryDto> categories) {
+		Map<Long, Integer> cntMap = this.findSubjectCountByCategories(categories);
+		this.fillSubjectCnt(categories, cntMap);
 	}
 
 	/**
@@ -397,5 +395,60 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 		Subjects subjects = this.findBySubjectId(subjectId);
 		SgPreconditions.checkNull(subjects, "subjects is null");
 		return subjects.getType();
+	}
+
+	private Map<Long, Integer> findSubjectCountByCategories(List<SubjectCategoryDto> categories) {
+		if (CollectionUtils.isEmpty(categories)) {
+			return Collections.emptyMap();
+		}
+		List<Long> ids = Lists.newArrayList();
+		for (SubjectCategoryDto category : categories) {
+			ids.add(category.getId());
+			addChildId(category.getChildren(), ids);
+		}
+		Map<Long, Integer> map = Maps.newConcurrentMap();
+		ListeningExecutorService executor = executorService.getSubjectExecutor();
+		List<ListenableFuture<?>> futures = Lists.newArrayListWithExpectedSize(categories.size());
+		for (Long id : ids) {
+			ListenableFuture<?> future = executor.submit(() -> {
+				Integer cnt = findSubjectCountByCategoryId(id);
+				if (cnt != null) {
+					map.put(id, cnt);
+				}
+			});
+			futures.add(future);
+		}
+		ExecutorUtils.waitFutures(futures);
+		return map;
+	}
+
+	private void fillSubjectCnt(List<SubjectCategoryDto> categories, Map<Long, Integer> cntMap) {
+		for (SubjectCategoryDto dto : categories) {
+			Integer cnt = cntMap.getOrDefault(dto.getId(), 0);
+			cnt = cnt + getTreeCnt(dto.getChildren(), cntMap);
+			dto.setSubjectCnt(cnt);
+		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	private int getTreeCnt(List<TreeEntity> entities, Map<Long, Integer> cntMap) {
+		int cnt = 0;
+		if (CollectionUtils.isNotEmpty(entities)) {
+			for (TreeEntity<?> entity : entities) {
+				cnt = cnt + cntMap.getOrDefault(entity.getId(), 0);
+				cnt = cnt + getTreeCnt(entity.getChildren(), cntMap);
+			}
+		}
+		return cnt;
+	}
+
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	private void addChildId(List<TreeEntity> entities, List<Long> ids) {
+		if (CollectionUtils.isNotEmpty(entities)) {
+			for (TreeEntity child : entities) {
+				ids.add(child.getId());
+				addChildId(child.getChildren(), ids);
+			}
+		}
 	}
 }

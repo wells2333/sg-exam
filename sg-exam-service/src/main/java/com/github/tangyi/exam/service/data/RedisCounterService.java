@@ -23,8 +23,8 @@ public class RedisCounterService {
 		longRedisTemplate.opsForValue().set(key + id, value);
 	}
 
-	public void incrCount(String key, Long id) {
-		longRedisTemplate.opsForValue().increment(key + id);
+	public Long incrCount(String key, Long id) {
+		return longRedisTemplate.opsForValue().increment(key + id);
 	}
 
 	public void decrCount(String key, Long id) {

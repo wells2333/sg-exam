@@ -1,7 +1,7 @@
 <template>
   <view v-bind="$attrs">
     <view class="short-answer-area">
-      <at-textarea :value="value" @change="handleChange" placeholder="请输入" :disabled="disabled" :max-length="maxLength"/>
+      <at-textarea :value="value" v-if="showInput" @change="handleChange" placeholder="请输入" :disabled="disabled" :max-length="maxLength"/>
     </view>
   </view>
 </template>
@@ -22,6 +22,10 @@ export default defineComponent({
     disabled: {
       type: Boolean,
       default: () => false
+    },
+    showInput: {
+      type: Boolean,
+      default: () => true
     },
     answer: {
       type: Object,
@@ -45,6 +49,7 @@ export default defineComponent({
     const standAnswer = ref<String>('');
     const disabled = ref<boolean>(props.disabled);
     const maxLength = ref<number>(props.maxLength);
+    const showInput = ref<boolean>(props.showInput);
 
     function handleChange(v) {
       value.value = v;
@@ -81,6 +86,7 @@ export default defineComponent({
       subject,
       value,
       disabled,
+      showInput,
       handleChange,
       update
     }

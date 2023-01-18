@@ -60,19 +60,34 @@ public class SubjectCategoryService extends CrudService<SubjectCategoryMapper, S
 
 	@Cacheable(value = ExamCacheName.SUBJECT_CATE_TREE, key = "'tree'", condition = "#condition == null || #condition.isEmpty()")
 	public List<SubjectCategoryDto> categoryTree(Map<String, Object> condition) {
-		SubjectCategory subjectCategory = new SubjectCategory();
-		subjectCategory.setTenantCode(SysUtil.getTenantCode());
+		SubjectCategory category = new SubjectCategory();
+		category.setTenantCode(SysUtil.getTenantCode());
 		Object categoryName = condition.get("categoryName");
 		if (categoryName != null) {
-			subjectCategory.setCategoryName(categoryName.toString());
+			category.setCategoryName(categoryName.toString());
 		}
+		return findAndBuild(category, CommonConstant.ROOT);
+	}
+
+	//@Cacheable(value = ExamCacheName.SUBJECT_CATE_TREE, key = "'tree' + #parentId")
+	public List<SubjectCategoryDto> getCategoryByParentId(Long parentId) {
+		SubjectCategory category = new SubjectCategory();
+		category.setTenantCode(SysUtil.getTenantCode());
+		category.setParentId(parentId);
+		return findAndBuild(category, parentId);
+	}
+
+	private List<SubjectCategoryDto> findAndBuild(SubjectCategory subjectCategory, Long rootId) {
 		List<SubjectCategory> categories = findList(subjectCategory);
 		if (CollectionUtils.isNotEmpty(categories)) {
-			List<SubjectCategoryDto> list = categories.stream().map(SubjectCategoryDto::new).distinct()
-					.collect(Collectors.toList());
-			return TreeUtil.buildTree(CollUtil.sort(list, Comparator.comparingInt(SubjectCategoryDto::getSort)),
-					CommonConstant.ROOT);
+			return buildTree(categories, rootId);
 		}
 		return Lists.newArrayList();
+	}
+
+	private List<SubjectCategoryDto> buildTree(List<SubjectCategory> categories, Long rootId) {
+		List<SubjectCategoryDto> list = categories.stream().map(SubjectCategoryDto::new).distinct()
+				.collect(Collectors.toList());
+		return TreeUtil.buildTree(CollUtil.sort(list, Comparator.comparingInt(SubjectCategoryDto::getSort)), rootId);
 	}
 }

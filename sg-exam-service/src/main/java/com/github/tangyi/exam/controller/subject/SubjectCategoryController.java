@@ -15,9 +15,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Tag(name = "题库分类信息管理")
@@ -36,16 +36,32 @@ public class SubjectCategoryController extends BaseController {
 	}
 
 	@GetMapping(value = "categoryTreeWithSubjectCnt")
-	@Operation(summary = "获取分类列表和对应的题目数量")
+	@Operation(summary = "获取分类树和对应的题目数量")
 	public R<List<SubjectCategoryDto>> categoryTreeWithSubjectCnt(
 			@RequestParam(required = false) Map<String, Object> condition) {
-		List<SubjectCategoryDto> tree = categoryService.categoryTree(condition);
-		List<Long> ids = tree.stream().map(SubjectCategoryDto::getId).collect(Collectors.toList());
-		Map<Long, Integer> map = subjectsService.findSubjectCountByCategoryIds(ids);
-		for (SubjectCategoryDto dto : tree) {
-			dto.setSubjectCnt(map.get(dto.getId()));
+		List<SubjectCategoryDto> categories = categoryService.categoryTree(condition);
+		subjectsService.findAndFillSubjectCnt(categories);
+		return R.success(categories);
+	}
+
+	@GetMapping(value = "getSubjectCntByParentId")
+	@Operation(summary = "根据父类目ID获取子类目信息和对应题目数量")
+	public R<List<SubjectCategoryDto>> getSubjectCntByParentId(Long parentId) {
+		List<SubjectCategoryDto> categories = categoryService.getCategoryByParentId(parentId);
+		subjectsService.findAndFillSubjectCnt(categories);
+		return R.success(categories);
+	}
+
+	@GetMapping(value = "getCategoryInfo")
+	@Operation(summary = "根据类目ID获取类目信息")
+	public R<SubjectCategoryDto> getCategoryInfo(Long id) {
+		SubjectCategory category = categoryService.get(id);
+		if (category != null) {
+			SubjectCategoryDto dto = new SubjectCategoryDto(category);
+			subjectsService.findAndFillSubjectCnt(Collections.singletonList(dto));
+			return R.success(dto);
 		}
-		return R.success(tree);
+		return R.success(null);
 	}
 
 	@GetMapping("/{id}")

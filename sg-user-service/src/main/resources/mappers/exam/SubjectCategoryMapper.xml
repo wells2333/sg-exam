@@ -25,6 +25,9 @@
             <if test="params.categoryName != null and params.categoryName != ''">
                 and (category_name like CONCAT('%',#{params.categoryName},'%'))
             </if>
+            <if test="params.parentId != null and params.parentId != ''">
+                and parent_id = #{params.parentId}
+            </if>
         </if>
         order by sort desc
     </select>
@@ -40,6 +43,9 @@
         SELECT * FROM exam_subject_category a WHERE a.is_deleted = 0 and tenant_code = #{tenantCode}
         <if test="categoryName != null and categoryName != ''">
             and (category_name like CONCAT('%',#{categoryName},'%'))
+        </if>
+        <if test="parentId != null and parentId != ''">
+            and parent_id = #{parentId}
         </if>
         order by sort desc
     </select>

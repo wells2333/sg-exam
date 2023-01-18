@@ -1,5 +1,5 @@
 export default {
-    navigationBarTitleText: '题库',
+    navigationBarTitleText: '热门题库',
     enablePullDownRefresh: true,
     enableShareAppMessage: true,
     enableShareTimeline: true,

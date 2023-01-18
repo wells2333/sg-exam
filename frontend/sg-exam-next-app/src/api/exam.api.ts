@@ -6,7 +6,7 @@ class examApi {
         return api.fetchExam<Sg.ExamInfo>("/v1/examination/examinationList", data, "GET")
     }
 
-    async examinationDetail(id: string|undefined) {
+    async examinationDetail(id: string | undefined) {
         return api.fetchExam<Sg.ExamInfo>("/v1/examination/" + id + "/detail", {}, "GET")
     }
 
@@ -15,7 +15,7 @@ class examApi {
     }
 
     // 开始考试
-    async startExam(examinationId: string|undefined, userId: string) {
+    async startExam(examinationId: string | undefined, userId: string) {
         return api.fetchExam<Sg.ExamInfo>("/v1/examRecord/start", {
             examinationId,
             userId
@@ -31,8 +31,8 @@ class examApi {
         return api.fetchExam<Sg.ExamInfo>("/v1/subjects/subjectList", params, "GET")
     }
 
-    async getSubjectDetail(id: string, findFav: boolean = false) {
-        return api.fetchExam<Sg.ExamInfo>("/v1/subjects/" + id + "?findFav=" + findFav, {}, "GET")
+    async getSubjectDetail(id: string, params: object) {
+        return api.fetchExam<Sg.ExamInfo>("/v1/subjects/" + id, params, "GET")
     }
 
     async getNextSubjectByCategoryId(categoryId: string, subjectId: string, nextType: string) {
@@ -86,11 +86,11 @@ class examApi {
         return api.fetchExam<Sg.ExamInfo>("/v1/course/detail/" + id, {}, "GET");
     }
 
-    async joinCourse(id: string|undefined, type: string) {
+    async joinCourse(id: string | undefined, type: string) {
         return api.fetchExam<Sg.ExamInfo>("/v1/course/" + id + "/join?type=" + type, {}, "POST");
     }
 
-    async courseEvaluate(id: string|undefined, params: object) {
+    async courseEvaluate(id: string | undefined, params: object) {
         return api.fetchExam<Sg.ExamInfo>("/v1/evaluate/list?courseId=" + id, params, "GET");
     }
 
@@ -108,6 +108,14 @@ class examApi {
 
     async categoryTreeWithSubjectCnt() {
         return api.fetchExam<Sg.ExamInfo>("/v1/subjectCategory/categoryTreeWithSubjectCnt", {}, "GET");
+    }
+
+    async getSubjectCntByParentId(parentId: string) {
+        return api.fetchExam<Sg.ExamInfo>("/v1/subjectCategory/getSubjectCntByParentId?parentId=" + parentId, {}, "GET");
+    }
+
+    async getCategoryInfo(id: string) {
+        return api.fetchExam<Sg.ExamInfo>("/v1/subjectCategory/getCategoryInfo?id=" + id, {}, "GET");
     }
 }
 

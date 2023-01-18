@@ -14,12 +14,12 @@
             {
               icon: 'clarity:note-edit-line',
               onClick: handleEdit.bind(null, record),
-              auth: 'exam:category:edit'
+              auth: 'exam:subject:category:edit'
             },
             {
               icon: 'ant-design:delete-outlined',
               color: 'error',
-              auth: 'exam:category:del',
+              auth: 'exam:subject:category:del',
               popConfirm: {
                 title: '是否确认删除',
                 confirm: handleDelete.bind(null, record),

@@ -17,7 +17,7 @@
             <choice ref="multiChoiceRef" :subject="subject" :multi="true"></choice>
           </view>
           <view v-else-if="subject.type === 1">
-            <short-answer ref="shortAnswerRef" :subject="subject"></short-answer>
+            <short-answer ref="shortAnswerRef" :subject="subject" :showInput="false"></short-answer>
           </view>
           <view v-else-if="subject.type === 2">
             <judgement ref="judgementRef" :subject="subject"></judgement>
@@ -28,12 +28,12 @@
             <subject-video ref="videoRef" :subject="subject"></subject-video>
           </view>
           <view class="answer-text">
-            <text>参考答案：</text>
+            <text>答案：</text>
             <text class="answer-text-value">
               {{ subject.answer !== undefined ? subject.answer.answer : '' }}
             </text>
           </view>
-          <view class="answer-text answer-text-analysis">
+          <view class="answer-text answer-text-analysis" v-if="subject.analysis !== undefined && subject.analysis !== null">
             <view>
               <text>解析：</text>
             </view>
@@ -90,7 +90,7 @@ export default {
     async function fetch() {
       await Taro.showLoading();
       try {
-        const res = await examApi.getSubjectDetail(subjectId.value, true);
+        const res = await examApi.getSubjectDetail(subjectId.value, {findFav: true, isView: true});
         const {code, result} = res;
         if (code === 0) {
           subject.value = result;

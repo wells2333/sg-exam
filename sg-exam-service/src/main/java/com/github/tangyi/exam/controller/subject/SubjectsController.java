@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.common.base.BaseController;
-import com.github.tangyi.common.constant.CommonConstant;
 import com.github.tangyi.common.excel.ExcelToolUtil;
 import com.github.tangyi.common.log.OperationType;
 import com.github.tangyi.common.log.SgLog;
@@ -31,11 +30,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
@@ -55,8 +52,9 @@ public class SubjectsController extends BaseController {
 	@GetMapping("/{id}")
 	@Operation(summary = "获取题目信息", description = "根据题目id获取题目详细信息")
 	public R<SubjectDto> subject(@PathVariable Long id,
-			@RequestParam(value = "findFav", required = false, defaultValue = "false") boolean findFav) {
-		SubjectDto dto = subjectsService.getSubject(id);
+			@RequestParam(value = "findFav", required = false, defaultValue = "false") boolean findFav,
+			@RequestParam(value = "isView", required = false, defaultValue = "false") boolean isView) {
+		SubjectDto dto = subjectsService.getSubject(id, isView);
 		if (dto != null && findFav) {
 			subjectFavoritesService.findUserFavorites(Collections.singletonList(dto));
 		}
@@ -69,22 +67,15 @@ public class SubjectsController extends BaseController {
 			@RequestParam(value = PAGE, required = false, defaultValue = PAGE_DEFAULT) int pageNum,
 			@RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize,
 			@RequestParam(value = "findFav", required = false, defaultValue = "false") boolean findFav,
+			@RequestParam(value = "findView", required = false, defaultValue = "false") boolean findView,
 			SubjectDto subject) {
-		return R.success(subjectsService.findPage(condition, pageNum, pageSize, findFav, subject));
+		return R.success(subjectsService.findPage(condition, pageNum, pageSize, findFav, findView, subject));
 	}
 
 	@GetMapping("getSubjectCountByCategoryId")
 	@Operation(summary = "获取题目数量")
 	public R<Integer> getSubjectCount(@RequestParam Long categoryId) {
 		return R.success(subjectsService.findSubjectCountByCategoryId(categoryId));
-	}
-
-	@GetMapping("getSubjectCountByCategoryIds")
-	@Operation(summary = "批量获取题目数量")
-	public R<Map<Long, Integer>> getSubjectCounts(@RequestParam String categoryIds) {
-		List<Long> list = Arrays.stream(categoryIds.split(CommonConstant.COMMA)).distinct().map(Long::valueOf)
-				.collect(Collectors.toList());
-		return R.success(subjectsService.findSubjectCountByCategoryIds(list));
 	}
 
 	@PostMapping

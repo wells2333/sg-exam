@@ -25,7 +25,7 @@
         </view>
       </view>
       <view>
-        <a href="#" @click="handleStart" :class="item.chargeType === 0 ? 'charge-free' : 'charge-free charge-no-free'">{{item.chargeType === 0 ? '免费' : '$' + item.chargePrice}}</a>
+        <a href="#" @click="handleStart" :class="item.chargeType === 0 ? 'charge-free' : 'charge-free charge-no-free'">{{item.chargeType === 0 || item.chargePrice === null ? '免费' : '$' + item.chargePrice}}</a>
       </view>
     </view>
   </view>

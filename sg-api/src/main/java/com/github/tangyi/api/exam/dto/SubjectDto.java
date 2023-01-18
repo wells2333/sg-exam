@@ -128,4 +128,9 @@ public class SubjectDto extends BaseEntity<SubjectDto> {
 	 * 是否已收藏
 	 */
 	private boolean favorite;
+
+	/**
+	 * 查看次数
+	 */
+	private String views;
 }

@@ -140,8 +140,9 @@ export default {
 
     async function init() {
       try {
-        Taro.showLoading();
+        await Taro.showLoading();
         await fetchBanners();
+        await fetchPopularCourses();
       } finally {
         Taro.hideLoading();
       }
@@ -169,23 +170,12 @@ export default {
   },
   onLoad() {
     filterLogin().then(() => {}).catch(() => {
-      const indexUrl = '/pages/index/index';
-      Taro.reLaunch({url: indexUrl});
+      Taro.reLaunch({url: '/pages/index/index'});
     });
-  },
-  onShow() {
-    this.fetchPopularCourses();
   },
   onPullDownRefresh() {
     try {
       this.init();
-      this.fetchPopularCourses();
-    } finally {
-      Taro.stopPullDownRefresh();
-    }
-  },
-  onReachBottom() {
-    try {
     } finally {
       Taro.stopPullDownRefresh();
     }
