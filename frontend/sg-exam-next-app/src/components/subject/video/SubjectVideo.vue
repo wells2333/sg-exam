@@ -94,6 +94,6 @@ export default defineComponent({
   margin-top: 6px;
 }
 .short-answer-area {
-  margin: 10px 0 10px 0;
+
 }
 </style>

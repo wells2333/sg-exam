@@ -43,8 +43,8 @@
           </view>
           <view @click="handleClickSubject(item)">
             <view class="subject-list-item-top">
-              <view class="subject-list-item-name">
-                <h4>{{item.subjectName}}</h4>
+              <view class="subject-title">
+                <text>{{item.subjectName}}</text>
               </view>
             </view>
             <view class="subject-list-item-bottom">
@@ -65,7 +65,7 @@ import Taro from "@tarojs/taro";
 import {onMounted, ref} from 'vue';
 import examApi from '../../api/exam.api';
 import api from "../../api/api";
-import {successMessage} from "../../utils/util";
+import {successMessage, warnMessage} from "../../utils/util";
 
 export default {
   setup() {
@@ -81,7 +81,7 @@ export default {
 
     async function fetch(append = false) {
       if (!hasNextPage.value) {
-        successMessage('无更多数据');
+        await warnMessage('无更多数据');
         return;
       }
       await Taro.showLoading();
@@ -164,7 +164,7 @@ export default {
       const res = await examApi.favoriteSubject(id, item.id, type);
       const {code} = res;
       if (code === 0) {
-        successMessage(text + '成功');
+        await successMessage(text + '成功');
       }
     }
 
@@ -262,14 +262,5 @@ export default {
 .home-item-left .label {
   margin-top: 4px;
   margin-bottom: 4px;
-}
-.subject-views {
-  margin-right: 10px;
-}
-
-.subject-views-text {
-  margin-right: 10px;
-  font-size: 12px;
-  color: #AAAAAA;
 }
 </style>

@@ -49,15 +49,15 @@
               </view>
             </view>
           </view>
-          <view class="answer-text">
-            <text>参考答案：</text>
+          <view class="answer-text" v-if="item.subject.answer.answer !== undefined && item.subject.answer.answer !== null">
+            <text class="answer-text-title">答案：</text>
             <text class="answer-text-value">
               {{ item.subject.answer.answer }}
             </text>
           </view>
-          <view class="answer-text answer-text-analysis">
+          <view class="answer-text answer-text-analysis" v-if="item.subject.analysis !== undefined && item.subject.analysis !== null">
             <view>
-              <text>解析：</text>
+              <text class="answer-text-title">解析：</text>
             </view>
             <view>
               <wxparse class="answer-text-value" :html="item.subject.analysis" key={Math.random()} />

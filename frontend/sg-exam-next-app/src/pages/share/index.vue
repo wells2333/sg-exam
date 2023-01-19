@@ -1,3 +1,3 @@
 <template>
-  dddd
+ <view></view>
 </template>

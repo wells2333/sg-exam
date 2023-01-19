@@ -12,6 +12,7 @@ import com.github.tangyi.common.log.SgLog;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.exam.service.RankInfoService;
+import com.github.tangyi.exam.service.data.SubjectViewCounterService;
 import com.github.tangyi.exam.service.exam.ExaminationActionService;
 import com.github.tangyi.exam.service.fav.SubjectFavoritesService;
 import com.github.tangyi.exam.service.subject.SubjectsService;
@@ -25,6 +26,7 @@ import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @AllArgsConstructor
@@ -42,6 +44,8 @@ public class AnswerController extends BaseController {
 	private final RankInfoService rankInfoService;
 
 	private final SubjectFavoritesService subjectFavoritesService;
+
+	private final SubjectViewCounterService subjectViewCounterService;
 
 	@GetMapping("/{id}")
 	@Operation(summary = "获取答题信息")
@@ -134,10 +138,19 @@ public class AnswerController extends BaseController {
 	@Operation(summary = "根据分类ID获取下一题")
 	public R<SubjectDto> nextSubjectByCategoryId(@RequestParam Long categoryId, @RequestParam Long subjectId,
 			@RequestParam Integer nextType,
-			@RequestParam(value = "findFav", required = false, defaultValue = "false") boolean findFav) {
+			@RequestParam(value = "findFav", required = false, defaultValue = "false") boolean findFav,
+			@RequestParam(value = "isView", required = false, defaultValue = "false") boolean isView) {
 		SubjectDto dto = subjectsService.nextSubjectByCategoryId(categoryId, subjectId, nextType);
-		if (dto != null && findFav) {
-			subjectFavoritesService.findUserFavorites(Collections.singletonList(dto));
+		Optional.ofNullable(dto).ifPresent(e -> {
+
+		});
+		if (dto != null) {
+			if (findFav) {
+				subjectFavoritesService.findUserFavorites(Collections.singletonList(dto));
+			}
+			if (isView) {
+				dto.setViews(subjectViewCounterService.viewSubject(dto.getId()).toString());
+			}
 		}
 		return R.success(dto);
 	}

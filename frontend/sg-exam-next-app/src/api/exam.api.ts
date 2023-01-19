@@ -40,7 +40,8 @@ class examApi {
             categoryId,
             subjectId,
             nextType,
-            findFav: true
+            findFav: true,
+            isView: true
         }, "GET")
     }
 

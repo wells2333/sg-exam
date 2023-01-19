@@ -30,13 +30,13 @@
               <judgement :subject="refItem(item)" :disabled="true" :answer="item.answer !== undefined ? item.answer.answer: undefined"></judgement>
             </view>
           </view>
-          <view class="answer-text">
-            <text>参考答案：</text>
+          <view class="answer-text" v-if="item.answer !== undefined && item.answer !== null">
+            <text class="answer-text-title">答案：</text>
             <text class="answer-text-value">
-              {{ item.answer !== undefined ? item.answer.answer : '' }}
+              {{ item.answer.answer}}
             </text>
           </view>
-          <view class="answer-text answer-text-analysis">
+          <view class="answer-text answer-text-analysis" v-if="item.analysis !== undefined && item.analysis !== null">
             <view>
               <text>解析：</text>
             </view>

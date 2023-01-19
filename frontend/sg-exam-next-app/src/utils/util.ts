@@ -70,18 +70,18 @@ export const getDuration = (start, end) => {
     }
 }
 
-export const successMessage = (msg: string = '操作成功', duration: number = 800) => {
-    Taro.atMessage({
-        message: msg,
-        type: 'success',
-        duration: duration
+export const successMessage = async (msg: string = '操作成功', duration: number = 500) => {
+    await Taro.showToast({
+        title: msg,
+        icon: 'success',
+        duration
     });
 }
 
-export const warnMessage = (msg: string = '操作失败', duration: number = 800) => {
-    Taro.atMessage({
-        message: msg,
-        type: 'warning',
-        duration: duration
+export const warnMessage = async (msg: string = '操作失败', duration: number = 500) => {
+    await Taro.showToast({
+        title: msg,
+        icon: 'error',
+        duration
     });
 }

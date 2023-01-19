@@ -5,6 +5,10 @@
       <view class="subject-content bg-white">
         <view class="subject-detail-type-label subject-list-item-label">
           <at-tag size="small" type="primary">{{ subject.typeLabel }}</at-tag>
+          <view>
+            <AtIcon class="subject-views" value='eye' size='8' color="#AAAAAA"></AtIcon>
+            <text class="subject-views-text">{{subject.views}}</text>
+          </view>
         </view>
         <view class="subject-title">
           <wxparse class="subject-title-content" :html="subject.subjectName" key={Math.random()}></wxparse>
@@ -28,14 +32,14 @@
             <subject-video ref="videoRef" :subject="subject"></subject-video>
           </view>
           <view class="answer-text">
-            <text>答案：</text>
+            <text class="answer-text-title">答案：</text>
             <text class="answer-text-value">
               {{ subject.answer !== undefined ? subject.answer.answer : '' }}
             </text>
           </view>
           <view class="answer-text answer-text-analysis" v-if="subject.analysis !== undefined && subject.analysis !== null">
             <view>
-              <text>解析：</text>
+              <text class="answer-text-title">解析：</text>
             </view>
             <view>
               <wxparse class="answer-text-value" :html="subject.analysis" key={Math.random()} />
@@ -61,7 +65,7 @@
 
 <script lang="ts">
 import Taro from "@tarojs/taro";
-import {onMounted, ref, unref} from 'vue';
+import {onMounted, ref} from 'vue';
 import examApi from '../../api/exam.api';
 import {Choice} from '../../components/subject/choice/index';
 import {Judgement} from '../../components/subject/judgement/index';
@@ -94,6 +98,7 @@ export default {
         const {code, result} = res;
         if (code === 0) {
           subject.value = result;
+          updateAnswerValue();
         }
       } finally {
         Taro.hideLoading();
@@ -112,24 +117,20 @@ export default {
       const res = await examApi.favoriteSubject(id, item.id, type);
       const {code} = res;
       if (code === 0) {
-        successMessage(text + '成功');
+        await successMessage(text + '成功');
       }
     }
 
     async function handleNext(nextType: string = '0') {
-      await Taro.showLoading();
-      try {
-        const res = await examApi.getNextSubjectByCategoryId(subject.value.categoryId, subject.value.id, nextType);
-        if (res.code === 0) {
-          if (res.result !== null) {
-            subject.value = res.result;
-            updateSubjectRef();
-          } else {
-            warnMessage('无更多数据');
-          }
+      const res = await examApi.getNextSubjectByCategoryId(subject.value.categoryId, subject.value.id, nextType);
+      if (res.code === 0) {
+        if (res.result !== null) {
+          subject.value = res.result;
+          updateAnswerValue();
+          updateSubjectRef();
+        } else {
+          await warnMessage('无更多数据');
         }
-      } finally {
-        Taro.hideLoading();
       }
     }
 
@@ -149,10 +150,14 @@ export default {
           ref = videoRef;
         }
         if (ref != undefined) {
-          setTimeout(() => {
-            ref.value.update(subject);
-          }, 50);
+          ref.value.update(subject);
         }
+      }
+    }
+
+    function updateAnswerValue() {
+      if (subject.value.answer !== undefined && subject.value.answer !== null) {
+        subject.value.answerValue = subject.value.answer.answer;
       }
     }
 
@@ -188,7 +193,11 @@ export default {
   justify-content: space-between;
 }
 .fav-fab {
-  float: right;
+  position: absolute;
+  bottom: 200px;
+  right: 0;
+  width: 38px;
+  height: 38px;
   margin-right: 10px;
 }
 .fav-fab .fav-fab-fav::before {

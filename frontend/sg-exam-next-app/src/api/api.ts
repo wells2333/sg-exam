@@ -153,9 +153,9 @@ class api {
                 method,
                 header: { 'Authorization': token, 'Tenant-Code': tenantCode },
                 success: res => {
-                    const { code } = res.data;
+                    const { code, result } = res.data;
                     // token 失效
-                    if (code === 401) {
+                    if (code === 1 && result === 401) {
                         Taro.clearStorageSync();
                         Taro.reLaunch({ url: "/pages/index/index" })
                     } else {

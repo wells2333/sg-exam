@@ -35,7 +35,7 @@ import examApi from '../../api/exam.api';
 import operationApi from '../../api/operation.api';
 import Taro from "@tarojs/taro";
 import {shardMessage} from '../../constant/constant';
-import {filterLogin} from "../../utils/filter";
+import {checkLogin} from "../../utils/filter";
 import {CourseItem} from '../../components/course-item';
 import {successMessage} from "../../utils/util";
 
@@ -169,9 +169,7 @@ export default {
     };
   },
   onLoad() {
-    filterLogin().then(() => {}).catch(() => {
-      Taro.reLaunch({url: '/pages/index/index'});
-    });
+    checkLogin();
   },
   onPullDownRefresh() {
     try {

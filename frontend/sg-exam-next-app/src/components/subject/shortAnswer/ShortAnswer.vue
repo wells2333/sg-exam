@@ -1,7 +1,7 @@
 <template>
   <view v-bind="$attrs">
-    <view class="short-answer-area">
-      <at-textarea :value="value" v-if="showInput" @change="handleChange" placeholder="请输入" :disabled="disabled" :max-length="maxLength"/>
+    <view class="short-answer-area" v-if="showInput">
+      <at-textarea :value="value" @change="handleChange" placeholder="请输入" :disabled="disabled" :max-length="maxLength"/>
     </view>
   </view>
 </template>
@@ -95,6 +95,6 @@ export default defineComponent({
 </script>
 <style>
 .short-answer-area {
-  padding-bottom: 8px;
+
 }
 </style>
