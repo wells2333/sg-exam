@@ -1,56 +1,56 @@
 <template>
-  <AtMessage/>
   <view v-show="!loading">
-    <view class="mg-6 home-view-tips">题库信息</view>
-    <view v-if="categoryInfo !== undefined">
-      <view class='at-article__section'>
-        <text class="at-article__h3">题库名称：{{categoryInfo.categoryName}}</text>
-      </view>
-      <view class='at-article__section'>
-        <text class="at-article__h3">题目数量：</text>
-        <at-tag class="label" type="primary" size="small">共{{categoryInfo.subjectCnt}}题</at-tag>
-      </view>
-      <view class='at-article__section'>
-        <text class="at-article__h3">更新时间：{{categoryInfo.updateTime}}</text>
-      </view>
-      <view class='at-article__section'>
-        <text class="at-article__p" v-if="categoryInfo.categoryDesc !== null">题库描述：{{categoryInfo.categoryDesc}}</text>
-      </view>
-    </view>
-    <view v-if="categories.length > 0">
-      <view class="mg-6 mg-top-10 mg-bottom-10 home-view-tips">子题库</view>
-      <view class="mg-6 home-content">
-        <view class="home-item" v-for="(item, idx) in categories" :key="idx" @click="handleClickCate(item)">
-          <view class="home-item-left">
-            <text>{{item.categoryName}}</text>
-            <at-tag class="label" type="primary" size="small">共{{item.subjectCnt}}题</at-tag>
-          </view>
-          <AtIcon class="home-item-right" value='chevron-right' size='8' color='#346FC2'></AtIcon>
+    <view class="bg-white">
+      <view class="mg-8 home-view-tips">题库信息</view>
+      <view v-if="categoryInfo !== undefined">
+        <view class='subjects-item-desc'>
+          <text>题库名称：{{categoryInfo.categoryName}}</text>
+        </view>
+        <view class='subjects-item-desc'>
+          <text>题目数量：共 {{categoryInfo.subjectCnt}} 题</text>
+        </view>
+        <view class='subjects-item-desc'>
+          <text>更新时间：{{categoryInfo.updateTime}}</text>
+        </view>
+        <view class='subjects-item-desc'>
+          <text v-if="categoryInfo.categoryDesc !== null">题库描述：{{categoryInfo.categoryDesc}}</text>
         </view>
       </view>
-    </view>
-    <view v-if="list.length > 0">
-      <view class="mg-6 mg-top-10 mg-bottom-10 home-view-tips">题目列表</view>
-      <view class="mg-6">
-        <view class="subject-list-item" v-for="item in list">
-          <view class="subject-list-item-label">
-            <at-tag type="primary" size="small">{{item.typeLabel}}</at-tag>
-            <view>
-              <AtIcon class="subject-views" value='eye' size='8' color="#AAAAAA"></AtIcon>
-              <text class="subject-views-text">{{item.views}}</text>
-              <AtIcon value='star-2' size='8' :color="item.favorite === true ? '#FFC82C': '#AAAAAA'" @click="handleFavSubject(item)"></AtIcon>
+      <view v-if="categories.length > 0">
+        <view class="mg-8 mg-top-10 mg-bottom-10 home-view-tips">子题库</view>
+        <view class="mg-8 home-content">
+          <view class="home-item gray-border" v-for="(item, idx) in categories" :key="idx" @click="handleClickCate(item)">
+            <view class="home-item-left">
+              <text>{{item.categoryName}}</text>
+              <at-tag class="label" type="primary" size="small">共{{item.subjectCnt}}题</at-tag>
             </view>
+            <AtIcon class="home-item-right" value='chevron-right' size='8' color='#346FC2'></AtIcon>
           </view>
-          <view @click="handleClickSubject(item)">
-            <view class="subject-list-item-top">
-              <view class="subject-title">
-                <text>{{item.subjectName}}</text>
+        </view>
+      </view>
+      <view v-if="list.length > 0">
+        <view class="mg-8 mg-top-10 mg-bottom-10 home-view-tips">题目列表</view>
+        <view class="bg-gray mg-8">
+          <view class="bg-white gray-border subject-list-item" v-for="item in list">
+            <view class="subject-list-item-label">
+              <at-tag type="primary" size="small">{{item.typeLabel}}</at-tag>
+              <view>
+                <AtIcon class="subject-views" value='eye' size='8' color="#AAAAAA"></AtIcon>
+                <text class="subject-views-text">{{item.views}}</text>
+                <AtIcon value='star-2' size='8' :color="item.favorite === true ? '#FFC82C': '#AAAAAA'" @click="handleFavSubject(item)"></AtIcon>
               </view>
             </view>
-            <view class="subject-list-item-bottom">
-              <view class="subject-list-item-level">
-                <text>难度：</text>
-                <at-rate :size="16" :value="item.level"/>
+            <view @click="handleClickSubject(item)">
+              <view class="subject-list-item-top">
+                <view class="subject-title">
+                  <text>{{item.subjectName}}</text>
+                </view>
+              </view>
+              <view class="subject-list-item-bottom">
+                <view class="subject-list-item-level color-gray">
+                  <text>难度：</text>
+                  <at-rate :size="16" :value="item.level"/>
+                </view>
               </view>
             </view>
           </view>
@@ -203,12 +203,9 @@ export default {
 
 <style>
 .subject-list-item {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   padding: 6px;
-}
-
-.subject-list-item:nth-child(odd) {
-  background-color: #FAFBFC;
+  border-radius: 10px;
 }
 
 .subject-list-item-top, .subject-list-item-bottom {
@@ -219,11 +216,9 @@ export default {
 .subject-list-item-label {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 6px;
 }
 
 .subject-list-item-level {
-  margin-top: 10px;
   margin-bottom: 6px;
   display: inline-flex;
   font-size: 12px;
@@ -246,7 +241,6 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  border: 1px solid #e2e2e2;
   align-items: center;
 }
 .home-item:nth-child(odd) {
@@ -259,8 +253,15 @@ export default {
   flex-direction: column;
   padding-left: 22px;
 }
+
 .home-item-left .label {
   margin-top: 4px;
   margin-bottom: 4px;
+}
+
+.subjects-item-desc {
+  font-size: 15px;
+  color: gray;
+  margin-left: 12px;
 }
 </style>

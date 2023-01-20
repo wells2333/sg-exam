@@ -33,7 +33,6 @@ function updatePackageJson() {
 }
 
 function build_web() {
-  # build web
   echo "start to build web"
   # shellcheck disable=SC2164
   cd frontend/sg-exam-app
@@ -43,7 +42,6 @@ function build_web() {
 }
 
 function build_admin() {
-  # build admin
   echo "start to build admin"
   # shellcheck disable=SC2164
   cd frontend/sg-exam-next-admin
@@ -53,7 +51,6 @@ function build_admin() {
 }
 
 function build_app() {
-  # build app
   echo "start to build app"
   # shellcheck disable=SC2164
   cd frontend/sg-exam-next-app
@@ -69,7 +66,6 @@ function build_frontend() {
 }
 
 function build_service() {
-  # build service
   echo "start to build service"
   chmod 764 gradlew
   ./gradlew clean
@@ -87,14 +83,12 @@ function push_service() {
 }
 
 function start_service() {
-  # pull image
   echo "start to pull image"
   docker-compose pull
   echo "start to start service with config"
   docker-compose config
   docker-compose up --remove-orphans --no-build -d
   echo "start service finished"
-  # ps
   docker ps
   # tail logs
   logs

@@ -1,5 +1,4 @@
 <template>
-  <AtMessage/>
   <view>
     <view class="banner-swiper-view">
       <swiper
@@ -22,10 +21,10 @@
     <view class="home-view">
       <view class="home-view-tips">热门题库</view>
       <view class="home-content">
-        <view class="home-item" v-for="(item, idx) in gridData" :key="idx" @click="handleClickCate(item)">
+        <view class="home-item gray-border" v-for="(item, idx) in gridData" :key="idx" @click="handleClickCate(item)">
           <view class="home-item-left">
             <text>{{item.value}}</text>
-            <at-tag class="label" type="primary" size="small">共{{item.subjectCnt}}题</at-tag>
+            <at-tag class="label" type="primary" size="small">共 {{item.subjectCnt}} 题</at-tag>
           </view>
           <AtIcon class="home-item-right" value='chevron-right' size='8' color='#346FC2'></AtIcon>
         </view>
@@ -144,7 +143,6 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  border: 1px solid #e2e2e2;
   align-items: center;
 }
 .home-item:nth-child(odd) {
