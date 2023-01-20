@@ -31,13 +31,14 @@
   <section class="input"></section>
 </template>
 <script lang="ts">
-import {ref, unref} from 'vue';
+import {ref} from 'vue';
 import Taro from "@tarojs/taro"
 import api from "../../api/api";
 import authApi from "../../api/auth.api";
 import userApi from "../../api/user.api";
 import studySvg from "../../assert/study_v3.svg";
 import {shardMessage, TENANT_CODE} from "../../constant/constant";
+import {showLoading, hideLoading, successMessage, warnMessage} from '../../utils/util';
 
 export default {
   setup() {
@@ -47,43 +48,40 @@ export default {
       tenantCode.value = value;
     }
 
-    // 用户授权登录
     async function getUserProfile() {
       wx.getUserProfile({
         desc: '用于完善用户资料',
         success: (res) => {
           const {userInfo} = res;
           const {nickName, gender, avatarUrl} = userInfo;
-          Taro.showLoading({title: '登录中'})
+          showLoading('登录中');
           Taro.login({
             success: async (data) => {
-              if (tenantCode.value === '') {
-                handleTenantCode(TENANT_CODE);
+              let tenantCodeValue = tenantCode.value;
+              if (tenantCodeValue === '') {
+                tenantCodeValue = TENANT_CODE;
               }
               const {code} = data;
-              const loginResult = await authApi.wxlogin(unref(tenantCode), code, {name: nickName, gender, avatarUrl});
+              const loginResult = await authApi.wxlogin(tenantCodeValue, code, {name: nickName, gender, avatarUrl});
               if (loginResult.code === 0 && loginResult.result) {
                 api.setTenantCode(loginResult.result.tenantCode);
                 api.setToken(loginResult.result.token);
                 const {result} = await userApi.userInfo();
                 api.setUserInfo(result);
-                Taro.showToast({title: '登录成功'});
-                Taro.reLaunch({url: "/pages/home/index"})
+                await successMessage('登录成功');
+                await Taro.reLaunch({url: "/pages/home/index"})
               } else {
-                Taro.showToast({title: '登录失败'});
+                await warnMessage('登录失败');
               }
-              Taro.hideLoading();
+              hideLoading();
             },
-            fail: () => {
-              Taro.showToast({title: '登录失败'});
-            },
-            timeout: () => {
-              Taro.showToast({title: '登录超时'});
+            fail: async () => {
+              await warnMessage('登录失败');
             }
           })
         },
-        fail: () => {
-          Taro.showToast({title: '授权失败'});
+        fail: async () => {
+          await warnMessage('授权失败');
         }
       });
     }

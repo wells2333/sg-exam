@@ -1,6 +1,6 @@
 {
   "name": "sg-exam-next-app",
-  "version": "5.0.8",
+  "version": "5.0.9",
   "private": true,
   "description": "sg-exam-next-app",
   "templateInfo": {
@@ -32,7 +32,7 @@
     "ios >= 8"
   ],
   "author": "tangyi",
-  "license": "MIT",
+  "license": "Apache2.0",
   "dependencies": {
     "@babel/runtime": "^7.7.7",
     "@nutui/nutui-taro": "^3.1.8",

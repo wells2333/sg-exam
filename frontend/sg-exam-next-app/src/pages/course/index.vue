@@ -15,6 +15,7 @@ import Taro from "@tarojs/taro";
 import {onMounted, ref} from 'vue';
 import examApi from '../../api/exam.api';
 import {CourseItem} from '../../components/course-item';
+import {showLoading, hideLoading} from '../../utils/util';
 
 export default {
   components: {
@@ -49,10 +50,10 @@ export default {
 
     async function init() {
       try {
-        Taro.showLoading();
+        await showLoading();
         await fetch();
       } finally {
-        Taro.hideLoading();
+        hideLoading();
       }
     }
     onMounted(() => {

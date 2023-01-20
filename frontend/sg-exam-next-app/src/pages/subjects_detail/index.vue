@@ -72,7 +72,7 @@ import {Judgement} from '../../components/subject/judgement/index';
 import {ShortAnswer} from '../../components/subject/shortAnswer/index';
 import {SubjectVideo} from '../../components/subject/video/index';
 import api from "../../api/api";
-import {successMessage, warnMessage} from "../../utils/util";
+import {successMessage, showNoMoreData, showLoading, hideLoading} from "../../utils/util";
 
 export default {
   components: {
@@ -82,7 +82,7 @@ export default {
     'subject-video': SubjectVideo
   },
   setup() {
-    const params = Taro.getCurrentInstance().router.params;
+    const params = Taro.getCurrentInstance().router?.params;
     const subjectId = ref<string>(params.id);
     const subject = ref<object>(undefined);
     const choiceRef = ref<any>(undefined);
@@ -92,7 +92,7 @@ export default {
     const videoRef = ref<any>(undefined);
 
     async function fetch() {
-      await Taro.showLoading();
+      await showLoading();
       try {
         const res = await examApi.getSubjectDetail(subjectId.value, {findFav: true, isView: true});
         const {code, result} = res;
@@ -101,7 +101,7 @@ export default {
           updateAnswerValue();
         }
       } finally {
-        Taro.hideLoading();
+        hideLoading();
       }
     }
 
@@ -129,7 +129,7 @@ export default {
           updateAnswerValue();
           updateSubjectRef();
         } else {
-          await warnMessage('无更多数据');
+          await showNoMoreData();
         }
       }
     }

@@ -10,7 +10,7 @@ export const filterLogin = () => {
         }
         const res = await validToken.validToken(token);
         const {code, result} = res;
-        if (code != 0 || result === false) {
+        if (code !== 0 || result === false) {
             reject(false)
         }
         resolve(true)

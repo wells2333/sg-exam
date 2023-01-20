@@ -68,13 +68,14 @@ import api from "../../api/api";
 import recordApi from '../../api/record.api';
 import Taro from '@tarojs/taro';
 import {examTypeTagList} from '../../constant/constant';
+import {showNoMoreData, showLoading, hideLoading} from '../../utils/util';
 
 export default {
   setup() {
     const currentInstance = Taro.getCurrentInstance();
-    const params = currentInstance.router.params;
+    const params = currentInstance.router?.params;
     let type = 0;
-    if (params.type !== undefined) {
+    if (params !== undefined && params.type !== undefined) {
       type = Number(params.type);
     }
     const current = ref<number>(type);
@@ -86,7 +87,7 @@ export default {
 
     async function fetch(type, examinationName = "", append = true) {
       if (!unref(hasNextPageRef)) {
-        Taro.showToast({title: '无更多数据', icon: 'none', duration: 1500});
+        await showNoMoreData();
         return;
       }
       if (loading.value) {
@@ -94,9 +95,9 @@ export default {
       }
       const {id} = api.getUserInfo();
       loading.value = true;
-      Taro.showLoading({title: '加载中'})
+      await showLoading();
       try {
-        const recordsRes = await recordApi.userRecords(id, {type});
+        const recordsRes = await recordApi.userRecords(id, {type, examinationName});
         const {code, result} = recordsRes
         if (code === 0) {
           const {list, hasNextPage, nextPage} = result;
@@ -109,7 +110,7 @@ export default {
           nextPageRef.value = nextPage;
         }
       } finally {
-        Taro.hideLoading();
+        hideLoading();
         loading.value = false;
       }
     }
@@ -162,11 +163,11 @@ export default {
 
     async function init() {
       try {
-        Taro.showLoading();
+        await showLoading();
         resetPage();
         await fetch(unref(current), "", false);
       } finally {
-        Taro.hideLoading();
+        hideLoading();
       }
     }
     onMounted(() => {

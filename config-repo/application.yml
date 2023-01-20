@@ -3,7 +3,6 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
   servlet:
-    # 文件上传配置
     multipart:
       # 单个文件的最大大小
       max-file-size: 100MB
@@ -12,7 +11,6 @@ spring:
   jackson:
     time-zone: GMT+8
 
-# mybatis配置
 mybatis:
   type-aliases-package: com.github.tangyi.api
   configuration:
@@ -25,7 +23,6 @@ pagehelper:
   supportMethodsArguments: true
   params: count=countSql
 
-# 系统配置
 sys:
   adminUser: admin  # 管理员账号，默认是admin
   key: '1234567887654321'

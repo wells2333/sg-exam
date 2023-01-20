@@ -56,7 +56,7 @@ import api from "../../api/api";
 import {Choice} from '../../components/subject/choice/index';
 import {Judgement} from '../../components/subject/judgement/index';
 import {ShortAnswer} from '../../components/subject/shortAnswer/index';
-import {successMessage} from "../../utils/util";
+import {showLoading, hideLoading, successMessage} from '../../utils/util';
 
 export default {
   components: {
@@ -78,7 +78,7 @@ export default {
 
     async function fetch() {
       try {
-        Taro.showLoading({title: '加载中'});
+        await showLoading();
         examination.value = api.getExamination();
         const params = currentInstance.router.params;
         recordId.value = params.recordId;
@@ -88,7 +88,7 @@ export default {
           subjects.value = subjectResult.result;
         }
       } finally {
-        Taro.hideLoading();
+        hideLoading();
       }
     }
 
@@ -152,16 +152,16 @@ export default {
 
     async function handleConfirmSubmitModal() {
       try {
-        Taro.showLoading({title: '提交中'});
+        await showLoading('提交中');
         const data = ref<any>([]);
         unref(subjects).forEach(subject => {
           let {id, answerValue} = subject;
           data.value.push({examRecordId: recordId.value, subjectId: id, answer: answerValue});
         })
         await examApi.submitAllSubjects(data.value);
-        Taro.showToast({title: '提交成功'});
+        await successMessage('提交成功');
       } finally {
-        Taro.hideLoading();
+        hideLoading();
         handleCloseSubmitModal();
         setTimeout(() => {
           Taro.redirectTo({url: "/pages/record/index?type=" + examination.value.type})
@@ -181,7 +181,7 @@ export default {
       const res = await examApi.favoriteSubject(id, item.id, type);
       const {code} = res;
       if (code === 0) {
-        successMessage(text + '成功');
+        await successMessage(text + '成功');
       }
     }
 

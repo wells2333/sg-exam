@@ -67,7 +67,7 @@ import Taro from "@tarojs/taro";
 import {Choice} from '../../components/subject/choice/index';
 import {Judgement} from '../../components/subject/judgement/index';
 import {ShortAnswer} from '../../components/subject/shortAnswer/index';
-import {successMessage} from "../../utils/util";
+import {successMessage} from '../../utils/util';
 
 export default {
   components: {
@@ -168,7 +168,7 @@ export default {
       const res = await examApi.favoriteSubject(id, item.id, type);
       const {code} = res;
       if (code === 0) {
-        successMessage(text + '成功');
+        await successMessage(text + '成功');
       }
     }
 

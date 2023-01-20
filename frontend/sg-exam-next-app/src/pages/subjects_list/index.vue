@@ -65,7 +65,7 @@ import Taro from "@tarojs/taro";
 import {onMounted, ref} from 'vue';
 import examApi from '../../api/exam.api';
 import api from "../../api/api";
-import {successMessage, warnMessage} from "../../utils/util";
+import {successMessage, showNoMoreData, showLoading, hideLoading} from "../../utils/util";
 
 export default {
   setup() {
@@ -81,10 +81,10 @@ export default {
 
     async function fetch(append = false) {
       if (!hasNextPage.value) {
-        await warnMessage('无更多数据');
+        await showNoMoreData();
         return;
       }
-      await Taro.showLoading();
+      await showLoading();
       try {
         const res = await examApi.getSubjects({categoryId, page: page.value, pageSize: pageSize.value, findFav: true, findView: true});
         const {code, result} = res;
@@ -99,7 +99,7 @@ export default {
           }
         }
       } finally {
-       Taro.hideLoading();
+       hideLoading();
       }
     }
 

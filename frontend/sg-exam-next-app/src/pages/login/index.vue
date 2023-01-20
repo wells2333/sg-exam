@@ -41,6 +41,7 @@ import authApi from "../../api/auth.api";
 import sendSms from '../../api/user.api';
 import userApi from '../../api/user.api';
 import {shardMessage, TENANT_CODE} from "../../constant/constant";
+import {showLoading, hideLoading, successMessage, warnMessage} from '../../utils/util';
 
 export default {
   setup() {
@@ -76,18 +77,18 @@ export default {
       if (validatePhoneValue()) {
         await sendSms.sendSms(phoneVal);
         countDown();
-        Taro.showToast({title: '短信发送成功'});
+        await successMessage('发送成功');
       }
     }
 
     function validatePhoneValue() {
       const phoneVal = unref(phone);
       if (phoneVal === '') {
-        Taro.showToast({title: '请输入手机号', icon: 'error'});
+        warnMessage('请输入手机号');
         return false;
       }
       if (!(/^1[34578]\d{9}$/.test(phoneVal))) {
-        Taro.showToast({title: '手机号格式错误', icon: 'error'});
+        warnMessage('手机号格式错误');
         return false;
       }
       return true;
@@ -96,11 +97,11 @@ export default {
     function validateSmsValue() {
       const smsVal = unref(sms);
       if (smsVal === '') {
-        Taro.showToast({title: '请输入验证码', icon: 'error'});
+        warnMessage('请输入验证码');
         return false;
       }
       if (smsVal.length !== 4) {
-        Taro.showToast({title: '请输入长度为4的验证码', icon: 'error'});
+        warnMessage('请输入长度为4的验证码');
         return false;
       }
       return true;
@@ -109,7 +110,7 @@ export default {
     async function handleLogin() {
       if (validatePhoneValue() && validateSmsValue()) {
         const phoneVal = unref(phone);
-        Taro.showLoading({title: '登录中'})
+        await showLoading('登录中');
         try {
           if (tenantCode.value === '') {
             handleTenantCode(TENANT_CODE);
@@ -125,13 +126,13 @@ export default {
             api.setToken(loginResult.result.token);
             const {result} = await userApi.userInfo();
             api.setUserInfo(result);
-            Taro.showToast({title: '登录成功'});
+            await successMessage('登录成功');
             Taro.reLaunch({url: "/pages/home/index"})
           } else {
-            Taro.showToast({title: loginResult.message, icon: 'error'});
+            await warnMessage(loginResult.message);
           }
         } finally {
-          Taro.hideLoading();
+          hideLoading();
         }
       }
     }

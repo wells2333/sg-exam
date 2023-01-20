@@ -93,6 +93,7 @@
 import Taro from "@tarojs/taro";
 import {onMounted, ref} from 'vue';
 import examApi from '../../api/exam.api';
+import {showLoading, hideLoading, successMessage, warnMessage} from '../../utils/util';
 
 export default {
   setup() {
@@ -146,7 +147,7 @@ export default {
     }
 
     async function handleSubmitEvaluate() {
-      if (!checkIsHasJoin()) {
+      if (!await checkIsHasJoin()) {
         return;
       }
       if (!isSubmitted.value) {
@@ -163,26 +164,17 @@ export default {
         const res = await examApi.addEvaluate(data);
         const {code} = res;
         if (code === 0) {
-          Taro.atMessage({
-            message: '提交成功',
-            type: 'success',
-          });
+          await successMessage('提交成功');
           await fetchEvaluate();
           setTimeout(() => {
             isSubmitted.value = false;
           }, 3000);
         } else {
-          Taro.atMessage({
-            message: '提交失败',
-            type: 'warning',
-          });
+          await warnMessage('提交失败');
           isSubmitted.value = false;
         }
       } else {
-        Taro.atMessage({
-          message: '请勿频繁提交',
-          type: 'warning',
-        });
+        await warnMessage('请勿频繁提交');
       }
     }
 
@@ -214,26 +206,17 @@ export default {
       const res = await examApi.joinCourse(courseId, type);
       const {code} = res;
       if (code === 0) {
-        Taro.atMessage({
-          message: joinText.value + '成功',
-          type: 'success',
-        });
+        await successMessage(joinText.value + '成功');
       } else {
-        Taro.atMessage({
-          message: joinText.value + '失败',
-          type: 'warning',
-        });
+        await warnMessage( joinText.value + '失败');
       }
       handleCloseJoinModal();
       await fetch();
     }
 
-    function checkIsHasJoin() {
+    async function checkIsHasJoin() {
       if (!isUserJoin.value) {
-        Taro.atMessage({
-          message: '请先报名',
-          type: 'warning',
-        });
+        await warnMessage( '请先报名');
         return false;
       }
       return true;
@@ -241,11 +224,11 @@ export default {
 
     async function init() {
       try {
-        Taro.showLoading();
+        await showLoading();
         await fetch();
         await fetchEvaluate();
       } finally {
-        Taro.hideLoading();
+        hideLoading();
       }
     }
 

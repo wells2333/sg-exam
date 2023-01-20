@@ -127,28 +127,28 @@ class api {
     }
 
     async fetchExam<T>(url: string, data: Object = {}, method: "GET" | "POST" = "POST") {
-        return this.fetch<T>(USER_SERVICE, url, data, method);
+        return this.fetch<T>(url, data, method);
     }
 
     async fetchUser<T>(url: string, data: Object = {}, method: "GET" | "POST" = "POST") {
-        return this.fetch<T>(USER_SERVICE, url, data, method);
+        return this.fetch<T>(url, data, method);
     }
 
     async uploadUser<T>(url: string, filePath: string, data: Object = {}) {
-        return this.upload<T>(USER_SERVICE, url, filePath, data);
+        return this.upload<T>(url, filePath, data);
     }
 
     async fetchAuth<T>(url: string, data: Object = {}, method: "GET" | "POST" = "POST") {
-        return this.fetch<T>(USER_SERVICE, url, data, method);
+        return this.fetch<T>(url, data, method);
     }
 
-    async fetch<T>(service: string, url: string, data: Object = {}, method: "GET" | "POST" = "POST") {
+    async fetch<T>(url: string, data: Object = {}, method: "GET" | "POST" = "POST") {
         let token: string = this.token || await Taro.getStorage({ key: 'token' }).then(el => el.data).catch(() => "")
         let tenantCode: string = this.tenantCode || await Taro.getStorage({ key: 'tenantCode' }).then(el => el.data).catch(() => "")
         return await new Promise<result<T>>((resolve, reject) => {
             Taro.request<result<T>>({
                 timeout: 1000 * 60,
-                url: service + url,
+                url: USER_SERVICE + url,
                 data,
                 method,
                 header: { 'Authorization': token, 'Tenant-Code': tenantCode },
@@ -163,7 +163,7 @@ class api {
                     }
                 },
                 fail: e => {
-                    Taro.showToast({ title: '服务器错误' })
+                    Taro.showToast({ title: '未知错误' });
                     Taro.hideLoading()
                     reject(e)
                 }
@@ -171,12 +171,12 @@ class api {
         })
     }
 
-    async upload<T>(service: string, url: string, filePath: string, data: Object = {}) {
+    async upload<T>(url: string, filePath: string, data: Object = {}) {
         let token: string = this.token || await Taro.getStorage({ key: 'token' }).then(el => el.data).catch(() => "")
         let tenantCode: string = this.tenantCode || await Taro.getStorage({ key: 'tenantCode' }).then(el => el.data).catch(() => "")
         return await new Promise<result<T>>((resolve, reject) => {
             Taro.uploadFile({
-                url: service + url,
+                url: USER_SERVICE + url,
                 filePath: filePath,
                 name: 'file',
                 header: { 'Authorization': token, 'Tenant-Code': tenantCode, 'content-type': 'multipart/form-data' },

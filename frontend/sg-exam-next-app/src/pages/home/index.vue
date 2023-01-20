@@ -37,7 +37,7 @@ import Taro from "@tarojs/taro";
 import {shardMessage} from '../../constant/constant';
 import {checkLogin} from "../../utils/filter";
 import {CourseItem} from '../../components/course-item';
-import {successMessage} from "../../utils/util";
+import {showLoading, hideLoading, successMessage} from '../../utils/util';
 
 export default {
   components: {
@@ -140,11 +140,11 @@ export default {
 
     async function init() {
       try {
-        await Taro.showLoading();
+        await showLoading();
         await fetchBanners();
         await fetchPopularCourses();
       } finally {
-        Taro.hideLoading();
+        hideLoading();
       }
     }
 

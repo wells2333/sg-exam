@@ -3,9 +3,6 @@ import Taro from "@tarojs/taro";
 
 class authApi {
 
-    /**
-     * 微信登录
-     */
     async wxlogin(tenantCode: string, code: string, data: Object = {}) {
         const url = "/wx/login?code=" + code;
         return await new Promise<any>((resolve, reject) => {

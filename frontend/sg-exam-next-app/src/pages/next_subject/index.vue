@@ -104,12 +104,12 @@ import {onMounted, ref, unref} from 'vue';
 import Taro from "@tarojs/taro";
 import examApi from '../../api/exam.api';
 import api from '../../api/api';
-import {getDuration, parseRes, successMessage} from '../../utils/util';
 import {initRecorderManager, playAudio, pleaseStartRecord, startRecordAudio, stopRecordAudio} from "./audio";
 import {Choice} from '../../components/subject/choice/index';
 import {Judgement} from '../../components/subject/judgement/index';
 import {ShortAnswer} from '../../components/subject/shortAnswer/index';
 import {SubjectVideo} from '../../components/subject/video/index';
+import {getDuration, parseRes, successMessage, warnMessage, showLoading, hideLoading, showNoMoreData} from "../../utils/util";
 
 export default {
   components: {
@@ -157,19 +157,21 @@ export default {
     api.setAnsweredCount(0);
 
     async function fetch() {
-      Taro.showLoading({title: '加载中'})
+      await showLoading();
       try {
         handleFirstSubject();
-        const params = currentInstance.router.params;
-        recordId.value = params.recordId;
-        examinationId.value = params.examinationId;
-        if (params.total && params.total > 0) {
-          api.setSubjectTotalCount(params.total);
-          subjectTotalCount.value = params.total;
+        const params = currentInstance.router?.params;
+        if (params !== undefined) {
+          recordId.value = params.recordId;
+          examinationId.value = params.examinationId;
+          if (params.total && params.total > 0) {
+            api.setSubjectTotalCount(params.total);
+            subjectTotalCount.value = params.total;
+          }
         }
         updateSubjectRef();
       } finally {
-        Taro.hideLoading();
+        hideLoading();
       }
     }
 
@@ -216,7 +218,7 @@ export default {
       const res = unref(recordRes);
       if (res && res.tempFilePath) {
         //uploadAudioFile(res.tempFilePath);
-        Taro.showToast({title: '上传成功'});
+        successMessage('上传成功');
       } else {
         pleaseStartRecord();
       }
@@ -284,7 +286,7 @@ export default {
           updateSubjectRef();
         } else {
           hasMore.value = false;
-          Taro.showToast({title: '无更多数据'});
+          await showNoMoreData();
         }
       } finally {
         loading.value = false;
@@ -306,11 +308,11 @@ export default {
         } else if (type === 5) {
           ref = videoRef;
         }
-        if (ref != undefined) {
-          setTimeout(() => {
+        setTimeout(() => {
+          if (ref != undefined && ref.value !== undefined) {
             ref.value.update(subject);
-          }, 50);
-        }
+          }
+        }, 50);
       }
     }
 
@@ -372,12 +374,12 @@ export default {
         examRecordId: recordId.value
       }).then(() => {
         submitLoading.value = false;
-        Taro.showToast({title: '提交成功'});
+        successMessage('提交成功');
         setTimeout(() => {
           Taro.redirectTo({url: "/pages/record/index?type=" + examination.value.type})
         }, 1000);
       }).catch(() => {
-        Taro.showToast({title: '提交失败', icon: 'error'});
+        warnMessage('提交失败');
       });
     }
 
@@ -389,7 +391,7 @@ export default {
       const res = await examApi.favoriteSubject(id, item.id, type);
       const {code} = res;
       if (code === 0) {
-        successMessage(text + '成功');
+        await successMessage(text + '成功');
       }
     }
 
@@ -445,7 +447,7 @@ export default {
     }
   },
   toback() {
-    debugger
+
   }
 }
 </script>

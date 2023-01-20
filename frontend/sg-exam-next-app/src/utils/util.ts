@@ -85,3 +85,15 @@ export const warnMessage = async (msg: string = '操作失败', duration: number
         duration
     });
 }
+
+export const showNoMoreData = async (title: string = '无更多数据') => {
+    await Taro.showToast({title, icon: 'none', duration: 800});
+}
+
+export const showLoading = async (title: string = '加载中') => {
+    await Taro.showLoading({title});
+}
+
+export const hideLoading = () => {
+    Taro.hideLoading();
+}

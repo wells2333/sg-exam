@@ -44,8 +44,9 @@
 
 <script lang="ts">
 import Taro from "@tarojs/taro";
-import {onMounted, ref, unref} from 'vue';
+import {onMounted, ref} from 'vue';
 import examApi from '../../api/exam.api';
+import {showLoading, hideLoading} from '../../utils/util';
 
 export default {
   setup() {
@@ -98,7 +99,7 @@ export default {
 
     async function init() {
       try {
-        Taro.showLoading();
+        await showLoading();
         await getCourseDetail();
         if (pointId.value !== undefined) {
           await getPoint();
@@ -106,7 +107,7 @@ export default {
           await getSection();
         }
       } finally {
-        Taro.hideLoading();
+        hideLoading();
       }
     }
 

@@ -39,6 +39,7 @@ import Taro from "@tarojs/taro";
 import {onMounted, ref} from 'vue';
 import examApi from '../../api/exam.api';
 import operationApi from "../../api/operation.api";
+import {showLoading, hideLoading} from "../../utils/util";
 
 export default {
   setup() {
@@ -85,11 +86,11 @@ export default {
 
     async function init() {
       try {
-        Taro.showLoading();
+        await showLoading();
         await fetchBanners();
         await fetchCategoryTree();
       } finally {
-        Taro.hideLoading();
+        hideLoading();
       }
     }
 

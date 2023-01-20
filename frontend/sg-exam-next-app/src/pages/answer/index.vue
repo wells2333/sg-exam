@@ -80,6 +80,8 @@ import {Choice} from '../../components/subject/choice/index';
 import {Judgement} from '../../components/subject/judgement/index';
 import {ShortAnswer} from '../../components/subject/shortAnswer/index';
 import {SubjectVideo} from '../../components/subject/video/index';
+import {showLoading, hideLoading} from '../../utils/util';
+
 export default {
   components: {
     'choice': Choice,
@@ -98,8 +100,8 @@ export default {
     const rate = ref<string>('-');
 
     async function fetch() {
-      await Taro.showLoading({title: '加载中'})
       try {
+        await showLoading();
         const params = currentInstance.router.params;
         recordId.value = params.recordId;
         examinationId.value = params.examinationId;
@@ -115,7 +117,7 @@ export default {
           }
         }
       } finally {
-        Taro.hideLoading();
+        hideLoading();
       }
     }
 

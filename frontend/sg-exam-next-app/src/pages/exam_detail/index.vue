@@ -64,7 +64,7 @@ import Taro from "@tarojs/taro";
 import {onMounted, ref} from 'vue';
 import examApi from '../../api/exam.api';
 import api from "../../api/api";
-import {warnMessage} from "../../utils/util";
+import {showLoading, hideLoading, warnMessage} from '../../utils/util';
 
 export default {
   setup() {
@@ -96,20 +96,20 @@ export default {
 
     async function handleConfirmStartModal() {
       try {
-        await Taro.showLoading({title: '加载中'});
+        await showLoading();
         const {id} = api.getUserInfo();
         if (!id) {
-          warnMessage('请先登录', 3000);
+          await warnMessage('请先登录');
           return;
         }
         const startResult = await examApi.startExam(examId, id);
         if (startResult && startResult.code === 1) {
-          warnMessage(startResult.message, 3000);
+          await warnMessage(startResult.message);
           return;
         }
         const {code, result, message} = startResult;
         if (code !== 0) {
-          warnMessage(message, 3000);
+          await warnMessage(message);
           return;
         }
         const {examination, examRecord, subjectDto, total, cards} = result;
@@ -141,10 +141,10 @@ export default {
 
     async function init() {
       try {
-        Taro.showLoading();
+        await showLoading();
         await fetch();
       } finally {
-        Taro.hideLoading();
+        hideLoading();
       }
     }
 
