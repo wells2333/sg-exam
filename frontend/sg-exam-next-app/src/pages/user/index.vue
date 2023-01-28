@@ -1,10 +1,9 @@
 <template>
-  <view>
+  <view class="bg-gray">
     <view class="avatar-container flex-row">
       <at-avatar class="avatar" :circle="true" size="large" :image="avatar"/>
       <view class="flex-col">
         <text class="userName">{{userInfo.name}}</text>
-        <text class="userDesc">2017年加入，我要好好学习天天向上~</text>
       </view>
     </view>
     <view class="top-tab-container flex-row">
@@ -12,33 +11,21 @@
       <view class="top-tab-item" @click="handleClickTopTab('/pages/record/index')">我的考试</view>
       <view class="top-tab-item" @click="handleClickTopTab('/pages/record/index')">我的成绩</view>
     </view>
-
     <view class="container">
       <at-list>
-        <at-list-item title="消息中心" arrow="right" :iconInfo="{ value: 'message'}"
+        <at-list-item title="消息中心" arrow="right" :iconInfo="{ value: 'message', color: '#ffa200'}"
                       :hasBorder="true"
                       @click="handleClick"></at-list-item>
-        <at-list-item title="帮助" arrow="right" :iconInfo="{ value: 'help'}"
+        <at-list-item title="帮助" arrow="right" :iconInfo="{ value: 'help', color: '#F97D81'}"
                       :hasBorder="true"
                       @click="handleClick"></at-list-item>
-        <at-list-item title="联系客服" arrow="right" :iconInfo="{ value: 'phone'}"
+        <at-list-item title="联系客服" arrow="right" :iconInfo="{ value: 'phone', color: '#00a03e'}"
                       :hasBorder="true"
                       @click="handleClick"></at-list-item>
-      </at-list>
-    </view>
-
-    <view class="container">
-      <at-list>
-        <at-list-item title="设置" arrow="right" :iconInfo="{ value: 'settings'}"
-                      @click="handleClick"></at-list-item>
-      </at-list>
-    </view>
-    <view class="container">
-      <at-list>
-        <at-list-item title="分享给朋友" arrow="right" class="share-box" :iconInfo="{ value: 'share'}"
+        <at-list-item title="分享给朋友" arrow="right" class="share-box" :iconInfo="{ value: 'share', color: '#35A7FF'}"
                       :hasBorder="true"
-                      @click="handleClick"></at-list-item>
-        <at-list-item title="关于" arrow="right" :iconInfo="{ value: 'link'}"
+                      @click="handleClickShare"></at-list-item>
+        <at-list-item title="关于" arrow="right" :iconInfo="{ value: 'link', color: '#9881F5'}"
                       @click="handleClickAbout"></at-list-item>
       </at-list>
     </view>
@@ -70,6 +57,12 @@ export default {
       Taro.showToast({title: '功能正在开发中', icon: 'none'});
     }
 
+    function handleClickShare() {
+      Taro.showShareMenu({
+        withShareTicket: true
+      });
+    }
+
     function handleClickAbout() {
       Taro.navigateTo({url: "/pages/about/index"});
     }
@@ -77,11 +70,13 @@ export default {
     onMounted(() => {
       fetch();
     });
+
     return {
       avatar,
       userInfo,
       handleClickTopTab,
       handleClick,
+      handleClickShare,
       handleClickAbout
     }
   }
@@ -89,10 +84,6 @@ export default {
 </script>
 
 <style>
-page {
-  background-color: #EEF0F0;
-}
-
 .avatar-container {
   height: 100px;
   color: rgba(80, 80, 80, 1);
@@ -114,17 +105,9 @@ page {
 
 .userName {
   margin-left: 10px;
-  margin-top: -16px;
   color: rgba(80, 80, 80, 1);
   font-size: 18px;
   text-align: left;
-}
-
-.userDesc {
-  margin-left: 10px;
-  margin-top: 8px;
-  color: rgba(166, 166, 166, 1);
-  font-size: 13px;
 }
 
 .top-tab-item {

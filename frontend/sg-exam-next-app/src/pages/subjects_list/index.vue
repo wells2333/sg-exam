@@ -7,7 +7,7 @@
           <text>题库名称：{{categoryInfo.categoryName}}</text>
         </view>
         <view class='subjects-item-desc'>
-          <text>题目数量：共 {{categoryInfo.subjectCnt}} 题</text>
+          <text>题目数量：共 {{subjectCnt !== undefined ? subjectCnt : categoryInfo.subjectCnt}} 题</text>
         </view>
         <view class='subjects-item-desc'>
           <text>更新时间：{{categoryInfo.updateTime}}</text>
@@ -71,6 +71,7 @@ export default {
   setup() {
     const params = Taro.getCurrentInstance().router?.params;
     const categoryId = params?.categoryId;
+    const subjectCnt = params?.subjectCnt;
     const loading = ref<boolean>(true);
     const list = ref<any>([]);
     const page = ref<number>(1);
@@ -174,6 +175,7 @@ export default {
 
     return {
       loading,
+      subjectCnt,
       list,
       categoryInfo,
       categories,
@@ -260,7 +262,7 @@ export default {
 }
 
 .subjects-item-desc {
-  font-size: 15px;
+  font-size: 14px;
   color: gray;
   margin-left: 12px;
 }

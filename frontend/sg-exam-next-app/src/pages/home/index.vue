@@ -20,6 +20,11 @@
       </swiper>
     </view>
   </view>
+  <view v-if="noticeValue !== undefined">
+    <AtNoticebar icon='volume-plus' marquee>
+      {{noticeValue}}
+    </AtNoticebar>
+  </view>
   <view class="home-view">
     <view class="home-view-tips">常用功能</view>
     <AtGrid @click="handleGridClick" :data="homeGridData"/>
@@ -31,6 +36,7 @@
 </template>
 <script lang="ts">
 import {onMounted, ref} from 'vue';
+import userApi from '../../api/user.api';
 import examApi from '../../api/exam.api';
 import operationApi from '../../api/operation.api';
 import Taro from "@tarojs/taro";
@@ -48,6 +54,7 @@ export default {
     let searchValue = ref<string>("");
     const banners = ref<any>([]);
     const courses = ref<any>([]);
+    const noticeValue = ref<any>(undefined);
 
     async function fetchBanners() {
       banners.value = [];
@@ -55,6 +62,14 @@ export default {
       const {code, result} = res;
       if (code == 0 && result && result.list && result.list.length > 0) {
         banners.value = [...result.list];
+      }
+    }
+
+    async function fetchNotice() {
+      const res = await userApi.getNotice();
+      const {code, result} = res;
+      if (code == 0 && result) {
+        noticeValue.value = result;
       }
     }
 
@@ -142,6 +157,7 @@ export default {
       try {
         await showLoading();
         await fetchBanners();
+        await fetchNotice();
         await fetchPopularCourses();
       } finally {
         hideLoading();
@@ -153,6 +169,7 @@ export default {
     });
 
     return {
+      noticeValue,
       current,
       homeGridData,
       searchValue,

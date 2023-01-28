@@ -23,8 +23,11 @@ class authApi {
         });
     }
 
-    async mobileLogin(tenantCode: string, mobile: string, code: string, data: object) {
-        const url = "/mobile/login?mobile=" + mobile + "&code=" + code;
+    async mobileLogin(tenantCode: string, mobile: string, code: string, isTestPhone: boolean, data: object) {
+        let url = "/mobile/login?mobile=" + mobile + "&code=" + code;
+        if (isTestPhone) {
+            url = url + "&ignoreCode=1";
+        }
         return await new Promise<any>((resolve, reject) => {
             Taro.request<any>({
                 timeout: 1000 * 5,

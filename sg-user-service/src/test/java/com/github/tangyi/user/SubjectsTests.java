@@ -1,7 +1,6 @@
 package com.github.tangyi.user;
 
 import com.alibaba.fastjson.JSON;
-import com.github.tangyi.common.utils.StringUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.io.FileUtils;
@@ -36,6 +35,42 @@ public class SubjectsTests {
 				subjectName = line;
 			} else {
 				content.append(line);
+			}
+		}
+		System.out.println(list);
+	}
+
+	@Test
+	public void testImportJs() throws Exception {
+		File file = new File("/Users/tangyi/Downloads/1.txt");
+		List<String> lines = FileUtils.readLines(file, StandardCharsets.UTF_8);
+		List<String> list = Lists.newArrayList();
+		for (int i = 1; i <= 50; i++) {
+			String prefix = i + "、";
+			String nextPrefix = i + 1 + "、";
+			String subjectName = "";
+			StringBuilder content = new StringBuilder();
+			boolean find = false;
+			for (String line : lines) {
+				if (line.startsWith(nextPrefix)) {
+					break;
+				}
+				if (line.startsWith(prefix)) {
+					subjectName = line.substring(line.indexOf(prefix) + 2);
+					find = true;
+					continue;
+				}
+				if (find && StringUtils.isNotEmpty(line)) {
+					content.append("<div>").append(line).append("</div>");
+				}
+			}
+			if (StringUtils.isNotEmpty(subjectName) && content.length() > 0) {
+			    content.delete(content.length() - 6, content.length());
+				Map<String, Object> subject = newSubject();
+				subject.put("subjectName", subjectName);
+				subject.put("answer", Collections.singletonMap("answer", content.toString()));
+				content.setLength(0);
+				list.add(JSON.toJSONString(subject));
 			}
 		}
 		System.out.println(list);

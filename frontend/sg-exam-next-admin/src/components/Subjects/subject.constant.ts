@@ -91,6 +91,7 @@ export const COLOR = {
   FOUR: '#531dab',
   FIVE: '#c41d7f'
 }
+
 export const subjectColor:any = {
   '0': COLOR.ZERO,
   '1': COLOR.ONE,

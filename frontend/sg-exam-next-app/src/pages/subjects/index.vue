@@ -94,7 +94,7 @@ export default {
     }
 
     function handleClickCate(item) {
-      Taro.navigateTo({url: "/pages/subjects_list/index?categoryId=" + item.id})
+      Taro.navigateTo({url: "/pages/subjects_list/index?categoryId=" + item.id + "&subjectCnt=" + item.subjectCnt})
     }
 
     onMounted(() => {

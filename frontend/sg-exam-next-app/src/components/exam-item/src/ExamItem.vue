@@ -10,7 +10,7 @@
     <view class="card-item-bottom" @click="handleStart">
       <h4 class="card-title">{{ item.examinationName }}</h4>
       <at-tag :class="index === 0 ? 'card-item-bottom-first-tag card-item-bottom-tag' : 'card-item-bottom-tag'"
-              type="primary" :circle="true" size="small" v-for="(tag, index) in tags">
+              type="primary" size="small" v-for="(tag, index) in tags">
         {{ tag }}
       </at-tag>
     </view>

@@ -31,13 +31,11 @@
           <view v-else-if="subject.type === 5">
             <subject-video ref="videoRef" :subject="subject"></subject-video>
           </view>
-          <view class="answer-text">
+          <view class="answer-text" v-if="subject.answer !== undefined && subject.answer !== null && subject.answer !== ''">
             <text class="answer-text-title">答案：</text>
-            <text class="answer-text-value">
-              {{ subject.answer !== undefined ? subject.answer.answer : '' }}
-            </text>
+            <wxparse class="answer-text-value" :html="subject.answer.answer" key={Math.random()} />
           </view>
-          <view class="answer-text answer-text-analysis" v-if="subject.analysis !== undefined && subject.analysis !== null">
+          <view class="answer-text answer-text-analysis" v-if="subject.analysis !== undefined && subject.analysis !== null && subject.analysis !== ''">
             <view>
               <text class="answer-text-title">解析：</text>
             </view>
@@ -48,13 +46,15 @@
         </view>
       </view>
     </view>
+    <view class="submit-btn-previous">
 
+    </view>
     <view class="submit-btn">
       <view class="submit-btn-item">
-        <AtButton type="primary" :circle="true" @click="handleNext('1')">上一题</AtButton>
+        <AtButton type="primary" :circle="true" :loading="loadingPrevious" @click="handleNext('1')">上一题</AtButton>
       </view>
       <view class="submit-btn-item">
-        <AtButton type="primary" :circle="true" @click="handleNext('0')">下一题</AtButton>
+        <AtButton type="primary" :circle="true" :loading="loadingNext" @click="handleNext('0')">下一题</AtButton>
       </view>
     </view>
     <AtFab class="fav-fab" v-if="subject !== undefined" @click="handleFavSubject(subject)">
@@ -90,7 +90,8 @@ export default {
     const judgementRef = ref<any>(undefined);
     const shortAnswerRef = ref<any>(undefined);
     const videoRef = ref<any>(undefined);
-
+    const loadingNext = ref<boolean>(false);
+    const loadingPrevious = ref<boolean>(false);
     async function fetch() {
       await showLoading();
       try {
@@ -122,15 +123,21 @@ export default {
     }
 
     async function handleNext(nextType: string = '0') {
-      const res = await examApi.getNextSubjectByCategoryId(subject.value.categoryId, subject.value.id, nextType);
-      if (res.code === 0) {
-        if (res.result !== null) {
-          subject.value = res.result;
-          updateAnswerValue();
-          updateSubjectRef();
-        } else {
-          await showNoMoreData();
+      const loadingRef = nextType === '0' ? loadingNext : loadingPrevious;
+      try {
+        loadingRef.value = true;
+        const res = await examApi.getNextSubjectByCategoryId(subject.value.categoryId, subject.value.id, nextType);
+        if (res.code === 0) {
+          if (res.result !== null) {
+            subject.value = res.result;
+            updateAnswerValue();
+            updateSubjectRef();
+          } else {
+            await showNoMoreData();
+          }
         }
+      } finally {
+        loadingRef.value = false;
       }
     }
 
@@ -172,6 +179,8 @@ export default {
       judgementRef,
       shortAnswerRef,
       videoRef,
+      loadingPrevious,
+      loadingNext,
       init,
       handleFavSubject,
       handleNext
@@ -192,14 +201,17 @@ export default {
   display: flex;
   justify-content: space-between;
 }
+
 .fav-fab {
-  position: absolute;
+  position: fixed;
   bottom: 200px;
   right: 0;
   width: 38px;
   height: 38px;
   margin-right: 10px;
+  background-color: #6190e8ab;
 }
+
 .fav-fab .fav-fab-fav::before {
   color: #FFC82C;
 }

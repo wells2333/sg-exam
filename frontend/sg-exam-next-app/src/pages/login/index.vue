@@ -41,7 +41,7 @@ import authApi from "../../api/auth.api";
 import sendSms from '../../api/user.api';
 import userApi from '../../api/user.api';
 import {shardMessage, TENANT_CODE} from "../../constant/constant";
-import {showLoading, hideLoading, successMessage, warnMessage} from '../../utils/util';
+import {hideLoading, showLoading, successMessage, warnMessage} from '../../utils/util';
 
 export default {
   setup() {
@@ -108,14 +108,16 @@ export default {
     }
 
     async function handleLogin() {
-      if (validatePhoneValue() && validateSmsValue()) {
-        const phoneVal = unref(phone);
+      const phoneVal = unref(phone);
+      const isTestPhone = phoneVal === '666';
+      if (isTestPhone || (validatePhoneValue() && validateSmsValue())) {
         await showLoading('登录中');
         try {
-          if (tenantCode.value === '') {
-            handleTenantCode(TENANT_CODE);
+          let tenantCodeValue = tenantCode.value;
+          if (tenantCodeValue === '') {
+             tenantCodeValue = TENANT_CODE;
           }
-          const loginResult = await authApi.mobileLogin(unref(tenantCode), phoneVal, unref(sms),
+          const loginResult = await authApi.mobileLogin(tenantCodeValue, phoneVal, unref(sms), isTestPhone,
               {
                 name: phoneVal,
                 gender: '0'

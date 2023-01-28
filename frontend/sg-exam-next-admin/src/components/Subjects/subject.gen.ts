@@ -163,7 +163,18 @@ export function genAnswerSchemas() {
     {
       label: '答案解析',
       field: 'analysis',
-      component: 'InputTextArea',
+      component: 'Input',
+      render: ({model, field}) => {
+        return h(Tinymce, {
+          value: model[field],
+          height: editorHeight,
+          plugins: tinymcePlugins,
+          toolbar: tinymceToolbar,
+          onChange: (value: string) => {
+            model[field] = value;
+          },
+        });
+      },
       colProps: {
         span: 24
       }
@@ -196,7 +207,18 @@ export function generateTextAnswer() {
   return [{
     label: '参考答案',
     field: 'answer',
-    component: 'InputTextArea',
+    component: 'Input',
+    render: ({model, field}) => {
+      return h(Tinymce, {
+        value: model[field],
+        height: editorHeight,
+        plugins: tinymcePlugins,
+        toolbar: tinymceToolbar,
+        onChange: (value: string) => {
+          model[field] = value;
+        },
+      });
+    },
     colProps: {
       span: 24
     }
