@@ -234,7 +234,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> implements IMenuS
 
 	private List<Menu> findUserMenus(String tenantCode) {
 		Collection<? extends GrantedAuthority> authorities = SysUtil.getAuthorities();
-		if (CollectionUtils.isNotEmpty(authorities)) {
+		if (CollectionUtils.isEmpty(authorities)) {
 			return Collections.emptyList();
 		}
 		List<Role> roleList = authorities.stream()

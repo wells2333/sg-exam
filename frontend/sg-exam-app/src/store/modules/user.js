@@ -31,7 +31,6 @@ const user = {
     }) || ''
   },
   actions: {
-    // 根据用户名登录
     LoginByUsername ({ commit, state, dispatch }, userInfo) {
       return new Promise((resolve, reject) => {
         const user = encryption({
@@ -39,9 +38,7 @@ const user = {
           key: '1234567887654321',
           param: ['credential']
         })
-
-        // 根据用户名、密码、租户code登录
-        loginByUsername(user.identifier, user.credential, user.code, user.randomStr).then(response => {
+        loginByUsername(user.tenantCode, user.identifier, user.credential, user.code, user.randomStr).then(response => {
           const data = response.data
           const {code, result} = data
           if (code === 0) {
@@ -57,7 +54,6 @@ const user = {
         })
       })
     },
-    // 根据手机号登录
     LoginBySocial ({ commit, state, dispatch }, userInfo) {
       return new Promise((resolve, reject) => {
         const user = encryption({
@@ -65,8 +61,7 @@ const user = {
           key: '1234567887654321',
           param: ['credential']
         })
-        // 根据用户手机号、短信验证码获取token
-        loginBySocial(user.phone, user.code).then(response => {
+        loginBySocial(user.tenantCode, user.phone, user.code).then(response => {
           const data = response.data
           setToken(data.token)
           setRefreshToken(data.token)
@@ -86,7 +81,7 @@ const user = {
           key: '1234567887654321',
           param: ['credential']
         })
-        registerByUsername(user.identifier, user.email, user.credential, user.code, user.randomStr).then(response => {
+        registerByUsername(user.tenantCode, user.identifier, user.email, user.credential, user.code, user.randomStr).then(response => {
           resolve()
         }).catch(error => {
           reject(error)
@@ -106,20 +101,15 @@ const user = {
         })
       })
     },
-    // 登出
     LogOut ({ commit, state }) {
       return new Promise((resolve, reject) => {
         logout(state.token, state.refresh_token).then(() => {
-          // 清除权限
           commit('SET_PERMISSIONS', [])
-          // 清除用户信息
           commit('SET_USER_INFO', {})
           commit('SET_TOKEN', '')
           commit('SET_REFRESH_TOKEN', '')
           commit('SET_ROLES', [])
-          // 清除系统配置信息
           commit('SET_SYS_CONFIG', {})
-          // 清除租户信息
           commit('SET_TENANT_CODE', {})
           removeToken()
           resolve()
@@ -128,19 +118,14 @@ const user = {
         })
       })
     },
-    // 注销session
     FedLogOut ({ commit }) {
       return new Promise(resolve => {
-        // 清除权限
         commit('SET_PERMISSIONS', [])
-        // 清除用户信息
         commit('SET_USER_INFO', {})
         commit('SET_TOKEN', '')
         commit('SET_REFRESH_TOKEN', '')
         commit('SET_ROLES', [])
-        // 清除系统配置信息
         commit('SET_SYS_CONFIG', {})
-        // 清除租户信息
         commit('SET_TENANT_CODE', {})
         removeToken()
         removeRefreshToken()

@@ -2,7 +2,7 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button v-if="hasPermission(['tenant:tenant:add'])" type="primary" @click="handleCreate"> 新增租户 </a-button>
+        <a-button v-if="hasPermission(['tenant:tenant:add'])" type="primary" @click="handleCreate"> 新增单位 </a-button>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -55,7 +55,7 @@ export default defineComponent({
     const [registerModal, { openModal }] = useModal();
     const { createMessage } = useMessage();
     const [registerTable, { reload }] = useTable({
-      title: '租户列表',
+      title: '单位列表',
       api: getTenantList,
       columns,
       formConfig: {

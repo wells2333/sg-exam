@@ -80,8 +80,8 @@ public class TenantInitService {
 		String tenantCode = tenant.getTenantCode();
 		role.setCommonValue(identifier, tenantCode);
 		role.setRoleCode(UserServiceConstant.ROLE_PREFIX + tenantCode);
-		// 角色名称，默认：管理员_${tenantName}
-		role.setRoleName("管理员_" + tenant.getTenantName());
+		// 角色名称，默认：单位管理员_${tenantName}
+		role.setRoleName("单位管理员_" + tenant.getTenantName());
 		if (roleService.insert(role) > 0) {
 			UserRole userRole = new UserRole();
 			userRole.setCommonValue(identifier, tenantCode);

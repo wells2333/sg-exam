@@ -1,13 +1,18 @@
 import request from '@/router/axios'
 import {getRefreshToken} from '@/utils/auth'
 
-export function loginByUsername(identifier, credential, code, randomStr) {
+const DEFAULT_TENANT_CODE = 'gitee';
+
+export function loginByUsername(tenantCode = DEFAULT_TENANT_CODE, identifier, credential, code, randomStr) {
   const grantType = 'password'
   const scope = 'read'
+  if (tenantCode === '') {
+    tenantCode = DEFAULT_TENANT_CODE
+  }
   return request({
     url: '/sg-user-service/login',
     headers: {
-      'Tenant-Code': 'gitee'
+      'Tenant-Code': tenantCode
     },
     method: 'post',
     params: {username: identifier, credential, randomStr, code, grant_type: grantType, scope}
@@ -16,27 +21,31 @@ export function loginByUsername(identifier, credential, code, randomStr) {
 
 /**
  * 根据手机号登录
- * @param social
- * @param code
  */
-export function loginBySocial(social, code) {
+export function loginBySocial(tenantCode = DEFAULT_TENANT_CODE, social, code) {
   const grantType = 'mobile'
   const scope = 'read'
+  if (tenantCode === '') {
+    tenantCode = DEFAULT_TENANT_CODE
+  }
   return request({
     url: '/sg-user-service/mobile/login',
     headers: {
-      'Tenant-Code': 'gitee'
+      'Tenant-Code': tenantCode
     },
     method: 'post',
     params: {mobile: social, code, grant_type: grantType, scope}
   })
 }
 
-export function registerByUsername(identifier, email, credential, code, randomStr) {
+export function registerByUsername(tenantCode = DEFAULT_TENANT_CODE, identifier, email, credential, code, randomStr) {
+  if (tenantCode === '') {
+    tenantCode = DEFAULT_TENANT_CODE
+  }
   return request({
     url: '/sg-user-service/v1/user/anonymousUser/register',
     method: 'post',
-    params: {identifier, email, credential, randomStr, code},
+    params: {tenantCode, identifier, email, credential, randomStr, code},
     data: {identifier, email, credential}
   })
 }

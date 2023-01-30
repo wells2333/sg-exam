@@ -33,13 +33,13 @@ export const tenantInitColor = {
 
 export const columns: BasicColumn[] = [
   {
-    title: '租户标识',
+    title: '单位标识',
     dataIndex: 'tenantCode',
     width: 160,
     align: 'left',
   },
   {
-    title: '租户名称',
+    title: '单位名称',
     dataIndex: 'tenantName',
     width: 160,
     align: 'left',
@@ -95,7 +95,7 @@ export const columns: BasicColumn[] = [
 export const searchFormSchema: FormSchema[] = [
   {
     field: 'tenantName',
-    label: '租户名称',
+    label: '单位名称',
     component: 'Input',
     colProps: { span: 8 },
   },
@@ -129,13 +129,13 @@ export const formSchema: FormSchema[] = [
   },
   {
     field: 'tenantName',
-    label: '租户名称',
+    label: '单位名称',
     component: 'Input',
     required: true,
   },
   {
     field: 'tenantCode',
-    label: '租户标识',
+    label: '单位标识',
     component: 'Input',
     required: true,
   },

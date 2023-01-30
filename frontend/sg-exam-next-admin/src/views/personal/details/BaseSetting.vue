@@ -32,7 +32,7 @@
 
   import headerImg from '/@/assets/images/header.jpg';
   import {getUserInfo, updateUserAvatar, uploadUserAvatar, updateUserInfo} from '/@/api/sys/user';
-  import { baseSetschemas } from './data';
+  import { baseSchemas } from './data';
   import { useUserStore } from '/@/store/modules/user';
 
   export default defineComponent({
@@ -50,7 +50,7 @@
 
       const [register, { setFieldsValue, validate }] = useForm({
         labelWidth: 120,
-        schemas: baseSetschemas,
+        schemas: baseSchemas,
         showActionButtonGroup: true,
         showResetButton: false,
         submitButtonOptions: {

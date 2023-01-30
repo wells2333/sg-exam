@@ -9,13 +9,13 @@ import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.constant.CommonConstant;
 import com.github.tangyi.common.excel.ExcelToolUtil;
 import com.github.tangyi.common.exceptions.CommonException;
+import com.github.tangyi.common.log.OperationType;
+import com.github.tangyi.common.log.SgLog;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.DateUtils;
 import com.github.tangyi.common.utils.PageUtil;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.common.vo.UserVo;
-import com.github.tangyi.common.log.SgLog;
-import com.github.tangyi.common.log.OperationType;
 import com.github.tangyi.user.excel.listener.UserImportListener;
 import com.github.tangyi.user.excel.model.UserExcelModel;
 import com.github.tangyi.user.service.DeptService;
@@ -149,10 +149,10 @@ public class UserController extends BaseController {
 	public R<Boolean> update(@RequestBody UserDto userDto) {
 		User user = new User();
 		BeanUtils.copyProperties(userDto, user);
-		UserAuths userAuths = new UserAuths();
-		userAuths.setIdentifier(userDto.getIdentifier());
-		userAuths.setTenantCode(userDto.getTenantCode());
-		userAuths = userAuthsService.getByIdentifier(userAuths);
+		UserAuths condition = new UserAuths();
+		condition.setIdentifier(userDto.getIdentifier());
+		condition.setTenantCode(userDto.getTenantCode());
+		UserAuths userAuths = userAuthsService.getByIdentifier(condition);
 		return R.success(userService.update(user, userAuths) > 0);
 	}
 

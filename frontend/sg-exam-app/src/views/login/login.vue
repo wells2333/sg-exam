@@ -13,6 +13,9 @@
         <!-- 注册 -->
         <el-tab-pane label="注册" name="/register" class="login-wrap-title">
           <el-form ref="registerForm" :model="register.form" :rules="register.rules" class="register-form" label-position="left" auto-complete="off">
+            <el-form-item prop="tenantCode">
+              <el-input placeholder="企业 ID" v-model="register.form.tenantCode" name="tenantCode" type="text" auto-complete="off"/>
+            </el-form-item>
             <el-form-item prop="identifier">
               <el-input placeholder="用户名" v-model="register.form.identifier" name="identifier" type="text" auto-complete="off"/>
             </el-form-item>
@@ -51,6 +54,9 @@
         <el-tab-pane label="登录" name="/login" class="login-wrap-title">
           <div v-if="!useSmsLogin">
             <el-form ref="loginForm" :model="login.form" :rules="login.rules" class="login-form" auto-complete="on" label-position="left">
+              <el-form-item prop="tenantCode">
+                <el-input placeholder="企业 ID" v-model="login.form.tenantCode" name="tenantCode" type="text" auto-complete="off"/>
+              </el-form-item>
               <el-form-item prop="identifier">
                 <el-input placeholder="用户名或邮箱" v-model="login.form.identifier" name="identifier" type="text" auto-complete="on"/>
               </el-form-item>
@@ -153,6 +159,7 @@ export default {
       activeName: '/login',
       login: {
         form: {
+          tenantCode: '',
           identifier: '',
           credential: '',
           code: '',
@@ -180,6 +187,7 @@ export default {
       },
       register: {
         form: {
+          tenantCode: '',
           identifier: '',
           email: '',
           credential: '',
@@ -209,6 +217,7 @@ export default {
       },
       sms: {
         form: {
+          tenantCode: '',
           phone: '',
           code: ''
         },

@@ -19,11 +19,19 @@ export const settingList = [
 ];
 
 // 基础设置 form
-export const baseSetschemas: FormSchema[] = [
+export const baseSchemas: FormSchema[] = [
   {
     field: 'id',
     component: 'Input',
     label: 'ID',
+    colProps: { span: 18 },
+    required: true,
+    show: false
+  },
+  {
+    field: 'tenantCode',
+    component: 'Input',
+    label: '租户标识',
     colProps: { span: 18 },
     required: true,
     show: false

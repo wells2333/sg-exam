@@ -135,7 +135,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	/**
 	 * 根据用户唯一标识获取用户详细信息
 	 */
-	@Cacheable(value = UserCacheName.USER_VO, key = "#identifier")
+	@Cacheable(value = UserCacheName.USER_VO, key = "#identifier", unless = "#result == null")
 	public UserVo findUserByIdentifier(Integer identityType, String identifier, String tenantCode) {
 		UserAuths userAuths = findUserAuthsByIdentifier(identityType, identifier, tenantCode);
 		if (userAuths == null) {
@@ -175,7 +175,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	/**
 	 * 获取用户信息，包括头像、角色、权限信息
 	 */
-	@Cacheable(value = UserCacheName.USER_DTO, key = "#userVo.identifier")
+	@Cacheable(value = UserCacheName.USER_DTO, key = "#userVo.identifier", unless = "#result == null")
 	public UserInfoDto findUserInfo(UserVo userVo) {
 		UserInfoDto userInfoDto = new UserInfoDto();
 		String tenantCode = userVo.getTenantCode();
@@ -208,7 +208,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	/**
 	 * 根据指定角色集合，查询用户权限数组
 	 */
-	@Cacheable(value = UserCacheName.USER_PERMISSION, key = "#identifier")
+	@Cacheable(value = UserCacheName.USER_PERMISSION, key = "#identifier", unless = "#result == null")
 	public Set<String> getUserPermissions(User user, String identifier, List<Role> roles) {
 		List<Menu> menuList = Lists.newArrayList();
 		// 超级管理员
@@ -233,7 +233,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 				Sets.newHashSet();
 	}
 
-	@Cacheable(value = UserCacheName.USER_ROLE, key = "#userAuths.identifier")
+	@Cacheable(value = UserCacheName.USER_ROLE, key = "#userAuths.identifier", unless = "#result == null")
 	public List<Role> getUserRoles(UserAuths userAuths) {
 		List<UserRole> userRoles = userRoleMapper.getByUserId(userAuths.getUserId());
 		if (CollectionUtils.isNotEmpty(userRoles)) {
