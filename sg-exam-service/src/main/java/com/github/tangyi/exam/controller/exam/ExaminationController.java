@@ -68,6 +68,7 @@ public class ExaminationController extends BaseController {
 	@Operation(summary = "创建考试", description = "创建考试")
 	@SgLog(value = "创建考试", operationType = OperationType.INSERT)
 	public R<Boolean> add(@RequestBody @Valid ExaminationDto examinationDto) {
+		examinationDto.setCommonValue();
 		return R.success(examinationService.insert(examinationDto) > 0);
 	}
 
@@ -76,6 +77,7 @@ public class ExaminationController extends BaseController {
 	@SgLog(value = "更新考试", operationType = OperationType.UPDATE)
 	public R<Boolean> update(@PathVariable Long id, @RequestBody @Valid ExaminationDto examinationDto) {
 		examinationDto.setId(id);
+		examinationDto.setCommonValue();
 		return R.success(examinationService.update(examinationDto) > 0);
 	}
 
