@@ -995,7 +995,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- ----------------------------
 -- 单位信息
 -- ----------------------------
-INSERT INTO `sys_tenant` VALUES (1, 'gitee', '码云', '码云', 1, 'admin', '2019-05-23 21:46:36', 'admin', '2022-05-20 13:26:27', 0, NULL, 2);
+INSERT INTO `sys_tenant` VALUES (1, 'gitee', '码云', '码云', 1, 'admin', '2019-05-23 21:46:36', 'admin', '2022-05-20 13:26:27', 0, NULL, 2, NULL);
 
 -- ----------------------------
 -- 账号
@@ -1272,8 +1272,8 @@ INSERT INTO `sys_attachment_group` VALUES (9, '考务图片', 'exam/image', 0000
 -- ----------------------------
 -- 小程序首页运营位
 -- ----------------------------
-INSERT INTO `operation_banner` VALUES (1, 'admin', '2022-11-12 12:42:26', 'admin', '2022-11-12 12:52:00', 0, 'gitee', '运营位Banner1', 0, 'https://cdn.yunmianshi.com/default_image/10.jpeg?e=1668228237&token=8-9rcJPtTrLOJP4fLNWXy_qwiLVc3Exu52iuGlxt:ZW1CihRYlSwQRBlybYWbX8lrz48=', 'https://cdn.yunmianshi.com/default_image/10.jpeg?e=1668228237&token=8-9rcJPtTrLOJP4fLNWXy_qwiLVc3Exu52iuGlxt:ZW1CihRYlSwQRBlybYWbX8lrz48=', '2232323');
-INSERT INTO `operation_banner` VALUES (2, 'admin', '2022-11-12 12:43:24', 'admin', '2022-11-12 12:51:56', 0, 'gitee', '运营位Banner2', 0, 'https://cdn.yunmianshi.com/default_image/13.jpeg?e=1668228494&token=8-9rcJPtTrLOJP4fLNWXy_qwiLVc3Exu52iuGlxt:REKRNJMtCekDjmrMkSvbLOuWAvM=', 'https://cdn.yunmianshi.com/default_image/13.jpeg?e=1668228494&token=8-9rcJPtTrLOJP4fLNWXy_qwiLVc3Exu52iuGlxt:REKRNJMtCekDjmrMkSvbLOuWAvM=', '3');
+INSERT INTO `operation_banner` VALUES (1, 'admin', '2022-11-12 12:42:26', 'admin', '2022-11-12 12:52:00', 0, 'gitee', '运营位Banner1', 0, 'https://cdn.yunmianshi.com/default_image/10.jpeg?e=1668228237&token=8-9rcJPtTrLOJP4fLNWXy_qwiLVc3Exu52iuGlxt:ZW1CihRYlSwQRBlybYWbX8lrz48=', 'https://cdn.yunmianshi.com/default_image/10.jpeg?e=1668228237&token=8-9rcJPtTrLOJP4fLNWXy_qwiLVc3Exu52iuGlxt:ZW1CihRYlSwQRBlybYWbX8lrz48=', '2232323', NULL);
+INSERT INTO `operation_banner` VALUES (2, 'admin', '2022-11-12 12:43:24', 'admin', '2022-11-12 12:51:56', 0, 'gitee', '运营位Banner2', 0, 'https://cdn.yunmianshi.com/default_image/13.jpeg?e=1668228494&token=8-9rcJPtTrLOJP4fLNWXy_qwiLVc3Exu52iuGlxt:REKRNJMtCekDjmrMkSvbLOuWAvM=', 'https://cdn.yunmianshi.com/default_image/13.jpeg?e=1668228494&token=8-9rcJPtTrLOJP4fLNWXy_qwiLVc3Exu52iuGlxt:REKRNJMtCekDjmrMkSvbLOuWAvM=', '3', NULL);
 
 -- ----------------------------
 -- 考试
@@ -1331,7 +1331,7 @@ INSERT INTO `exam_subject_option` VALUES (20, 5, 'D', '<p>水</p>', 'admin', '20
 -- ----------------------------
 INSERT INTO `exam_subject_category` VALUES (1, '语文', NULL, -1, 1, 0, 'admin', '2022-11-13 15:33:49', 'admin', '2022-11-13 15:33:49', 0, 'gitee');
 
-INSERT INTO `exam_course` VALUES (1, '义务教育语文学科课程', NULL, NULL, NULL, '义务教育语文学科课程', 'admin', '2022-11-26 11:00:04', 'admin', '2022-11-26 11:00:04', 0, 'gitee', 4, NULL, NULL);
+INSERT INTO `exam_course` VALUES (1, '义务教育语文学科课程', NULL, NULL, NULL, '义务教育语文学科课程', 'admin', '2022-11-26 11:00:04', 'admin', '2022-11-26 11:00:04', 0, 'gitee', 4, NULL, NULL, 0, 0.00, 3, '义务教育语文学科课程', 100, 0);
 
 INSERT INTO `exam_course_chapter` VALUES (1, '单元一 四季美景', 1, 1, 'admin', '2022-11-26 11:00:23', 'admin', '2022-11-26 11:02:24', 0, 'gitee', '单元一 四季美景');
 INSERT INTO `exam_course_chapter` VALUES (2, '单元二 至情至爱', 2, 1, 'admin', '2022-11-26 11:02:14', 'admin', '2022-11-26 11:02:14', 0, 'gitee', '单元二 至情至爱');
@@ -1340,21 +1340,18 @@ INSERT INTO `exam_course_chapter` VALUES (4, '单元四 人生之舟', 4, 1, 'ad
 INSERT INTO `exam_course_chapter` VALUES (5, '单元五 动物与人', 5, 1, 'admin', '2022-11-26 11:03:03', 'admin', '2022-11-26 11:03:03', 0, 'gitee', '单元五 动物与人');
 INSERT INTO `exam_course_chapter` VALUES (6, '单元六 想象之翼', 6, 1, 'admin', '2022-11-26 11:03:17', 'admin', '2022-11-26 11:03:17', 0, 'gitee', '单元六 想象之翼');
 
-INSERT INTO `exam_course_section` VALUES (2, '1．春/朱自清', 1, 1, 1, NULL, 'admin', '2022-11-26 11:03:37', 'admin', '2022-11-26 11:04:28', 0, 'gitee', '1．春/朱自清', NULL);
-INSERT INTO `exam_course_section` VALUES (3, '2．济南的冬天/老舍', 2, 1, 1, NULL, 'admin', '2022-11-26 11:03:50', 'admin', '2022-11-26 11:04:37', 0, 'gitee', '2．济南的冬天/老舍', NULL);
-INSERT INTO `exam_course_section` VALUES (4, '3．雨的四季/刘湛秋', 3, 1, 1, NULL, 'admin', '2022-11-26 11:04:17', 'admin', '2022-11-26 11:04:17', 0, 'gitee', '3．雨的四季/刘湛秋', NULL);
-INSERT INTO `exam_course_section` VALUES (5, '4．古代诗歌 观沧海/曹操', 4, 1, 1, NULL, 'admin', '2022-11-26 11:06:01', 'admin', '2022-11-26 11:06:01', 0, 'gitee', '4．古代诗歌 观沧海/曹操', NULL);
-INSERT INTO `exam_course_section` VALUES (6, '5．秋天的怀念/史铁生', 1, 2, 1, NULL, 'admin', '2022-11-26 11:06:29', 'admin', '2022-11-26 11:06:29', 0, 'gitee', '5．秋天的怀念/史铁生', NULL);
-INSERT INTO `exam_course_section` VALUES (7, '6．散步/莫怀戚', 2, 2, 1, NULL, 'admin', '2022-11-26 11:06:41', 'admin', '2022-11-26 11:06:41', 0, 'gitee', '6．散步/莫怀戚', NULL);
-INSERT INTO `exam_course_section` VALUES (8, '7．散文诗两首金色花/泰戈尔', 100, 2, 1, NULL, 'admin', '2022-11-26 11:06:54', 'admin', '2022-11-26 11:06:54', 0, 'gitee', '7．散文诗两首金色花/泰戈尔', NULL);
-INSERT INTO `exam_course_section` VALUES (9, '8.《世说新语》两则咏雪', 100, 2, 1, NULL, 'admin', '2022-11-26 11:07:05', 'admin', '2022-11-26 11:07:05', 0, 'gitee', '8.《世说新语》两则咏雪', NULL);
-INSERT INTO `exam_course_section` VALUES (10, '9．从百草园到三味书屋/鲁迅', 1, 3, 1, NULL, 'admin', '2022-11-26 11:07:24', 'admin', '2022-11-26 11:07:24', 0, 'gitee', '9．从百草园到三味书屋/鲁迅', NULL);
-INSERT INTO `exam_course_section` VALUES (11, '10．再塑生命的人/海伦•凯勒', 2, 3, 1, NULL, 'admin', '2022-11-26 11:07:40', 'admin', '2022-11-26 11:07:40', 0, 'gitee', '10．再塑生命的人/海伦•凯勒', NULL);
-INSERT INTO `exam_course_section` VALUES (12, '11．窃读记/林海音', 3, 3, 1, NULL, 'admin', '2022-11-26 11:07:58', 'admin', '2022-11-26 11:07:58', 0, 'gitee', '11．窃读记/林海音', NULL);
-INSERT INTO `exam_course_section` VALUES (13, '12．《论语》十二章', 4, 3, 1, NULL, 'admin', '2022-11-26 11:08:12', 'admin', '2022-11-26 11:08:12', 0, 'gitee', '12．《论语》十二章', NULL);
-INSERT INTO `exam_course_section` VALUES (14, '13．纪念白求恩/毛泽东', 1, 4, 1, NULL, 'admin', '2022-11-26 11:08:42', 'admin', '2022-11-26 11:08:42', 0, 'gitee', '13．纪念白求恩/毛泽东', NULL);
-INSERT INTO `exam_course_section` VALUES (15, '17．猫/郑振铎', 1, 5, 1, NULL, 'admin', '2022-11-26 11:09:05', 'admin', '2022-11-26 11:09:05', 0, 'gitee', '17．猫/郑振铎', NULL);
-INSERT INTO `exam_course_section` VALUES (16, '21．皇帝的新装/安徒生', 1, 6, 1, NULL, 'admin', '2022-11-26 11:09:21', 'admin', '2022-11-26 11:09:21', 0, 'gitee', '21．皇帝的新装/安徒生', NULL);
-
-INSERT INTO `exam_course_evaluate` VALUES (14, '这课程真的不错', 1, 4, 'admin', '2022-11-26 16:38:12', 'admin', '2022-11-26 16:38:12', 0, 'gitee', 1);
-INSERT INTO `exam_course_evaluate` VALUES (15, '这课程讲得可以，五星好评', 1, 5, 'admin', '2022-11-26 16:38:36', 'admin', '2022-11-26 16:38:36', 0, 'gitee', 1);
+INSERT INTO `exam_course_section` VALUES (2, '1．春/朱自清', 1, 1, 1, NULL, 'admin', '2022-11-26 11:03:37', 'admin', '2022-11-26 11:04:28', 0, 'gitee', '1．春/朱自清', NULL, 0, '');
+INSERT INTO `exam_course_section` VALUES (3, '2．济南的冬天/老舍', 2, 1, 1, NULL, 'admin', '2022-11-26 11:03:50', 'admin', '2022-11-26 11:04:37', 0, 'gitee', '2．济南的冬天/老舍', NULL, 1, '');
+INSERT INTO `exam_course_section` VALUES (4, '3．雨的四季/刘湛秋', 3, 1, 1, NULL, 'admin', '2022-11-26 11:04:17', 'admin', '2022-11-26 11:04:17', 0, 'gitee', '3．雨的四季/刘湛秋', NULL, 0, '');
+INSERT INTO `exam_course_section` VALUES (5, '4．古代诗歌 观沧海/曹操', 4, 1, 1, NULL, 'admin', '2022-11-26 11:06:01', 'admin', '2022-11-26 11:06:01', 0, 'gitee', '4．古代诗歌 观沧海/曹操', NULL, 0, '');
+INSERT INTO `exam_course_section` VALUES (6, '5．秋天的怀念/史铁生', 1, 2, 1, NULL, 'admin', '2022-11-26 11:06:29', 'admin', '2022-11-26 11:06:29', 0, 'gitee', '5．秋天的怀念/史铁生', NULL, 0, '');
+INSERT INTO `exam_course_section` VALUES (7, '6．散步/莫怀戚', 2, 2, 1, NULL, 'admin', '2022-11-26 11:06:41', 'admin', '2022-11-26 11:06:41', 0, 'gitee', '6．散步/莫怀戚', NULL, 0, '');
+INSERT INTO `exam_course_section` VALUES (8, '7．散文诗两首金色花/泰戈尔', 100, 2, 1, NULL, 'admin', '2022-11-26 11:06:54', 'admin', '2022-11-26 11:06:54', 0, 'gitee', '7．散文诗两首金色花/泰戈尔', NULL, 0, '');
+INSERT INTO `exam_course_section` VALUES (9, '8.《世说新语》两则咏雪', 100, 2, 1, NULL, 'admin', '2022-11-26 11:07:05', 'admin', '2022-11-26 11:07:05', 0, 'gitee', '8.《世说新语》两则咏雪', NULL, 0, '');
+INSERT INTO `exam_course_section` VALUES (10, '9．从百草园到三味书屋/鲁迅', 1, 3, 1, NULL, 'admin', '2022-11-26 11:07:24', 'admin', '2022-11-26 11:07:24', 0, 'gitee', '9．从百草园到三味书屋/鲁迅', NULL, 0, '');
+INSERT INTO `exam_course_section` VALUES (11, '10．再塑生命的人/海伦•凯勒', 2, 3, 1, NULL, 'admin', '2022-11-26 11:07:40', 'admin', '2022-11-26 11:07:40', 0, 'gitee', '10．再塑生命的人/海伦•凯勒', NULL, 0, '');
+INSERT INTO `exam_course_section` VALUES (12, '11．窃读记/林海音', 3, 3, 1, NULL, 'admin', '2022-11-26 11:07:58', 'admin', '2022-11-26 11:07:58', 0, 'gitee', '11．窃读记/林海音', NULL, 0, '');
+INSERT INTO `exam_course_section` VALUES (13, '12．《论语》十二章', 4, 3, 1, NULL, 'admin', '2022-11-26 11:08:12', 'admin', '2022-11-26 11:08:12', 0, 'gitee', '12．《论语》十二章', NULL, 0, '');
+INSERT INTO `exam_course_section` VALUES (14, '13．纪念白求恩/毛泽东', 1, 4, 1, NULL, 'admin', '2022-11-26 11:08:42', 'admin', '2022-11-26 11:08:42', 0, 'gitee', '13．纪念白求恩/毛泽东', NULL, 0, '');
+INSERT INTO `exam_course_section` VALUES (15, '17．猫/郑振铎', 1, 5, 1, NULL, 'admin', '2022-11-26 11:09:05', 'admin', '2022-11-26 11:09:05', 0, 'gitee', '17．猫/郑振铎', NULL, 0, '');
+INSERT INTO `exam_course_section` VALUES (16, '21．皇帝的新装/安徒生', 1, 6, 1, NULL, 'admin', '2022-11-26 11:09:21', 'admin', '2022-11-26 11:09:21', 0, 'gitee', '21．皇帝的新装/安徒生', NULL, 0, '');
