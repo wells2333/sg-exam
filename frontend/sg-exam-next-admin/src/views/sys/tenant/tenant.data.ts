@@ -59,7 +59,7 @@ export const columns: BasicColumn[] = [
   {
     title: '状态',
     dataIndex: 'status',
-    width: 80,
+    width: 120,
     customRender: ({ record }) => {
       const status = record.status;
       return h(Tag, { color: tenantColor[status] }, () => tenantStatus[status]);
@@ -118,13 +118,13 @@ export const formSchema: FormSchema[] = [
   {
     field: 'id',
     label: 'id',
-    component: 'Render',
+    component: 'Input',
     show: false,
   },
   {
     field: 'roleId',
     label: 'roleId',
-    component: 'Render',
+    component: 'Input',
     show: false,
   },
   {

@@ -60,7 +60,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> implements IMenuS
 		return Collections.emptyList();
 	}
 
-	@Cacheable(value = UserCacheName.USER_MENU, key = "#type + '_' + #identifier + '_' + #buildTree")
+	@Cacheable(value = UserCacheName.USER_MENU, key = "#tenantCode + '_' + #type + '_' + #identifier + '_' + #buildTree")
 	public List<MenuDto> findUserMenuTree(Byte type, String identifier, String tenantCode, boolean buildTree) {
 		List<Menu> userMenus = SysUtil.isAdmin(identifier) ?
 				findAdminMenus(type, tenantCode) :
@@ -91,7 +91,8 @@ public class MenuService extends CrudService<MenuMapper, Menu> implements IMenuS
 
 	@Override
 	@Transactional
-	@CacheEvict(value = {UserCacheName.MENU, UserCacheName.ALL_MENU, UserCacheName.USER_MENU}, allEntries = true)
+	@CacheEvict(value = {UserCacheName.MENU, UserCacheName.ALL_MENU, UserCacheName.USER_MENU,
+			UserCacheName.ROLE_MENU}, allEntries = true)
 	public int insert(Menu menu) {
 		return super.insert(menu);
 	}
@@ -180,20 +181,26 @@ public class MenuService extends CrudService<MenuMapper, Menu> implements IMenuS
 		}
 	}
 
-	/**
-	 * 保存菜单
-	 */
 	@Transactional
 	public void saveRoleMenu(Menu menu, Role role, String identifier, String tenantCode, AtomicInteger counter) {
 		if (insert(menu) > 0) {
-			RoleMenu roleMenu = new RoleMenu();
-			roleMenu.setRoleId(role.getId());
-			roleMenu.setMenuId(menu.getId());
-			roleMenu.setCommonValue(identifier, tenantCode);
-			// 保存角色菜单关系
-			roleMenuService.insert(roleMenu);
+			saveRoleMenu(role.getId(), menu.getId(), identifier, tenantCode);
 			counter.incrementAndGet();
 		}
+	}
+
+	@Transactional
+	public void saveRoleMenu(Long roleId, Long menuId, String identifier, String tenantCode) {
+		RoleMenu roleMenu = new RoleMenu();
+		roleMenu.setRoleId(roleId);
+		roleMenu.setMenuId(menuId);
+		roleMenu.setCommonValue(identifier, tenantCode);
+		roleMenuService.insert(roleMenu);
+	}
+
+	@Transactional
+	public void deleteByRoleId(Long roleId) {
+		roleMenuService.deleteByRoleId(roleId);
 	}
 
 	private List<Menu> findMenuByRoleList(List<Role> roleList, String tenantCode) {
@@ -238,7 +245,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> implements IMenuS
 			return Collections.emptyList();
 		}
 		List<Role> roleList = authorities.stream()
-				.filter(authority -> authority.getAuthority() != null && authority.getAuthority()
+				.filter(authority -> authority.getAuthority() != null && authority.getAuthority().toLowerCase()
 						.startsWith(UserServiceConstant.ROLE_PREFIX)).map(authority -> {
 					Role role = new Role();
 					role.setRoleCode(authority.getAuthority());

@@ -29,13 +29,22 @@ public class TenantService extends CrudService<TenantMapper, Tenant> implements 
 
 	private final TenantInitService tenantInitService;
 
-	private final CommonExecutorService commonExecutorService;
-
 	private final QiNiuService qiNiuService;
+
+	private final RoleService roleService;
 
 	@Cacheable(value = UserCacheName.TENANT, key = "#tenantCode")
 	public Tenant getByTenantCode(String tenantCode) {
 		return this.dao.getByTenantCode(tenantCode);
+	}
+
+	@Override
+	public Tenant get(Long id) {
+		Tenant tenant = super.get(id);
+		if (tenant != null && tenant.getImageId() != null) {
+			tenant.setImageUrl(qiNiuService.getPreviewUrl(tenant.getImageId()));
+		}
+		return tenant;
 	}
 
 	@Override
@@ -56,34 +65,57 @@ public class TenantService extends CrudService<TenantMapper, Tenant> implements 
 	 */
 	@Transactional
 	public int add(Tenant tenant) {
-		tenant.setInitStatus(TenantConstant.INIT_ING);
 		int update = this.insert(tenant);
-		if (update > 0) {
-			asyncInit(tenant);
+		if (TenantConstant.PASS_AUDIT.equals(tenant.getStatus())) {
+			Role role = tenantInitService.initTenant(tenant, SysUtil.getUser());
+			tenant.setRoleId(role.getId());
+			tenant.setInitStatus(TenantConstant.INIT_SUCCESS);
+			updateTenantInfo(tenant);
 		}
 		return update;
-	}
-
-	public void asyncInit(Tenant tenant) {
-		String identifier = SysUtil.getUser();
-		commonExecutorService.getCommonExecutor().execute(() -> {
-			try {
-				Role role = tenantInitService.initTenant(tenant, identifier);
-				tenant.setRoleId(role.getId());
-				tenant.setInitStatus(TenantConstant.INIT_SUCCESS);
-			} catch (Exception e) {
-				tenant.setInitStatus(TenantConstant.INIT_FAILED);
-				log.error("failed to async init tenant", e);
-			} finally {
-				update(tenant);
-			}
-		});
 	}
 
 	@Override
 	@Transactional
 	@CacheEvict(value = UserCacheName.TENANT, key = "#tenant.tenantCode")
 	public int update(Tenant tenant) {
+		Tenant oldTenant = this.get(tenant.getId());
+		// 未初始化 + 待审核 => 审核通过
+		if (oldTenant != null && TenantConstant.NOT_INIT.equals(oldTenant.getInitStatus())
+				&& TenantConstant.PENDING_AUDIT.equals(oldTenant.getStatus()) && TenantConstant.PASS_AUDIT.equals(
+				tenant.getStatus())) {
+			doInitTenant(tenant);
+		} else if (TenantConstant.PASS_AUDIT.equals(tenant.getStatus())) {
+			// 审核通过，但没初始化对应的角色
+			if (tenant.getRoleId() == null) {
+				doInitTenant(tenant);
+			} else {
+				// 已经初始化过，则更新菜单
+				updateTenantMenu(tenant);
+			}
+		}
+		return super.update(tenant);
+	}
+
+	@Transactional
+	public void doInitTenant(Tenant tenant) {
+		Role role = tenantInitService.initTenant(tenant, SysUtil.getUser());
+		tenant.setRoleId(role.getId());
+		tenant.setInitStatus(TenantConstant.INIT_SUCCESS);
+	}
+
+	@Transactional
+	public void updateTenantMenu(Tenant tenant) {
+		Role role = roleService.get(tenant.getRoleId());
+		if (role != null) {
+			tenantInitService.initTenantMenu(tenant, role, SysUtil.getUser());
+			tenant.setInitStatus(TenantConstant.INIT_SUCCESS);
+		}
+	}
+
+	@Transactional
+	@CacheEvict(value = UserCacheName.TENANT, key = "#tenant.tenantCode")
+	public int updateTenantInfo(Tenant tenant) {
 		return super.update(tenant);
 	}
 

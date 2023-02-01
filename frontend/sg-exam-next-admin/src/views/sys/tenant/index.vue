@@ -21,16 +21,7 @@
                 confirm: handleDelete.bind(null, record),
                 auth: 'tenant:tenant:del'
               },
-            },
-            {
-              icon: 'ant-design:reload-outlined',
-               auth: 'tenant:tenant:edit',
-              popConfirm: {
-                title: '是否重新初始化',
-                confirm: handleInit.bind(null, record),
-                auth: 'tenant:tenant:edit'
-              },
-           },
+            }
           ]"
         />
       </template>
@@ -41,12 +32,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { BasicTable, useTable, TableAction } from '/@/components/Table';
-import { getTenantList, deleteTenant, initTenant } from '/@/api/sys/tenant';
+import { getTenantList, deleteTenant } from '/@/api/sys/tenant';
 import { useModal } from '/@/components/Modal';
 import TenantModal from './TenantModal.vue';
 import { columns, searchFormSchema } from './tenant.data';
 import {useMessage} from "/@/hooks/web/useMessage";
 import { usePermission } from '/@/hooks/web/usePermission';
+
 export default defineComponent({
   name: 'TenantManagement',
   components: { BasicTable, TenantModal, TableAction },
@@ -77,15 +69,13 @@ export default defineComponent({
         fixed: undefined,
       },
     });
-    async function handleInit(record: Recordable) {
-      await initTenant(record.id);
-      await reload();
-    }
+
     function handleCreate() {
       openModal(true, {
         isUpdate: false,
       });
     }
+
     function handleEdit(record: Recordable) {
       openModal(true, {
         record,
@@ -105,7 +95,6 @@ export default defineComponent({
       hasPermission,
       registerTable,
       registerModal,
-      handleInit,
       handleCreate,
       handleEdit,
       handleDelete,

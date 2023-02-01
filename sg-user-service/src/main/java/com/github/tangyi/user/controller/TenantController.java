@@ -4,7 +4,6 @@ import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.user.constant.TenantConstant;
 import com.github.tangyi.api.user.model.Tenant;
 import com.github.tangyi.common.base.BaseController;
-import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.log.OperationType;
 import com.github.tangyi.common.log.SgLog;
 import com.github.tangyi.common.model.R;
@@ -55,7 +54,9 @@ public class TenantController extends BaseController {
 	@SgLog(value = "新增租户", operationType = OperationType.INSERT)
 	public R<Boolean> add(@RequestBody @Valid Tenant tenant) {
 		tenant.setCommonValue(SysUtil.getUser(), tenant.getTenantCode());
-		tenant.setStatus(TenantConstant.PENDING_AUDIT);
+		if (tenant.getStatus() == null) {
+			tenant.setStatus(TenantConstant.PENDING_AUDIT);
+		}
 		return R.success(tenantService.add(tenant) > 0);
 	}
 
@@ -88,17 +89,5 @@ public class TenantController extends BaseController {
 	public R<List<Tenant>> findById(@RequestBody Long[] ids) {
 		List<Tenant> tenantList = tenantService.findListById(ids);
 		return Optional.ofNullable(tenantList).isPresent() ? R.success(tenantList) : null;
-	}
-
-	@PostMapping("init/{id}")
-	@Operation(summary = "租户初始化")
-	@SgLog(value = "租户初始化", operationType = OperationType.UPDATE)
-	public R<Boolean> init(@PathVariable Long id) {
-		Tenant tenant = tenantService.get(id);
-		SgPreconditions.checkNull(tenant, "tenant not found");
-		if (TenantConstant.NOT_INIT.equals(tenant.getInitStatus())) {
-			tenantService.asyncInit(tenant);
-		}
-		return R.success(Boolean.TRUE);
 	}
 }

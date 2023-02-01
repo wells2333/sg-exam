@@ -124,9 +124,9 @@ public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
 	protected void unsuccessfulAuthentication(HttpServletRequest req, HttpServletResponse res,
 			AuthenticationException failed) throws IOException, ServletException {
 		if (failed instanceof BadCredentialsException) {
-			log.error("unsuccessful authentication: {}", failed.getMessage());
+			log.error("Unsuccessful authentication: {}", failed.getMessage());
 		} else {
-			log.error("unsuccessful authentication", failed);
+			log.error("Unsuccessful authentication", failed);
 		}
 		RUtil.out(res, R.error(failed.getMessage()));
 	}

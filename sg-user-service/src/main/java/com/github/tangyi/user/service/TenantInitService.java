@@ -6,14 +6,15 @@ import com.github.tangyi.api.user.model.*;
 import com.github.tangyi.common.constant.CommonConstant;
 import com.github.tangyi.common.exceptions.CommonException;
 import com.github.tangyi.common.utils.StopWatchUtil;
+import com.github.tangyi.constants.UserCacheName;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
 
 @Slf4j
 @AllArgsConstructor
@@ -35,15 +36,15 @@ public class TenantInitService {
 	 */
 	@Transactional
 	public Role initTenant(Tenant tenant, String identifier) {
-		log.info("start init tenant auth, tenantCode：{}", tenant.getTenantCode());
+		log.info("Start to init tenant, tenantCode：{}", tenant.getTenantCode());
 		StopWatch watch = StopWatchUtil.start();
 		User user = initTenantAuth(tenant, identifier);
 		Role role = initTenantRole(user, tenant, identifier);
 		if (role == null) {
-			throw new CommonException("failed to init tenant role, tenantCode: " + tenant.getTenantCode());
+			throw new CommonException("Failed to init tenant role, tenantCode: " + tenant.getTenantCode());
 		}
 		initTenantMenu(tenant, role, identifier);
-		log.info("init tenant auth success, tenantCode: {}, took: {}", tenant.getTenantCode(),
+		log.info("Tenant has been initialed, tenantCode: {}, took: {}", tenant.getTenantCode(),
 				StopWatchUtil.stop(watch));
 		return role;
 	}
@@ -58,16 +59,17 @@ public class TenantInitService {
 			UserAuths userAuths = new UserAuths();
 			userAuths.setCommonValue(identifier, tenant.getTenantCode());
 			userAuths.setUserId(user.getId());
-			userAuths.setIdentifier(tenant.getTenantCode());
+			// 租户管理员账号：admin_${tenantCode}
+			userAuths.setIdentifier(UserServiceConstant.ADMIN_PREFIX + tenant.getTenantCode());
 			userAuths.setIdentityType(IdentityType.PASSWORD.getValue());
 			// 初始化默认密码
 			userAuths.setCredential(userService.encodeCredential(CommonConstant.DEFAULT_PASSWORD));
 			if (userAuthsService.insert(userAuths) > 0) {
-				log.info("init tenant auth success, tenantCode: {}", tenant.getTenantCode());
+				log.info("Init tenant auth success, tenantCode: {}", tenant.getTenantCode());
 				return user;
 			}
 		}
-		log.error("failed to init tenant auth, tenantCode: {}", tenant.getTenantCode());
+		log.error("Failed to init tenant auth, tenantCode: {}", tenant.getTenantCode());
 		return null;
 	}
 
@@ -79,20 +81,21 @@ public class TenantInitService {
 		Role role = new Role();
 		String tenantCode = tenant.getTenantCode();
 		role.setCommonValue(identifier, tenantCode);
-		role.setRoleCode(UserServiceConstant.ROLE_PREFIX + tenantCode);
-		// 角色名称，默认：单位管理员_${tenantName}
-		role.setRoleName("单位管理员_" + tenant.getTenantName());
+		// 角色 code：role_admin_${tenantCode}
+		role.setRoleCode(UserServiceConstant.ROLE_ADMIN_PREFIX + tenantCode);
+		// 角色名称：单位管理员_${tenantCode}
+		role.setRoleName("单位管理员_" + tenantCode);
 		if (roleService.insert(role) > 0) {
 			UserRole userRole = new UserRole();
 			userRole.setCommonValue(identifier, tenantCode);
 			userRole.setUserId(user.getId());
 			userRole.setRoleId(role.getId());
 			if (userRoleService.insert(userRole) > 0) {
-				log.info("init tenant role success, tenantCode: {}", tenantCode);
+				log.info("Init tenant role success, tenantCode: {}", tenantCode);
 				return role;
 			}
 		}
-		log.error("failed to init tenant role, tenantCode: {}", tenantCode);
+		log.error("Failed to init tenant role, tenantCode: {}", tenantCode);
 		return null;
 	}
 
@@ -100,16 +103,19 @@ public class TenantInitService {
 	 * 初始化菜单
 	 */
 	@Transactional
+	@CacheEvict(value = {UserCacheName.MENU, UserCacheName.ALL_MENU, UserCacheName.USER_MENU,
+			UserCacheName.ROLE_MENU}, allEntries = true)
 	public void initTenantMenu(Tenant tenant, Role role, String identifier) {
 		StopWatch watch = StopWatchUtil.start();
-		int menuSize = 0;
 		String tenantCode = tenant.getTenantCode();
-		if (StringUtils.isNotEmpty(tenant.getMenuIds())) {
-			Long[] menuIds = Arrays.stream(StringUtils.split(tenant.getMenuIds(), CommonConstant.COMMA))
-					.map(Long::parseLong).toArray(Long[]::new);
-			menuSize = menuService.copyMenuTree(menuIds, role, identifier, tenantCode);
+		menuService.deleteByRoleId(role.getId());
+		String[] menuIds = StringUtils.split(tenant.getMenuIds(), CommonConstant.COMMA);
+		if (menuIds != null && menuIds.length > 0) {
+			for (String menuId : menuIds) {
+				menuService.saveRoleMenu(role.getId(), Long.valueOf(menuId), identifier, tenantCode);
+			}
 		}
-		log.info("init tenant menus, tenantCode: {}, menu size: {}, took: {}", tenantCode, menuSize,
-				StopWatchUtil.stop(watch));
+		log.info("Init tenant menus, tenantCode: {}, menu size: {}, took: {}", tenantCode,
+				ArrayUtils.getLength(menuIds), StopWatchUtil.stop(watch));
 	}
 }

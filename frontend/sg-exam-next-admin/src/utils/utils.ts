@@ -1,8 +1,5 @@
 import CryptoJS from 'crypto-js'
 
-/**
- * 加密处理
- */
 export function encryption(params): string {
   let {
     data,

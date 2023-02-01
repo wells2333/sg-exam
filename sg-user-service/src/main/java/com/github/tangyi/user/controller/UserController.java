@@ -15,6 +15,7 @@ import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.DateUtils;
 import com.github.tangyi.common.utils.PageUtil;
 import com.github.tangyi.common.utils.SysUtil;
+import com.github.tangyi.common.utils.TenantHolder;
 import com.github.tangyi.common.vo.UserVo;
 import com.github.tangyi.user.excel.listener.UserImportListener;
 import com.github.tangyi.user.excel.model.UserExcelModel;
@@ -186,6 +187,7 @@ public class UserController extends BaseController {
 		User user = userService.get(id);
 		UserAuths userAuths = new UserAuths();
 		userAuths.setUserId(user.getId());
+		userAuths.setTenantCode(TenantHolder.getTenantCode());
 		return R.success(userService.delete(user, userAuths) > 0);
 	}
 
@@ -268,6 +270,7 @@ public class UserController extends BaseController {
 	@Operation(summary = "重置密码", description = "根据用户id重置密码")
 	@SgLog(value = "重置密码", operationType = OperationType.UPDATE)
 	public R<Boolean> resetPassword(@RequestBody UserDto userDto) {
+		userDto.setTenantCode(TenantHolder.getTenantCode());
 		return R.success(userService.resetPassword(userDto));
 	}
 

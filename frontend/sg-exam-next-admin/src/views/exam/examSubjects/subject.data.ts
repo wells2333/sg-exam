@@ -16,7 +16,6 @@ export const formSchema: FormSchema[] = [
     field: 'parentDept',
     label: '上级部门',
     component: 'TreeSelect',
-
     componentProps: {
       fieldNames: {
         label: 'deptName',

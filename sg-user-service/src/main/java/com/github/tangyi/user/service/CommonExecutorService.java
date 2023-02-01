@@ -33,23 +33,23 @@ public class CommonExecutorService implements IExecutorService {
 		log.info("start to init common executor");
 		int coreSize = EXECUTOR_CORE_SIZE;
 		this.commonExecutor = ExecutorUtils.newListeningExecutor("common-%d", coreSize, EXECUTOR_QUEUE_SIZE);
-		log.info("init common executor finished, coreSize: {}", coreSize);
+		log.info("Init common executor finished, coreSize: {}", coreSize);
 
-		log.info("start to init exam executor");
+		log.info("Start to init exam executor");
 		this.examExecutor = ExecutorUtils.newListeningExecutor("exam-%d", coreSize, EXECUTOR_QUEUE_SIZE);
-		log.info("init exam executor finished, coreSize: {}", coreSize);
+		log.info("Init exam executor finished, coreSize: {}", coreSize);
 
-		log.info("start to init subject executor");
+		log.info("Start to init subject executor");
 		this.subjectExecutor = ExecutorUtils.newListeningExecutor("subject-%d", coreSize, EXECUTOR_QUEUE_SIZE);
-		log.info("init subject executor finished, coreSize: {}", coreSize);
+		log.info("Init subject executor finished, coreSize: {}", coreSize);
 
-		log.info("start to init submit exam executor");
+		log.info("Start to init submit exam executor");
 		this.submitExecutor = ExecutorUtils.newListeningExecutor("submit-exam-%d", coreSize, EXECUTOR_QUEUE_SIZE);
-		log.info("init submit exam executor finished, coreSize: {}", coreSize);
+		log.info("Init submit exam executor finished, coreSize: {}", coreSize);
 
-		log.info("start to init import executor");
+		log.info("Start to init import executor");
 		this.importExecutor = ExecutorUtils.newListeningExecutor("import-%d", coreSize, EXECUTOR_QUEUE_SIZE);
-		log.info("init import executor finished, coreSize: {}", coreSize);
+		log.info("Init import executor finished, coreSize: {}", coreSize);
 	}
 
 	public ListeningExecutorService getCommonExecutor() {

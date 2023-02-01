@@ -3,6 +3,7 @@ import { FormSchema } from '/@/components/Table';
 import {h} from "vue";
 import {Tag} from "ant-design-vue";
 import {subjectColor} from '/@/components/Subjects/subject.constant';
+import {HtmlText} from '/@/components/HtmlText';
 
 export const columns: BasicColumn[] = [
   {
@@ -14,6 +15,11 @@ export const columns: BasicColumn[] = [
     title: '题目名称',
     dataIndex: 'subjectName',
     align: 'left',
+    customRender: ({ record }) => {
+      return h(HtmlText, {
+        text: record.subjectName
+      });
+    }
   },
   {
     title: '类型',

@@ -6,7 +6,11 @@ public interface UserServiceConstant {
 
 	Byte MENU_TYPE_PERMISSION = 1;
 
-	String ROLE_PREFIX = "ROLE_";
+	String ROLE_PREFIX = "role_";
+
+	String ROLE_ADMIN_PREFIX = "role_admin_";
+
+	String ADMIN_PREFIX = "admin_";
 
 	Integer RELATIONSHIP_TYPE_FATHER = 0;
 

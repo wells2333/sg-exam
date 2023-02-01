@@ -73,7 +73,6 @@ export default defineComponent({
 
     function delOption(field) {
       const optionName = field.split(addOptionBtnSlot)[1];
-      // update answer option
       const newAnswerOptions: any[] = [];
       const schema = unref(formElRef.value).getSchema;
       schema.forEach(fieldObj => {

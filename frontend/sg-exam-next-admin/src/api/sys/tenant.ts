@@ -32,12 +32,4 @@ export const deleteTenant = (id: string) => {
   );
 };
 
-export const initTenant = (id: string) => {
-  return defHttp.post<ApiRes>(
-    {
-      url: TenantApi.Base + '/init/' + id,
-    }
-  );
-};
-
 

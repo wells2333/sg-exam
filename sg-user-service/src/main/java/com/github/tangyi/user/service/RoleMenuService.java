@@ -6,6 +6,7 @@ import com.github.tangyi.common.constant.CommonConstant;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.constants.UserCacheName;
 import com.github.tangyi.user.mapper.RoleMenuMapper;
+import com.google.common.base.Preconditions;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -67,5 +68,11 @@ public class RoleMenuService extends CrudService<RoleMenuMapper, RoleMenu> imple
 
 	public List<RoleMenu> getByMenuIds(List<RoleMenu> roleMenus) {
 		return roleMenuMapper.getByMenuIds(roleMenus);
+	}
+
+	@Transactional
+	public int deleteByRoleId(Long roleId) {
+		Preconditions.checkState(roleId != null, "roleId must not null");
+		return roleMenuMapper.deleteByRoleId(roleId);
 	}
 }

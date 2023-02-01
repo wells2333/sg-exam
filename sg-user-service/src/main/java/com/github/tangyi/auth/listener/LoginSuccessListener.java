@@ -40,7 +40,7 @@ public class LoginSuccessListener implements ApplicationListener<CustomAuthentic
 			CustomUserDetails customUserDetails = (CustomUserDetails) userDetails;
 			String tenantCode = customUserDetails.getTenantCode();
 			String username = userDetails.getUsername();
-			log.info("login success, username: {} , tenantCode: {}", username, tenantCode);
+			log.info("Login success, username: {} , tenantCode: {}", username, tenantCode);
 			// 记录日志
 			Log logInfo = new Log();
 			logInfo.setTitle("用户登录");
