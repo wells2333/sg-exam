@@ -20,20 +20,20 @@ import java.util.List;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class RoleService extends CrudService<RoleMapper, Role> implements IRoleService {
+public class RoleService extends CrudService<RoleMapper, Role> implements IRoleService, UserCacheName {
 
 	private final RoleMenuMapper roleMenuMapper;
 
 	private final UserRoleMapper userRoleMapper;
 
 	@Override
-	@Cacheable(value = UserCacheName.ROLE, key = "#role.tenantCode", unless = "#result == null")
+	@Cacheable(value = ROLE, key = "#role.tenantCode", unless = "#result == null")
 	public List<Role> findAllList(Role role) {
 		SgPreCondition.checkTenantCode(role.getTenantCode());
 		return super.findAllList(role);
 	}
 
-	@Cacheable(value = UserCacheName.ROLE, key = "#role.id", unless = "#result == null")
+	@Cacheable(value = ROLE, key = "#role.id", unless = "#result == null")
 	public Role findByRoleCode(Role role) {
 		SgPreCondition.checkTenantCode(role.getTenantCode());
 		return this.dao.findByRoleCode(role);
@@ -47,14 +47,14 @@ public class RoleService extends CrudService<RoleMapper, Role> implements IRoleS
 
 	@Override
 	@Transactional
-	@CacheEvict(value = UserCacheName.ROLE, allEntries = true)
+	@CacheEvict(value = ROLE, allEntries = true)
 	public int update(Role role) {
 		return super.update(role);
 	}
 
 	@Override
 	@Transactional
-	@CacheEvict(value = UserCacheName.ROLE, allEntries = true)
+	@CacheEvict(value = ROLE, allEntries = true)
 	public int delete(Role role) {
 		int deleted = roleMenuMapper.deleteByRoleId(role.getId());
 		log.info("Role menus has been deleted, roleId: {}, deleted: {}", role.getId(), deleted);

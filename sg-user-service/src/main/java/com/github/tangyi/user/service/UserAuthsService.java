@@ -20,9 +20,10 @@ import java.util.List;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class UserAuthsService extends CrudService<UserAuthsMapper, UserAuths> implements IUserAuthsService {
+public class UserAuthsService extends CrudService<UserAuthsMapper, UserAuths>
+		implements IUserAuthsService, UserCacheName {
 
-	@Cacheable(value = UserCacheName.USER_AUTHS, key = "#userAuths.tenantCode + '_' + #userAuths.identifier", unless = "#result == null")
+	@Cacheable(value = USER_AUTHS, key = "#userAuths.tenantCode + ':' + #userAuths.identifier", unless = "#result == null")
 	public UserAuths getByIdentifier(UserAuths userAuths) {
 		SgPreCondition.checkIdentifierAndTenantCode(userAuths.getIdentifier(), userAuths.getTenantCode());
 		return this.dao.getByIdentifier(userAuths);
@@ -33,21 +34,21 @@ public class UserAuthsService extends CrudService<UserAuthsMapper, UserAuths> im
 	}
 
 	@Transactional
-	@CacheEvict(value = UserCacheName.USER_AUTHS, key = "#userAuths.tenantCode + '_' + #userAuths.identifier")
+	@CacheEvict(value = USER_AUTHS, key = "#userAuths.tenantCode + ':' + #userAuths.identifier")
 	public int deleteByIdentifier(UserAuths userAuths) {
 		SgPreCondition.checkIdentifierAndTenantCode(userAuths.getIdentifier(), userAuths.getTenantCode());
 		return this.dao.deleteByIdentifier(userAuths);
 	}
 
 	@Transactional
-	@CacheEvict(value = UserCacheName.USER_AUTHS, allEntries = true)
+	@CacheEvict(value = USER_AUTHS, allEntries = true)
 	public int deleteByUserId(UserAuths userAuths) {
 		Preconditions.checkState(userAuths.getUserId() != null, "userId must not be null");
 		return this.dao.deleteByUserId(userAuths);
 	}
 
 	@Transactional
-	@CacheEvict(value = UserCacheName.USER_AUTHS, allEntries = true)
+	@CacheEvict(value = USER_AUTHS, allEntries = true)
 	public int insertBatch(List<UserAuths> userAuths) {
 		return dao.insertBatch(userAuths);
 	}

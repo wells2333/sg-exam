@@ -1,12 +1,13 @@
 package com.github.tangyi.user.service;
 
-import com.github.tangyi.api.user.service.IUserService;
 import com.github.tangyi.api.user.constant.TenantConstant;
 import com.github.tangyi.api.user.constant.UserServiceConstant;
 import com.github.tangyi.api.user.dto.UserDto;
 import com.github.tangyi.api.user.dto.UserInfoDto;
+import com.github.tangyi.api.user.enums.AttachTypeEnum;
 import com.github.tangyi.api.user.enums.IdentityType;
 import com.github.tangyi.api.user.model.*;
+import com.github.tangyi.api.user.service.IUserService;
 import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.constant.CommonConstant;
 import com.github.tangyi.common.constant.SecurityConstant;
@@ -19,7 +20,6 @@ import com.github.tangyi.common.utils.EnvUtils;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.common.vo.UserVo;
 import com.github.tangyi.constants.UserCacheName;
-import com.github.tangyi.api.user.enums.AttachTypeEnum;
 import com.github.tangyi.user.mapper.RoleMapper;
 import com.github.tangyi.user.mapper.UserMapper;
 import com.github.tangyi.user.mapper.UserRoleMapper;
@@ -51,7 +51,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class UserService extends CrudService<UserMapper, User> implements IUserService {
+public class UserService extends CrudService<UserMapper, User> implements IUserService, UserCacheName {
 
 	private static final PasswordEncoder encoder = new BCryptPasswordEncoder();
 
@@ -113,7 +113,6 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	@Transactional
 	public void createUserRole(UserDto userDto, User user) {
 		if (CollectionUtils.isEmpty(user.getRole())) {
-			// 分配默认角色
 			defaultRole(user, user.getTenantCode(), userDto.getIdentifier());
 			return;
 		}
@@ -135,7 +134,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	/**
 	 * 根据用户唯一标识获取用户详细信息
 	 */
-	@Cacheable(value = UserCacheName.USER_VO, key = "#identifier", unless = "#result == null")
+	@Cacheable(value = USER_VO, key = "#tenantCode + ':' + #identifier", unless = "#result == null")
 	public UserVo findUserByIdentifier(Integer identityType, String identifier, String tenantCode) {
 		UserAuths userAuths = findUserAuthsByIdentifier(identityType, identifier, tenantCode);
 		if (userAuths == null) {
@@ -175,7 +174,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	/**
 	 * 获取用户信息，包括头像、角色、权限信息
 	 */
-	@Cacheable(value = UserCacheName.USER_DTO, key = "#userVo.identifier", unless = "#result == null")
+	@Cacheable(value = USER_DTO, key = "#userVo.tenantCode + ':' + #userVo.identifier", unless = "#result == null")
 	public UserInfoDto findUserInfo(UserVo userVo) {
 		UserInfoDto userInfoDto = new UserInfoDto();
 		String tenantCode = userVo.getTenantCode();
@@ -200,15 +199,11 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 		// 头像信息
 		getUserAvatar(userInfoDto, user);
 		// 用户的菜单
-		userInfoDto.setMenus(
-				menuService.findUserMenuTree(UserServiceConstant.MENU_TYPE_MENU, identifier, tenantCode, true));
+		userInfoDto.setMenus(menuService.findUserMenus(tenantCode, identifier));
 		return userInfoDto;
 	}
 
-	/**
-	 * 根据指定角色集合，查询用户权限数组
-	 */
-	@Cacheable(value = UserCacheName.USER_PERMISSION, key = "#identifier", unless = "#result == null")
+	@Cacheable(value = USER_PERMISSION, key = "#user.tenantCode + ':' + #identifier", unless = "#result == null")
 	public Set<String> getUserPermissions(User user, String identifier, List<Role> roles) {
 		List<Menu> menuList = Lists.newArrayList();
 		// 超级管理员
@@ -233,7 +228,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 				Sets.newHashSet();
 	}
 
-	@Cacheable(value = UserCacheName.USER_ROLE, key = "#userAuths.identifier", unless = "#result == null")
+	@Cacheable(value = USER_ROLE, key = "#userAuths.tenantCode + ':' + #userAuths.identifier", unless = "#result == null")
 	public List<Role> getUserRoles(UserAuths userAuths) {
 		List<UserRole> userRoles = userRoleMapper.getByUserId(userAuths.getUserId());
 		if (CollectionUtils.isNotEmpty(userRoles)) {
@@ -252,19 +247,16 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	}
 
 	@Transactional
-	@CacheEvict(value = {UserCacheName.USER, UserCacheName.USER_ROLE, UserCacheName.USER_PERMISSION,
-			UserCacheName.USER_AUTHS}, key = "#userDto.identifier")
+	@CacheEvict(value = {USER, USER_VO, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
+			USER_MENU_PERMISSION}, key = "#userDto.tenantCode + ':' + #userDto.identifier")
 	public boolean updateUser(Long id, UserDto userDto) {
 		User user = new User();
 		BeanUtils.copyProperties(userDto, user);
 		user.setId(id);
 		user.setCommonValue();
-		// 更新用户信息
 		this.dao.updateByPrimaryKeySelective(user);
-		// 更新用户角色关系
 		UserRole sysUserRole = new UserRole();
 		sysUserRole.setUserId(user.getId());
-		// 删除原有的角色信息
 		userRoleMapper.delete(sysUserRole);
 		if (CollectionUtils.isNotEmpty(userDto.getRole())) {
 			createUserRole(user.getId(), userDto.getRole());
@@ -273,18 +265,17 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	}
 
 	@Transactional
-	@CacheEvict(value = {UserCacheName.USER, UserCacheName.USER_VO, UserCacheName.USER_DTO, UserCacheName.USER_ROLE,
-			UserCacheName.USER_PERMISSION, UserCacheName.USER_AUTHS}, key = "#userAuths.identifier")
+	@CacheEvict(value = {USER, USER_VO, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
+			USER_MENU_PERMISSION}, key = "#user.tenantCode + ':' + #userAuths.identifier")
 	public int update(User user, UserAuths userAuths) {
 		user.setCommonValue();
 		return this.dao.updateByPrimaryKeySelective(user);
 	}
 
 	@Transactional
-	@CacheEvict(value = {UserCacheName.USER, UserCacheName.USER_VO, UserCacheName.USER_DTO, UserCacheName.USER_ROLE,
-			UserCacheName.USER_PERMISSION, UserCacheName.USER_AUTHS}, key = "#userDto.identifier")
+	@CacheEvict(value = {USER, USER_VO, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
+			USER_MENU_PERMISSION}, key = "#userDto.tenantCode + ':' + #userDto.identifier")
 	public int updatePassword(UserDto userDto) {
-		userDto.setTenantCode(SysUtil.getTenantCode());
 		SgPreconditions.checkBlank(userDto.getNewPassword(), "新密码不能为空");
 		SgPreconditions.checkBlank(userDto.getIdentifier(), "用户名不能为空");
 		UserAuths userAuths = findUserAuthsByIdentifier(null, userDto.getIdentifier(), userDto.getTenantCode());
@@ -302,8 +293,8 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	}
 
 	@Transactional
-	@CacheEvict(value = {UserCacheName.USER, UserCacheName.USER_VO, UserCacheName.USER_DTO, UserCacheName.USER_ROLE,
-			UserCacheName.USER_PERMISSION, UserCacheName.USER_AUTHS}, key = "#userDto.identifier")
+	@CacheEvict(value = {USER, USER_VO, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
+			USER_MENU_PERMISSION}, key = "#userDto.tenantCode + ':' + #userDto.identifier")
 	public String updateAvatar(UserDto userDto) {
 		User user = this.get(userDto.getId());
 		SgPreconditions.checkNull(user, "用户不存在");
@@ -333,8 +324,8 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	}
 
 	@Transactional
-	@CacheEvict(value = {UserCacheName.USER, UserCacheName.USER_VO, UserCacheName.USER_DTO, UserCacheName.USER_ROLE,
-			UserCacheName.USER_PERMISSION, UserCacheName.USER_AUTHS}, key = "#userAuths.identifier")
+	@CacheEvict(value = {USER, USER_VO, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
+			USER_MENU_PERMISSION}, key = "#userAuths.tenantCode + ':' + #userAuths.identifier")
 	public int delete(User user, UserAuths userAuths) {
 		userRoleMapper.deleteByUserId(userAuths.getUserId());
 		userAuthsService.deleteByUserId(userAuths);
@@ -344,8 +335,8 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 
 	@Override
 	@Transactional
-	@CacheEvict(value = {UserCacheName.USER, UserCacheName.USER_VO, UserCacheName.USER_DTO, UserCacheName.USER_ROLE,
-			UserCacheName.USER_PERMISSION, UserCacheName.USER_AUTHS}, allEntries = true)
+	@CacheEvict(value = {USER, USER_VO, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
+			USER_MENU_PERMISSION}, allEntries = true)
 	public int deleteAll(Long[] ids) {
 		String currentUser = SysUtil.getUser(), tenantCode = SysUtil.getTenantCode();
 		for (Long id : ids) {
@@ -365,32 +356,19 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 		return this.dao.userCount(userVo);
 	}
 
-	private void getUserAvatar(UserInfoDto userInfoDto, User user) {
-		try {
-			if (user.getAvatarId() != null && user.getAvatarId() != 0L) {
-				userInfoDto.setAvatar(qiNiuService.getPreviewUrl(user.getAvatarId()));
-			} else {
-				userInfoDto.setAvatar(DEFAULT_AVATAR_URL);
-			}
-		} catch (Exception e) {
-			log.error("getUserAvatar failed", e);
-		}
-	}
-
 	@Transactional
-	@CacheEvict(value = {UserCacheName.USER, UserCacheName.USER_VO, UserCacheName.USER_DTO, UserCacheName.USER_ROLE,
-			UserCacheName.USER_PERMISSION, UserCacheName.USER_AUTHS}, key = "#userDto.identifier")
+	@CacheEvict(value = {USER, USER_VO, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
+			USER_MENU_PERMISSION}, key = "#userDto.tenantCode + ':' + #userDto.identifier")
 	public boolean resetPassword(UserDto userDto) {
 		UserAuths userAuths = findUserAuthsByIdentifier(null, userDto.getIdentifier(), userDto.getTenantCode());
 		SgPreconditions.checkNull(userAuths, "账号不存在");
-		// reset password
 		userAuths.setCredential(encoder.encode(CommonConstant.DEFAULT_PASSWORD));
 		return userAuthsService.update(userAuths) > 0;
 	}
 
 	@Transactional
-	@CacheEvict(value = {UserCacheName.USER, UserCacheName.USER_VO, UserCacheName.USER_DTO, UserCacheName.USER_ROLE,
-			UserCacheName.USER_PERMISSION, UserCacheName.USER_AUTHS}, key = "#userDto.identifier")
+	@CacheEvict(value = {USER, USER_VO, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
+			USER_MENU_PERMISSION}, key = "#userDto.tenantCode + ':' + #userDto.identifier")
 	public boolean register(UserDto userDto) {
 		boolean success = false;
 		if (userDto.getIdentityType() == null) {
@@ -430,7 +408,6 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	}
 
 	private String decryptCredential(String encoded, Integer identityType) {
-		// 返回默认密码
 		if (StringUtils.isBlank(encoded)) {
 			return CommonConstant.DEFAULT_PASSWORD;
 		}
@@ -513,8 +490,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	}
 
 	@Transactional
-	@CacheEvict(value = {UserCacheName.USER, UserCacheName.USER_VO, UserCacheName.USER_DTO, UserCacheName.USER_ROLE,
-			UserCacheName.USER_PERMISSION, UserCacheName.USER_AUTHS}, allEntries = true)
+	@CacheEvict(value = {USER, USER_VO, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS}, allEntries = true)
 	public boolean importUsers(List<UserInfoDto> userInfoDtos) {
 		String currentUser = SysUtil.getUser(), tenantCode = SysUtil.getTenantCode();
 		Date currentDate = DateUtils.asDate(LocalDateTime.now());
@@ -579,5 +555,17 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 			}
 		}
 		return false;
+	}
+
+	private void getUserAvatar(UserInfoDto userInfoDto, User user) {
+		try {
+			if (user.getAvatarId() != null && user.getAvatarId() != 0L) {
+				userInfoDto.setAvatar(qiNiuService.getPreviewUrl(user.getAvatarId()));
+			} else {
+				userInfoDto.setAvatar(DEFAULT_AVATAR_URL);
+			}
+		} catch (Exception e) {
+			log.error("getUserAvatar failed", e);
+		}
 	}
 }

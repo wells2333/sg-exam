@@ -34,7 +34,7 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Service
-public class MenuService extends CrudService<MenuMapper, Menu> implements IMenuService {
+public class MenuService extends CrudService<MenuMapper, Menu> implements IMenuService, UserCacheName {
 
 	private final MenuMapper menuMapper;
 
@@ -60,28 +60,34 @@ public class MenuService extends CrudService<MenuMapper, Menu> implements IMenuS
 		return Collections.emptyList();
 	}
 
-	@Cacheable(value = UserCacheName.USER_MENU, key = "#tenantCode + '_' + #type + '_' + #identifier + '_' + #buildTree")
-	public List<MenuDto> findUserMenuTree(Byte type, String identifier, String tenantCode, boolean buildTree) {
-		List<Menu> userMenus = SysUtil.isAdmin(identifier) ?
-				findAdminMenus(type, tenantCode) :
-				findUserMenus(tenantCode);
-		return toMenuDto(userMenus, type, buildTree);
+	@Cacheable(value = USER_MENU, key = "#tenantCode + ':' + #identifier", unless = "#result == null")
+	public List<MenuDto> findUserMenus(String tenantCode, String identifier) {
+		return findUserMenuTree(UserServiceConstant.MENU_TYPE_MENU, identifier, tenantCode, true);
 	}
 
-	@Cacheable(value = UserCacheName.TENANT_MENU, key = "#tenantCode")
+	@Cacheable(value = USER_MENU_PERMISSION, key = "#tenantCode + ':' + #identifier", unless = "#result == null")
+	public Set<String> findUserMenuPermissions(String tenantCode, String identifier) {
+		List<MenuDto> menus = findUserMenuTree(UserServiceConstant.MENU_TYPE_PERMISSION, identifier, tenantCode, false);
+		if (CollectionUtils.isNotEmpty(menus)) {
+			return menus.stream().map(MenuDto::getPermission).collect(Collectors.toSet());
+		}
+		return null;
+	}
+
+	@Cacheable(value = TENANT_MENU, key = "#tenantCode", unless = "#result == null")
 	public List<MenuDto> findDefaultTenantMenu(String tenantCode, boolean buildTree) {
 		Menu condition = new Menu();
 		condition.setTenantCode(tenantCode);
 		return toMenuDto(findAllList(condition), null, buildTree);
 	}
 
-	@Cacheable(value = UserCacheName.ROLE_MENU, key = "#role")
+	@Cacheable(value = ROLE_MENU, key = "#role", unless = "#result == null")
 	public List<Menu> findMenuByRole(String role, String tenantCode) {
 		return menuMapper.findByRole(role, tenantCode);
 	}
 
 	@Override
-	@Cacheable(value = UserCacheName.ALL_MENU, key = "#menu.tenantCode")
+	@Cacheable(value = UserCacheName.ALL_MENU, key = "#menu.tenantCode", unless = "#result == null")
 	public List<Menu> findAllList(Menu menu) {
 		Menu condition = new Menu();
 		condition.setTenantCode(SysUtil.getTenantCode());
@@ -91,8 +97,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> implements IMenuS
 
 	@Override
 	@Transactional
-	@CacheEvict(value = {UserCacheName.MENU, UserCacheName.ALL_MENU, UserCacheName.USER_MENU,
-			UserCacheName.ROLE_MENU}, allEntries = true)
+	@CacheEvict(value = {MENU, ALL_MENU, USER_MENU, USER_MENU_PERMISSION, ROLE_MENU}, allEntries = true)
 	public int insert(Menu menu) {
 		return super.insert(menu);
 	}
@@ -102,7 +107,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> implements IMenuS
 	 */
 	@Override
 	@Transactional
-	@CacheEvict(value = {UserCacheName.MENU, UserCacheName.ALL_MENU, UserCacheName.USER_MENU}, allEntries = true)
+	@CacheEvict(value = {MENU, ALL_MENU, USER_MENU, USER_MENU_PERMISSION}, allEntries = true)
 	public int update(Menu menu) {
 		String tenantCode = SysUtil.getTenantCode();
 		Menu source = this.get(menu.getId());
@@ -115,7 +120,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> implements IMenuS
 
 	@Override
 	@Transactional
-	@CacheEvict(value = {UserCacheName.MENU, UserCacheName.ALL_MENU, UserCacheName.USER_MENU}, allEntries = true)
+	@CacheEvict(value = {MENU, ALL_MENU, USER_MENU, USER_MENU_PERMISSION}, allEntries = true)
 	public int delete(Menu menu) {
 		menu.setCommonValue();
 		super.delete(menu);
@@ -133,7 +138,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> implements IMenuS
 	}
 
 	@Transactional
-	@CacheEvict(value = {UserCacheName.ALL_MENU, UserCacheName.USER_MENU}, allEntries = true)
+	@CacheEvict(value = {ALL_MENU, USER_MENU}, allEntries = true)
 	public int deleteByTenantCode(Menu menu) {
 		return this.dao.deleteByTenantCode(menu);
 	}
@@ -242,7 +247,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> implements IMenuS
 	private List<Menu> findUserMenus(String tenantCode) {
 		Collection<? extends GrantedAuthority> authorities = SysUtil.getAuthorities();
 		if (CollectionUtils.isEmpty(authorities)) {
-			return Collections.emptyList();
+			return null;
 		}
 		List<Role> roleList = authorities.stream()
 				.filter(authority -> authority.getAuthority() != null && authority.getAuthority().toLowerCase()
@@ -254,9 +259,16 @@ public class MenuService extends CrudService<MenuMapper, Menu> implements IMenuS
 		return findMenuByRoleList(roleList, tenantCode);
 	}
 
+	private List<MenuDto> findUserMenuTree(Byte type, String identifier, String tenantCode, boolean buildTree) {
+		List<Menu> userMenus = SysUtil.isAdmin(identifier) ?
+				findAdminMenus(type, tenantCode) :
+				findUserMenus(tenantCode);
+		return toMenuDto(userMenus, type, buildTree);
+	}
+
 	private List<MenuDto> toMenuDto(List<Menu> menus, Byte type, boolean buildTree) {
 		if (CollectionUtils.isEmpty(menus)) {
-			return Collections.emptyList();
+			return null;
 		}
 		List<MenuDto> list = Lists.newArrayListWithExpectedSize(menus.size());
 		for (Menu menu : menus) {

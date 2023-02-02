@@ -39,7 +39,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 		long start = System.nanoTime();
 		UserVo userVo = userService.findUserByIdentifier(null, username, TenantHolder.getTenantCode());
 		if (userVo == null) {
-			throw new UsernameNotFoundException("user does not exist");
+			throw new UsernameNotFoundException("User does not exist");
 		}
 		return new CustomUserDetails(username, userVo.getCredential(),
 				CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(),

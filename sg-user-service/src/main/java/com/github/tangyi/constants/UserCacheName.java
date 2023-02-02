@@ -20,6 +20,8 @@ public interface UserCacheName {
 
 	String USER_MENU = "user:menu";
 
+	String USER_MENU_PERMISSION = "user:menu_permission";
+
 	String ROLE_MENU = "role:menu";
 
 	String TENANT_MENU = "tenant:menu";

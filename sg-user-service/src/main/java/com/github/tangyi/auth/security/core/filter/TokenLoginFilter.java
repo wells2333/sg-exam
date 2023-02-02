@@ -37,7 +37,6 @@ public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
 
 	private static final String CREDENTIAL = "credential";
 
-	// all get access token uri
 	public static final String ACCESS_TOKEN_URLS = EnvUtils.getValue("ACCESS_TOKEN_LOGIN_URLS", StringUtils.join(
 			Stream.of(SecurityConstant.LOGIN_URL, SecurityConstant.REGISTER, SecurityConstant.MOBILE_LOGIN_URL)
 					.toArray(), CommonConstant.COMMA));

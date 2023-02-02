@@ -141,13 +141,14 @@ public class UserController extends BaseController {
 	@Operation(summary = "更新用户信息", description = "根据用户id更新用户的基本信息、角色信息")
 	@SgLog(value = "修改用户", operationType = OperationType.UPDATE)
 	public R<Boolean> update(@PathVariable Long id, @RequestBody UserDto userDto) {
+		userDto.setTenantCode(TenantHolder.getTenantCode());
 		return R.success(userService.updateUser(id, userDto));
 	}
 
 	@PutMapping("updateInfo")
 	@Operation(summary = "更新用户基本信息", description = "根据用户id更新用户的基本信息")
 	@SgLog(value = "更新用户基本信息", operationType = OperationType.UPDATE)
-	public R<Boolean> update(@RequestBody UserDto userDto) {
+	public R<Boolean> updateInfo(@RequestBody UserDto userDto) {
 		User user = new User();
 		BeanUtils.copyProperties(userDto, user);
 		UserAuths condition = new UserAuths();
@@ -161,6 +162,7 @@ public class UserController extends BaseController {
 	@Operation(summary = "修改用户密码", description = "修改用户密码")
 	@SgLog(value = "更新用户密码", operationType = OperationType.UPDATE)
 	public R<Boolean> updatePassword(@RequestBody UserDto userDto) {
+		userDto.setTenantCode(TenantHolder.getTenantCode());
 		return R.success(userService.updatePassword(userDto) > 0);
 	}
 
@@ -177,6 +179,7 @@ public class UserController extends BaseController {
 	@Operation(summary = "更新用户头像")
 	@SgLog(value = "更新用户头像", operationType = OperationType.UPDATE)
 	public R<String> updateAvatar(@RequestBody UserDto userDto) {
+		userDto.setTenantCode(TenantHolder.getTenantCode());
 		return R.success(userService.updateAvatar(userDto));
 	}
 

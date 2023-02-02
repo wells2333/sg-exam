@@ -2,7 +2,6 @@ package com.github.tangyi.user.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.user.constant.TenantConstant;
-import com.github.tangyi.api.user.constant.UserServiceConstant;
 import com.github.tangyi.api.user.dto.MenuDto;
 import com.github.tangyi.api.user.model.Menu;
 import com.github.tangyi.common.base.BaseController;
@@ -20,7 +19,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,28 +41,16 @@ public class MenuController extends BaseController {
 
 	private final MenuService menuService;
 
-	/**
-	 * 返回当前用户的树形菜单集合
-	 */
 	@GetMapping(value = "userMenu")
 	@Operation(summary = "获取当前用户的菜单列表")
 	public R<List<MenuDto>> userMenu() {
-		return R.success(
-				menuService.findUserMenuTree(UserServiceConstant.MENU_TYPE_MENU, SysUtil.getUser(), SysUtil.getTenantCode(),
-						true));
+		return R.success(menuService.findUserMenus(SysUtil.getTenantCode(), SysUtil.getUser()));
 	}
 
-	/**
-	 * 返回当前用户的权限编码
-	 */
 	@GetMapping(value = "userPermissions")
 	@Operation(summary = "获取当前用户的权限编码")
 	public R<Set<String>> userPermissions() {
-		List<MenuDto> dtoList = menuService.findUserMenuTree(UserServiceConstant.MENU_TYPE_PERMISSION, SysUtil.getUser(),
-				SysUtil.getTenantCode(), false);
-		return R.success(CollectionUtils.isNotEmpty(dtoList) ?
-				dtoList.stream().map(MenuDto::getPermission).collect(Collectors.toSet()) :
-				Collections.emptySet());
+		return R.success(menuService.findUserMenuPermissions(SysUtil.getTenantCode(), SysUtil.getUser()));
 	}
 
 	@GetMapping(value = "defaultTenantMenu")
