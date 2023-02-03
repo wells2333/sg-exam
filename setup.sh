@@ -14,26 +14,26 @@ function update_version() {
   sed -i "" "s/version=[0-9].[0-9].[0-9]/version=$version/" gradle.properties
   sed -i "" "s/SG_EXAM_VERSION=[0-9].[0-9].[0-9]/SG_EXAM_VERSION=$version/" .env
   sed -i "" "s/version-[0-9].[0-9].[0-9]/version-$version/" README.md
-  cd sg-api && updateBuild "$version"
-  cd ../sg-common && updateBuild "$version"
-  cd ../sg-exam-service && updateBuild "$version"
-  cd ../sg-generator && updateBuild "$version"
-  cd ../sg-job && updateBuild "$version"
-  cd ../sg-user-service && updateBuild "$version"
+  cd sg-api && update_build "$version"
+  cd ../sg-common && update_build "$version"
+  cd ../sg-exam-service && update_build "$version"
+  cd ../sg-generator && update_build "$version"
+  cd ../sg-job && update_build "$version"
+  cd ../sg-user-service && update_build "$version"
   cd ../frontend
-  cd sg-exam-app && updatePackageJson "$version"
-  cd ../sg-exam-next-admin && updatePackageJson "$version"
-  cd ../sg-exam-next-app && updatePackageJson "$version"
+  cd sg-exam-app && update_package_json "$version"
+  cd ../sg-exam-next-admin && update_package_json "$version"
+  cd ../sg-exam-next-app && update_package_json "$version"
   cd ../..
   echo "Project version has been updated to $version successfully."
 }
 
-function updateBuild() {
+function update_build() {
   local version="$1"
   sed -i "" "s/version '[0-9].[0-9].[0-9]'/version '$version'/" build.gradle
 }
 
-function updatePackageJson() {
+function update_package_json() {
   local version="$1"
   sed -i "" "s/\"version\": \"[0-9].[0-9].[0-9]\"/\"version\": \"$version\"/" package.json
 }
