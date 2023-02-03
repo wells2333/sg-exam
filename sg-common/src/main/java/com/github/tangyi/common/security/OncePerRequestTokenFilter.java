@@ -71,7 +71,7 @@ public class OncePerRequestTokenFilter extends OncePerRequestFilter {
 		if (StringUtils.isEmpty(authorization)) {
 			authorization = request.getParameter(SecurityConstant.AUTHORIZATION);
 		}
-		SgPreconditions.checkBoolean(StringUtils.isEmpty(authorization), "没有用户凭证");
+		SgPreconditions.checkBoolean(StringUtils.isEmpty(authorization), "无用户凭证");
 		SgPreconditions.checkBoolean(!authorization.startsWith(SecurityConstant.BEARER), "token非法");
 		String token = authorization.substring(SecurityConstant.BEARER.length());
 		Claims claims = parseTokenBody(token);
@@ -80,16 +80,18 @@ public class OncePerRequestTokenFilter extends OncePerRequestFilter {
 		String id = ObjectUtil.toString(claims.get(TokenManager.ID));
 		String tenantCode = ObjectUtil.toString(claims.get(TokenManager.TENANT_CODE));
 		if (StringUtils.isNotEmpty(identify) && SecurityContextHolder.getContext().getAuthentication() == null) {
-			UserToken userToken = tokenManager.getToken(userId, id);
-			if (userToken == null || !userToken.getUserId().toString().equals(userId) || !userToken.getId()
-					.equals(id)) {
-				throw new TokenExpireException("token失效，请重新登录");
+			UserToken userToken = tokenManager.getToken(userId);
+			if (userToken == null || !userToken.getUserId().toString().equals(userId)) {
+				throw new TokenExpireException("token已失效，请重新登录");
 			}
-			// 默认续期30分钟，"记住我"续期7天
+			if (!userToken.getId().equals(id)) {
+				throw new TokenExpireException("已在其它端登录");
+			}
+			// "记住我" 续期7天
 			long expire = userToken.isRemember() ?
 					TimeUnit.DAYS.toSeconds(TokenManager.TOKEN_REMEMBER_EXPIRE) :
 					TimeUnit.MINUTES.toSeconds(TokenManager.TOKEN_EXPIRE);
-			// token接近过期则自动续期
+			// token 接近过期则自动续期 240 分钟
 			Duration duration = Duration.between(LocalDateTime.now(), userToken.getExpiresAt());
 			if (duration.toMinutes() < TokenManager.TOKEN_EXPIRE) {
 				tokenManager.expireToken(userToken, (int) expire);
@@ -114,8 +116,8 @@ public class OncePerRequestTokenFilter extends OncePerRequestFilter {
 		try {
 			claims = tokenManager.getTokenBody(token);
 		} catch (Exception e) {
-			log.error("parseTokenBody failed", e);
-			throw new TokenExpireException("parseTokenBody failed");
+			log.error("Failed to parse token body", e);
+			throw new TokenExpireException("Failed to parse token body");
 		}
 		return claims;
 	}

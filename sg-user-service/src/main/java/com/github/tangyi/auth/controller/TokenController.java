@@ -26,14 +26,14 @@ public class TokenController extends BaseController {
 	@GetMapping("validToken")
 	public R<Boolean> validToken(HttpServletRequest request) {
 		UserToken userToken = parseUserToken(request);
-		return R.success(userToken != null && tokenManager.tokenExist(userToken));
+		return R.success(userToken != null && tokenManager.tokenExist(userToken.getUserId()));
 	}
 
 	@GetMapping("logout")
 	public R<Boolean> logout(HttpServletRequest request) {
 		UserToken userToken = parseUserToken(request);
-		if (tokenManager.tokenExist(userToken)) {
-			tokenManager.deleteToken(userToken);
+		if (userToken != null && tokenManager.tokenExist(userToken.getUserId())) {
+			tokenManager.deleteToken(userToken.getUserId());
 		}
 		return R.success(Boolean.TRUE);
 	}

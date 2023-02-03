@@ -30,6 +30,10 @@ public class UserTokenService {
 
 	private final TokenManager tokenManager;
 
+	public void generateAndSaveToken(HttpServletRequest req, HttpServletResponse res, CustomUserDetails details) {
+		generateAndSaveToken(req, res, details, true);
+	}
+
 	public Map<String, Object> generateAndSaveToken(HttpServletRequest req, HttpServletResponse res,
 			CustomUserDetails details, boolean writeRes) {
 		String role = null;
@@ -42,7 +46,7 @@ public class UserTokenService {
 		String ip = req.getRemoteAddr();
 		String userAgent = req.getHeader(HttpHeaders.USER_AGENT);
 		LocalDateTime issuedAt = LocalDateTime.now();
-		// 默认180分钟有效，"记住我"7天有效
+		// 默认 240 分钟有效，"记住我" 7 天有效
 		LocalDateTime expireAt = issuedAt.plusSeconds(remember ?
 				TimeUnit.DAYS.toSeconds(TokenManager.TOKEN_REMEMBER_EXPIRE) :
 				TimeUnit.MINUTES.toSeconds((TokenManager.TOKEN_EXPIRE)));
@@ -60,34 +64,24 @@ public class UserTokenService {
 		userToken.setRemember(remember);
 		// 距离过期时间剩余的秒数
 		int expireSeconds = (int) ChronoUnit.SECONDS.between(issuedAt, expireAt);
-		// 保存到Redis
 		if (tokenManager.saveToken(userToken, expireSeconds)) {
-			// 生成token
 			String token = tokenManager.createToken(userToken);
 			Map<String, Object> map = Maps.newHashMapWithExpectedSize(3);
 			map.put("token", token);
 			map.put(CommonConstant.TENANT_CODE, details.getTenantCode());
-			log.info("login success, identify: {}, loginType: {}", details.getUsername(),
+			log.info("Login successfully, identify: {}, loginType: {}", details.getUsername(),
 					details.getLoginType().getType());
 			if (writeRes) {
 				RUtil.out(res, R.success(map));
 			}
 			return map;
 		} else {
-			log.info("login failed, identify: {}, loginType: {}", details.getUsername(),
+			log.info("Failed to login, identify: {}, loginType: {}", details.getUsername(),
 					details.getLoginType().getType());
 			if (writeRes) {
 				RUtil.out(res, R.error("login failed"));
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * 生成token，并保存到Redis
-	 */
-	public Map<String, Object> generateAndSaveToken(HttpServletRequest req, HttpServletResponse res,
-			CustomUserDetails details) {
-		return generateAndSaveToken(req, res, details, true);
 	}
 }

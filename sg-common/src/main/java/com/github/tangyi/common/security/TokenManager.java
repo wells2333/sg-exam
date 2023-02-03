@@ -18,9 +18,10 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class TokenManager {
 
-	public static final long TOKEN_EXPIRE = Long.parseLong(EnvUtils.getValue("TOKEN_EXPIRE", 180 + ""));
+	public static final long TOKEN_EXPIRE = Long.parseLong(EnvUtils.getValue("TOKEN_EXPIRE", 240 + ""));
 
 	public static final long TOKEN_REMEMBER_EXPIRE = Long.parseLong(
 			EnvUtils.getValue("TOKEN_REMEMBER_EXPIRE_SECONDS", "7"));
@@ -39,7 +40,7 @@ public class TokenManager {
 
 	public static final String TENANT_CODE = "tenantCode";
 
-	public static final String TOKEN_KEY_PREFIX = "user_token_";
+	public static final String TOKEN_KEY_PREFIX = "user_token:";
 
 	private final RedisTemplate redisTemplate;
 
@@ -63,23 +64,14 @@ public class TokenManager {
 		if (MapUtils.isNotEmpty(body)) {
 			body.forEach(builder::claim);
 		}
-		builder
-				// token的过期时间由Redis维护
-				.setIssuedAt(
-						new Date(userToken.getIssuedAt().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()))
-				// 使用UUID作为token的ID
+		builder.setIssuedAt(new Date(userToken.getIssuedAt().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()))
 				.setId(userToken.getId()).signWith(SignatureAlgorithm.HS512, TOKEN_SIGN_KEY);
 		return SecurityConstant.BEARER + builder.compressWith(CompressionCodecs.GZIP).compact();
 	}
 
-	/**
-	 * 保存token到Redis
-	 * key: user_token_${userId}_${tokenId}
-	 */
-	@SuppressWarnings("unchecked")
 	public boolean saveToken(UserToken userToken, int expire) {
 		try {
-			redisTemplate.opsForValue().set(tokenKey(userToken), userToken, expire, TimeUnit.SECONDS);
+			redisTemplate.opsForValue().set(tokenKey(userToken.getUserId()), userToken, expire, TimeUnit.SECONDS);
 			return true;
 		} catch (Exception e) {
 			log.error("saveToken failed", e);
@@ -87,39 +79,26 @@ public class TokenManager {
 		return false;
 	}
 
-	/**
-	 * 从Redis获取token信息
-	 */
-	public UserToken getToken(String userId, String id) {
-		return (UserToken) redisTemplate.opsForValue().get(TOKEN_KEY_PREFIX + userId + "_" + id);
+	public UserToken getToken(String userId) {
+		return (UserToken) redisTemplate.opsForValue().get(TOKEN_KEY_PREFIX + userId);
 	}
 
-	/**
-	 * 设置超时时间
-	 */
-	@SuppressWarnings("unchecked")
 	public void expireToken(UserToken userToken, int expire) {
-		redisTemplate.expire(tokenKey(userToken), expire, TimeUnit.SECONDS);
+		redisTemplate.expire(tokenKey(userToken.getUserId()), expire, TimeUnit.SECONDS);
 	}
 
-	/**
-	 * token 是否存在
-	 */
 	@SuppressWarnings("unchecked")
-	public boolean tokenExist(UserToken userToken) {
-		return redisTemplate.hasKey(tokenKey(userToken));
+	public Boolean tokenExist(Long userId) {
+		return redisTemplate.hasKey(tokenKey(userId));
 	}
 
-	/**
-	 * 删除token
-	 */
-	@SuppressWarnings("unchecked")
-	public void deleteToken(UserToken userToken) {
-		redisTemplate.delete(tokenKey(userToken));
+	public void deleteToken(Long userId) {
+		redisTemplate.delete(tokenKey(userId));
 	}
 
-	private String tokenKey(UserToken userToken) {
-		return TOKEN_KEY_PREFIX + userToken.getUserId() + "_" + userToken.getId();
+	private String tokenKey(Long userId) {
+		// key: user_token:${userId}
+		return TOKEN_KEY_PREFIX + userId;
 	}
 
 	public Claims getTokenBody(String token) {

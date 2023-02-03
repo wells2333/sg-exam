@@ -73,10 +73,10 @@ export const columns: BasicColumn[] = [
     customRender: ({record}) => {
       const courseStatus = record.courseStatus;
       let color = 'green';
-      let text = '上架中';
+      let text = '已发布';
       if (courseStatus !== null && courseStatus === 1) {
         color = 'blue';
-        text = '已下架';
+        text = '草稿';
       }
       return h(Tag, {color: color}, () => text);
     },
@@ -118,11 +118,11 @@ export const formSchema: FormSchema[] = [
     field: 'courseStatus',
     label: '状态',
     component: 'RadioButtonGroup',
-    defaultValue: 0,
+    defaultValue: 1,
     componentProps: {
       options: [
-        { label: '上架中', value: 0 },
-        { label: '已下架', value: 1 },
+        { label: '草稿', value: 1 },
+        { label: '已发布', value: 0 },
       ],
     },
     required: true,

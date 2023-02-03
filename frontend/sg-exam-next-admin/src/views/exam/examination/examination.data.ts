@@ -143,11 +143,11 @@ export const formSchema: FormSchema[] = [
     field: 'status',
     label: '状态',
     component: 'RadioButtonGroup',
-    defaultValue: 0,
+    defaultValue: 1,
     componentProps: {
       options: [
-        { label: '已发布', value: 0 },
         { label: '草稿', value: 1 },
+        { label: '已发布', value: 0 },
       ],
     },
     required: true,

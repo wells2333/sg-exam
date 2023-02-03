@@ -23,10 +23,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -92,8 +90,6 @@ public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
 
 	/**
 	 * 授权类型为密码模式则解密
-	 * @param request request
-	 * @return boolean
 	 */
 	private boolean needDecrypt(HttpServletRequest request) {
 		String uri = request.getRequestURI();
@@ -114,14 +110,14 @@ public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
 
 	@Override
 	protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain,
-			Authentication auth) throws IOException, ServletException {
+			Authentication auth) {
 		CustomUserDetails details = (CustomUserDetails) auth.getPrincipal();
 		userTokenService.generateAndSaveToken(req, res, details);
 	}
 
 	@Override
 	protected void unsuccessfulAuthentication(HttpServletRequest req, HttpServletResponse res,
-			AuthenticationException failed) throws IOException, ServletException {
+			AuthenticationException failed) {
 		if (failed instanceof BadCredentialsException) {
 			log.error("Unsuccessful authentication: {}", failed.getMessage());
 		} else {
