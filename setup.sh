@@ -1,10 +1,15 @@
 #!/bin/bash
 set -e
-set -x
+
+BASENAME=$(basename "$0")
+SG_EXAM_APP="sg-exam-app"
+SG_EXAM_NEXT_ADMIN="sg-exam-next-admin"
+SG_EXAM_NEXT_APP="sg-exam-next-app"
+SG_EXAM_USER_SERVICE="sg-exam-user-service"
 
 function update_version() {
   local version="$1"
-  echo "$version"
+  echo "Updating project version to $version ..."
   sed -i "" "s/version = '[0-9].[0-9].[0-9]'/version = '$version'/" build.gradle
   sed -i "" "s/version=[0-9].[0-9].[0-9]/version=$version/" gradle.properties
   sed -i "" "s/SG_EXAM_VERSION=[0-9].[0-9].[0-9]/SG_EXAM_VERSION=$version/" .env
@@ -19,7 +24,8 @@ function update_version() {
   cd sg-exam-app && updatePackageJson "$version"
   cd ../sg-exam-next-admin && updatePackageJson "$version"
   cd ../sg-exam-next-app && updatePackageJson "$version"
-  cd ../.. && pwd
+  cd ../..
+  echo "Project version has been updated to $version successfully."
 }
 
 function updateBuild() {
@@ -28,35 +34,35 @@ function updateBuild() {
 }
 
 function updatePackageJson() {
-    local version="$1"
-    sed -i "" "s/\"version\": \"[0-9].[0-9].[0-9]\"/\"version\": \"$version\"/" package.json
+  local version="$1"
+  sed -i "" "s/\"version\": \"[0-9].[0-9].[0-9]\"/\"version\": \"$version\"/" package.json
 }
 
 function build_web() {
-  echo "start to build web"
+  echo "Building $SG_EXAM_APP ..."
   # shellcheck disable=SC2164
   cd frontend/sg-exam-app
   yarn build
   cd ../..
-  echo "build web finished"
+  echo "$SG_EXAM_APP has been built successfully."
 }
 
 function build_admin() {
-  echo "start to build admin"
+  echo "Building $SG_EXAM_NEXT_ADMIN ..."
   # shellcheck disable=SC2164
   cd frontend/sg-exam-next-admin
   yarn build
   cd ../..
-  echo "build admin finished"
+  echo "$SG_EXAM_NEXT_ADMIN has been built successfully."
 }
 
 function build_app() {
-  echo "start to build app"
+  echo "Building $SG_EXAM_NEXT_APP ..."
   # shellcheck disable=SC2164
   cd frontend/sg-exam-next-app
   export NODE_OPTIONS=--openssl-legacy-provider && yarn build:weapp
   cd ../..
-  echo "build app finished"
+  echo "$SG_EXAM_NEXT_APP has been built successfully."
 }
 
 function build_frontend() {
@@ -66,46 +72,61 @@ function build_frontend() {
 }
 
 function build_service() {
-  echo "start to build service"
+  echo "Building $SG_EXAM_USER_SERVICE ..."
   chmod 764 gradlew
   ./gradlew clean
   ./gradlew build
-  echo "build service finished, start to build image"
-  echo "start to build service image"
+  echo "$SG_EXAM_USER_SERVICE has been built successfully."
+  echo "Building docker image ..."
   docker-compose build
-  echo "build service image finished"
+  echo "Docker image has been built successfully."
 }
 
 function push_service() {
-  echo "start to push service"
+  echo "Pushing docker image ..."
   docker-compose push
-  echo "push service finished"
+  echo "Docker image has been pushed successfully."
 }
 
 function start_service() {
-  echo "start to pull image"
+  echo "Pulling docker image ..."
   docker-compose pull
-  echo "start to start service with config"
+  echo "Starting services ..."
   docker-compose config
   docker-compose up --remove-orphans --no-build -d
-  echo "start service finished"
+  echo "Services has been started successfully."
   docker ps
-  # tail logs
   logs
 }
 
 function stop_service() {
-  echo "start to stop service"
+  echo "Stopping services ..."
   docker-compose stop
-  echo "stop service finished"
+  echo "Services has been stopped successfully."
 }
 
 function logs() {
-  docker logs "$(docker ps |grep 'sg-user-service'|awk '{print $1}')" -f --tail=100
+  docker logs "$(docker ps |grep $SG_EXAM_USER_SERVICE|awk '{print $1}')" -f --tail=100
+}
+
+function print_usage() {
+  echo "Usage: $BASENAME COMMAND
+       $BASENAME --help
+  A online examination application.
+  Commands:
+      help                Get detailed help and usage
+      build_f             Build frontend services
+      build               Build backend services and docker image
+      push                Push docker image to registry
+      start               Start services
+      stop                Stop services
+      restart             Pull docker image and restart services
+      logs                Tails the services logs
+      version             Update project version to a specify version"
+  exit 1
 }
 
 function main() {
-  clear
   if [ "$#" -eq 0 ]; then
     _usage
     exit 0
@@ -114,6 +135,10 @@ function main() {
   local version="$2"
   shift
   case "${cmd}" in
+  -h | --help | help)
+    print_usage
+    exit
+    ;;
   build_f)
     build_frontend
     ;;
@@ -139,8 +164,13 @@ function main() {
   logs)
     logs
     ;;
-  v)
+  version)
     update_version "$version"
+    ;;
+  *)
+    echo "$BASENAME: '$cmd' is not a $BASENAME command."
+    echo "Run '$BASENAME --help' for more information."
+    exit 1
     ;;
   esac
 }
