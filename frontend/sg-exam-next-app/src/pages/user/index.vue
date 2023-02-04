@@ -27,6 +27,8 @@
                       @click="handleClickShare"></at-list-item>
         <at-list-item title="关于" arrow="right" :iconInfo="{ value: 'link', color: '#9881F5'}"
                       @click="handleClickAbout"></at-list-item>
+        <at-list-item title="退出登录" arrow="right" :iconInfo="{ value: 'alert-circle', color: '#2288A5'}"
+                      @click="handleLogout"></at-list-item>
       </at-list>
     </view>
   </view>
@@ -67,6 +69,11 @@ export default {
       Taro.navigateTo({url: "/pages/about/index"});
     }
 
+    function handleLogout() {
+      api.logout();
+      Taro.reLaunch({ url: "/pages/index/index" })
+    }
+
     onMounted(() => {
       fetch();
     });
@@ -77,7 +84,8 @@ export default {
       handleClickTopTab,
       handleClick,
       handleClickShare,
-      handleClickAbout
+      handleClickAbout,
+      handleLogout
     }
   }
 }

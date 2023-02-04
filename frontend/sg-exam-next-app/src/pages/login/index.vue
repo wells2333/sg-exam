@@ -12,7 +12,7 @@
           :value="sms"
           center
           clearable
-          title="短信验证码"
+          title="验证码"
           placeholder="请输入短信验证码"
           use-button-slot
           @change="handleSmsChange"
@@ -41,7 +41,7 @@ import authApi from "../../api/auth.api";
 import sendSms from '../../api/user.api';
 import userApi from '../../api/user.api';
 import {shardMessage, TENANT_CODE} from "../../constant/constant";
-import {hideLoading, showLoading, successMessage, warnMessage} from '../../utils/util';
+import {hideLoading, showLoading, successMessage, warnMessage, validatePhoneValue, validateSmsValue} from '../../utils/util';
 
 export default {
   setup() {
@@ -74,43 +74,17 @@ export default {
 
     async function handlePhoneLogin() {
       const phoneVal = unref(phone);
-      if (validatePhoneValue()) {
+      if (await validatePhoneValue(phone)) {
         await sendSms.sendSms(phoneVal);
         countDown();
         await successMessage('发送成功');
       }
     }
 
-    function validatePhoneValue() {
-      const phoneVal = unref(phone);
-      if (phoneVal === '') {
-        warnMessage('请输入手机号');
-        return false;
-      }
-      if (!(/^1[34578]\d{9}$/.test(phoneVal))) {
-        warnMessage('手机号格式错误');
-        return false;
-      }
-      return true;
-    }
-
-    function validateSmsValue() {
-      const smsVal = unref(sms);
-      if (smsVal === '') {
-        warnMessage('请输入验证码');
-        return false;
-      }
-      if (smsVal.length !== 4) {
-        warnMessage('请输入长度为4的验证码');
-        return false;
-      }
-      return true;
-    }
-
     async function handleLogin() {
       const phoneVal = unref(phone);
       const isTestPhone = phoneVal === '666';
-      if (isTestPhone || (validatePhoneValue() && validateSmsValue())) {
+      if (isTestPhone || (await validatePhoneValue() && await validateSmsValue())) {
         await showLoading('登录中');
         try {
           let tenantCodeValue = tenantCode.value;

@@ -67,12 +67,17 @@ export default {
               const {code} = data;
               const loginResult = await authApi.wxlogin(tenantCodeValue, code, {name: nickName, gender, avatarUrl});
               if (loginResult.code === 0 && loginResult.result) {
-                api.setTenantCode(loginResult.result.tenantCode);
-                api.setToken(loginResult.result.token);
+                const {tenantCode, token, hasPhone} = loginResult.result;
+                api.setTenantCode(tenantCode);
+                api.setToken(token);
                 const {result} = await userApi.userInfo();
                 api.setUserInfo(result);
                 await successMessage('登录成功');
-                await Taro.reLaunch({url: "/pages/home/index"})
+                if (!hasPhone) {
+                  await Taro.navigateTo({url: "/pages/phone_info/index"});
+                } else {
+                  await Taro.reLaunch({url: "/pages/home/index"});
+                }
               } else {
                 await warnMessage('登录失败');
               }
@@ -157,6 +162,6 @@ swiper {
 }
 
 .tenant-code-input {
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 </style>

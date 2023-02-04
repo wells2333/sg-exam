@@ -19,10 +19,7 @@ import com.github.tangyi.common.utils.TenantHolder;
 import com.github.tangyi.common.vo.UserVo;
 import com.github.tangyi.user.excel.listener.UserImportListener;
 import com.github.tangyi.user.excel.model.UserExcelModel;
-import com.github.tangyi.user.service.DeptService;
-import com.github.tangyi.user.service.UserAuthsService;
-import com.github.tangyi.user.service.UserRoleService;
-import com.github.tangyi.user.service.UserService;
+import com.github.tangyi.user.service.*;
 import com.github.tangyi.user.utils.UserUtils;
 import com.google.common.collect.Lists;
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,6 +58,8 @@ public class UserController extends BaseController {
 	private final DeptService deptService;
 
 	private final UserAuthsService userAuthsService;
+
+	private final ValidateCodeService validateCodeService;
 
 	@GetMapping("/{id}")
 	@Operation(summary = "获取用户信息", description = "根据用户id获取用户详细信息")
@@ -149,12 +148,17 @@ public class UserController extends BaseController {
 	@Operation(summary = "更新用户基本信息", description = "根据用户id更新用户的基本信息")
 	@SgLog(value = "更新用户基本信息", operationType = OperationType.UPDATE)
 	public R<Boolean> updateInfo(@RequestBody UserDto userDto) {
+		// 检查验证码
+		if (StringUtils.isNotEmpty(userDto.getCode())) {
+			validateCodeService.checkCode(userDto.getCode(), userDto.getPhone());
+		}
 		User user = new User();
 		BeanUtils.copyProperties(userDto, user);
 		UserAuths condition = new UserAuths();
 		condition.setIdentifier(userDto.getIdentifier());
 		condition.setTenantCode(userDto.getTenantCode());
 		UserAuths userAuths = userAuthsService.getByIdentifier(condition);
+		user.setId(userAuths.getUserId());
 		return R.success(userService.update(user, userAuths) > 0);
 	}
 

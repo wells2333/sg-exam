@@ -22,6 +22,8 @@ public class CustomUserDetails extends User {
 
 	private Long id;
 
+	private String phone;
+
 	private long startNanoTime;
 
 	private LoginTypeEnum loginType;
@@ -34,11 +36,12 @@ public class CustomUserDetails extends User {
 	}
 
 	public CustomUserDetails(String username, String password, boolean enabled,
-			Collection<? extends GrantedAuthority> authorities, String tenantCode, Long id, long startNanoTime,
-			LoginTypeEnum loginType) {
+			Collection<? extends GrantedAuthority> authorities, String tenantCode, Long id, String phone,
+			long startNanoTime, LoginTypeEnum loginType) {
 		super(username, password, enabled, true, true, true, authorities);
 		this.tenantCode = tenantCode;
 		this.id = id;
+		this.phone = phone;
 		this.startNanoTime = startNanoTime;
 		this.loginType = loginType;
 	}

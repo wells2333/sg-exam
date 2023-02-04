@@ -239,6 +239,11 @@ public class UserDto implements Serializable {
 	@Schema(description = "个性签名")
 	private String signature;
 
+	/**
+	 * 短信验证码
+	 */
+	private String code;
+
 	public UserDto() {
 
 	}

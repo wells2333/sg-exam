@@ -43,7 +43,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 		}
 		return new CustomUserDetails(username, userVo.getCredential(),
 				CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(),
-				userVo.getUserId(), start, LoginTypeEnum.PWD);
+				userVo.getUserId(), userVo.getPhone(), start, LoginTypeEnum.PWD);
 
 	}
 
@@ -57,7 +57,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 		}
 		return new CustomUserDetails(username, userVo.getCredential(),
 				CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(),
-				userVo.getUserId(), start, LoginTypeEnum.PWD);
+				userVo.getUserId(), userVo.getPhone(), start, LoginTypeEnum.PWD);
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 		}
 		return new CustomUserDetails(userVo.getIdentifier(), userVo.getCredential(),
 				CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(),
-				userVo.getUserId(), start, LoginTypeEnum.SMS);
+				userVo.getUserId(), userVo.getPhone(), start, LoginTypeEnum.SMS);
 	}
 
 	@Override
@@ -127,7 +127,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 		long start = System.currentTimeMillis();
 		return new CustomUserDetails(userVo.getIdentifier(), userVo.getCredential(),
 				CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(),
-				userVo.getUserId(), start, LoginTypeEnum.WECHAT);
+				userVo.getUserId(), userVo.getPhone(), start, LoginTypeEnum.WECHAT);
 	}
 
 	private Set<GrantedAuthority> getAuthority(UserVo userVo) {

@@ -61,6 +61,7 @@ public class LoginSuccessListener implements ApplicationListener<CustomAuthentic
 			userDto.setId(customUserDetails.getId());
 			userDto.setIdentifier(username);
 			userDto.setLoginTime(DateUtils.asDate(LocalDateTime.now()));
+			userDto.setTenantCode(tenantCode);
 			saveLoginInfo(logInfo, userDto);
 		}
 	}

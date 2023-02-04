@@ -1,4 +1,5 @@
 import Taro from "@tarojs/taro";
+import {unref} from "vue";
 
 /**
  * 生成随机len位数字
@@ -96,4 +97,43 @@ export const showLoading = async (title: string = '加载中') => {
 
 export const hideLoading = () => {
     Taro.hideLoading();
+}
+
+export const validatePhoneValue = async (phone) => {
+    const phoneVal = unref(phone);
+    if (phoneVal === '') {
+        await warnMessage('请输入手机号');
+        return false;
+    }
+    if (!(/^1[34578]\d{9}$/.test(phoneVal))) {
+        await warnMessage('手机号格式错误');
+        return false;
+    }
+    return true;
+}
+
+export const validateEmail = async (email) => {
+    const emailVal = unref(email);
+    if (emailVal === '') {
+        await warnMessage('请输入邮箱');
+        return false;
+    }
+    if (!(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/.test(emailVal))) {
+        await warnMessage('邮箱格式错误');
+        return false;
+    }
+    return true;
+}
+
+export const validateSmsValue = async (sms) => {
+    const smsVal = unref(sms);
+    if (smsVal === '') {
+        await warnMessage('请输入验证码');
+        return false;
+    }
+    if (smsVal.length !== 4) {
+        await warnMessage('请输入长度为4的验证码');
+        return false;
+    }
+    return true;
 }

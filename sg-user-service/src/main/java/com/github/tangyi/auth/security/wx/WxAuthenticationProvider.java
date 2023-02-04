@@ -25,12 +25,11 @@ public class WxAuthenticationProvider implements AuthenticationProvider {
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		WxAuthenticationToken wxAuthenticationToken = (WxAuthenticationToken) authentication;
-		// 微信的code
 		String principal = wxAuthenticationToken.getPrincipal().toString();
 		UserDetails userDetails = customUserDetailsService.loadUserByWxCodeAndTenantCode(
 				wxAuthenticationToken.getTenantCode(), principal, wxAuthenticationToken.getWxUser());
 		if (userDetails == null) {
-			log.debug("Authentication failed: no credentials provided");
+			log.info("Failed to authentication : no credentials provided, principal: {}", principal);
 			SpringContextHolder.publishEvent(new CustomAuthenticationFailureEvent(authentication, userDetails));
 			throw new BadCredentialsException(
 					messages.getMessage("AbstractUserDetailsAuthenticationProvider.noopBindAccount",

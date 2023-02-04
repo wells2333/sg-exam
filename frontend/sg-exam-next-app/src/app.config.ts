@@ -19,7 +19,8 @@ export default defineAppConfig({
       'pages/subjects/index',
       'pages/subjects_list/index',
       'pages/subjects_detail/index',
-      'pages/webview/index'
+      'pages/webview/index',
+      'pages/phone_info/index'
   ],
   window: {
     backgroundTextStyle: 'light',

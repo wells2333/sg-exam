@@ -2,14 +2,12 @@ package com.github.tangyi.auth.filter;
 
 import cn.hutool.core.util.StrUtil;
 import com.github.tangyi.auth.constant.SecurityConstant;
-import com.github.tangyi.common.constant.CommonConstant;
 import com.github.tangyi.common.constant.Status;
 import com.github.tangyi.common.exceptions.InvalidValidateCodeException;
-import com.github.tangyi.common.exceptions.ValidateCodeExpiredException;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.RUtil;
+import com.github.tangyi.user.service.ValidateCodeService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -24,7 +22,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ValidateCodeFilter extends OncePerRequestFilter {
 
-	private final RedisTemplate redisTemplate;
+	private final ValidateCodeService validateCodeService;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -54,7 +52,6 @@ public class ValidateCodeFilter extends OncePerRequestFilter {
 		}
 	}
 
-	@SuppressWarnings({"unchecked"})
 	private void checkCode(HttpServletRequest request) throws InvalidValidateCodeException {
 		// 验证码
 		String code = request.getParameter("code");
@@ -67,24 +64,6 @@ public class ValidateCodeFilter extends OncePerRequestFilter {
 		if (StrUtil.isBlank(randomStr)) {
 			randomStr = request.getParameter("mobile");
 		}
-		String key = CommonConstant.VERIFICATION_CODE_KEY + randomStr;
-		// 验证码过期
-		if (Boolean.FALSE.equals(redisTemplate.hasKey(key))) {
-			throw new ValidateCodeExpiredException(SecurityConstant.EXPIRED_ERROR);
-		}
-		Object codeObj = redisTemplate.opsForValue().get(key);
-		if (codeObj == null) {
-			throw new ValidateCodeExpiredException(SecurityConstant.EXPIRED_ERROR);
-		}
-		String saveCode = codeObj.toString();
-		if (StrUtil.isBlank(saveCode)) {
-			redisTemplate.delete(key);
-			throw new ValidateCodeExpiredException(SecurityConstant.EXPIRED_ERROR);
-		}
-		if (!StrUtil.equals(saveCode, code)) {
-			redisTemplate.delete(key);
-			throw new InvalidValidateCodeException("验证码错误");
-		}
-		redisTemplate.delete(key);
+		validateCodeService.checkCode(code, randomStr);
 	}
 }

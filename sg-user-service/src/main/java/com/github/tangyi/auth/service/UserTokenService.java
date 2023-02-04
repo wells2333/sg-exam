@@ -1,6 +1,7 @@
 package com.github.tangyi.auth.service;
 
 import com.github.tangyi.common.constant.CommonConstant;
+import com.github.tangyi.common.enums.LoginTypeEnum;
 import com.github.tangyi.common.model.CustomUserDetails;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.model.UserToken;
@@ -10,6 +11,7 @@ import com.google.common.collect.Maps;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -64,22 +66,22 @@ public class UserTokenService {
 		userToken.setRemember(remember);
 		// 距离过期时间剩余的秒数
 		int expireSeconds = (int) ChronoUnit.SECONDS.between(issuedAt, expireAt);
+		LoginTypeEnum loginType = details.getLoginType();
 		if (tokenManager.saveToken(userToken, expireSeconds)) {
 			String token = tokenManager.createToken(userToken);
 			Map<String, Object> map = Maps.newHashMapWithExpectedSize(3);
 			map.put("token", token);
 			map.put(CommonConstant.TENANT_CODE, details.getTenantCode());
-			log.info("Login successfully, identify: {}, loginType: {}", details.getUsername(),
-					details.getLoginType().getType());
+			map.put("hasPhone", StringUtils.isNotEmpty(details.getPhone()));
+			log.info("Login successfully, identify: {}, loginType: {}", details.getUsername(), loginType.getType());
 			if (writeRes) {
 				RUtil.out(res, R.success(map));
 			}
 			return map;
 		} else {
-			log.info("Failed to login, identify: {}, loginType: {}", details.getUsername(),
-					details.getLoginType().getType());
+			log.info("Failed to login, identify: {}, loginType: {}", details.getUsername(), loginType.getType());
 			if (writeRes) {
-				RUtil.out(res, R.error("login failed"));
+				RUtil.out(res, R.error("Failed to login"));
 			}
 		}
 		return null;

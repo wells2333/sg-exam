@@ -126,11 +126,18 @@ class api {
         return wx.getStorageSync('cards');
     }
 
-    async fetchExam<T>(url: string, data: Object = {}, method: "GET" | "POST" = "POST") {
+    logout() {
+        this.setToken(undefined);
+        this.setUserInfo(undefined);
+        this.setTenantCode(undefined);
+        Taro.clearStorageSync();
+    }
+
+    async fetchExam<T>(url: string, data: Object = {}, method: "GET" | "POST" | "PUT" = "POST") {
         return this.fetch<T>(url, data, method);
     }
 
-    async fetchUser<T>(url: string, data: Object = {}, method: "GET" | "POST" = "POST") {
+    async fetchUser<T>(url: string, data: Object = {}, method: "GET" | "POST" | "PUT" = "POST") {
         return this.fetch<T>(url, data, method);
     }
 
@@ -138,11 +145,11 @@ class api {
         return this.upload<T>(url, filePath, data);
     }
 
-    async fetchAuth<T>(url: string, data: Object = {}, method: "GET" | "POST" = "POST") {
+    async fetchAuth<T>(url: string, data: Object = {}, method: "GET" | "POST" | "PUT" = "POST") {
         return this.fetch<T>(url, data, method);
     }
 
-    async fetch<T>(url: string, data: Object = {}, method: "GET" | "POST" = "POST") {
+    async fetch<T>(url: string, data: Object = {}, method: "GET" | "POST" | "PUT" = "POST") {
         let token: string = this.token || await Taro.getStorage({ key: 'token' }).then(el => el.data).catch(() => "")
         let tenantCode: string = this.tenantCode || await Taro.getStorage({ key: 'tenantCode' }).then(el => el.data).catch(() => "")
         return await new Promise<result<T>>((resolve, reject) => {

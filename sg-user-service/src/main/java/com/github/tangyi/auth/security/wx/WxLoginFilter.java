@@ -23,21 +23,14 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * 微信登录filter，登录时支持传入用户的资料，如姓名、电话、性别等
- */
 @Slf4j
 public class WxLoginFilter extends AbstractAuthenticationProcessingFilter {
 
-	/**
-	 * 微信登录的code参数，后续用code换取openId和sessionKey
-	 */
 	private static final String SPRING_SECURITY_FORM_WX_KEY = "code";
 
 	@Getter
@@ -69,25 +62,20 @@ public class WxLoginFilter extends AbstractAuthenticationProcessingFilter {
 		if (postOnly && !request.getMethod().equals(HttpMethod.POST.name())) {
 			throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
 		}
-		// 获取code
 		String code = StringUtils.defaultIfEmpty(obtainCode(request), "").trim();
-		// 封装成token
 		WxAuthenticationToken wxAuthenticationToken = new WxAuthenticationToken(
 				request.getHeader(CommonConstant.TENANT_CODE_HEADER), code);
-		// 封装其它基本信息
 		setWxUserDetails(request, wxAuthenticationToken);
 		setDetails(request, wxAuthenticationToken);
 		Authentication auth = null;
 		try {
-			// 认证
 			auth = this.getAuthenticationManager().authenticate(wxAuthenticationToken);
-			log.info("wx authentication success, code: {}, principal: {}", code, auth.getPrincipal());
-			// 认证成功
+			log.info("Wx authentication successfully, code: {}, principal: {}", code, auth.getPrincipal());
 			eventPublisher.publishAuthenticationSuccess(auth);
 			SecurityContextHolder.getContext().setAuthentication(auth);
 		} catch (Exception failed) {
 			SecurityContextHolder.clearContext();
-			log.error("wx authentication request failed, code: {}", code, failed);
+			log.error("Failed to authentication wx login request, code: {}", code, failed);
 			eventPublisher.publishAuthenticationFailure(new BadCredentialsException(failed.getMessage(), failed),
 					new PreAuthenticatedAuthenticationToken("access-token", "N/A"));
 			try {
@@ -102,9 +90,8 @@ public class WxLoginFilter extends AbstractAuthenticationProcessingFilter {
 
 	@Override
 	protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain,
-			Authentication auth) throws IOException, ServletException {
+			Authentication auth) {
 		CustomUserDetails details = (CustomUserDetails) auth.getPrincipal();
-		// 认证成功，生成token
 		userTokenService.generateAndSaveToken(req, res, details);
 	}
 
@@ -116,12 +103,6 @@ public class WxLoginFilter extends AbstractAuthenticationProcessingFilter {
 		authRequest.setDetails(authenticationDetailsSource.buildDetails(request));
 	}
 
-	/**
-	 * 设置姓名、性别、头像等信息
-	 *
-	 * @param request     request
-	 * @param authRequest authRequest
-	 */
 	private void setWxUserDetails(HttpServletRequest request, WxAuthenticationToken authRequest) {
 		ObjectMapper mapper = new ObjectMapper();
 		try (InputStream in = request.getInputStream()) {

@@ -33,7 +33,7 @@ public class MobileService implements IMobileService {
 	public R<Boolean> sendVerificationCode(String mobile) {
 		String key = CommonConstant.VERIFICATION_CODE_KEY + mobile;
 		String code = RandomUtil.randomNumbers(VERIFICATION_CODE_SIZE);
-		log.info("generate verification code success: {}, {}", mobile, code);
+		log.info("Generate verification code success: {}, {}", mobile, code);
 		redisTemplate.opsForValue().set(key, code, SecurityConstant.DEFAULT_SMS_EXPIRE, TimeUnit.SECONDS);
 		SmsDto dto = new SmsDto();
 		dto.setReceiver(mobile);
