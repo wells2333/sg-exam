@@ -26,7 +26,7 @@ export default {
     const courseList = ref<any>(undefined);
 
     async function fetch(courseName: string = '') {
-      const res = await examApi.courseList({courseName});
+      const res = await examApi.courseList({courseName, status: 1});
       const {code, result} = res;
       if (code === 0) {
         courseList.value = result.list;

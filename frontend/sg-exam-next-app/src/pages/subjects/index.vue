@@ -20,7 +20,7 @@
     </view>
     <view class="home-view">
       <view class="home-view-tips">热门题库</view>
-      <view class="home-content">
+      <view class="home-content" v-if="gridData.length > 0">
         <view class="home-item gray-border" v-for="(item, idx) in gridData" :key="idx" @click="handleClickCate(item)">
           <view class="home-item-left">
             <text>{{item.value}}</text>
@@ -28,6 +28,9 @@
           </view>
           <AtIcon class="home-item-right" value='chevron-right' size='8' color='#346FC2'></AtIcon>
         </view>
+      </view>
+      <view v-else class="no-more-data-text">
+        <text>暂无更多数据</text>
       </view>
     </view>
   </view>
@@ -58,16 +61,18 @@ export default {
     async function fetchCategoryTree() {
       const res = await examApi.categoryTreeWithSubjectCnt();
       const {code, result} = res;
-      if (code === 0 && result !== null && result.length > 0) {
+      if (code === 0 && result !== null) {
         tree.value = result;
         gridData.value = [];
-        result.forEach(e => {
-          gridData.value.push({
-            id: e.id,
-            subjectCnt: e.subjectCnt,
-            value: e.categoryName
+        if (result.length > 0) {
+          result.forEach(e => {
+            gridData.value.push({
+              id: e.id,
+              subjectCnt: e.subjectCnt,
+              value: e.categoryName
+            });
           });
-        });
+        }
       }
     }
 

@@ -35,14 +35,16 @@ class examApi {
         return api.fetchExam<Sg.ExamInfo>("/v1/subjects/" + id, params, "GET")
     }
 
-    async getNextSubjectByCategoryId(categoryId: string, subjectId: string, nextType: string) {
+    async getNextSubjectByCategoryId(categoryId: string, subjectId: string, nextType: string, random: boolean = false, realTimeIds: object) {
         return api.fetchExam<Sg.ExamInfo>("/v1/answer/nextSubjectByCategoryId", {
             categoryId,
             subjectId,
             nextType,
             findFav: true,
-            isView: true
-        }, "GET")
+            isView: true,
+            random,
+            realTimeIds
+        }, "POST")
     }
 
     async saveAndNext(data: object, type: string, nextSubjectSortNo: string = '') {
@@ -108,7 +110,9 @@ class examApi {
     }
 
     async categoryTreeWithSubjectCnt() {
-        return api.fetchExam<Sg.ExamInfo>("/v1/subjectCategory/categoryTreeWithSubjectCnt", {}, "GET");
+        return api.fetchExam<Sg.ExamInfo>("/v1/subjectCategory/categoryTreeWithSubjectCnt", {
+            status: 1
+        }, "GET");
     }
 
     async getSubjectCntByParentId(parentId: string) {

@@ -12,7 +12,7 @@
           <div class="title">{{ item.title }}</div>
           <div class="des">{{ item.des }}</div>
           <view class="tenant-code-input">
-            <at-input :value="tenantCode" @change="handleTenantCode" title="企业ID" placeholder="非必填" :border="false"></at-input>
+            <at-input :value="tenantCode" @change="handleTenantCode" title="企业 ID" placeholder="企业 ID" :border="false" style="text-align: left"></at-input>
           </view>
           <view class="login-btn">
             <at-button circle type="primary" size="normal" @click="getUserProfile">
@@ -43,9 +43,12 @@ import {showLoading, hideLoading, successMessage, warnMessage} from '../../utils
 export default {
   setup() {
     const tenantCode = ref<string>("");
-
-    function handleTenantCode(value) {
-      tenantCode.value = value;
+    async function handleTenantCode(value) {
+      if (new RegExp('^[A-z0-9]*$').test(value)) {
+        tenantCode.value = value;
+      } else {
+        await warnMessage('只能输入英文或数字');
+      }
     }
 
     async function getUserProfile() {
@@ -89,7 +92,7 @@ export default {
     const items = [
       {
         title: 'HI，欢迎使用云面试',
-        des: '提供面试、考试、练习、问卷等功能',
+        des: '提供考试、练习、刷题、在线学习等功能',
         icon: studySvg
       }
     ]
@@ -139,7 +142,7 @@ swiper {
       .des {
         font-size: 28 rpx;
         color: #969696;
-        margin-bottom: 20 rpx;
+        margin: 6px;
       }
     }
   }

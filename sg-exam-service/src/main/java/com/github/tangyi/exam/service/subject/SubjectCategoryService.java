@@ -66,10 +66,13 @@ public class SubjectCategoryService extends CrudService<SubjectCategoryMapper, S
 		if (categoryName != null) {
 			category.setCategoryName(categoryName.toString());
 		}
+		Object status = condition.get("status");
+		if (status != null) {
+			category.setStatus(Integer.valueOf(status.toString()));
+		}
 		return findAndBuild(category, CommonConstant.ROOT);
 	}
 
-	//@Cacheable(value = ExamCacheName.SUBJECT_CATE_TREE, key = "'tree' + #parentId")
 	public List<SubjectCategoryDto> getCategoryByParentId(Long parentId) {
 		SubjectCategory category = new SubjectCategory();
 		category.setTenantCode(SysUtil.getTenantCode());

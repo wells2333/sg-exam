@@ -49,4 +49,10 @@ public class SubjectCategory extends BaseEntity<SubjectCategory> {
 	 */
 	@Column(name = "type")
 	private Integer type;
+
+	/**
+	 * 状态：0：草稿，1：已发布
+	 */
+	@Column(name = "status")
+	private Integer status;
 }

@@ -2,6 +2,7 @@ package com.github.tangyi.exam.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.dto.AnswerDto;
+import com.github.tangyi.api.exam.dto.NextSubjectDto;
 import com.github.tangyi.api.exam.dto.RankInfoDto;
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.Answer;
@@ -132,23 +133,16 @@ public class AnswerController extends BaseController {
 
 	/**
 	 * 根据分类ID获取下一题
-	 * @param nextType          0：下一题，1：上一题
 	 */
-	@GetMapping("nextSubjectByCategoryId")
+	@PostMapping("nextSubjectByCategoryId")
 	@Operation(summary = "根据分类ID获取下一题")
-	public R<SubjectDto> nextSubjectByCategoryId(@RequestParam Long categoryId, @RequestParam Long subjectId,
-			@RequestParam Integer nextType,
-			@RequestParam(value = "findFav", required = false, defaultValue = "false") boolean findFav,
-			@RequestParam(value = "isView", required = false, defaultValue = "false") boolean isView) {
-		SubjectDto dto = subjectsService.nextSubjectByCategoryId(categoryId, subjectId, nextType);
-		Optional.ofNullable(dto).ifPresent(e -> {
-
-		});
+	public R<SubjectDto> nextSubjectByCategoryId(@RequestBody NextSubjectDto next) {
+		SubjectDto dto = subjectsService.nextSubjectByCategoryId(next);
 		if (dto != null) {
-			if (findFav) {
+			if (next.isFindFav()) {
 				subjectFavoritesService.findUserFavorites(Collections.singletonList(dto));
 			}
-			if (isView) {
+			if (next.isView()) {
 				dto.setViews(subjectViewCounterService.viewSubject(dto.getId()).toString());
 			}
 		}

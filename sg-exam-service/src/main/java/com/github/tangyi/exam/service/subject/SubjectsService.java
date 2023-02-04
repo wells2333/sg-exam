@@ -2,6 +2,7 @@ package com.github.tangyi.exam.service.subject;
 
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.constants.AnswerConstant;
+import com.github.tangyi.api.exam.dto.NextSubjectDto;
 import com.github.tangyi.api.exam.dto.SubjectCategoryDto;
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.*;
@@ -38,6 +39,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -255,15 +257,43 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 				.getNextByCurrentIdAndType(examinationId, previousSubjectId, nextType);
 	}
 
-	public SubjectDto nextSubjectByCategoryId(Long categoryId, Long currentSubjectId, Integer nextType) {
-		Subjects subjects = this.findBySubjectId(currentSubjectId);
-		if (subjects != null) {
-			Integer sort = Math.max(0,
-					AnswerConstant.NEXT.equals(nextType) ? subjects.getSort() + 1 : subjects.getSort() - 1);
-			Subjects nextSubjects = this.dao.findByCategoryIdAndSort(categoryId, sort);
-			if (nextSubjects != null) {
-				return subjectServiceFactory.service(getSubjectType(nextSubjects.getSubjectId()))
-						.getSubject(nextSubjects.getSubjectId());
+	public SubjectDto nextSubjectByCategoryId(NextSubjectDto next) {
+		Subjects subjects = this.findBySubjectId(next.getSubjectId());
+		if (subjects == null) {
+			return null;
+		}
+		if (next.isRandom()) {
+			return nextRandomSubjectByCategoryId(next, subjects.getSort());
+		}
+		return nextSortedSubjectByCategoryId(next, subjects);
+	}
+
+	public SubjectDto nextSortedSubjectByCategoryId(NextSubjectDto next, Subjects subjects) {
+		Integer sort = Math.max(0,
+				AnswerConstant.NEXT.equals(next.getNextType()) ? subjects.getSort() + 1 : subjects.getSort() - 1);
+		Subjects nextSubjects = this.dao.findByCategoryIdAndSort(next.getCategoryId(), sort);
+		if (nextSubjects != null) {
+			return this.getSubject(nextSubjects.getSubjectId(), nextSubjects.getType());
+		}
+		return null;
+	}
+
+	public SubjectDto nextRandomSubjectByCategoryId(NextSubjectDto next, long currentSort) {
+		Long categoryId = next.getCategoryId();
+		int max = this.dao.findMaxSortByCategoryId(categoryId);
+		if (max != currentSort) {
+			long sort;
+			int retry = 3;
+			Set<Long> realTimeIds = next.getRealTimeIds() == null ? Collections.emptySet() : next.getRealTimeIds();
+			do {
+				sort = ThreadLocalRandom.current().nextLong(max);
+				retry--;
+			} while (sort == currentSort && realTimeIds.contains(sort) && retry > 0);
+			if (sort != currentSort) {
+				Subjects subjects = this.dao.findByCategoryIdAndSort(categoryId, (int) sort);
+				if (subjects != null) {
+					return this.getSubject(subjects.getSubjectId(), subjects.getType());
+				}
 			}
 		}
 		return null;

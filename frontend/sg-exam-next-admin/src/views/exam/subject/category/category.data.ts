@@ -11,9 +11,15 @@ export const columns: BasicColumn[] = [
     align: 'left',
   },
   {
-    title: '分类描述',
-    dataIndex: 'categoryDesc',
-    align: 'left',
+    title: '状态',
+    dataIndex: 'status',
+    customRender: ({ record }) => {
+      const status = record.status;
+      const enable = ~~status === 1;
+      const color = enable ? 'green' : 'red';
+      const text = enable ? '已发布' : '草稿';
+      return h(Tag, { color: color }, () => text);
+    },
   },
   {
     title: '类型',
@@ -37,6 +43,11 @@ export const columns: BasicColumn[] = [
     dataIndex: 'sort',
     title: '排序',
     width: 160,
+    align: 'left',
+  },
+  {
+    title: '分类描述',
+    dataIndex: 'categoryDesc',
     align: 'left',
   },
   {
@@ -66,6 +77,20 @@ export const formSchema: FormSchema[] = [
     label: '分类名称',
     component: 'Input',
     required: true,
+  },
+  {
+    field: 'status',
+    label: '状态',
+    component: 'RadioButtonGroup',
+    defaultValue: 0,
+    componentProps: {
+      options: [
+        { label: '草稿', value: 0 },
+        { label: '已发布', value: 1 },
+      ],
+    },
+    required: true,
+    colProps: { span: 12 },
   },
   {
     field: 'type',

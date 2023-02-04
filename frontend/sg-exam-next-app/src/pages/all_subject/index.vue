@@ -37,10 +37,9 @@
       </view>
     </view>
     <view class="all-subject-submit-btn">
-      <view class="submit-btn-item">
-        <at-button type="primary" :circle="true" @click="handleSubmit">提交</at-button>
-      </view>
+      <at-button type="primary" :circle="true" @click="handleSubmit">提交</at-button>
     </view>
+    <view class="all-subject-bottom bg-white"></view>
   </view>
   <at-modal :isOpened="isOpenedSubmitModal" title="确定提交吗？" cancelText="取消"
             confirmText="确认"
@@ -224,8 +223,6 @@ page {
 }
 
 .all-subject-submit-btn {
-  display: flex;
-  justify-content: center;
   padding: 10px;
   background-color: white;
 }
@@ -237,5 +234,9 @@ page {
 .subject-type-label {
   display: flex;
   justify-content: space-between;
+}
+
+.all-subject-bottom {
+  height: 80px;
 }
 </style>

@@ -72,7 +72,7 @@ export default {
         const examinationList = await examApi.examinationList({
           type,
           examinationName,
-          status: 0,
+          status: 1,
           page: unref(nextPageRef),
           favorite: '1'
         });

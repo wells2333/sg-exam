@@ -43,7 +43,7 @@
             <view @click="handleClickSubject(item)">
               <view class="subject-list-item-top">
                 <view class="subject-title">
-                  <text>{{item.subjectName}}</text>
+                  <wxparse class="subject-title-content" :html="item.subjectName" key={Math.random()}></wxparse>
                 </view>
               </view>
               <view class="subject-list-item-bottom">
@@ -56,6 +56,13 @@
           </view>
         </view>
       </view>
+    </view>
+    <view>
+      <AtActionSheet :isOpened="isOpenedAction" @close="handleCloseAction" title="请选择查看模式" cancelText="取消">
+        <AtActionSheetItem @click="handlePreviewAction">预览模式</AtActionSheetItem>
+        <AtActionSheetItem @click="handleSortedAction">顺序刷题</AtActionSheetItem>
+        <AtActionSheetItem @click="handleRandomAction">随机刷题</AtActionSheetItem>
+      </AtActionSheet>
     </view>
   </view>
 </template>
@@ -79,6 +86,8 @@ export default {
     const hasNextPage = ref<boolean>(true);
     const categoryInfo = ref<any>(undefined);
     const categories = ref<object[]>([]);
+    const isOpenedAction = ref<boolean>(false);
+    const clickItem = ref<any>(undefined);
 
     async function fetch(append = false) {
       if (!hasNextPage.value) {
@@ -154,7 +163,8 @@ export default {
     }
 
     function handleClickSubject(item) {
-      Taro.navigateTo({url: "/pages/subjects_detail/index?id=" + item.id})
+      clickItem.value = item;
+      isOpenedAction.value = true;
     }
 
     async function handleFavSubject(item) {
@@ -169,6 +179,25 @@ export default {
       }
     }
 
+    function handlePreviewAction() {
+      Taro.navigateTo({url: "/pages/subjects_detail/index?mode=1&id=" + clickItem.value.id});
+      handleCloseAction();
+    }
+
+    function handleSortedAction() {
+      Taro.navigateTo({url: "/pages/subjects_detail/index?mode=2&id=" + clickItem.value.id});
+      handleCloseAction();
+    }
+
+    function handleRandomAction() {
+      Taro.navigateTo({url: "/pages/subjects_detail/index?mode=3&id=" + clickItem.value.id});
+      handleCloseAction();
+    }
+
+    function handleCloseAction() {
+      isOpenedAction.value = false;
+    }
+
     onMounted(() => {
       init();
     });
@@ -179,11 +208,16 @@ export default {
       list,
       categoryInfo,
       categories,
+      isOpenedAction,
       init,
       nextPage,
       handleClickSubject,
       handleFavSubject,
-      handleClickCate
+      handleClickCate,
+      handlePreviewAction,
+      handleSortedAction,
+      handleRandomAction,
+      handleCloseAction
     }
   },
   onPullDownRefresh() {

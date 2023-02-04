@@ -8,13 +8,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.beans.BeanUtils;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class SubjectCategoryDto extends TreeEntity<SubjectCategoryDto> {
-
-	public SubjectCategoryDto() {
-
-	}
 
 	/**
 	 * 分类名称
@@ -35,6 +31,8 @@ public class SubjectCategoryDto extends TreeEntity<SubjectCategoryDto> {
 	private Integer type;
 
 	private Integer subjectCnt;
+
+	private Integer status;
 
 	public SubjectCategoryDto(SubjectCategory subjectCategory) {
 		BeanUtils.copyProperties(subjectCategory, this);

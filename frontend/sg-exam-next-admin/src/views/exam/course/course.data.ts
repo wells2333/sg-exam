@@ -74,7 +74,7 @@ export const columns: BasicColumn[] = [
       const courseStatus = record.courseStatus;
       let color = 'green';
       let text = '已发布';
-      if (courseStatus !== null && courseStatus === 1) {
+      if (courseStatus !== null && courseStatus === 0) {
         color = 'blue';
         text = '草稿';
       }
@@ -118,11 +118,11 @@ export const formSchema: FormSchema[] = [
     field: 'courseStatus',
     label: '状态',
     component: 'RadioButtonGroup',
-    defaultValue: 1,
+    defaultValue: 0,
     componentProps: {
       options: [
-        { label: '草稿', value: 1 },
-        { label: '已发布', value: 0 },
+        { label: '草稿', value: 0 },
+        { label: '已发布', value: 1 },
       ],
     },
     required: true,

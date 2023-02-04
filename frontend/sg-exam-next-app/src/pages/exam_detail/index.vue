@@ -186,7 +186,7 @@ export default {
 }
 
 .exam-detail-info {
-  padding: 8px;
+  padding-top: 8px;
 }
 
 .exam-detail-item-info {
@@ -207,8 +207,7 @@ export default {
 }
 
 .exam-pane {
-  margin-left: 8px;
-  margin-top: 10px;
+  margin-top: 16px;
   color: #2C405A;
 }
 

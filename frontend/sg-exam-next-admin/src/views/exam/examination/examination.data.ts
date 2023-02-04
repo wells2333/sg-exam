@@ -4,7 +4,6 @@ import {h, unref} from 'vue';
 import {Image, Tag} from 'ant-design-vue';
 import { getAllCourses } from "/@/api/exam/course";
 import {DescItem} from "/@/components/Description";
-import {BasicUpload} from "/@/components/Upload";
 import {uploadImage} from "/@/api/exam/examMedia";
 import {SgUpload} from "/@/components/SgUpload";
 
@@ -53,7 +52,7 @@ export const columns: BasicColumn[] = [
     width: 80,
     customRender: ({ record }) => {
       const status = record.status;
-      const enable = ~~status === 0;
+      const enable = ~~status === 1;
       const color = enable ? 'green' : 'red';
       const text = enable ? '已发布' : '草稿';
       return h(Tag, { color: color }, () => text);
@@ -143,11 +142,11 @@ export const formSchema: FormSchema[] = [
     field: 'status',
     label: '状态',
     component: 'RadioButtonGroup',
-    defaultValue: 1,
+    defaultValue: 0,
     componentProps: {
       options: [
-        { label: '草稿', value: 1 },
-        { label: '已发布', value: 0 },
+        { label: '草稿', value: 0 },
+        { label: '已发布', value: 1 },
       ],
     },
     required: true,

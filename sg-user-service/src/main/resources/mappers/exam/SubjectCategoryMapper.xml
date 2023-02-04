@@ -8,6 +8,7 @@
         <result column="parent_id" property="parentId"/>
         <result column="sort" property="sort"/>
         <result column="type" property="type"/>
+        <result column="status" property="status"/>
         <result column="creator" property="creator"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
@@ -28,6 +29,9 @@
             <if test="params.parentId != null and params.parentId != ''">
                 and parent_id = #{params.parentId}
             </if>
+            <if test="params.status != null and params.status != ''">
+                and status = #{params.status}
+            </if>
         </if>
         order by sort desc
     </select>
@@ -46,6 +50,9 @@
         </if>
         <if test="parentId != null and parentId != ''">
             and parent_id = #{parentId}
+        </if>
+        <if test="status != null and status != ''">
+            and status = #{status}
         </if>
         order by sort desc
     </select>
