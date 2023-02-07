@@ -6,6 +6,7 @@ import com.github.tangyi.api.exam.service.IExamFavoritesService;
 import com.github.tangyi.api.exam.service.IExaminationService;
 import com.github.tangyi.common.utils.StopWatchUtil;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.core.LockAssert;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -19,7 +20,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class CronUpdateFavoritesJob {
+public class UpdateFavoritesJob {
 
 	private final IExaminationService examinationService;
 
@@ -29,7 +30,7 @@ public class CronUpdateFavoritesJob {
 
 	private final ICourseFavoritesService courseFavoritesService;
 
-	public CronUpdateFavoritesJob(IExaminationService examinationService, IExamFavoritesService examFavoritesService,
+	public UpdateFavoritesJob(IExaminationService examinationService, IExamFavoritesService examFavoritesService,
 			ICourseService courseService, ICourseFavoritesService courseFavoritesService) {
 		this.examinationService = examinationService;
 		this.examFavoritesService = examFavoritesService;
@@ -38,9 +39,10 @@ public class CronUpdateFavoritesJob {
 	}
 
 	@Scheduled(cron = "0 10 * * * ?")
-	@SchedulerLock(name = "updateFavoritesJob", lockAtMostFor = "30m", lockAtLeastFor = "30m")
+	@SchedulerLock(name = "updateFavoritesJob", lockAtMostFor = "59m", lockAtLeastFor = "10m")
 	public void updateFavoritesJob() {
 		try {
+			LockAssert.assertLocked();
 			log.info("Start to update favorites");
 			StopWatch watch = StopWatchUtil.start();
 			doUpdateFavorites();
