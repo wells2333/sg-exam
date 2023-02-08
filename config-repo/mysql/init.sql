@@ -51,7 +51,7 @@ CREATE TABLE `exam_course` (
   `cate_name` varchar(255) DEFAULT NULL COMMENT '类别名称',
   `tags` varchar(255) DEFAULT NULL COMMENT '标签',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='课程信息';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='课程信息';
 
 -- ----------------------------
 -- Table structure for exam_examination
@@ -842,7 +842,7 @@ CREATE TABLE `sys_user_student` (
 
 CREATE TABLE `exam_course_section` (
    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
-   `title` varchar(128) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '标题',
+   `title` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '标题',
    `sort` int DEFAULT NULL COMMENT '序号',
    `chapter_id` bigint DEFAULT NULL COMMENT '章ID',
    `learn_hour` int DEFAULT NULL COMMENT '时长',
@@ -856,12 +856,12 @@ CREATE TABLE `exam_course_section` (
    `section_desc` varchar(255) DEFAULT NULL COMMENT '描述',
    `video_name` varchar(255) DEFAULT NULL COMMENT '视频名称',
    PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COMMENT='课程节表';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='课程节表';
 
 -- 课程章节表
 CREATE TABLE `exam_course_chapter` (
    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
-   `title` varchar(128) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '标题',
+   `title` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '标题',
    `sort` int DEFAULT NULL COMMENT '序号',
    `course_id` bigint DEFAULT NULL COMMENT '课程ID',
    `creator` varchar(128) NOT NULL COMMENT '创建人',
@@ -872,11 +872,11 @@ CREATE TABLE `exam_course_chapter` (
    `tenant_code` varchar(16) NOT NULL COMMENT '租户编号',
    `chapter_desc` varchar(255) DEFAULT NULL COMMENT '描述',
    PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='课程章表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='课程章表';
 
 CREATE TABLE `exam_course_evaluate` (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `evaluate_content` varchar(512) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '评价内容',
+    `evaluate_content` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '评价内容',
     `user_id` bigint NOT NULL COMMENT '用户ID',
     `evaluate_level` int(1) unsigned zerofill DEFAULT '0',
     `creator` varchar(128) NOT NULL COMMENT '创建人',
@@ -888,7 +888,7 @@ CREATE TABLE `exam_course_evaluate` (
     `course_id` bigint NOT NULL COMMENT '课程ID',
     PRIMARY KEY (`id`) USING BTREE,
     KEY `idx_course_id` (`course_id`) COMMENT '课程ID'
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3 COMMENT='课程评价表';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='课程评价表';
 
 CREATE TABLE `exam_user_favorites` (
    `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -923,11 +923,11 @@ CREATE TABLE `exam_fav_start_count` (
     PRIMARY KEY (`id`),
     KEY `idx_target_id` (`target_id`) USING BTREE COMMENT '目标ID索引',
     KEY `idx_target_type` (`target_type`) USING BTREE COMMENT '目标ID类型索引'
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3 COMMENT='收藏、开始数量表';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='收藏、开始数量表';
 
 CREATE TABLE `exam_course_knowledge_point` (
    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
-   `title` varchar(128) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '知识点标题',
+   `title` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '知识点标题',
    `sort` int NOT NULL COMMENT '序号',
    `section_id` bigint NOT NULL COMMENT '节ID',
    `creator` varchar(128) NOT NULL COMMENT '创建人',
@@ -938,7 +938,7 @@ CREATE TABLE `exam_course_knowledge_point` (
    `tenant_code` varchar(16) NOT NULL COMMENT '租户编号',
    `content` text COMMENT '知识点内容',
    PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb3 COMMENT='章节知识点';
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COMMENT='章节知识点';
 
 CREATE TABLE `exam_course_member` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -953,7 +953,7 @@ CREATE TABLE `exam_course_member` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `idx_course_id` (`course_id`),
   KEY `idx_user_id` (`user_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3 COMMENT='课程学员表';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='课程学员表';
 
 ALTER TABLE `operation_banner` ADD COLUMN `image_id` bigint(20) NULL COMMENT '图片ID';
 
