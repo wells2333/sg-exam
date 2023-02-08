@@ -84,7 +84,7 @@ export default {
     async function handleLogin() {
       const phoneVal = unref(phone);
       const isTestPhone = phoneVal === '666';
-      if (isTestPhone || (await validatePhoneValue() && await validateSmsValue())) {
+      if (isTestPhone || (await validatePhoneValue(phoneVal) && await validateSmsValue(unref(sms)))) {
         await showLoading('登录中');
         try {
           let tenantCodeValue = tenantCode.value;
