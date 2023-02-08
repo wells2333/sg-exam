@@ -6,6 +6,8 @@ import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.log.OperationType;
 import com.github.tangyi.common.log.SgLog;
 import com.github.tangyi.common.model.R;
+import com.github.tangyi.common.utils.SysUtil;
+import com.github.tangyi.common.utils.TenantHolder;
 import com.github.tangyi.user.service.SmsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,6 +32,8 @@ public class SmsController extends BaseController {
 	@SgLog(value = "发送短信", operationType = OperationType.INSERT)
 	public R<SendSmsResponseBody> sendSms(@RequestBody SmsDto smsDto) {
 		log.info("send message to {}, content: {}", smsDto.getReceiver(), smsDto.getContent());
+		smsDto.setOperator(SysUtil.getUser());
+		smsDto.setTenantCode(TenantHolder.getTenantCode());
 		SendSmsResponseBody body = smsService.sendSms(smsDto);
 		log.info("send message success, response: {}", body);
 		return R.success(body);

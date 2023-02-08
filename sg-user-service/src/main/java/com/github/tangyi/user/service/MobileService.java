@@ -9,6 +9,8 @@ import com.github.tangyi.common.constant.CommonConstant;
 import com.github.tangyi.common.constant.SecurityConstant;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.EnvUtils;
+import com.github.tangyi.common.utils.SysUtil;
+import com.github.tangyi.common.utils.TenantHolder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -38,6 +40,8 @@ public class MobileService implements IMobileService {
 		SmsDto dto = new SmsDto();
 		dto.setReceiver(mobile);
 		dto.setContent(String.format(SMS_TEMPLATE, code));
+		dto.setOperator(SysUtil.getUser());
+		dto.setTenantCode(TenantHolder.getTenantCode());
 		SendSmsResponseBody body = smsService.sendSms(dto);
 		SgPreconditions.checkNull(body, "send verification code response is null");
 		boolean isOk = "OK".equals(body.getCode());

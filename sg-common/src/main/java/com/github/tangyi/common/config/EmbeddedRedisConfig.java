@@ -7,29 +7,26 @@ import redis.embedded.RedisServer;
 
 import javax.annotation.PostConstruct;
 
-/**
- * 内嵌Redis，用于dev环境
- */
-@Configuration
-@Profile("dev")
 @Slf4j
+@Profile("dev")
+@Configuration
 public class EmbeddedRedisConfig {
 
 	@PostConstruct
-	public void startRedis() {
+	public void start() {
 		try {
-			log.info("start redis server");
-			RedisServer redisServer = RedisServer.builder()
+			log.info("Starting embedded redis...");
+			RedisServer redis = RedisServer.builder()
 					.port(6379)
 					.setting("bind 127.0.0.1")
 					.setting("daemonize no")
 					.setting("appendonly no")
 					.setting("maxmemory 128M")
 					.build();
-			redisServer.start();
-			log.info("start redis success");
+			redis.start();
+			log.info("Embedded redis started successfully");
 		} catch (Exception e) {
-			log.error("start redis server error: {}", e.getMessage(), e);
+			log.error("Failed to start embedded redis", e);
 		}
 	}
 }

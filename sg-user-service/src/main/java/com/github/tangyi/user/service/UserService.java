@@ -418,7 +418,6 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 		}
 		try {
 			encoded = AesUtil.decryptAES(encoded, sysProperties.getKey()).trim();
-			log.info("decrypt result: {}", encoded);
 		} catch (Exception e) {
 			throw new CommonException(e, "Decrypt failed");
 		}

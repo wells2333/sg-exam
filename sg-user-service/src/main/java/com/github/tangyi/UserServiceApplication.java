@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import tk.mybatis.spring.annotation.MapperScan;
@@ -18,7 +17,6 @@ import java.util.TimeZone;
 
 @EnableAsync
 @EnableCaching
-@EnableScheduling
 @SpringBootApplication
 @MapperScan(basePackages = {"com.github.tangyi.user.mapper", "com.github.tangyi.exam.mapper",
 		"com.github.tangyi.generator.mapper", "com.github.tangyi.operation.mapper"})
