@@ -1,4 +1,4 @@
-package com.github.tangyi.api.exam.model;
+package com.github.tangyi.api.user.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;

@@ -18,4 +18,8 @@ public class SmsDto implements Serializable {
      * 发送内容
      */
     private String content;
+
+	private String operator;
+
+	private String tenantCode;
 }

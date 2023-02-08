@@ -80,6 +80,7 @@ ignore:
     - /v1/subjects/template/json
     - /v1/subjects/template/excel
     - /v1/subjects/exportDemoExcel
+    - /tool/gen/download/**
 
 logging:
   level:

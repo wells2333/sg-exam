@@ -6,18 +6,18 @@ import com.aliyun.dysmsapi20170525.models.SendSmsResponse;
 import com.aliyun.dysmsapi20170525.models.SendSmsResponseBody;
 import com.aliyun.teaopenapi.models.Config;
 import com.github.tangyi.api.user.dto.SmsDto;
-import com.github.tangyi.api.user.service.ISmsService;
+import com.github.tangyi.api.user.model.SysSms;
+import com.github.tangyi.api.user.service.ISysSmsService;
 import com.github.tangyi.common.exceptions.CommonException;
-import com.github.tangyi.common.utils.EnvUtils;
+import com.github.tangyi.common.service.CrudService;
+import com.github.tangyi.user.mapper.SysSmsMapper;
 import com.github.tangyi.user.properties.SmsProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class SmsService implements ISmsService {
-
-	public static final String SMS_ENDPOINT = EnvUtils.getValue("SMS_ENDPOINT", "dysmsapi.aliyuncs.com");
+public class SmsService extends CrudService<SysSmsMapper, SysSms> implements ISysSmsService {
 
 	private final SmsProperties smsProperties;
 
@@ -27,7 +27,7 @@ public class SmsService implements ISmsService {
 		this.smsProperties = smsProperties;
 		Config config = new Config().setAccessKeyId(smsProperties.getAppKey())
 				.setAccessKeySecret(smsProperties.getAppSecret());
-		config.endpoint = SMS_ENDPOINT;
+		config.endpoint = "dysmsapi.aliyuncs.com";
 		this.client = new com.aliyun.dysmsapi20170525.Client(config);
 	}
 
@@ -38,11 +38,25 @@ public class SmsService implements ISmsService {
 		try {
 			SendSmsResponse response = client.sendSms(sendSmsRequest);
 			SendSmsResponseBody body = response.getBody();
-			log.info("send sms success, mobile: {}, response: {}", smsDto.getReceiver(), JSON.toJSONString(body));
+			String responseStr = JSON.toJSONString(body);
+			SysSms sms = new SysSms();
+			sms.setReceiver(smsDto.getReceiver());
+			sms.setContent(smsDto.getContent());
+			sms.setResponse(responseStr);
+			log.info("Sms has been sent successfully, mobile: {}, response: {}", smsDto.getReceiver(), responseStr);
 			return body;
 		} catch (Exception e) {
-			throw new CommonException(e, "failed to send sms");
+			throw new CommonException(e, "Failed to send sms");
 		}
+	}
+
+	public int insertSms(SmsDto smsDto, String responseStr) {
+		SysSms sms = new SysSms();
+		sms.setCommonValue(smsDto.getOperator(), smsDto.getTenantCode());
+		sms.setReceiver(smsDto.getReceiver());
+		sms.setContent(smsDto.getContent());
+		sms.setResponse(responseStr);
+		return this.insert(sms);
 	}
 }
 
