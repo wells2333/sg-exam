@@ -38,17 +38,24 @@ dependencies {
     implementation 'io.micrometer:micrometer-registry-prometheus:1.9.0'
     implementation 'com.aliyun:dysmsapi20170525:2.0.9'
     implementation 'com.alibaba:fastjson:1.2.70'
+    implementation 'cn.smallbun.screw:screw-core:1.0.5'
     implementation('com.baidu.aip:java-sdk:4.15.4') {
         exclude group: 'org.slf4j', module: 'slf4j-simple'
     }
     implementation 'com.github.kstyrc:embedded-redis:0.6'
 
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'com.github.stefanbirkner:system-rules:1.19.0'
 }
 
 test {
     useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
 }
 
 tasks.withType(JavaCompile) {

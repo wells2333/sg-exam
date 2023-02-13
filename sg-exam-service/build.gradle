@@ -14,8 +14,8 @@ dependencies {
     implementation(project(':sg-common'))
     implementation 'com.alibaba:fastjson:1.2.70'
     implementation 'tk.mybatis:mapper-spring-boot-starter:4.2.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
 test {

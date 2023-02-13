@@ -91,7 +91,7 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
 	}
 
 	/**
-	 * 根据上一题ID查询下一题
+	 * 根据上一题 ID 查询下一题
 	 *
 	 * @param examinationId examinationId
 	 * @param previousId    previousId
@@ -163,6 +163,7 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
 	}
 
 	@Override
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public PageInfo<SubjectDto> findSubjectPage(PageInfo pageInfo, SubjectDto subjectDto) {
 		SubjectShortAnswer subjectShortAnswer = new SubjectShortAnswer();
 		BeanUtils.copyProperties(subjectDto, subjectShortAnswer);

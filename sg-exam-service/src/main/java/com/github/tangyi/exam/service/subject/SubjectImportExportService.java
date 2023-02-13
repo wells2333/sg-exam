@@ -121,17 +121,17 @@ public class SubjectImportExportService {
 		List<SubjectDto> subjects = new ArrayList<>();
 		ExaminationSubject es = new ExaminationSubject();
 		List<ExaminationSubject> examinationSubjects = Lists.newArrayList();
-		// 根据题目id导出
+		// 根据题目 id 导出
 		if (ArrayUtils.isNotEmpty(ids)) {
 			for (Long id : ids) {
 				es.setSubjectId(id);
 				examinationSubjects.addAll(examinationSubjectService.findListBySubjectId(es));
 			}
 		} else if (examinationId != null) {
-			// 根据考试ID
+			// 根据考试 ID
 			examinationSubjects = examinationSubjectService.findListByExaminationId(examinationId);
 		} else if (categoryId != null) {
-			// 根据分类ID、类型导出
+			// 根据分类 ID、类型导出
 			examinationSubjects = examinationSubjectService.findListByCategoryId(es);
 		}
 		if (CollectionUtils.isNotEmpty(examinationSubjects)) {
@@ -222,7 +222,7 @@ public class SubjectImportExportService {
 
 	public List<SubjectDto> demoSubjects() {
 		SubjectDto dto = new SubjectDto();
-		dto.setSubjectName("《山行》是描绘了___的景色.");
+		dto.setSubjectName("《山行》是描绘了___的景色。");
 		dto.setType(SubjectType.CHOICES.getValue());
 		dto.setChoicesType(0);
 		dto.setScore(5.0);
@@ -262,7 +262,7 @@ public class SubjectImportExportService {
 
 	public List<SubjectDto> demoTxtSubjects() throws IOException {
 		String file = "";
-		List<String> lines = FileUtils.readLines(new File(file));
+		List<String> lines = FileUtils.readLines(new File(file), StandardCharsets.UTF_8);
 		List<SubjectDto> list = Lists.newArrayList();
 		for (int i = 0; i < lines.size(); i = i + 7) {
 			String subjectName = lines.get(i);

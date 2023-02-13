@@ -30,7 +30,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -49,7 +53,7 @@ public class GenTableServiceImpl extends CrudService<GenTableMapper, GenTable> i
 	/**
 	 * 查询业务信息
 	 *
-	 * @param id 业务ID
+	 * @param id 业务 ID
 	 * @return 业务信息
 	 */
 	@Override
@@ -192,9 +196,13 @@ public class GenTableServiceImpl extends CrudService<GenTableMapper, GenTable> i
 	@Override
 	public byte[] downloadCode(String tableName) {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		ZipOutputStream zip = new ZipOutputStream(outputStream);
-		generatorCode(tableName, zip);
-		IOUtils.closeQuietly(zip);
+		try {
+			ZipOutputStream zip = new ZipOutputStream(outputStream);
+			generatorCode(tableName, zip);
+			zip.close();
+		} catch (Exception e) {
+			log.error("Failed to download code", e);
+		}
 		return outputStream.toByteArray();
 	}
 
@@ -282,7 +290,11 @@ public class GenTableServiceImpl extends CrudService<GenTableMapper, GenTable> i
 		for (String tableName : tableNames) {
 			generatorCode(tableName, zip);
 		}
-		IOUtils.closeQuietly(zip);
+		try {
+			zip.close();
+		} catch (Exception e) {
+			log.error("Failed to download code", e);
+		}
 		return outputStream.toByteArray();
 	}
 
@@ -309,10 +321,10 @@ public class GenTableServiceImpl extends CrudService<GenTableMapper, GenTable> i
 			Template tpl = Velocity.getTemplate(template, "UTF-8");
 			tpl.merge(context, sw);
 			try {
-				// 添加到zip
+				// 添加到 zip
 				zip.putNextEntry(new ZipEntry(VelocityUtils.getFileName(template, table)));
 				IOUtils.write(sw.toString(), zip, "UTF-8");
-				IOUtils.closeQuietly(sw);
+				sw.close();
 				zip.flush();
 				zip.closeEntry();
 			} catch (IOException e) {
