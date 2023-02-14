@@ -43,12 +43,6 @@ dependencies {
         exclude group: 'org.slf4j', module: 'slf4j-simple'
     }
     implementation 'com.github.kstyrc:embedded-redis:0.6'
-
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'com.github.stefanbirkner:system-rules:1.19.0'
 }
 
 test {

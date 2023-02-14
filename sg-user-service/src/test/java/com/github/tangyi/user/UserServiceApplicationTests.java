@@ -3,8 +3,8 @@ package com.github.tangyi.user;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.tangyi.common.model.R;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,11 +34,12 @@ public class UserServiceApplicationTests extends BaseTests {
 		ResultActions action = mvc.perform(builder);
 		StatusResultMatchers status = MockMvcResultMatchers.status();
 		ResultMatcher ok = status.isOk();
-		String result = action.andDo(MockMvcResultHandlers.print()).andExpect(ok).andReturn().getResponse().getContentAsString();
-		Assert.assertNotNull(result);
+		String result = action.andDo(MockMvcResultHandlers.print()).andExpect(ok).andReturn().getResponse()
+				.getContentAsString();
+		Assertions.assertNotNull(result);
 		R<JSONObject> r = JSON.parseObject(result, R.class);
-		Assert.assertNotNull(r.getResult());
-		Assert.assertNotNull(r.getResult().get("token"));
-		Assert.assertNotNull(r.getResult().get("tenantCode"));
+		Assertions.assertNotNull(r.getResult());
+		Assertions.assertNotNull(r.getResult().get("token"));
+		Assertions.assertNotNull(r.getResult().get("tenantCode"));
 	}
 }

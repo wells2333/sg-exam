@@ -8,7 +8,7 @@ import cn.smallbun.screw.core.execute.DocumentationExecute;
 import cn.smallbun.screw.core.process.ProcessConfig;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 
@@ -27,8 +27,8 @@ public class DbDocTests extends BaseTests {
 		hikariConfig.setUsername(System.getenv("SG_DB_USER_USERNAME"));
 		hikariConfig.setPassword(System.getenv("SG_DB_USER_PASSWORD"));
 		hikariConfig.addDataSourceProperty("useInformationSchema", "true");
-		hikariConfig.setMinimumIdle(1);
-		hikariConfig.setMaximumPoolSize(1);
+		hikariConfig.setMinimumIdle(2);
+		hikariConfig.setMaximumPoolSize(5);
 		DataSource dataSource = new HikariDataSource(hikariConfig);
 
 		EngineConfig engineConfig = EngineConfig.builder().fileOutputDir(OUTPUT).fileType(EngineFileType.MD)
