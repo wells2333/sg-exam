@@ -23,3 +23,6 @@ CREATE TABLE `sys_sms` (
    `tenant_code` varchar(16) DEFAULT NULL COMMENT '租户编号',
    PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='消息发送表';
+
+ALTER TABLE `sys_user`
+    ADD UNIQUE INDEX `idx_phone_tenant`(`phone`, `tenant_code`) USING BTREE;

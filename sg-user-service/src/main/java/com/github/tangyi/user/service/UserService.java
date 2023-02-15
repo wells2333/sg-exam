@@ -25,6 +25,7 @@ import com.github.tangyi.user.mapper.UserMapper;
 import com.github.tangyi.user.mapper.UserRoleMapper;
 import com.github.tangyi.user.utils.MenuUtil;
 import com.github.tangyi.user.utils.UserUtils;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -153,6 +154,12 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 		return userVo;
 	}
 
+	public User findUserByPhone(String phone, String tenantCode) {
+		Preconditions.checkNotNull(phone);
+		Preconditions.checkNotNull(tenantCode);
+		return this.dao.findUserByPhone(phone, tenantCode);
+	}
+
 	public UserAuths findUserAuthsByIdentifier(String identifier) {
 		return findUserAuthsByIdentifier(null, identifier, SysUtil.getTenantCode());
 	}
@@ -169,6 +176,16 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 		}
 		condition.setTenantCode(tenantCode);
 		return userAuthsService.getByIdentifier(condition);
+	}
+
+	public UserAuths findUserAuthsByUserId(Integer identityType, Long userId, String tenantCode) {
+		UserAuths condition = new UserAuths();
+		condition.setUserId(userId);
+		condition.setTenantCode(tenantCode);
+		if (identityType != null) {
+			condition.setIdentityType(IdentityType.matchByType(identityType).getValue());
+		}
+		return userAuthsService.getByUserId(condition);
 	}
 
 	/**
@@ -391,20 +408,24 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 			}
 		}
 		if (this.insert(user) > 0) {
-			UserAuths userAuths = new UserAuths();
-			userAuths.setCommonValue(userDto.getIdentifier(), user.getTenantCode());
-			userAuths.setUserId(user.getId());
-			userAuths.setIdentifier(userDto.getIdentifier());
-			if (userDto.getIdentityType() != null) {
-				userAuths.setIdentityType(userDto.getIdentityType());
-			}
-			// 设置密码
-			userAuths.setCredential(encoder.encode(password));
-			userAuthsService.insert(userAuths);
+			registerUserAuths(user, userDto.getIdentifier(), userDto.getIdentityType(), password);
 			// 分配默认角色
 			success = defaultRole(user, userDto.getTenantCode(), userDto.getIdentifier());
 		}
 		return success;
+	}
+
+	@Transactional
+	public void registerUserAuths(User user, String identifier, Integer identityType, String password) {
+		UserAuths userAuths = new UserAuths();
+		userAuths.setCommonValue(identifier, user.getTenantCode());
+		userAuths.setUserId(user.getId());
+		userAuths.setIdentifier(identifier);
+		if (identityType != null) {
+			userAuths.setIdentityType(identityType);
+		}
+		userAuths.setCredential(encoder.encode(password));
+		userAuthsService.insert(userAuths);
 	}
 
 	private String decryptCredential(String encoded, Integer identityType) {

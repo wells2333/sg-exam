@@ -29,6 +29,12 @@ public class UserAuthsService extends CrudService<UserAuthsMapper, UserAuths>
 		return this.dao.getByIdentifier(userAuths);
 	}
 
+	public UserAuths getByUserId(UserAuths userAuths) {
+		SgPreCondition.checkUserIdAndTenantCode(userAuths.getUserId(), userAuths.getTenantCode());
+		Preconditions.checkState(userAuths.getIdentityType() != null, "identityType must not be null");
+		return this.dao.getByUserId(userAuths);
+	}
+
 	public List<UserAuths> getListByUsers(List<User> userList) {
 		return this.dao.getListByUserIds(userList.stream().map(User::getId).distinct().toArray(Long[]::new));
 	}

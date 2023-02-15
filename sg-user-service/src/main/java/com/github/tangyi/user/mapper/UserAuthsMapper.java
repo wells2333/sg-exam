@@ -12,6 +12,8 @@ public interface UserAuthsMapper extends CrudMapper<UserAuths> {
 
     UserAuths getByIdentifier(UserAuths userAuths);
 
+	UserAuths getByUserId(UserAuths userAuths);
+
     List<UserAuths> getListByUserIds(@Param("userIds") Long[] userIds);
 
     int deleteByIdentifier(UserAuths userAuths);
