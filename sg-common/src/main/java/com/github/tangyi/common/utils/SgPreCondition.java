@@ -10,6 +10,11 @@ public class SgPreCondition {
 		checkTenantCode(tenantCode);
 	}
 
+	public static void checkUserIdAndTenantCode(Long userId, String tenantCode) {
+		Preconditions.checkState(userId != null, "userId must not be null");
+		checkTenantCode(tenantCode);
+	}
+
 	public static void checkTenantCode(String tenantCode) {
 		Preconditions.checkState(StringUtils.isNotEmpty(tenantCode), "tenantCode must not be null");
 	}

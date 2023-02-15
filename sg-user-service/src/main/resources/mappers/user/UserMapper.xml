@@ -65,6 +65,10 @@
         SELECT COUNT(1) FROM sys_user a WHERE a.is_deleted = 0 and a.tenant_code = #{tenantCode}
     </select>
 
+    <select id="findUserByPhone" resultMap="userResultMap">
+        SELECT * FROM sys_user a WHERE a.phone = #{phone} AND a.tenant_code = #{tanantCode}
+    </select>
+
     <delete id="delete">
         UPDATE sys_user SET
             is_deleted = 1,
