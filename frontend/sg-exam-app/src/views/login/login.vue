@@ -323,9 +323,8 @@ export default {
         if (valid) {
           this.sms.sending = true
           sendSms(this.sms.form.phone).then(response => {
-            console.log(response.data)
             this.sms.form.code = ''
-            this.$message.warning('验证码发送成功：' + response.data.msg)
+            this.$message.success('验证码发送成功')
             setTimeout(() => {
               this.sms.sending = false
             }, 500)

@@ -10,6 +10,7 @@ import com.github.tangyi.api.user.model.SysSms;
 import com.github.tangyi.api.user.service.ISysSmsService;
 import com.github.tangyi.common.exceptions.CommonException;
 import com.github.tangyi.common.service.CrudService;
+import com.github.tangyi.common.utils.EnvUtils;
 import com.github.tangyi.user.mapper.SysSmsMapper;
 import com.github.tangyi.user.properties.SmsProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class SmsService extends CrudService<SysSmsMapper, SysSms> implements ISysSmsService {
+
+	private static final Boolean SEND_SMS = Boolean.parseBoolean(EnvUtils.getValue("SEND_SMS", "true"));
 
 	private final SmsProperties smsProperties;
 
@@ -36,7 +39,15 @@ public class SmsService extends CrudService<SysSmsMapper, SysSms> implements ISy
 				.setTemplateCode(smsProperties.getTemplateCode()).setPhoneNumbers(smsDto.getReceiver())
 				.setTemplateParam(smsDto.getContent());
 		try {
-			SendSmsResponse response = client.sendSms(sendSmsRequest);
+			SendSmsResponse response;
+			if (SEND_SMS) {
+				response = client.sendSms(sendSmsRequest);
+			} else {
+				response = new SendSmsResponse();
+				SendSmsResponseBody body = new SendSmsResponseBody();
+				body.setCode("OK");
+				response.setBody(body);
+			}
 			SendSmsResponseBody body = response.getBody();
 			String responseStr = JSON.toJSONString(body);
 			SysSms sms = new SysSms();

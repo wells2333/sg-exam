@@ -76,20 +76,20 @@ public class MobileLoginFilter extends AbstractAuthenticationProcessingFilter {
 		try {
 			// 认证
 			authResult = this.getAuthenticationManager().authenticate(mobileAuthenticationToken);
-			log.info("mobile authentication success, mobile: {}, result: {}", mobile, authResult);
+			log.info("Mobile authentication successfully, mobile: {}", mobile);
 			// 认证成功
 			eventPublisher.publishAuthenticationSuccess(authResult);
 			SecurityContextHolder.getContext().setAuthentication(authResult);
 		} catch (Exception failed) {
 			SecurityContextHolder.clearContext();
-			log.error("mobile authentication request failed, mobile: {}", mobile, failed);
+			log.error("Failed to authentication mobile request , mobile: {}", mobile, failed);
 			eventPublisher.publishAuthenticationFailure(new BadCredentialsException(failed.getMessage(), failed),
 					new PreAuthenticatedAuthenticationToken("access-token", "N/A"));
 			try {
 				authenticationEntryPoint.commence(request, response,
 						new UsernameNotFoundException(failed.getMessage(), failed));
 			} catch (Exception e) {
-				log.error("mobile authenticationEntryPoint handle failed, mobile: {}", mobile, failed);
+				log.error("Failed to handle mobile authentication, mobile: {}", mobile, failed);
 			}
 		}
 		return authResult;
@@ -97,7 +97,7 @@ public class MobileLoginFilter extends AbstractAuthenticationProcessingFilter {
 
 	@Override
 	protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain,
-			Authentication auth) throws IOException, ServletException {
+			Authentication auth) {
 		CustomUserDetails details = (CustomUserDetails) auth.getPrincipal();
 		// 认证成功，生成token
 		userTokenService.generateAndSaveToken(req, res, details);
@@ -111,18 +111,14 @@ public class MobileLoginFilter extends AbstractAuthenticationProcessingFilter {
 		authRequest.setDetails(authenticationDetailsSource.buildDetails(request));
 	}
 
-	/**
-	 * 设置姓名、性别、头像等信息
-	 *
-	 * @param request     request
-	 * @param authRequest authRequest
-	 */
 	private void setMobileUserDetails(HttpServletRequest request, MobileAuthenticationToken authRequest) {
 		ObjectMapper mapper = new ObjectMapper();
 		try (InputStream in = request.getInputStream()) {
-			authRequest.setMobileUser(mapper.readValue(in, MobileUser.class));
+			if (in.available() > 0) {
+				authRequest.setMobileUser(mapper.readValue(in, MobileUser.class));
+			}
 		} catch (IOException e) {
-			log.error("init mobile userDetails failed", e);
+			log.error("Failed to set mobile userDetails", e);
 		}
 	}
 }

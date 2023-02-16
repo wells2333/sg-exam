@@ -11,5 +11,5 @@ public interface UserMapper extends CrudMapper<User> {
 
 	Integer userCount(UserVo userVo);
 
-	User findUserByPhone(@Param("phone") String phone, @Param("phone") String tenantCode);
+	User findUserByPhone(@Param("phone") String phone, @Param("tenantCode") String tenantCode);
 }

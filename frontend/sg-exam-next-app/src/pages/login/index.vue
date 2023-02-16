@@ -75,7 +75,11 @@ export default {
     async function handlePhoneLogin() {
       const phoneVal = unref(phone);
       if (await validatePhoneValue(phone)) {
-        await sendSms.sendSms(phoneVal);
+        let tenantCodeValue = unref(tenantCode);
+        if (tenantCodeValue === '') {
+          tenantCodeValue = 'gitee';
+        }
+        await sendSms.sendSmsTenant(phoneVal, tenantCodeValue);
         countDown();
         await successMessage('发送成功');
       }

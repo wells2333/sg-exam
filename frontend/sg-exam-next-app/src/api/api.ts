@@ -134,11 +134,19 @@ class api {
     }
 
     async fetchExam<T>(url: string, data: Object = {}, method: "GET" | "POST" | "PUT" = "POST") {
-        return this.fetch<T>(url, data, method);
+        return this.fetch<T>(url, data, method, undefined);
+    }
+
+    async fetchExamTenant<T>(url: string, data: Object = {}, method: "GET" | "POST" | "PUT" = "POST", tenantCode: string | undefined = undefined) {
+        return this.fetch<T>(url, data, method, tenantCode);
     }
 
     async fetchUser<T>(url: string, data: Object = {}, method: "GET" | "POST" | "PUT" = "POST") {
-        return this.fetch<T>(url, data, method);
+        return this.fetch<T>(url, data, method, undefined);
+    }
+
+    async fetchUserTenant<T>(url: string, data: Object = {}, method: "GET" | "POST" | "PUT" = "POST", tenantCode: string | undefined = undefined) {
+        return this.fetch<T>(url, data, method, tenantCode);
     }
 
     async uploadUser<T>(url: string, filePath: string, data: Object = {}) {
@@ -146,12 +154,18 @@ class api {
     }
 
     async fetchAuth<T>(url: string, data: Object = {}, method: "GET" | "POST" | "PUT" = "POST") {
-        return this.fetch<T>(url, data, method);
+        return this.fetch<T>(url, data, method, undefined);
     }
 
-    async fetch<T>(url: string, data: Object = {}, method: "GET" | "POST" | "PUT" = "POST") {
+    async fetchAuthTenant<T>(url: string, data: Object = {}, method: "GET" | "POST" | "PUT" = "POST", tenantCode: string | undefined = undefined) {
+        return this.fetch<T>(url, data, method, tenantCode);
+    }
+
+    async fetch<T>(url: string, data: Object = {}, method: "GET" | "POST" | "PUT" = "POST", tenantCode: string | undefined = undefined) {
         let token: string = this.token || await Taro.getStorage({ key: 'token' }).then(el => el.data).catch(() => "")
-        let tenantCode: string = this.tenantCode || await Taro.getStorage({ key: 'tenantCode' }).then(el => el.data).catch(() => "")
+        if (tenantCode === undefined || tenantCode === '') {
+            tenantCode = this.tenantCode || await Taro.getStorage({ key: 'tenantCode' }).then(el => el.data).catch(() => "")
+        }
         return await new Promise<result<T>>((resolve, reject) => {
             Taro.request<result<T>>({
                 timeout: 1000 * 60,

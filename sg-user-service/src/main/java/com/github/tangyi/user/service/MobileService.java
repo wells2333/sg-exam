@@ -23,7 +23,8 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class MobileService implements IMobileService {
 
-	private static final int VERIFICATION_CODE_SIZE = Integer.parseInt(EnvUtils.getValue("VERIFICATION_CODE_SIZE", "4"));
+	private static final int VERIFICATION_CODE_SIZE = Integer.parseInt(
+			EnvUtils.getValue("VERIFICATION_CODE_SIZE", "4"));
 
 	private static final String SMS_TEMPLATE = "{\"code\":\"%s\"}";
 
@@ -35,20 +36,19 @@ public class MobileService implements IMobileService {
 	public R<Boolean> sendVerificationCode(String mobile) {
 		String key = CommonConstant.VERIFICATION_CODE_KEY + mobile;
 		String code = RandomUtil.randomNumbers(VERIFICATION_CODE_SIZE);
-		log.info("Generate verification code success: {}, {}", mobile, code);
-		redisTemplate.opsForValue().set(key, code, SecurityConstant.DEFAULT_SMS_EXPIRE, TimeUnit.SECONDS);
 		SmsDto dto = new SmsDto();
 		dto.setReceiver(mobile);
 		dto.setContent(String.format(SMS_TEMPLATE, code));
 		dto.setOperator(SysUtil.getUser());
 		dto.setTenantCode(TenantHolder.getTenantCode());
 		SendSmsResponseBody body = smsService.sendSms(dto);
-		SgPreconditions.checkNull(body, "send verification code response is null");
+		SgPreconditions.checkNull(body, "Send verification code response is null");
 		boolean isOk = "OK".equals(body.getCode());
 		if (isOk) {
-			log.info("send verification code success: {}", body.getMessage());
+			redisTemplate.opsForValue().set(key, code, SecurityConstant.DEFAULT_SMS_EXPIRE, TimeUnit.SECONDS);
+			log.info("Verification code has been sent successfully, mobile: {}, code: {}", mobile, code);
 		} else {
-			log.error("failed to send verification code, mobile: {}, code: {}, message: {}", mobile, body.getCode(),
+			log.error("Failed to send verification code, mobile: {}, code: {}, message: {}", mobile, body.getCode(),
 					body.getMessage());
 		}
 		return R.success(isOk);

@@ -63,11 +63,14 @@ const user = {
         })
         loginBySocial(user.tenantCode, user.phone, user.code).then(response => {
           const data = response.data
-          setToken(data.token)
-          setRefreshToken(data.token)
-          commit('SET_TOKEN', data.token)
-          commit('SET_REFRESH_TOKEN', data.token)
-          commit('SET_TENANT_CODE', data.tenantCode)
+          const {code, result} = data
+          if (code === 0) {
+            setToken(result.token)
+            setRefreshToken(result.token)
+            commit('SET_TOKEN', result.token)
+            commit('SET_REFRESH_TOKEN', result.token)
+            commit('SET_TENANT_CODE', result.tenantCode)
+          }
           resolve()
         }).catch(error => {
           reject(error)

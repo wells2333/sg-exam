@@ -30,24 +30,24 @@ public class CommonExecutorService implements IExecutorService {
 
 	@PostConstruct
 	public void init() {
-		log.info("start to init common executor");
+		log.info("Initializing common executor");
 		int coreSize = EXECUTOR_CORE_SIZE;
 		this.commonExecutor = ExecutorUtils.newListeningExecutor("common-%d", coreSize, EXECUTOR_QUEUE_SIZE);
 		log.info("Init common executor finished, coreSize: {}", coreSize);
 
-		log.info("Start to init exam executor");
+		log.info("Initializing exam executor");
 		this.examExecutor = ExecutorUtils.newListeningExecutor("exam-%d", coreSize, EXECUTOR_QUEUE_SIZE);
 		log.info("Init exam executor finished, coreSize: {}", coreSize);
 
-		log.info("Start to init subject executor");
+		log.info("Initializing subject executor");
 		this.subjectExecutor = ExecutorUtils.newListeningExecutor("subject-%d", coreSize, EXECUTOR_QUEUE_SIZE);
 		log.info("Init subject executor finished, coreSize: {}", coreSize);
 
-		log.info("Start to init submit exam executor");
+		log.info("Initializing submit exam executor");
 		this.submitExecutor = ExecutorUtils.newListeningExecutor("submit-exam-%d", coreSize, EXECUTOR_QUEUE_SIZE);
 		log.info("Init submit exam executor finished, coreSize: {}", coreSize);
 
-		log.info("Start to init import executor");
+		log.info("Initializing import executor");
 		this.importExecutor = ExecutorUtils.newListeningExecutor("import-%d", coreSize, EXECUTOR_QUEUE_SIZE);
 		log.info("Init import executor finished, coreSize: {}", coreSize);
 	}

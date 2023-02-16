@@ -3,7 +3,12 @@ package com.github.tangyi.user.controller;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.user.dto.UserDto;
 import com.github.tangyi.api.user.dto.UserInfoDto;
-import com.github.tangyi.api.user.model.*;
+import com.github.tangyi.api.user.model.Attachment;
+import com.github.tangyi.api.user.model.Dept;
+import com.github.tangyi.api.user.model.Role;
+import com.github.tangyi.api.user.model.User;
+import com.github.tangyi.api.user.model.UserAuths;
+import com.github.tangyi.api.user.model.UserRole;
 import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.constant.CommonConstant;
@@ -19,8 +24,13 @@ import com.github.tangyi.common.utils.TenantHolder;
 import com.github.tangyi.common.vo.UserVo;
 import com.github.tangyi.user.excel.listener.UserImportListener;
 import com.github.tangyi.user.excel.model.UserExcelModel;
-import com.github.tangyi.user.service.*;
+import com.github.tangyi.user.service.DeptService;
+import com.github.tangyi.user.service.UserAuthsService;
+import com.github.tangyi.user.service.UserRoleService;
+import com.github.tangyi.user.service.UserService;
+import com.github.tangyi.user.service.ValidateCodeService;
 import com.github.tangyi.user.utils.UserUtils;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -30,8 +40,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -148,18 +166,23 @@ public class UserController extends BaseController {
 	@Operation(summary = "更新用户基本信息", description = "根据用户id更新用户的基本信息")
 	@SgLog(value = "更新用户基本信息", operationType = OperationType.UPDATE)
 	public R<Boolean> updateInfo(@RequestBody UserDto userDto) {
-		// 检查验证码
-		if (StringUtils.isNotEmpty(userDto.getCode())) {
-			validateCodeService.checkCode(userDto.getCode(), userDto.getPhone());
+		Preconditions.checkNotNull(userDto.getId());
+		checkCode(userDto);
+		return R.success(userService.updateInfo(userDto));
+	}
+
+	@PutMapping("bindPhoneNumber")
+	@Operation(summary = "绑定手机号", description = "绑定手机号")
+	@SgLog(value = "绑定手机号", operationType = OperationType.UPDATE)
+	public R<Boolean> bindPhoneNumber(@RequestBody UserDto userDto) {
+		Preconditions.checkNotNull(userDto.getId());
+		checkCode(userDto);
+		User user = userService.findUserByPhone(userDto.getPhone(), userDto.getTenantCode());
+		if (user != null && !user.getId().equals(userDto.getId())) {
+			log.error("Phone has used by user, phone: {}, user: {}", userDto.getPhone(), user.getName());
+			return R.success(Boolean.FALSE);
 		}
-		User user = new User();
-		BeanUtils.copyProperties(userDto, user);
-		UserAuths condition = new UserAuths();
-		condition.setIdentifier(userDto.getIdentifier());
-		condition.setTenantCode(userDto.getTenantCode());
-		UserAuths userAuths = userAuthsService.getByIdentifier(condition);
-		user.setId(userAuths.getUserId());
-		return R.success(userService.update(user, userAuths) > 0);
+		return R.success(userService.updateInfo(userDto));
 	}
 
 	@PutMapping("anonymousUser/updatePassword")
@@ -285,5 +308,11 @@ public class UserController extends BaseController {
 	@Operation(summary = "更新用户登录信息", description = "根据用户id更新用户的登录信息")
 	public R<Boolean> updateLoginInfo(@RequestBody UserDto userDto) {
 		return R.success(userService.updateLoginInfo(userDto));
+	}
+
+	private void checkCode(UserDto userDto) {
+		if (StringUtils.isNotEmpty(userDto.getCode())) {
+			validateCodeService.checkCode(userDto.getCode(), userDto.getPhone());
+		}
 	}
 }

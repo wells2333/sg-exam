@@ -96,8 +96,9 @@ export default {
       if (emailValue !== '' && !await validateEmail(email)) {
         return;
       }
-      const {identifier, tenantCode}  = await api.getUserInfo();
-      const res = await userApi.updateInfo({
+      const {id, identifier, tenantCode}  = await api.getUserInfo();
+      const res = await userApi.bindPhoneNumber({
+        id,
         identifier,
         tenantCode,
         phone: phone.value,

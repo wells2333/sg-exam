@@ -2,12 +2,14 @@ package com.github.tangyi.auth.security.wx;
 
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 @Data
 public class WxUser implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    @Serial
+	private static final long serialVersionUID = 1L;
 
     /**
      * 姓名

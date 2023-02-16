@@ -7,11 +7,16 @@ class userApi {
     }
 
     sendSms(phone: string) {
-        return api.fetchUser<any>("/v1/mobile/sendSms/" + phone, {}, "GET");
+        const tenantCode = api.getTenantCode();
+        return api.fetchUserTenant<any>("/v1/mobile/sendSms/" + phone, {}, "GET", tenantCode);
     }
 
-    updateInfo(userInfo: object) {
-        return api.fetchUser<Sg.UserInfo>("/v1/user/updateInfo", userInfo, "PUT");
+    sendSmsTenant(phone: string, tenantCode: string | undefined) {
+        return api.fetchUserTenant<any>("/v1/mobile/sendSms/" + phone, {}, "GET", tenantCode);
+    }
+
+    bindPhoneNumber(userInfo: object) {
+        return api.fetchUser<Sg.UserInfo>("/v1/user/bindPhoneNumber", userInfo, "PUT");
     }
 
     uploadAudio(filePath: string, data: Object = {}) {

@@ -40,12 +40,10 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		long start = System.nanoTime();
 		UserVo userVo = userService.findUserByIdentifier(null, username, TenantHolder.getTenantCode());
-		if (userVo == null) {
-			throw new UsernameNotFoundException("User does not exist");
-		}
-		return new CustomUserDetails(username, userVo.getCredential(),
-				CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(),
-				userVo.getUserId(), userVo.getPhone(), start, LoginTypeEnum.PWD);
+		checkUserExist(userVo);
+		boolean enabled = CommonConstant.STATUS_NORMAL.equals(userVo.getStatus());
+		return new CustomUserDetails(username, userVo.getCredential(), enabled, getAuthority(userVo),
+				userVo.getTenantCode(), userVo.getUserId(), userVo.getPhone(), start, LoginTypeEnum.PWD);
 	}
 
 	@Override
@@ -53,12 +51,10 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 			throws UsernameNotFoundException, TenantNotFoundException {
 		long start = System.nanoTime();
 		UserVo userVo = userService.findUserByIdentifier(null, username, tenantCode);
-		if (userVo == null) {
-			throw new UsernameNotFoundException("User does not exist");
-		}
-		return new CustomUserDetails(username, userVo.getCredential(),
-				CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(),
-				userVo.getUserId(), userVo.getPhone(), start, LoginTypeEnum.PWD);
+		checkUserExist(userVo);
+		boolean enabled = CommonConstant.STATUS_NORMAL.equals(userVo.getStatus());
+		return new CustomUserDetails(username, userVo.getCredential(), enabled, getAuthority(userVo),
+				userVo.getTenantCode(), userVo.getUserId(), userVo.getPhone(), start, LoginTypeEnum.PWD);
 	}
 
 	@Override
@@ -66,15 +62,14 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 			throws UsernameNotFoundException {
 		long start = System.nanoTime();
 		UserVo userVo = socialLogin(mobileUser, social, tenantCode);
-		return new CustomUserDetails(userVo.getIdentifier(), userVo.getCredential(),
-				CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(),
-				userVo.getUserId(), userVo.getPhone(), start, LoginTypeEnum.SMS);
+		boolean enabled = CommonConstant.STATUS_NORMAL.equals(userVo.getStatus());
+		return new CustomUserDetails(userVo.getIdentifier(), userVo.getCredential(), enabled, getAuthority(userVo),
+				userVo.getTenantCode(), userVo.getUserId(), userVo.getPhone(), start, LoginTypeEnum.SMS);
 	}
 
 	@Override
 	public UserDetails loadUserByWxCodeAndTenantCode(String tenantCode, String code, WxUser wxUser)
 			throws UsernameNotFoundException {
-		// 根据code获取openId和sessionKey
 		WxSession wxSession = wxService.code2Session(code);
 		SgPreconditions.checkNull(wxSession, "Failed to get openId");
 		return loadUserByWxOpenIdAndTenantCode(wxUser, wxSession.getOpenId(), tenantCode);
@@ -109,6 +104,12 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 		return new CustomUserDetails(userVo.getIdentifier(), userVo.getCredential(),
 				CommonConstant.STATUS_NORMAL.equals(userVo.getStatus()), getAuthority(userVo), userVo.getTenantCode(),
 				userVo.getUserId(), userVo.getPhone(), start, LoginTypeEnum.WECHAT);
+	}
+
+	private void checkUserExist(UserVo userVo) {
+		if (userVo == null) {
+			throw new UsernameNotFoundException("User does not exist");
+		}
 	}
 
 	private Set<GrantedAuthority> getAuthority(UserVo userVo) {

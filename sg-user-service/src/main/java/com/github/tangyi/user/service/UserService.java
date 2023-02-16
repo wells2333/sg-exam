@@ -6,7 +6,13 @@ import com.github.tangyi.api.user.dto.UserDto;
 import com.github.tangyi.api.user.dto.UserInfoDto;
 import com.github.tangyi.api.user.enums.AttachTypeEnum;
 import com.github.tangyi.api.user.enums.IdentityType;
-import com.github.tangyi.api.user.model.*;
+import com.github.tangyi.api.user.model.Attachment;
+import com.github.tangyi.api.user.model.Dept;
+import com.github.tangyi.api.user.model.Menu;
+import com.github.tangyi.api.user.model.Role;
+import com.github.tangyi.api.user.model.User;
+import com.github.tangyi.api.user.model.UserAuths;
+import com.github.tangyi.api.user.model.UserRole;
 import com.github.tangyi.api.user.service.IUserService;
 import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.constant.CommonConstant;
@@ -45,7 +51,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -287,6 +297,18 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	public int update(User user, UserAuths userAuths) {
 		user.setCommonValue();
 		return this.dao.updateByPrimaryKeySelective(user);
+	}
+
+	@Transactional
+	public boolean updateInfo(UserDto userDto) {
+		User user = new User();
+		BeanUtils.copyProperties(userDto, user);
+		UserAuths condition = new UserAuths();
+		condition.setIdentifier(userDto.getIdentifier());
+		condition.setTenantCode(userDto.getTenantCode());
+		UserAuths userAuths = userAuthsService.getByIdentifier(condition);
+		user.setId(userAuths.getUserId());
+		return this.update(user, userAuths) > 0;
 	}
 
 	@Transactional
