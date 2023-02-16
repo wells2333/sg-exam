@@ -6,13 +6,7 @@ import com.github.tangyi.api.user.dto.UserDto;
 import com.github.tangyi.api.user.dto.UserInfoDto;
 import com.github.tangyi.api.user.enums.AttachTypeEnum;
 import com.github.tangyi.api.user.enums.IdentityType;
-import com.github.tangyi.api.user.model.Attachment;
-import com.github.tangyi.api.user.model.Dept;
-import com.github.tangyi.api.user.model.Menu;
-import com.github.tangyi.api.user.model.Role;
-import com.github.tangyi.api.user.model.User;
-import com.github.tangyi.api.user.model.UserAuths;
-import com.github.tangyi.api.user.model.UserRole;
+import com.github.tangyi.api.user.model.*;
 import com.github.tangyi.api.user.service.IUserService;
 import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.constant.CommonConstant;
@@ -51,11 +45,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -145,7 +135,6 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	/**
 	 * 根据用户唯一标识获取用户详细信息
 	 */
-	@Cacheable(value = USER_VO, key = "#tenantCode + ':' + #identifier", unless = "#result == null")
 	public UserVo findUserByIdentifier(Integer identityType, String identifier, String tenantCode) {
 		UserAuths userAuths = findUserAuthsByIdentifier(identityType, identifier, tenantCode);
 		if (userAuths == null) {
@@ -274,7 +263,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	}
 
 	@Transactional
-	@CacheEvict(value = {USER, USER_VO, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
+	@CacheEvict(value = {USER, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
 			USER_MENU_PERMISSION}, key = "#userDto.tenantCode + ':' + #userDto.identifier")
 	public boolean updateUser(Long id, UserDto userDto) {
 		User user = new User();
@@ -292,7 +281,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	}
 
 	@Transactional
-	@CacheEvict(value = {USER, USER_VO, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
+	@CacheEvict(value = {USER, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
 			USER_MENU_PERMISSION}, key = "#user.tenantCode + ':' + #userAuths.identifier")
 	public int update(User user, UserAuths userAuths) {
 		user.setCommonValue();
@@ -312,7 +301,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	}
 
 	@Transactional
-	@CacheEvict(value = {USER, USER_VO, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
+	@CacheEvict(value = {USER, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
 			USER_MENU_PERMISSION}, key = "#userDto.tenantCode + ':' + #userDto.identifier")
 	public int updatePassword(UserDto userDto) {
 		SgPreconditions.checkBlank(userDto.getNewPassword(), "新密码不能为空");
@@ -332,7 +321,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	}
 
 	@Transactional
-	@CacheEvict(value = {USER, USER_VO, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
+	@CacheEvict(value = {USER, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
 			USER_MENU_PERMISSION}, key = "#userDto.tenantCode + ':' + #userDto.identifier")
 	public String updateAvatar(UserDto userDto) {
 		User user = this.get(userDto.getId());
@@ -363,7 +352,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	}
 
 	@Transactional
-	@CacheEvict(value = {USER, USER_VO, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
+	@CacheEvict(value = {USER, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
 			USER_MENU_PERMISSION}, key = "#userAuths.tenantCode + ':' + #userAuths.identifier")
 	public int delete(User user, UserAuths userAuths) {
 		userRoleMapper.deleteByUserId(userAuths.getUserId());
@@ -374,7 +363,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 
 	@Override
 	@Transactional
-	@CacheEvict(value = {USER, USER_VO, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
+	@CacheEvict(value = {USER, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
 			USER_MENU_PERMISSION}, allEntries = true)
 	public int deleteAll(Long[] ids) {
 		String currentUser = SysUtil.getUser(), tenantCode = SysUtil.getTenantCode();
@@ -396,7 +385,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	}
 
 	@Transactional
-	@CacheEvict(value = {USER, USER_VO, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
+	@CacheEvict(value = {USER, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
 			USER_MENU_PERMISSION}, key = "#userDto.tenantCode + ':' + #userDto.identifier")
 	public boolean resetPassword(UserDto userDto) {
 		UserAuths userAuths = findUserAuthsByIdentifier(null, userDto.getIdentifier(), userDto.getTenantCode());
@@ -406,13 +395,11 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	}
 
 	@Transactional
-	@CacheEvict(value = {USER, USER_VO, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
+	@CacheEvict(value = {USER, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
 			USER_MENU_PERMISSION}, key = "#userDto.tenantCode + ':' + #userDto.identifier")
 	public boolean register(UserDto userDto) {
+		Preconditions.checkNotNull(userDto.getIdentityType());
 		boolean success = false;
-		if (userDto.getIdentityType() == null) {
-			userDto.setIdentityType(IdentityType.PASSWORD.getValue());
-		}
 		String password = decryptCredential(userDto.getCredential(), userDto.getIdentityType());
 		User user = new User();
 		BeanUtils.copyProperties(userDto, user);
@@ -532,7 +519,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	}
 
 	@Transactional
-	@CacheEvict(value = {USER, USER_VO, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS}, allEntries = true)
+	@CacheEvict(value = {USER, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS}, allEntries = true)
 	public boolean importUsers(List<UserInfoDto> userInfoDtos) {
 		String currentUser = SysUtil.getUser(), tenantCode = SysUtil.getTenantCode();
 		Date currentDate = DateUtils.asDate(LocalDateTime.now());

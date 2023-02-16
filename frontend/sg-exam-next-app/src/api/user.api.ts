@@ -19,6 +19,10 @@ class userApi {
         return api.fetchUser<Sg.UserInfo>("/v1/user/bindPhoneNumber", userInfo, "PUT");
     }
 
+    updateInfo(userInfo: object) {
+        return api.fetchUser<Sg.UserInfo>("/v1/user/updateInfo", userInfo, "PUT");
+    }
+
     uploadAudio(filePath: string, data: Object = {}) {
         return api.uploadUser<any>("/v1/speechSynthesis/uploadSpeech", filePath, data)
     }

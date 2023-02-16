@@ -1,6 +1,6 @@
 <template>
   <view class="bg-gray">
-    <view class="avatar-container flex-row">
+    <view class="avatar-container flex-row" @click="handleUserInfo">
       <at-avatar class="avatar" :circle="true" size="large" :image="avatar"/>
       <view class="flex-col">
         <text class="userName">{{userInfo.name}}</text>
@@ -74,6 +74,10 @@ export default {
       Taro.reLaunch({ url: "/pages/index/index" })
     }
 
+    function handleUserInfo() {
+      Taro.navigateTo({url: "/pages/user_info/index"});
+    }
+
     onMounted(() => {
       fetch();
     });
@@ -85,7 +89,8 @@ export default {
       handleClick,
       handleClickShare,
       handleClickAbout,
-      handleLogout
+      handleLogout,
+      handleUserInfo
     }
   }
 }

@@ -3,6 +3,7 @@ package com.github.tangyi.user.controller;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.user.dto.UserDto;
 import com.github.tangyi.api.user.dto.UserInfoDto;
+import com.github.tangyi.api.user.enums.IdentityType;
 import com.github.tangyi.api.user.model.Attachment;
 import com.github.tangyi.api.user.model.Dept;
 import com.github.tangyi.api.user.model.Role;
@@ -280,6 +281,9 @@ public class UserController extends BaseController {
 	@PostMapping("anonymousUser/register")
 	@SgLog(value = "注册用户", operationType = OperationType.INSERT)
 	public R<Boolean> register(@RequestBody @Valid UserDto userDto) {
+		if (userDto.getIdentityType() == null) {
+			userDto.setIdentityType(IdentityType.PASSWORD.getValue());
+		}
 		return R.success(userService.register(userDto));
 	}
 

@@ -154,6 +154,6 @@ export default {
 }
 
 .gender_checkbox {
-  padding-left: 16px;
+  margin-right: 18px;
 }
 </style>

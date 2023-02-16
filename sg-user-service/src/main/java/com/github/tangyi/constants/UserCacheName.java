@@ -6,8 +6,6 @@ public interface UserCacheName {
 
 	String USER = "user";
 
-	String USER_VO = "user:vo";
-
 	String USER_DTO = "user:dto";
 
 	String USER_AUTHS = "user:auths";

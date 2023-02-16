@@ -139,6 +139,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 			}
 			userDto.setIdentifier(social);
 			userDto.setCredential(social);
+			userDto.setPhone(social);
 			userDto.setIdentityType(IdentityType.PHONE_NUMBER.getValue());
 			userDto.setLoginTime(DateUtils.asDate(LocalDateTime.now()));
 			userService.register(userDto);
