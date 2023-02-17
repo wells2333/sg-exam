@@ -10,16 +10,12 @@ import java.util.List;
 
 public interface IQiNiuService {
 
-	Attachment upload(MultipartFile file, String groupCode) throws IOException;
-
 	Attachment upload(MultipartFile file, String groupCode, String user, String tenantCode) throws IOException;
 
 	Attachment upload(String groupCode, String fileName, String originalFilename, byte[] bytes, String user,
 			String tenantCode);
 
 	void upload(Attachment attachment, byte[] bytes);
-
-	int save(Attachment attachment);
 
 	boolean delete(Attachment attachment) throws QiniuException;
 
@@ -29,13 +25,9 @@ public interface IQiNiuService {
 
 	String getDownloadUrl(String fileName, long expire);
 
-	boolean isNotDefaultGroup(Attachment attachment);
-
 	String getPreviewUrl(Long id);
 
 	Attachment getPreviewAttachment(Long id);
 
 	Long randomImage(String groupCode);
-
-
 }
