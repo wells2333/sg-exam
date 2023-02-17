@@ -1,4 +1,4 @@
-<h1 align="center">Welcome to sg-exam-next 👋</h1>
+<h1 align="center">Welcome to sg-exam 👋</h1>
 <p>
   <img alt="Version" src="https://img.shields.io/badge/version-0.0.1-blue.svg?cacheSeconds=2592000" />
   <a href="https://mp.weixin.qq.com/s/oal9atlSQxfL4YOiLtYfuA" target="_blank">
@@ -21,7 +21,7 @@
 
 > **注意：本版本为 Spring Boot 版本，没有太多中间件依赖，使用、部署都非常方便，并且持续更新维护**
 > 
-> **v5.0.0 版本以前为 Spring Cloud 版本，依赖了比较多的中间件，代码在 sc 分支**
+> **Spring Cloud 版本依赖了比较多的中间件，代码在 sc 分支**
 > 
 > **Spring Cloud 版本已不再维护！已不再维护！已不再维护！**
 
@@ -59,9 +59,9 @@ web前台主要功能：提供在线考试、课程学习、练习等功能
 
 ## 部署文档 & 操作手册 & 源码解析 & 视频教程
 
-[SG-EXAM-NEXT](https://mp.weixin.qq.com/s?__biz=Mzg2Mjg2OTcyNA==&amp;mid=2247484080&amp;idx=1&amp;sn=85d5bd3a9d03b710903076ab14b20e92&amp;chksm=ce000303f9778a15c0b7afd21fd82aad685f13eb09a0dafa2c8fad97b6eacd9585dd738a0f0a&token=755573063&lang=zh_CN#rd)
+- [SG-EXAM-NEXT](https://mp.weixin.qq.com/s?__biz=Mzg2Mjg2OTcyNA==&amp;mid=2247484080&amp;idx=1&amp;sn=85d5bd3a9d03b710903076ab14b20e92&amp;chksm=ce000303f9778a15c0b7afd21fd82aad685f13eb09a0dafa2c8fad97b6eacd9585dd738a0f0a&token=755573063&lang=zh_CN#rd)
 
-功能规划: [Roadmap](https://www.yuque.com/tangyi-5ldnl/paf15u/cwvtvfd0a07ozfk2?singleDoc#)
+- [Roadmap](https://www.yuque.com/tangyi-5ldnl/paf15u/cwvtvfd0a07ozfk2?singleDoc#)
 
 ## 功能截图
 
@@ -129,6 +129,8 @@ web前台主要功能：提供在线考试、课程学习、练习等功能
 <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/qq_new.png" width="160"/>
 
 <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/qq_3.png" width="160"/>
+
+<img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/qq_4.png" width="160"/>
 
 ## 请作者喝咖啡
 
