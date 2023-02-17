@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v1/notice")
 public class SysNoticeController extends BaseController {
 
-	public static final String NOTICE_VALUE = EnvUtils.getValue("NOTICE_VALUE", "新年快乐！兔年大吉！");
+	public static final String NOTICE_VALUE = EnvUtils.getValue("NOTICE_VALUE", "");
 
 	@GetMapping("/getNotice")
 	@Operation(summary = "查询公告")

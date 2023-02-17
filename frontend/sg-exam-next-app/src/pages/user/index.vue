@@ -1,9 +1,13 @@
 <template>
-  <view class="bg-gray">
+  <view class="bg-gray" v-if="userInfo !== undefined">
     <view class="avatar-container flex-row" @click="handleUserInfo">
       <at-avatar class="avatar" :circle="true" size="large" :image="avatar"/>
-      <view class="flex-col">
+      <view class="flex-col user-info">
         <text class="userName">{{userInfo.name}}</text>
+        <text class="userDesc">{{userInfo.signature === null || userInfo.signature === '' ? '好好学习天天向上~' : userInfo.signature}}</text>
+      </view>
+      <view class="more-btn">
+        <at-icon value='chevron-right' size='15' color='#CCC'></at-icon>
       </view>
     </view>
     <view class="top-tab-container flex-row">
@@ -38,17 +42,19 @@
 import {onMounted, ref} from 'vue';
 import api from '../../api/api';
 import Taro from "@tarojs/taro";
+import {hideLoading, showLoading} from "../../utils/util";
 
 export default {
   setup() {
-    const userInfo = ref<any>(api.getUserInfo());
-    const avatar = ref<string>(userInfo.value.avatar);
-    if (userInfo.value.avatar === '') {
-      avatar.value = 'https://img.yzcdn.cn/vant/cat.jpeg';
-    }
+    const userInfo = ref<any>(undefined);
+    const avatar = ref<string>(undefined);
 
     async function fetch() {
-
+      userInfo.value = api.getUserInfo();
+      avatar.value = userInfo.value.avatar;
+      if (userInfo.value.avatar === '') {
+        avatar.value = 'https://img.yzcdn.cn/vant/cat.jpeg';
+      }
     }
 
     function handleClickTopTab(url) {
@@ -78,11 +84,20 @@ export default {
       Taro.navigateTo({url: "/pages/user_info/index"});
     }
 
+    async function init() {
+      try {
+        await showLoading();
+        await fetch();
+      } finally {
+        hideLoading();
+      }
+    }
     onMounted(() => {
-      fetch();
+      init();
     });
 
     return {
+      init,
       avatar,
       userInfo,
       handleClickTopTab,
@@ -92,7 +107,14 @@ export default {
       handleLogout,
       handleUserInfo
     }
-  }
+  },
+  onPullDownRefresh() {
+    try {
+      this.init();
+    } finally {
+      Taro.stopPullDownRefresh();
+    }
+  },
 }
 </script>
 
@@ -123,6 +145,13 @@ export default {
   text-align: left;
 }
 
+.userDesc {
+  margin-left: 10px;
+  margin-top: 8px;
+  color: rgba(166, 166, 166, 1);
+  font-size: 13px;
+}
+
 .top-tab-item {
   color: rgba(80, 80, 80, 1);
   font-size: 14px;
@@ -140,5 +169,15 @@ export default {
 
 .container {
   margin-top: 10px;
+}
+
+.user-info{
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 20px;
+}
+.more-btn {
+  padding-right: 5px;
 }
 </style>

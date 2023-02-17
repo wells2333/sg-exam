@@ -289,6 +289,8 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	}
 
 	@Transactional
+	@CacheEvict(value = {USER, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
+			USER_MENU_PERMISSION}, key = "#userDto.tenantCode + ':' + #userDto.identifier")
 	public boolean updateInfo(UserDto userDto) {
 		User user = new User();
 		BeanUtils.copyProperties(userDto, user);

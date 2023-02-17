@@ -1,6 +1,7 @@
 <template>
-  <view class="bg-gray">
-    <view class="container" v-if="userInfo !== undefined">
+  <view v-if="userInfo !== undefined">
+    <view class="container">
+      <at-input title="ID" :value="userInfo.id" disabled></at-input>
       <view class="at-input">
         <view class="at-input__container">
           <text class="at-input__title">头像</text>
@@ -8,7 +9,7 @@
         </view>
       </view>
       <at-input title="昵称" :value="userInfo.name" @change="handleChangeName"></at-input>
-      <at-input title="账号" :value="userInfo.identifier" disabled></at-input>
+      <at-input title="签名" :value="userInfo.signature" @change="handleChangeSignature"></at-input>
       <view class="at-input">
         <view class="at-input__container">
           <text class="at-input__title">性别</text>
@@ -35,32 +36,48 @@
 import {onMounted, ref} from 'vue';
 import api from '../../api/api';
 import userApi from "../../api/user.api";
+import {showLoading, hideLoading, successMessage, validateEmail, validatePhoneValue, warnMessage} from "../../utils/util";
 import Taro from "@tarojs/taro";
-import {successMessage, warnMessage} from "../../utils/util";
 
 export default {
   setup() {
     const userInfo = ref<any>(undefined);
     const gender = ref<any>(0);
     const avatar = ref<string>();
+
     async function handleSave() {
-      const res = await userApi.updateInfo({
-        id: userInfo.value.id,
-        tenantCode: userInfo.value.tenantCode,
-        identifier: userInfo.value.identifier,
-        identityType: userInfo.value.identityType,
-        name: userInfo.value.name,
-        gender: gender.value,
-        phone: userInfo.value.phone,
-        email: userInfo.value.email
-      });
-      if (res && res.code === 0) {
-        await successMessage('保存成功');
-        const {result} = await userApi.userInfo();
-        userInfo.value = result;
-        api.setUserInfo(result);
-      } else {
-        await warnMessage('保存失败');
+      const {id, tenantCode, identifier, identityType, name, phone, email, signature} = userInfo.value;
+      if (phone !== '' && !await validatePhoneValue(phone)) {
+        await warnMessage('手机号格式不正确');
+        return;
+      }
+      if (email !== '' && !await validateEmail(email)) {
+        await warnMessage('邮箱格式不正确');
+        return;
+      }
+      try {
+        await showLoading();
+        const res = await userApi.updateInfo({
+          id,
+          tenantCode,
+          identifier,
+          identityType,
+          name,
+          gender: gender.value,
+          phone,
+          email,
+          signature
+        });
+        if (res && res.code === 0) {
+          await successMessage('保存成功');
+          const {result} = await userApi.userInfo();
+          userInfo.value = result;
+          api.setUserInfo(result);
+        } else {
+          await warnMessage('保存失败');
+        }
+      } finally {
+        hideLoading();
       }
     }
 
@@ -84,6 +101,10 @@ export default {
       gender.value = detail.value;
     }
 
+    function handleChangeSignature(value) {
+      userInfo.value.signature = value;
+    }
+
     async function fetch() {
       const {result} = await userApi.userInfo();
       userInfo.value = result;
@@ -94,11 +115,21 @@ export default {
       }
     }
 
+    async function init() {
+      try {
+        await showLoading();
+        await fetch();
+      } finally {
+        hideLoading();
+      }
+    }
+
     onMounted(() => {
-      fetch();
+      init();
     })
 
     return {
+      init,
       avatar,
       userInfo,
       gender,
@@ -107,9 +138,17 @@ export default {
       handleChangeName,
       handleChangePhone,
       handleChangeEmail,
-      handleChangeGender
+      handleChangeGender,
+      handleChangeSignature
     }
-  }
+  },
+  onPullDownRefresh() {
+    try {
+      this.init();
+    } finally {
+      Taro.stopPullDownRefresh();
+    }
+  },
 }
 </script>
 

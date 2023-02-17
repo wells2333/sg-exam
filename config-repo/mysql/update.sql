@@ -11,7 +11,7 @@ CREATE TABLE shedlock(
 )
 
 CREATE TABLE `sys_sms` (
-   `id` bigint(20) NOT NULL COMMENT 'id',
+   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
    `receiver` varchar(255) DEFAULT NULL COMMENT '接收方',
    `content` varchar(512) DEFAULT NULL COMMENT '发送内容',
    `response` varchar(512) DEFAULT NULL COMMENT '消息响应',

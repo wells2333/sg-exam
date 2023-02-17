@@ -34,7 +34,7 @@ public class DbDocTests extends BaseTests {
 		EngineConfig engineConfig = EngineConfig.builder().fileOutputDir(OUTPUT).fileType(EngineFileType.MD)
 				.produceType(EngineTemplateType.freemarker).fileName(NAME).build();
 		ProcessConfig processConfig = ProcessConfig.builder().build();
-		Configuration config = Configuration.builder().version("5.0.11").description(NAME).dataSource(dataSource)
+		Configuration config = Configuration.builder().version("0.0.1").description(NAME).dataSource(dataSource)
 				.engineConfig(engineConfig).produceConfig(processConfig).build();
 		new DocumentationExecute(config).execute();
 	}

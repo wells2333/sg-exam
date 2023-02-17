@@ -18,6 +18,7 @@ import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,6 +32,7 @@ import java.util.List;
 @Schema(description = "用户返回结果")
 public class UserDto implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	/**
