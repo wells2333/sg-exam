@@ -27,7 +27,7 @@ public interface IQiNiuService {
 
 	String getDownloadUrl(AttachGroup group, String attachName);
 
-	String getDownloadUrl(String fileName, int expire);
+	String getDownloadUrl(String fileName, long expire);
 
 	boolean isNotDefaultGroup(Attachment attachment);
 

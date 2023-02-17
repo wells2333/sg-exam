@@ -111,7 +111,7 @@ public class QiNiuService implements IQiNiuService {
 		return getDownloadUrl(getName(group.getGroupCode(), attachName), group.getUrlExpire());
 	}
 
-	public String getDownloadUrl(String fileName, int expire) {
+	public String getDownloadUrl(String fileName, long expire) {
 		if (expire <= 0) {
 			expire = AttachConstant.DEFAULT_EXPIRE;
 		}

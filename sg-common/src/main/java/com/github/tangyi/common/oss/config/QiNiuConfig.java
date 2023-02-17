@@ -25,5 +25,5 @@ public class QiNiuConfig {
 	/**
 	 * 链接超时时间，单位秒
 	 */
-	private Integer expire;
+	private Long expire;
 }

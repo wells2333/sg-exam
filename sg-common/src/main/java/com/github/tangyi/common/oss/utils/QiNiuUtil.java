@@ -62,7 +62,7 @@ public class QiNiuUtil {
 	/**
 	 * 获取图片url
 	 */
-	public static String getDownloadUrl(String fileName, int expire) {
+	public static String getDownloadUrl(String fileName, long expire) {
 		QiNiuConfig qiNiuConfig = getQiNiuConfig();
 		String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8).replace("+", "%20");
 		String publicUrl = String.format("%s/%s", qiNiuConfig.getDomainOfBucket(), encodedFileName);

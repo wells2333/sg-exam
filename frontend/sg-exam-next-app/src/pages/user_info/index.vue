@@ -1,6 +1,6 @@
 <template>
   <view class="bg-gray">
-    <view class="container">
+    <view class="container" v-if="userInfo !== undefined">
       <view class="at-input">
         <view class="at-input__container">
           <text class="at-input__title">头像</text>
@@ -12,12 +12,12 @@
       <view class="at-input">
         <view class="at-input__container">
           <text class="at-input__title">性别</text>
-          <radio-group>
+          <radio-group @change="handleChangeGender">
             <label>
-              <radio class="gender_checkbox" :value="userInfo.gender" color="#6190E8" :checked="true">男</radio>
+              <radio class="gender_checkbox" color="#6190E8" value="0" :checked="gender === 0">男</radio>
             </label>
             <label>
-              <radio class="gender_checkbox" :value="userInfo.gender" color="#6190E8">女</radio>
+              <radio class="gender_checkbox" color="#6190E8" value="1" :checked="gender === 1">女</radio>
             </label>
           </radio-group>
         </view>
@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import {ref} from 'vue';
+import {onMounted, ref} from 'vue';
 import api from '../../api/api';
 import userApi from "../../api/user.api";
 import Taro from "@tarojs/taro";
@@ -40,12 +40,9 @@ import {successMessage, warnMessage} from "../../utils/util";
 
 export default {
   setup() {
-    const userInfo = ref<any>(api.getUserInfo());
-    const avatar = ref<string>(userInfo.value.avatar);
-    if (userInfo.value.avatar === '') {
-      avatar.value = 'https://img.yzcdn.cn/vant/cat.jpeg';
-    }
-
+    const userInfo = ref<any>(undefined);
+    const gender = ref<any>(0);
+    const avatar = ref<string>();
     async function handleSave() {
       const res = await userApi.updateInfo({
         id: userInfo.value.id,
@@ -53,13 +50,14 @@ export default {
         identifier: userInfo.value.identifier,
         identityType: userInfo.value.identityType,
         name: userInfo.value.name,
-        gender: userInfo.value.gender,
+        gender: gender.value,
         phone: userInfo.value.phone,
         email: userInfo.value.email
       });
       if (res && res.code === 0) {
         await successMessage('保存成功');
         const {result} = await userApi.userInfo();
+        userInfo.value = result;
         api.setUserInfo(result);
       } else {
         await warnMessage('保存失败');
@@ -82,14 +80,34 @@ export default {
       userInfo.value.email = value;
     }
 
+    function handleChangeGender({detail}) {
+      gender.value = detail.value;
+    }
+
+    async function fetch() {
+      const {result} = await userApi.userInfo();
+      userInfo.value = result;
+      gender.value = userInfo.value.gender;
+      avatar.value = userInfo.value.avatar;
+      if (userInfo.value.avatar === '') {
+        avatar.value = 'https://img.yzcdn.cn/vant/cat.jpeg';
+      }
+    }
+
+    onMounted(() => {
+      fetch();
+    })
+
     return {
       avatar,
       userInfo,
+      gender,
       handleSave,
       handleSelectAvatar,
       handleChangeName,
       handleChangePhone,
-      handleChangeEmail
+      handleChangeEmail,
+      handleChangeGender
     }
   }
 }

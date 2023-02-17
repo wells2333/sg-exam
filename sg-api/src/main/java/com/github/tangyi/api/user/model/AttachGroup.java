@@ -19,7 +19,7 @@ public class AttachGroup extends BaseEntity<AttachGroup> {
 	private String groupCode;
 
 	@Column(name = "url_expire")
-	private Integer urlExpire;
+	private Long urlExpire;
 
 	@Column(name = "remark")
 	private String remark;
