@@ -609,21 +609,19 @@ CREATE TABLE `sys_menu` (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_message`;
 CREATE TABLE `sys_message` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `title` varchar(255) DEFAULT NULL COMMENT '消息标题',
-  `content` varchar(255) DEFAULT NULL COMMENT '消息内容',
-  `startTime` datetime NULL DEFAULT NULL COMMENT '开始时间',
-  `endTime` datetime NULL DEFAULT NULL COMMENT '结束时间',
-  `type` tinyint(1) DEFAULT NULL COMMENT '消息类型',
-  `status` tinyint(1) DEFAULT NULL COMMENT '消息状态，1: 自动，2：显示，3：未显示',
-  `creator` varchar(128) NOT NULL COMMENT '创建人',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `operator` varchar(128) DEFAULT NULL COMMENT '修改人',
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-  `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
-  `tenant_code` varchar(16) NOT NULL COMMENT '租户编号',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+   `title` varchar(255) DEFAULT NULL COMMENT '消息标题',
+   `content` varchar(255) DEFAULT NULL COMMENT '消息内容',
+   `type` tinyint(1) unsigned zerofill DEFAULT '0' COMMENT '消息类型，0：站内信',
+   `creator` varchar(128) NOT NULL COMMENT '创建人',
+   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+   `operator` varchar(128) DEFAULT NULL COMMENT '修改人',
+   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
+   `tenant_code` varchar(16) NOT NULL COMMENT '租户编号',
+   `sender` varchar(255) NOT NULL COMMENT '发送人',
+   PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='消息表';
 
 -- ----------------------------
 -- Table structure for sys_news

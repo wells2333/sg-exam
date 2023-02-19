@@ -24,3 +24,34 @@ CREATE TABLE `sys_sms` (
    PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='消息发送表';
 
+CREATE TABLE `sys_message_read` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `message_id` bigint(20) NOT NULL COMMENT '消息ID',
+    `receiver_id` bigint(20) NOT NULL COMMENT '接收人ID',
+    `creator` varchar(128) NOT NULL COMMENT '创建人',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `operator` varchar(128) NOT NULL COMMENT '修改人',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
+    `tenant_code` varchar(16) NOT NULL COMMENT '租户编号',
+    PRIMARY KEY (`id`) USING BTREE,
+    KEY `idx_message_id` (`message_id`),
+    KEY `idx_receiver_id` (`receiver_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='已读消息表';
+
+CREATE TABLE `sys_message_receiver` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `message_id` bigint(20) NOT NULL COMMENT '消息ID',
+    `receiver_id` bigint(20) NOT NULL COMMENT '接收人ID',
+    `creator` varchar(128) NOT NULL COMMENT '创建人',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `operator` varchar(128) NOT NULL COMMENT '修改人',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
+    `tenant_code` varchar(16) NOT NULL COMMENT '租户编号',
+    `type` tinyint(1) unsigned zerofill NOT NULL DEFAULT '0' COMMENT '消息类型，0：站内信',
+    PRIMARY KEY (`id`) USING BTREE,
+    KEY `idx_message_id` (`message_id`),
+    KEY `idx_receiver_id` (`receiver_id`) USING BTREE,
+    KEY `idx_type` (`type`)
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8 COMMENT='消息接收表';

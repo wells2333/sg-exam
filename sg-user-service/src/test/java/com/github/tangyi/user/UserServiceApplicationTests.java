@@ -26,8 +26,18 @@ public class UserServiceApplicationTests extends BaseTests {
 	@Autowired(required = false)
 	private MockMvc mvc;
 
+	private String token;
+
 	@Test
 	public void testTokenLogin() throws Exception {
+		setupToken();
+	}
+
+	@SuppressWarnings("unchecked")
+	private void setupToken() throws Exception {
+		if (this.token != null) {
+			return;
+		}
 		String tokenLoginUri = "/login?grant_type=password&scope=read&ignoreCode=1&username=admin&credential=lBTqrKS0kZixOFXeZ0HRng==&remember=false";
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(tokenLoginUri)
 				.header("Tenant-Code", "gitee");
@@ -38,8 +48,23 @@ public class UserServiceApplicationTests extends BaseTests {
 				.getContentAsString();
 		Assertions.assertNotNull(result);
 		R<JSONObject> r = JSON.parseObject(result, R.class);
-		Assertions.assertNotNull(r.getResult());
-		Assertions.assertNotNull(r.getResult().get("token"));
-		Assertions.assertNotNull(r.getResult().get("tenantCode"));
+		JSONObject res = r.getResult();
+		Assertions.assertNotNull(res);
+		this.token = res.get("token").toString();
+		Assertions.assertNotNull(this.token);
+		Assertions.assertNotNull(res.get("tenantCode"));
+	}
+
+	@Test
+	public void testGetNotice() throws Exception {
+		setupToken();
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/v1/notice/getNotice")
+				.header("Tenant-Code", "gitee").header("Authorization", token);
+		ResultActions action = mvc.perform(builder);
+		StatusResultMatchers status = MockMvcResultMatchers.status();
+		ResultMatcher ok = status.isOk();
+		String result = action.andDo(MockMvcResultHandlers.print()).andExpect(ok).andReturn().getResponse()
+				.getContentAsString();
+		Assertions.assertNotNull(result);
 	}
 }

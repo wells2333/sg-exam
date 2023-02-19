@@ -38,6 +38,8 @@ public interface UserCacheName {
 
 	String MESSAGE = "message";
 
+	String MESSAGE_RECEIVER = "message_receiver";
+
 	String NEWS = "news";
 
 	String BANNER = "banner";

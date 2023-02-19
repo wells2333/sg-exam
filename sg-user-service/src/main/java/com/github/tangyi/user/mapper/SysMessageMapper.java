@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SysMessageMapper extends CrudMapper<SysMessage> {
+
+	SysMessage getByMessageType(Integer type);
 }

@@ -56,6 +56,7 @@ public class ${ClassName}Controller extends BaseController {
 	@SgLog(value = "修改${functionName}", operationType = OperationType.UPDATE)
     public R<Boolean> update(@PathVariable("${pkColumn.javaField}") ${pkColumn.javaType} ${pkColumn.javaField}, @RequestBody @Valid ${ClassName} ${className}) {
         ${className}.setId(${pkColumn.javaField});
+        ${className}.setCommonValue(SysUtil.getUser(), ${className}.getTenantCode());
         return R.success(${className}Service.update(${className}) > 0);
     }
 

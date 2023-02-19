@@ -42,7 +42,7 @@ export default defineComponent({
       showActionButtonGroup: false,
     });
     const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
-      resetFields();
+      await resetFields();
       checkedMenuIds.value = [];
       setModalProps({ confirmLoading: false });
       if (unref(treeData).length === 0) {
@@ -65,7 +65,7 @@ export default defineComponent({
           checkedMenuIds.value = menuIds;
           allCheckedMenuIds.value = [...roleAllMenuIds];
         }
-        setFieldsValue({
+        await setFieldsValue({
           ...data.record,
         });
       } else {

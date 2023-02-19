@@ -95,6 +95,21 @@ export const LogApi = {
   LogList: UserService + '/v1/log/logList',
 }
 
+export const MessageApi = {
+  Base: UserService + '/v1/message',
+  MessageList: UserService + '/v1/message/list',
+}
+
+export const MessageReceiverApi = {
+  Base: UserService + '/v1/receiver',
+  MessageList: UserService + '/v1/receiver/list',
+}
+
+export const MessageReadApi = {
+  Base: UserService + '/v1/read',
+  ReadMessageList: UserService + '/v1/read/list',
+}
+
 export const MenuApi = {
   Base: UserService + '/v1/menu',
   Tree: UserService + '/v1/menu/menuTree',
