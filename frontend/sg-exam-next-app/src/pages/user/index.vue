@@ -17,9 +17,9 @@
     </view>
     <view class="container">
       <at-list>
-        <at-list-item title="消息中心" arrow="right" :iconInfo="{ value: 'message', color: '#ffa200'}"
+        <at-list-item title="我的消息" arrow="right" :iconInfo="{ value: 'message', color: '#ffa200'}"
                       :hasBorder="true"
-                      @click="handleClick"></at-list-item>
+                      @click="handleMessages"></at-list-item>
         <at-list-item title="帮助" arrow="right" :iconInfo="{ value: 'help', color: '#F97D81'}"
                       :hasBorder="true"
                       @click="handleClick"></at-list-item>
@@ -84,6 +84,10 @@ export default {
       Taro.navigateTo({url: "/pages/user_info/index"});
     }
 
+    function handleMessages() {
+      Taro.navigateTo({url: "/pages/messages/index"});
+    }
+
     async function init() {
       try {
         await showLoading();
@@ -105,7 +109,8 @@ export default {
       handleClickShare,
       handleClickAbout,
       handleLogout,
-      handleUserInfo
+      handleUserInfo,
+      handleMessages
     }
   },
   onPullDownRefresh() {

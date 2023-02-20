@@ -170,3 +170,58 @@
 .charge-no-free {
   background-color: #ee4f12 !important;
 }
+
+.messages, .no-border-message {
+  margin: 10px;
+  padding-bottom: 12px;
+  position: relative;
+}
+
+.messages:after {
+  content: "";
+  position: absolute;
+  border-bottom: 1px solid #d6e4ef;
+  transform: scaleY(0.5);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.message-title {
+  font-size: 18px;
+  line-height: 24px;
+}
+
+.message-title-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.message-title-time {
+  color: #CCC;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.message-detail-title-time {
+  color: #CCC;
+  font-size: 14px;
+  line-height: 20px;
+  margin-top: 10px;
+}
+
+.message-content {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  color: #666;
+  font-size: 16px;
+  line-height: 26px;
+}
+
+.overflow-hidden-text {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}

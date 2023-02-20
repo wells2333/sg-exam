@@ -30,6 +30,14 @@ class userApi {
     getNotice() {
         return api.fetchUser<any>("/v1/notice/getNotice", {}, "GET");
     }
+
+    getMessages(userId: string, type: number) {
+        return api.fetchUser<any>("/v1/message/userMessageList", {receiverId: userId, type: type}, "GET");
+    }
+
+    getMessageDetail(id: string) {
+        return api.fetchUser<any>("/v1/message/" + id, {}, "GET");
+    }
 }
 
 export default new userApi()

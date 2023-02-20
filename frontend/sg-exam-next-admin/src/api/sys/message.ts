@@ -42,7 +42,7 @@ export const getMessageListByReceiver = (params?: object) =>
   defHttp.get<ApiRes>({url: MessageReceiverApi.MessageList, params});
 
 export const getUserMessageList = (params?: object) =>
-  defHttp.get<ApiRes>({url: MessageReceiverApi.Base + '/userMessageList', params});
+  defHttp.get<ApiRes>({url: MessageApi.Base + '/userMessageList', params});
 
 export const readMessage = (params?: object
 ) => {

@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -61,12 +60,26 @@ public class SysMessageService extends CrudService<SysMessageMapper, SysMessage>
 			getMessageByReceivers(userId, receiverPage.getList(), list);
 		}
 		SysMessage condition = new SysMessage();
-		condition.setStatus();
+		condition.setTenantCode(SysUtil.getTenantCode());
+		// 已发布
+		condition.setStatus(1);
+		// 全部用户
+		condition.setReceiverType(0);
+		Object type = params.get("type");
+		if (type != null) {
+			condition.setType(Integer.valueOf(type.toString()));
+		}
 		List<SysMessage> messages = this.findAllList(condition);
 		if (CollectionUtils.isNotEmpty(messages)) {
 			list.addAll(messages);
 		}
-		list = list.stream().sorted(Comparator.comparing(e -> e.getUpdateTime().getTime())).collect(Collectors.toList());
+		list.sort((o1, o2) -> {
+			if (o2.getUpdateTime().getTime() - o1.getUpdateTime().getTime() > 0) {
+				return 1;
+			} else {
+				return -1;
+			}
+		});
 		BeanUtils.copyProperties(receiverPage, page);
 		page.setList(list);
 		return page;
@@ -98,8 +111,10 @@ public class SysMessageService extends CrudService<SysMessageMapper, SysMessage>
 	public int update(SysMessage sysMessage) {
 		SysMessage dbMessage = this.get(sysMessage.getId());
 		receiverService.deleteByMessageId(dbMessage.getId());
-		addMessageReceivers(dbMessage.getId(), dbMessage.getType(), sysMessage.getReceivers(), sysMessage.getOperator(),
-				sysMessage.getTenantCode());
+		if (sysMessage.getStatus() == 1) {
+			addMessageReceivers(dbMessage.getId(), dbMessage.getType(), sysMessage.getReceivers(), sysMessage.getOperator(),
+					sysMessage.getTenantCode());
+		}
 		return super.update(sysMessage);
 	}
 

@@ -49,7 +49,6 @@ import { useModal } from '/@/components/Modal';
             messageId: record.id,
             receiverId: unref(userInfo).id
           });
-          record.titleDelete = true;
         }
         await openModal(true, {
           record

@@ -39,6 +39,15 @@
 
     <select id="findList" resultMap="sysMessageResultMap">
         SELECT * FROM sys_message a WHERE a.is_deleted = 0 AND a.tenant_code = #{tenantCode}
+        <if test="receiverType != null">
+            AND a.receiver_type = #{receiverType}
+        </if>
+        <if test="status != null">
+            AND a.status = #{status}
+        </if>
+        <if test="type != null">
+            AND a.type = #{type}
+        </if>
     </select>
 
     <select id="findListById" resultMap="sysMessageResultMap">
