@@ -54,6 +54,7 @@
         <if test="params.type != null and params.type != ''">
             AND type = #{params.type}
         </if>
+        ORDER BY a.update_time DESC
     </select>
 
     <insert id="insertBatch">

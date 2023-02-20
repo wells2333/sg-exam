@@ -1,5 +1,6 @@
 package com.github.tangyi.user.service;
 
+import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.user.model.SysMessage;
 import com.github.tangyi.api.user.model.SysMessageReceiver;
 import com.github.tangyi.api.user.service.ISysMessageService;
@@ -11,13 +12,16 @@ import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,6 +33,8 @@ public class SysMessageService extends CrudService<SysMessageMapper, SysMessage>
 	private static final Integer RECEIVER_TYPE_PART_USER = 1;
 
 	private final SysMessageReceiverService receiverService;
+
+	private final SysMessageReadService messageReadService;
 
 	@Override
 	@Cacheable(value = MESSAGE, key = "#id")
@@ -43,6 +49,27 @@ public class SysMessageService extends CrudService<SysMessageMapper, SysMessage>
 	@Override
 	public SysMessage getByMessageType(Integer type) {
 		return this.dao.getByMessageType(type);
+	}
+
+	@Override
+	public PageInfo<SysMessage> getPublishedMessage(Map<String, Object> params, int pageNum, int pageSize) {
+		Long userId = SysUtil.getUserId();
+		PageInfo<SysMessage> page = new PageInfo<>();
+		List<SysMessage> list = Lists.newArrayListWithExpectedSize(pageSize);
+		PageInfo<SysMessageReceiver> receiverPage = receiverService.getPublishedMessage(params, pageNum, pageSize);
+		if (CollectionUtils.isNotEmpty(receiverPage.getList())) {
+			getMessageByReceivers(userId, receiverPage.getList(), list);
+		}
+		SysMessage condition = new SysMessage();
+		condition.setStatus();
+		List<SysMessage> messages = this.findAllList(condition);
+		if (CollectionUtils.isNotEmpty(messages)) {
+			list.addAll(messages);
+		}
+		list = list.stream().sorted(Comparator.comparing(e -> e.getUpdateTime().getTime())).collect(Collectors.toList());
+		BeanUtils.copyProperties(receiverPage, page);
+		page.setList(list);
+		return page;
 	}
 
 	@Transactional
@@ -121,5 +148,17 @@ public class SysMessageService extends CrudService<SysMessageMapper, SysMessage>
 			return receivers.stream().map(SysMessageReceiver::getReceiverId).collect(Collectors.toList());
 		}
 		return Collections.emptyList();
+	}
+
+	private void getMessageByReceivers(Long userId, List<SysMessageReceiver> receivers, List<SysMessage> list) {
+		for (SysMessageReceiver receiver : receivers) {
+			SysMessage message = this.get(receiver.getMessageId());
+			if (message != null) {
+				if (messageReadService.findByMessageIdAndReceiverId(message.getId(), userId) != null) {
+					message.setHasRead(true);
+				}
+				list.add(message);
+			}
+		}
 	}
 }

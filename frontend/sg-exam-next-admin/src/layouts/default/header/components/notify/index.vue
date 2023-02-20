@@ -12,18 +12,17 @@
                 {{ item.name }}
                 <span v-if="item.list.length !== 0">({{ item.list.length }})</span>
               </template>
-              <!-- 绑定title-click事件的通知列表中标题是“可点击”的-->
-              <NoticeList :list="item.list" v-if="item.key === '1'" @title-click="onNoticeClick" />
-              <NoticeList :list="item.list" v-else />
+              <NoticeList :list="item.list" @title-click="onNoticeClick" />
             </TabPane>
           </template>
         </Tabs>
       </template>
     </Popover>
+    <NoticeModal @register="registerModal" />
   </div>
 </template>
 <script lang="ts">
-import {computed, defineComponent, onMounted, ref, unref} from 'vue';
+import {defineComponent, onMounted, ref, unref} from 'vue';
 import { Popover, Tabs, Badge } from 'ant-design-vue';
 import { BellOutlined } from '@ant-design/icons-vue';
 import { tabListData, ListItem } from './data';
@@ -31,13 +30,16 @@ import NoticeList from './NoticeList.vue';
 import { useDesign } from '/@/hooks/web/useDesign';
 import {getUserMessageList, readMessage} from "/@/api/sys/message";
 import {useUserStore} from "/@/store/modules/user";
+import NoticeModal from './NoticeModal.vue';
+import { useModal } from '/@/components/Modal';
 
   export default defineComponent({
-    components: { Popover, BellOutlined, Tabs, TabPane: Tabs.TabPane, Badge, NoticeList },
+    components: { Popover, BellOutlined, Tabs, TabPane: Tabs.TabPane, Badge, NoticeList, NoticeModal },
     setup() {
       const { prefixCls } = useDesign('header-notify');
       const listData = ref(tabListData);
       const count = ref<number>(0);
+      const [registerModal, { openModal }] = useModal();
 
       async function onNoticeClick(record: ListItem) {
         if (!record.hasRead) {
@@ -49,6 +51,9 @@ import {useUserStore} from "/@/store/modules/user";
           });
           record.titleDelete = true;
         }
+        await openModal(true, {
+          record
+        });
       }
 
       async function fetch() {
@@ -70,10 +75,11 @@ import {useUserStore} from "/@/store/modules/user";
               id: e.id,
               avatar: 'https://gw.alipayobjects.com/zos/rmsportal/ThXAXghbEsBCCSDihZxY.png',
               title: e.title,
+              content: e.content,
               description: e.content,
               datetime: e.updateTime,
-              hasRead: e.hasRead,
-              titleDelete: e.hasRead
+              updateTime: e.updateTime,
+              hasRead: e.hasRead
             });
           });
         }
@@ -90,10 +96,11 @@ import {useUserStore} from "/@/store/modules/user";
               id: e.id,
               avatar: 'https://gw.alipayobjects.com/zos/rmsportal/ThXAXghbEsBCCSDihZxY.png',
               title: e.title,
+              content: e.content,
               description: e.content,
               datetime: e.updateTime,
-              hasRead: e.hasRead,
-              titleDelete: e.hasRead
+              updateTime: e.updateTime,
+              hasRead: e.hasRead
             });
           });
         }
@@ -104,6 +111,8 @@ import {useUserStore} from "/@/store/modules/user";
       });
 
       return {
+        registerModal,
+        openModal,
         prefixCls,
         listData,
         count,
