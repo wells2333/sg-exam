@@ -1,7 +1,7 @@
 import request from '@/router/axios'
 import {getRefreshToken} from '@/utils/auth'
 
-const DEFAULT_TENANT_CODE = 'gitee';
+const DEFAULT_TENANT_CODE = 'gitee'
 
 export function loginByUsername(tenantCode = DEFAULT_TENANT_CODE, identifier, credential, code, randomStr) {
   const grantType = 'password'

@@ -154,3 +154,8 @@ export const ExamCourseKnowledgePointApi = {
   Base: UserService + '/v1/knowledgePoint',
   ExamCourseKnowledgePointList: UserService + '/v1/knowledgePoint/list',
 }
+
+export const SysConfigApi = {
+  Base: UserService + '/v1/config',
+  ConfigList: UserService + '/v1/config/list',
+}

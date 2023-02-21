@@ -4,7 +4,7 @@
         <div class="clever-main-menu">
           <div class="classy-nav-container breakpoint-off">
             <nav class="classy-navbar justify-content-between" id="cleverNav">
-              <a class="nav-brand hidden-sm-only" href="/">云职评</a>
+              <a class="nav-brand hidden-sm-only" href="/">{{sysConfig.sys_web_name}}</a>
               <div class="classy-menu">
                 <div class="classynav">
                   <div class="search-area hidden-sm-only">
@@ -67,7 +67,7 @@
 
 <script>
 import OMain from './common/main'
-import { mapState } from 'vuex'
+import {mapGetters, mapState} from 'vuex'
 import { isNotEmpty, messageWarn } from '@/utils/util'
 
 export default {
@@ -75,15 +75,16 @@ export default {
     OMain
   },
   computed: {
-    // 获取用户信息
     ...mapState({
-      userInfo: state => state.user.userInfo
-    })
+      userInfo: state => state.user.userInfo,
+    }),
+    ...mapGetters([
+      'sysConfig'
+    ])
   },
   created () {
     this.checkLogin()
   },
-  // 检测路由变化
   watch: {
     $route () {
       this.checkLogin()
@@ -101,11 +102,9 @@ export default {
     openAdmin () {
       window.open(window.location.origin + '/admin')
     },
-    // 提交考试
     handleSubmitExam () {
       this.$refs.mainRef.handleSubmitExam()
     },
-
     // 导航栏切换
     open (path) {
       if (path.startsWith('http')) {

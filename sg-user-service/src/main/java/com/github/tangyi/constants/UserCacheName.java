@@ -43,4 +43,6 @@ public interface UserCacheName {
 	String NEWS = "news";
 
 	String BANNER = "banner";
+
+	String SYS_CONFIG = "sys:config";
 }

@@ -2,6 +2,10 @@ import api from './api'
 
 class userApi {
 
+    getSysDefaultConfig() {
+        return api.fetchUser<Sg.UserInfo>("/v1/config/getDefaultSysConfig", {}, "GET");
+    }
+
     userInfo() {
         return api.fetchUser<Sg.UserInfo>("/v1/user/info?identityType=4", {}, "GET");
     }

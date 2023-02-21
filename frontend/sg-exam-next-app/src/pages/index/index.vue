@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="items !== undefined">
     <swiper
         style="height: calc(100vh - 56px);"
         :indicator-dots="true"
@@ -31,18 +31,33 @@
   <section class="input"></section>
 </template>
 <script lang="ts">
-import {ref} from 'vue';
+import {onMounted, ref} from 'vue';
 import Taro from "@tarojs/taro"
 import api from "../../api/api";
 import authApi from "../../api/auth.api";
 import userApi from "../../api/user.api";
-import studySvg from "../../assert/study_v3.svg";
 import {shardMessage, TENANT_CODE} from "../../constant/constant";
 import {showLoading, hideLoading, successMessage, warnMessage} from '../../utils/util';
 
 export default {
   setup() {
     const tenantCode = ref<string>("");
+    const items = ref<any>(undefined);
+    const showAuthorizeBtn = ref<boolean>(false);
+
+    async function fetch() {
+      const res = await userApi.getSysDefaultConfig();
+      const {code, result} = res;
+      if (code === 0) {
+        items.value = [];
+        items.value.push({
+          title: result.sys_wxapp_main_title,
+          des: result.sys_wxapp_sub_title,
+          icon: result.sys_wxapp_avatar,
+        });
+      }
+    }
+
     async function handleTenantCode(value) {
       if (new RegExp('^[A-z0-9]*$').test(value)) {
         tenantCode.value = value;
@@ -94,19 +109,13 @@ export default {
       });
     }
 
-    const items = [
-      {
-        title: 'HI，欢迎使用云面试',
-        des: '提供考试、练习、刷题、在线学习等功能',
-        icon: studySvg
-      }
-    ]
-
-    const showAuthorizeBtn = ref<boolean>(false);
-
     function handlePhoneLogin() {
       Taro.navigateTo({url: "/pages/login/index"})
     }
+
+    onMounted(async () => {
+      await fetch();
+    });
 
     return {items, showAuthorizeBtn, tenantCode, handleTenantCode, getUserProfile, handlePhoneLogin}
   },

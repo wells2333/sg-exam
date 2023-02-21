@@ -97,7 +97,6 @@ export default {
     }
   },
   computed: {
-    // 获取用户信息
     ...mapState({
       userInfo: state => state.user.userInfo,
       practice: state => state.practice.practice,

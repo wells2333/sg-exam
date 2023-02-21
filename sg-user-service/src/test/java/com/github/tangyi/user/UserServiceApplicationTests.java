@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.result.StatusResultMatchers;
 @AutoConfigureMockMvc
 @ActiveProfiles("dev")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class UserServiceApplicationTests extends BaseTests {
+class UserServiceApplicationTests extends BaseTests {
 
 	@Autowired(required = false)
 	private MockMvc mvc;
@@ -29,7 +29,7 @@ public class UserServiceApplicationTests extends BaseTests {
 	private String token;
 
 	@Test
-	public void testTokenLogin() throws Exception {
+	void testTokenLogin() throws Exception {
 		setupToken();
 	}
 
@@ -56,10 +56,22 @@ public class UserServiceApplicationTests extends BaseTests {
 	}
 
 	@Test
-	public void testGetNotice() throws Exception {
+	void testGetNotice() throws Exception {
 		setupToken();
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/v1/notice/getNotice")
 				.header("Tenant-Code", "gitee").header("Authorization", token);
+		ResultActions action = mvc.perform(builder);
+		StatusResultMatchers status = MockMvcResultMatchers.status();
+		ResultMatcher ok = status.isOk();
+		String result = action.andDo(MockMvcResultHandlers.print()).andExpect(ok).andReturn().getResponse()
+				.getContentAsString();
+		Assertions.assertNotNull(result);
+	}
+
+	@Test
+	void testGetSysDefaultConfig() throws Exception {
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/v1/config/getDefaultSysConfig")
+				.header("Tenant-Code", "gitee");
 		ResultActions action = mvc.perform(builder);
 		StatusResultMatchers status = MockMvcResultMatchers.status();
 		ResultMatcher ok = status.isOk();

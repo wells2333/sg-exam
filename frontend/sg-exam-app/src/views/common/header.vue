@@ -65,7 +65,6 @@ import { isNotEmpty, messageWarn } from '@/utils/util'
 
 export default {
   computed: {
-    // 获取用户信息
     ...mapState({
       userInfo: state => state.user.userInfo
     })

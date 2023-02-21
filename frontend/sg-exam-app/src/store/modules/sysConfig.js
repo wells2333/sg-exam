@@ -12,7 +12,7 @@ const sysConfig = {
     GetSysConfig ({ commit }) {
       return new Promise((resolve, reject) => {
         getSysConfig().then(response => {
-          const data = response.data.data
+          const data = response.data.result
           commit('SET_SYS_CONFIG', data)
           resolve()
         }).catch(error => {

@@ -81,6 +81,7 @@ ignore:
     - /v1/subjects/template/excel
     - /v1/subjects/exportDemoExcel
     - /tool/gen/download/**
+    - /v1/config/getDefaultSysConfig
 
 logging:
   level:

@@ -11,6 +11,12 @@ const whiteList = ['/', '/home', '/register', '/login', '/auth-redirect', '/404'
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // 进度条
+  const sysConfig = store.getters.sysConfig
+  if (sysConfig === undefined || Object.keys(sysConfig).length === 0) {
+    store.dispatch('GetSysConfig').then(res => {}).catch(() => {
+      Message.error('获取系统配置失败！')
+    })
+  }
   if (to.path.indexOf('/mobile') !== -1) {
     next()
   } else if (getToken()) { // 判断是否已登录
@@ -27,13 +33,6 @@ router.beforeEach((to, from, next) => {
             next({ path: '/' })
           })
         })
-        // 获取系统配置信息
-        const sysConfig = store.getters.sysConfig
-        if (Object.keys(sysConfig).length === 0) {
-          store.dispatch('GetSysConfig').then(res => {}).catch(() => {
-            console.log('获取系统配置失败！')
-          })
-        }
       } else {
         next()
       }

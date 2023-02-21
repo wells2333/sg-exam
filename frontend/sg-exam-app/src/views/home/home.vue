@@ -3,9 +3,9 @@
     <el-row class="hero-area" type="flex" justify="center" align="middle">
       <el-col :span="24">
         <div class="hero-content">
-          <h2>云职评AI面试</h2>
-          <h4>采用AI技术，新一代面试管理平台</h4>
-          <h4>提供私有化、AI面试、肢体测评、笔试、性格测试等功能</h4>
+          <h2>{{sysConfig.sys_web_main_title}}</h2>
+          <h4>{{sysConfig.sys_web_sub_title_one}}</h4>
+          <h4>{{sysConfig.sys_web_sub_title_two}}</h4>
           <router-link to="/courses" class="btn clever-btn">开始使用</router-link>
         </div>
       </el-col>
@@ -223,6 +223,7 @@
 <script>
 import OFooter from '../common/footer'
 import CountTo from 'vue-count-to'
+import {mapGetters} from "vuex";
 
 export default {
   props: {
@@ -251,6 +252,11 @@ export default {
         setTimeout(() => this.goTop(i), 16)
       }
     }
+  },
+  computed: {
+    ...mapGetters([
+      'sysConfig'
+    ])
   },
   created () {
     let vm = this

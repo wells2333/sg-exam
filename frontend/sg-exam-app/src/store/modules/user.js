@@ -28,6 +28,9 @@ const user = {
     }) || '',
     tenantCode: getStore({
       name: 'tenantCode'
+    }) || '',
+    sysConfig: getStore({
+      name: 'sys_config'
     }) || ''
   },
   actions: {
