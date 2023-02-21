@@ -1,6 +1,6 @@
 <h1 align="center">Welcome to sg-exam 👋</h1>
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-0.0.1-blue.svg?cacheSeconds=2592000" />
+  <img alt="Version" src="https://img.shields.io/badge/version-0.0.2-blue.svg?cacheSeconds=2592000" />
   <a href="https://mp.weixin.qq.com/s/oal9atlSQxfL4YOiLtYfuA" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
