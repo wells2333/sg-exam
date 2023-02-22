@@ -17,9 +17,7 @@
     </resultMap>
 
     <select id="findList" resultMap="deptResultMap">
-        SELECT *
-        FROM sys_dept a
-        WHERE a.is_deleted = 0
+        SELECT * FROM sys_dept a WHERE a.is_deleted = 0 AND a.tenant_code = #{tenantCode}
     </select>
 
     <select id="findListById" resultMap="deptResultMap">

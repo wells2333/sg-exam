@@ -29,16 +29,16 @@
         <where>
             is_deleted = 0
             <if test="name != null and name != ''">
-                and (name like CONCAT('%',#{name},'%'))
+                AND (name like CONCAT('%',#{name},'%'))
             </if>
             <if test="isDeleted != null">
-                and is_deleted = #{isDeleted}
+                AND is_deleted = #{isDeleted}
             </if>
             <if test="hideMenu != null">
-                and hideMenu = #{hideMenu}
+                AND hideMenu = #{hideMenu}
             </if>
             <if test="tenantCode != null and tenantCode != ''">
-                and tenant_code = #{tenantCode}
+                AND tenant_code = #{tenantCode}
             </if>
         </where>
     </select>

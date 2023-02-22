@@ -17,19 +17,22 @@
     </resultMap>
 
     <select id="findPage" resultMap="roleResultMap">
-        SELECT * FROM sys_role where is_deleted = 0
+        SELECT * FROM sys_role WHERE is_deleted = 0
         <if test="params != null">
             <if test="params.roleName != null and params.roleName != ''">
-                and (role_name like CONCAT('%',#{params.roleName},'%'))
+                AND (role_name like CONCAT('%',#{params.roleName},'%'))
             </if>
             <if test="params.roleCode != null and params.roleCode != ''">
-                and role_code = #{params.roleCode}
+                AND role_code = #{params.roleCode}
             </if>
             <if test="params.isDefault != null and params.isDefault != ''">
-                and is_default = #{params.isDefault}
+                AND is_default = #{params.isDefault}
             </if>
             <if test="params.status != null">
-                and status = #{params.status}
+                AND status = #{params.status}
+            </if>
+            <if test="params.tenantCode != null">
+                AND tenant_code = #{params.tenantCode}
             </if>
         </if>
         <choose>
@@ -43,7 +46,7 @@
     </select>
 
     <select id="findList" resultMap="roleResultMap">
-        SELECT * FROM sys_role a WHERE a.is_deleted = 0
+        SELECT * FROM sys_role a WHERE a.is_deleted = 0 AND a.tenant_code = #{tenantCode}
     </select>
 
     <select id="findListById" resultMap="roleResultMap">

@@ -23,6 +23,11 @@ public interface ConfigKey {
 	String SYS_WEB_SUB_TITLE_TWO = "sys_web_sub_title_two";
 
 	/**
+	 * 网站 Copyright
+	 */
+	String SYS_WEB_COPYRIGHT = "sys_web_copyright";
+
+	/**
 	 * 系统 LOGO
 	 */
 	String SYS_AVATAR = "sys_avatar";

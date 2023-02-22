@@ -114,7 +114,7 @@ export const formSchema: FormSchema[] = [
   {
     field: 'content',
     label: '消息内容',
-    component: 'Input',
+    component: 'InputTextArea',
     required: true,
   },
   {

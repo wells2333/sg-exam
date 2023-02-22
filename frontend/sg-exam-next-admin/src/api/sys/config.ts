@@ -5,6 +5,9 @@ import {SysConfigApi} from "/@/api/api";
 export const getSysConfigList = (params?: object) =>
   defHttp.get<ApiRes>({url: SysConfigApi.ConfigList, params});
 
+export const getSysDefaultConfig = () =>
+  defHttp.get<ApiRes>({url: SysConfigApi.Base + '/getDefaultSysConfig'});
+
 export const createSysConfig = (params?: object
 ) => {
   return defHttp.post<ApiRes>(

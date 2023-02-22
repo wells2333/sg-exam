@@ -22,10 +22,10 @@
               class="w-1/2 -mt-16 -enter-x"
             />
             <div class="mt-10 font-medium text-white -enter-x">
-              <span class="inline-block mt-4 text-3xl"> {{ t('sys.login.signInTitle') }}</span>
+              <span class="inline-block mt-4 text-3xl" v-if="sysConfig !== undefined"> {{ sysConfig.sys_admin_main_title }}</span>
             </div>
-            <div class="mt-5 font-normal text-white text-md dark:text-gray-500 -enter-x">
-              {{ t('sys.login.signInDesc') }}
+            <div class="mt-5 font-normal text-white text-md dark:text-gray-500 -enter-x" v-if="sysConfig !== undefined">
+              {{ sysConfig.sys_admin_sub_title }}
             </div>
           </div>
         </div>
@@ -61,32 +61,50 @@
     </div>
   </div>
 </template>
-<script lang="ts" setup>
-  import { computed } from 'vue';
-  import { AppLogo } from '/@/components/Application';
-  import { AppLocalePicker, AppDarkModeToggle } from '/@/components/Application';
-  import LoginForm from './LoginForm.vue';
-  import ForgetPasswordForm from './ForgetPasswordForm.vue';
-  import RegisterForm from './RegisterForm.vue';
-  import MobileForm from './MobileForm.vue';
-  import QrCodeForm from './QrCodeForm.vue';
-  import { useGlobSetting } from '/@/hooks/setting';
-  import { useI18n } from '/@/hooks/web/useI18n';
-  import { useDesign } from '/@/hooks/web/useDesign';
-  import { useLocaleStore } from '/@/store/modules/locale';
+<script lang="ts">
+import {computed, defineComponent, ref} from 'vue';
+import { AppLocalePicker, AppDarkModeToggle } from '/@/components/Application';
+import LoginForm from './LoginForm.vue';
+import ForgetPasswordForm from './ForgetPasswordForm.vue';
+import RegisterForm from './RegisterForm.vue';
+import MobileForm from './MobileForm.vue';
+import QrCodeForm from './QrCodeForm.vue';
+import { useGlobSetting } from '/@/hooks/setting';
+import { useI18n } from '/@/hooks/web/useI18n';
+import { useDesign } from '/@/hooks/web/useDesign';
+import { useLocaleStore } from '/@/store/modules/locale';
+import {getSysDefaultConfig} from "/@/api/sys/config";
+import {useSysConfigStore} from "/@/store/modules/config";
+const sysConfig = ref<any>(await getSysDefaultConfig());
+const sysConfigStore = useSysConfigStore();
+sysConfigStore.setSysConfig(sysConfig);
 
-  defineProps({
+export default defineComponent({
+  name: 'Login',
+  components: {
+    AppLocalePicker, AppDarkModeToggle, LoginForm, ForgetPasswordForm, RegisterForm, MobileForm, QrCodeForm
+  },
+  props: {
     sessionTimeout: {
       type: Boolean,
     },
-  });
-
-  const globSetting = useGlobSetting();
-  const { prefixCls } = useDesign('login');
-  const { t } = useI18n();
-  const localeStore = useLocaleStore();
-  const showLocale = localeStore.getShowPicker;
-  const title = computed(() => globSetting?.title ?? '');
+  },
+  setup() {
+    const globSetting = useGlobSetting();
+    const { prefixCls } = useDesign('login');
+    const { t } = useI18n();
+    const localeStore = useLocaleStore();
+    const showLocale = localeStore.getShowPicker;
+    const title = computed(() => globSetting?.title ?? '');
+    return {
+      prefixCls,
+      t,
+      showLocale,
+      title,
+      sysConfig
+    }
+  }
+});
 </script>
 <style lang="less">
   @prefix-cls: ~'@{namespace}-login';

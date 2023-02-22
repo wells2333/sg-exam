@@ -1,6 +1,8 @@
 // token key
 export const TOKEN_KEY = 'TOKEN__';
 
+export const SYS_CONFIG_KEY = 'SYS_CONFIG_';
+
 export const TENANT_CODE_KEY = 'TENANT_CODE_';
 
 export const LOCALE_KEY = 'LOCALE__';

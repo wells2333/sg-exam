@@ -3,7 +3,7 @@
     <div v-if="record !== undefined">
       <h2>{{record.title}}</h2>
       <p class="message-update-time">{{record.updateTime}}</p>
-      <p>{{record.content}}</p>
+      <p class="message-content">{{record.content}}</p>
     </div>
   </BasicModal>
 </template>
@@ -38,5 +38,9 @@ export default defineComponent({
 .message-update-time {
   color: gray;
   font-size: 12px;
+}
+
+.message-content {
+  white-space: pre-wrap;
 }
 </style>

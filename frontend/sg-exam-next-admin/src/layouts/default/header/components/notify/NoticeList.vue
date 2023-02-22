@@ -34,7 +34,7 @@
             <div>
               <div class="description" v-if="item.description">
                 <a-typography-paragraph
-                  style="width: 100%; margin-bottom: 0 !important"
+                  style="width: 100%; margin-bottom: 0 !important; white-space: pre-wrap;"
                   :ellipsis="
                     $props.descRows && $props.descRows > 0
                       ? { rows: $props.descRows, tooltip: !!item.description }

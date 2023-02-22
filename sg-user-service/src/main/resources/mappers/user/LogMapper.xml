@@ -22,10 +22,13 @@
     </resultMap>
 
     <select id="findPage" resultMap="logResultMap">
-        SELECT * FROM sys_log where is_deleted = 0
+        SELECT * FROM sys_log WHERE is_deleted = 0
         <if test="params != null">
             <if test="params.title != null and params.title != ''">
-                and (title like CONCAT('%',#{params.title},'%'))
+                AND (title like CONCAT('%',#{params.title},'%'))
+            </if>
+            <if test="params.tenantCode != null and params.tenantCode != ''">
+                AND tenant_code = #{params.tenantCode}
             </if>
         </if>
         <choose>

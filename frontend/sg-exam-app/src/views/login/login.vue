@@ -170,7 +170,7 @@ export default {
           identifier: [{ required: true, trigger: 'blur', message: '请输入用户名' }],
           credential: [
             { required: true, trigger: 'blur', message: '请输入密码' },
-            { min: 6, trigger: 'blur', message: '密码长度最少为6位' }],
+            { min: 4, trigger: 'blur', message: '密码长度最少为4位' }],
           code: [
             { required: true, message: '请输入验证码', trigger: 'blur' },
             { min: 4, max: 4, message: '验证码长度为4位', trigger: 'blur' }
@@ -200,7 +200,7 @@ export default {
           email: [{ required: true, trigger: 'blur', message: '请输入邮箱地址' }],
           credential: [
             { required: true, trigger: 'blur', message: '请输入密码' },
-            { min: 6, trigger: 'blur', message: '密码长度最少为6位' }],
+            { min: 4, trigger: 'blur', message: '密码长度最少为4位' }],
           code: [
             { required: true, message: '请输入验证码', trigger: 'blur' },
             { min: 4, max: 4, message: '验证码长度为4位', trigger: 'blur' }

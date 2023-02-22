@@ -88,8 +88,6 @@ export const formSchema: FormSchema[] = [
         height: editorHeight,
         plugins: tinymcePlugins,
         toolbar: tinymceToolbar,
-        height: 120,
-        // 指定上传URL
         uploadUrl: ExamMediaApi.UploadImage,
         onChange: (value: string) => {
           model[field] = value;
