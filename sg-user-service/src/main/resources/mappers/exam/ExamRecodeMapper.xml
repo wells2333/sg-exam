@@ -23,44 +23,44 @@
         SELECT * FROM exam_examination_record a WHERE a.is_deleted = 0
         <if test="params != null">
             <if test="params.tenantCode != null and params.tenantCode != ''">
-                and tenant_code = #{params.tenantCode}
+                AND tenant_code = #{params.tenantCode}
             </if>
             <if test="params.examinationId != null and params.examinationId != ''">
-                and examination_id = #{params.examinationId}
+                AND examination_id = #{params.examinationId}
             </if>
             <if test="params.userId != null and params.userId != ''">
-                and user_id = #{params.userId}
+                AND user_id = #{params.userId}
             </if>
         </if>
         <choose>
             <when test="params.sortField != null and params.sortField != '' and params.sortOrder != null and params.sortOrder != ''">
-                order by #{params.sortField} #{params.sortOrder}
+                ORDER BY #{params.sortField} #{params.sortOrder}
             </when>
             <otherwise>
-                order by start_time desc
+                ORDER BY start_time DESC
             </otherwise>
         </choose>
     </select>
 
     <select id="getByUserIdAndExaminationId" resultMap="examRecordResultMap">
         SELECT * FROM exam_examination_record a
-        WHERE a.user_id = #{userId} and examination_id = #{examinationId} and a.is_deleted = 0
+        WHERE a.user_id = #{userId} and examination_id = #{examinationId} AND a.is_deleted = 0
     </select>
 
     <select id="getByUserId" resultMap="examRecordResultMap">
         SELECT * FROM exam_examination_record a
-        WHERE a.user_id = #{userId} and a.is_deleted = 0
+        WHERE a.user_id = #{userId} AND a.is_deleted = 0
         <if test="params != null">
             <if test="params.type != null and params.type != ''">
-                and type = #{params.type}
+                AND type = #{params.type}
             </if>
         </if>
-        order by update_time desc
+        ORDER BY update_time DESC
     </select>
 
     <select id="getByExaminationId" resultMap="examRecordResultMap">
         SELECT * FROM exam_examination_record a
-        WHERE a.examination_id = #{examinationId} and a.is_deleted = 0
+        WHERE a.examination_id = #{examinationId} AND a.is_deleted = 0
     </select>
 
     <select id="findExaminationRecordCount" resultType="java.lang.Integer">

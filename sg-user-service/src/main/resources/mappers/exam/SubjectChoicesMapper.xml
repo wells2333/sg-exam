@@ -24,7 +24,7 @@
         SELECT * FROM exam_subject_choices a WHERE a.is_deleted = 0
         <if test="params != null">
             <if test="params.tenantCode != null and params.tenantCode != ''">
-                and tenant_code = #{params.tenantCode}
+                AND tenant_code = #{params.tenantCode}
             </if>
         </if>
     </select>
@@ -40,12 +40,10 @@
         UPDATE exam_subject_choices SET is_deleted = 1 WHERE id = #{id}
     </delete>
 
-    <!-- 物理删除 -->
     <delete id="physicalDelete">
         DELETE FROM exam_subject_choices WHERE id = #{id}
     </delete>
 
-    <!-- 物理删除 -->
     <delete id="physicalDeleteAll">
         DELETE FROM exam_subject_choices WHERE id in
         <foreach item="item" index="index" collection="ids" open="("

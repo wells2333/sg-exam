@@ -41,7 +41,7 @@
     </delete>
 
     <delete id="deleteAll">
-        UPDATE exam_subject_speech SET is_deleted = 1 WHERE id in
+        UPDATE exam_subject_speech SET is_deleted = 1 WHERE id IN
         <foreach item="item" index="index" collection="ids" open="("
                  separator="," close=")">#{item}
         </foreach>
@@ -52,7 +52,7 @@
     </delete>
 
     <delete id="physicalDeleteAll">
-        DELETE FROM exam_subject_speech WHERE id in
+        DELETE FROM exam_subject_speech WHERE id IN
         <foreach item="item" index="index" collection="ids" open="("
                  separator="," close=")">#{item}
         </foreach>

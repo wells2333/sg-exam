@@ -22,7 +22,7 @@
     </resultMap>
 
     <select id="findList" resultMap="studentResultMap">
-        SELECT * FROM sys_student a WHERE a.is_deleted = 0
+        SELECT * FROM sys_student a WHERE a.is_deleted = 0 AND a.tenant_code = #{tenantCode}
     </select>
 
     <select id="findListById" resultMap="studentResultMap">

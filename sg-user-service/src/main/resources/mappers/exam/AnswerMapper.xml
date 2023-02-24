@@ -25,11 +25,11 @@
         SELECT *
         FROM exam_answer a
         WHERE a.exam_record_id = #{examRecordId}
-          and a.subject_id = #{subjectId}
+        AND a.subject_id = #{subjectId}
     </select>
 
     <select id="batchFindByRecordIdAndSubjectId" resultMap="answerResultMap">
-        SELECT * FROM exam_answer a WHERE a.exam_record_id = #{recordId} and a.subject_id in
+        SELECT * FROM exam_answer a WHERE a.exam_record_id = #{recordId} AND a.subject_id IN
         <foreach item="item" index="index" collection="subjectIds" open="("
                  separator="," close=")">
             #{item}
@@ -40,13 +40,13 @@
         SELECT * FROM exam_answer a WHERE a.is_deleted = 0
         <if test="params != null">
             <if test="params.examRecordId != null and params.examRecordId != ''">
-                and exam_record_id = #{params.examRecordId}
+                AND exam_record_id = #{params.examRecordId}
             </if>
             <if test="params.answerType != null and params.answerType != ''">
-                and answer_type = #{params.answerType}
+                AND answer_type = #{params.answerType}
             </if>
             <if test="params.tenantCode != null and params.tenantCode != ''">
-                and tenant_code = #{params.tenantCode}
+                AND tenant_code = #{params.tenantCode}
             </if>
         </if>
     </select>
@@ -56,11 +56,11 @@
     </select>
 
     <select id="countByAnswerType" resultType="Integer">
-        SELECT count(1) FROM exam_answer a WHERE a.exam_record_id = #{examRecordId} and a.answer_type = #{answerType}
+        SELECT count(1) FROM exam_answer a WHERE a.exam_record_id = #{examRecordId} AND a.answer_type = #{answerType}
     </select>
 
     <select id="sumScoreByAnswerType" resultType="Integer">
-        SELECT sum(score) FROM exam_answer a  WHERE a.exam_record_id = #{examRecordId} and a.answer_type = #{answerType}
+        SELECT sum(score) FROM exam_answer a WHERE a.exam_record_id = #{examRecordId} AND a.answer_type = #{answerType}
     </select>
 
     <insert id="batchInsert">
@@ -103,7 +103,7 @@
 
     <update id="batchUpdate" parameterType="java.util.ArrayList">
         <foreach collection="answers" item="item" index="index" open="" close="" separator=";">
-            update exam_answer
+            UPDATE exam_answer
             <set>
                 <if test="item.answer != null">
                     answer = #{item.answer,jdbcType=VARCHAR},
@@ -123,7 +123,7 @@
                 operator = #{item.operator,jdbcType=VARCHAR},
                 update_time = #{item.updateTime,jdbcType=TIMESTAMP},
             </set>
-            where exam_record_id = #{item.examRecordId,jdbcType=BIGINT} and subject_id =
+            WHERE exam_record_id = #{item.examRecordId,jdbcType=BIGINT} AND subject_id =
             #{item.subjectId,jdbcType=BIGINT}
         </foreach>
     </update>

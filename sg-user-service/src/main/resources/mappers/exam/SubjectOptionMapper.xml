@@ -16,7 +16,7 @@
     </resultMap>
 
     <select id="getBySubjectChoicesId" resultMap="subjectOptionResultMap">
-        SELECT * FROM exam_subject_option a WHERE a.subject_choices_id = #{subjectChoicesId} and a.is_deleted = 0
+        SELECT * FROM exam_subject_option a WHERE a.subject_choices_id = #{subjectChoicesId} AND a.is_deleted = 0
     </select>
 
     <select id="getBySubjectChoicesIds" resultMap="subjectOptionResultMap">
@@ -44,7 +44,7 @@
 
     <!-- 批量插入 -->
     <insert id="insertBatch">
-        insert into exam_subject_option (
+        INSERT INTO exam_subject_option (
             id,
             subject_choices_id,
             option_name,
@@ -56,7 +56,7 @@
             update_time,
             is_deleted,
             tenant_code
-        ) values
+        ) VALUES
         <foreach collection="list" item="item" index="index" separator=",">
             (
             #{item.id},
@@ -84,7 +84,7 @@
     </delete>
 
     <delete id="deleteAll">
-        UPDATE exam_subject_option SET is_deleted = 1 WHERE id in
+        UPDATE exam_subject_option SET is_deleted = 1 WHERE id IN
         <foreach item="item" index="index" collection="ids" open="("
                  separator="," close=")">#{item}
         </foreach>
@@ -92,7 +92,7 @@
 
     <!-- 物理批量删除 -->
     <delete id="physicalDeleteAll">
-        DELETE FROM exam_subject_option WHERE id in
+        DELETE FROM exam_subject_option WHERE id IN
         <foreach item="item" index="index" collection="ids" open="("
                  separator="," close=")">#{item}
         </foreach>

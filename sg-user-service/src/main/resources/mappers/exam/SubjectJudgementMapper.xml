@@ -23,7 +23,7 @@
         SELECT FROM exam_subject_judgement a WHERE a.is_deleted = 0
         <if test="params != null">
             <if test="params.tenantCode != null and params.tenantCode != ''">
-                and tenant_code = #{params.tenantCode}
+                AND tenant_code = #{params.tenantCode}
             </if>
         </if>
     </select>
@@ -40,7 +40,7 @@
     </delete>
 
     <delete id="deleteAll">
-        UPDATE exam_subject_judgement SET is_deleted = 1 WHERE id in
+        UPDATE exam_subject_judgement SET is_deleted = 1 WHERE id IN
         <foreach item="item" index="index" collection="ids" open="("
                  separator="," close=")">#{item}
         </foreach>

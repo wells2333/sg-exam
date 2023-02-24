@@ -19,23 +19,25 @@
     <select id="findPage" resultMap="attachmentResultMap">
         SELECT * FROM sys_attachment WHERE is_deleted = 0
         <if test="params != null">
+            <if test="params.tenantCode != null and params.tenantCode != ''">
+                AND tenant_code = #{params.tenantCode}
+            </if>
             <if test="params.attachmentName != null and params.attachmentName != ''">
-                and (attachment_name like CONCAT('%',#{params.attachmentName},'%'))
+                AND (attachment_name LIKE CONCAT('%',#{params.attachmentName},'%'))
             </if>
             <if test="params.attachType != null and params.attachType != ''">
-                and (attach_type like CONCAT('%',#{params.attachType},'%'))
+                AND (attach_type LIKE CONCAT('%',#{params.attachType},'%'))
             </if>
             <if test="params.groupCode != null and params.groupCode != ''">
-                and (group_code like CONCAT('%',#{params.groupCode},'%'))
+                AND (group_code LIKE CONCAT('%',#{params.groupCode},'%'))
             </if>
         </if>
-
         <choose>
             <when test="params.sortField != null and params.sortField != '' and params.sortOrder != null and params.sortOrder != ''">
-                order by #{params.sortField} #{params.sortOrder}
+                ORDER BY #{params.sortField} #{params.sortOrder}
             </when>
             <otherwise>
-                order by update_time desc
+                ORDER BY update_time desc
             </otherwise>
         </choose>
     </select>
@@ -43,10 +45,13 @@
     <select id="findList" resultMap="attachmentResultMap">
         SELECT * FROM sys_attachment a WHERE a.is_deleted = 0
         <if test="groupCode != null and groupCode != ''">
-            and group_code = #{groupCode}
+            AND group_code = #{groupCode}
         </if>
         <if test="attachType != null and attachType != ''">
-            and attach_type = #{attachType}
+            AND attach_type = #{attachType}
+        </if>
+        <if test="tenantCode != null and tenantCode != ''">
+            AND tenant_code = #{tenantCode}
         </if>
         ORDER BY CREATE_DATE DESC
     </select>

@@ -16,7 +16,7 @@
     </resultMap>
 
     <select id="getByIdentifier" resultMap="userAuthResultMap">
-        SELECT * FROM sys_user_auths a WHERE a.identifier = #{identifier} and a.is_deleted = 0 and a.tenant_code = #{tenantCode}
+        SELECT * FROM sys_user_auths a WHERE a.identifier = #{identifier} AND a.is_deleted = 0 AND a.tenant_code = #{tenantCode}
     </select>
 
     <select id="getListByUserIds" resultMap="userAuthResultMap">

@@ -16,22 +16,25 @@
     </resultMap>
 
     <select id="findPage" resultMap="resultMap">
-        SELECT * FROM sys_speech_synthesis where is_deleted = 0
+        SELECT * FROM sys_speech_synthesis WHERE is_deleted = 0
         <if test="params != null">
             <if test="params.name != null and params.name != ''">
-                and (name like CONCAT('%',#{params.name},'%'))
+                AND (name like CONCAT('%',#{params.name},'%'))
             </if>
             <if test="params.text != null and params.text != ''">
-                and (text like CONCAT('%',#{params.text},'%'))
+                AND (text like CONCAT('%',#{params.text},'%'))
+            </if>
+            <if test="tenantCode != null and tenantCode != ''">
+                AND tenant_code = #{tenantCode}
             </if>
         </if>
 
         <choose>
             <when test="params.sortField != null and params.sortField != '' and params.sortOrder != null and params.sortOrder != ''">
-                order by #{params.sortField} #{params.sortOrder}
+                ORDER BY #{params.sortField} #{params.sortOrder}
             </when>
             <otherwise>
-                order by update_time desc
+                ORDER BY update_time DESC
             </otherwise>
         </choose>
     </select>

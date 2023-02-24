@@ -33,10 +33,10 @@
         </if>
         <choose>
             <when test="params.sortField != null and params.sortField != '' and params.sortOrder != null and params.sortOrder != ''">
-                order by #{params.sortField} #{params.sortOrder}
+                ORDER BY #{params.sortField} #{params.sortOrder}
             </when>
             <otherwise>
-                order by update_time desc
+                ORDER BY update_time DESC
             </otherwise>
         </choose>
     </select>

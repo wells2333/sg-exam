@@ -106,9 +106,9 @@
                  LEFT JOIN sys_role_menu rm ON rm.role_id = r.id
                  LEFT JOIN sys_menu a ON a.id = rm.menu_id
         WHERE r.is_deleted = 0
-          AND a.is_deleted = 0
-          AND r.role_code = #{role}
-          AND r.tenant_code = #{tenantCode}
+        AND a.is_deleted = 0
+        AND r.role_code = #{role}
+        AND r.tenant_code = #{tenantCode}
         ORDER BY a.sort DESC
     </select>
 

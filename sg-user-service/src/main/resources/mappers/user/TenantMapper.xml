@@ -17,29 +17,28 @@
     </resultMap>
 
     <select id="findPage" resultMap="tenantResultMap">
-        SELECT * FROM sys_tenant where is_deleted = 0
+        SELECT * FROM sys_tenant WHERE is_deleted = 0
         <if test="params != null">
             <if test="params.tenantName != null and params.tenantName != ''">
-                and (tenant_name like CONCAT('%',#{params.tenantName},'%'))
+                AND (tenant_name LIKE CONCAT('%',#{params.tenantName},'%'))
             </if>
             <if test="params.status != null">
-                and status = #{params.status}
+                AND status = #{params.status}
             </if>
         </if>
-
         <choose>
             <when test="params.sortField != null and params.sortField != '' and params.sortOrder != null and params.sortOrder != ''">
-                order by #{params.sortField} #{params.sortOrder}
+                ORDER BY #{params.sortField} #{params.sortOrder}
             </when>
             <otherwise>
-                order by update_time desc
+                ORDER BY update_time DESC
             </otherwise>
         </choose>
     </select>
 
     <select id="getByTenantCode" resultMap="tenantResultMap">
         SELECT * FROM sys_tenant a
-        WHERE a.tenant_code = #{tenantCode} and a.is_deleted = 0 and a.status = 1
+        WHERE a.tenant_code = #{tenantCode} AND a.is_deleted = 0 AND a.status = 1
     </select>
 
     <delete id="delete">
@@ -49,6 +48,6 @@
     </delete>
 
     <select id="tenantCount" resultType="Integer">
-        SELECT COUNT(1) FROM sys_tenant a WHERE a.is_deleted = 0 and a.status = 1
+        SELECT COUNT(1) FROM sys_tenant a WHERE a.is_deleted = 0 AND a.status = 1
     </select>
 </mapper>

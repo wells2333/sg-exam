@@ -41,7 +41,6 @@ public class SysMessageReadController extends BaseController {
 
 	@PostMapping
 	@Operation(summary = "新增已读消息")
-	@SgLog(value = "新增已读消息", operationType = OperationType.INSERT)
 	public R<Boolean> add(@RequestBody @Valid SysMessageRead sysMessageRead) {
 		sysMessageRead.setCommonValue();
 		return R.success(sysMessageReadService.insert(sysMessageRead) > 0);
@@ -49,7 +48,6 @@ public class SysMessageReadController extends BaseController {
 
 	@PostMapping("readMessage")
 	@Operation(summary = "读消息")
-	@SgLog(value = "读消息", operationType = OperationType.INSERT)
 	public R<Boolean> readMessage(@RequestBody @Valid SysMessageRead sysMessageRead) {
 		SysMessageRead read = sysMessageReadService.findByMessageIdAndReceiverId(sysMessageRead.getMessageId(),
 				sysMessageRead.getReceiverId());
@@ -62,7 +60,6 @@ public class SysMessageReadController extends BaseController {
 
 	@PutMapping("{id}")
 	@Operation(summary = "修改已读消息")
-	@SgLog(value = "修改已读消息", operationType = OperationType.UPDATE)
 	public R<Boolean> update(@PathVariable("id") Long id, @RequestBody @Valid SysMessageRead sysMessageRead) {
 		sysMessageRead.setId(id);
 		return R.success(sysMessageReadService.update(sysMessageRead) > 0);
@@ -70,7 +67,6 @@ public class SysMessageReadController extends BaseController {
 
 	@DeleteMapping("{id}")
 	@Operation(summary = "删除已读消息")
-	@SgLog(value = "删除已读消息", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable("id") Long id) {
 		SysMessageRead sysMessageRead = sysMessageReadService.get(id);
 		sysMessageRead.setCommonValue();

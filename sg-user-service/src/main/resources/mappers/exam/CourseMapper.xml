@@ -27,23 +27,21 @@
         SELECT * FROM exam_course WHERE is_deleted = 0
         <if test="params != null">
             <if test="params.tenantCode != null and params.tenantCode != ''">
-                and tenant_code = #{params.tenantCode}
+                AND tenant_code = #{params.tenantCode}
             </if>
             <if test="params.courseName != null and params.courseName != ''">
-                and (course_name like CONCAT('%',#{params.courseName},'%'))
+                AND (course_name like CONCAT('%',#{params.courseName},'%'))
             </if>
         </if>
         ORDER BY sort ASC
     </select>
 
     <select id="findAllIds" resultType="java.lang.Long">
-        SELECT a.id
-        FROM exam_course a
-        WHERE a.is_deleted = 0
+        SELECT a.id FROM exam_course a WHERE a.is_deleted = 0
     </select>
 
     <select id="findList" resultMap="courseResultMap">
-        SELECT * FROM exam_course a WHERE a.is_deleted = 0 and a.tenant_code = #{tenantCode} ORDER BY sort ASC
+        SELECT * FROM exam_course a WHERE a.is_deleted = 0 AND a.tenant_code = #{tenantCode} ORDER BY sort ASC
     </select>
 
     <select id="findListById" resultMap="courseResultMap">
@@ -58,7 +56,7 @@
     </delete>
 
     <delete id="deleteAll">
-        UPDATE exam_course SET is_deleted = 1 WHERE id in
+        UPDATE exam_course SET is_deleted = 1 WHERE id IN
         <foreach item="item" index="index" collection="ids" open="("
                  separator="," close=")">#{item}
         </foreach>

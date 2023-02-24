@@ -15,11 +15,11 @@
     </select>
 
     <select id="findListByExaminationId" resultMap="examinationSubjectResultMap">
-        SELECT * FROM exam_examination_subject a WHERE a.examination_id = #{examinationId} order by sort ASC
+        SELECT * FROM exam_examination_subject a WHERE a.examination_id = #{examinationId} ORDER BY sort ASC
     </select>
 
     <select id="findByExaminationIdAndSubjectId" resultMap="examinationSubjectResultMap">
-        SELECT * FROM exam_examination_subject a WHERE a.examination_id = #{examinationId} and a.subject_id = #{subjectId}
+        SELECT * FROM exam_examination_subject a WHERE a.examination_id = #{examinationId} AND a.subject_id = #{subjectId}
     </select>
 
     <select id="findMinSortByExaminationId" resultMap="examinationSubjectResultMap">
@@ -27,7 +27,7 @@
     </select>
 
     <select id="findByExaminationIdAndSort" resultMap="examinationSubjectResultMap">
-        SELECT * FROM exam_examination_subject a WHERE a.examination_id = #{examinationId} and a.sort = #{sort}
+        SELECT * FROM exam_examination_subject a WHERE a.examination_id = #{examinationId} AND a.sort = #{sort}
     </select>
 
     <select id="findMaxSortByExaminationId" resultType="Integer">
@@ -42,10 +42,10 @@
         SELECT * FROM exam_examination_subject a where 1=1
         <if test="params != null">
             <if test="params.tenantCode != null and params.tenantCode != ''">
-                and tenant_code = #{params.tenantCode}
+                AND tenant_code = #{params.tenantCode}
             </if>
             <if test="params.examinationId != null">
-                and examination_id = #{params.examinationId}
+                AND examination_id = #{params.examinationId}
             </if>
         </if>
         ORDER BY sort ASC
@@ -76,7 +76,7 @@
     </delete>
 
     <delete id="deleteAll">
-        DELETE FROM exam_examination_subject WHERE id in
+        DELETE FROM exam_examination_subject WHERE id IN
         <foreach item="item" index="index" collection="ids" open="("
                  separator="," close=")">#{item}
         </foreach>

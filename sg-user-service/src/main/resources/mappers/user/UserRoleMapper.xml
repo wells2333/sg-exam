@@ -39,20 +39,20 @@
     </insert>
 
     <delete id="delete">
-        delete from sys_user_role
-        where user_id = #{userId}
+        DELETE FROM sys_user_role
+        WHERE user_id = #{userId}
         <if test="roleId != null and roleId != ''">
-            and role_id = #{roleId}
+            AND role_id = #{roleId}
         </if>
     </delete>
 
     <delete id="deleteByUserId">
-        delete from sys_user_role
-        where user_id = #{userId}
+        DELETE FROM sys_user_role
+        WHERE user_id = #{userId}
     </delete>
 
     <delete id="deleteByRoleId">
-        delete from sys_user_role
-        where role_id = #{roleId}
+        DELETE FROM sys_user_role
+        WHERE role_id = #{roleId}
     </delete>
 </mapper>

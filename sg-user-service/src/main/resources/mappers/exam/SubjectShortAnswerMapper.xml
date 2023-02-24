@@ -24,7 +24,7 @@
         SELECT * FROM exam_subject_short_answer a WHERE a.is_deleted = 0
         <if test="params != null">
             <if test="params.tenantCode != null and params.tenantCode != ''">
-                and tenant_code = #{params.tenantCode}
+                AND tenant_code = #{params.tenantCode}
             </if>
         </if>
     </select>
@@ -41,7 +41,7 @@
     </delete>
 
     <delete id="deleteAll">
-        UPDATE exam_subject_short_answer SET is_deleted = 1 WHERE id in
+        UPDATE exam_subject_short_answer SET is_deleted = 1 WHERE id IN
         <foreach item="item" index="index" collection="ids" open="("
                  separator="," close=")">#{item}
         </foreach>
@@ -54,7 +54,7 @@
 
     <!-- 物理删除 -->
     <delete id="physicalDeleteAll">
-        DELETE FROM exam_subject_short_answer WHERE id in
+        DELETE FROM exam_subject_short_answer WHERE id IN
         <foreach item="item" index="index" collection="ids" open="("
                  separator="," close=")">#{item}
         </foreach>

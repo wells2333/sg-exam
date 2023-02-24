@@ -17,7 +17,7 @@
         SELECT * FROM exam_pictures a WHERE a.is_deleted = 0
         <if test="params != null">
             <if test="params.tenantCode != null and params.tenantCode != ''">
-                and tenant_code = #{params.tenantCode}
+                AND tenant_code = #{params.tenantCode}
             </if>
         </if>
     </select>

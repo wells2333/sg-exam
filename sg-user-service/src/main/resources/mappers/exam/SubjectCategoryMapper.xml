@@ -21,19 +21,19 @@
         SELECT * FROM exam_subject_category a WHERE a.is_deleted = 0
         <if test="params != null">
             <if test="params.tenantCode != null and params.tenantCode != ''">
-                and tenant_code = #{params.tenantCode}
+                AND tenant_code = #{params.tenantCode}
             </if>
             <if test="params.categoryName != null and params.categoryName != ''">
-                and (category_name like CONCAT('%',#{params.categoryName},'%'))
+                AND (category_name like CONCAT('%',#{params.categoryName},'%'))
             </if>
             <if test="params.parentId != null and params.parentId != ''">
-                and parent_id = #{params.parentId}
+                AND parent_id = #{params.parentId}
             </if>
             <if test="params.status != null and params.status != ''">
-                and status = #{params.status}
+                AND status = #{params.status}
             </if>
         </if>
-        order by sort desc
+        ORDER BY sort DESC
     </select>
 
     <select id="findListById" resultMap="subjectCategoryResultMap">
@@ -44,17 +44,17 @@
     </select>
 
     <select id="findList" resultMap="subjectCategoryResultMap">
-        SELECT * FROM exam_subject_category a WHERE a.is_deleted = 0 and tenant_code = #{tenantCode}
+        SELECT * FROM exam_subject_category a WHERE a.is_deleted = 0 AND tenant_code = #{tenantCode}
         <if test="categoryName != null and categoryName != ''">
-            and (category_name like CONCAT('%',#{categoryName},'%'))
+            AND (category_name LIKE CONCAT('%',#{categoryName},'%'))
         </if>
         <if test="parentId != null and parentId != ''">
-            and parent_id = #{parentId}
+            AND parent_id = #{parentId}
         </if>
         <if test="status != null and status != ''">
-            and status = #{status}
+            AND status = #{status}
         </if>
-        order by sort desc
+        ORDER BY sort DESC
     </select>
 
     <delete id="delete">

@@ -49,12 +49,10 @@
     </insert>
 
     <delete id="deleteByRoleId">
-        delete from sys_role_menu
-        where role_id = #{roleId}
+        DELETE FROM sys_role_menu WHERE role_id = #{roleId}
     </delete>
 
     <delete id="deleteByMenuId">
-        delete from sys_role_menu
-        where menu_id = #{menuId}
+        DELETE FROM sys_role_menu WHERE menu_id = #{menuId}
     </delete>
 </mapper>
