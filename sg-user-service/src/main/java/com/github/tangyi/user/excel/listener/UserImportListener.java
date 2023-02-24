@@ -3,7 +3,7 @@ package com.github.tangyi.user.excel.listener;
 import com.github.tangyi.api.user.dto.UserInfoDto;
 import com.github.tangyi.common.excel.AbstractExcelImportListener;
 import com.github.tangyi.user.excel.model.UserExcelModel;
-import com.github.tangyi.user.service.UserService;
+import com.github.tangyi.user.service.sys.UserService;
 import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;

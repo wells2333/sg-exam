@@ -8,6 +8,8 @@ import com.github.tangyi.api.user.model.SpeechSynthesis;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.user.mapper.SpeechSynthesisMapper;
+import com.github.tangyi.user.service.attach.AttachmentService;
+import com.github.tangyi.user.service.attach.QiNiuService;
 import com.github.tangyi.user.speech.BaiduSpeechSynthesisService;
 import com.github.tangyi.user.speech.SynthesisHandlerContext;
 import lombok.AllArgsConstructor;

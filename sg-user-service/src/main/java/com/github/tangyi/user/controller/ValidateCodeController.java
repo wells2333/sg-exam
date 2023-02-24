@@ -1,7 +1,7 @@
 package com.github.tangyi.user.controller;
 
 import com.github.tangyi.common.base.BaseController;
-import com.github.tangyi.user.service.UserService;
+import com.github.tangyi.user.service.sys.UserService;
 import com.google.code.kaptcha.Producer;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;

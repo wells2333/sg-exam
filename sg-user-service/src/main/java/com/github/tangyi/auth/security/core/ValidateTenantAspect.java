@@ -2,7 +2,7 @@ package com.github.tangyi.auth.security.core;
 
 import com.github.tangyi.api.user.model.Tenant;
 import com.github.tangyi.common.exceptions.TenantNotFoundException;
-import com.github.tangyi.user.service.TenantService;
+import com.github.tangyi.user.service.sys.TenantService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.annotation.Aspect;

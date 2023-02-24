@@ -1,7 +1,7 @@
 package com.github.tangyi.user;
 
 import com.github.tangyi.api.user.dto.SmsDto;
-import com.github.tangyi.user.service.SmsService;
+import com.github.tangyi.user.service.message.SmsService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

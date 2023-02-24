@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.github.tangyi.user.mapper.AttachmentMapper">
+<mapper namespace="com.github.tangyi.user.mapper.attach.AttachmentMapper">
     <resultMap id="attachmentResultMap" type="com.github.tangyi.api.user.model.Attachment">
         <id column="id" property="id"/>
         <result column="attach_name" property="attachName"/>

@@ -2,7 +2,7 @@ package com.github.tangyi.log;
 
 import com.github.tangyi.common.log.SgLogEvent;
 import com.github.tangyi.common.model.Log;
-import com.github.tangyi.user.service.LogService;
+import com.github.tangyi.user.service.sys.LogService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;

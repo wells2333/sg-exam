@@ -4,7 +4,7 @@ import com.baidu.aip.speech.AipSpeech;
 import com.baidu.aip.speech.TtsResponse;
 import com.github.tangyi.api.user.model.Attachment;
 import com.github.tangyi.common.utils.EnvUtils;
-import com.github.tangyi.user.service.QiNiuService;
+import com.github.tangyi.user.service.attach.QiNiuService;
 import com.google.common.collect.Maps;
 import org.springframework.stereotype.Service;
 

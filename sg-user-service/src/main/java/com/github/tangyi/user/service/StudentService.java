@@ -10,6 +10,8 @@ import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.common.vo.UserVo;
 import com.github.tangyi.user.mapper.StudentMapper;
+import com.github.tangyi.user.service.sys.UserService;
+import com.github.tangyi.user.service.sys.UserStudentService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;

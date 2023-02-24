@@ -14,7 +14,7 @@ import com.github.tangyi.common.utils.EnvUtils;
 import com.github.tangyi.common.utils.TenantHolder;
 import com.github.tangyi.common.utils.okhttp.OkHttpUtil;
 import com.github.tangyi.common.vo.UserVo;
-import com.github.tangyi.user.service.UserService;
+import com.github.tangyi.user.service.sys.UserService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import org.apache.commons.lang3.StringUtils;

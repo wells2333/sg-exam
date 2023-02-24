@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @AllArgsConstructor
+@SuppressWarnings({"unchecked"})
 public class ValidateCodeService {
 
 	private final RedisTemplate redisTemplate;
 
-	@SuppressWarnings({"unchecked"})
 	public void checkCode(String code, String randomStr) {
 		String key = CommonConstant.VERIFICATION_CODE_KEY + randomStr;
 		// 验证码过期
