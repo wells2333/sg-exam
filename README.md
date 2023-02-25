@@ -35,7 +35,7 @@
 **想体验后台的功能可使用测试租户 ID：sg，租户账号：admin_sg，密码：123456**
 该账号可新增用户、部门、课程、考试、题库等信息
 
-<img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/sg_login.jpg" width="200"/>
+<img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/sg_login.png" width="200"/>
 
 小程序和公众号：
 
