@@ -1,6 +1,6 @@
 <h1 align="center">Welcome to sg-exam 👋</h1>
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-0.0.2-blue.svg?cacheSeconds=2592000" />
+  <img alt="Version" src="https://img.shields.io/badge/version-0.0.3-blue.svg?cacheSeconds=2592000" />
   <a href="https://mp.weixin.qq.com/s/oal9atlSQxfL4YOiLtYfuA" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
@@ -27,10 +27,15 @@
 
 ### [在线体验](https://www.yunmianshi.com/)
 
-|   平台   |      地址      |   账号密码    |
-| --------- | -------- | -------- |
-|  前台  |  [www.yunmianshi.com](https://www.yunmianshi.com)  |   账号：preview，密码：123456 |
-|  后台  |  [www.yunmianshi.com/admin](https://www.yunmianshi.com/admin)   |  账号：preview，密码：123456 |
+|   平台   |      地址      | 账号密码                                                        |
+| --------- | -------- |-------------------------------------------------------------|
+|  前台  |  [www.yunmianshi.com](https://www.yunmianshi.com)  | 账号：preview，密码：123456                                        |
+|  后台  |  [www.yunmianshi.com/admin](https://www.yunmianshi.com/admin)   | 默认租户账号：preview，密码：123456 |
+
+**想体验后台的功能可使用测试租户 ID：sg，租户账号：admin_sg，密码：123456**
+该账号可新增用户、部门、课程、考试、题库等信息
+
+<img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/sg_login.jpg" width="200"/>
 
 小程序和公众号：
 

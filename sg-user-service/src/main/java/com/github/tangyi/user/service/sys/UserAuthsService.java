@@ -3,6 +3,7 @@ package com.github.tangyi.user.service.sys;
 import com.github.tangyi.api.user.model.User;
 import com.github.tangyi.api.user.model.UserAuths;
 import com.github.tangyi.api.user.service.IUserAuthsService;
+import com.github.tangyi.common.base.BaseEntity;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.SgPreCondition;
 import com.github.tangyi.constants.UserCacheName;
@@ -41,8 +42,7 @@ public class UserAuthsService extends CrudService<UserAuthsMapper, UserAuths>
 		if (CollectionUtils.isEmpty(userList)) {
 			return Collections.emptyList();
 		}
-		Long[] ids = userList.stream().map(User::getId).distinct().toArray(Long[]::new);
-		return this.dao.getListByUserIds(ids);
+		return this.dao.getListByUserIds(BaseEntity.ids(userList));
 	}
 
 	@Transactional

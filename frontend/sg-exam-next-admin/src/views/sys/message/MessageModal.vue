@@ -26,6 +26,7 @@ import { BasicForm, useForm, ApiSelect} from '/@/components/Form/index';
 import { formSchema } from './message.data';
 import {getMessageInfo, createMessage, updateMessage} from '/@/api/sys/message';
 import {selectUsers} from "/@/api/sys/message";
+import {getDeptList} from "/@/api/sys/dept";
 
 export default defineComponent({
   name: 'MessageModal',
@@ -38,7 +39,7 @@ export default defineComponent({
     const searchParams = computed<Recordable>(() => {
       return { name: unref(name) };
     });
-    const [registerForm, { setFieldsValue, resetFields, validate }] = useForm({
+    const [registerForm, { setFieldsValue, resetFields, validate, updateSchema }] = useForm({
       labelWidth: 100,
       schemas: formSchema,
       showActionButtonGroup: false,
@@ -47,14 +48,23 @@ export default defineComponent({
       await resetFields();
       id = data.record?.id || null;
       isUpdate.value = !!data?.isUpdate;
+      const treeData = await getDeptList();
+      updateSchema([
+        {
+          field: 'receiverDeptId',
+          componentProps: { treeData },
+        },
+      ]);
       if (unref(isUpdate)) {
         const res = await getMessageInfo(id, {});
         if (res) {
           data.record.receivers = res.receivers;
+          data.record.receiverDeptId = res.receiverDeptId;
         }
         await setFieldsValue({
           ...data.record,
         });
+      } else {
       }
       setModalProps({ confirmLoading: false });
     });

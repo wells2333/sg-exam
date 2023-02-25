@@ -19,6 +19,8 @@ export const messageColor = {
 
 const isPartUser = (receiverType: number) => receiverType === 1;
 
+const isDept = (receiverType: number) => receiverType === 2;
+
 export const columns: BasicColumn[] = [
   {
     title: '消息类型',
@@ -125,7 +127,8 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       options: [
         { label: '全部用户', value: 0 },
-        { label: '部分用户', value: 1 },
+        { label: '指定用户', value: 1 },
+        { label: '指定部门', value: 2 },
       ],
     },
     required: true,
@@ -136,5 +139,19 @@ export const formSchema: FormSchema[] = [
     component: 'Input',
     slot: 'remoteSearch',
     ifShow: ({ values }) => isPartUser(values.receiverType),
+  },
+  {
+    field: 'receiverDeptId',
+    label: '接收部门',
+    component: 'TreeSelect',
+    componentProps: {
+      replaceFields: {
+        label: 'deptName',
+        key: 'id',
+        value: 'id',
+      },
+      getPopupContainer: () => document.body,
+    },
+    ifShow: ({ values }) => isDept(values.receiverType),
   }
 ];

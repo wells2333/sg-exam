@@ -1,14 +1,12 @@
--- 更新脚本
-
 ALTER TABLE `exam_subject_category` ADD COLUMN `status` tinyint(1) ZEROFILL NOT NULL COMMENT '状态：0：草稿，1：已发布';
 
-CREATE TABLE shedlock(
- `NAME` varchar(64) NOT NULL DEFAULT '' COMMENT '任务名',
+CREATE TABLE `shedlock`(
+ `name` varchar(64) NOT NULL DEFAULT '' COMMENT '任务名',
  `lock_until` timestamp(3) NULL DEFAULT NULL COMMENT '释放时间',
  `locked_at` timestamp(3) NULL DEFAULT NULL COMMENT '锁定时间',
  `locked_by` varchar(255) DEFAULT NULL COMMENT '锁定实例',
  PRIMARY KEY (name)
-)
+);
 
 CREATE TABLE `sys_sms` (
    `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
@@ -100,4 +98,9 @@ INSERT INTO `sys_role_menu` VALUES (450, 2, 96, '', '2022-11-30 22:42:31', '', '
 INSERT INTO `sys_role_menu` VALUES (451, 2, 97, '', '2022-11-30 22:42:31', '', '2022-11-30 22:42:31', 0, '');
 INSERT INTO `sys_role_menu` VALUES (452, 2, 98, '', '2022-11-30 22:42:31', '', '2022-11-30 22:42:31', 0, '');
 INSERT INTO `sys_role_menu` VALUES (453, 2, 99, '', '2022-11-30 22:42:31', '', '2022-11-30 22:42:31', 0, '');
+
+ALTER TABLE `sys_message`
+    ADD COLUMN `receiver_type` tinyint(1) NOT NULL COMMENT '接收人类型，0：全部用户，1：部分用户，2：部门';
+ALTER TABLE `sys_message`
+    ADD COLUMN `status` tinyint(1) NOT NULL COMMENT '状态，0：草稿，1：已发布';
 

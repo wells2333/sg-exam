@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -88,6 +89,11 @@ public class BaseEntity<T> implements Serializable {
 		this.updateTime = null;
 		this.isDeleted = null;
 		this.tenantCode = null;
+	}
+
+	@SuppressWarnings({"rawtypes"})
+	public static <E extends BaseEntity> Long[] ids(List<E> entities) {
+		return entities.stream().map(BaseEntity::getId).toArray(Long[]::new);
 	}
 }
 

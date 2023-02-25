@@ -20,25 +20,34 @@ import javax.validation.constraints.NotBlank;
 @EqualsAndHashCode(callSuper = true)
 public class SysMessageReceiver extends BaseEntity<SysMessageReceiver> {
 
-    /**
-     * 消息ID
-     */
-    @JsonSerialize(using = ToStringSerializer.class)
-    @Column(name = "message_id")
-    private Long messageId;
+	/**
+	 * 消息ID
+	 */
+	@JsonSerialize(using = ToStringSerializer.class)
+	@Column(name = "message_id")
+	private Long messageId;
 
-    /**
-     * 接收人ID
-     */
-    @JsonSerialize(using = ToStringSerializer.class)
-    @Column(name = "receiver_id")
-    private Long receiverId;
+	/**
+	 * 接收人ID
+	 */
+	@JsonSerialize(using = ToStringSerializer.class)
+	@Column(name = "receiver_id")
+	private Long receiverId;
 
 	@Column(name = "type")
 	private Integer type;
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
-    }
+	public static SysMessageReceiver of(String user, String tenantCode, Long messageId, Long receiverId, Integer type) {
+		SysMessageReceiver receiver = new SysMessageReceiver();
+		receiver.setCommonValue(user, tenantCode);
+		receiver.setReceiverId(receiverId);
+		receiver.setMessageId(messageId);
+		receiver.setType(type);
+		return receiver;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 }

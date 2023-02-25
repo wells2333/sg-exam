@@ -62,7 +62,7 @@
   </div>
 </template>
 <script lang="ts">
-import {computed, defineComponent, ref} from 'vue';
+import {computed, defineComponent, onMounted, ref} from 'vue';
 import { AppLocalePicker, AppDarkModeToggle } from '/@/components/Application';
 import LoginForm from './LoginForm.vue';
 import ForgetPasswordForm from './ForgetPasswordForm.vue';
@@ -75,9 +75,6 @@ import { useDesign } from '/@/hooks/web/useDesign';
 import { useLocaleStore } from '/@/store/modules/locale';
 import {getSysDefaultConfig} from "/@/api/sys/config";
 import {useSysConfigStore} from "/@/store/modules/config";
-const sysConfig = ref<any>(await getSysDefaultConfig());
-const sysConfigStore = useSysConfigStore();
-sysConfigStore.setSysConfig(sysConfig);
 
 export default defineComponent({
   name: 'Login',
@@ -89,13 +86,20 @@ export default defineComponent({
       type: Boolean,
     },
   },
-  setup() {
+  setup () {
+    const sysConfig = ref<any>();
+    const sysConfigStore = useSysConfigStore();
     const globSetting = useGlobSetting();
     const { prefixCls } = useDesign('login');
     const { t } = useI18n();
     const localeStore = useLocaleStore();
     const showLocale = localeStore.getShowPicker;
     const title = computed(() => globSetting?.title ?? '');
+
+    onMounted(async () => {
+      sysConfig.value = await getSysDefaultConfig();
+      sysConfigStore.setSysConfig(sysConfig.value);
+    });
     return {
       prefixCls,
       t,

@@ -1,6 +1,7 @@
 package com.github.tangyi.api.user.model;
 
 import com.github.tangyi.common.base.BaseEntity;
+import com.github.tangyi.common.utils.SysUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -61,10 +62,24 @@ public class SysMessage extends BaseEntity<SysMessage> {
 	private List<Long> receivers;
 
 	/**
+	 * 接收部门 ID
+	 */
+	@Transient
+	private String receiverDeptId;
+
+	/**
 	 * 是否已读
 	 */
 	@Transient
 	private boolean hasRead;
+
+	public static SysMessage of(String tenantCode, Integer status, Integer receiverType) {
+		SysMessage message = new SysMessage();
+		message.setTenantCode(tenantCode);
+		message.setStatus(status);
+		message.setReceiverType(receiverType);
+		return message;
+	}
 
 	@Override
 	public String toString() {
