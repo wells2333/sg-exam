@@ -4,9 +4,11 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.github.tangyi.api.exam.dto.ExaminationDto;
 import com.github.tangyi.common.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.beans.BeanUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
@@ -14,6 +16,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -104,6 +107,12 @@ public class Examination extends BaseEntity<Examination> {
 	private Integer answerType;
 
 	/**
+	 * 权限控制，0：全部用户，1：指定用户，2：指定部门
+	 */
+	@Column(name = "access_type")
+	private Integer accessType;
+
+	/**
 	 * 考试次数
 	 */
 	@Transient
@@ -114,4 +123,22 @@ public class Examination extends BaseEntity<Examination> {
 	 */
 	@Transient
 	private Long favoritesCount;
+
+	/**
+	 * 成员 ID
+	 */
+	@Transient
+	private List<Long> members;
+
+	/**
+	 * 部门 ID
+	 */
+	@Transient
+	private String deptMember;
+
+	public static Examination of(ExaminationDto dto) {
+		Examination examination = new Examination();
+		BeanUtils.copyProperties(dto, examination);
+		return examination;
+	}
 }

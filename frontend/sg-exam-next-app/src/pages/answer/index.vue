@@ -1,5 +1,5 @@
 <template>
-  <view class="answer-box">
+  <view class="answer-box" v-if="!loading">
     <view class="overview-container">
       <view class="answer-exam-name">
         <text>{{ detail.examinationName }}</text>
@@ -98,9 +98,11 @@ export default {
     const examinationId = ref<string>('');
     const score = ref<string>('-');
     const rate = ref<string>('-');
+    const loading = ref<boolean>(true);
 
     async function fetch() {
       try {
+        loading.value = true;
         await showLoading();
         const params = currentInstance.router.params;
         recordId.value = params.recordId;
@@ -118,6 +120,7 @@ export default {
         }
       } finally {
         hideLoading();
+        loading.value = false;
       }
     }
 
@@ -135,7 +138,14 @@ export default {
     onMounted(() => {
       fetch();
     });
-    return {detail, score, rate, handleTryAgain, getOptionColor}
+    return {
+      loading,
+      detail,
+      score,
+      rate,
+      handleTryAgain,
+      getOptionColor
+    }
   }
 }
 </script>

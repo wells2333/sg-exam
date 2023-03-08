@@ -71,29 +71,29 @@
               <!-- 简答题 -->
               <div v-if="tempIncorrectAnswer.subject.type === 1">
                 <p>
-                  考生答案：<span v-html="tempIncorrectAnswer.subject.answer.answer"></span>
+                  考生答案：<span v-html="tempIncorrectAnswer.answer"></span>
                 </p>
               </div>
               <!-- 判断 -->
               <div v-if="tempIncorrectAnswer.subject.type === 2">
                 <p>
-                  考生答案：{{tempIncorrectAnswer.subject.answer.answer === '0' ? '正确' : '错误'}}
+                  考生答案：{{tempIncorrectAnswer.answer === '0' ? '正确' : '错误'}}
                 </p>
               </div>
               <!-- 语音 -->
               <div v-if="tempIncorrectAnswer.subject.type === 4">
                 <p>
-                  考生答案：<span v-html="tempIncorrectAnswer.subject.answer.answer"></span>
+                  考生答案：<span v-html="tempIncorrectAnswer.answer"></span>
                 </p>
               </div>
               <!-- 视频 -->
               <div v-if="tempIncorrectAnswer.subject.type === 5">
                 <p>
-                  考生答案：<span v-html="tempIncorrectAnswer.subject.answer.answer"></span>
+                  考生答案：<span v-html="tempIncorrectAnswer.answer"></span>
                 </p>
               </div>
-              <p class="subject-content-answer" v-if="tempIncorrectAnswer.answer !== ''">
-                参考答案：<span v-html="tempIncorrectAnswer.answer"></span>
+              <p class="subject-content-answer" v-if="tempIncorrectAnswer.subject.answer !== undefined">
+                参考答案：<span v-html="tempIncorrectAnswer.subject.answer.answer"></span>
               </p>
               <p class="subject-content-analysis" v-if="tempIncorrectAnswer.subject.analysis !== ''">
                 解析：<span v-html="tempIncorrectAnswer.subject.analysis"></span>

@@ -3,7 +3,7 @@ import api from './api'
 class examApi {
 
     async examinationList(data) {
-        return api.fetchExam<Sg.ExamInfo>("/v1/examination/examinationList", data, "GET")
+        return api.fetchExam<Sg.ExamInfo>("/v1/examination/userExaminationList", data, "GET")
     }
 
     async examinationDetail(id: string | undefined) {
@@ -41,7 +41,7 @@ class examApi {
             subjectId,
             nextType,
             findFav: true,
-            isView: true,
+            view: true,
             random,
             realTimeIds
         }, "POST")

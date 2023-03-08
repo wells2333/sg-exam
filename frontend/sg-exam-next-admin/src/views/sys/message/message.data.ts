@@ -153,5 +153,5 @@ export const formSchema: FormSchema[] = [
       getPopupContainer: () => document.body,
     },
     ifShow: ({ values }) => isDept(values.receiverType),
-  }
+  },
 ];

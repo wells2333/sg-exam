@@ -1,13 +1,12 @@
 package com.github.tangyi.exam.service.exam;
 
 import com.github.pagehelper.PageInfo;
-import com.github.tangyi.api.exam.dto.ExaminationDto;
-import com.github.tangyi.api.exam.dto.RandomSubjectDto;
-import com.github.tangyi.api.exam.dto.SimpleSubjectDto;
-import com.github.tangyi.api.exam.dto.SubjectDto;
+import com.github.tangyi.api.exam.dto.*;
 import com.github.tangyi.api.exam.model.*;
 import com.github.tangyi.api.exam.service.IExaminationService;
+import com.github.tangyi.api.user.model.User;
 import com.github.tangyi.api.user.service.IQiNiuService;
+import com.github.tangyi.api.user.service.IUserService;
 import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.constant.Group;
 import com.github.tangyi.common.constant.Status;
@@ -16,8 +15,10 @@ import com.github.tangyi.common.properties.SysProperties;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.*;
 import com.github.tangyi.constants.ExamCacheName;
+import com.github.tangyi.constants.ExamConstant;
 import com.github.tangyi.exam.enums.ExaminationType;
 import com.github.tangyi.exam.mapper.ExaminationMapper;
+import com.github.tangyi.exam.service.ExamExaminationMemberService;
 import com.github.tangyi.exam.service.ExaminationSubjectService;
 import com.github.tangyi.exam.service.course.CourseService;
 import com.github.tangyi.exam.service.fav.ExamFavoritesService;
@@ -25,14 +26,15 @@ import com.github.tangyi.exam.service.image.RandomImageService;
 import com.github.tangyi.exam.service.subject.SubjectCategoryService;
 import com.github.tangyi.exam.service.subject.SubjectsService;
 import com.github.tangyi.exam.utils.ExamUtil;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -46,7 +48,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Service
 public class ExaminationService extends CrudService<ExaminationMapper, Examination>
-		implements IExaminationService, ExamCacheName {
+		implements IExaminationService, ExamCacheName, ExamConstant {
 
 	private final SubjectsService subjectsService;
 
@@ -64,56 +66,99 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 
 	private final RandomImageService randomImageService;
 
+	private final ExamExaminationMemberService memberService;
+
+	private final IUserService userService;
+
 	@Override
 	@Cacheable(value = ExamCacheName.EXAMINATION, key = "#id")
 	public Examination get(Long id) {
 		return super.get(id);
 	}
 
-	public ExaminationDto getDetail(Long id) {
-		Examination examination = super.get(id);
-		List<Course> courses = courseService.findListById(
-				Collections.singletonList(examination.getId()).toArray(Long[]::new));
-		return toDto(examination, courses);
-	}
-
 	public List<Long> findAllIds() {
 		return this.dao.findAllIds();
 	}
 
-	public int insert(ExaminationDto examinationDto) {
-		Examination examination = new Examination();
-		BeanUtils.copyProperties(examinationDto, examination);
-		if (examinationDto.getCourse() != null) {
-			examination.setCourseId(examinationDto.getCourse().getId());
+	@Override
+	public PageInfo<Examination> findUserExaminations(Map<String, Object> params, int pageNum, int pageSize) {
+		commonPageParam(params, pageNum, pageSize);
+		return new PageInfo<>(this.dao.findUserExaminations(params));
+	}
+
+	@Override
+	public ExaminationDto getDetail(Long id) {
+		Examination examination = super.get(id);
+		Long[] ids = Collections.singletonList(examination.getId()).toArray(Long[]::new);
+		List<Course> courses = courseService.findListById(ids);
+		Map<Long, Course> courseMap = toCourseMap(courses);
+		return toDto(examination, courseMap);
+	}
+
+	@Override
+	public MemberDto getMembers(Long id) {
+		MemberDto dto = new MemberDto();
+		List<ExamExaminationMember> members = memberService.findListByExamId(id);
+		if (CollectionUtils.isNotEmpty(members)) {
+			List<Long> userMembers = dto.getUserMembers();
+			for (ExamExaminationMember member : members) {
+				if (EXAM_MEMBER_TYPE_USER.equals(member.getMemberType())) {
+					userMembers.add(member.getMemberId());
+				} else if (EXAM_MEMBER_TYPE_DEPT.equals(member.getMemberType())) {
+					dto.setDeptMember(member.getMemberId().toString());
+				}
+			}
 		}
-		examination.setCommonValue();
-		// 初始化图片
+		return dto;
+	}
+
+	@Override
+	@Transactional
+	public int insertExamination(ExaminationDto examinationDto) {
+		Examination examination = Examination.of(examinationDto);
+		String user = SysUtil.getUser();
+		String tenantCode = SysUtil.getTenantCode();
+		examination.setCommonValue(user, tenantCode);
+		Course course = examinationDto.getCourse();
+		if (course != null) {
+			examination.setCourseId(course.getId());
+		}
 		if (examination.getImageId() == null) {
 			examination.setImageId(qiNiuService.randomImage(Group.DEFAULT));
 		}
+		addExaminationMembers(examinationDto, user, tenantCode);
 		return super.insert(examination);
 	}
 
+	@Override
 	public PageInfo<ExaminationDto> examinationList(Map<String, Object> params, int pageNum, int pageSize) {
 		PageInfo<Examination> page = findPage(params, pageNum, pageSize);
-		PageInfo<ExaminationDto> pageInfo = new PageInfo<>();
-		BeanUtils.copyProperties(page, pageInfo);
-		if (CollectionUtils.isNotEmpty(page.getList())) {
-			List<ExaminationDto> dtoList = toDtoList(page.getList());
-			if (Status.OPEN.equals(params.get("favorite"))) {
-				examFavoritesService.findExamStartCounts(dtoList);
-				examFavoritesService.findUserFavorites(dtoList);
-				examFavoritesService.findFavCount(dtoList);
-			}
-			pageInfo.setList(dtoList);
+		List<Examination> list = page.getList();
+		if (CollectionUtils.isNotEmpty(list)) {
+			return toDtoPage(page, list, params);
 		}
-		return pageInfo;
+		return new PageInfo<>();
+	}
+
+	@Override
+	public PageInfo<ExaminationDto> userExaminationList(Map<String, Object> params, int pageNum, int pageSize) {
+		Long userId = SysUtil.getUserId();
+		params.put("userId", userId);
+		User user = userService.get(userId);
+		Preconditions.checkNotNull(user, "user not found");
+		Long deptId = user.getDeptId();
+		if (deptId != null) {
+			params.put("deptId", deptId);
+		}
+		PageInfo<Examination> page = this.findUserExaminations(params, pageNum, pageSize);
+		List<Examination> list = page.getList();
+		if (CollectionUtils.isNotEmpty(list)) {
+			return toDtoPage(page, list, params);
+		}
+		return new PageInfo<>();
 	}
 
 	public PageInfo<?> findUserFavoritesPage(PageInfo<ExamUserFav> page) {
-		PageInfo<ExaminationDto> pageInfo = new PageInfo<>();
-		BeanUtils.copyProperties(page, pageInfo);
 		List<Long> examIds = page.getList().stream().map(ExamUserFav::getTargetId).collect(Collectors.toList());
 		List<Examination> examinations = findListById(examIds.toArray(Long[]::new));
 		List<ExaminationDto> dtoList = toDtoList(examinations);
@@ -122,51 +167,41 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		}
 		examFavoritesService.findExamStartCounts(dtoList);
 		examFavoritesService.findFavCount(dtoList);
-		pageInfo.setList(dtoList);
-		return pageInfo;
+		return PageUtil.newPageInfo(page, dtoList);
 	}
 
-	public List<ExaminationDto> toDtoList(List<Examination> examinations) {
-		List<Course> courses = courseService.findListById(
-				examinations.stream().map(Examination::getCourseId).distinct().toArray(Long[]::new));
-		return examinations.stream().map(exam -> toDto(exam, courses)).collect(Collectors.toList());
-	}
-
-	public ExaminationDto toDto(Examination exam, List<Course> courses) {
-		ExaminationDto dto = new ExaminationDto();
-		BeanUtils.copyProperties(exam, dto);
-		// 设置考试所属课程
-		courses.stream().filter(tempCourse -> tempCourse.getId().equals(exam.getCourseId())).findFirst()
-				.ifPresent(dto::setCourse);
-		initExaminationImage(dto);
-		dto.setTypeLabel(ExaminationType.matchByValue(dto.getType()).getName());
-		return dto;
-	}
-
-	/**
-	 * 获取考试封面
-	 */
-	public void initExaminationImage(ExaminationDto examinationDto) {
-		try {
-			if (examinationDto.getImageId() != null && examinationDto.getImageId() != 0L) {
-				String imageUrl = qiNiuService.getPreviewUrl(examinationDto.getImageId());
-				examinationDto.setImageUrl(StringUtils.getIfEmpty(imageUrl, randomImageService::randomImage));
-			}
-		} catch (Exception e) {
-			log.error("initExaminationImage failed", e);
+	@Override
+	@Transactional
+	@CacheEvict(value = {ExamCacheName.EXAMINATION, ExamCacheName.EXAM_ALL_SUBJECT}, key = "#examinationDto.id")
+	public int updateExamination(ExaminationDto examinationDto) {
+		Examination examination = Examination.of(examinationDto);
+		String user = SysUtil.getUser();
+		String tenantCode = SysUtil.getTenantCode();
+		examination.setCommonValue(user, tenantCode);
+		Course course = examinationDto.getCourse();
+		if (course != null) {
+			examination.setCourseId(course.getId());
 		}
+		memberService.deleteByExamId(examination.getId());
+		addExaminationMembers(examinationDto, user, tenantCode);
+		return super.update(examination);
 	}
 
 	@Transactional
-	@CacheEvict(value = {ExamCacheName.EXAMINATION, ExamCacheName.EXAM_ALL_SUBJECT}, key = "#examinationDto.id")
-	public int update(ExaminationDto examinationDto) {
-		Examination examination = new Examination();
-		BeanUtils.copyProperties(examinationDto, examination);
-		if (examinationDto.getCourse() != null) {
-			examination.setCourseId(examinationDto.getCourse().getId());
+	public void addExaminationMembers(ExaminationDto dto, String user, String tenantCode) {
+		// 未发布
+		if (!EXAM_STATUS_PUBLISHED.equals(dto.getStatus())) {
+			return;
 		}
-		examination.setCommonValue();
-		return super.update(examination);
+		Long id = dto.getId();
+		// 用户 ID
+		memberService.addMembers(id, dto.getMembers(), EXAM_MEMBER_EXAM, EXAM_MEMBER_TYPE_USER, user, tenantCode);
+		// 部门 ID
+		String deptMember = dto.getDeptMember();
+		if (StringUtils.isNotEmpty(deptMember)) {
+			memberService.addMembers(id, Collections.singletonList(Long.valueOf(deptMember)), EXAM_MEMBER_EXAM,
+					EXAM_MEMBER_TYPE_DEPT, user, tenantCode);
+		}
 	}
 
 	@Override
@@ -201,17 +236,12 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		}
 	}
 
-	/**
-	 * 查询考试数量
-	 */
 	public int findExaminationCount(Examination examination) {
 		return this.dao.findExaminationCount(examination);
 	}
 
 	public PageInfo<SubjectDto> findSubjectPageById(SubjectDto subjectDto, Map<String, Object> params, int pageNum,
 			int pageSize) {
-		// 返回结果
-		PageInfo<SubjectDto> subjectDtoPageInfo = new PageInfo<>();
 		// 查询考试题目关联表
 		ExaminationSubject es = new ExaminationSubject();
 		es.setTenantCode(SysUtil.getTenantCode());
@@ -231,9 +261,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 			subjectDtoList = subjectDtoList.stream().sorted(Comparator.comparing(SubjectDto::getSort))
 					.collect(Collectors.toList());
 		}
-		subjectDtoPageInfo.setList(subjectDtoList);
-		PageUtil.copyProperties(examinationSubjects, subjectDtoPageInfo);
-		return subjectDtoPageInfo;
+		return PageUtil.newPageInfo(examinationSubjects, subjectDtoList);
 	}
 
 	/**
@@ -383,10 +411,20 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		return Boolean.TRUE;
 	}
 
+	@Transactional
+	public void clearCurrentSubjects(Long id) {
+		List<SimpleSubjectDto> subjects = allSubjects(id);
+		if (CollectionUtils.isNotEmpty(subjects)) {
+			for (SimpleSubjectDto subject : subjects) {
+				subjectsService.physicalDelete(subject.getId());
+			}
+		}
+	}
+
 	/**
 	 * 随机选取题目
 	 */
-	public List<SubjectDto> randomAddSubject(List<Subjects> subjects, int cnt) {
+	private List<SubjectDto> randomAddSubject(List<Subjects> subjects, int cnt) {
 		StopWatch start = StopWatchUtil.start();
 		// 已经选取的题目ID，用于去重
 		Set<Long> idSet = Sets.newHashSetWithExpectedSize(cnt);
@@ -416,13 +454,50 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		return result;
 	}
 
-	@Transactional
-	public void clearCurrentSubjects(Long id) {
-		List<SimpleSubjectDto> subjects = allSubjects(id);
-		if (CollectionUtils.isNotEmpty(subjects)) {
-			for (SimpleSubjectDto subject : subjects) {
-				subjectsService.physicalDelete(subject.getId());
+	private PageInfo<ExaminationDto> toDtoPage(PageInfo<Examination> page, List<Examination> list,
+			Map<String, Object> params) {
+		List<ExaminationDto> dtoList = toDtoList(list);
+		if (Status.OPEN.equals(params.get("favorite"))) {
+			examFavoritesService.findExamStartCounts(dtoList);
+			examFavoritesService.findUserFavorites(dtoList);
+			examFavoritesService.findFavCount(dtoList);
+		}
+		return PageUtil.newPageInfo(page, dtoList);
+	}
+
+	private List<ExaminationDto> toDtoList(List<Examination> examinations) {
+		Long[] ids = examinations.stream().map(Examination::getCourseId).distinct().toArray(Long[]::new);
+		List<Course> courses = courseService.findListById(ids);
+		Map<Long, Course> courseMap = toCourseMap(courses);
+		return examinations.stream().map(exam -> toDto(exam, courseMap)).collect(Collectors.toList());
+	}
+
+	private Map<Long, Course> toCourseMap(List<Course> courses) {
+		Map<Long, Course> courseMap = Maps.newHashMap();
+		if (CollectionUtils.isNotEmpty(courses)) {
+			for (Course course : courses) {
+				courseMap.put(course.getId(), course);
 			}
+		}
+		return courseMap;
+	}
+
+	private ExaminationDto toDto(Examination exam, Map<Long, Course> courseMap) {
+		ExaminationDto dto = ExaminationDto.of(exam);
+		Optional.ofNullable(courseMap.get(exam.getCourseId())).ifPresent(dto::setCourse);
+		initExaminationImage(dto);
+		dto.setTypeLabel(ExaminationType.matchByValue(dto.getType()).getName());
+		return dto;
+	}
+
+	private void initExaminationImage(ExaminationDto examinationDto) {
+		try {
+			if (examinationDto.getImageId() != null && examinationDto.getImageId() != 0L) {
+				String imageUrl = qiNiuService.getPreviewUrl(examinationDto.getImageId());
+				examinationDto.setImageUrl(StringUtils.getIfEmpty(imageUrl, randomImageService::randomImage));
+			}
+		} catch (Exception e) {
+			log.error("initExaminationImage failed", e);
 		}
 	}
 }

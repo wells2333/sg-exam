@@ -3,7 +3,7 @@
     <BasicForm @register="registerForm">
       <template #remoteSearch="{ model, field }">
         <ApiSelect
-          :api="selectUsers"
+          :api="getSelectUserList"
           showSearch
           v-model:value="model[field]"
           :filterOption="false"
@@ -25,9 +25,7 @@ import { BasicModal, useModalInner } from '/@/components/Modal';
 import { BasicForm, useForm, ApiSelect} from '/@/components/Form/index';
 import { formSchema } from './message.data';
 import {getMessageInfo, createMessage, updateMessage} from '/@/api/sys/message';
-import {selectUsers} from "/@/api/sys/message";
-import {getDeptList} from "/@/api/sys/dept";
-
+import {getSelectDeptList, getSelectUserList} from "/@/api/sys/select";
 export default defineComponent({
   name: 'MessageModal',
   components: { BasicModal, BasicForm, ApiSelect },
@@ -48,7 +46,7 @@ export default defineComponent({
       await resetFields();
       id = data.record?.id || null;
       isUpdate.value = !!data?.isUpdate;
-      const treeData = await getDeptList();
+      const treeData = await getSelectDeptList();
       updateSchema([
         {
           field: 'receiverDeptId',
@@ -95,7 +93,7 @@ export default defineComponent({
       registerModal,
       registerForm,
       getTitle,
-      selectUsers,
+      getSelectUserList,
       onSearch,
       handleSubmit
     };

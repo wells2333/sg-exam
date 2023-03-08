@@ -104,3 +104,25 @@ ALTER TABLE `sys_message`
 ALTER TABLE `sys_message`
     ADD COLUMN `status` tinyint(1) NOT NULL COMMENT '状态，0：草稿，1：已发布';
 
+ALTER TABLE `exam_examination`
+    ADD COLUMN `access_type` tinyint(1) NOT NULL COMMENT '权限控制，0：全部用户，1：指定用户，2：指定部门' AFTER `answer_type`;
+
+CREATE TABLE `exam_examination_member` (
+   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+   `exam_type` tinyint(1) unsigned zerofill NOT NULL DEFAULT '0' COMMENT '类型，0：课程，1：考试',
+   `creator` varchar(128) NOT NULL COMMENT '创建人',
+   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+   `operator` varchar(128) NOT NULL COMMENT '修改人',
+   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
+   `tenant_code` varchar(16) NOT NULL COMMENT '租户编号',
+   `member_type` tinyint(1) NOT NULL COMMENT '成员类型，0：全部用户，1：用户ID，2：部门',
+   `member_id` bigint(20) NOT NULL COMMENT '成员ID',
+   `exam_id` bigint(20) NOT NULL COMMENT '考试/课程ID',
+   PRIMARY KEY (`id`) USING BTREE,
+   KEY `idx_type` (`exam_type`),
+   KEY `idx_member_id` (`member_id`),
+   KEY `idx_member_type` (`member_type`),
+   KEY `idx_exam_type` (`exam_type`),
+   KEY `idx_exam_id` (`exam_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8 COMMENT='考试成员表';

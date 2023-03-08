@@ -1,4 +1,4 @@
-package com.github.tangyi.api.user.dto;
+package com.github.tangyi.api.common;
 
 import lombok.Data;
 
@@ -6,7 +6,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 @Data
-public class SysMessageUserDto implements Serializable {
+public class IdNameDto implements Serializable {
 
 	@Serial
 	private static final long serialVersionUID = 1L;

@@ -2,6 +2,7 @@ package com.github.tangyi.exam.controller.exam;
 
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.dto.ExaminationDto;
+import com.github.tangyi.api.exam.dto.MemberDto;
 import com.github.tangyi.api.exam.dto.RandomSubjectDto;
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.Examination;
@@ -30,7 +31,7 @@ public class ExaminationController extends BaseController {
 	private final IExaminationService examinationService;
 
 	@GetMapping("/{id}")
-	@Operation(summary = "获取考试信息", description = "根据考试id获取考试信息")
+	@Operation(summary = "获取考试信息", description = "根据考试 ID 获取考试信息")
 	public R<Examination> examination(@PathVariable Long id) {
 		return R.success(examinationService.get(id));
 	}
@@ -41,6 +42,12 @@ public class ExaminationController extends BaseController {
 		return R.success(examinationService.getDetail(id));
 	}
 
+	@GetMapping("/{id}/getMembers")
+	@Operation(summary = "获取考试成员 ID", description = "根据考试 ID 获取考试成员 ID")
+	public R<MemberDto> getMembers(@PathVariable Long id) {
+		return R.success(examinationService.getMembers(id));
+	}
+
 	@GetMapping("/anonymousUser/{id}")
 	@Operation(summary = "获取考试信息", description = "根据考试id获取考试详细信息")
 	public R<Examination> anonymousUserGet(@PathVariable Long id) {
@@ -49,10 +56,18 @@ public class ExaminationController extends BaseController {
 
 	@GetMapping("examinationList")
 	@Operation(summary = "获取考试列表")
-	public R<PageInfo<ExaminationDto>> list(@RequestParam Map<String, Object> condition,
+	public R<PageInfo<ExaminationDto>> examinationList(@RequestParam Map<String, Object> condition,
 			@RequestParam(value = PAGE, required = false, defaultValue = PAGE_DEFAULT) int pageNum,
 			@RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize) {
 		return R.success(examinationService.examinationList(condition, pageNum, pageSize));
+	}
+
+	@GetMapping("userExaminationList")
+	@Operation(summary = "获取用户有权限的考试列表")
+	public R<PageInfo<ExaminationDto>> userExaminationList(@RequestParam Map<String, Object> condition,
+			@RequestParam(value = PAGE, required = false, defaultValue = PAGE_DEFAULT) int pageNum,
+			@RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize) {
+		return R.success(examinationService.userExaminationList(condition, pageNum, pageSize));
 	}
 
 	@RequestMapping("subjectList")
@@ -69,7 +84,7 @@ public class ExaminationController extends BaseController {
 	@SgLog(value = "创建考试", operationType = OperationType.INSERT)
 	public R<Boolean> add(@RequestBody @Valid ExaminationDto examinationDto) {
 		examinationDto.setCommonValue();
-		return R.success(examinationService.insert(examinationDto) > 0);
+		return R.success(examinationService.insertExamination(examinationDto) > 0);
 	}
 
 	@PutMapping("{id}")
@@ -78,7 +93,7 @@ public class ExaminationController extends BaseController {
 	public R<Boolean> update(@PathVariable Long id, @RequestBody @Valid ExaminationDto examinationDto) {
 		examinationDto.setId(id);
 		examinationDto.setCommonValue();
-		return R.success(examinationService.update(examinationDto) > 0);
+		return R.success(examinationService.updateExamination(examinationDto) > 0);
 	}
 
 	@DeleteMapping("{id}")

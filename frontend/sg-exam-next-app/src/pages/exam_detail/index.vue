@@ -20,11 +20,6 @@
               </text>
             </view>
             <view class="exam-detail-item-info">
-              <text class="exam-desc-item">
-                模式：{{ examInfo.answerType===0 ? '展示全部题目' : '顺序答题' }}
-              </text>
-            </view>
-            <view class="exam-detail-item-info">
               <text class="exam-desc-item" v-if="examInfo.course !== null">
                 课程：{{ examInfo.course.courseName }}
               </text>
@@ -99,17 +94,17 @@ export default {
         await showLoading();
         const {id} = api.getUserInfo();
         if (!id) {
-          await warnMessage('请先登录');
+          await warnMessage('请先登录', 1500);
           return;
         }
         const startResult = await examApi.startExam(examId, id);
         if (startResult && startResult.code === 1) {
-          await warnMessage(startResult.message);
+          await warnMessage(startResult.message, 1500);
           return;
         }
         const {code, result, message} = startResult;
         if (code !== 0) {
-          await warnMessage(message);
+          await warnMessage(message, 1500);
           return;
         }
         const {examination, examRecord, subjectDto, total, cards} = result;

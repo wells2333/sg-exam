@@ -1,18 +1,7 @@
 <template>
   <div class="subject-box">
     <el-row :gutter="30">
-      <el-col :span="5">
-        <div class="tool-bar">
-          <div class="current-progress">
-            当前进度: {{ subject.sort }}/{{ cards.length }}
-          </div>
-          <div class="answer-card">
-            <el-button type="text" icon="el-icon-date" @click="answerCard">答题卡</el-button>
-          </div>
-          <el-button type="success" icon="el-icon-date" @click="submitExam">提交</el-button>
-        </div>
-      </el-col>
-      <el-col :span="18">
+      <el-col :span="16" :offset="3">
         <div class="subject-box-card">
           <div class="subject-exam-title">{{ exam.examinationName }}（共{{
               cards.length
@@ -28,6 +17,17 @@
             <el-button plain @click="last" :loading="loadingLast">上一题</el-button>
             <el-button plain @click="next" :loading="loadingNext">下一题</el-button>
           </div>
+        </div>
+      </el-col>
+      <el-col :span="3">
+        <div class="tool-bar">
+          <div class="current-progress">
+            当前进度: {{ subject.sort }}/{{ cards.length }}
+          </div>
+          <div class="answer-card">
+            <el-button type="text" icon="el-icon-date" @click="answerCard">答题卡</el-button>
+          </div>
+          <el-button type="success" icon="el-icon-date" @click="submitExam">提交</el-button>
         </div>
       </el-col>
     </el-row>

@@ -5,6 +5,7 @@ import com.github.tangyi.api.exam.model.Examination;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.BeanUtils;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -27,5 +28,11 @@ public class ExaminationDto extends Examination {
 	 * 是否收藏
 	 */
 	private boolean favorite;
+
+	public static ExaminationDto of(Examination examination) {
+		ExaminationDto dto = new ExaminationDto();
+		BeanUtils.copyProperties(examination, dto);
+		return dto;
+	}
 
 }

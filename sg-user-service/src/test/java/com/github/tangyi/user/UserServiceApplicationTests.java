@@ -28,13 +28,8 @@ class UserServiceApplicationTests extends BaseTests {
 
 	private String token;
 
-	@Test
-	void testTokenLogin() throws Exception {
-		setupToken();
-	}
-
 	@SuppressWarnings("unchecked")
-	private void setupToken() throws Exception {
+	void setupToken() throws Exception {
 		if (this.token != null) {
 			return;
 		}
@@ -42,10 +37,8 @@ class UserServiceApplicationTests extends BaseTests {
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(tokenLoginUri)
 				.header("Tenant-Code", "gitee");
 		ResultActions action = mvc.perform(builder);
-		StatusResultMatchers status = MockMvcResultMatchers.status();
-		ResultMatcher ok = status.isOk();
-		String result = action.andDo(MockMvcResultHandlers.print()).andExpect(ok).andReturn().getResponse()
-				.getContentAsString();
+		String result = action.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
+				.andReturn().getResponse().getContentAsString();
 		Assertions.assertNotNull(result);
 		R<JSONObject> r = JSON.parseObject(result, R.class);
 		JSONObject res = r.getResult();
@@ -56,11 +49,14 @@ class UserServiceApplicationTests extends BaseTests {
 	}
 
 	@Test
+	void testTokenLogin() throws Exception {
+		setupToken();
+	}
+
+	@Test
 	void testGetNotice() throws Exception {
 		setupToken();
-		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/v1/notice/getNotice")
-				.header("Tenant-Code", "gitee").header("Authorization", token);
-		ResultActions action = mvc.perform(builder);
+		ResultActions action = mvc.perform(mockReq("/v1/notice/getNotice"));
 		StatusResultMatchers status = MockMvcResultMatchers.status();
 		ResultMatcher ok = status.isOk();
 		String result = action.andDo(MockMvcResultHandlers.print()).andExpect(ok).andReturn().getResponse()
@@ -73,10 +69,21 @@ class UserServiceApplicationTests extends BaseTests {
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/v1/config/getDefaultSysConfig")
 				.header("Tenant-Code", "gitee");
 		ResultActions action = mvc.perform(builder);
-		StatusResultMatchers status = MockMvcResultMatchers.status();
-		ResultMatcher ok = status.isOk();
-		String result = action.andDo(MockMvcResultHandlers.print()).andExpect(ok).andReturn().getResponse()
-				.getContentAsString();
+		String result = action.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
+				.andReturn().getResponse().getContentAsString();
+		Assertions.assertNotNull(result);
+	}
+
+	MockHttpServletRequestBuilder mockReq(String url) {
+		return MockMvcRequestBuilders.get(url).header("Tenant-Code", "gitee").header("Authorization", token);
+	}
+
+	@Test
+	void getGetUserExaminationList() throws Exception {
+		setupToken();
+		ResultActions action = mvc.perform(mockReq("/v1/examination/userExaminationList"));
+		String result = action.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
+				.andReturn().getResponse().getContentAsString();
 		Assertions.assertNotNull(result);
 	}
 }

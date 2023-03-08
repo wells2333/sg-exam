@@ -1,47 +1,49 @@
 <template>
   <AtMessage/>
-  <view class="fixed-top">
-    <view class="subject-exam-title bg-white">
-      <view>{{ examination.examinationName }}({{ examination.totalScore }}分)</view>
-      <view class="subject-exam-progress">
-        <at-progress :percent="percentage" size="small" strokeWidth="8"/>
+  <view v-if="!loading">
+    <view class="fixed-top">
+      <view class="subject-exam-title bg-white">
+        <view>{{ examination.examinationName }}({{ examination.totalScore }}分)</view>
+        <view class="subject-exam-progress">
+          <at-progress :percent="percentage" size="small" strokeWidth="8"/>
+        </view>
       </view>
+    </view>
+    <view class="fixed-top-next subject-box">
+      <view class="subject-content bg-white" v-for="(item, index) in subjects" :key="index">
+        <view class="subject-type-label">
+          <at-tag size="small" type="primary">{{ item.typeLabel }}</at-tag>
+          <at-icon v-if="examination.type !== 0" @click="handleFavSubject(item)" value="star-2" size='10' :color="item.favorite === true ? '#FFC82C': '#AAAAAA'"></at-icon>
+        </view>
+        <view class="subject-title">
+          <text class="subject-title-content">{{ item.sort }}.&nbsp;</text>
+          <wxparse class="subject-title-content" :html="item.subjectName" key={Math.random()}></wxparse>
+        </view>
+        <view>
+          <view v-if="item.type === 0">
+            <choice :ref="refs[index]" :subject="refItem(item)" @update-selected="handleChoiceSelectedChange"></choice>
+          </view>
+          <view v-else-if="item.type === 3">
+            <choice :ref="refs[index]" :subject="refItem(item)" :multi="true"
+                    @update-selected="handleChoiceSelectedChange"></choice>
+          </view>
+          <view v-else-if="item.type === 1">
+            <short-answer :ref="refs[index]" :subject="refItem(item)"
+                          @update-selected="handleChoiceSelectedChange"></short-answer>
+          </view>
+          <view v-else-if="item.type === 4">
+            <judgement :ref="refs[index]" :subject="refItem(item)"
+                       @update-selected="handleChoiceSelectedChange"></judgement>
+          </view>
+        </view>
+      </view>
+      <view class="all-subject-submit-btn">
+        <at-button type="primary" :circle="true" @click="handleSubmit">提交</at-button>
+      </view>
+      <view class="all-subject-bottom bg-white"></view>
     </view>
   </view>
-  <view class="fixed-top-next subject-box">
-    <view class="subject-content bg-white" v-for="(item, index) in subjects" :key="index">
-      <view class="subject-type-label">
-        <at-tag size="small" type="primary">{{ item.typeLabel }}</at-tag>
-        <at-icon v-if="examination.type !== 0" @click="handleFavSubject(item)" value="star-2" size='10' :color="item.favorite === true ? '#FFC82C': '#AAAAAA'"></at-icon>
-      </view>
-      <view class="subject-title">
-        <text class="subject-title-content">{{ item.sort }}.&nbsp;</text>
-        <wxparse class="subject-title-content" :html="item.subjectName" key={Math.random()}></wxparse>
-      </view>
-      <view>
-        <view v-if="item.type === 0">
-          <choice :ref="refs[index]" :subject="refItem(item)" @update-selected="handleChoiceSelectedChange"></choice>
-        </view>
-        <view v-else-if="item.type === 3">
-          <choice :ref="refs[index]" :subject="refItem(item)" :multi="true"
-                  @update-selected="handleChoiceSelectedChange"></choice>
-        </view>
-        <view v-else-if="item.type === 1">
-          <short-answer :ref="refs[index]" :subject="refItem(item)"
-                        @update-selected="handleChoiceSelectedChange"></short-answer>
-        </view>
-        <view v-else-if="item.type === 4">
-          <judgement :ref="refs[index]" :subject="refItem(item)"
-                     @update-selected="handleChoiceSelectedChange"></judgement>
-        </view>
-      </view>
-    </view>
-    <view class="all-subject-submit-btn">
-      <at-button type="primary" :circle="true" @click="handleSubmit">提交</at-button>
-    </view>
-    <view class="all-subject-bottom bg-white"></view>
-  </view>
-  <at-modal :isOpened="isOpenedSubmitModal" title="确定提交吗？" cancelText="取消"
+   <at-modal :isOpened="isOpenedSubmitModal" title="确定提交吗？" cancelText="取消"
             confirmText="确认"
             @close="handleCloseSubmitModal"
             @cancel="handleCloseSubmitModal"
@@ -74,9 +76,11 @@ export default {
     const examination = ref<any>({});
     const isOpenedSubmitModal = ref<boolean>(false);
     const refs = ref<any>([]);
+    const loading = ref<boolean>(true);
 
     async function fetch() {
       try {
+        loading.value = true;
         await showLoading();
         examination.value = api.getExamination();
         const params = currentInstance.router.params;
@@ -88,6 +92,7 @@ export default {
         }
       } finally {
         hideLoading();
+        loading.value = false;
       }
     }
 
@@ -151,6 +156,7 @@ export default {
 
     async function handleConfirmSubmitModal() {
       try {
+        handleCloseSubmitModal();
         await showLoading('提交中');
         const data = ref<any>([]);
         unref(subjects).forEach(subject => {
@@ -161,10 +167,7 @@ export default {
         await successMessage('提交成功');
       } finally {
         hideLoading();
-        handleCloseSubmitModal();
-        setTimeout(() => {
-          Taro.redirectTo({url: "/pages/record/index?type=" + examination.value.type})
-        }, 500);
+        Taro.redirectTo({url: "/pages/record/index?type=" + examination.value.type})
       }
     }
 
@@ -187,7 +190,9 @@ export default {
     onMounted(() => {
       fetch();
     });
+
     return {
+      loading,
       subjects,
       percentage,
       examination,

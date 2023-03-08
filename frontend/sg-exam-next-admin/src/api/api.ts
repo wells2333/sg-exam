@@ -159,3 +159,9 @@ export const SysConfigApi = {
   Base: UserService + '/v1/config',
   ConfigList: UserService + '/v1/config/list',
 }
+
+export const SelectApi = {
+  Base: UserService + '/v1/select',
+  UserList: UserService + '/v1/select/userList',
+  DeptList: UserService + '/v1/select/deptList',
+}

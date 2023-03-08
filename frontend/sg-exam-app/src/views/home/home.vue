@@ -223,7 +223,7 @@
 <script>
 import OFooter from '../common/footer'
 import CountTo from 'vue-count-to'
-import {mapGetters} from "vuex";
+import {mapGetters} from 'vuex'
 
 export default {
   props: {

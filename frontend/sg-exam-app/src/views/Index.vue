@@ -76,7 +76,7 @@ export default {
   },
   computed: {
     ...mapState({
-      userInfo: state => state.user.userInfo,
+      userInfo: state => state.user.userInfo
     }),
     ...mapGetters([
       'sysConfig'

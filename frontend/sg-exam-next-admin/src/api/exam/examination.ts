@@ -8,6 +8,9 @@ export const getExaminationList = (params?: object) =>
 export const getExaminationSubjectList = (params?: object) =>
   defHttp.get<ApiRes>({url: ExaminationApi.SubjectList, params});
 
+export const getExaminationMembers = (id?: object) =>
+  defHttp.get<ApiRes>({url: ExaminationApi.Base + '/' + id + '/getMembers'});
+
 export const createExamination = (params?: object
 ) => {
   return defHttp.post<ApiRes>(
@@ -43,7 +46,6 @@ export const nexSubjectNo = (id?: string) => {
     }
   );
 }
-
 
 export const batchAddSubjects = (id?: string, subjects?: Recordable[]) => {
   return defHttp.post<ApiRes>(

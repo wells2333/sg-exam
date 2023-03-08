@@ -15,6 +15,7 @@
         <result column="sort" property="sort"/>
         <result column="tags" property="tags"/>
         <result column="answer_type" property="answerType"/>
+        <result column="access_type" property="accessType"/>
         <result column="remark" property="remark"/>
         <result column="creator" property="creator"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -64,6 +65,37 @@
         <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
+    </select>
+
+    <select id="findUserExaminations" resultMap="examinationResultMap">
+        SELECT *
+        FROM exam_examination a
+        WHERE a.is_deleted = 0 AND a.status = 1 AND a.tenant_code = #{params.tenantCode}
+        <if test="params.examinationName != null and params.examinationName != ''">
+            AND (examination_name LIKE CONCAT('%',#{params.examinationName},'%'))
+        </if>
+        <if test="params.type != null and params.type != ''">
+            AND type = #{params.type}
+        </if>
+        <if test="params.status != null and params.status != ''">
+            AND status = #{params.status}
+        </if>
+        AND (
+        a.access_type = 0
+        <if test="params.userId != null">
+            OR (a.access_type = 1 AND a.id IN (SELECT exam_id
+            FROM exam_examination_member
+            WHERE exam_type = 1
+            AND member_type = 1
+            AND member_id = #{params.userId}))
+        </if>
+        <if test="params.deptId != null">
+            OR (a.access_type = 2 AND a.id IN (SELECT exam_id
+            FROM exam_examination_member
+            WHERE exam_type = 1 AND member_type = 2 AND member_id = #{params.deptId}))
+        </if>
+        )
+        ORDER BY update_time DESC
     </select>
 
     <select id="findExaminationCount" resultType="java.lang.Integer">

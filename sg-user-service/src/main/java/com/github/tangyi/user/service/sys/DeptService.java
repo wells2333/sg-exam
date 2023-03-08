@@ -45,6 +45,7 @@ public class DeptService extends CrudService<DeptMapper, Dept> implements IDeptS
 	/**
 	 * 查询树形部门集合
 	 */
+	@Override
 	public List<DeptDto> deptList() {
 		Dept dept = new Dept();
 		dept.setTenantCode(SysUtil.getTenantCode());

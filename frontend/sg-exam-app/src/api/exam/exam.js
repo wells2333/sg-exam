@@ -4,7 +4,7 @@ const baseExaminationUrl = '/sg-user-service/v1/examination/'
 
 export function fetchList (query) {
   return request({
-    url: baseExaminationUrl + 'examinationList',
+    url: baseExaminationUrl + 'userExaminationList',
     method: 'get',
     params: query
   })

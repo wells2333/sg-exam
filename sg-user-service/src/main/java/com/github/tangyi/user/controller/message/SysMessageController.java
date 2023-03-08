@@ -1,34 +1,20 @@
 package com.github.tangyi.user.controller.message;
 
 import com.github.pagehelper.PageInfo;
-import com.github.tangyi.api.user.dto.SysMessageUserDto;
 import com.github.tangyi.api.user.model.SysMessage;
-import com.github.tangyi.api.user.model.User;
 import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.log.OperationType;
 import com.github.tangyi.common.log.SgLog;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.user.service.message.SysMessageService;
-import com.github.tangyi.user.service.sys.UserService;
-import com.google.common.collect.Lists;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -39,8 +25,6 @@ import java.util.Map;
 public class SysMessageController extends BaseController {
 
 	private final SysMessageService sysMessageService;
-
-	private final UserService userService;
 
 	@GetMapping("/list")
 	@Operation(summary = "查询消息列表")
@@ -62,27 +46,6 @@ public class SysMessageController extends BaseController {
 			@RequestParam(value = PAGE, required = false, defaultValue = PAGE_DEFAULT) int pageNum,
 			@RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize) {
 		return R.success(sysMessageService.getPublishedMessage(condition, pageNum, pageSize));
-	}
-
-	@GetMapping("selectUsers")
-	@Operation(summary = "获取用户列表")
-	public R<PageInfo<SysMessageUserDto>> selectUsers(@RequestParam Map<String, Object> condition,
-			@RequestParam(value = PAGE, required = false, defaultValue = PAGE_DEFAULT) int pageNum,
-			@RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize) {
-		PageInfo<SysMessageUserDto> dtoPage = new PageInfo<>();
-		List<SysMessageUserDto> dtoList = Lists.newArrayList();
-		PageInfo<User> userPage = userService.findPage(condition, pageNum, pageSize);
-		List<User> users = userPage.getList();
-		if (CollectionUtils.isNotEmpty(users)) {
-			for (User user : users) {
-				SysMessageUserDto dto = new SysMessageUserDto();
-				dto.setId(user.getId());
-				dto.setName(user.getName());
-				dtoList.add(dto);
-			}
-		}
-		dtoPage.setList(dtoList);
-		return R.success(dtoPage);
 	}
 
 	@PostMapping

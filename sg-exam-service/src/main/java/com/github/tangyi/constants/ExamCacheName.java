@@ -62,4 +62,6 @@ public interface ExamCacheName {
 
 	String FAV_START_COUNT = "fav_start_count";
 
+	String EXAM_MEMBER = "exam:member";
+
 }

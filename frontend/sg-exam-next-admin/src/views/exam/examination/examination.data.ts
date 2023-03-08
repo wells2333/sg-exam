@@ -7,6 +7,10 @@ import {DescItem} from "/@/components/Description";
 import {uploadImage} from "/@/api/exam/examMedia";
 import {SgUpload} from "/@/components/SgUpload";
 
+const isPartUser = (accessType: number) => accessType === 1;
+
+const isDept = (accessType: number) => accessType === 2;
+
 export const examColor = {
   0: 'green',
   1: 'magenta',
@@ -191,7 +195,7 @@ export const formSchema: FormSchema[] = [
     component: 'RangePicker',
     componentProps: {
       'show-time': true,
-      valueFormat: 'YYYY-MM-DD HH:mm:ss'
+      valueFormat: 'YYYY-MM-DD HH:mm:ss',
     },
     colProps: { span: 12 },
   },
@@ -215,6 +219,41 @@ export const formSchema: FormSchema[] = [
       placeholder: '多个标签用逗号分隔',
     },
     colProps: { span: 12 },
+  },
+  {
+    field: 'accessType',
+    label: '权限控制',
+    component: 'RadioButtonGroup',
+    defaultValue: 0,
+    componentProps: {
+      options: [
+        { label: '全部用户', value: 0 },
+        { label: '指定用户', value: 1 },
+        { label: '指定部门', value: 2 },
+      ],
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'members',
+    label: '选择用户',
+    component: 'Input',
+    slot: 'remoteSearch',
+    ifShow: ({ values }) => isPartUser(values.accessType),
+  },
+  {
+    field: 'deptMember',
+    label: '选择部门',
+    component: 'TreeSelect',
+    componentProps: {
+      replaceFields: {
+        label: 'deptName',
+        key: 'id',
+        value: 'id',
+      },
+      getPopupContainer: () => document.body,
+    },
+    ifShow: ({ values }) => isDept(values.accessType),
   },
   {
     label: '注意事项',
@@ -264,5 +303,5 @@ export const examinationDetailFormSchema: DescItem[] = [
   {
     field: 'remark',
     label: '备注',
-  }
+  },
 ];
