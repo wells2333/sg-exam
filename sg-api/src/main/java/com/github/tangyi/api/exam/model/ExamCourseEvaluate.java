@@ -54,6 +54,9 @@ public class ExamCourseEvaluate extends BaseEntity<ExamCourseEvaluate> {
 	@Transient
 	private String courseName;
 
+	@Transient
+	private String evaluateTime;
+
 	public void setEvaluateContent(String evaluateContent) {
 		this.evaluateContent = evaluateContent;
 	}
@@ -100,6 +103,14 @@ public class ExamCourseEvaluate extends BaseEntity<ExamCourseEvaluate> {
 
 	public void setOperatorName(String operatorName) {
 		this.operatorName = operatorName;
+	}
+
+	public String getEvaluateTime() {
+		return evaluateTime;
+	}
+
+	public void setEvaluateTime(String evaluateTime) {
+		this.evaluateTime = evaluateTime;
 	}
 
 	@Override
