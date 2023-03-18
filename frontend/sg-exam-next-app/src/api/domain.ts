@@ -10,7 +10,7 @@ class domain {
         switch (envVersion) {
             case "develop":
                 // 开发版
-                this.baseUrl = "http://127.0.0.1:9183";
+                this.baseUrl = "http://192.168.1.9:9183";
                 break;
             case "trial":
                 // 体验版

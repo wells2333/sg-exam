@@ -1,49 +1,29 @@
 <template>
-  <view>
-    <view class="banner-swiper-view">
-      <swiper
-          class='banner-swiper'
-          indicatorColor='#999'
-          indicatorActiveColor='#333'
-          current='current'
-          duration='500'
-          interval='5000'
-          circular='false'
-          autoplay='false'
-          indicatorDots='true'>
-        <swiper-item v-for="(item, idx) in banners" :key="idx">
-          <view @click="handleClickBanner(item)">
-            <image :src="item.imageUrl" class="banner-swiper-image"/>
-          </view>
-        </swiper-item>
-      </swiper>
-    </view>
-    <view class="home-view">
-      <view class="home-view-tips">热门题库</view>
-      <view class="home-content" v-if="gridData.length > 0">
-        <view class="home-item gray-border" v-for="(item, idx) in gridData" :key="idx" @click="handleClickCate(item)">
-          <view class="home-item-left">
-            <text>{{item.value}}</text>
-            <at-tag class="label" type="primary" size="small">共 {{item.subjectCnt}} 题</at-tag>
-          </view>
-          <AtIcon class="home-item-right" value='chevron-right' size='8' color='#346FC2'></AtIcon>
+  <view class="home-view">
+    <view class="home-content" v-if="gridData.length > 0">
+      <view class="home-item mt-22" v-for="(item, idx) in gridData" :key="idx" @click="handleClickCate(item)">
+        <view class="home-item-left">
+          <text>{{item.value}}</text>
+          <nut-tag class="label" type="primary" size="small" plain>共 {{item.subjectCnt}} 题</nut-tag>
         </view>
-      </view>
-      <view v-else class="no-more-data-text">
-        <text>暂无更多数据</text>
+        <IconFont class="home-item-right" name="rect-right" color="#346FC2"></IconFont>
       </view>
     </view>
   </view>
 </template>
 
 <script lang="ts">
+import {IconFont} from '@nutui/icons-vue-taro';
 import Taro from "@tarojs/taro";
 import {onMounted, ref} from 'vue';
 import examApi from '../../api/exam.api';
-import operationApi from "../../api/operation.api";
-import {showLoading, hideLoading} from "../../utils/util";
+import operationApi from '../../api/operation.api';
+import {showLoading, hideLoading} from '../../utils/util';
 
 export default {
+  components: {
+    IconFont
+  },
   setup() {
     const banners = ref<any>([]);
     const tree = ref<any>([]);
@@ -99,7 +79,7 @@ export default {
     }
 
     function handleClickCate(item) {
-      Taro.navigateTo({url: "/pages/subjects_list/index?categoryId=" + item.id + "&subjectCnt=" + item.subjectCnt})
+      Taro.navigateTo({url: "/pages/exam_pages/subjects_list/index?categoryId=" + item.id + "&subjectCnt=" + item.subjectCnt})
     }
 
     onMounted(() => {
@@ -131,41 +111,5 @@ export default {
 </script>
 
 <style>
-.home-content {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-}
-.home-item {
-  border-radius: 12px;
-  margin-bottom: 20px;
-  padding-top: 6px;
-  padding-bottom: 6px;
-  padding-right: 12px;
-  width: 170px;
-  flex-shrink: 0;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
-.home-item:nth-child(odd) {
-  margin-right: 15px;
-}
-
-.home-item-left {
-  color: black;
-  display: flex;
-  flex-direction: column;
-  padding-left: 22px;
-}
-.home-item-left .label {
-  margin-top: 4px;
-  margin-bottom: 4px;
-}
-.home-item-right {
-
-}
 
 </style>

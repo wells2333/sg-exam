@@ -1,14 +1,17 @@
 <template>
   <view v-bind="$attrs">
-    <view class="at-checkbox">
+    <view class="subject-choice-checkbox">
       <view v-for="(option, idx) in options" :key="option.value" :class="genOptionClasses(option)"
             @tap="handleClick(idx)">
-        <view class="at-checkbox__option-wrap">
-          <view class="at-checkbox__option-cnt">
+        <view class="subject-choice-checkbox__option-wrap">
+          <view class="subject-choice-checkbox__option-cnt">
             <view :class="genOptionLabelClasses(option)">
               <text class="at-icon at-icon-check"/>
             </view>
-            <view class="at-checkbox__title">
+            <view class="subject-choice-checkbox__title">
+              <view class="subject-choice-option-name">
+                <nut-tag color="gray" plain round size="30">{{option.value}}</nut-tag>
+              </view>
               <view v-html="option.label" class="choice-option-label"></view>
             </view>
           </view>
@@ -76,7 +79,7 @@ export default defineComponent({
     function initOptions(subjectOptions) {
       if (subjectOptions !== undefined) {
         subjectOptions.forEach(option => {
-          const label = option.optionName + '. ' + option.optionContent;
+          const label = option.optionContent;
           const value = option.optionName;
           options.value.push({label, value, disabled: props.disabled});
         });
@@ -160,13 +163,45 @@ export default defineComponent({
 })
 </script>
 
-<style>
+<style lang="scss">
 .choice-option-label {
+  font-size: 34px;
   display: inline-flex;
 }
 
-.red-color {
-  background-color: #FF4949;
-  color: white;
+.subject-choice-checkbox {
+  position: relative;
+  background-color: #FFF;
+  padding-bottom: 8px;
 }
+
+.subject-choice-checkbox__option-wrap {
+  border-radius: 8px;
+  padding: 10px 10px;
+}
+
+.subject-choice-checkbox__option-cnt {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.subject-choice-checkbox__title {
+  display: flex;
+  align-items: center;
+  font-size: 0.68267rem;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.subject-choice-option-name {
+  margin-left: 6px;
+  margin-right: 16px;
+}
+
+.at-checkbox__option--selected {
+  background-color: #9e9e9e30;
+  border-radius: 8px;
+}
+
 </style>

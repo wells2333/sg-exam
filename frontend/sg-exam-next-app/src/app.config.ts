@@ -1,36 +1,46 @@
 export default defineAppConfig({
-  pages: [
-      'pages/home/index',
-      'pages/index/index',
-      'pages/login/index',
-      'pages/answer/index',
-      'pages/record/index',
-      'pages/all_subject/index',
-      'pages/next_subject/index',
-      'pages/user/index',
-      'pages/share/index',
-      'pages/about/index',
-      'pages/favorite/index',
-      'pages/exam/index',
-      'pages/exam_detail/index',
-      'pages/course/index',
-      'pages/course_detail/index',
-      'pages/course_section/index',
-      'pages/subjects/index',
-      'pages/subjects_list/index',
-      'pages/subjects_detail/index',
-      'pages/webview/index',
-      'pages/phone_info/index',
-      'pages/user_info/index',
-      'pages/messages/index',
-      'pages/message_detail/index'
-  ],
-  window: {
-    backgroundTextStyle: 'light',
-    navigationBarBackgroundColor: '#fff',
-    navigationBarTitleText: 'SG-EXAM',
-    navigationBarTextStyle: 'black'
-  },
+    pages: [
+        'pages/home/index',
+        'pages/index/index',
+        'pages/register/index',
+        'pages/forgotpassowrd/index',
+        'pages/subjects/index',
+        'pages/user/index'
+    ],
+    subpackages: [{
+        'root': 'pages/exam_pages/',
+        'pages': [
+            'exam/index',
+            'exam_detail/index',
+            'course/index',
+            'course_detail/index',
+            'course_section/index',
+            'subjects_list/index',
+            'subjects_detail/index',
+            'all_subject/index',
+            'next_subject/index',
+            'record/index',
+            'answer/index',
+            'favorite/index',
+        ]
+    }, {
+        'root': 'pages/user_pages/',
+        'pages': [
+            'user_info/index',
+            'messages/index',
+            'message_detail/index',
+            'webview/index',
+            'about/index',
+            'share/index',
+            'phone_info/index'
+        ]
+    }],
+    window: {
+        backgroundTextStyle: 'light',
+        navigationBarBackgroundColor: '#fff',
+        navigationBarTitleText: 'SG-EXAM',
+        navigationBarTextStyle: 'black'
+    },
     tabBar: {
         color: "#505050",
         selectedColor: "#3c4a54",
@@ -58,7 +68,5 @@ export default defineAppConfig({
             }
         ]
     },
-    usingComponents: {
-
-    }
+    usingComponents: {}
 })

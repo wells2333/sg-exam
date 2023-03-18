@@ -35,7 +35,7 @@ public class SgLogAspect {
 		String user = SysUtil.getUser();
 		String tenantCode = SysUtil.getTenantCode();
 		logger.info("[sys-log] {}.{}, operator: {}, type: {}", className, methodName, user, log.operationType());
-		com.github.tangyi.common.model.Log vo = getLog(user);
+		Log vo = getLog(user);
 		vo.setTitle(log.value());
 		long start = System.nanoTime();
 		Object obj = point.proceed();

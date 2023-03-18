@@ -1,3 +1,3 @@
-export default {
-    navigationBarTitleText: '开始体验',
-} as Taro.PageConfig
+export default definePageConfig({
+  navigationBarTitleText: '首页'
+})
