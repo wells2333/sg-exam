@@ -8,7 +8,7 @@ tasks.withType(JavaCompile) {
 
 subprojects {
 	group "com.github.tangyi"
-    version = '0.0.4'
+    version = '0.0.5'
 
     apply plugin: 'java'
     apply plugin: 'io.spring.dependency-management'

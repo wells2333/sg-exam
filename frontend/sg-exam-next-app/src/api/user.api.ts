@@ -10,6 +10,15 @@ class userApi {
         return api.fetchUser<Sg.UserInfo>("/v1/user/info?identityType=4", {}, "GET");
     }
 
+    checkExist(tenantCode: string, username: string) {
+        return api.fetchUserTenant<Sg.UserInfo>("/v1/user/anonymousUser/checkExist/" + username, {identityType: 1}, "GET", tenantCode);
+    }
+
+    register(tenantCode: string, data: object) {
+        Object.assign(data, {identityType: 1});
+        return api.fetchUserTenant<Sg.UserInfo>("/v1/user/anonymousUser/register?ignoreCode=1", data, "POST", tenantCode);
+    }
+
     sendSms(phone: string) {
         const tenantCode = api.getTenantCode();
         return api.fetchUserTenant<any>("/v1/mobile/sendSms/" + phone, {}, "GET", tenantCode);

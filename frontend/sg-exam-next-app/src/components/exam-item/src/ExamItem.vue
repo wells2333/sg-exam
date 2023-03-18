@@ -1,27 +1,24 @@
 <template>
   <view>
     <view @click="handleStart">
-      <image class="card-item-img" :src="item.imageUrl">
-        <view class="card-item-img-top">
-          <text class="card-item-img-top-text">{{ item.typeLabel }}</text>
-        </view>
-      </image>
+      <image class="card-item-img" :src="item.imageUrl"></image>
     </view>
     <view class="card-item-bottom" @click="handleStart">
       <h4 class="card-title">{{ item.examinationName }}</h4>
-      <at-tag :class="index === 0 ? 'card-item-bottom-first-tag card-item-bottom-tag' : 'card-item-bottom-tag'"
-              type="primary" size="small" v-for="(tag, index) in tags">
+      <nut-tag :class="index === 0 ? 'card-item-bottom-first-tag card-item-bottom-tag' : 'card-item-bottom-tag'"
+              type="success" size="small" v-for="(tag, index) in tags">
         {{ tag }}
-      </at-tag>
+      </nut-tag>
     </view>
     <view class="card-item-bottom-fixed">
       <view class="card-item-favorites">
         <view class="card-item-favorites-item">
-          <at-icon value='edit' size='10' color='#AAAAAA'></at-icon>
+          <IconFont name='edit' color='#AAAAAA'></IconFont>
           <text class="card-item-favorites-text">{{ startCount }}</text>
         </view>
         <view class="card-item-favorites-item" @click="handleFavoriteExam">
-          <at-icon value='star-2' size='10' :color="favorite === true ? '#FFC82C' : '#AAAAAA'"></at-icon>
+          <IconFont v-if="favorite" name='star-fill-n' color="#FFC82C"></IconFont>
+          <IconFont v-else name='star-n' color="#AAAAAA"></IconFont>
           <text class="card-item-favorites-text">{{ favoriteCount }}</text>
         </view>
       </view>
@@ -34,7 +31,7 @@
 
 <script lang="ts">
 import {defineComponent, ref} from 'vue';
-import Taro from "@tarojs/taro";
+import {IconFont} from '@nutui/icons-vue-taro';
 import {transformToArray} from "../../../utils/util";
 import examApi from "../../../api/exam.api";
 import api from "../../../api/api";
@@ -42,7 +39,7 @@ import {successMessage} from "../../../utils/util";
 
 export default defineComponent({
   name: 'ExamItem',
-  components: {},
+  components: {IconFont},
   props: {
     item: {
       type: Object
@@ -106,11 +103,5 @@ export default defineComponent({
 </script>
 
 <style>
-
-.at-tag--primary {
-  color: #78A4F4;
-  border-color: #78A4F4;
-  background-color: #FFF;
-}
 
 </style>

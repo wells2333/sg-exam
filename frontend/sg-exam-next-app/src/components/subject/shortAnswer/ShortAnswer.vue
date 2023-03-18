@@ -1,14 +1,14 @@
 <template>
   <view v-bind="$attrs">
     <view class="short-answer-area" v-if="showInput">
-      <at-textarea :value="value" @change="handleChange" placeholder="请输入" :disabled="disabled" :max-length="maxLength"/>
+      <nut-textarea v-model="value" @change="handleChange" placeholder="请输入" :disabled="disabled" :max-length="maxLength"/>
     </view>
   </view>
 </template>
 
 <script lang="ts">
 import {defineComponent, ref, unref} from 'vue';
-import {isNotEmpty, transformToArray} from '../../../utils/util';
+import {isNotEmpty} from '../../../utils/util';
 
 export default defineComponent({
   name: 'ShortAnswer',
@@ -37,7 +37,7 @@ export default defineComponent({
     },
     maxLength: {
       type: Number,
-      default: () => 500
+      default: () => 300
     }
   },
   emits: [
@@ -52,6 +52,7 @@ export default defineComponent({
     const showInput = ref<boolean>(props.showInput);
 
     function handleChange(v) {
+      debugger
       value.value = v;
       props.subject.answerValue = v;
       props.subject.checked = true;
@@ -94,7 +95,7 @@ export default defineComponent({
 })
 </script>
 <style>
-.short-answer-area {
-
+.short-answer-area .nut-textarea {
+  padding: 0;
 }
 </style>

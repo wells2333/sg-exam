@@ -1,33 +1,41 @@
 <template>
-  <AtMessage/>
   <view>
     <view class="banner-swiper-view">
-      <swiper
-          class='banner-swiper'
-          indicatorColor='#999'
-          indicatorActiveColor='#333'
-          current='current'
-          duration='500'
-          interval='5000'
-          circular='false'
-          autoplay='false'
-          indicatorDots='true'>
-        <swiper-item v-for="(item, idx) in banners" :key="idx">
+      <nut-swiper :init-page="banners.length" :pagination-visible="true" pagination-color="#426543" auto-play="3000"
+                  height="150">
+        <nut-swiper-item v-for="(item, idx) in banners" :key="idx">
           <view @click="handleClickBanner(item)">
-            <image :src="item.imageUrl" class="banner-swiper-image"/>
+            <img :src="item.imageUrl" class="banner-swiper-image"/>
           </view>
-        </swiper-item>
-      </swiper>
+        </nut-swiper-item>
+      </nut-swiper>
     </view>
   </view>
   <view v-if="noticeValue !== undefined">
-    <AtNoticebar icon='volume-plus' marquee>
-      {{noticeValue}}
-    </AtNoticebar>
+    <nut-noticebar :text="noticeValue"></nut-noticebar>
   </view>
   <view class="home-view">
-    <view class="home-view-tips">常用功能</view>
-    <AtGrid @click="handleGridClick" :data="homeGridData"/>
+    <view class="home-view-tips">热门功能</view>
+    <nut-grid :column-num="3" square clickable>
+      <nut-grid-item text="考试" @click="handleGridClickExam0">
+        <IconFont font-class-name="iconfont" class-prefix="icon" name="kaoshi" size="30px" color="#FF9800"></IconFont>
+      </nut-grid-item>
+      <nut-grid-item text="课程" @click="handleGridClickCourse">
+        <IconFont font-class-name="iconfont" class-prefix="icon" name="kecheng" size="30px" color="#5ab6ff"></IconFont>
+      </nut-grid-item>
+      <nut-grid-item text="练习" @click="handleGridClickExam1">
+        <IconFont font-class-name="iconfont" class-prefix="icon" name="jiachang_lianxi" size="30px" color="#ff217c"></IconFont>
+      </nut-grid-item>
+      <nut-grid-item text="问卷" @click="handleGridClickExam2">
+        <IconFont font-class-name="iconfont" class-prefix="icon" name="tiaochawenjuan" size="30px" color="#F44336"></IconFont>
+      </nut-grid-item>
+      <nut-grid-item text="面试" @click="handleGridClickExam3">
+        <IconFont font-class-name="iconfont" class-prefix="icon" name="zhenrenmianshi" size="30px" color="#FF9800"></IconFont>
+      </nut-grid-item>
+      <nut-grid-item text="收藏" @click="handleGridClickFav">
+        <IconFont font-class-name="iconfont" class-prefix="icon" name="shoucang" size="30px" color="red"></IconFont>
+      </nut-grid-item>
+    </nut-grid>
     <view class="home-view-tips">热门课程</view>
     <view class="popular-course-item box-show-item mb-bottom-20" v-for="course in courses">
       <course-item :item="course" @click="handleClickCourse" @fav="handleFav"></course-item>
@@ -35,11 +43,12 @@
   </view>
 </template>
 <script lang="ts">
+import Taro from '@tarojs/taro';
+import {IconFont} from '@nutui/icons-vue-taro';
 import {onMounted, ref} from 'vue';
 import userApi from '../../api/user.api';
 import examApi from '../../api/exam.api';
 import operationApi from '../../api/operation.api';
-import Taro from "@tarojs/taro";
 import {shardMessage} from '../../constant/constant';
 import {checkLogin} from "../../utils/filter";
 import {CourseItem} from '../../components/course-item';
@@ -47,6 +56,7 @@ import {showLoading, hideLoading, successMessage} from '../../utils/util';
 
 export default {
   components: {
+    IconFont,
     'course-item': CourseItem
   },
   setup() {
@@ -89,51 +99,32 @@ export default {
       }
     }
 
-    function handleGridClick(item) {
-      if (item.value === '课程') {
-        Taro.navigateTo({url: "/pages/course/index"})
-      } else if (item.value === '考试') {
-        Taro.navigateTo({url: "/pages/exam/index?active=0"})
-      } else if (item.value === '练习') {
-        Taro.navigateTo({url: "/pages/exam/index?active=1"})
-      } else if (item.value === '问卷') {
-        Taro.navigateTo({url: "/pages/exam/index?active=2"})
-      } else if (item.value === '面试') {
-        Taro.navigateTo({url: "/pages/exam/index?active=3"})
-      } else if (item.value === '收藏') {
-        Taro.navigateTo({url: "/pages/favorite/index"})
-      }
+    function handleGridClickExam0() {
+      Taro.navigateTo({url: "/pages/exam_pages/exam/index?active=0"});
     }
 
-    const homeGridData = [
-      {
-        image: 'https://img20.360buyimg.com/jdphoto/s72x72_jfs/t15151/308/1012305375/2300/536ee6ef/5a411466N040a074b.png',
-        value: '考试'
-      },
-      {
-        image: 'https://img12.360buyimg.com/jdphoto/s72x72_jfs/t6160/14/2008729947/2754/7d512a86/595c3aeeNa89ddf71.png',
-        value: '课程'
-      },
-      {
-        image: 'https://img10.360buyimg.com/jdphoto/s72x72_jfs/t5872/209/5240187906/2872/8fa98cd/595c3b2aN4155b931.png',
-        value: '练习'
-      },
-      {
-        image: 'https://img12.360buyimg.com/jdphoto/s72x72_jfs/t10660/330/203667368/1672/801735d7/59c85643N31e68303.png',
-        value: '问卷'
-      },
-      {
-        image: 'https://img14.360buyimg.com/jdphoto/s72x72_jfs/t17251/336/1311038817/3177/72595a07/5ac44618Na1db7b09.png',
-        value: '面试'
-      },
-      {
-        image: 'https://img30.360buyimg.com/jdphoto/s72x72_jfs/t5770/97/5184449507/2423/294d5f95/595c3b4dNbc6bc95d.png',
-        value: '收藏'
-      }
-    ];
+    function handleGridClickExam1() {
+      Taro.navigateTo({url: "/pages/exam_pages/exam/index?active=1"});
+    }
+
+    function handleGridClickExam2() {
+      Taro.navigateTo({url: "/pages/exam_pages/exam/index?active=2"})
+    }
+
+    function handleGridClickExam3() {
+      Taro.navigateTo({url: "/pages/exam_pages/exam/index?active=3"})
+    }
+
+    function handleGridClickCourse() {
+      Taro.navigateTo({url: "/pages/exam_pages/course/index"});
+    }
+
+    function handleGridClickFav() {
+      Taro.navigateTo({url: "/pages/exam_pages/favorite/index"});
+    }
 
     function handleClickCourse(course) {
-      Taro.navigateTo({url: "/pages/course_detail/index?courseId=" + course.id})
+      Taro.navigateTo({url: "/pages/exam_pages/course_detail/index?courseId=" + course.id})
     }
 
     function handleClickBanner(item) {
@@ -142,7 +133,7 @@ export default {
         return;
       }
       if (redirectUrl.startsWith('http')) {
-        Taro.navigateTo({url: "/pages/webview/index?url=" + redirectUrl})
+        Taro.navigateTo({url: "/pages/exam_pages/webview/index?url=" + redirectUrl})
       } else {
         Taro.navigateTo({url: redirectUrl});
       }
@@ -171,15 +162,19 @@ export default {
     return {
       noticeValue,
       current,
-      homeGridData,
       searchValue,
       courses,
       banners,
       init,
       handleSearchChange,
       handleSearch,
-      handleGridClick,
+      handleGridClickExam0,
+      handleGridClickExam1,
+      handleGridClickExam2,
+      handleGridClickExam3,
+      handleGridClickCourse,
       handleClickCourse,
+      handleGridClickFav,
       handleClickBanner,
       handleFav,
       fetchPopularCourses

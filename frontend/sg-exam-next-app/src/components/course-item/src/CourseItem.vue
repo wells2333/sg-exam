@@ -16,11 +16,12 @@
     <view class="card-item-bottom-fixed">
       <view class="card-item-favorites">
         <view class="card-item-favorites-item">
-          <at-icon value='user' size='10' color='#AAAAAA'></at-icon>
+          <IconFont font-class-name="iconfont" class-prefix="icon" name='user' color='#AAAAAA' size="18"></IconFont>
           <text class="card-item-favorites-text">{{ memberCount }}</text>
         </view>
         <view class="card-item-favorites-item" @click="handleFavorite">
-          <at-icon value='star-2' size='10' :color=" favorite ? '#FFC82C' : '#AAAAAA' "></at-icon>
+          <IconFont v-if="favorite" name='star-fill-n' color="#FFC82C"></IconFont>
+          <IconFont v-else name='star-n' color="#AAAAAA"></IconFont>
           <text class="card-item-favorites-text">{{ favCount }}</text>
         </view>
       </view>
@@ -32,16 +33,16 @@
 </template>
 
 <script lang="ts">
+import {IconFont} from '@nutui/icons-vue-taro';
 import {defineComponent, ref} from 'vue';
 import {transformToArray} from "../../../utils/util";
 import api from "../../../api/api";
 import examApi from "../../../api/exam.api";
-import Taro from "@tarojs/taro";
 import {successMessage} from "../../../utils/util";
 
 export default defineComponent({
   name: 'CourseItem',
-  components: {},
+  components: {IconFont},
   props: {
     item: {
       type: Object

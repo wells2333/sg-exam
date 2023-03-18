@@ -1,14 +1,11 @@
 <template>
   <view v-bind="$attrs">
-    <view class="at-checkbox">
+    <view class="subject-choice-checkbox">
       <view v-for="(option, idx) in options" :key="option.value" :class="genOptionClasses(option)"
             @tap="handleClick(idx)">
-        <view class="at-checkbox__option-wrap">
-          <view class="at-checkbox__option-cnt">
-            <view class="at-checkbox__icon-cnt">
-              <text class="at-icon at-icon-check"/>
-            </view>
-            <view class="at-checkbox__title">
+        <view class="subject-choice-checkbox__option-wrap">
+          <view class="subject-choice-checkbox__option-cnt">
+            <view class="subject-choice-checkbox__title">
               <view v-html="option.label" class="choice-option-label"></view>
             </view>
           </view>
@@ -60,7 +57,6 @@ export default defineComponent({
       options.value.push({label: '正确', value: '正确'});
       options.value.push({label: '错误', value: '错误'});
     }
-
 
     function handleChange(value) {
       selectedList.value = value;

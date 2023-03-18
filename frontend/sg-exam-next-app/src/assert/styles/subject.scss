@@ -1,0 +1,165 @@
+.fixed-top {
+  top: 0;
+  position: fixed;
+  z-index: 100;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.fixed-top-next {
+  margin-top: 80px !important;
+}
+.subject-box {
+  height: 100%;
+  margin: 22px;
+}
+
+.subject-exam-title {
+  font-size: 36px;
+  padding: 14px;
+}
+
+.subject-exam-progress {
+
+}
+
+.subject-content {
+  margin-top: 22px;
+  padding-left: 12px;
+  padding-right: 12px;
+  font-weight: 300;
+  position: relative;
+  border-radius: 6px;
+}
+
+.subject-title, .answer-text-title {
+  display: flex;
+  margin: 0.6em 0;
+  font-weight: 450;
+}
+
+.subject-title-content {
+  display: inline-block;
+}
+
+.subject-type-label {
+  font-size: 16px;
+}
+
+.subject-option {
+  font-size: 16px;
+  padding: 12px;
+}
+
+.subject-option-prefix {
+  font-size: 16px;
+  display: inline-block
+}
+
+.submit-btn {
+  text-align: center;
+  position: fixed;
+  bottom: 150px;
+  left: 30px;
+  right: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.submit-btn-item {
+  margin: 4px;
+}
+
+.submit-btn-previous {
+  width: 100%;
+  height: 230px;
+}
+
+.duration-info {
+  color: grey;
+  font-size: 16px;
+}
+
+.audio-btn-group {
+  display: flex;
+  margin-top: 60px;
+  padding-bottom: 12px;
+}
+
+.audio-btn {
+  padding: 0 15px;
+  margin-right: 16px;
+}
+
+.card-box {
+  display: inline-flex;
+  flex-wrap: wrap;
+  width: 100%;
+  padding: 8px;
+}
+
+.card-item {
+  padding: 8px;
+}
+
+.card-item .card-item-btn {
+  line-height: inherit;
+  align-items: center;
+  height: 40px;
+  width: 40px;
+  border-radius: 20px;
+}
+
+.subject-views {
+  margin-right: 10px;
+}
+
+.subject-views-text {
+  margin-left: 6px;
+  margin-right: 20px;
+  font-size: 26px;
+  color: #AAAAAA;
+}
+
+.subject-list-item-right {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.home-content {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.home-item {
+  border-radius: 12px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.15);
+  margin-bottom: 20px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-right: 12px;
+  width: 347px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.home-item:nth-child(odd) {
+  margin-right: 15px;
+}
+
+.home-item-left {
+  color: black;
+  display: flex;
+  flex-direction: column;
+  padding-left: 22px;
+}
+
+.home-item-left .label {
+  margin: 10px 0;
+}

@@ -1,0 +1,91 @@
+.answer-box {
+  height: 100%;
+  padding: 6px;
+}
+.answer-exam-name {
+  font-size: 32px;
+  text-align: center;
+  padding-left: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.answer-box-item {
+  height: 100%;
+}
+
+.answer-text {
+  display: flex;
+  align-items: center;
+}
+
+.answer-text-analysis {
+  display: inline-flex;
+}
+
+.answer-text-value {
+  font-size: 30px;
+}
+
+.answer-subject-content {
+  padding: 10px;
+  background: rgb(255, 255, 255);
+  border-radius: 10.5px;
+  margin-top: 6px;
+}
+
+.answer-subject-title {
+  font-size: 18px;
+  display: inline-block;
+  padding-top: 10px;
+}
+
+.answer-subject-title-content {
+  display: inline-block;
+}
+
+.answer-subject-title-score {
+  color: grey;
+}
+
+.answer-subject-option {
+  font-size: 16px;
+  padding: 6px;
+}
+
+.answer-subject-option-prefix {
+  font-size: 16px;
+  display: inline-block
+}
+
+.overview-container {
+  height: 180px;
+  overflow: hidden;
+  color: rgba(80, 80, 80, 1);
+  background: rgb(255, 255, 255);
+  text-align: center;
+  border-radius: 10.5px;
+}
+
+.overview-item {
+  font-size: 30px;
+  flex: 1;
+  border-right: 1px solid rgba(236, 238, 241, 1);
+}
+.overview-item:last-child {
+  border-right: none;
+}
+
+.overview-item-detail {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 30px;
+  text-align: center;
+  color: #E65D05;
+}
+.answer-subject-content-tips {
+  font-size: 16px;
+}
+.answer-try-again-btn {
+  text-align: center;
+  margin: 20px 0;
+}

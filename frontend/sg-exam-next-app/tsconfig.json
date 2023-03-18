@@ -15,13 +15,13 @@
     "sourceMap": true,
     "baseUrl": ".",
     "rootDir": ".",
-    "jsx": "react",
+    "jsx": "preserve",
     "allowJs": true,
     "resolveJsonModule": true,
     "typeRoots": [
       "node_modules/@types"
     ]
   },
-  "include": ["./src", "global.d.ts"],
+  "include": ["./src", "./types", "components.d.ts"],
   "compileOnSave": false
 }

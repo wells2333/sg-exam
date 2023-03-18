@@ -1,17 +1,15 @@
-import {createApp} from 'vue';
-import {createUI} from 'taro-ui-vue3';
-import './base.less';
-import './app.less';
-import './assert/styles/subject.less';
-import './assert/styles/answer.less';
-import 'taro-ui-vue3/dist/style/index.scss';
+import { createApp } from 'vue';
+import './app.scss';
+import './base.scss';
+import './assert/styles/answer.scss';
+import './assert/styles/subject.scss';
+import './assert/font/iconfont.css';
+import '@nutui/nutui-taro/dist/style.css';
+import { IconFont } from '@nutui/icons-vue-taro';
 
 const App = createApp({
-    onShow(options) {
-    },
-});
-
-const tuv3 = createUI();
-App.use(tuv3);
+  onShow (options) {},
+})
+App.use(IconFont);
 
 export default App
