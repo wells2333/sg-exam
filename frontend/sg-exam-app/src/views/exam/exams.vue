@@ -99,7 +99,7 @@ export default {
         page: 1,
         pageSize: 6,
         examinationName: '',
-        status: 0
+        status: 1
       },
       tempExamRecord: {
         id: null,
