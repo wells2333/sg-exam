@@ -20,6 +20,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
 @Slf4j
@@ -41,13 +42,15 @@ public class ExamCourseEvaluateController extends BaseController {
 			@RequestParam(value = PAGE, required = false, defaultValue = PAGE_DEFAULT) int pageNum,
 			@RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize) {
 		PageInfo<ExamCourseEvaluate> page = examCourseEvaluateService.findPage(condition, pageNum, pageSize);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		// 查询课程名称
 		if (CollectionUtils.isNotEmpty(page.getList())) {
-			for (ExamCourseEvaluate examCourseEvaluate : page.getList()) {
-				Course course = courseService.get(examCourseEvaluate.getCourseId());
+			for (ExamCourseEvaluate evaluate : page.getList()) {
+				Course course = courseService.get(evaluate.getCourseId());
 				if (course != null) {
-					examCourseEvaluate.setCourseName(course.getCourseName());
+					evaluate.setCourseName(course.getCourseName());
 				}
+				evaluate.setEvaluateTime(format.format(evaluate.getUpdateTime()));
 			}
 		}
 		return R.success(page);
