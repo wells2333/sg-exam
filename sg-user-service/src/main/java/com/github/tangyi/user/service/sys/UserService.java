@@ -403,6 +403,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 		User user = new User();
 		BeanUtils.copyProperties(userDto, user);
 		// 初始化用户名，系统编号，租户编号
+		user.setIsDeleted(Boolean.TRUE);
 		user.setCommonValue(userDto.getIdentifier(), SysUtil.getTenantCode());
 		user.setStatus(CommonConstant.DEL_FLAG_NORMAL);
 		// 初始化头像
