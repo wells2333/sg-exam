@@ -1,46 +1,87 @@
 <template>
   <view>
-    <nut-searchbar v-model="searchValue" placeholder="搜索"/>
+    <nut-searchbar v-model="searchValue" @search="handleSearch" placeholder="搜索"/>
     <view class="ml-22 mr-22">
-      <view class="box-show-item mb-bottom-20" v-if="courseList !== undefined" v-for="course in courseList">
+      <view class="box-show-item mb-bottom-20" v-for="course in itemList">
         <course-item :item="course" @click="handleClickCourse(course)"></course-item>
       </view>
+      <nut-empty v-if="!loading && itemList.length === 0"></nut-empty>
     </view>
   </view>
 </template>
 
 <script lang="ts">
 import Taro from '@tarojs/taro';
-import {onMounted, ref} from 'vue';
+import {onMounted, ref, unref} from 'vue';
 import examApi from '../../../api/exam.api';
 import {CourseItem} from '../../../components/course-item';
-import {showLoading, hideLoading} from '../../../utils/util';
+import {showLoading, hideLoading, warnMessage} from '../../../utils/util';
 
 export default {
   components: {
     'course-item': CourseItem
   },
   setup() {
-    let searchValue = ref<string>("");
-    const courseList = ref<any>(undefined);
+    let searchValue = ref<string>('');
+    const itemList = ref<any>([]);
+    const hasNextPageRef = ref<boolean>(true);
+    const nextPageRef = ref<number>(1);
+    const loading = ref<boolean>(false);
+    const pageNumRef = ref<number>(1);
 
-    async function fetch(courseName: string = '') {
-      const res = await examApi.courseList({courseName, status: 1});
-      const {code, result} = res;
-      if (code === 0) {
-        courseList.value = result.list;
+    async function fetch(courseName: string = '', append = true) {
+      debugger
+      if (!unref(hasNextPageRef)) {
+        return;
+      }
+      if (loading.value) {
+        return;
+      }
+      loading.value = true;
+      if (!append) {
+        itemList.value = [];
+      }
+      await showLoading();
+      try {
+        const res = await examApi.courseList({
+          courseName,
+          status: 1,
+          page: unref(nextPageRef),
+        });
+        const {code, result} = res;
+        if (code === 0) {
+          const {list, hasNextPage, nextPage, pageNum} = result;
+          if (list != null && list.length > 0) {
+            if (append) {
+              itemList.value = [...itemList.value, ...list];
+            } else {
+              itemList.value = list;
+            }
+          } else {
+            if (append) {
+              await warnMessage('无更多数据');
+            } else {
+              itemList.value = [];
+            }
+          }
+          hasNextPageRef.value = hasNextPage;
+          nextPageRef.value = nextPage;
+          pageNumRef.value = pageNum;
+        }
+      } finally {
+        loading.value = false;
+        await hideLoading();
       }
     }
 
     function handleSearch() {
-      fetch(searchValue.value);
+      resetPage();
+      fetch(searchValue.value, false);
     }
 
-    function handleSearchChange(value) {
-      searchValue.value = value;
-      if (value === '') {
-        fetch();
-      }
+    function resetPage() {
+      hasNextPageRef.value = true;
+      nextPageRef.value = 1;
     }
 
     function handleClickCourse(course) {
@@ -55,15 +96,33 @@ export default {
         hideLoading();
       }
     }
+
     onMounted(() => {
       init();
     });
 
-    return {init, fetch, searchValue, courseList, handleSearch, handleSearchChange, handleClickCourse}
+    return {
+      searchValue,
+      itemList,
+      loading,
+      init,
+      fetch,
+      handleSearch,
+      resetPage,
+      handleClickCourse
+    }
   },
   onPullDownRefresh() {
     try {
-      this.init();
+      this.resetPage();
+      this.fetch('', false);
+    } finally {
+      Taro.stopPullDownRefresh();
+    }
+  },
+  onReachBottom() {
+    try {
+      this.fetch('', true);
     } finally {
       Taro.stopPullDownRefresh();
     }

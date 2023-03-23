@@ -4,7 +4,7 @@
       <view class="home-item mt-22" v-for="(item, idx) in gridData" :key="idx" @click="handleClickCate(item)">
         <view class="home-item-left">
           <text>{{item.value}}</text>
-          <nut-tag class="label" type="primary" size="small" plain>共 {{item.subjectCnt}} 题</nut-tag>
+          <nut-tag class="label" size="small" plain round>共 {{item.subjectCnt}} 题</nut-tag>
         </view>
         <IconFont class="home-item-right" name="rect-right" color="#346FC2"></IconFont>
       </view>

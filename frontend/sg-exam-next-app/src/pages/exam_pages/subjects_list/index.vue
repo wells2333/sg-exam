@@ -8,7 +8,7 @@
                 @click="handleClickCate(item)">
             <view class="home-item-left">
               <text>{{ item.categoryName }}</text>
-              <nut-tag class="label" type="primary" size="small" plain>
+              <nut-tag class="label" size="small" plain round>
                 共{{ item.subjectCnt }}题
               </nut-tag>
             </view>

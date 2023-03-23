@@ -1,30 +1,36 @@
 <template>
   <view>
-    <nut-searchbar v-model="searchValue" @action-click="handleSearch" placeholder="搜索"/>
-  </view>
-  <view class="exam-view">
-    <nut-tabs v-model="current" @click="handleTabClick">
-      <nut-tab-pane title="考试">
-        <view class="exam-item box-show-item flex-col" v-for="item in exams">
-          <exam-item :item="item" @start="handleStart"></exam-item>
-        </view>
-      </nut-tab-pane>
-      <nut-tab-pane title="练习">
-        <view class="exam-item box-show-item flex-col" v-for="item in exams">
-          <exam-item :item="item" @start="handleStart"></exam-item>
-        </view>
-      </nut-tab-pane>
-      <nut-tab-pane title="问卷">
-        <view class="exam-item box-show-item flex-col" v-for="item in exams">
-          <exam-item :item="item" @start="handleStart"></exam-item>
-        </view>
-      </nut-tab-pane>
-      <nut-tab-pane title="面试">
-        <view class="exam-item box-show-item flex-col" v-for="item in exams">
-          <exam-item :item="item" @start="handleStart"></exam-item>
-        </view>
-      </nut-tab-pane>
-    </nut-tabs>
+    <view>
+      <nut-searchbar v-model="searchValue" @search="handleSearch" placeholder="搜索"/>
+    </view>
+    <view class="exam-view">
+      <nut-tabs v-model="current" @click="handleTabClick">
+        <nut-tab-pane title="考试">
+          <view class="exam-item box-show-item flex-col" v-for="item in itemList">
+            <exam-item :item="item" @start="handleStart"></exam-item>
+          </view>
+          <nut-empty v-if="!loading && itemList.length === 0"></nut-empty>
+        </nut-tab-pane>
+        <nut-tab-pane title="练习">
+          <view class="exam-item box-show-item flex-col" v-for="item in itemList">
+            <exam-item :item="item" @start="handleStart"></exam-item>
+          </view>
+          <nut-empty v-if="!loading && itemList.length === 0"></nut-empty>
+        </nut-tab-pane>
+        <nut-tab-pane title="问卷">
+          <view class="exam-item box-show-item flex-col" v-for="item in itemList">
+            <exam-item :item="item" @start="handleStart"></exam-item>
+          </view>
+          <nut-empty v-if="!loading && itemList.length === 0"></nut-empty>
+        </nut-tab-pane>
+        <nut-tab-pane title="面试">
+          <view class="exam-item box-show-item flex-col" v-for="item in itemList">
+            <exam-item :item="item" @start="handleStart"></exam-item>
+          </view>
+          <nut-empty v-if="!loading && itemList.length === 0"></nut-empty>
+        </nut-tab-pane>
+      </nut-tabs>
+    </view>
   </view>
 </template>
 <script lang="ts">
@@ -33,6 +39,7 @@ import examApi from '../../../api/exam.api';
 import Taro from "@tarojs/taro";
 import {ExamItem} from '../../../components/exam-item';
 import {examTypeTagList, shardMessage} from '../../../constant/constant';
+import {hideLoading, showLoading, warnMessage} from "../../../utils/util";
 
 export default {
   components: {
@@ -47,14 +54,14 @@ export default {
       Taro.setNavigationBarTitle({title: getTitleName(active)})
     }
     const current = ref<number>(active);
-    let exams = ref<any>([]);
+    let itemList = ref<any>([]);
     let searchValue = ref<string>("");
     const hasNextPageRef = ref<boolean>(true);
     const nextPageRef = ref<number>(1);
     const loading = ref<boolean>(false);
     const pageNumRef = ref<number>(1);
 
-    async function fetch(type, examinationName = "", append = true) {
+    async function fetch(type, examinationName = '', append = true) {
       if (!unref(hasNextPageRef)) {
         return;
       }
@@ -62,6 +69,10 @@ export default {
         return;
       }
       loading.value = true;
+      if (!append) {
+        itemList.value = [];
+      }
+      await showLoading();
       try {
         // 查询启用的考试
         const examinationList = await examApi.examinationList({
@@ -76,9 +87,15 @@ export default {
           const {list, hasNextPage, nextPage, pageNum} = result;
           if (list != null && list.length > 0) {
             if (append) {
-              exams.value = [...exams.value, ...list];
+              itemList.value = [...itemList.value, ...list];
             } else {
-              exams.value = list;
+              itemList.value = list;
+            }
+          } else {
+            if (append) {
+              await warnMessage('无更多数据');
+            } else {
+              itemList.value = [];
             }
           }
           hasNextPageRef.value = hasNextPage;
@@ -87,6 +104,7 @@ export default {
         }
       } finally {
         loading.value = false;
+        await hideLoading();
       }
     }
 
@@ -98,9 +116,8 @@ export default {
       const value = Number(paneKey);
       searchValue.value = "";
       Taro.setNavigationBarTitle({title: getTitleName(value)})
-      resetList();
       resetPage();
-      fetch(value);
+      fetch(value, '', false);
     }
 
     function getTitleName(value) {
@@ -115,15 +132,7 @@ export default {
       return title + '列表';
     }
 
-    function handleSearchChange(value) {
-      searchValue.value = value;
-      if (value === '') {
-        fetch(unref(current));
-      }
-    }
-
     function handleSearch() {
-      resetList();
       resetPage();
       fetch(unref(current), unref(searchValue), false);
     }
@@ -131,14 +140,6 @@ export default {
     function resetPage() {
       hasNextPageRef.value = true;
       nextPageRef.value = 1;
-    }
-
-    function resetList() {
-      exams.value = [];
-    }
-
-    function showEmptyList() {
-      return !loading && (exams === undefined || exams === null || exams.length === 0);
     }
 
     onMounted(() => {
@@ -150,24 +151,20 @@ export default {
       tagsList: examTypeTagList,
       current,
       searchValue,
-      exams,
+      itemList,
       hasNextPageRef,
       nextPageRef,
       pageNumRef,
       handleStart,
       handleTabClick,
-      handleSearchChange,
       handleSearch,
       fetch,
-      resetList,
       resetPage,
-      showEmptyList
     };
   },
   onPullDownRefresh() {
     try {
       this.resetPage();
-      this.resetList();
       this.fetch(unref(this.current), '', false);
     } finally {
       Taro.stopPullDownRefresh();
@@ -175,7 +172,7 @@ export default {
   },
   onReachBottom() {
     try {
-      this.fetch(unref(this.current));
+      this.fetch(unref(this.current), '', true);
     } finally {
       Taro.stopPullDownRefresh();
     }

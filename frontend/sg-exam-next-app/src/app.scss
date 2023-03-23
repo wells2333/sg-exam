@@ -222,8 +222,10 @@
   overflow: hidden;
 }
 
-.empty-list {
-  text-align: center;
-  margin-top: 50px;
-  color: gray;
+.home-item-left .label {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+  color: #3F51B5 !important;
+  background: #dae3fb7a !important;
+  border: none !important;
 }
