@@ -1,8 +1,6 @@
 import Taro from "@tarojs/taro"
 import domain from "./domain";
 
-export const TENANT_CODE = `gitee`;
-
 export const USER_SERVICE = domain.getBaseUrl() + "/sg-user-service";
 
 interface result<T = any> {
@@ -38,92 +36,83 @@ class api {
 
     setTenantCode(tenantCode: string) {
         this.tenantCode = tenantCode
-        wx.setStorage({ key: 'tenantCode', data: tenantCode })
+        Taro.setStorage({ key: 'tenantCode', data: tenantCode })
     }
 
     getTenantCode() {
-        return wx.getStorageSync('tenantCode');
+        return Taro.getStorageSync('tenantCode');
     }
 
     setToken(token: string) {
         this.token = token
-        wx.setStorage({ key: 'token', data: token })
+        Taro.setStorage({ key: 'token', data: token })
     }
 
     getToken() {
-        return wx.getStorageSync('token');
+        return Taro.getStorageSync('token');
     }
 
     setUserInfo(userInfo: object) {
         this.userInfo = userInfo
-        wx.setStorage({ key: 'userInfo', data: userInfo })
+        Taro.setStorage({ key: 'userInfo', data: userInfo })
     }
 
     getUserInfo() {
-        return wx.getStorageSync('userInfo');
+        return Taro.getStorageSync('userInfo');
     }
 
     setExamination(examination: object) {
         this.examination = examination
-        wx.setStorage({ key: 'examination', data: examination })
+        Taro.setStorage({ key: 'examination', data: examination })
     }
 
     getExamination() {
-        return wx.getStorageSync('examination');
+        return Taro.getStorageSync('examination');
     }
 
     setExamRecord(examRecord: object) {
         this.examRecord = examRecord
-        wx.setStorage({ key: 'examRecord', data: examRecord })
+        Taro.setStorage({ key: 'examRecord', data: examRecord })
     }
 
     getExamRecord() {
-        return wx.getStorageSync('examRecord');
+        return Taro.getStorageSync('examRecord');
     }
 
     setSubject(subject: object) {
         this.subject = subject
-        wx.setStorage({ key: 'subject', data: subject })
+        Taro.setStorage({ key: 'subject', data: subject })
     }
 
     getSubject() {
-        return wx.getStorageSync('subject');
+        return Taro.getStorageSync('subject');
     }
 
     setSubjectTotalCount(subjectTotalCount: number) {
         this.subjectTotalCount = subjectTotalCount
-        wx.setStorage({ key: 'subjectTotalCount', data: subjectTotalCount })
+        Taro.setStorage({ key: 'subjectTotalCount', data: subjectTotalCount })
     }
 
     getSubjectTotalCount() {
-        return wx.getStorageSync('subjectTotalCount');
+        return Taro.getStorageSync('subjectTotalCount');
     }
 
     setAnsweredCount(answeredCount: number) {
         this.answeredCount = answeredCount
-        wx.setStorage({ key: 'answeredCount', data: answeredCount })
+        Taro.setStorage({ key: 'answeredCount', data: answeredCount })
     }
 
     getAnsweredCount() {
-        return wx.getStorageSync('answeredCount');
-    }
-
-    setDuration(duration: string) {
-        this.duration = duration
-        wx.setStorage({ key: 'duration', data: duration })
-    }
-
-    getDuration() {
-        return wx.getStorageSync('duration');
+        return Taro.getStorageSync('answeredCount');
     }
 
     setCards(cards: Object) {
         this.cards = cards
-        wx.setStorage({ key: 'cards', data: cards })
+        Taro.setStorage({ key: 'cards', data: cards })
     }
 
     getCards() {
-        return wx.getStorageSync('cards');
+        return Taro.getStorageSync('cards');
     }
 
     logout() {

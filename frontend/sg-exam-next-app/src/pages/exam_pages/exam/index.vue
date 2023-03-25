@@ -92,9 +92,7 @@ export default {
               itemList.value = list;
             }
           } else {
-            if (append) {
-              await warnMessage('无更多数据');
-            } else {
+            if (!append) {
               itemList.value = [];
             }
           }

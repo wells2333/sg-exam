@@ -1,59 +1,55 @@
 <template>
   <view class="exam-record">
-    <nut-searchbar v-model="searchValue" @action-click="handleSearch"
+    <nut-searchbar v-model="searchValue" @search="handleSearch"
                    placeholder="请输入名称"></nut-searchbar>
     <nut-tabs v-model="current" @change="handleTabClick">
       <nut-tab-pane title="考试">
-        <view class="mt-22">
-          <view class="item flex-row" v-for="item in records" @click="goToDetails($event, item)">
-            <view class="item-cont">
-              <view class="flex-row">
-                <text class="item-name">{{ item.examinationName }}</text>
-              </view>
-              <text class="item-time">{{ item.startTime }}</text>
+        <view class="item flex-row" v-for="item in itemList" @click="goToDetails(item)">
+          <view class="item-cont">
+            <view class="flex-row">
+              <text class="item-name">{{ item.examinationName }}</text>
             </view>
-            <view class="item-status">{{ item.submitStatusName }}</view>
+            <text class="item-time">{{ item.startTime }}</text>
           </view>
+          <view class="item-status">{{ item.submitStatusName }}</view>
         </view>
+        <nut-empty v-if="!loading && itemList.length === 0"></nut-empty>
       </nut-tab-pane>
       <nut-tab-pane title="练习">
-        <view class="mt-22">
-          <view class="item flex-row" v-for="item in records" @click="goToDetails($event, item)">
-            <view class="item-cont">
-              <view class="flex-row">
-                <text class="item-name">{{ item.examinationName }}</text>
-              </view>
-              <text class="item-time">{{ item.startTime }}</text>
+        <view class="item flex-row" v-for="item in itemList" @click="goToDetails(item)">
+          <view class="item-cont">
+            <view class="flex-row">
+              <text class="item-name">{{ item.examinationName }}</text>
             </view>
-            <view class="item-status">{{ item.submitStatusName }}</view>
+            <text class="item-time">{{ item.startTime }}</text>
           </view>
+          <view class="item-status">{{ item.submitStatusName }}</view>
         </view>
+        <nut-empty v-if="!loading && itemList.length === 0"></nut-empty>
       </nut-tab-pane>
       <nut-tab-pane title="问卷">
-        <view class="mt-22">
-          <view class="item flex-row" v-for="item in records" @click="goToDetails($event, item)">
-            <view class="item-cont">
-              <view class="flex-row">
-                <text class="item-name">{{ item.examinationName }}</text>
-              </view>
-              <text class="item-time">{{ item.startTime }}</text>
+        <view class="item flex-row" v-for="item in itemList" @click="goToDetails(item)">
+          <view class="item-cont">
+            <view class="flex-row">
+              <text class="item-name">{{ item.examinationName }}</text>
             </view>
-            <view class="item-status">{{ item.submitStatusName }}</view>
+            <text class="item-time">{{ item.startTime }}</text>
           </view>
+          <view class="item-status">{{ item.submitStatusName }}</view>
         </view>
+        <nut-empty v-if="!loading && itemList.length === 0"></nut-empty>
       </nut-tab-pane>
       <nut-tab-pane title="面试">
-        <view class="mt-22">
-          <view class="item flex-row" v-for="item in records" @click="goToDetails($event, item)">
-            <view class="item-cont">
-              <view class="flex-row">
-                <text class="item-name">{{ item.examinationName }}</text>
-              </view>
-              <text class="item-time">{{ item.startTime }}</text>
+        <view class="item flex-row" v-for="item in itemList" @click="goToDetails(item)">
+          <view class="item-cont">
+            <view class="flex-row">
+              <text class="item-name">{{ item.examinationName }}</text>
             </view>
-            <view class="item-status">{{ item.submitStatusName }}</view>
+            <text class="item-time">{{ item.startTime }}</text>
           </view>
+          <view class="item-status">{{ item.submitStatusName }}</view>
         </view>
+        <nut-empty v-if="!loading && itemList.length === 0"></nut-empty>
       </nut-tab-pane>
     </nut-tabs>
   </view>
@@ -75,13 +71,14 @@ export default {
       type = Number(params.type);
     }
     const current = ref<number>(type);
-    let records = ref<any>([]);
+    let itemList = ref<any>([]);
     const loading = ref<boolean>(false);
     const hasNextPageRef = ref<boolean>(true);
     const nextPageRef = ref<number>(1);
-    let searchValue = ref<string>("");
+    const pageNumRef = ref<number>(1);
+    let searchValue = ref<string>('');
 
-    async function fetch(type, examinationName = "", append = true) {
+    async function fetch(type, examinationName = '', append = true) {
       if (!unref(hasNextPageRef)) {
         await showNoMoreData();
         return;
@@ -89,51 +86,47 @@ export default {
       if (loading.value) {
         return;
       }
-      const {id} = api.getUserInfo();
       loading.value = true;
       await showLoading();
+      if (!append) {
+        itemList.value = [];
+      }
       try {
+        const {id} = api.getUserInfo();
         const recordsRes = await recordApi.userRecords(id, {type, examinationName});
         const {code, result} = recordsRes
         if (code === 0) {
-          const {list, hasNextPage, nextPage} = result;
-          if (append) {
-            records.value = [...records.value, ...list];
+          const {list, hasNextPage, nextPage, pageNum} = result;
+          if (list !== null && list.length > 0) {
+            if (append) {
+              itemList.value = [...itemList.value, ...list];
+            } else {
+              itemList.value = list;
+            }
           } else {
-            records.value = list;
+            if (!append) {
+              itemList.value = [];
+            }
           }
           hasNextPageRef.value = hasNextPage;
           nextPageRef.value = nextPage;
+          pageNumRef.value = pageNum;
         }
       } finally {
-        hideLoading();
         loading.value = false;
+        hideLoading();
       }
     }
 
-    function goToDetails($event, item) {
+    function goToDetails(item) {
       const recordId = unref(item).id;
       const examinationId = unref(item).examinationId;
       Taro.navigateTo({url: `/pages/exam_pages/answer/index?recordId=${recordId}&examinationId=${examinationId}`});
     }
 
-    function getTypeTag(item) {
-      if (item.type === 0) {
-        return 'success';
-      } else if (item.type === 1) {
-        return 'primary';
-      } else if (item.type === 2) {
-        return 'warning';
-      } else if (item.type === 3) {
-        return 'danger';
-      }
-      return 'success';
-    }
-
     function handleTabClick({paneKey}) {
       current.value = paneKey;
-      searchValue.value = "";
-      resetList();
+      searchValue.value = '';
       resetPage();
       fetch(paneKey);
     }
@@ -143,7 +136,6 @@ export default {
     }
 
     function handleSearch() {
-      resetList();
       resetPage();
       fetch(unref(current), unref(searchValue), false);
     }
@@ -153,15 +145,11 @@ export default {
       nextPageRef.value = 1;
     }
 
-    function resetList() {
-      records.value = [];
-    }
-
     async function init() {
       try {
         await showLoading();
         resetPage();
-        await fetch(unref(current), "", false);
+        await fetch(unref(current), '', false);
       } finally {
         hideLoading();
       }
@@ -176,16 +164,14 @@ export default {
       searchValue,
       tagsList: examTypeTagList,
       current,
-      records,
+      itemList,
       init,
       goToDetails,
-      getTypeTag,
       handleTabClick,
       handleSearchChange,
       handleSearch,
       fetch,
-      resetPage,
-      resetList
+      resetPage
     };
   },
   onPullDownRefresh() {
@@ -220,7 +206,7 @@ export default {
   justify-content: space-between;
   margin: 0 24px;
   border-bottom: 1px solid rgb(235, 237, 240);
-  padding: 10px 0;
+  padding: 20px 0;
   position: relative;
 }
 
@@ -230,14 +216,14 @@ export default {
 }
 
 .item-time {
-  margin-top: 3px;
+  margin-top: 10px;
   color: #969799;
   font-size: 26px;
 }
 
 .item-status {
   color: #969799;
-  font-size: 24px;
+  font-size: 26px;
 }
 
 .item-status::after {

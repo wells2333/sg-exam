@@ -5,8 +5,9 @@
         <view class="subject-detail-type-label subject-list-item-label">
           <nut-tag size="small" type="success">{{ subject.typeLabel }}</nut-tag>
           <view class="align-items-center">
-            <IconFont class="subject-views"  font-class-name="iconfont" class-prefix="icon" name='eye' color='#AAAAAA' size="18"></IconFont>
-            <text class="subject-views-text">{{subject.views}}</text>
+            <IconFont class="subject-views" font-class-name="iconfont" class-prefix="icon" name='eye' color='#AAAAAA'
+                      size="18"></IconFont>
+            <text class="subject-views-text">{{ subject.views }}</text>
           </view>
         </view>
         <view class="subject-title">
@@ -30,16 +31,18 @@
           <view v-else-if="subject.type === 5">
             <subject-video ref="videoRef" :subject="subject"></subject-video>
           </view>
-          <view v-if="showAnswerAndAnalysis && subject.answer !== undefined && subject.answer !== null && subject.answer !== ''">
+          <view
+              v-if="showAnswerAndAnalysis && subject.answer !== undefined && subject.answer !== null && subject.answer !== ''">
             <text class="answer-text-title">答案：</text>
             <view v-if="subject.type === 2">
-              <text>{{subject.answer.answer === '0' ? '正确' : '错误'}}</text>
+              <text>{{ subject.answer.answer === '0' ? '正确' : '错误' }}</text>
             </view>
             <view v-else>
               <wxparse class="answer-text-value" :html="subject.answer.answer" key={Math.random()}></wxparse>
             </view>
           </view>
-          <view v-if="showAnswerAndAnalysis && subject.analysis !== undefined && subject.analysis !== null && subject.analysis !== ''">
+          <view
+              v-if="showAnswerAndAnalysis && subject.analysis !== undefined && subject.analysis !== null && subject.analysis !== ''">
             <view>
               <text class="answer-text-title">解析：</text>
             </view>
@@ -54,16 +57,22 @@
     </view>
     <view class="submit-btn">
       <view class="submit-btn-item" v-if="mode !== '3'">
-        <nut-button type="primary" :circle="true" :loading="loadingPrevious" @click="handleNext('1')">上一题</nut-button>
+        <nut-button type="primary" :circle="true" :loading="loadingPrevious" @click="handleNext('1')">上一题
+        </nut-button>
       </view>
       <view class="submit-btn-item">
         <nut-button type="primary" :circle="true" :loading="loadingNext" @click="handleNext('0')">下一题</nut-button>
       </view>
     </view>
-    <AtFab class="fav-fab" v-if="subject !== undefined" @click="handleFavSubject(subject)">
-      <text class="at-fab__icon at-icon at-icon-star-2" :class="subject.favorite ? 'fav-fab-fav' : ''"></text>
-    </AtFab>
+    <view class="fav-fab" v-if="subject !== undefined" @click="handleFavSubject(subject)">
+      <nut-button class="fav-fab-btn" size="large" :circle="true" :color="subject.favorite ? '#FFC82C' : '#6190e8ab'">
+        <template #icon>
+          <Star size="22px"/>
+        </template>
+      </nut-button>
+    </view>
   </view>
+  <nut-notify type="success" duration="500" v-model:visible="showNotify" :msg="notifyMsg"/>
 </template>
 
 <script lang="ts">
@@ -76,11 +85,14 @@ import {Judgement} from '../../../components/subject/judgement/index';
 import {ShortAnswer} from '../../../components/subject/shortAnswer/index';
 import {SubjectVideo} from '../../../components/subject/video/index';
 import api from '../../../api/api';
-import {successMessage, showNoMoreData, showLoading, hideLoading} from '../../../utils/util';
+import {showNoMoreData, showLoading, hideLoading} from '../../../utils/util';
+import {StarFill, Star} from '@nutui/icons-vue-taro';
 
 export default {
   components: {
     IconFont,
+    StarFill,
+    Star,
     'choice': Choice,
     'judgement': Judgement,
     'short-answer': ShortAnswer,
@@ -106,6 +118,8 @@ export default {
       mode.value = params.mode + '';
       showAnswerAndAnalysis.value = params.mode === '1';
     }
+    const showNotify = ref<boolean>(false);
+    const notifyMsg = ref<string>('');
 
     async function fetch() {
       await showLoading();
@@ -133,7 +147,8 @@ export default {
       const res = await examApi.favoriteSubject(id, item.id, type);
       const {code} = res;
       if (code === 0) {
-        await successMessage(text + '成功');
+        notifyMsg.value = text + '成功';
+        showNotify.value = true;
       }
     }
 
@@ -197,7 +212,7 @@ export default {
       }
     }
 
-   async function handleAnswered(s) {
+    async function handleAnswered(s) {
       showAnswerAndAnalysis.value = true;
       // 单选题自动下一题
       if (subject.value.type === 0 && subject.value.answer.answer === s.value.answerValue) {
@@ -230,6 +245,8 @@ export default {
       videoRef,
       loadingPrevious,
       loadingNext,
+      showNotify,
+      notifyMsg,
       init,
       handleFavSubject,
       handleNext,
@@ -254,15 +271,11 @@ export default {
 
 .fav-fab {
   position: fixed;
-  bottom: 200px;
-  right: 0;
-  width: 38px;
-  height: 38px;
-  margin-right: 10px;
-  background-color: #6190e8ab;
+  bottom: 500px;
+  right: 50px;
 }
 
-.fav-fab .fav-fab-fav::before {
-  color: #FFC82C;
+.fav-fab-btn {
+  padding: 26px;
 }
 </style>

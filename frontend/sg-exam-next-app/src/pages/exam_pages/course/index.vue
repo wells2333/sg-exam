@@ -15,7 +15,7 @@ import Taro from '@tarojs/taro';
 import {onMounted, ref, unref} from 'vue';
 import examApi from '../../../api/exam.api';
 import {CourseItem} from '../../../components/course-item';
-import {showLoading, hideLoading, warnMessage} from '../../../utils/util';
+import {showLoading, hideLoading} from '../../../utils/util';
 
 export default {
   components: {
@@ -30,7 +30,6 @@ export default {
     const pageNumRef = ref<number>(1);
 
     async function fetch(courseName: string = '', append = true) {
-      debugger
       if (!unref(hasNextPageRef)) {
         return;
       }
@@ -58,9 +57,7 @@ export default {
               itemList.value = list;
             }
           } else {
-            if (append) {
-              await warnMessage('无更多数据');
-            } else {
+            if (!append) {
               itemList.value = [];
             }
           }
