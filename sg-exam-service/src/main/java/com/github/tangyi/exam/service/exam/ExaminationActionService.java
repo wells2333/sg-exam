@@ -247,7 +247,7 @@ public class ExaminationActionService {
 			int update = answerService.batchUpdate(updates);
 			log.info("batch update success, recordId: {}, size: {}", recordId, update);
 		}
-		submitAsync(recordId, userCode, tenantCode);
+		submit(recordId, userCode, tenantCode);
 		return Boolean.TRUE;
 	}
 

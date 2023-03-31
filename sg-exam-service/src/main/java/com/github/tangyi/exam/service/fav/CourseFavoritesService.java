@@ -37,7 +37,7 @@ public class CourseFavoritesService extends CrudService<UserFavMapper, ExamUserF
 		return userFavService.findUserFavoritesIds(SysUtil.getUserId(), FAV_TYPE_COURSE);
 	}
 
-	public void findUserFavorites(List<Course> list) {
+	public void findAndFillUserFavorites(List<Course> list) {
 		if (CollectionUtils.isEmpty(list)) {
 			return;
 		}
@@ -51,9 +51,8 @@ public class CourseFavoritesService extends CrudService<UserFavMapper, ExamUserF
 
 	/**
 	 * 查询收藏次数
-	 * @param list list
 	 */
-	public void findFavCount(List<Course> list) {
+	public void findAndFillFavCount(List<Course> list) {
 		if (CollectionUtils.isEmpty(list)) {
 			return;
 		}

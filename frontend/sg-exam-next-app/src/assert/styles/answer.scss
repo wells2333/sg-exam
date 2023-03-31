@@ -1,8 +1,9 @@
 .answer-box {
   height: 100%;
 }
+
 .answer-exam-name {
-  font-size: 32px;
+  font-size: 40px;
   text-align: center;
   padding-left: 10px;
   padding-top: 10px;
@@ -58,7 +59,7 @@
 }
 
 .overview-container {
-  height: 180px;
+  height: 300px;
   overflow: hidden;
   color: rgba(80, 80, 80, 1);
   background: rgb(255, 255, 255);
@@ -67,21 +68,14 @@
 }
 
 .overview-item {
-  font-size: 30px;
-  flex: 1;
-  border-right: 1px solid rgba(236, 238, 241, 1);
-}
-.overview-item:last-child {
-  border-right: none;
+  font-size: 36px;
 }
 
 .overview-item-detail {
-  margin-top: 10px;
-  margin-bottom: 10px;
-  font-size: 30px;
-  text-align: center;
+  font-size: 46px;
   color: #E65D05;
 }
+
 .answer-subject-content-tips {
   font-size: 16px;
 }

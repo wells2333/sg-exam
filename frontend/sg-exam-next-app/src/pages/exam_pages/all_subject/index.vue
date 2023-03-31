@@ -53,6 +53,7 @@ import api from '../../../api/api';
 import {Choice} from '../../../components/subject/choice/index';
 import {Judgement} from '../../../components/subject/judgement/index';
 import {ShortAnswer} from '../../../components/subject/shortAnswer/index';
+import {Parser} from '../../../components/parser/index';
 import {showLoading, hideLoading, successMessage} from '../../../utils/util';
 
 export default {
@@ -61,6 +62,7 @@ export default {
     'choice': Choice,
     'judgement': Judgement,
     'short-answer': ShortAnswer,
+    Parser
   },
   setup() {
     const currentInstance = Taro.getCurrentInstance();
@@ -98,28 +100,7 @@ export default {
       console.log(radioArr.value, 'radioArr')
     }
 
-    function handleSingleOptionChange($event, item) {
-      const {detail} = $event;
-      unref(item).answer = detail;
-      unref(item).checked = true;
-      refreshProgress();
-    }
-
-    function handleMultiOptionChange($event, item) {
-      const {detail} = $event;
-      unref(item).answer = detail;
-      unref(item).checked = true;
-      refreshProgress();
-    }
-
     function handleShortAnswerChange($event, item) {
-      const {detail} = $event;
-      unref(item).answer = detail;
-      unref(item).checked = true;
-      refreshProgress();
-    }
-
-    function handleJudgementChange($event, item) {
       const {detail} = $event;
       unref(item).answer = detail;
       unref(item).checked = true;
@@ -167,7 +148,7 @@ export default {
       } finally {
         submitting.value = false;
         hideLoading();
-        Taro.redirectTo({url: "/pages/exam_pages/record/index?type=" + examination.value.type})
+        Taro.navigateTo({url: `/pages/exam_pages/answer/index?recordId=${recordId.value}&examinationId=${examinationId.value}`});
       }
     }
 
@@ -201,10 +182,7 @@ export default {
       refs,
       submitting,
       handleStart,
-      handleSingleOptionChange,
-      handleMultiOptionChange,
       handleShortAnswerChange,
-      handleJudgementChange,
       visibleSubmitDialog,
       handleSubmit,
       onCancelSubmit,
@@ -231,6 +209,8 @@ page {
 .all-subject-submit-btn {
   display: flex;
   padding-top: 50px;
+  padding-left: 10px;
+  padding-right: 10px;
   background-color: white;
   text-align: center;
   justify-content: center;

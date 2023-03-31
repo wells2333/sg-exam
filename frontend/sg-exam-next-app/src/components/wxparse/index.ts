@@ -1,6 +1,6 @@
 import Fuck from './wxParse'
 
-Component({
+const wxParse = Component({
     properties: {
         html: {
             type: String,
@@ -12,4 +12,6 @@ Component({
             Fuck.wxParse('wxParseData', 'html', this.properties.html, this)
         },
     },
-})
+});
+
+export default wxParse;

@@ -50,6 +50,7 @@
       </nut-action-sheet>
     </view>
   </view>
+  <nut-notify type="success" duration="500" v-model:visible="showNotify" :msg="notifyMsg"/>
 </template>
 
 <script lang="ts">
@@ -78,6 +79,8 @@ export default {
     const isOpenedAction = ref<boolean>(false);
     const clickItem = ref<any>(undefined);
     const menuItems = [{name: '预览模式'}, {name: '顺序刷题'}, {name: '随机刷题'}];
+    const showNotify = ref<boolean>(false);
+    const notifyMsg = ref<string>('');
 
     async function fetch(append = false) {
       if (!hasNextPage.value) {
@@ -175,7 +178,8 @@ export default {
       const res = await examApi.favoriteSubject(id, item.id, type);
       const {code} = res;
       if (code === 0) {
-        await successMessage(text + '成功');
+        notifyMsg.value = text + '成功';
+        showNotify.value = true;
       }
     }
 
@@ -209,6 +213,8 @@ export default {
       categories,
       isOpenedAction,
       menuItems,
+      showNotify,
+      notifyMsg,
       init,
       nextPage,
       handleClickSubject,

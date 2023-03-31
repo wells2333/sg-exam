@@ -1,22 +1,19 @@
 <template>
   <view class="answer-box" v-if="!loading">
     <view class="overview-container">
-      <view class="answer-exam-name">
-        <text>{{ detail.examinationName }}</text>
+      <view class="overview-container-btn">
+        <nut-button shape="round" type="success" size="large">
+          <template #icon>
+            <IconFont name="Check" size="40px"></IconFont>
+          </template>
+        </nut-button>
       </view>
-      <view class="flex-row">
-        <view class="overview-item">
-          <text>成绩</text>
-          <view class="overview-item-detail">{{ score }}</view>
-        </view>
-        <view class="overview-item">
-          <text>正确率</text>
-          <view class="overview-item-detail"> {{ rate }}</view>
-        </view>
-        <view class="overview-item">
-          <text>耗时</text>
-          <view class="overview-item-detail">{{ detail.duration }}</view>
-        </view>
+      <view class="answer-exam-name">
+        <text>提交成功</text>
+      </view>
+      <view class="overview-item">
+        <text>你的得分：</text>
+        <text class="overview-item-detail">{{ score }}</text>
       </view>
     </view>
     <view class="answer-box-item">
@@ -73,6 +70,7 @@
 
 <script lang="ts">
 import {onMounted, ref} from 'vue';
+import {IconFont} from '@nutui/icons-vue-taro';
 import recordApi from '../../../api/record.api';
 import Taro from '@tarojs/taro';
 import {Choice} from '../../../components/subject/choice/index';
@@ -83,6 +81,7 @@ import {showLoading, hideLoading} from '../../../utils/util';
 
 export default {
   components: {
+    IconFont,
     'choice': Choice,
     'judgement': Judgement,
     'short-answer': ShortAnswer,
@@ -142,8 +141,7 @@ export default {
       detail,
       score,
       rate,
-      handleTryAgain,
-      getOptionColor
+      handleTryAgain
     }
   }
 }
@@ -154,11 +152,8 @@ page {
   background-color: rgba(242, 244, 248, 1);
 }
 
-.at-divider {
-  height: 16px;
-}
-
-.at-divider__content {
-  color: #555555;
+.overview-container-btn {
+  width: 100px;
+  margin: 30px auto 10px;
 }
 </style>

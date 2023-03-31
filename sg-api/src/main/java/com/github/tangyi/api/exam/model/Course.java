@@ -85,13 +85,13 @@ public class Course extends BaseEntity<Course> {
 	 * 排序号
 	 */
 	@Column(name = "sort")
-	private int sort;
+	private Integer sort;
 
 	/**
 	 * 课程状态，0：上架，1：下架
 	 */
 	@Column(name = "course_status")
-	private int courseStatus;
+	private Integer courseStatus;
 
 	/**
 	 * 报名人数
@@ -103,7 +103,7 @@ public class Course extends BaseEntity<Course> {
 	 * 是否收藏
 	 */
 	@Transient
-	private boolean favorite;
+	private Boolean favorite;
 
 	/**
 	 * 收藏人数

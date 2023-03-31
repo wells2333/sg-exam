@@ -37,6 +37,7 @@ declare module '@vue/runtime-core' {
     NutTabs: typeof import('@nutui/nutui-taro')['Tabs']
     NutTag: typeof import('@nutui/nutui-taro')['Tag']
     NutTextarea: typeof import('@nutui/nutui-taro')['Textarea']
+    Parser: typeof import('./src/components/parser/src/Parser.vue')['default']
     ShortAnswer: typeof import('./src/components/subject/shortAnswer/ShortAnswer.vue')['default']
     Speech: typeof import('./src/components/subject/speech/Speech.vue')['default']
     SubjectVideo: typeof import('./src/components/subject/video/SubjectVideo.vue')['default']

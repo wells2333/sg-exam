@@ -22,7 +22,9 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -83,55 +85,6 @@ public class UserFavService extends CrudService<UserFavMapper, ExamUserFav>
 	@CacheEvict(value = ExamCacheName.USER_FAVORITES, allEntries = true)
 	public int deleteAll(Long[] ids) {
 		return super.deleteAll(ids);
-	}
-
-	public ExamUserFav getByUserIdAndTarget(ExamUserFav favorites) {
-		return this.dao.getByUserIdAndTarget(favorites);
-	}
-
-	public String getFavCountKey(int targetType) {
-		String key = "";
-		switch (targetType) {
-			case FAV_TYPE_EXAM -> key = USER_FAVORITES_EXAMINATION_COUNT;
-			case FAV_TYPE_COURSE -> key = USER_FAVORITES_COURSE_COUNT;
-			case FAV_TYPE_SUBJECT -> key = USER_FAVORITES_SUBJECT_COUNT;
-			default -> {
-			}
-		}
-		if (StringUtils.isEmpty(key)) {
-			throw new IllegalArgumentException("invalid targetType");
-		}
-		return key;
-	}
-
-	public String getUserFavKey(int targetType) {
-		String key = "";
-		switch (targetType) {
-			case FAV_TYPE_EXAM -> key = USER_FAVORITES_EXAMINATION;
-			case FAV_TYPE_COURSE -> key = USER_FAVORITES_COURSE;
-			case FAV_TYPE_SUBJECT -> key = USER_FAVORITES_SUBJECT;
-			default -> {
-			}
-		}
-		if (StringUtils.isEmpty(key)) {
-			throw new IllegalArgumentException("invalid targetType");
-		}
-		return key;
-	}
-
-	public String getStartCountKey(int targetType) {
-		String key = "";
-		switch (targetType) {
-			case FAV_TYPE_EXAM -> key = EXAMINATION_START_COUNT;
-			case FAV_TYPE_COURSE -> key = COURSE_START_COUNT;
-			case FAV_TYPE_SUBJECT -> key = SUBJECT_START_COUNT;
-			default -> {
-			}
-		}
-		if (StringUtils.isEmpty(key)) {
-			throw new IllegalArgumentException("invalid targetType");
-		}
-		return key;
 	}
 
 	@Transactional
@@ -195,17 +148,15 @@ public class UserFavService extends CrudService<UserFavMapper, ExamUserFav>
 	}
 
 	public Map<String, Set<String>> getFavRelation(int targetType) {
-		String userFavKey = getUserFavKey(targetType);
+		String key = getUserFavKey(targetType);
 		Map<String, Set<String>> user2FavIdMap = Maps.newHashMap();
-		Set<Object> fields = longRedisTemplate.opsForHash().keys(userFavKey);
-		if (CollectionUtils.isNotEmpty(fields)) {
-			for (Object fieldObj : fields) {
-				Object value = longRedisTemplate.opsForHash().get(userFavKey, fieldObj);
-				if (value != null) {
-					String userId = fieldObj.toString();
-					Stream.of(value.toString().split(",")).filter(StringUtils::isNotBlank)
-							.forEach(eId -> user2FavIdMap.computeIfAbsent(userId, s -> Sets.newHashSet()).add(eId));
-				}
+		ScanOptions options = ScanOptions.scanOptions().match("*").count(2048).build();
+		try (Cursor<Map.Entry<Object, Object>> cursor = longRedisTemplate.opsForHash().scan(key, options)) {
+			while (cursor.hasNext()) {
+				Map.Entry<Object, Object> entry = cursor.next();
+				String userId = entry.getKey().toString();
+				Stream.of(entry.getValue().toString().split(",")).filter(StringUtils::isNotBlank)
+						.forEach(eId -> user2FavIdMap.computeIfAbsent(userId, s -> Sets.newHashSet()).add(eId));
 			}
 		}
 		log.info("get redis fav relation success, size: {}", user2FavIdMap.size());
@@ -331,5 +282,52 @@ public class UserFavService extends CrudService<UserFavMapper, ExamUserFav>
 			favStartCountMapper.batchInsert(inserts);
 			log.info("insert start count success, size: {}", inserts.size());
 		}
+	}
+
+	private ExamUserFav getByUserIdAndTarget(ExamUserFav favorites) {
+		return this.dao.getByUserIdAndTarget(favorites);
+	}
+
+	private String getFavCountKey(int targetType) {
+		String key = "";
+		switch (targetType) {
+			case FAV_TYPE_EXAM -> key = USER_FAVORITES_EXAMINATION_COUNT;
+			case FAV_TYPE_COURSE -> key = USER_FAVORITES_COURSE_COUNT;
+			case FAV_TYPE_SUBJECT -> key = USER_FAVORITES_SUBJECT_COUNT;
+			default -> {
+			}
+		}
+		return validkKey(key);
+	}
+
+	private String getUserFavKey(int targetType) {
+		String key = "";
+		switch (targetType) {
+			case FAV_TYPE_EXAM -> key = USER_FAVORITES_EXAMINATION;
+			case FAV_TYPE_COURSE -> key = USER_FAVORITES_COURSE;
+			case FAV_TYPE_SUBJECT -> key = USER_FAVORITES_SUBJECT;
+			default -> {
+			}
+		}
+		return validkKey(key);
+	}
+
+	private String getStartCountKey(int targetType) {
+		String key = "";
+		switch (targetType) {
+			case FAV_TYPE_EXAM -> key = EXAMINATION_START_COUNT;
+			case FAV_TYPE_COURSE -> key = COURSE_START_COUNT;
+			case FAV_TYPE_SUBJECT -> key = SUBJECT_START_COUNT;
+			default -> {
+			}
+		}
+		return validkKey(key);
+	}
+
+	private String validkKey(String key) {
+		if (StringUtils.isEmpty(key)) {
+			throw new IllegalArgumentException("Invalid targetType");
+		}
+		return key;
 	}
 }

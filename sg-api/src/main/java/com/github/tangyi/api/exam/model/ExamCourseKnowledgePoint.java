@@ -48,7 +48,7 @@ public class ExamCourseKnowledgePoint extends BaseEntity<ExamCourseKnowledgePoin
 	 * 学习时长
 	 */
 	@Column(name = "learn_hour")
-	private int learnHour;
+	private Integer learnHour;
 
 	/**
 	 * 视频ID
@@ -101,11 +101,11 @@ public class ExamCourseKnowledgePoint extends BaseEntity<ExamCourseKnowledgePoin
 		return content;
 	}
 
-	public int getLearnHour() {
+	public Integer getLearnHour() {
 		return learnHour;
 	}
 
-	public void setLearnHour(int learnHour) {
+	public void setLearnHour(Integer learnHour) {
 		this.learnHour = learnHour;
 	}
 

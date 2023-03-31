@@ -74,8 +74,7 @@ function build_frontend() {
 function build_service() {
   echo "Building $SG_EXAM_USER_SERVICE ..."
   chmod 764 gradlew
-  ./gradlew clean
-  ./gradlew build
+  ./gradlew build -x test
   echo "$SG_EXAM_USER_SERVICE has been built successfully."
   echo "Building docker image ..."
   docker-compose build

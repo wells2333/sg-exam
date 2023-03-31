@@ -73,9 +73,10 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 
 	public List<Course> popularCourses() {
 		PageInfo<Course> page = this.findPage(Maps.newHashMap(), 1, 10);
-		courseFavoritesService.findUserFavorites(page.getList());
-		courseFavoritesService.findFavCount(page.getList());
-		return page.getList();
+		List<Course> courses = page.getList();
+		courseFavoritesService.findAndFillUserFavorites(courses);
+		courseFavoritesService.findAndFillFavCount(courses);
+		return courses;
 	}
 
 	@Override
@@ -96,7 +97,7 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 		for (Course course : courses) {
 			course.setFavorite(true);
 		}
-		courseFavoritesService.findFavCount(courses);
+		courseFavoritesService.findAndFillFavCount(courses);
 		pageInfo.setList(courses);
 		return pageInfo;
 	}

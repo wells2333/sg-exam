@@ -86,21 +86,18 @@ public class UserFavController extends BaseController {
 
 	@PostMapping("favExam/{examinationId}")
 	@Operation(summary = "收藏/取消收藏考试")
-	@SgLog(value = "收藏/取消收藏考试", operationType = OperationType.UPDATE)
 	public R<Boolean> favExam(@PathVariable Long examinationId, @RequestParam Long userId, @RequestParam Integer type) {
 		return R.success(examFavoritesService.favorite(userId, examinationId, type));
 	}
 
 	@PostMapping("favSubject/{subjectId}")
 	@Operation(summary = "收藏/取消收藏题目")
-	@SgLog(value = "收藏/取消收藏题目", operationType = OperationType.UPDATE)
 	public R<Boolean> favSubject(@PathVariable Long subjectId, @RequestParam Long userId, @RequestParam Integer type) {
 		return R.success(subjectFavoritesService.favorite(userId, subjectId, type));
 	}
 
 	@PostMapping("favCourse/{courseId}")
 	@Operation(summary = "收藏/取消收藏课程")
-	@SgLog(value = "收藏/取消收藏课程", operationType = OperationType.UPDATE)
 	public R<Boolean> favCourse(@PathVariable Long courseId, @RequestParam Long userId, @RequestParam Integer type) {
 		return R.success(courseFavoritesService.favorite(userId, courseId, type));
 	}
