@@ -2,6 +2,8 @@ package com.github.tangyi.user.service;
 
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.service.ISpeechSynthesisService;
+import com.github.tangyi.api.user.attach.AttachmentManager;
+import com.github.tangyi.api.user.attach.MultipartFileUploadContext;
 import com.github.tangyi.api.user.enums.AttachTypeEnum;
 import com.github.tangyi.api.user.model.Attachment;
 import com.github.tangyi.api.user.model.SpeechSynthesis;
@@ -9,7 +11,6 @@ import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.user.mapper.SpeechSynthesisMapper;
 import com.github.tangyi.user.service.attach.AttachmentService;
-import com.github.tangyi.user.service.attach.QiNiuService;
 import com.github.tangyi.user.speech.BaiduSpeechSynthesisService;
 import com.github.tangyi.user.speech.SynthesisHandlerContext;
 import lombok.AllArgsConstructor;
@@ -32,7 +33,7 @@ public class SpeechSynthesisService extends CrudService<SpeechSynthesisMapper, S
 
 	private final AttachmentService attachmentService;
 
-	private final QiNiuService qiNiuService;
+	private final AttachmentManager attachmentManager;
 
 	private final BaiduSpeechSynthesisService baiduSpeechSynthesisService;
 
@@ -54,12 +55,11 @@ public class SpeechSynthesisService extends CrudService<SpeechSynthesisMapper, S
 	}
 
 	@Transactional
-	public void synthesis(SpeechSynthesis speechSynthesis) throws Exception {
+	public void synthesis(SpeechSynthesis speechSynthesis) {
 		String tenantCode = SysUtil.getTenantCode();
 		String user = SysUtil.getUser();
 		speechSynthesis.setCommonValue(user, tenantCode);
 		SynthesisHandlerContext context = new SynthesisHandlerContext();
-		context.setGroupCode(AttachTypeEnum.SPEECH.getValue());
 		// 截取前5个字符 + UUID作为文件名
 		String fileName = speechSynthesis.getText().substring(0, Math.min(5, speechSynthesis.getText().length())) + "_"
 				+ UUID.randomUUID() + ".mp3";
@@ -97,18 +97,16 @@ public class SpeechSynthesisService extends CrudService<SpeechSynthesisMapper, S
 			return;
 		}
 		Attachment attachment = attachmentService.get(speechSynthesis.getAttachId());
-		if (attachment != null) {
-			try {
-				qiNiuService.delete(attachment);
-			} catch (Exception e) {
-				log.error("delete attachment file failed", e);
-				throw new RuntimeException(e);
-			}
+		try {
+			attachmentManager.delete(attachment);
+		} catch (Exception e) {
+			log.error("delete attachment file failed", e);
+			throw new RuntimeException(e);
 		}
 	}
 
 	@Transactional
 	public Attachment uploadSpeech(MultipartFile file) throws IOException {
-		return qiNiuService.upload(file, AttachTypeEnum.SPEECH.getValue(), SysUtil.getUser(), SysUtil.getTenantCode());
+		return attachmentManager.upload(MultipartFileUploadContext.of(AttachTypeEnum.SPEECH, file));
 	}
 }

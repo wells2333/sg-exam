@@ -3,7 +3,7 @@ package com.github.tangyi.exam.service.subject;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.SubjectVideo;
-import com.github.tangyi.api.user.service.IQiNiuService;
+import com.github.tangyi.api.user.attach.AttachmentManager;
 import com.github.tangyi.common.base.BaseEntity;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.constants.ExamCacheName;
@@ -25,7 +25,7 @@ public class SubjectVideoService extends CrudService<SubjectVideoMapper, Subject
 
 	private final SubjectVideoConverter subjectVideoConverter;
 
-	private final IQiNiuService qiNiuService;
+	private final AttachmentManager attachmentManager;
 
 	@Override
 	@Cacheable(value = ExamCacheName.SUBJECT_VIDEO, key = "#id")
@@ -37,7 +37,7 @@ public class SubjectVideoService extends CrudService<SubjectVideoMapper, Subject
 	public SubjectDto getSubject(Long id) {
 		SubjectDto dto = subjectVideoConverter.toDto(this.get(id));
 		if (dto != null && dto.getVideoId() != null) {
-			dto.setVideoUrl(qiNiuService.getPreviewUrl(dto.getVideoId()));
+			dto.setVideoUrl(attachmentManager.getPreviewUrl(dto.getVideoId()));
 		}
 		return dto;
 	}

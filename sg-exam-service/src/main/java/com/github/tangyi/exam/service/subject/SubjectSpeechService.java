@@ -4,8 +4,8 @@ import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.SubjectSpeech;
 import com.github.tangyi.api.exam.service.ISpeechSynthesisService;
+import com.github.tangyi.api.user.attach.AttachmentManager;
 import com.github.tangyi.api.user.model.SpeechSynthesis;
-import com.github.tangyi.api.user.service.IQiNiuService;
 import com.github.tangyi.common.base.BaseEntity;
 import com.github.tangyi.common.exceptions.CommonException;
 import com.github.tangyi.common.service.CrudService;
@@ -32,7 +32,7 @@ public class SubjectSpeechService extends CrudService<SubjectSpeechMapper, Subje
 
 	private final ISpeechSynthesisService speechSynthesisService;
 
-	private final IQiNiuService qiNiuService;
+	private final AttachmentManager attachmentManager;
 
 	@Override
 	@Cacheable(value = ExamCacheName.SUBJECT_SPEECH, key = "#id")
@@ -47,7 +47,7 @@ public class SubjectSpeechService extends CrudService<SubjectSpeechMapper, Subje
 		if (dto != null && dto.getSpeechId() != null) {
 			SpeechSynthesis synthesis = speechSynthesisService.get(dto.getSpeechId());
 			if (synthesis != null) {
-				dto.setSpeechUrl(qiNiuService.getPreviewUrl(synthesis.getAttachId()));
+				dto.setSpeechUrl(attachmentManager.getPreviewUrl(synthesis.getAttachId()));
 			}
 		}
 		return dto;

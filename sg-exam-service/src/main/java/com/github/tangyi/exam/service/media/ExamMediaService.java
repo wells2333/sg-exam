@@ -1,9 +1,9 @@
 package com.github.tangyi.exam.service.media;
 
+import com.github.tangyi.api.user.attach.AttachmentManager;
+import com.github.tangyi.api.user.attach.MultipartFileUploadContext;
 import com.github.tangyi.api.user.enums.AttachTypeEnum;
 import com.github.tangyi.api.user.model.Attachment;
-import com.github.tangyi.api.user.service.IQiNiuService;
-import com.github.tangyi.common.utils.SysUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ExamMediaService {
 
-	private final IQiNiuService qiNiuService;
+	private final AttachmentManager attachmentManager;
 
 	public Attachment uploadVideo(MultipartFile file) {
 		return upload(file, AttachTypeEnum.EXAM_VIDEO);
@@ -28,7 +28,7 @@ public class ExamMediaService {
 
 	public Attachment upload(MultipartFile file, AttachTypeEnum type) {
 		try {
-			return qiNiuService.upload(file, type.getValue(), SysUtil.getUser(), SysUtil.getTenantCode());
+			return attachmentManager.upload(MultipartFileUploadContext.of(type, file));
 		} catch (IOException e) {
 			log.error("upload exam media failed, type: {}", type.getDesc(), e);
 		}
@@ -36,10 +36,10 @@ public class ExamMediaService {
 	}
 
 	public String imageUrl(Long id) {
-		return qiNiuService.getPreviewUrl(id);
+		return attachmentManager.getPreviewUrl(id);
 	}
 
 	public String videoUrl(Long id) {
-		return qiNiuService.getPreviewUrl(id);
+		return attachmentManager.getPreviewUrl(id);
 	}
 }

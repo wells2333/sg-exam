@@ -4,4 +4,6 @@ import com.github.tangyi.api.user.model.AttachGroup;
 import com.github.tangyi.common.service.ICrudService;
 
 public interface IAttachGroupService extends ICrudService<AttachGroup> {
+
+	AttachGroup findByGroupCode(String groupCode);
 }

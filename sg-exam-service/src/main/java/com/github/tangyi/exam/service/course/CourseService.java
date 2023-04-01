@@ -7,9 +7,9 @@ import com.github.tangyi.api.exam.dto.CourseDetailDto;
 import com.github.tangyi.api.exam.dto.CourseSectionDto;
 import com.github.tangyi.api.exam.model.*;
 import com.github.tangyi.api.exam.service.ICourseService;
+import com.github.tangyi.api.user.attach.AttachmentManager;
 import com.github.tangyi.api.user.model.Attachment;
 import com.github.tangyi.api.user.service.IAttachmentService;
-import com.github.tangyi.api.user.service.IQiNiuService;
 import com.github.tangyi.common.constant.Group;
 import com.github.tangyi.common.constant.Status;
 import com.github.tangyi.common.exceptions.CommonException;
@@ -43,7 +43,7 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 
 	private final IAttachmentService attachmentService;
 
-	private final IQiNiuService qiNiuService;
+	private final AttachmentManager attachmentManager;
 
 	private final RandomImageService randomImageService;
 
@@ -107,7 +107,7 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 	public int insert(Course course) {
 		// 没有上传图片，使用默认图片
 		if (course.getImageId() == null) {
-			course.setImageId(qiNiuService.randomImage(Group.DEFAULT));
+			course.setImageId(attachmentManager.randomAttachmentId(Group.DEFAULT));
 		}
 		return super.insert(course);
 	}
@@ -150,7 +150,7 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 				// 图片
 				String imageUrl = null;
 				if (course.getImageId() != null && course.getImageId() != 0L) {
-					imageUrl = qiNiuService.getPreviewUrl(course.getImageId());
+					imageUrl = attachmentManager.getPreviewUrl(course.getImageId());
 				}
 				course.setImageUrl(StringUtils.getIfEmpty(imageUrl, randomImageService::randomImage));
 				// 报名人数

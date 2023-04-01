@@ -18,8 +18,7 @@ import java.util.TimeZone;
 @EnableAsync
 @EnableCaching
 @SpringBootApplication
-@MapperScan(basePackages = {"com.github.tangyi.user.mapper", "com.github.tangyi.exam.mapper",
-		"com.github.tangyi.generator.mapper", "com.github.tangyi.operation.mapper"})
+@MapperScan(basePackages = {"com.github.tangyi.*.mapper"})
 public class UserServiceApplication implements WebMvcConfigurer {
 
 	public static void main(String[] args) {
@@ -33,8 +32,7 @@ public class UserServiceApplication implements WebMvcConfigurer {
 	}
 
 	@Bean
-	public MeterRegistryCustomizer<MeterRegistry> configurer(
-			@Value("${spring.application.name}") String applicationName) {
+	MeterRegistryCustomizer<MeterRegistry> configurer(@Value("${spring.application.name}") String applicationName) {
 		return (registry) -> registry.config().commonTags("application", applicationName);
 	}
 }

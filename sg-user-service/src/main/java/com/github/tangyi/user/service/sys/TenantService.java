@@ -1,6 +1,7 @@
 package com.github.tangyi.user.service.sys;
 
 import com.github.pagehelper.PageInfo;
+import com.github.tangyi.api.user.attach.AttachmentManager;
 import com.github.tangyi.api.user.constant.TenantConstant;
 import com.github.tangyi.api.user.model.Menu;
 import com.github.tangyi.api.user.model.Role;
@@ -10,7 +11,6 @@ import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.constants.UserCacheName;
 import com.github.tangyi.user.mapper.sys.TenantMapper;
-import com.github.tangyi.user.service.attach.QiNiuService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -30,7 +30,7 @@ public class TenantService extends CrudService<TenantMapper, Tenant> implements 
 
 	private final TenantInitService tenantInitService;
 
-	private final QiNiuService qiNiuService;
+	private final AttachmentManager attachmentManager;
 
 	private final RoleService roleService;
 
@@ -43,7 +43,7 @@ public class TenantService extends CrudService<TenantMapper, Tenant> implements 
 	public Tenant get(Long id) {
 		Tenant tenant = super.get(id);
 		if (tenant != null && tenant.getImageId() != null) {
-			tenant.setImageUrl(qiNiuService.getPreviewUrl(tenant.getImageId()));
+			tenant.setImageUrl(attachmentManager.getPreviewUrl(tenant.getImageId()));
 		}
 		return tenant;
 	}
@@ -54,7 +54,7 @@ public class TenantService extends CrudService<TenantMapper, Tenant> implements 
 		if (CollectionUtils.isNotEmpty(page.getList())) {
 			for (Tenant tenant : page.getList()) {
 				if (tenant.getImageId() != null) {
-					tenant.setImageUrl(qiNiuService.getPreviewUrl(tenant.getImageId()));
+					tenant.setImageUrl(attachmentManager.getPreviewUrl(tenant.getImageId()));
 				}
 			}
 		}

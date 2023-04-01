@@ -1,21 +1,17 @@
-package com.github.tangyi.api.user.service;
+package com.github.tangyi.api.user.attach;
 
 import com.github.tangyi.api.user.model.AttachGroup;
 import com.github.tangyi.api.user.model.Attachment;
 import com.qiniu.common.QiniuException;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
 
-public interface IQiNiuService {
+public interface AttachmentStorage {
 
-	Attachment upload(MultipartFile file, String groupCode, String user, String tenantCode) throws IOException;
+	Attachment upload(MultipartFileUploadContext context) throws IOException;
 
-	Attachment upload(String groupCode, String fileName, String originalFilename, byte[] bytes, String user,
-			String tenantCode);
-
-	void upload(Attachment attachment, byte[] bytes);
+	Attachment upload(BytesUploadContext context);
 
 	boolean delete(Attachment attachment) throws QiniuException;
 
@@ -29,5 +25,5 @@ public interface IQiNiuService {
 
 	Attachment getPreviewAttachment(Long id);
 
-	Long randomImage(String groupCode);
+	Long randomAttachmentId(String groupCode);
 }

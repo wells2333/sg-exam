@@ -1,9 +1,11 @@
 package com.github.tangyi.user.service.attach;
 
+import com.github.tangyi.api.user.attach.AttachmentStorage;
+import com.github.tangyi.api.user.attach.BytesUploadContext;
+import com.github.tangyi.api.user.attach.MultipartFileUploadContext;
 import com.github.tangyi.api.user.enums.AttachTypeEnum;
 import com.github.tangyi.api.user.model.AttachGroup;
 import com.github.tangyi.api.user.model.Attachment;
-import com.github.tangyi.api.user.service.IQiNiuService;
 import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.constant.Group;
 import com.github.tangyi.common.oss.config.QiNiuConfig;
@@ -38,9 +40,9 @@ import java.util.List;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class QiNiuService implements IQiNiuService {
+public class QiNiuAttachmentStorage implements AttachmentStorage {
 
-	private static final int QINIU_SHARD_SIZE = EnvUtils.getInt("QINIU_SHARD_SIZE", 256);
+	private static final int QI_NIU_SHARD_SIZE = EnvUtils.getInt("QI_NIU_SHARD_SIZE", 256);
 
 	private final AttachmentService attachmentService;
 
@@ -50,10 +52,21 @@ public class QiNiuService implements IQiNiuService {
 
 	private final QiNiuConfig qiNiuConfig;
 
+	@Override
 	@Transactional
-	public Attachment upload(MultipartFile file, String groupCode, String user, String tenantCode) throws IOException {
-		return upload(groupCode, file.getOriginalFilename(), file.getOriginalFilename(), file.getBytes(), user,
-				tenantCode);
+	public Attachment upload(MultipartFileUploadContext context) throws IOException {
+		String groupCode = context.getGroup().getGroupCode();
+		MultipartFile file = context.getMultipartFile();
+		return this.upload(groupCode, file.getOriginalFilename(), file.getOriginalFilename(), file.getBytes(),
+				context.getUser(), context.getTenantCode());
+	}
+
+	@Override
+	@Transactional
+	public Attachment upload(BytesUploadContext context) {
+		String groupCode = context.getGroup().getGroupCode();
+		return this.upload(groupCode, context.getFileName(), context.getOriginalFilename(), context.getBytes(),
+				context.getUser(), context.getTenantCode());
 	}
 
 	@Transactional
@@ -165,7 +178,7 @@ public class QiNiuService implements IQiNiuService {
 	}
 
 	@Transactional
-	public Long randomImage(String groupCode) {
+	public Long randomAttachmentId(String groupCode) {
 		String name = RandomImageUtil.randomImage(props.getDefaultImageCount(), props.getDefaultImageType());
 		String fileName = getName(AttachTypeEnum.DEFAULT_IMAGE.getValue(), name);
 		String url = getDownloadUrl(fileName, AttachConstant.DEFAULT_EXPIRE);
@@ -183,7 +196,7 @@ public class QiNiuService implements IQiNiuService {
 
 	private String getShardName(String groupCode, String fileName) {
 		if (groupCode != null) {
-			int shardId = HashUtil.getShardId(fileName, QINIU_SHARD_SIZE);
+			int shardId = HashUtil.getShardId(fileName, QI_NIU_SHARD_SIZE);
 			return getName(groupCode, shardId, fileName);
 		}
 		return fileName;

@@ -30,6 +30,7 @@ public class AttachGroupService extends CrudService<AttachGroupMapper, AttachGro
 		return super.get(id);
 	}
 
+	@Override
 	@Cacheable(value = UserCacheName.ATTACHMENT_GROUP, key = "#groupCode")
 	public AttachGroup findByGroupCode(String groupCode) {
 		return this.dao.findByIdentifier(groupCode);

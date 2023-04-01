@@ -2,6 +2,7 @@ package com.github.tangyi.user.service.attach;
 
 import com.github.tangyi.api.user.model.Attachment;
 import com.github.tangyi.api.user.service.IAttachmentService;
+import com.github.tangyi.common.exceptions.CommonException;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.constants.UserCacheName;
 import com.github.tangyi.user.mapper.attach.AttachmentMapper;
@@ -16,6 +17,15 @@ import org.springframework.transaction.annotation.Transactional;
 @AllArgsConstructor
 @Service
 public class AttachmentService extends CrudService<AttachmentMapper, Attachment> implements IAttachmentService {
+
+	@Override
+	public Attachment getNotNullAttachment(Long id) {
+		Attachment attachment = this.get(id);
+		if (attachment == null) {
+			throw new CommonException("attachment does not exist, id: " + id);
+		}
+		return attachment;
+	}
 
 	@Override
 	@Cacheable(value = UserCacheName.ATTACHMENT, key = "#id")

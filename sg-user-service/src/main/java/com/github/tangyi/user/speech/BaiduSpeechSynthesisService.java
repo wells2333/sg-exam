@@ -2,9 +2,11 @@ package com.github.tangyi.user.speech;
 
 import com.baidu.aip.speech.AipSpeech;
 import com.baidu.aip.speech.TtsResponse;
-import com.github.tangyi.api.user.model.Attachment;
+import com.github.tangyi.api.user.attach.AttachmentManager;
+import com.github.tangyi.api.user.attach.BytesUploadContext;
+import com.github.tangyi.api.user.enums.AttachTypeEnum;
+import com.github.tangyi.api.user.model.AttachGroup;
 import com.github.tangyi.common.utils.EnvUtils;
-import com.github.tangyi.user.service.attach.QiNiuService;
 import com.google.common.collect.Maps;
 import org.springframework.stereotype.Service;
 
@@ -26,10 +28,10 @@ public class BaiduSpeechSynthesisService {
 
 	private final AipSpeech client;
 
-	private final QiNiuService qiNiuService;
+	private final AttachmentManager attachmentManager;
 
-	public BaiduSpeechSynthesisService(QiNiuService qiNiuService) {
-		this.qiNiuService = qiNiuService;
+	public BaiduSpeechSynthesisService(AttachmentManager attachmentManager) {
+		this.attachmentManager = attachmentManager;
 		this.client = new AipSpeech(BAIDU_APP_ID, BAIDU_API_KEY, BAIDU_SECRET_KEY);
 		client.setConnectionTimeoutInMillis(2000);
 		client.setSocketTimeoutInMillis(60000);
@@ -47,14 +49,19 @@ public class BaiduSpeechSynthesisService {
 		options.put("per", BAIDU_PER);
 		// 调用接口
 		TtsResponse res = client.synthesis(text, "zh", 1, options);
-		return res.getResult() == null ? res.getData(): null;
+		return res.getResult() == null ? res.getData() : null;
 	}
 
 	public void synthesisAndUpLoad(String text, SynthesisHandlerContext context) {
 		byte[] bytes = synthesis(text);
 		String fileName = context.getFileName();
-		Attachment attachment = qiNiuService.upload(context.getGroupCode(), fileName, fileName, bytes,
-				context.getUser(), context.getTenantCode());
-		context.setAttachment(attachment);
+		BytesUploadContext uploadContext = new BytesUploadContext();
+		uploadContext.setGroup(AttachGroup.of(AttachTypeEnum.SPEECH));
+		uploadContext.setUser(context.getUser());
+		uploadContext.setTenantCode(context.getTenantCode());
+		uploadContext.setFileName(fileName);
+		uploadContext.setOriginalFilename(fileName);
+		uploadContext.setBytes(bytes);
+		context.setAttachment(attachmentManager.upload(uploadContext));
 	}
 }

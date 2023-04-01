@@ -1,5 +1,7 @@
 package com.github.tangyi.user.service.sys;
 
+import com.github.tangyi.api.user.attach.AttachmentManager;
+import com.github.tangyi.api.user.attach.MultipartFileUploadContext;
 import com.github.tangyi.api.user.constant.TenantConstant;
 import com.github.tangyi.api.user.constant.UserServiceConstant;
 import com.github.tangyi.api.user.dto.UserDto;
@@ -24,7 +26,6 @@ import com.github.tangyi.user.mapper.sys.RoleMapper;
 import com.github.tangyi.user.mapper.sys.UserMapper;
 import com.github.tangyi.user.mapper.sys.UserRoleMapper;
 import com.github.tangyi.user.service.attach.AttachmentService;
-import com.github.tangyi.user.service.attach.QiNiuService;
 import com.github.tangyi.user.utils.MenuUtil;
 import com.github.tangyi.user.utils.UserUtils;
 import com.google.common.base.Preconditions;
@@ -70,7 +71,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 
 	private final AttachmentService attachmentService;
 
-	private final QiNiuService qiNiuService;
+	private final AttachmentManager attachmentManager;
 
 	private final SysProperties sysProperties;
 
@@ -317,7 +318,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	}
 
 	public Attachment uploadAvatar(MultipartFile file) throws IOException {
-		return qiNiuService.upload(file, AttachTypeEnum.AVATAR.getValue(), SysUtil.getUser(), SysUtil.getTenantCode());
+		return attachmentManager.upload(MultipartFileUploadContext.of(AttachTypeEnum.AVATAR, file));
 	}
 
 	@Transactional
@@ -334,7 +335,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 		}
 		user.setAvatarId(userDto.getAvatarId());
 		update(user);
-		return qiNiuService.getPreviewUrl(userDto.getAvatarId());
+		return attachmentManager.getPreviewUrl(userDto.getAvatarId());
 	}
 
 	public boolean checkIdentifierIsExist(Integer identityType, String identifier, String tenantCode) {
@@ -478,7 +479,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 				UserVo tempUserVo = new UserVo();
 				BeanUtils.copyProperties(tempUser, tempUserVo);
 				if (tempUser.getAvatarId() != null) {
-					tempUserVo.setAvatarUrl(qiNiuService.getPreviewUrl(tempUser.getAvatarId()));
+					tempUserVo.setAvatarUrl(attachmentManager.getPreviewUrl(tempUser.getAvatarId()));
 				}
 				userVos.add(tempUserVo);
 			}
@@ -560,7 +561,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 		for (User user : users) {
 			if (user.getAvatarId() != null) {
 				try {
-					result.put(user.getId(), qiNiuService.getPreviewUrl(user.getAvatarId()));
+					result.put(user.getId(), attachmentManager.getPreviewUrl(user.getAvatarId()));
 				} catch (Exception e) {
 					log.error("findUserAvatarUrl failed, userId: {}", user.getId(), e);
 				}
@@ -587,7 +588,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	private void getUserAvatar(UserInfoDto userInfoDto, User user) {
 		try {
 			if (user.getAvatarId() != null && user.getAvatarId() != 0L) {
-				userInfoDto.setAvatar(qiNiuService.getPreviewUrl(user.getAvatarId()));
+				userInfoDto.setAvatar(attachmentManager.getPreviewUrl(user.getAvatarId()));
 			} else {
 				userInfoDto.setAvatar(DEFAULT_AVATAR_URL);
 			}

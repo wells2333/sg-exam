@@ -4,8 +4,8 @@ import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.dto.*;
 import com.github.tangyi.api.exam.model.*;
 import com.github.tangyi.api.exam.service.IExaminationService;
+import com.github.tangyi.api.user.attach.AttachmentManager;
 import com.github.tangyi.api.user.model.User;
-import com.github.tangyi.api.user.service.IQiNiuService;
 import com.github.tangyi.api.user.service.IUserService;
 import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.constant.Group;
@@ -56,7 +56,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 
 	private final SysProperties sysProperties;
 
-	private final IQiNiuService qiNiuService;
+	private final AttachmentManager attachmentManager;
 
 	private final SubjectCategoryService subjectCategoryService;
 
@@ -124,7 +124,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 			examination.setCourseId(course.getId());
 		}
 		if (examination.getImageId() == null) {
-			examination.setImageId(qiNiuService.randomImage(Group.DEFAULT));
+			examination.setImageId(attachmentManager.randomAttachmentId(Group.DEFAULT));
 		}
 		addExaminationMembers(examinationDto, user, tenantCode);
 		return super.insert(examination);
@@ -493,7 +493,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	private void initExaminationImage(ExaminationDto examinationDto) {
 		try {
 			if (examinationDto.getImageId() != null && examinationDto.getImageId() != 0L) {
-				String imageUrl = qiNiuService.getPreviewUrl(examinationDto.getImageId());
+				String imageUrl = attachmentManager.getPreviewUrl(examinationDto.getImageId());
 				examinationDto.setImageUrl(StringUtils.getIfEmpty(imageUrl, randomImageService::randomImage));
 			}
 		} catch (Exception e) {

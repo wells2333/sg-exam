@@ -1,21 +1,19 @@
 package com.github.tangyi.user.controller.attach;
 
-import com.beust.jcommander.internal.Lists;
 import com.github.pagehelper.PageInfo;
+import com.github.tangyi.api.user.attach.AttachmentManager;
+import com.github.tangyi.api.user.attach.MultipartFileUploadContext;
+import com.github.tangyi.api.user.enums.AttachTypeEnum;
 import com.github.tangyi.api.user.model.AttachGroup;
 import com.github.tangyi.api.user.model.Attachment;
 import com.github.tangyi.common.base.BaseController;
-import com.github.tangyi.common.base.SgPreconditions;
+import com.github.tangyi.common.log.OperationType;
+import com.github.tangyi.common.log.SgLog;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.properties.SysProperties;
-import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.common.vo.AttachmentVo;
-import com.github.tangyi.common.log.SgLog;
-import com.github.tangyi.common.log.OperationType;
-import com.github.tangyi.api.user.enums.AttachTypeEnum;
 import com.github.tangyi.user.service.attach.AttachGroupService;
 import com.github.tangyi.user.service.attach.AttachmentService;
-import com.github.tangyi.user.service.attach.QiNiuService;
 import com.qiniu.common.QiniuException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -36,7 +34,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -52,7 +49,7 @@ public class AttachmentController extends BaseController {
 
 	private final SysProperties sysProperties;
 
-	private final QiNiuService qiNiuService;
+	private final AttachmentManager attachmentManager;
 
 	@Operation(summary = "获取附件信息")
 	@GetMapping("/{id}")
@@ -77,50 +74,46 @@ public class AttachmentController extends BaseController {
 		if (StringUtils.isEmpty(groupCode)) {
 			groupCode = AttachTypeEnum.OTHER.getValue();
 		}
-		return R.success(qiNiuService.upload(file, groupCode, SysUtil.getUser(), SysUtil.getTenantCode()));
+		AttachGroup group = groupService.findByGroupCode(groupCode);
+		return R.success(attachmentManager.upload(MultipartFileUploadContext.of(group, file)));
 	}
 
 	@GetMapping("getDownloadUrl")
 	@Operation(summary = "获取下载链接")
 	@SgLog(value = "获取下载链接", operationType = OperationType.PREVIEW)
 	public R<String> getDownloadUrl(@NotBlank Long id) {
-		Attachment attachment = attachmentService.get(id);
-		SgPreconditions.checkNull(attachment, "attachment does not exist");
-		AttachGroup group = groupService.findByGroupCode(attachment.getGroupCode());
-		SgPreconditions.checkNull(group, "group does not exist");
-		return R.success(attachment.getUrl());
+		return R.success(attachmentService.getNotNullAttachment(id).getUrl());
 	}
 
 	@GetMapping("download")
 	@Operation(summary = "下载附件", description = "根据ID下载附件")
 	@SgLog(value = "下载文件", operationType = OperationType.DOWNLOAD)
 	public R<String> download(@NotBlank Long id) {
-		Attachment attachment = attachmentService.get(id);
-		SgPreconditions.checkNull(attachment, "attachment does not exist");
+		Attachment attachment = attachmentService.getNotNullAttachment(id);
 		AttachGroup group = groupService.findByGroupCode(attachment.getGroupCode());
-		SgPreconditions.checkNull(group, "group does not exist");
-		return R.success(qiNiuService.getDownloadUrl(group, attachment.getAttachName()));
+		return R.success(attachmentManager.getDownloadUrl(group, attachment.getAttachName()));
 	}
 
 	@DeleteMapping("/{id}")
 	@Operation(summary = "删除附件", description = "根据ID删除附件")
 	@SgLog(value = "删除附件", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable Long id) throws QiniuException {
-		Attachment attachment = attachmentService.get(id);
-		SgPreconditions.checkNull(attachment, "attachment does not exist");
-		qiNiuService.delete(attachment);
-		return R.success(attachmentService.delete(attachment) > 0);
+		Attachment attachment = attachmentService.getNotNullAttachment(id);
+		boolean res = false;
+		if (attachmentManager.delete(attachment)) {
+			res = attachmentService.delete(attachment) > 0;
+		}
+		return R.success(res);
 	}
 
 	@PostMapping("deleteAll")
 	@Operation(summary = "批量删除附件")
 	@SgLog(value = "批量删除附件", operationType = OperationType.DELETE)
 	public R<Boolean> deleteAll(@RequestBody Long[] ids) throws QiniuException {
-		List<Attachment> attachments = Lists.newArrayList();
 		for (Long id : ids) {
-			Optional.ofNullable(attachmentService.get(id)).ifPresent(attachments::add);
+			this.delete(id);
 		}
-		return R.success(qiNiuService.deleteAll(attachments));
+		return R.success(true);
 	}
 
 	@PostMapping(value = "findById")
@@ -141,13 +134,13 @@ public class AttachmentController extends BaseController {
 	@GetMapping("/{id}/getPreviewUrl")
 	@Operation(summary = "查询附件预览")
 	public R<String> getPreviewUrl(@PathVariable Long id) {
-		return R.success(qiNiuService.getPreviewUrl(id));
+		return R.success(attachmentManager.getPreviewUrl(id));
 	}
 
 	@GetMapping("/{id}/getPreviewAttachment")
 	@Operation(summary = "查询附件预览信息")
 	public R<Attachment> getPreviewAttachment(@PathVariable Long id) {
-		return R.success(qiNiuService.getPreviewAttachment(id));
+		return R.success(attachmentManager.getPreviewAttachment(id));
 	}
 
 	@GetMapping("/{id}/canPreview")
@@ -179,6 +172,6 @@ public class AttachmentController extends BaseController {
 	@GetMapping("/createRandomImage")
 	@Operation(summary = "生成默认图片")
 	public R<Long> createRandomImage(@RequestParam String groupCode) {
-		return R.success(qiNiuService.randomImage(groupCode));
+		return R.success(attachmentManager.randomAttachmentId(groupCode));
 	}
 }

@@ -6,8 +6,6 @@ import lombok.Data;
 @Data
 public class SynthesisHandlerContext {
 
-	private String groupCode;
-
 	private String fileName;
 
 	private String tenantCode;
