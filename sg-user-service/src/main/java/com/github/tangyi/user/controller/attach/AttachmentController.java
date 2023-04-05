@@ -14,7 +14,6 @@ import com.github.tangyi.common.properties.SysProperties;
 import com.github.tangyi.common.vo.AttachmentVo;
 import com.github.tangyi.user.service.attach.AttachGroupService;
 import com.github.tangyi.user.service.attach.AttachmentService;
-import com.qiniu.common.QiniuException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -97,7 +96,7 @@ public class AttachmentController extends BaseController {
 	@DeleteMapping("/{id}")
 	@Operation(summary = "删除附件", description = "根据ID删除附件")
 	@SgLog(value = "删除附件", operationType = OperationType.DELETE)
-	public R<Boolean> delete(@PathVariable Long id) throws QiniuException {
+	public R<Boolean> delete(@PathVariable Long id) throws IOException {
 		Attachment attachment = attachmentService.getNotNullAttachment(id);
 		boolean res = false;
 		if (attachmentManager.delete(attachment)) {
@@ -109,7 +108,7 @@ public class AttachmentController extends BaseController {
 	@PostMapping("deleteAll")
 	@Operation(summary = "批量删除附件")
 	@SgLog(value = "批量删除附件", operationType = OperationType.DELETE)
-	public R<Boolean> deleteAll(@RequestBody Long[] ids) throws QiniuException {
+	public R<Boolean> deleteAll(@RequestBody Long[] ids) throws IOException {
 		for (Long id : ids) {
 			this.delete(id);
 		}

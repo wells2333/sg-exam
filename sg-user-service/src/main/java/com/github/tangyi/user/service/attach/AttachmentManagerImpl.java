@@ -10,7 +10,6 @@ import com.github.tangyi.api.user.model.Attachment;
 import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.exceptions.CommonException;
 import com.google.common.collect.Maps;
-import com.qiniu.common.QiniuException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -62,13 +61,13 @@ public class AttachmentManagerImpl implements AttachmentManager {
 	}
 
 	@Override
-	public boolean delete(Attachment attachment) throws QiniuException {
+	public boolean delete(Attachment attachment) throws IOException {
 		AttachGroup group = groupService.findByGroupCode(attachment.getGroupCode());
 		return getManager(group).delete(attachment);
 	}
 
 	@Override
-	public boolean deleteAll(AttachGroup group, List<Attachment> attachments) throws QiniuException {
+	public boolean deleteAll(AttachGroup group, List<Attachment> attachments) throws IOException {
 		return getManager(group).deleteAll(attachments);
 	}
 

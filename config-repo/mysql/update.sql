@@ -126,3 +126,6 @@ CREATE TABLE `exam_examination_member` (
    KEY `idx_exam_type` (`exam_type`),
    KEY `idx_exam_id` (`exam_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8 COMMENT='考试成员表';
+
+ALTER TABLE `sys_attachment_group`
+    ADD COLUMN `storage_type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '存储类型，1：七牛，2：本地文件';

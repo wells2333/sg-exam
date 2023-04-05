@@ -1,17 +1,17 @@
 package com.github.tangyi.user.service.attach;
 
-import com.github.tangyi.api.user.attach.AttachmentStorage;
 import com.github.tangyi.api.user.attach.BytesUploadContext;
 import com.github.tangyi.api.user.attach.MultipartFileUploadContext;
 import com.github.tangyi.api.user.enums.AttachTypeEnum;
 import com.github.tangyi.api.user.model.AttachGroup;
 import com.github.tangyi.api.user.model.Attachment;
-import com.github.tangyi.common.base.SgPreconditions;
-import com.github.tangyi.common.constant.Group;
 import com.github.tangyi.common.oss.config.QiNiuConfig;
 import com.github.tangyi.common.oss.exceptions.OssException;
 import com.github.tangyi.common.properties.SysProperties;
-import com.github.tangyi.common.utils.*;
+import com.github.tangyi.common.utils.FileUtil;
+import com.github.tangyi.common.utils.JsonMapper;
+import com.github.tangyi.common.utils.RandomImageUtil;
+import com.github.tangyi.common.utils.StopWatchUtil;
 import com.github.tangyi.constants.UserCacheName;
 import com.github.tangyi.user.constants.AttachConstant;
 import com.qiniu.common.QiniuException;
@@ -22,11 +22,9 @@ import com.qiniu.storage.Region;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,14 +33,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 @Slf4j
 @Service
-@AllArgsConstructor
-public class QiNiuAttachmentStorage implements AttachmentStorage {
-
-	private static final int QI_NIU_SHARD_SIZE = EnvUtils.getInt("QI_NIU_SHARD_SIZE", 256);
+public class QiNiuAttachmentStorage extends AbstractAttachmentStorage {
 
 	private final AttachmentService attachmentService;
 
@@ -51,6 +45,16 @@ public class QiNiuAttachmentStorage implements AttachmentStorage {
 	private final SysProperties props;
 
 	private final QiNiuConfig qiNiuConfig;
+
+	public QiNiuAttachmentStorage(AttachmentService attachmentService, AttachGroupService groupService,
+			AttachmentService attachmentService1, AttachGroupService groupService1, SysProperties props,
+			QiNiuConfig qiNiuConfig) {
+		super(attachmentService, groupService);
+		this.attachmentService = attachmentService1;
+		this.groupService = groupService1;
+		this.props = props;
+		this.qiNiuConfig = qiNiuConfig;
+	}
 
 	@Override
 	@Transactional
@@ -72,25 +76,14 @@ public class QiNiuAttachmentStorage implements AttachmentStorage {
 	@Transactional
 	public Attachment upload(String groupCode, String fileName, String originalFilename, byte[] bytes, String user,
 			String tenantCode) {
-		SgPreconditions.checkNull(groupCode, "group code is null");
-		SgPreconditions.checkNull(bytes, "bytes is null");
-		Attachment attachment = new Attachment();
-		attachment.setCommonValue(user, tenantCode);
-		attachment.setAttachType(FileUtil.getFileNameEx(fileName));
-		attachment.setAttachSize(String.valueOf(bytes.length));
-		attachment.setAttachName(originalFilename);
-		attachment.setGroupCode(groupCode);
+		Attachment attachment = prepareAttachment(groupCode, fileName, originalFilename, bytes, user, tenantCode);
 		upload(attachment, bytes);
 		return attachment;
 	}
 
 	@Transactional
 	public void upload(Attachment attachment, byte[] bytes) {
-		SgPreconditions.checkNull(attachment, "attachment is null");
-		SgPreconditions.checkNull(bytes, "attachment bytes is null");
-		SgPreconditions.checkNull(attachment.getGroupCode(), "group code must not null");
-		// groupCode 作为目录
-		String fileName = getShardName(attachment.getGroupCode(), attachment.getAttachName());
+		String fileName = preUpload(attachment, bytes);
 		StopWatch watch = StopWatchUtil.start();
 		try {
 			Response response = getUploadManager().put(bytes, fileName, getQiNiuToken());
@@ -107,74 +100,10 @@ public class QiNiuAttachmentStorage implements AttachmentStorage {
 		}
 	}
 
-	@Transactional
-	@CacheEvict(value = {UserCacheName.ATTACHMENT, UserCacheName.ATTACHMENT_URL}, key = "#attachment.id")
-	public boolean delete(Attachment attachment) throws QiniuException {
-		SgPreconditions.checkNull(attachment, "attachment is null");
-		if (attachmentService.delete(attachment) > 0 && attachment.getGroupCode() != null) {
-			AttachGroup group = groupService.findByGroupCode(attachment.getGroupCode());
-			if (group != null) {
-				String fileName = getShardName(group.getGroupCode(), attachment.getAttachName());
-				log.info("Deleting file {} ...", fileName);
-				BucketManager manager = getBucketManager(getAuth(), new Configuration(Region.region2()));
-				manager.delete(qiNiuConfig.getBucket(), fileName);
-				log.info("File has been deleted, fileName: {}", fileName);
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Transactional
-	@CacheEvict(value = {UserCacheName.ATTACHMENT, UserCacheName.ATTACHMENT_URL}, allEntries = true)
-	public boolean deleteAll(List<Attachment> attachments) throws QiniuException {
-		boolean result = false;
-		for (Attachment attachment : attachments) {
-			if (isNotDefaultGroup(attachment)) {
-				result = this.delete(attachment);
-			}
-		}
-		return result;
-	}
-
-	public boolean delete(String fileName) throws QiniuException {
-		log.info("Deleting file {} ...", fileName);
-		getBucketManager(getAuth(), new Configuration(Region.region2())).delete(qiNiuConfig.getBucket(), fileName);
-		log.info("File has been deleted, fileName: {}", fileName);
-		return Boolean.TRUE;
-	}
-
-	public String getDownloadUrl(AttachGroup group, String attachName) {
-		String fileName = getShardName(group.getGroupCode(), attachName);
-		return getDownloadUrl(fileName, group.getUrlExpire());
-	}
-
-	public String getDownloadUrl(String fileName, long expire) {
-		if (expire <= 0) {
-			expire = AttachConstant.DEFAULT_EXPIRE;
-		}
-		String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8).replace("+", "%20");
-		String publicUrl = String.format("%s/%s", qiNiuConfig.getDomainOfBucket(), encodedFileName);
-		return getAuth().privateDownloadUrl(publicUrl, expire);
-	}
-
-	@Cacheable(value = UserCacheName.ATTACHMENT_URL, key = "#id", unless = "#result == null")
-	public String getPreviewUrl(Long id) {
-		Attachment attachment = getPreviewAttachment(id);
-		return attachment != null ? attachment.getUrl() : null;
-	}
-
-	public Attachment getPreviewAttachment(Long id) {
-		Attachment attachment = attachmentService.get(id);
-		if (attachment != null && StringUtils.isEmpty(attachment.getUrl())) {
-			AttachGroup group = groupService.findByGroupCode(attachment.getGroupCode());
-			if (group != null) {
-				String fileName = getShardName(group.getGroupCode(), attachment.getAttachName());
-				String url = getDownloadUrl(fileName, group.getUrlExpire());
-				attachment.setUrl(url);
-			}
-		}
-		return attachment;
+	@Override
+	public void doDelete(Attachment attachment, String fileName) throws IOException {
+		BucketManager manager = getBucketManager(getAuth(), new Configuration(Region.region2()));
+		manager.delete(qiNiuConfig.getBucket(), fileName);
 	}
 
 	@Transactional
@@ -194,24 +123,13 @@ public class QiNiuAttachmentStorage implements AttachmentStorage {
 		return attachment.getId();
 	}
 
-	private String getShardName(String groupCode, String fileName) {
-		if (groupCode != null) {
-			int shardId = HashUtil.getShardId(fileName, QI_NIU_SHARD_SIZE);
-			return getName(groupCode, shardId, fileName);
+	public String getDownloadUrl(String fileName, long expire) {
+		if (expire <= 0) {
+			expire = AttachConstant.DEFAULT_EXPIRE;
 		}
-		return fileName;
-	}
-
-	private String getName(String groupCode, String fileName) {
-		return getName(groupCode, -1, fileName);
-	}
-
-	private String getName(String groupCode, int shardId, String fileName) {
-		String res = groupCode + "/";
-		if (shardId > 0) {
-			res = res + shardId + "/";
-		}
-		return res + fileName;
+		String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8).replace("+", "%20");
+		String publicUrl = String.format("%s/%s", qiNiuConfig.getDomainOfBucket(), encodedFileName);
+		return getAuth().privateDownloadUrl(publicUrl, expire);
 	}
 
 	private Auth getAuth() {
@@ -232,9 +150,5 @@ public class QiNiuAttachmentStorage implements AttachmentStorage {
 
 	private String getQiNiuToken() {
 		return getAuth().uploadToken(qiNiuConfig.getBucket());
-	}
-
-	private boolean isNotDefaultGroup(Attachment attachment) {
-		return !Group.DEFAULT.equals(attachment.getGroupCode());
 	}
 }

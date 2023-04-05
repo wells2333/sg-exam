@@ -1,5 +1,7 @@
 import { BasicColumn } from '/@/components/Table';
 import { FormSchema } from '/@/components/Table';
+import {h} from "vue";
+import {Tag} from "ant-design-vue";
 
 export const columns: BasicColumn[] = [
   {
@@ -19,6 +21,22 @@ export const columns: BasicColumn[] = [
     dataIndex: 'groupCode',
     width: 120,
     align: 'left',
+  },
+  {
+    title: '存储类型',
+    dataIndex: 'storageType',
+    width: 120,
+    align: 'left',
+    customRender: ({record}) => {
+      const storageType = record.storageType;
+      let color = 'green';
+      let text = '本地磁盘';
+      if (storageType !== null && storageType === 1) {
+        color = 'blue';
+        text = '七牛云';
+      }
+      return h(Tag, {color}, () => text);
+    },
   },
   {
     title: 'url过期时间',
@@ -71,6 +89,19 @@ export const formSchema: FormSchema[] = [
     label: '分组标识',
     component: 'Input',
     required: true,
+  },
+  {
+    field: 'storageType',
+    label: '存储类型',
+    required: true,
+    component: 'RadioButtonGroup',
+    defaultValue: 1,
+    componentProps: {
+      options: [
+        { label: '七牛云', value: 1 },
+        { label: '本地磁盘', value: 2 },
+      ],
+    },
   },
   {
     field: 'urlExpire',
