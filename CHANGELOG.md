@@ -1,7 +1,7 @@
 sg-exam Releases
 ------------
 
-## Version 0.0.6 (2023-04-01)
+## Version 0.0.6 (2023-05-03)
 
 新功能：
 
@@ -11,6 +11,8 @@ sg-exam Releases
 改进：
 
 - 部分 bugfix
+- 修复课程管理 URL 双斜杠问题
+- 增加默认是 Spring 防火墙配置
 
 ## Version 0.0.5 (2023-03-18)
 

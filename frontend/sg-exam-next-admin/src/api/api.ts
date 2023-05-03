@@ -17,12 +17,12 @@ export const AnswerApi = {
 }
 
 export const ChapterApi = {
-  Base: ExamService + '/v1/chapter/',
+  Base: ExamService + '/v1/chapter',
   CourseList: ExamService + '/v1/chapter/list'
 }
 
 export const CourseApi = {
-  Base: ExamService + '/v1/course/',
+  Base: ExamService + '/v1/course',
   CourseList: ExamService + '/v1/course/courseList',
   AllCourses: ExamService + '/v1/course/allCourses'
 }
@@ -39,7 +39,7 @@ export const ExamMediaApi = {
 }
 
 export const ExamOptionApi = {
-  Base: ExamService + '/v1/option/',
+  Base: ExamService + '/v1/option',
   OptionList: ExamService + '/v1/option/defaultOptions',
 }
 
@@ -49,7 +49,7 @@ export const ExamRecordApi = {
 }
 
 export const SectionApi = {
-  Base: ExamService + '/v1/section/',
+  Base: ExamService + '/v1/section',
   CourseList: ExamService + '/v1/section/list'
 }
 
