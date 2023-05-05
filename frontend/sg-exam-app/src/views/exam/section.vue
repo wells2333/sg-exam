@@ -27,7 +27,7 @@
             </div>
           </transition>
         </el-col>
-        <el-col :span="18" style="padding-left: 20px;">
+        <el-col :span="18" style="padding-left: 20px; padding-right: 20px;">
           <transition name="el-fade-in">
             <div v-show="!loading">
               <div>
@@ -236,7 +236,7 @@ export default {
 }
 
 .section-video {
-  margin-right: 20px;
+
 }
 
 .section-title:hover, .point-title:hover {

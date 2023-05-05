@@ -3,7 +3,7 @@ import {AuthService, ExamService, UserService} from "/@/api/services";
 export const AttachmentApi = {
   Base: UserService + '/v1/attachment',
   AttachmentList: UserService + '/v1/attachment/attachmentList',
-  Upload: UserService + 'v1/attachment/upload'
+  Upload: UserService + '/v1/attachment/upload'
 }
 
 export const AttachmentGroupApi = {

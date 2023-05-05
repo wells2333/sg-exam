@@ -18,6 +18,14 @@ export function fetchCourseList (query) {
   })
 }
 
+export function popularCourses (query) {
+  return request({
+    url: baseCourseUrl + 'popularCourses',
+    method: 'get',
+    params: query
+  })
+}
+
 export function getObj (id) {
   return request({
     url: baseCourseUrl + id,
