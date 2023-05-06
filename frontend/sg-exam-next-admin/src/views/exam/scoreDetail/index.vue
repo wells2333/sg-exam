@@ -8,6 +8,9 @@
       :data="score"
       :schema="scoreDetailSchema"
     />
+    <div style="background-color: white">
+      <a-button type="primary" @click="handleMarkOk" class="mr-2" :loading="markOkLoading" style="margin-left: 10px;">批改完成</a-button>
+    </div>
     <BasicTable @register="registerTable">
       <template #action="{ record }">
         <TableAction
@@ -41,7 +44,7 @@ import {useRoute} from 'vue-router';
 import {PageWrapper} from '/@/components/Page';
 import {useGo} from '/@/hooks/web/usePage';
 import {getScoreDetail} from '/@/api/exam/score';
-import {markAnswer} from '/@/api/exam/answer';
+import {markAnswer, markOk} from '/@/api/exam/answer';
 import {Description} from '/@/components/Description/index';
 import {BasicTable, TableAction, useTable} from '/@/components/Table';
 import {answerColumns, scoreDetailSchema} from './detail.data';
@@ -68,6 +71,7 @@ export default defineComponent({
     const currentKey = ref('detail');
     const score = ref({});
     const answers = ref([]);
+    const markOkLoading = ref(false);
     const [registerTable, {reload}] = useTable({
       title: '题目列表',
       columns: answerColumns,
@@ -133,13 +137,36 @@ export default defineComponent({
       await fetch();
     }
 
+    async function handleMarkOk() {
+      try {
+        markOkLoading.value = true;
+        const res = await markOk(recordId.value);
+        if (res) {
+          createMessage.success('保存成功');
+        } else {
+          createMessage.warn('保存失败');
+        }
+      } finally {
+        markOkLoading.value = false;
+      }
+    }
+
     onMounted(() => {
       fetch();
     });
     return {
       registerModal,
-      scoreDetailSchema, score, recordId, currentKey, goBack, registerTable,
-      handleView, handleRight, handleWrong
+      scoreDetailSchema,
+      score,
+      recordId,
+      currentKey,
+      markOkLoading,
+      registerTable,
+      goBack,
+      handleView,
+      handleRight,
+      handleWrong,
+      handleMarkOk
     };
   },
 });

@@ -9,5 +9,7 @@ import java.util.List;
 @Repository
 public interface CourseMapper extends CrudMapper<Course> {
 
+	Long findAllCourseCount();
+
 	List<Long> findAllIds();
 }

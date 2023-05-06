@@ -8,9 +8,11 @@ import java.util.List;
 
 public interface ICourseService extends ICrudService<Course> {
 
+	Long findAllCourseCount();
+
 	List<Long> findAllIds();
 
-	List<Course> popularCourses();
+	List<Course> popularCourses(String findFav);
 
 	CourseDetailDto getDetail(Long id);
 

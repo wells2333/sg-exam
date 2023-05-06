@@ -37,6 +37,10 @@
         </choose>
     </select>
 
+    <select id="findAllSubjectCount" resultType="Long">
+        SELECT COUNT(1) FROM exam_subjects
+    </select>
+
     <select id="findBySubjectId" resultMap="subjectTypeResultMap">
         SELECT * FROM exam_subjects a WHERE a.subject_id = #{subjectId}
     </select>

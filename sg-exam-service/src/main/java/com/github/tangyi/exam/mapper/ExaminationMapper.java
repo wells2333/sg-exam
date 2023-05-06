@@ -11,6 +11,8 @@ import java.util.Map;
 @Repository
 public interface ExaminationMapper extends CrudMapper<Examination> {
 
+	Long findAllExaminationCount();
+
 	List<Long> findAllIds();
 
 	List<Examination> findUserExaminations(@Param("params") Map<String, Object> params);

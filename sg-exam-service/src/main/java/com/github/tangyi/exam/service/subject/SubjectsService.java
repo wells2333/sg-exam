@@ -151,6 +151,10 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 		return pageInfo;
 	}
 
+	public Long findAllSubjectCount() {
+		return this.dao.findAllSubjectCount();
+	}
+
 	public Integer findSubjectCountByCategoryId(Long categoryId) {
 		return this.dao.findSubjectCountByCategoryId(categoryId);
 	}

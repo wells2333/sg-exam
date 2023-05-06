@@ -8,7 +8,6 @@ import com.github.tangyi.api.user.constant.AttachmentConstant;
 import com.github.tangyi.api.user.model.AttachGroup;
 import com.github.tangyi.api.user.model.Attachment;
 import com.github.tangyi.common.base.SgPreconditions;
-import com.github.tangyi.common.exceptions.CommonException;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,10 +26,13 @@ public class AttachmentManagerImpl implements AttachmentManager {
 
 	private final AttachGroupService groupService;
 
+	private final QiNiuAttachmentStorage qiNiuStorage;
+
 	public AttachmentManagerImpl(AttachmentService attachmentService, AttachGroupService groupService,
 			LocalAttachmentStorage localStorage, QiNiuAttachmentStorage qiNiuStorage) {
 		this.attachmentService = attachmentService;
 		this.groupService = groupService;
+		this.qiNiuStorage = qiNiuStorage;
 		this.register(AttachmentConstant.LOCAL, localStorage);
 		this.register(AttachmentConstant.QI_NIU, qiNiuStorage);
 	}
@@ -45,7 +47,8 @@ public class AttachmentManagerImpl implements AttachmentManager {
 		SgPreconditions.checkNull(group, "AttachGroup must not be null");
 		AttachmentStorage storage = this.storageMap.get(group.getStorageType());
 		if (storage == null) {
-			throw new CommonException("storage not found, storageType: " + group.getStorageType());
+			log.warn("storage not found, storageType: {}, use qiNiuStorage", group.getStorageType());
+			return qiNiuStorage;
 		}
 		return storage;
 	}

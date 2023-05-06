@@ -14,6 +14,8 @@ public interface IAnswerService extends ICrudService<Answer> {
 
 	int updateScore(Answer answer);
 
+	int markOk(Long recordId);
+
 	PageInfo<AnswerDto> answerListInfo(String pageNum, String pageSize, Long recordId, Answer answer);
 
 	AnswerDto answerInfo(Long recordId, Long currentSubjectId, Integer nextType);

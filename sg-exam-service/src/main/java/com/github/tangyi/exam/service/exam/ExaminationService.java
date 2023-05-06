@@ -71,6 +71,11 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	private final IUserService userService;
 
 	@Override
+	public Long findAllExaminationCount() {
+		return this.dao.findAllExaminationCount();
+	}
+
+	@Override
 	@Cacheable(value = ExamCacheName.EXAMINATION, key = "#id")
 	public Examination get(Long id) {
 		return super.get(id);

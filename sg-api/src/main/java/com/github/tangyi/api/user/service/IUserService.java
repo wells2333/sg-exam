@@ -9,4 +9,6 @@ import java.util.List;
 public interface IUserService extends ICrudService<User> {
 
 	List<UserVo> findUserVoListById(Long[] ids);
+
+	Long findAllUserCount();
 }

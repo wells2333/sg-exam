@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserMapper extends CrudMapper<User> {
 
+	Long findAllUserCount();
+
 	Integer userCount(UserVo userVo);
 
 	User findUserByPhone(@Param("phone") String phone, @Param("tenantCode") String tenantCode);

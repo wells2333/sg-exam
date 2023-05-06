@@ -52,8 +52,8 @@ public class CourseController extends BaseController {
 
 	@GetMapping("popularCourses")
 	@Operation(summary = "获取热门课程列表")
-	public R<List<Course>> popularCourses() {
-		return R.success(courseService.popularCourses());
+	public R<List<Course>> popularCourses(@RequestParam(required = false, defaultValue = "true") String findFav) {
+		return R.success(courseService.popularCourses(findFav));
 	}
 
 	@PostMapping

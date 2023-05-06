@@ -5,9 +5,9 @@ spring:
   servlet:
     multipart:
       # 单个文件的最大大小
-      max-file-size: 100MB
+      max-file-size: 800MB
       # 整个请求的最大大小
-      max-request-size: 100MB
+      max-request-size: 800MB
   jackson:
     time-zone: GMT+8
 
@@ -82,6 +82,8 @@ ignore:
     - /v1/subjects/exportDemoExcel
     - /tool/gen/download/**
     - /v1/config/getDefaultSysConfig
+    - /v1/course/popularCourses
+    - /v1/home/**
 
 logging:
   level:

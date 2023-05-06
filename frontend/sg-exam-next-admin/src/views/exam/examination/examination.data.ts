@@ -97,8 +97,8 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Select',
     componentProps: {
       options: [
-        { label: '启用', value: 0 },
-        { label: '停用', value: 1 },
+        { label: '已发布', value: 1 },
+        { label: '草稿', value: 0 },
       ],
     },
     colProps: { span: 8 },

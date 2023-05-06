@@ -98,11 +98,7 @@ public class AttachmentController extends BaseController {
 	@SgLog(value = "删除附件", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable Long id) throws IOException {
 		Attachment attachment = attachmentService.getNotNullAttachment(id);
-		boolean res = false;
-		if (attachmentManager.delete(attachment)) {
-			res = attachmentService.delete(attachment) > 0;
-		}
-		return R.success(res);
+		return R.success(attachmentManager.delete(attachment));
 	}
 
 	@PostMapping("deleteAll")

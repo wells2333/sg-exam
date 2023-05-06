@@ -19,7 +19,7 @@
                 <img src="static/img/core-img/star.png" alt="">
               </div>
               <h2>
-                <count-to :start-val="0" :end-val="200" :duration="2600" class="counter"/>
+                <count-to :start-val="0" :end-val="userCount" :duration="2600" class="counter"/>
               </h2>
               <h5>用户数</h5>
             </div>
@@ -32,7 +32,7 @@
                 <img src="static/img/core-img/star.png" alt="">
               </div>
               <h2>
-                <count-to :start-val="0" :end-val="500" :duration="2600" class="counter"/>
+                <count-to :start-val="0" :end-val="examinationCount" :duration="2600" class="counter"/>
               </h2>
               <h5>考试数</h5>
             </div>
@@ -45,7 +45,7 @@
                 <img src="static/img/core-img/star.png" alt="">
               </div>
               <h2>
-                <count-to :start-val="0" :end-val="233" :duration="2600" class="counter"/>
+                <count-to :start-val="0" :end-val="subjectCount" :duration="2600" class="counter"/>
               </h2>
               <h5>题目数</h5>
             </div>
@@ -58,7 +58,7 @@
                 <img src="static/img/core-img/star.png" alt="">
               </div>
               <h2>
-                <count-to :start-val="0" :end-val="300" :duration="2600" class="counter"/>
+                <count-to :start-val="0" :end-val="courseCount" :duration="2600" class="counter"/>
               </h2>
               <h5>课程数</h5>
             </div>
@@ -75,138 +75,29 @@
           </div>
         </el-col>
       </el-row>
-      <el-row type="flex" justify="center" :gutter="50">
-        <el-col :span="6">
+      <el-row v-if="courses.length === 3" type="flex" justify="center" :gutter="50">
+        <el-col :span="6" v-for="(course, index) in courses" :key="index">
           <transition name="fade-transform" mode="out-in">
-            <div class="single-popular-course" v-show="showCourses">
-              <img src="static/img/bg-img/c1.jpg" alt="">
+            <div class="single-popular-course" v-show="showCourses" @click="courseDetail(course)">
+              <img :src="course.imageUrl" alt="">
               <div class="course-content">
-                <h4>英语语法</h4>
+                <h4>{{course.courseName}}</h4>
                 <div class="meta d-flex align-items-center">
-                  <a href="#">Tanma</a>
+                  <a href="#">{{course.teacher}}</a>
                   <span><i class="fa fa-circle" aria-hidden="true"></i></span>
-                  <a href="#">艺术 &amp; 设计</a>
+                  <a href="#">{{course.major !== null ? course.major : ''}}</a>
                 </div>
-                <p>7天搞定英语语法，一线名师带你突破英语基础语法困境，扎实提升。</p>
+                <p>{{course.simpleDesc !== null ? course.simpleDesc : '-'}}</p>
               </div>
               <div class="seat-rating-fee d-flex justify-content-between">
                 <div class="seat-rating h-100 d-flex align-items-center">
                   <div class="seat">
-                    <i class="el-icon-user-solid" aria-hidden="true"></i> 10
-                  </div>
-                  <div class="rating">
-                    <i class="el-icon-star-on" aria-hidden="true"></i> 4.5
+                    <i class="el-icon-user-solid" aria-hidden="true"></i> {{course.memberCount}}
                   </div>
                 </div>
                 <div class="course-fee h-100">
-                  <a href="#" class="free">免费</a>
+                  <a href="#" class="free">{{course.chargeType === 0 ? '免费' : '$' + course.chargePrice}}</a>
                 </div>
-              </div>
-            </div>
-          </transition>
-        </el-col>
-        <el-col :span="6">
-          <transition name="fade-transform" mode="out-in">
-            <div class="single-popular-course mb-80" v-show="showCourses">
-              <img src="static/img/bg-img/c2.jpg" alt="">
-              <div class="course-content">
-                <h4>词汇</h4>
-                <div class="meta d-flex align-items-center">
-                  <a href="#">Tanma</a>
-                  <span><i class="fa fa-circle" aria-hidden="true"></i></span>
-                  <a href="#">艺术 &amp; 设计</a>
-                </div>
-                <p>专业英语词汇培训辅导班，系统方法帮您高效提升英语词汇培训成绩</p>
-              </div>
-              <div class="seat-rating-fee d-flex justify-content-between">
-                <div class="seat-rating h-100 d-flex align-items-center">
-                  <div class="seat">
-                    <i class="el-icon-user-solid" aria-hidden="true"></i> 10
-                  </div>
-                  <div class="rating">
-                    <i class="el-icon-star-on" aria-hidden="true"></i> 4.5
-                  </div>
-                </div>
-                <div class="course-fee h-100">
-                  <a href="#">免费</a>
-                </div>
-              </div>
-            </div>
-          </transition>
-        </el-col>
-        <el-col :span="6">
-          <transition name="fade-transform" mode="out-in">
-            <div class="single-popular-course mb-80" v-show="showCourses">
-              <img src="static/img/bg-img/c3.jpg" alt="">
-              <div class="course-content">
-                <h4>说明文写作</h4>
-                <div class="meta d-flex align-items-center">
-                  <a href="#">Tanma</a>
-                  <span><i class="fa fa-circle" aria-hidden="true"></i></span>
-                  <a href="#">艺术 &amp; 设计</a>
-                </div>
-                <p>精选辅导教程，训练学生阅读和写作说明文的能力</p>
-              </div>
-              <div class="seat-rating-fee d-flex justify-content-between">
-                <div class="seat-rating h-100 d-flex align-items-center">
-                  <div class="seat">
-                    <i class="el-icon-user-solid" aria-hidden="true"></i> 10
-                  </div>
-                  <div class="rating">
-                    <i class="el-icon-star-on" aria-hidden="true"></i> 4.5
-                  </div>
-                </div>
-                <div class="course-fee h-100">
-                  <a href="#">免费</a>
-                </div>
-              </div>
-            </div>
-          </transition>
-        </el-col>
-      </el-row>
-    </div>
-
-    <div class="blog-area padding-80-0">
-      <el-row>
-        <el-col :span="24">
-          <div class="section-heading">
-            <h3>博客分享</h3>
-          </div>
-        </el-col>
-      </el-row>
-      <el-row type="flex" justify="center" :gutter="50">
-        <el-col :span="10">
-          <transition name="fade-transform" mode="out-in">
-            <div class="single-blog-area mb-80" v-show="showBlog">
-              <img src="static/img/blog-img/1.jpg" alt="">
-              <div class="blog-content">
-                <a href="#" class="blog-headline">
-                  <h4>英语语法师</h4>
-                </a>
-                <div class="meta d-flex align-items-center">
-                  <a href="#">Tanma</a>
-                  <span><i class="fa fa-circle" aria-hidden="true"></i></span>
-                  <a href="#">艺术 &amp; 设计</a>
-                </div>
-                <p>7天搞定英语语法，一线名师带你突破英语基础语法困境，扎实提升。</p>
-              </div>
-            </div>
-          </transition>
-        </el-col>
-        <el-col :span="10">
-          <transition name="fade-transform" mode="out-in">
-            <div class="single-blog-area mb-80" v-show="showBlog">
-              <img src="static/img/blog-img/2.jpg" alt="">
-              <div class="blog-content">
-                <a href="#" class="blog-headline">
-                  <h4>英语语法师</h4>
-                </a>
-                <div class="meta d-flex align-items-center">
-                  <a href="#">Tanma</a>
-                  <span><i class="fa fa-circle" aria-hidden="true"></i></span>
-                  <a href="#">艺术 &amp; 设计</a>
-                </div>
-                <p>7天搞定英语语法，一线名师带你突破英语基础语法困境，扎实提升。</p>
               </div>
             </div>
           </transition>
@@ -224,6 +115,9 @@
 import OFooter from '../common/footer'
 import CountTo from 'vue-count-to'
 import {mapGetters} from 'vuex'
+import { popularCourses } from '@/api/exam/course'
+import { summary } from '@/api/exam/home'
+import { notifyFail } from '@/utils/util'
 
 export default {
   props: {
@@ -237,7 +131,15 @@ export default {
       isActive: false,
       showFacts: false,
       showCourses: false,
-      showBlog: false
+      showBlog: false,
+      query: {
+        findFav: false
+      },
+      courses: [],
+      userCount: 0,
+      courseCount: 0,
+      examinationCount: 0,
+      subjectCount: 0
     }
   },
   components: {
@@ -245,6 +147,41 @@ export default {
     CountTo
   },
   methods: {
+    getHomeSummary: function () {
+      summary({}).then(response => {
+        const result = response.data.result
+        if (result.userCount) {
+          this.userCount = result.userCount
+        }
+        if (result.courseCount) {
+          this.courseCount = result.courseCount
+        }
+        if (result.examinationCount) {
+          this.examinationCount = result.examinationCount
+        }
+        if (result.subjectCount) {
+          this.subjectCount = result.subjectCount
+        }
+      }).catch(() => {
+        notifyFail(this, '加载首页数据失败！')
+      })
+    },
+    getPopularCourses: function () {
+      popularCourses(this.query).then(response => {
+        const list = response.data.result
+        if (list && list.length >= 3) {
+          this.courses = []
+          for (let i = 0; i < 3; i++) {
+            this.courses.push(list[i])
+          }
+        }
+      }).catch(() => {
+        notifyFail(this, '加载热门课程数据失败！')
+      })
+    },
+    courseDetail: function (course) {
+      this.$router.push({name: 'course-details', query: {courseId: course.id}})
+    },
     // 返回顶部
     goTop: function (i) {
       document.documentElement.scrollTop -= i
@@ -274,6 +211,8 @@ export default {
         }, 350)
       }
     }
+    this.getHomeSummary()
+    this.getPopularCourses()
     setTimeout(() => {
       vm.showFacts = true
     }, 350)

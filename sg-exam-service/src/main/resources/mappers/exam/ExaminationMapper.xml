@@ -51,6 +51,10 @@
         </choose>
     </select>
 
+    <select id="findAllExaminationCount" resultType="java.lang.Long">
+        SELECT COUNT(1) FROM exam_examination a WHERE a.is_deleted = 0
+    </select>
+
     <select id="findAllIds" resultType="java.lang.Long">
         SELECT a.id FROM exam_examination a WHERE a.is_deleted = 0
     </select>
@@ -95,7 +99,7 @@
             WHERE exam_type = 1 AND member_type = 2 AND member_id = #{params.deptId}))
         </if>
         )
-        ORDER BY update_time DESC
+        ORDER BY sort DESC
     </select>
 
     <select id="findExaminationCount" resultType="java.lang.Integer">

@@ -60,7 +60,7 @@ export default defineComponent({
     },
     uploadUrl: {
       type: String,
-      default: UserService + 'v1/attachment/upload',
+      default: UserService + '/v1/attachment/upload',
     },
     accept: {
       type: String,

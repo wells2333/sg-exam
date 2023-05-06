@@ -77,6 +77,11 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 
 	private final UserAuthsService userAuthsService;
 
+	@Override
+	public Long findAllUserCount() {
+		return this.dao.findAllUserCount();
+	}
+
 	@Transactional
 	public int createUser(UserDto userDto) {
 		userDto.setTenantCode(SysUtil.getTenantCode());

@@ -22,10 +22,8 @@
 
     <select id="findPage" resultMap="subjectSpeechResultMap">
         SELECT * FROM exam_subject_speech a WHERE a.is_deleted = 0
-        <if test="params != null">
-            <if test="params.tenantCode != null and params.tenantCode != ''">
-                and tenant_code = #{params.tenantCode}
-            </if>
+        <if test="params != null and params.tenantCode != null and params.tenantCode != ''">
+            AND a.tenant_code = #{params.tenantCode}
         </if>
     </select>
 

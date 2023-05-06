@@ -64,6 +64,10 @@
         </foreach>
     </select>
 
+    <select id="findAllUserCount" resultType="Long">
+        SELECT COUNT(1) FROM sys_user a WHERE a.is_deleted = 0
+    </select>
+
     <select id="userCount" resultType="Integer">
         SELECT COUNT(1) FROM sys_user a WHERE a.is_deleted = 0 and a.tenant_code = #{tenantCode}
     </select>

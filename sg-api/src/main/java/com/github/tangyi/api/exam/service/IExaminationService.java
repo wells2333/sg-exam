@@ -13,6 +13,8 @@ import java.util.Map;
 
 public interface IExaminationService extends ICrudService<Examination> {
 
+	Long findAllExaminationCount();
+
 	List<Long> findAllIds();
 
 	PageInfo<ExaminationDto> examinationList(Map<String, Object> params, int pageNum, int pageSize);

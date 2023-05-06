@@ -36,6 +36,10 @@
         ORDER BY sort ASC
     </select>
 
+    <select id="findAllCourseCount" resultType="java.lang.Long">
+        SELECT COUNT(1) FROM exam_course a WHERE a.is_deleted = 0
+    </select>
+
     <select id="findAllIds" resultType="java.lang.Long">
         SELECT a.id FROM exam_course a WHERE a.is_deleted = 0
     </select>

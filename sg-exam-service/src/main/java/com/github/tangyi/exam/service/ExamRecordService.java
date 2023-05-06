@@ -12,6 +12,7 @@ import com.github.tangyi.api.user.service.IUserService;
 import com.github.tangyi.common.excel.ExcelToolUtil;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.DateUtils;
+import com.github.tangyi.common.utils.PageUtil;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.common.vo.DeptVo;
 import com.github.tangyi.common.vo.UserVo;
@@ -60,11 +61,8 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 		PageInfo<ExaminationRecordDto> pageInfo = new PageInfo<>();
 		PageInfo<ExaminationRecord> recordPageInfo = this.findPage(condition, pageNum, pageSize);
 		List<ExaminationRecord> records = recordPageInfo.getList();
+		PageUtil.copyProperties(recordPageInfo, pageInfo);
 		pageInfo.setList(toRecordDto(records));
-		pageInfo.setTotal(recordPageInfo.getTotal());
-		pageInfo.setPages(recordPageInfo.getPages());
-		pageInfo.setPageSize(recordPageInfo.getPageSize());
-		pageInfo.setPageNum(recordPageInfo.getPageNum());
 		return pageInfo;
 	}
 

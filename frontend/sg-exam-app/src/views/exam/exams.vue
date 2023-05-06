@@ -1,6 +1,5 @@
 <template>
   <div class="content-container">
-    <!-- 搜索框 -->
     <div class="search-form">
       <el-form ref="examForm" :inline="true" :model="query" label-width="100px" class="examForm">
         <el-form-item label="考试名称" prop="examinationName">
@@ -12,8 +11,6 @@
         </el-form-item>
       </el-form>
     </div>
-
-    <!-- 分类 -->
     <div class="category-list">
       <ul>
         <li :class="activeTag === '1' ? 'active' : ''" @click="changeTag('1')">全部</li>
@@ -22,7 +19,6 @@
         <li :class="activeTag === '4' ? 'active' : ''" @click="changeTag('4')">参数人数</li>
       </ul>
     </div>
-    <!-- 考试卡片列表 -->
     <div class="exam-card-list">
       <transition name="fade-transform" mode="out-in" v-for="exam in examList" :key="exam.id">
         <div class="card-item" v-show="exam.show">
@@ -52,12 +48,11 @@
           </div>
         </div>
       </transition>
-      <!-- 对齐 -->
       <i v-if="examList !== undefined && examList.length > 0" v-for="count in (examList.length)" :key="count"></i>
     </div>
     <el-row style="text-align: center; margin-bottom: 50px;">
       <el-col :span="24">
-        <el-button type="default" @click="scrollList" :loading="loading" style="margin-bottom: 100px;">加载更多</el-button>
+        <el-button v-if="!isLastPage" type="default" @click="scrollList" :loading="loading" style="margin-bottom: 100px;">加载更多</el-button>
       </el-col>
     </el-row>
   </div>
@@ -111,7 +106,6 @@ export default {
     }
   },
   computed: {
-    // 获取用户信息
     ...mapState({
       userInfo: state => state.user.userInfo,
       course: state => state.course.course,
@@ -135,12 +129,15 @@ export default {
   },
   methods: {
     // 加载考试列表
-    getExamList () {
+    getExamList (reset = false) {
       this.loading = true
       fetchList(this.query).then(response => {
         const { total, isLastPage, list } = response.data.result
         this.total = total
         this.isLastPage = isLastPage
+        if (reset) {
+          this.examList = [];
+        }
         this.updateExamList(list)
         this.loading = false
       }).catch(() => {
@@ -214,11 +211,11 @@ export default {
     },
     submitForm () {
       this.query.page = 1
-      this.getExamList()
+      this.getExamList(true)
     },
     resetForm () {
       this.query.examinationName = ''
-      this.getExamList()
+      this.getExamList(true)
     },
     // 切换tag
     changeTag (tag) {
@@ -230,7 +227,7 @@ export default {
       } else {
         this.query.sort = 'id'
       }
-      this.getExamList()
+      this.getExamList(true)
     },
     handleSizeChange (val) {
       this.query.limit = val
@@ -265,7 +262,7 @@ export default {
       for (let i = 0; i < list.length; i++) {
         setTimeout(() => {
           list[i].show = true
-        }, 250 + (100 * i))
+        }, 50 + (100 * i))
       }
     }
   }

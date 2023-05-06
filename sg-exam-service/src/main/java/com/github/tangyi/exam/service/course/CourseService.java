@@ -58,6 +58,11 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 	private final CourseFavoritesService courseFavoritesService;
 
 	@Override
+	public Long findAllCourseCount() {
+		return this.dao.findAllCourseCount();
+	}
+
+	@Override
 	@Cacheable(value = ExamCacheName.COURSE, key = "#id")
 	public Course get(Long id) {
 		Course course = super.get(id);
@@ -71,11 +76,13 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 		return this.dao.findAllIds();
 	}
 
-	public List<Course> popularCourses() {
+	public List<Course> popularCourses(String findFav) {
 		PageInfo<Course> page = this.findPage(Maps.newHashMap(), 1, 10);
 		List<Course> courses = page.getList();
-		courseFavoritesService.findAndFillUserFavorites(courses);
-		courseFavoritesService.findAndFillFavCount(courses);
+		if (Boolean.parseBoolean(findFav)) {
+			courseFavoritesService.findAndFillUserFavorites(courses);
+			courseFavoritesService.findAndFillFavCount(courses);
+		}
 		return courses;
 	}
 

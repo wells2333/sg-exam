@@ -10,6 +10,8 @@ import java.util.List;
 @Repository
 public interface SubjectsMapper extends CrudMapper<Subjects> {
 
+	Long findAllSubjectCount();
+
 	Subjects findBySubjectId(Long subjectId);
 
 	Subjects findByCategoryIdAndSort(@Param("categoryId") Long categoryId, @Param("sort") Integer sort);

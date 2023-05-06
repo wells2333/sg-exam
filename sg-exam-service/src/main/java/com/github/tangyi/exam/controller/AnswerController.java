@@ -27,7 +27,6 @@ import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @AllArgsConstructor
@@ -169,6 +168,13 @@ public class AnswerController extends BaseController {
 	public R<Boolean> markAnswer(@RequestBody @Valid Answer answer) {
 		answer.setCommonValue();
 		return R.success(answerService.updateScore(answer) > 0);
+	}
+
+	@PutMapping("markOk")
+	@Operation(summary = "批改完成")
+	@SgLog(value = "批改完成", operationType = OperationType.UPDATE)
+	public R<Boolean> markOk(@RequestParam Long recordId) {
+		return R.success(answerService.markOk(recordId) > 0);
 	}
 
 	/**

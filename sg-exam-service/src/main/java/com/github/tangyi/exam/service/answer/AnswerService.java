@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.constants.AnswerConstant;
 import com.github.tangyi.api.exam.dto.AnswerDto;
 import com.github.tangyi.api.exam.dto.SubjectDto;
+import com.github.tangyi.api.exam.enums.SubmitStatusEnum;
 import com.github.tangyi.api.exam.model.Answer;
 import com.github.tangyi.api.exam.model.ExaminationRecord;
 import com.github.tangyi.api.exam.model.ExaminationSubject;
@@ -12,10 +13,7 @@ import com.github.tangyi.api.exam.service.IAnswerService;
 import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.service.CrudService;
-import com.github.tangyi.common.utils.DateUtils;
-import com.github.tangyi.common.utils.ObjectUtil;
-import com.github.tangyi.common.utils.RUtil;
-import com.github.tangyi.common.utils.SysUtil;
+import com.github.tangyi.common.utils.*;
 import com.github.tangyi.common.vo.UserVo;
 import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.exam.handler.AnswerHandlerFactory;
@@ -130,6 +128,18 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> implements 
 			}
 		}
 		return 1;
+	}
+
+	@Override
+	@Transactional
+	public int markOk(Long recordId) {
+		ExaminationRecord record = examRecordService.get(recordId);
+		if (record != null) {
+			record.setCommonValue();
+			record.setSubmitStatus(SubmitStatusEnum.CALCULATED.getValue());
+			return examRecordService.update(record);
+		}
+		return -1;
 	}
 
 	@Override
@@ -330,10 +340,8 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> implements 
 			}).collect(Collectors.toList());
 		}
 		PageInfo<AnswerDto> answerDtoPageInfo = new PageInfo<>();
+		PageUtil.copyProperties(answerPageInfo, answerDtoPageInfo);
 		answerDtoPageInfo.setList(answerDtos);
-		answerDtoPageInfo.setTotal(answerPageInfo.getTotal());
-		answerDtoPageInfo.setPageNum(answerPageInfo.getPageNum());
-		answerDtoPageInfo.setPageSize(answerPageInfo.getPageSize());
 		return answerDtoPageInfo;
 	}
 

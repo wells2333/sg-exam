@@ -13,3 +13,11 @@ export const markAnswer = (params?: object) => {
     }
   );
 }
+
+export const markOk = (recordId?: string) => {
+  return defHttp.put<void>(
+    {
+      url: AnswerApi.Base + '/markOk?recordId=' + recordId,
+    }
+  );
+}
