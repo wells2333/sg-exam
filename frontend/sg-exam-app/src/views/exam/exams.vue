@@ -136,7 +136,7 @@ export default {
         this.total = total
         this.isLastPage = isLastPage
         if (reset) {
-          this.examList = [];
+          this.examList = []
         }
         this.updateExamList(list)
         this.loading = false

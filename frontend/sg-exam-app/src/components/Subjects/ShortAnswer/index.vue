@@ -6,6 +6,9 @@
         <span class="subject-title-content" v-html="subjectInfo.subjectName"/>
         <span class="subject-title-content"
               v-if="subjectInfo.score !== undefined && subjectInfo.score !== 0">&nbsp;({{ subjectInfo.score }})分</span>
+        <div class="subject-video-info" v-if="subjectInfo.subjectVideoId && subjectInfo.subjectVideoName">
+          <sg-video ref="sgVideo"></sg-video>
+        </div>
         <div class="subject-tinymce">
           <tinymce ref="editor" :height="height" v-model="userAnswer"/>
         </div>
@@ -16,11 +19,14 @@
 
 <script>
 import Tinymce from '@/components/Tinymce'
+import SgVideo from '@/components/SgVideo'
+import {setVideoSrc, pauseVideo} from '@/utils/busi'
 
 export default {
   name: 'ShortAnswer',
   components: {
-    Tinymce
+    Tinymce,
+    SgVideo
   },
   props: {
     height: {
@@ -55,9 +61,13 @@ export default {
       if (subject.hasOwnProperty('answer')) {
         this.setAnswer(subject.answer.answer)
       }
+      setVideoSrc(subject, this.$refs)
     },
     getSubjectInfo() {
       return this.subjectInfo
+    },
+    beforeSave() {
+      pauseVideo(this.$refs)
     }
   }
 }

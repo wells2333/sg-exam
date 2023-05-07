@@ -22,6 +22,8 @@ export function emptySubject() {
     'options.B': '',
     'options.C': '',
     'options.D': '',
+    subjectVideoId: undefined,
+    subjectVideoName: '',
   }
 }
 
@@ -49,6 +51,7 @@ export function generateChoicesSchemas(subjectData: object, defaultOptions: obje
     }
   }
   schemas.push(...gentSubjectNameSchemas());
+  schemas.push(...genSubjectUploadVideoSchemas());
   schemas.push(...genBasicSchemas());
   schemas.push(...genOptionDividerSchemas());
   if (answerOptions.length > 0) {
@@ -229,6 +232,7 @@ export function generateTextAnswer() {
 export function genShortAnswerSchemas() {
   const schemas: any[] = [];
   schemas.push(...gentSubjectNameSchemas());
+  schemas.push(...genSubjectUploadVideoSchemas());
   schemas.push(...genBasicSchemas());
   schemas.push(...judgeTypeSchemas());
   schemas.push(...generateTextAnswer());
@@ -240,6 +244,7 @@ export function genShortAnswerSchemas() {
 export function genJudgementSchemas() {
   const schemas: any[] = [];
   schemas.push(...gentSubjectNameSchemas());
+  schemas.push(...genSubjectUploadVideoSchemas());
   schemas.push(...genBasicSchemas());
   schemas.push(...judgeTypeSchemas());
   schemas.push(...generateJudgementAnswer());
@@ -251,6 +256,7 @@ export function genJudgementSchemas() {
 export function genSpeechSchemas() {
   const schemas: any[] = [];
   schemas.push(...genSpeechSubjectNameSchemas());
+  schemas.push(...genSubjectUploadVideoSchemas());
   schemas.push(...genBasicSchemas());
   schemas.push(...judgeTypeSchemas());
   schemas.push(...generateTextAnswer());
@@ -367,6 +373,42 @@ export function genUploadVideoSchemas() {
     },
     {
       field: 'videoName',
+      label: '视频名称',
+      component: 'Input',
+      colProps: {
+        span: 12
+      }
+    }
+  ]
+}
+
+export function genSubjectUploadVideoSchemas() {
+  return [
+    {
+      label: '题目视频',
+      field: 'subjectVideoId',
+      component: 'Input',
+      required: false,
+      render: ({model, field}) => {
+        return h(SgUpload, {
+          value: model[field],
+          api: uploadVideo,
+          accept: videoTypes,
+          type: 'video',
+          handleDone: (value) => {
+            if (value && unref(value)) {
+              model[field] = unref(value).id;
+              model['subjectVideoName'] = unref(value).name;
+            }
+          },
+        });
+      },
+      colProps: {
+        span: 12
+      }
+    },
+    {
+      field: 'subjectVideoName',
       label: '视频名称',
       component: 'Input',
       colProps: {

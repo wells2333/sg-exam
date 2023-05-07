@@ -169,6 +169,10 @@ export default {
     saveCurrentSubjectAndGetNextSubject(nextType, nextSubjectSort, subjectId = undefined) {
       const answerId = isNotEmpty(this.tempAnswer) ? this.tempAnswer.id : ''
       const answer = this.getAnswer(answerId)
+      const ref = this.getSubjectRef()
+      if (ref) {
+        ref.beforeSave()
+      }
       this.startLoading(nextType)
       saveAndNext(answer, nextType, nextSubjectSort, subjectId).then(response => {
         if (response.data.result !== null) {
@@ -177,7 +181,6 @@ export default {
             this.setSubjectInfo(subject)
           })
         }
-        // 更新时间
         this.subjectStartTime = moment().format('YYYY-MM-DD HH:mm:ss')
         this.endLoading(nextType)
       }).catch((error) => {
@@ -208,6 +211,10 @@ export default {
       })
     },
     doSubmitExam(answer, examinationId, examRecordId, userInfo, toExamRecord) {
+      const ref = this.getSubjectRef()
+      if (ref) {
+        ref.beforeSave()
+      }
       const answerId = isNotEmpty(answer) ? answer.id : ''
       saveAndNext(this.getAnswer(answerId), 0).then(response => {
         // 提交到后台

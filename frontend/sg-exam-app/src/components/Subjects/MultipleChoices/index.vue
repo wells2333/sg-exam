@@ -7,6 +7,9 @@
         <span class="subject-title-content"
               v-if="subjectInfo.score !== undefined && subjectInfo.score !== 0">&nbsp;({{ subjectInfo.score }})分</span>
       </div>
+      <div class="subject-video-info" v-if="subjectInfo.subjectVideoId && subjectInfo.subjectVideoName">
+        <sg-video ref="sgVideo"></sg-video>
+      </div>
       <ul class="subject-options" v-for="option in options" :key="option.id">
         <li class="subject-option">
           <input class="toggle" type="checkbox" :checked="isChecked(option.optionName)"
@@ -22,10 +25,15 @@
 </template>
 
 <script>
+import SgVideo from '@/components/SgVideo'
 import {isNotEmpty} from '@/utils/util'
+import {setVideoSrc, pauseVideo} from '@/utils/busi'
 
 export default {
   name: 'MultipleChoices',
+  components: {
+    SgVideo
+  },
   data() {
     return {
       subjectCount: 0,
@@ -62,12 +70,12 @@ export default {
       if (subject.hasOwnProperty('answer')) {
         this.setAnswer(subject.answer.answer)
       }
+      setVideoSrc(subject, this.$refs)
     },
     getSubjectInfo() {
       this.subjectInfo.options = this.options
       return this.subjectInfo
     },
-    // 选中选项
     toggleOption($event, option) {
       if ($event.target.checked) {
         if (!this.userAnswer.includes(option.optionName)) {
@@ -80,6 +88,9 @@ export default {
     },
     isChecked(optionName) {
       return this.userAnswer.includes(optionName)
+    },
+    beforeSave() {
+      pauseVideo(this.$refs)
     }
   }
 }

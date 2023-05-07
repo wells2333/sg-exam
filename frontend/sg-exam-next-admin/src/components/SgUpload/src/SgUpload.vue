@@ -3,7 +3,7 @@
     <div class="sg-upload">
       <div class="sg-upload-files">
         <Image v-if="type === 'img' && file" style="width: 40px;height: 40px;cursor: pointer;overflow: hidden;" :src="file.url" :alt="file.name"/>
-        <a target="_blank" v-else-if="showFileList && file">{{file.name}}</a>
+        <a target="_blank" v-else-if="showFileList && file" :href="file.url">{{file.name}}</a>
         <Icon v-if="showFileList && file" icon="ant-design:delete-outlined" class="sg-upload-del-btn"
               @click="handleDelete" title="删除"/>
       </div>
@@ -125,7 +125,6 @@ export default defineComponent({
     async function customRequest(formData) {
       formData.filename = formData.file.name;
       const {api, handleFormData} = props;
-      // 处理formData
       if (handleFormData !== undefined && isFunction(handleFormData)) {
         await props.handleFormData?.(formData);
       }
@@ -140,7 +139,6 @@ export default defineComponent({
         const {id, url} = data.result;
         file.value = {id, name: formData.file.name, url};
         emit('done', file);
-        // 回调handleDone
         if (props.handleDone !== undefined) {
           props.handleDone?.(file.value);
         }
@@ -175,6 +173,7 @@ export default defineComponent({
     watch(
       () => props.value,
       async (val: string, prevVal: string) => {
+        debugger
         resetFile();
         if (val) {
           const res = await getAttachment(val);

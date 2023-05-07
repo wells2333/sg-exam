@@ -138,7 +138,6 @@ export default defineComponent({
       return value;
     }
 
-    // 更新题目
     function setSubjectValue(data) {
       setParams(data);
       const subjectData = unref(data?.subjectData);

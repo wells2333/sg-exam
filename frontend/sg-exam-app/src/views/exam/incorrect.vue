@@ -73,6 +73,9 @@
                   tempIncorrectAnswer.subject.score
                 }}分）
               </div>
+              <div v-if="tempIncorrectAnswer.subject.subjectVideoUrl">
+                <sg-video ref="sgVideo" :src="tempIncorrectAnswer.subject.subjectVideoUrl"></sg-video>
+              </div>
               <!-- 选择题 -->
               <div>
                 <ul class="subject-options" v-for="option in tempIncorrectAnswer.subject.options"
@@ -137,9 +140,13 @@ import {getAnswerListInfo} from '@/api/exam/answer'
 import {examRecordDetails} from '@/api/exam/examRecord'
 import {notifyFail, messageWarn} from '@/utils/util'
 import {answerType} from '@/const/constant'
+import SgVideo from '@/components/SgVideo'
 
 export default {
   name: 'Incorrect',
+  components: {
+    SgVideo
+  },
   data() {
     return {
       loading: true,

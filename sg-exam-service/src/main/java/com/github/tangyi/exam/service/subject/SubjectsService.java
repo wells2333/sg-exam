@@ -8,6 +8,7 @@ import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.*;
 import com.github.tangyi.api.exam.service.IExecutorService;
 import com.github.tangyi.api.exam.service.ISubjectsService;
+import com.github.tangyi.api.user.attach.AttachmentManager;
 import com.github.tangyi.common.base.BaseEntity;
 import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.base.TreeEntity;
@@ -67,6 +68,8 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 
 	private final SubjectViewCounterService subjectViewCounterService;
 
+	private final AttachmentManager attachmentManager;
+
 	private final IExecutorService executorService;
 
 	/**
@@ -101,7 +104,11 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 	}
 
 	public SubjectDto getSubject(Long subjectId, Integer type) {
-		return subjectServiceFactory.service(type).getSubject(subjectId);
+		SubjectDto dto = subjectServiceFactory.service(type).getSubject(subjectId);
+		if (dto.getSubjectVideoId() != null) {
+			dto.setSubjectVideoUrl(attachmentManager.getPreviewUrl(dto.getSubjectVideoId()));
+		}
+		return dto;
 	}
 
 	@Cacheable(cacheNames = ExamCacheName.SUBJECTS, key = "#subjectId")

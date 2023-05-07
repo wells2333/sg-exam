@@ -129,3 +129,24 @@ CREATE TABLE `exam_examination_member` (
 
 ALTER TABLE `sys_attachment_group`
     ADD COLUMN `storage_type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '存储类型，1：七牛，2：本地文件';
+
+ALTER TABLE `exam_subject_choices`
+    ADD COLUMN `subject_video_id` bigint(20) NULL COMMENT '题目视频ID' AFTER `speech_id`,
+ADD COLUMN `subject_video_name` varchar(255) NULL COMMENT '题目视频名称' AFTER `subject_video_id`;
+
+ALTER TABLE `exam_subject_judgement`
+    ADD COLUMN `subject_video_id` bigint(20) NULL COMMENT '题目视频ID' AFTER `speech_id`,
+ADD COLUMN `subject_video_name` varchar(255) NULL COMMENT '题目视频名称' AFTER `subject_video_id`;
+
+ALTER TABLE `exam_subject_short_answer`
+    ADD COLUMN `subject_video_id` bigint(20) NULL COMMENT '题目视频ID' AFTER `speech_id`,
+ADD COLUMN `subject_video_name` varchar(255) NULL COMMENT '题目视频名称' AFTER `subject_video_id`;
+
+ALTER TABLE `exam_subject_speech`
+    ADD COLUMN `subject_video_id` bigint(20) NULL COMMENT '题目视频ID' AFTER `speech_id`,
+ADD COLUMN `subject_video_name` varchar(255) NULL COMMENT '题目视频名称' AFTER `subject_video_id`;
+
+ALTER TABLE `exam_subject_video`
+    ADD COLUMN `subject_video_id` bigint(20) NULL COMMENT '题目视频ID' AFTER `speech_id`,
+ADD COLUMN `subject_video_name` varchar(255) NULL COMMENT '题目视频名称' AFTER `subject_video_id`;
+

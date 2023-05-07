@@ -12,6 +12,8 @@
         <result column="sort" property="sort"/>
         <result column="speech_id" property="speechId"/>
         <result column="judge_type" property="judgeType"/>
+        <result column="subject_video_id" property="subjectVideoId"/>
+        <result column="subject_video_name" property="subjectVideoName"/>
         <result column="creator" property="creator"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />

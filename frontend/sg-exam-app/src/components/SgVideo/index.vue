@@ -66,11 +66,20 @@ export default {
     }
   },
   mounted() {
-
   },
   computed: {
     player() {
       return this.$refs.sgVideoPlayer.player
+    }
+  },
+  watch: {
+    src: {
+      immediate: true,
+      handler (val) {
+        if (val) {
+          this.setSrc(val)
+        }
+      }
     }
   },
   methods: {

@@ -133,4 +133,10 @@ public class SubjectDto extends BaseEntity<SubjectDto> {
 	 * 查看次数
 	 */
 	private String views;
+
+	private Long subjectVideoId;
+
+	private String subjectVideoName;
+
+	private String subjectVideoUrl;
 }

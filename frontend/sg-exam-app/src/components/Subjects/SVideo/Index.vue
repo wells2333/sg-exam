@@ -22,6 +22,7 @@
 <script>
 import SgVideo from '@/components/SgVideo'
 import Tinymce from '@/components/Tinymce'
+import {pauseVideo} from '@/utils/busi'
 
 export default {
   name: 'SVideo',
@@ -79,9 +80,11 @@ export default {
       this.subjectInfo.options = this.options
       return this.subjectInfo
     },
-    // 选中选项
     toggleOption() {
       this.onChoice(this.subjectInfo.sort)
+    },
+    beforeSave() {
+      pauseVideo(this.$refs)
     }
   }
 }
