@@ -351,6 +351,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 		return userAuthsService.getByIdentifier(userAuths) != null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void saveImageCode(String random, String imageCode) {
 		redisTemplate.opsForValue()
 				.set(CommonConstant.VERIFICATION_CODE_KEY + random, imageCode, SecurityConstant.DEFAULT_IMAGE_EXPIRE,
@@ -404,12 +405,10 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 			USER_MENU_PERMISSION}, key = "#userDto.tenantCode + ':' + #userDto.identifier")
 	public boolean register(UserDto userDto) {
 		Preconditions.checkNotNull(userDto.getIdentityType());
-		boolean success = false;
 		String password = decryptCredential(userDto.getCredential(), userDto.getIdentityType());
 		User user = new User();
 		BeanUtils.copyProperties(userDto, user);
 		// 初始化用户名，系统编号，租户编号
-		user.setIsDeleted(Boolean.TRUE);
 		user.setCommonValue(userDto.getIdentifier(), SysUtil.getTenantCode());
 		user.setStatus(CommonConstant.DEL_FLAG_NORMAL);
 		// 初始化头像
@@ -425,9 +424,9 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 		if (this.insert(user) > 0) {
 			registerUserAuths(user, userDto.getIdentifier(), userDto.getIdentityType(), password);
 			// 分配默认角色
-			success = defaultRole(user, userDto.getTenantCode(), userDto.getIdentifier());
+			return defaultRole(user, userDto.getTenantCode(), userDto.getIdentifier());
 		}
-		return success;
+		return false;
 	}
 
 	@Transactional
@@ -455,7 +454,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 		try {
 			encoded = AesUtil.decryptAES(encoded, sysProperties.getKey()).trim();
 		} catch (Exception e) {
-			throw new CommonException(e, "Decrypt failed");
+			throw new CommonException(e, "Failed to decrypt credential");
 		}
 		return encoded;
 	}
