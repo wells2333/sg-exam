@@ -2,10 +2,10 @@
   <div>
     <div class="subject-content">
       <div class="subject-title">
-        {{ subjectInfo.sort }}
-        <span class="subject-title-content" v-html="subjectInfo.subjectName"/>
+        {{ subjectInfo.sort }}.
         <span class="subject-title-content"
-              v-if="subjectInfo.score !== undefined && subjectInfo.score !== 0">&nbsp;({{ subjectInfo.score }})分</span>
+              v-if="subjectInfo.score !== undefined && subjectInfo.score !== 0">&nbsp;({{ subjectInfo.score }}分)&nbsp;</span>
+        <span class="subject-title-content" v-html="subjectInfo.subjectName"/>
       </div>
       <div class="subject-video-info" v-if="subjectInfo.subjectVideoId && subjectInfo.subjectVideoName">
         <sg-video ref="sgVideo"></sg-video>

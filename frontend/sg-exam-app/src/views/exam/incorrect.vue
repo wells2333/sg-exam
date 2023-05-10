@@ -81,9 +81,11 @@
                 <ul class="subject-options" v-for="option in tempIncorrectAnswer.subject.options"
                     :key="option.id">
                   <li class="subject-option" :class="getClass(option.right)">
-                    <label><span class="subject-option-prefix">{{
+                    <label>
+                      <span class="subject-option-prefix">{{
                         option.optionName
-                      }}&nbsp;</span><span v-html="option.optionContent"
+                      }}&nbsp;</span>
+                      <span v-html="option.optionContent"
                                            class="subject-option-prefix"></span></label>
                   </li>
                 </ul>

@@ -3,11 +3,11 @@
     <div class="subject-content">
       <div class="subject-title">
         {{ subjectInfo.sort }}.
-        <span class="subject-title-content" v-html="subjectInfo.subjectName"/>
         <span class="subject-title-content"
               v-if="subjectInfo.score !== undefined && subjectInfo.score !== 0">&nbsp;({{
             subjectInfo.score
-          }})分</span>
+          }}分)&nbsp;</span>
+        <span class="subject-title-content" v-html="subjectInfo.subjectName"/>
       </div>
       <div class="subject-video">
         <sg-video ref="sgVideo"></sg-video>

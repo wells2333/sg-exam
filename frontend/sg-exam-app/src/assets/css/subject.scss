@@ -20,14 +20,18 @@
 }
 
 .subject-title {
+  display: flex;
   font-size: 18px;
-  line-height: 22px;
+  margin-bottom: 10px;
   .subject-title-number {
     display: inline-block;
     line-height: 22px;
   }
   .subject-title-content {
-    display: inline-block;
+    display: flex;
+    p {
+      font-size: 18px !important;
+    }
   }
 }
 .subject-options {
@@ -53,20 +57,19 @@
       appearance: none;
     }
     .toggle+label {
-      background-image: url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%22-10%20-18%20100%20135%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22none%22%20stroke%3D%22%23ededed%22%20stroke-width%3D%223%22/%3E%3C/svg%3E');
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB0PSIxNjgzNzI3OTgxMTI0IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwOTcgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjUyMTgiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTU1OC40NDU3MTQgMGE1MTIgNTEyIDAgMSAwIDAgMTAyNCA1MTIgNTEyIDAgMCAwIDAtMTAyNG0wIDU0Ljg1NzE0M0E0NTcuNjU0ODU3IDQ1Ny42NTQ4NTcgMCAwIDEgMTAxNS41ODg1NzEgNTEyYTQ1Ny42NTQ4NTcgNDU3LjY1NDg1NyAwIDAgMS00NTcuMTQyODU3IDQ1Ny4xNDI4NTdBNDU3LjY1NDg1NyA0NTcuNjU0ODU3IDAgMCAxIDEwMS4zMDI4NTcgNTEyIDQ1Ny42NTQ4NTcgNDU3LjY1NDg1NyAwIDAgMSA1NTguNDQ1NzE0IDU0Ljg1NzE0MyIgZmlsbD0iIzhhOGE4YSIgcC1pZD0iNTIxOSI+PC9wYXRoPjwvc3ZnPg==');
       background-repeat: no-repeat;
-      background-position: center left;
-      background-size: 30px;
+      background-position: 0 10px;
+      background-size: 22px;
     }
     .toggle:checked+label {
-      background-size: 30px;
-      background-image: url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%22-10%20-18%20100%20135%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22none%22%20stroke%3D%22%23bddad5%22%20stroke-width%3D%223%22/%3E%3Cpath%20fill%3D%22%235dc2af%22%20d%3D%22M72%2025L42%2071%2027%2056l-4%204%2020%2020%2034-52z%22/%3E%3C/svg%3E');
+      background-size: 22px;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB0PSIxNjgzNzI4MTY3Njk0IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjcyNjQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTUxMiAxMDYuNjY3QTQwNS4zMzMgNDA1LjMzMyAwIDEgMSAxMDYuNjY3IDUxMiA0MDUuMzMzIDQwNS4zMzMgMCAwIDEgNTEyIDEwNi42NjdtMC02NEE0NjkuMzMzIDQ2OS4zMzMgMCAxIDAgOTgxLjMzMyA1MTIgNDY5LjMzMyA0NjkuMzMzIDAgMCAwIDUxMiA0Mi42Njd6IiBwLWlkPSI3MjY1IiBmaWxsPSIjNDA5RUZGIj48L3BhdGg+PHBhdGggZD0iTTQ0OCA3MTQuNjY3YTMyIDMyIDAgMCAxLTIyLjYxMy05LjM4N2wtMTkyLTE5MmEzMiAzMiAwIDAgMSA0NS4yMjYtNDUuMjI3TDQ0OCA2MzcuNDRsMjk3LjM4Ny0yOTcuMzg3YTMyIDMyIDAgMCAxIDQ1LjIyNiA0NS4yMjdsLTMyMCAzMjBBMzIgMzIgMCAwIDEgNDQ4IDcxNC42Njd6IiBwLWlkPSI3MjY2IiBmaWxsPSIjNDA5RUZGIj48L3BhdGg+PC9zdmc+');
     }
     label {
+      display: flex;
       word-break: break-all;
-      padding: 10px 10px 10px 45px;
-      display: block;
-      line-height: 1.0;
+      padding: 10px 10px 10px 31px;
       transition: color 0.4s;
     }
     /* 选项名称 */
