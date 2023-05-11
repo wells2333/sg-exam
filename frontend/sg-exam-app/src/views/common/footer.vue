@@ -6,7 +6,7 @@
           <el-col :span="6" :offset="2" class="footer-col">
             <h4>链接</h4>
             <a target="_blank" href="https://gitee.com/wells2333/sg-exam">码云</a>
-            <a target="_blank" href="https://github.com/">GITHUB</a>
+            <a target="_blank" href="https://github.com/wells2333/sg-exam">GitHub</a>
             <a target="_blank" href="javascript:void(0);"
                onclick="window.open(window.location.origin + '/admin');return false;">管理后台</a>
             <a target="_blank" href="https://gitee.com/wells2333/sg-exam/blob/master/CHANGELOG.md">更新日志</a>
@@ -18,7 +18,6 @@
           </el-col>
           <el-col :span="6" class="footer-col">
             <h4>社区</h4>
-            <a target="_blank" href="https://www.kancloud.cn/tangyi/sg-exam/1322864">看云</a>
             <a target="_blank" href="https://gitee.com/wells2333/sg-exam/issues">反馈建议</a>
           </el-col>
         </el-row>
@@ -43,7 +42,7 @@
       <el-row :gutter="20">
         <el-col :span="12" :offset="6">
           <div class="cop">
-            <a class="content-c3" href="https://gitee.com/wells2333" target="_blank">
+            <a class="content-c3" href="https://beian.miit.gov.cn/" target="_blank">
               <span class="content-c3">陕ICP备20002980号-2</span>
             </a>
           </div>

@@ -56,4 +56,9 @@ public interface ConfigKey {
 	 * 小程序首页副标题
 	 */
 	String SYS_WXAPP_SUB_TITLE = "sys_wxapp_sub_title";
+
+	/**
+	 * 登录页面是否展示单位标识输入框
+	 */
+	String SYS_LOGIN_SHOW_TENANT_CODE = "sys_login_show_tenant_code";
 }

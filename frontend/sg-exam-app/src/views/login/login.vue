@@ -13,7 +13,7 @@
         <!-- 注册 -->
         <el-tab-pane label="注册" name="/register" class="login-wrap-title">
           <el-form ref="registerForm" :model="register.form" :rules="register.rules" class="register-form" label-position="left" auto-complete="off">
-            <el-form-item prop="tenantCode">
+            <el-form-item prop="tenantCode" v-if="sysConfig.sys_login_show_tenant_code && sysConfig.sys_login_show_tenant_code ==='true'">
               <el-input placeholder="企业 ID" v-model="register.form.tenantCode" name="tenantCode" type="text" auto-complete="off"/>
             </el-form-item>
             <el-form-item prop="identifier">
@@ -54,7 +54,7 @@
         <el-tab-pane label="登录" name="/login" class="login-wrap-title">
           <div v-if="!useSmsLogin">
             <el-form ref="loginForm" :model="login.form" :rules="login.rules" class="login-form" auto-complete="on" label-position="left">
-              <el-form-item prop="tenantCode">
+              <el-form-item prop="tenantCode" v-if="sysConfig.sys_login_show_tenant_code && sysConfig.sys_login_show_tenant_code ==='true'">
                 <el-input placeholder="企业 ID" v-model="login.form.tenantCode" name="tenantCode" type="text" auto-complete="off"/>
               </el-form-item>
               <el-form-item prop="identifier">
@@ -243,7 +243,7 @@ export default {
     this.refreshRegisterCode()
   },
   computed: {
-    ...mapGetters(['tagWel'])
+    ...mapGetters(['tagWel', 'sysConfig'])
   },
   methods: {
     refreshLoginCode () {

@@ -21,13 +21,15 @@
           <a-button type="primary" v-bind="{ ...getButtonProps }" preIcon="carbon:cloud-upload">上传</a-button>
         </Upload>
       </div>
+      <div class="sg-upload-progress">
+        <Progress v-show="showProgress" :percent="percent" size="small" />
+      </div>
     </div>
   </div>
 </template>
 <script lang="ts">
 import {computed, defineComponent, ref, watch} from 'vue';
-
-import {Image, message, Upload} from 'ant-design-vue';
+import {Image, message, Progress, Upload} from 'ant-design-vue';
 import {useDesign} from '/@/hooks/web/useDesign';
 import {deleteAttachment, getAttachment, uploadApi} from "/@/api/attachment/attach";
 import {UserService} from "/@/api/services";
@@ -36,7 +38,7 @@ import {isFunction} from "/@/utils/is";
 
 export default defineComponent({
   name: 'SgUpload',
-  components: {Upload, Image, Icon},
+  components: {Upload, Image, Icon, Progress},
   props: {
     value: {
       type: String,
@@ -96,6 +98,8 @@ export default defineComponent({
     const {prefixCls} = useDesign('sg-upload');
     const type = ref<string>(props.type);
     const file = ref(undefined);
+    const percent = ref<number>(0);
+    const showProgress = ref<boolean>(false);
     const getButtonProps = computed(() => {
       const {disabled} = props;
       return {
@@ -108,6 +112,8 @@ export default defineComponent({
       const status = file?.status;
       const url = file?.response?.url;
       const name = file?.name;
+      percent.value = 0;
+      showProgress.value = true;
       if (status === 'uploading') {
         if (!uploading) {
           emit('uploading', name);
@@ -130,9 +136,22 @@ export default defineComponent({
       }
       let result;
       if (api !== undefined && isFunction(api)) {
-        result = await props.api?.(formData);
+        result = await props.api?.(formData,
+          function onUploadProgress(progressEvent: ProgressEvent) {
+            let v = ((progressEvent.loaded / progressEvent.total) * 100) | 0;
+            if (v === 100) {
+              v = 99;
+            }
+            percent.value = v;
+        });
       } else {
-        result = await uploadApi(formData);
+        result = await uploadApi(formData, function onUploadProgress(progressEvent: ProgressEvent) {
+          let v = ((progressEvent.loaded / progressEvent.total) * 100) | 0;
+          if (v === 100) {
+            v = 99;
+          }
+          percent.value = v;
+        });
       }
       const {data} = result;
       if (data && data.code === 0) {
@@ -142,6 +161,7 @@ export default defineComponent({
         if (props.handleDone !== undefined) {
           props.handleDone?.(file.value);
         }
+        percent.value = 100;
         message.success('上传成功');
       } else {
         message.error('上传失败');
@@ -173,7 +193,6 @@ export default defineComponent({
     watch(
       () => props.value,
       async (val: string, prevVal: string) => {
-        debugger
         resetFile();
         if (val) {
           const res = await getAttachment(val);
@@ -182,6 +201,7 @@ export default defineComponent({
             if (id) {
               file.value = {id, name: attachName, url};
             }
+            showProgress.value = false;
           }
         }
       },
@@ -190,6 +210,8 @@ export default defineComponent({
       prefixCls,
       type,
       file,
+      percent,
+      showProgress,
       handleChange,
       customRequest,
       getButtonProps,
@@ -216,7 +238,8 @@ export default defineComponent({
 }
 
 .sg-upload {
-  display: inline-flex;
+  display: flex;
+  align-items: center;
 }
 
 .sg-upload-files {
@@ -229,5 +252,10 @@ export default defineComponent({
   margin-right: 20px;
   color: #ff4d4f;
   cursor: pointer;
+}
+
+.sg-upload-progress {
+  width: 120px;
+  margin-left: 10px;
 }
 </style>

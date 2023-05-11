@@ -13,7 +13,11 @@ router.beforeEach((to, from, next) => {
   NProgress.start() // 进度条
   const sysConfig = store.getters.sysConfig
   if (sysConfig === undefined || Object.keys(sysConfig).length === 0) {
-    store.dispatch('GetSysConfig').then(res => {}).catch(() => {
+    store.dispatch('GetSysConfig').then(res => {
+      if (res) {
+        document.title = res.sys_web_name
+      }
+    }).catch(() => {
       Message.error('获取系统配置失败！')
     })
   }

@@ -14,7 +14,7 @@ const sysConfig = {
         getSysConfig().then(response => {
           const data = response.data.result
           commit('SET_SYS_CONFIG', data)
-          resolve()
+          resolve(data)
         }).catch(error => {
           reject(error)
         })
