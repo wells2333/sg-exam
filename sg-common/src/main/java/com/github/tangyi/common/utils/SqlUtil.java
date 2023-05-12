@@ -9,9 +9,12 @@ import java.util.regex.Pattern;
 
 public class SqlUtil {
 
+	private SqlUtil() {
+	}
+
 	@SuppressWarnings(value={"uncheck","deprecation"})
 	public static void main(String[] args) throws Exception {
-		File file = new File("/Users/gaungyi.tan/gitee/sg-exam/exam-service/src/main/resources/data.sql");
+		File file = new File("");
 		String content = Files.toString(file, Charsets.UTF_8);
 		content = "SET MODE MYSQL;\n\n" + content;
 		content = content.replaceAll("`", "");

@@ -4,6 +4,9 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomImageUtil {
 
+	private RandomImageUtil() {
+	}
+
 	public static String randomImage(int count, String type) {
 		return (ThreadLocalRandom.current().nextInt(count) + 1) + type;
 	}

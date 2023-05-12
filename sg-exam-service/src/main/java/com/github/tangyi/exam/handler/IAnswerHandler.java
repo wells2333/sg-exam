@@ -20,27 +20,21 @@ public interface IAnswerHandler {
 
 	/**
 	 * 是否为选择题
-	 * @return boolean
 	 */
 	boolean hasOption();
 
 	/**
 	 * 统计成绩
-	 * @param answers answers
-	 * @return HandleResult
 	 */
 	AnswerHandleResult handle(List<Answer> answers);
 
 	/**
 	 * 获取题目类型
-	 * @return SubjectTypeEnum
 	 */
 	SubjectType getSubjectType();
 
 	/**
 	 * 获取题目列表
-	 * @param answers answers
-	 * @return List
 	 */
 	List<SubjectDto> getSubjects(List<Answer> answers);
 
@@ -56,8 +50,6 @@ public interface IAnswerHandler {
 
 	/**
 	 * 判断某个选项是否正确
-	 * @param answer answer
-	 * @param subject subject
 	 */
 	void judgeOptionRight(Answer answer, SubjectDto subject);
 

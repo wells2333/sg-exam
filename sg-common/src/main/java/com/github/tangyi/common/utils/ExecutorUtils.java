@@ -11,6 +11,9 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class ExecutorUtils {
 
+	private ExecutorUtils() {
+	}
+
 	public static ThreadPoolExecutor newExecutor(String threadName, int corePoolSize, int queueCapacity) {
 		return new ThreadPoolExecutor(corePoolSize, corePoolSize, 10, TimeUnit.SECONDS,
 				new LinkedBlockingQueue<>(queueCapacity), new ThreadFactoryBuilder().setNameFormat(threadName).build(),
@@ -27,7 +30,7 @@ public class ExecutorUtils {
 		try {
 			Futures.allAsList(futures).get();
 		} catch (Exception e) {
-			log.error("failed to waitFutures", e);
+			log.error("Failed to wait futures", e);
 		}
 	}
 }

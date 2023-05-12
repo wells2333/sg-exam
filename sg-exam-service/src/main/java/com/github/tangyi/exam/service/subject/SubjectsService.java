@@ -6,7 +6,7 @@ import com.github.tangyi.api.exam.dto.NextSubjectDto;
 import com.github.tangyi.api.exam.dto.SubjectCategoryDto;
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.*;
-import com.github.tangyi.api.exam.service.IExecutorService;
+import com.github.tangyi.api.exam.thread.IExecutorHolder;
 import com.github.tangyi.api.exam.service.ISubjectsService;
 import com.github.tangyi.api.user.attach.AttachmentManager;
 import com.github.tangyi.common.base.BaseEntity;
@@ -70,7 +70,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 
 	private final AttachmentManager attachmentManager;
 
-	private final IExecutorService executorService;
+	private final IExecutorHolder executorHolder;
 
 	/**
 	 * 根据单个题目ID查询题目信息，会有缓存
@@ -448,7 +448,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 			addChildId(category.getChildren(), ids);
 		}
 		Map<Long, Integer> map = Maps.newConcurrentMap();
-		ListeningExecutorService executor = executorService.getSubjectExecutor();
+		ListeningExecutorService executor = executorHolder.getSubjectExecutor();
 		List<ListenableFuture<?>> futures = Lists.newArrayListWithExpectedSize(categories.size());
 		for (Long id : ids) {
 			ListenableFuture<?> future = executor.submit(() -> {

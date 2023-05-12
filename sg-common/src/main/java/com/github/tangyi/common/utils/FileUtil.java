@@ -6,6 +6,9 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 public class FileUtil {
 
+	private FileUtil() {
+	}
+
 	public static String getFileNameEx(String fileName) {
 		if ((fileName != null) && (fileName.length() > 0)) {
 			int dot = fileName.lastIndexOf('.');

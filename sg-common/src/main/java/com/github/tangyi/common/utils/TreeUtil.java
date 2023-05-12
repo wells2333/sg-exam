@@ -7,9 +7,9 @@ import java.util.List;
 
 public class TreeUtil {
 
-	/**
-	 * 两层循环实现建树
-	 */
+	private TreeUtil() {
+	}
+
 	@SuppressWarnings(value = "unchecked")
 	public static <T> List<T> buildTree(List<? extends TreeEntity<T>> treeEntities, Object root) {
 		List<TreeEntity<T>> treeEntityArrayList = new ArrayList<>();

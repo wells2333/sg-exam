@@ -4,7 +4,7 @@ import com.github.tangyi.api.exam.constants.AnswerConstant;
 import com.github.tangyi.api.exam.dto.*;
 import com.github.tangyi.api.exam.enums.SubmitStatusEnum;
 import com.github.tangyi.api.exam.model.*;
-import com.github.tangyi.api.exam.service.IExecutorService;
+import com.github.tangyi.api.exam.thread.IExecutorHolder;
 import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.*;
@@ -57,14 +57,14 @@ public class ExaminationActionService {
 
 	private final RankInfoService rankInfoService;
 
-	private final IExecutorService executorService;
+	private final IExecutorHolder executorHolder;
 
 	private final ExamFavoritesService examFavoritesService;
 
 	public ExaminationActionService(ExaminationService examinationService,
 			ExaminationSubjectService examinationSubjectService, ExamRecordService examRecordService,
 			SubjectsService subjectsService, SubjectServiceFactory subjectServiceFactory, AnswerService answerService,
-			AnswerHandleService answerHandleService, RankInfoService rankInfoService, IExecutorService executorService,
+			AnswerHandleService answerHandleService, RankInfoService rankInfoService, IExecutorHolder executorHolder,
 			ExamFavoritesService examFavoritesService) {
 		this.examinationService = examinationService;
 		this.examinationSubjectService = examinationSubjectService;
@@ -74,7 +74,7 @@ public class ExaminationActionService {
 		this.answerService = answerService;
 		this.answerHandleService = answerHandleService;
 		this.rankInfoService = rankInfoService;
-		this.executorService = executorService;
+		this.executorHolder = executorHolder;
 		this.examFavoritesService = examFavoritesService;
 	}
 
@@ -393,7 +393,7 @@ public class ExaminationActionService {
 	 */
 	public void submitAsync(Long recordId, String userCode, String tenantCode) {
 		StopWatch watch = StopWatchUtil.start();
-		ListenableFuture<Boolean> future = executorService.getSubmitExecutor()
+		ListenableFuture<Boolean> future = executorHolder.getSubmitExecutor()
 				.submit(() -> submit(recordId, userCode, tenantCode));
 		Futures.addCallback(future, new FutureCallback<>() {
 			@Override
@@ -406,6 +406,6 @@ public class ExaminationActionService {
 			public void onFailure(@Nullable Throwable e) {
 				log.error("submit future failed, recordId: {}, user: {}", recordId, userCode, e);
 			}
-		}, executorService.getSubmitExecutor());
+		}, executorHolder.getSubmitExecutor());
 	}
 }

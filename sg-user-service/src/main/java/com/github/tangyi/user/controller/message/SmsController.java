@@ -31,11 +31,11 @@ public class SmsController extends BaseController {
 	@Operation(summary = "发送短信")
 	@SgLog(value = "发送短信", operationType = OperationType.INSERT)
 	public R<SendSmsResponseBody> sendSms(@RequestBody SmsDto smsDto) {
-		log.info("send message to {}, content: {}", smsDto.getReceiver(), smsDto.getContent());
+		log.info("Start to send sms message to {}, content: {}", smsDto.getReceiver(), smsDto.getContent());
 		smsDto.setOperator(SysUtil.getUser());
 		smsDto.setTenantCode(TenantHolder.getTenantCode());
 		SendSmsResponseBody body = smsService.sendSms(smsDto);
-		log.info("send message success, response: {}", body);
+		log.info("Send sms message finished, response: {}", body);
 		return R.success(body);
 	}
 }

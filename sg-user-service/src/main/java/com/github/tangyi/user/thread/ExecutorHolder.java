@@ -1,6 +1,6 @@
-package com.github.tangyi.user.service;
+package com.github.tangyi.user.thread;
 
-import com.github.tangyi.api.exam.service.IExecutorService;
+import com.github.tangyi.api.exam.thread.IExecutorHolder;
 import com.github.tangyi.common.utils.EnvUtils;
 import com.github.tangyi.common.utils.ExecutorUtils;
 import com.google.common.util.concurrent.ListeningExecutorService;
@@ -11,7 +11,7 @@ import javax.annotation.PostConstruct;
 
 @Slf4j
 @Service
-public class CommonExecutorService implements IExecutorService {
+public class ExecutorHolder implements IExecutorHolder {
 
 	public static final int EXECUTOR_QUEUE_SIZE = EnvUtils.getInt("EXECUTOR_QUEUE_SIZE", 2000);
 

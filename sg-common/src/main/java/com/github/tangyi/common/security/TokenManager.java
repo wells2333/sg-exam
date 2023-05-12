@@ -21,25 +21,16 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class TokenManager {
 
-	public static final long TOKEN_EXPIRE = Long.parseLong(EnvUtils.getValue("TOKEN_EXPIRE", 240 + ""));
+	private static final String TOKEN_SIGN_KEY = EnvUtils.getValue("TOKEN_SIGN_KEY", "123456");
 
-	public static final long TOKEN_REMEMBER_EXPIRE = Long.parseLong(
-			EnvUtils.getValue("TOKEN_REMEMBER_EXPIRE_SECONDS", "7"));
-
-	public static final String TOKEN_SIGN_KEY = EnvUtils.getValue("TOKEN_SIGN_KEY", "123456");
-
+	public static final long TOKEN_EXPIRE = EnvUtils.getLong("TOKEN_EXPIRE", 240);
+	public static final long TOKEN_REMEMBER_EXPIRE = EnvUtils.getLong("TOKEN_REMEMBER_EXPIRE_SECONDS", 7);
 	public static final String ID = "id";
-
 	public static final String ROLE_KEY = "role";
-
 	public static final String IDENTIFY = "identify";
-
 	public static final String USER_ID = "userId";
-
 	public static final String LOGIN_TYPE = "loginType";
-
 	public static final String TENANT_CODE = "tenantCode";
-
 	public static final String TOKEN_KEY_PREFIX = "user_token:";
 
 	private final RedisTemplate redisTemplate;
@@ -74,7 +65,7 @@ public class TokenManager {
 			redisTemplate.opsForValue().set(tokenKey(userToken.getUserId()), userToken, expire, TimeUnit.SECONDS);
 			return true;
 		} catch (Exception e) {
-			log.error("saveToken failed", e);
+			log.error("Failed to save token", e);
 		}
 		return false;
 	}

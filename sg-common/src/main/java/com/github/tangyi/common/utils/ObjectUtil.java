@@ -4,6 +4,9 @@ import java.util.Objects;
 
 public class ObjectUtil {
 
+	private ObjectUtil() {
+	}
+
 	public static int intValue(Integer value) {
 		return value == null ? 0 : value;
 	}

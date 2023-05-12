@@ -2,7 +2,7 @@ package com.github.tangyi.exam.service.subject;
 
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.Subjects;
-import com.github.tangyi.api.exam.service.IExecutorService;
+import com.github.tangyi.api.exam.thread.IExecutorHolder;
 import com.github.tangyi.common.utils.ExecutorUtils;
 import com.github.tangyi.exam.enums.SubjectType;
 import com.google.common.collect.Lists;
@@ -37,7 +37,7 @@ public class SubjectServiceFactory {
 
 	private final SubjectVideoService subjectVideoService;
 
-	private final IExecutorService executorService;
+	private final IExecutorHolder executorHolder;
 
 	/**
 	 * 根据题目类型返回对应的BaseSubjectService
@@ -69,7 +69,7 @@ public class SubjectServiceFactory {
 		Map<Integer, List<Subjects>> map = subjects.stream()
 				.collect(Collectors.groupingBy(Subjects::getType, Collectors.toList()));
 		Map<Long, SubjectDto> result = Maps.newHashMapWithExpectedSize(subjects.size());
-		ListeningExecutorService executor = executorService.getSubjectExecutor();
+		ListeningExecutorService executor = executorHolder.getSubjectExecutor();
 		List<ListenableFuture<?>> futures = Lists.newArrayListWithExpectedSize(map.size());
 		for (Map.Entry<Integer, List<Subjects>> entry : map.entrySet()) {
 			ListenableFuture<?> future = executor.submit(() -> {

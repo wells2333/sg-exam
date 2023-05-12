@@ -6,8 +6,10 @@ import org.apache.commons.lang3.StringUtils;
 
 public class StringUtil {
 
-	/** 下划线 */
 	private static final char SEPARATOR = '_';
+
+	private StringUtil() {
+	}
 
 	/**
 	 * 驼峰式命名法 例如：user_name->userName

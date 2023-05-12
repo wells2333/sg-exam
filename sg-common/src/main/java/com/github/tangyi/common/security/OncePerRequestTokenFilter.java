@@ -54,15 +54,15 @@ public class OncePerRequestTokenFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		if (!isFilterUrl(request)) {
+		if (isIgnoreUrl(request)) {
+			filterChain.doFilter(request, response);
+		} else {
 			try {
 				parseToken(request);
 				filterChain.doFilter(request, response);
 			} catch (CommonException e) {
 				RUtil.out(response, R.error(ApiMsg.KEY_TOKEN, e.getMessage()));
 			}
-		} else {
-			filterChain.doFilter(request, response);
 		}
 	}
 
@@ -87,7 +87,7 @@ public class OncePerRequestTokenFilter extends OncePerRequestFilter {
 			if (!userToken.getId().equals(id)) {
 				throw new TokenExpireException("已在其它端登录");
 			}
-			// "记住我" 续期7天
+			// "记住我" 续期 7 天
 			long expire = userToken.isRemember() ?
 					TimeUnit.DAYS.toSeconds(TokenManager.TOKEN_REMEMBER_EXPIRE) :
 					TimeUnit.MINUTES.toSeconds(TokenManager.TOKEN_EXPIRE);
@@ -122,7 +122,7 @@ public class OncePerRequestTokenFilter extends OncePerRequestFilter {
 		return claims;
 	}
 
-	private boolean isFilterUrl(HttpServletRequest request) {
+	private boolean isIgnoreUrl(HttpServletRequest request) {
 		boolean match = false;
 		for (AntPathRequestMatcher matcher : matchers) {
 			if (matcher.matcher(request).isMatch()) {

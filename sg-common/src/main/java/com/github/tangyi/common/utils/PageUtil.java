@@ -10,6 +10,9 @@ import java.util.Map;
 
 public class PageUtil implements PageConstant {
 
+	private PageUtil() {
+	}
+
 	public static void copyProperties(PageInfo<?> source, PageInfo<?> target) {
 		target.setPageNum(source.getPageNum());
 		target.setPageSize(source.getPageSize());

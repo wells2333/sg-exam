@@ -24,13 +24,13 @@ public class SubjectLevelConverter implements Converter<Integer> {
 
 	@Override
 	public Integer convertToJavaData(CellData cellData, ExcelContentProperty contentProperty,
-			GlobalConfiguration globalConfiguration) throws Exception {
+			GlobalConfiguration globalConfiguration) {
 		return SubjectLevel.matchByName(cellData.getStringValue()).getValue();
 	}
 
 	@Override
 	public CellData<String> convertToExcelData(Integer value, ExcelContentProperty contentProperty,
-			GlobalConfiguration globalConfiguration) throws Exception {
+			GlobalConfiguration globalConfiguration) {
 		return new CellData<>(SubjectLevel.matchByValue(value).getName());
 	}
 }

@@ -88,9 +88,7 @@ public class ExamUtil {
 	}
 
 	/**
-	 * 替换收尾的逗号
-	 * @param str str
-	 * @return String
+	 * 替换首尾的逗号
 	 */
 	public static String replaceComma(String str) {
 		if (StringUtils.isNotBlank(str)) {

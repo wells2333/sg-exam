@@ -9,14 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 封装简单数据导入的逻辑，解析3000条刷一次数据库
+ * 封装简单数据导入的逻辑，解析 3000 条刷一次数据库
  */
 public abstract class AbstractExcelImportListener<T> extends AnalysisEventListener<T> {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**
-	 * 每隔3000条存储数据库
+	 * 每隔 3000 条存储数据库
 	 */
 	private static final int BATCH_COUNT = 3000;
 
@@ -28,23 +28,19 @@ public abstract class AbstractExcelImportListener<T> extends AnalysisEventListen
 	@Override
 	public void invoke(T dataModel, AnalysisContext context) {
 		dataList.add(dataModel);
-		// 达到BATCH_COUNT则保存进数据库，防止数据几万条数据在内存，容易OOM
+		// 达到 BATCH_COUNT 则保存进数据库，防止数据几万条数据在内存，容易OOM
 		if (dataList.size() >= BATCH_COUNT) {
 			saveData(dataList);
-			// 存储完成清理list
+			// 存储完成清理
 			dataList.clear();
 		}
 	}
 
 	@Override
 	public void doAfterAllAnalysed(AnalysisContext context) {
-		// 最后一次保存
 		saveData(dataList);
 		logger.info("All data is parsed!");
 	}
 
-	/**
-	 * 保存数据，子类实现
-	 */
 	public abstract void saveData(List<T> dataList);
 }

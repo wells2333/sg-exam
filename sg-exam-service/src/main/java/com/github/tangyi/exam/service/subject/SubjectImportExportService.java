@@ -6,7 +6,7 @@ import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.Answer;
 import com.github.tangyi.api.exam.model.ExaminationSubject;
 import com.github.tangyi.api.exam.model.SubjectOption;
-import com.github.tangyi.api.exam.service.IExecutorService;
+import com.github.tangyi.api.exam.thread.IExecutorHolder;
 import com.github.tangyi.common.excel.ExcelToolUtil;
 import com.github.tangyi.common.utils.SnowFlakeId;
 import com.github.tangyi.common.utils.StopWatchUtil;
@@ -48,7 +48,7 @@ public class SubjectImportExportService {
 
 	private final ExaminationSubjectService examinationSubjectService;
 
-	private final IExecutorService executorService;
+	private final IExecutorHolder executorHolder;
 
 	@Transactional
 	public void importSubject(List<SubjectDto> subjects, Long examinationId, Long categoryId, String creator,
@@ -73,7 +73,7 @@ public class SubjectImportExportService {
 			categoryId = ExamSubjectConstant.DEFAULT_CATEGORY_ID;
 		}
 		final Long finalCategoryId = categoryId;
-		ListeningExecutorService executor = executorService.getImportExecutor();
+		ListeningExecutorService executor = executorHolder.getImportExecutor();
 		for (List<SubjectDto> pt : Lists.partition(subjects, 100)) {
 			ListenableFuture<Boolean> future = executor.submit(() -> {
 				try {
@@ -149,7 +149,7 @@ public class SubjectImportExportService {
 		String tenantCode = SysUtil.getTenantCode();
 		try (InputStream inputStream = file.getInputStream()) {
 			String json = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-			ListeningExecutorService executor = executorService.getImportExecutor();
+			ListeningExecutorService executor = executorHolder.getImportExecutor();
 			ListenableFuture<Boolean> future = executor.submit(() -> {
 				try {
 					List<SubjectDto> subjects = JSON.parseArray(json, SubjectDto.class);
@@ -191,7 +191,7 @@ public class SubjectImportExportService {
 	public Boolean importExcelSubject(Long categoryId, MultipartFile file) throws IOException {
 		String user = SysUtil.getUser();
 		String tenantCode = SysUtil.getTenantCode();
-		ListeningExecutorService executor = executorService.getImportExecutor();
+		ListeningExecutorService executor = executorHolder.getImportExecutor();
 		// 数据读取到内存
 		byte[] data = IOUtils.toByteArray(file.getInputStream());
 		ListenableFuture<Boolean> future = executor.submit(() -> {

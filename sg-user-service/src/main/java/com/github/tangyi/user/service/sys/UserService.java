@@ -210,7 +210,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 		condition.setTenantCode(tenantCode);
 		UserAuths userAuths = userAuthsService.getByIdentifier(condition);
 		SgPreconditions.checkNull(userAuths, "identifier " + identifier + "does not exist");
-		// 根据用户id查询用户详细信息
+		// 根据用户 ID 查询用户详细信息
 		User user = this.get(userAuths.getUserId());
 		SgPreconditions.checkNull(user, "get user info failed");
 		// 查询用户的角色信息

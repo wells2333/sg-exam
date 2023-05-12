@@ -20,11 +20,11 @@ public class DateUtils {
 
 	public static final DateTimeFormatter FORMATTER_MILLIS = DateTimeFormatter.ofPattern("yyyyMMddhhmmssSSS");
 
+	private DateUtils() {
+	}
+
 	/**
 	 * 日期转string
-	 *
-	 * @param date date
-	 * @return String
 	 */
 	public static String localDateToString(LocalDateTime date) {
 		return date != null ? date.format(FORMATTER) : "";
@@ -32,9 +32,6 @@ public class DateUtils {
 
 	/**
 	 * 日期转string
-	 *
-	 * @param date date
-	 * @return String
 	 */
 	public static String localDateMillisToString(LocalDateTime date) {
 		return date != null ? date.format(FORMATTER_MILLIS) : "";
@@ -42,9 +39,6 @@ public class DateUtils {
 
 	/**
 	 * LocalDate转Date
-	 *
-	 * @param localDate localDate
-	 * @return Date
 	 */
 	public static Date asDate(LocalDate localDate) {
 		return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
@@ -52,9 +46,6 @@ public class DateUtils {
 
 	/**
 	 * LocalDateTime转Date
-	 *
-	 * @param localDateTime localDateTime
-	 * @return Date
 	 */
 	public static Date asDate(LocalDateTime localDateTime) {
 		return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
@@ -62,9 +53,6 @@ public class DateUtils {
 
 	/**
 	 * Date转LocalDate
-	 *
-	 * @param date date
-	 * @return LocalDate
 	 */
 	public static LocalDate asLocalDate(Date date) {
 		return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
@@ -72,9 +60,6 @@ public class DateUtils {
 
 	/**
 	 * Date转LocalDateTime
-	 *
-	 * @param date date
-	 * @return LocalDateTime
 	 */
 	public static LocalDateTime asLocalDateTime(Date date) {
 		return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
@@ -82,9 +67,6 @@ public class DateUtils {
 
 	/**
 	 * 两个时间之差
-	 *
-	 * @param startDate startDate
-	 * @param endDate   endDate
 	 * @return 分钟
 	 */
 	public static Integer getBetweenMinutes(Date startDate, Date endDate) {
@@ -107,9 +89,6 @@ public class DateUtils {
 
 	/**
 	 * 两个时间只差
-	 *
-	 * @param startDate startDate
-	 * @param endDate   endDate
 	 * @return 秒数
 	 */
 	public static Integer getBetweenSecond(Date startDate, Date endDate) {
@@ -143,8 +122,6 @@ public class DateUtils {
 
 	/**
 	 * 天数累加
-	 * @param plusDay plusDay
-	 * @return LocalDateTime
 	 */
 	public static LocalDateTime plusDay(int plusDay) {
 		return LocalDateTime.now().plusDays(plusDay);
@@ -156,8 +133,6 @@ public class DateUtils {
 
 	/**
 	 * 统计时间
-	 * @param startTime startTime
-	 * @return String
 	 */
 	public static String duration(Date startTime) {
 		return formatDuration(calculateDuration(startTime, new Date()));
@@ -165,8 +140,6 @@ public class DateUtils {
 
 	/**
 	 * 统计时间，不需要毫秒
-	 * @param startTime startTime
-	 * @return String
 	 */
 	public static String durationNoNeedMillis(Date startTime, Date endTime) {
 		return formatDuration(calculateDuration(startTime, endTime), false, true);
@@ -174,9 +147,6 @@ public class DateUtils {
 
 	/**
 	 * 统计时间
-	 * @param startTime startTime
-	 * @param endTime endTime
-	 * @return Duration
 	 */
 	public static Duration calculateDuration(Date startTime, Date endTime) {
 		if (startTime == null || endTime == null) {
@@ -195,7 +165,6 @@ public class DateUtils {
 
 	/**
 	 * 格式化日期
-	 * @param duration to format
 	 * @return A human readable duration
 	 */
 	public static String formatDuration(Duration duration, boolean needMillis, boolean chinese) {
@@ -235,8 +204,6 @@ public class DateUtils {
 
 	/**
 	 * 获取当前日期, 默认格式为yyyy-MM-dd
-	 *
-	 * @return String
 	 */
 	public static String getDate() {
 		return dateTimeNow(YYYY_MM_DD);

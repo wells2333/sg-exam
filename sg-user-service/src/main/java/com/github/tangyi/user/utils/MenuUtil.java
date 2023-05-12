@@ -18,12 +18,12 @@ public class MenuUtil {
 	}
 
 	public static List<MenuExcelModel> convertToExcelModel(List<Menu> menus) {
-		List<MenuExcelModel> menuExcelModels = new ArrayList<>(menus.size());
+		List<MenuExcelModel> models = new ArrayList<>(menus.size());
 		menus.forEach(menu -> {
-			MenuExcelModel menuExcelModel = new MenuExcelModel();
-			BeanUtils.copyProperties(menu, menuExcelModel);
-			menuExcelModels.add(menuExcelModel);
+			MenuExcelModel model = new MenuExcelModel();
+			BeanUtils.copyProperties(menu, model);
+			models.add(model);
 		});
-		return menuExcelModels;
+		return models;
 	}
 }

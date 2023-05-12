@@ -7,6 +7,9 @@ import java.time.LocalDateTime;
 
 public class StopWatchUtil {
 
+	private StopWatchUtil() {
+	}
+
 	public static StopWatch start() {
 		StopWatch watch = new StopWatch();
 		watch.start();

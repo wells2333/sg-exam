@@ -22,6 +22,9 @@ public class QRCodeUtils {
 	// LOGO高度
 	private static final int LOGO_HEIGHT = 60;
 
+	private QRCodeUtils() {
+	}
+
 	/**
 	 * 生成二维码，写到本地
 	 *

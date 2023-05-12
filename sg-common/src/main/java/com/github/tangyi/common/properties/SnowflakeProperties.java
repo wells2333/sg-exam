@@ -10,12 +10,12 @@ import org.springframework.context.annotation.Configuration;
 public class SnowflakeProperties {
 
     /**
-     * 工作节点ID
+     * 工作节点 ID
      */
     private String workId;
 
     /**
-     * 数据中心ID
+     * 数据中心 ID
      */
     private String dataCenterId;
 }

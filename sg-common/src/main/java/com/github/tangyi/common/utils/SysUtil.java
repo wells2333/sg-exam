@@ -16,6 +16,9 @@ public class SysUtil {
 
 	private static final String ADMIN_IDENTIFIER = EnvUtils.getValue("ADMIN_IDENTIFIER", "admin");
 
+	private SysUtil() {
+	}
+
 	private static Authentication getAuthentication() {
 		return SecurityContextHolder.getContext().getAuthentication();
 	}

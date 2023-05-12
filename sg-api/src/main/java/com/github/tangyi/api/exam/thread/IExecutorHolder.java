@@ -1,8 +1,8 @@
-package com.github.tangyi.api.exam.service;
+package com.github.tangyi.api.exam.thread;
 
 import com.google.common.util.concurrent.ListeningExecutorService;
 
-public interface IExecutorService {
+public interface IExecutorHolder {
 
 	ListeningExecutorService getCommonExecutor();
 

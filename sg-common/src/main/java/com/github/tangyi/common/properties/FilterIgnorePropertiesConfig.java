@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 不做权限拦截的URL
+ * 不做权限拦截的 URL
  */
 @Data
 @Configuration

@@ -9,7 +9,6 @@ public @interface ExcelModel {
 
 	/**
 	 * 模块名，用于导出时的文件名
-	 * @return String
 	 */
 	String value() default "";
 

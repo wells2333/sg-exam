@@ -5,6 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 
 public class SgPreCondition {
 
+	private SgPreCondition() {
+	}
+
 	public static void checkIdentifierAndTenantCode(String identifier, String tenantCode) {
 		Preconditions.checkState(StringUtils.isNotEmpty(identifier), "identifier must not be null");
 		checkTenantCode(tenantCode);

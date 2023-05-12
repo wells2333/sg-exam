@@ -13,6 +13,9 @@ public class AesUtil {
 
 	private static final String DEFAULT_CIPHER_ALGORITHM = "AES/CBC/NOPadding";
 
+	private AesUtil() {
+	}
+
 	public static String decryptAES(String data, String pass) throws Exception {
 		Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
 		cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(pass.getBytes(), KEY_ALGORITHM),

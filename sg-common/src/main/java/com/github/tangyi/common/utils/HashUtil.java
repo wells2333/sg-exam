@@ -4,6 +4,9 @@ import org.apache.lucene.util.StringHelper;
 
 public class HashUtil {
 
+	private HashUtil() {
+	}
+
 	public static int getShardId(String id, int size) {
 		return Math.floorMod(hash(id), size);
 	}

@@ -2,6 +2,9 @@ package com.github.tangyi.common.utils;
 
 public class EnvUtils {
 
+	private EnvUtils() {
+	}
+
 	public static String getValue(String key, String defaultVal) {
 		try {
 			String value = getValue(key);
@@ -16,12 +19,11 @@ public class EnvUtils {
 	}
 
 	public static String getValue(String key) {
-		// 系统-D
+		// 系统 -D
 		String val = System.getProperty(key);
 		if (val != null) {
 			return val;
 		}
-		// 环境变量
 		return System.getenv(key);
 	}
 

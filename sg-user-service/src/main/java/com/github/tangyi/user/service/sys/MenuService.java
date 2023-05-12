@@ -13,7 +13,7 @@ import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.common.utils.TreeUtil;
 import com.github.tangyi.constants.UserCacheName;
 import com.github.tangyi.user.mapper.sys.MenuMapper;
-import com.github.tangyi.user.service.CommonExecutorService;
+import com.github.tangyi.user.thread.ExecutorHolder;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -26,12 +26,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -45,12 +40,12 @@ public class MenuService extends CrudService<MenuMapper, Menu> implements IMenuS
 
 	private final RoleMenuService roleMenuService;
 
-	private final CommonExecutorService executorService;
+	private final ExecutorHolder executorHolder;
 
-	public MenuService(MenuMapper menuMapper, RoleMenuService roleMenuService, CommonExecutorService executorService) {
+	public MenuService(MenuMapper menuMapper, RoleMenuService roleMenuService, ExecutorHolder executorHolder) {
 		this.menuMapper = menuMapper;
 		this.roleMenuService = roleMenuService;
-		this.executorService = executorService;
+		this.executorHolder = executorHolder;
 	}
 
 	public List<MenuDto> menuTree(String tenantCode) {
@@ -173,7 +168,7 @@ public class MenuService extends CrudService<MenuMapper, Menu> implements IMenuS
 	private List<Menu> findMenuByRoleList(List<Role> roleList, String tenantCode) {
 		List<ListenableFuture<List<Menu>>> futures = Lists.newArrayListWithExpectedSize(roleList.size());
 		for (Role role : roleList) {
-			ListenableFuture<List<Menu>> future = executorService.getCommonExecutor().submit(() -> {
+			ListenableFuture<List<Menu>> future = executorHolder.getCommonExecutor().submit(() -> {
 				try {
 					return findMenuByRole(role.getRoleCode(), tenantCode);
 				} catch (Exception e) {

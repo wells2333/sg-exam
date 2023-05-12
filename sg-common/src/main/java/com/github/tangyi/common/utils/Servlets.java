@@ -11,8 +11,6 @@ public class Servlets {
 
     /**
      * 获取在不同浏览器下的下载文件的转码规则
-     *
-     * @param request  request
      * @param fileName 原名，不进行转码前名称
      * @return String 示例 "filename=\"" + downloadName + "\"";
      */
