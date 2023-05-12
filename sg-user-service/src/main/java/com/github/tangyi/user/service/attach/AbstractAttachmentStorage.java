@@ -35,7 +35,7 @@ public abstract class AbstractAttachmentStorage implements AttachmentStorage {
 
 	protected Attachment prepareAttachment(String groupCode, String fileName, String originalFilename, byte[] bytes,
 			String user, String tenantCode) {
-		SgPreconditions.checkNull(groupCode, "group code is null");
+		SgPreconditions.checkNull(groupCode, "groupCode is null");
 		SgPreconditions.checkNull(bytes, "bytes is null");
 		Attachment attachment = new Attachment();
 		attachment.setCommonValue(user, tenantCode);
@@ -49,7 +49,7 @@ public abstract class AbstractAttachmentStorage implements AttachmentStorage {
 	protected String preUpload(Attachment attachment, byte[] bytes) {
 		SgPreconditions.checkNull(attachment, "attachment is null");
 		SgPreconditions.checkNull(bytes, "attachment bytes is null");
-		SgPreconditions.checkNull(attachment.getGroupCode(), "group code must not null");
+		SgPreconditions.checkNull(attachment.getGroupCode(), "groupCode must not null");
 		// groupCode 作为目录
 		return getShardName(attachment.getGroupCode(), attachment.getAttachName());
 	}

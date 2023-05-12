@@ -11,8 +11,6 @@ public interface TenantMapper extends CrudMapper<Tenant> {
 
 	/**
 	 * 查询租户数量
-	 *
-	 * @return Integer
 	 */
 	Integer tenantCount();
 }

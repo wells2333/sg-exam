@@ -11,43 +11,19 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "sms")
 public class SmsProperties {
 
-    /**
-     * appKey
-     */
     private String appKey;
 
-    /**
-     * appSecret
-     */
     private String appSecret;
 
-    /**
-     * regionId
-     */
     private String regionId;
 
-    /**
-     * domain
-     */
     private String domain;
 
-    /**
-     * 签名
-     */
     private String signName;
 
-    /**
-     * 模板code
-     */
     private String templateCode;
 
-    /**
-     * 版本
-     */
     private String version;
 
-    /**
-     * action
-     */
     private String action;
 }

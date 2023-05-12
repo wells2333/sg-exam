@@ -11,7 +11,6 @@ public interface RoleMapper extends CrudMapper<Role> {
 
 	/**
 	 * 查询默认的角色
-	 * @return Role
 	 */
 	Role findDefaultRole(String tenantCode);
 }
