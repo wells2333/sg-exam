@@ -13,6 +13,11 @@ public class MultipartFileUploadContext extends UploadContext {
 
 	private MultipartFile multipartFile;
 
+	public MultipartFileUploadContext multipartFile(MultipartFile multipartFile) {
+		this.multipartFile = multipartFile;
+		return this;
+	}
+
 	public static MultipartFileUploadContext of(AttachTypeEnum type, MultipartFile file) {
 		return of(AttachGroup.of(type), file, SysUtil.getUser(), SysUtil.getTenantCode());
 	}
@@ -22,11 +27,7 @@ public class MultipartFileUploadContext extends UploadContext {
 	}
 
 	public static MultipartFileUploadContext of(AttachGroup group, MultipartFile file, String user, String tenantCode) {
-		MultipartFileUploadContext context = new MultipartFileUploadContext();
-		context.setGroup(group);
-		context.setMultipartFile(file);
-		context.setUser(user);
-		context.setTenantCode(tenantCode);
-		return context;
+		return (MultipartFileUploadContext) new MultipartFileUploadContext().multipartFile(file).group(group).user(user)
+				.tenantCode(tenantCode);
 	}
 }

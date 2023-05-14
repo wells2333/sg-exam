@@ -28,6 +28,11 @@ public class AttachmentService extends CrudService<AttachmentMapper, Attachment>
 	}
 
 	@Override
+	public Attachment findByHash(String hash, String tenantCode) {
+		return this.dao.findByHash(hash, tenantCode);
+	}
+
+	@Override
 	@Cacheable(value = UserCacheName.ATTACHMENT, key = "#id")
 	public Attachment get(Long id) {
 		return super.get(id);

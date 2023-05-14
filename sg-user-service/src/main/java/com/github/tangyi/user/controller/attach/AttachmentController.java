@@ -2,6 +2,7 @@ package com.github.tangyi.user.controller.attach;
 
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.user.attach.AttachmentManager;
+import com.github.tangyi.api.user.attach.ChunkUploadContext;
 import com.github.tangyi.api.user.attach.MultipartFileUploadContext;
 import com.github.tangyi.api.user.enums.AttachTypeEnum;
 import com.github.tangyi.api.user.model.AttachGroup;
@@ -33,6 +34,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -64,16 +66,39 @@ public class AttachmentController extends BaseController {
 		return R.success(attachmentService.findPage(condition, pageNum, pageSize));
 	}
 
+	@PostMapping("prepareUploadChunks")
+	@Operation(summary = "准备多分片文件上传")
+	public R<Attachment> prepareUploadChunks(@RequestParam(required = false) String groupCode,
+			@RequestBody Attachment attachment) {
+		AttachGroup group = getAttachGroup(groupCode);
+		return R.success(attachmentManager.prepareUploadChunks(group, attachment));
+	}
+
+	@PostMapping("uploadChunk")
+	@Operation(summary = "上传文件分片")
+	public R<Boolean> uploadChunk(
+			@Parameter(description = "要上传的文件", required = true) @RequestParam("file") MultipartFile file,
+			@RequestParam("hash") String hash, @RequestParam("index") Integer index) throws IOException {
+		ChunkUploadContext context = new ChunkUploadContext();
+		context.setMultipartFile(file);
+		context.hash(hash).index(index);
+		return R.success(attachmentManager.uploadChunk(context));
+	}
+
+	@PostMapping("mergeChunks")
+	@Operation(summary = "合并文件分片")
+	public R<Attachment> mergeChunks(@RequestParam String hash)
+			throws IOException, ExecutionException, InterruptedException {
+		return R.success(attachmentManager.mergeChunks(hash));
+	}
+
 	@PostMapping("upload")
 	@Operation(summary = "上传文件")
 	@SgLog(value = "上传文件", operationType = OperationType.UPLOAD)
 	public R<Attachment> upload(
 			@Parameter(description = "要上传的文件", required = true) @RequestParam("file") MultipartFile file,
 			@RequestParam(required = false) String groupCode) throws IOException {
-		if (StringUtils.isEmpty(groupCode)) {
-			groupCode = AttachTypeEnum.OTHER.getValue();
-		}
-		AttachGroup group = groupService.findByGroupCode(groupCode);
+		AttachGroup group = getAttachGroup(groupCode);
 		return R.success(attachmentManager.upload(MultipartFileUploadContext.of(group, file)));
 	}
 
@@ -168,5 +193,12 @@ public class AttachmentController extends BaseController {
 	@Operation(summary = "生成默认图片")
 	public R<Long> createRandomImage(@RequestParam String groupCode) {
 		return R.success(attachmentManager.randomAttachmentId(groupCode));
+	}
+
+	private AttachGroup getAttachGroup(String groupCode) {
+		if (StringUtils.isEmpty(groupCode)) {
+			groupCode = AttachTypeEnum.OTHER.getValue();
+		}
+		return groupService.findByGroupCode(groupCode);
 	}
 }

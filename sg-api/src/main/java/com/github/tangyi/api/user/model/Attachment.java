@@ -47,6 +47,12 @@ public class Attachment extends BaseEntity<Attachment> {
 	private String url;
 
 	/**
+	 * 哈希值
+	 */
+	@Column(name = "hash")
+	private String hash;
+
+	/**
 	 * 上传结果
 	 */
 	@Transient

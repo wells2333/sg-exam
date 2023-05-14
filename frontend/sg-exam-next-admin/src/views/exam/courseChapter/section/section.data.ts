@@ -1,10 +1,8 @@
 import {BasicColumn, FormSchema} from '/@/components/Table';
 import {h, unref} from "vue";
-import {uploadVideo} from "/@/api/exam/examMedia";
 import {Tag} from "ant-design-vue";
 import {Tinymce} from "/@/components/Tinymce";
 import {
-  editorHeight,
   tinymcePlugins,
   tinymceToolbar
 } from "/@/components/Subjects/subject.constant";
@@ -115,11 +113,9 @@ export const formSchema: FormSchema[] = [
     render: ({model, field}) => {
       return h(Tinymce, {
         value: model[field],
-        height: editorHeight,
         plugins: tinymcePlugins,
         toolbar: tinymceToolbar,
         height: 300,
-        // 指定上传URL
         uploadUrl: ExamMediaApi.UploadImage,
         onChange: (value: string) => {
           model[field] = value;
@@ -137,7 +133,7 @@ export const formSchema: FormSchema[] = [
     render: ({model, field}) => {
       return h(SgUpload, {
         value: model[field],
-        api: uploadVideo,
+        groupCode: 'exam/video',
         type: 'video',
         handleDone: (value) => {
           if (value) {

@@ -9,7 +9,6 @@ import com.github.tangyi.common.utils.EnvUtils;
 import com.github.tangyi.common.utils.FileUtil;
 import com.github.tangyi.common.utils.HashUtil;
 import com.github.tangyi.constants.UserCacheName;
-import com.qiniu.common.QiniuException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.CacheEvict;
@@ -33,22 +32,23 @@ public abstract class AbstractAttachmentStorage implements AttachmentStorage {
 		this.groupService = groupService;
 	}
 
-	protected Attachment prepareAttachment(String groupCode, String fileName, String originalFilename, byte[] bytes,
+	@Override
+	public Attachment prepareAttachment(String groupCode, String fileName, String originalFilename, byte[] bytes,
 			String user, String tenantCode) {
 		SgPreconditions.checkNull(groupCode, "groupCode is null");
-		SgPreconditions.checkNull(bytes, "bytes is null");
 		Attachment attachment = new Attachment();
 		attachment.setCommonValue(user, tenantCode);
 		attachment.setAttachType(FileUtil.getFileNameEx(fileName));
-		attachment.setAttachSize(String.valueOf(bytes.length));
+		if (bytes != null) {
+			attachment.setAttachSize(String.valueOf(bytes.length));
+		}
 		attachment.setAttachName(originalFilename);
 		attachment.setGroupCode(groupCode);
 		return attachment;
 	}
 
-	protected String preUpload(Attachment attachment, byte[] bytes) {
+	protected String preUpload(Attachment attachment) {
 		SgPreconditions.checkNull(attachment, "attachment is null");
-		SgPreconditions.checkNull(bytes, "attachment bytes is null");
 		SgPreconditions.checkNull(attachment.getGroupCode(), "groupCode must not null");
 		// groupCode 作为目录
 		return getShardName(attachment.getGroupCode(), attachment.getAttachName());

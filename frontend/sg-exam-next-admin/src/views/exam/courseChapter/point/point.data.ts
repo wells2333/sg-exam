@@ -8,7 +8,6 @@ import {
 } from "/@/components/Subjects/subject.constant";
 import {ExamMediaApi} from "/@/api/api";
 import {Tag} from "ant-design-vue";
-import {uploadVideo} from "/@/api/exam/examMedia";
 import {SgUpload} from "/@/components/SgUpload";
 
 export const columns: BasicColumn[] = [
@@ -130,7 +129,7 @@ export const formSchema: FormSchema[] = [
     render: ({model, field}) => {
       return h(SgUpload, {
         value: model[field],
-        api: uploadVideo,
+        group: 'exam/video',
         type: 'video',
         handleDone: (value) => {
           if (value) {

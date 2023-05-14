@@ -11,4 +11,19 @@ public class UploadContext {
 	private String user;
 
 	private String tenantCode;
+
+	public UploadContext group(AttachGroup group) {
+		this.group = group;
+		return this;
+	}
+
+	public UploadContext user(String user) {
+		this.user = user;
+		return this;
+	}
+
+	public UploadContext tenantCode(String tenantCode) {
+		this.tenantCode = tenantCode;
+		return this;
+	}
 }

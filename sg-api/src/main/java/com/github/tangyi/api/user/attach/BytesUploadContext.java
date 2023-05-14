@@ -12,4 +12,19 @@ public class BytesUploadContext extends UploadContext {
 	private String originalFilename;
 
 	private byte[] bytes;
+
+	public BytesUploadContext fileName(String fileName) {
+		this.fileName = fileName;
+		return this;
+	}
+
+	public BytesUploadContext originalFilename(String originalFilename) {
+		this.originalFilename = originalFilename;
+		return this;
+	}
+
+	public BytesUploadContext fileName(byte[] bytes) {
+		this.bytes = bytes;
+		return this;
+	}
 }

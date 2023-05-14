@@ -8,6 +8,7 @@
         <result column="attach_size" property="attachSize"/>
         <result column="group_code" property="groupCode"/>
         <result column="url" property="url"/>
+        <result column="hash" property="hash"/>
         <result column="creator" property="creator"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
@@ -62,6 +63,10 @@
         <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
+    </select>
+
+    <select id="findByHash" resultMap="attachmentResultMap">
+        SELECT * FROM sys_attachment a WHERE a.hash = #{hash} AND a.tenant_code = #{tenantCode}
     </select>
 
     <delete id="delete">

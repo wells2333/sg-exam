@@ -5,10 +5,16 @@ import com.github.tangyi.api.user.model.Attachment;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public interface AttachmentStorage {
 
+	Attachment prepareAttachment(String groupCode, String fileName, String originalFilename, byte[] bytes, String user,
+			String tenantCode);
+
 	Attachment upload(MultipartFileUploadContext context) throws IOException;
+
+	Attachment upload(FileUploadContext context) throws IOException, ExecutionException, InterruptedException;
 
 	Attachment upload(BytesUploadContext context);
 

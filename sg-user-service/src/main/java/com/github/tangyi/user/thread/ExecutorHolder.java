@@ -28,6 +28,8 @@ public class ExecutorHolder implements IExecutorHolder {
 
 	private ListeningExecutorService importExecutor;
 
+	private ListeningExecutorService qiNiuUploadExecutor;
+
 	@PostConstruct
 	public void init() {
 		log.info("Initializing common executor");
@@ -50,6 +52,10 @@ public class ExecutorHolder implements IExecutorHolder {
 		log.info("Initializing import executor");
 		this.importExecutor = ExecutorUtils.newListeningExecutor("import-%d", coreSize, EXECUTOR_QUEUE_SIZE);
 		log.info("Init import executor finished, coreSize: {}", coreSize);
+
+		log.info("Initializing qiNiu upload executor");
+		this.qiNiuUploadExecutor = ExecutorUtils.newListeningExecutor("qiniu-upload-%d", coreSize, EXECUTOR_QUEUE_SIZE);
+		log.info("Init qiNiu upload executor finished, coreSize: {}", coreSize);
 	}
 
 	public ListeningExecutorService getCommonExecutor() {
@@ -70,5 +76,9 @@ public class ExecutorHolder implements IExecutorHolder {
 
 	public ListeningExecutorService getSubjectExecutor() {
 		return subjectExecutor;
+	}
+
+	public ListeningExecutorService getQiNiuUploadExecutor() {
+		return qiNiuUploadExecutor;
 	}
 }

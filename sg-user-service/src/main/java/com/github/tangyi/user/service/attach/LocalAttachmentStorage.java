@@ -1,6 +1,7 @@
 package com.github.tangyi.user.service.attach;
 
 import com.github.tangyi.api.user.attach.BytesUploadContext;
+import com.github.tangyi.api.user.attach.FileUploadContext;
 import com.github.tangyi.api.user.attach.MultipartFileUploadContext;
 import com.github.tangyi.api.user.model.AttachGroup;
 import com.github.tangyi.api.user.model.Attachment;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Service
@@ -50,6 +52,15 @@ public class LocalAttachmentStorage extends AbstractAttachmentStorage {
 
 	@Override
 	@Transactional
+	public Attachment upload(FileUploadContext context) throws IOException, ExecutionException, InterruptedException {
+		String groupCode = context.getGroup().getGroupCode();
+		File file = context.getTargetFile();
+		return this.upload(groupCode, file.getName(), file.getName(), FileCopyUtils.copyToByteArray(file),
+				context.getUser(), context.getTenantCode());
+	}
+
+	@Override
+	@Transactional
 	public Attachment upload(BytesUploadContext context) {
 		String groupCode = context.getGroup().getGroupCode();
 		return this.upload(groupCode, context.getFileName(), context.getOriginalFilename(), context.getBytes(),
@@ -66,7 +77,7 @@ public class LocalAttachmentStorage extends AbstractAttachmentStorage {
 
 	@Transactional
 	public void upload(Attachment attachment, byte[] bytes) {
-		String fileName = preUpload(attachment, bytes);
+		String fileName = preUpload(attachment);
 		StopWatch watch = StopWatchUtil.start();
 		try {
 			String fullName = this.localDirectory + fileName;

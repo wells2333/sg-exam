@@ -151,3 +151,7 @@ ALTER TABLE `exam_subject_video`
 ADD COLUMN `subject_video_name` varchar(255) NULL COMMENT '题目视频名称' AFTER `subject_video_id`;
 
 INSERT INTO `sys_config` (`id`, `config_key`, `config_value`, `config_desc`, `creator`, `create_time`, `operator`, `update_time`, `is_deleted`, `tenant_code`) VALUES (14, 'sys_login_show_tenant_code', 'true', '登录页面是否展示单位标识输入框', 'admin', '2023-05-11 22:47:47', 'admin', '2023-05-11 22:48:35', 0, 'gitee');
+
+ALTER TABLE `sys_attachment` ADD COLUMN `hash` varchar(255) NOT NULL DEFAULT '' COMMENT '哈希值';
+
+ALTER TABLE `sys_attachment` ADD INDEX `idx_hash`(`hash`);

@@ -15,6 +15,7 @@ sg-exam Releases
 - 修复课程管理 URL 双斜杠问题
 - 增加默认是 Spring 防火墙配置
 - 修复图片上传失败 bug
+- SgUpload 组件、七牛云支持多分片上传，提高上传速度
 
 ## Version 0.0.5 (2023-03-18)
 
