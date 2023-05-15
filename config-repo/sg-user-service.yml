@@ -131,6 +131,4 @@ springdoc:
 
 # 系统配置
 sys:
-  cacheExpire: 86400 # 缓存失效时间，单位秒，默认一天
   imageUrl: https://cdn.yunmianshi.com/images/default/%s.jpeg
-  imageCount: 30

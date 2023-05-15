@@ -21,13 +21,13 @@ public class GenderConverter implements Converter<Integer> {
 
 	@Override
 	public Integer convertToJavaData(CellData cellData, ExcelContentProperty contentProperty,
-			GlobalConfiguration globalConfiguration) throws Exception {
+			GlobalConfiguration globalConfiguration) {
 		return GenderEnum.matchByName(cellData.getStringValue()).getValue();
 	}
 
 	@Override
 	public CellData<String> convertToExcelData(Integer value, ExcelContentProperty contentProperty,
-			GlobalConfiguration globalConfiguration) throws Exception {
+			GlobalConfiguration globalConfiguration) {
 		return new CellData<>(GenderEnum.matchByValue(value).getName());
 	}
 }

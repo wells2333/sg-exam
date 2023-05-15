@@ -24,9 +24,7 @@ pagehelper:
   params: count=countSql
 
 sys:
-  adminUser: admin  # 管理员账号，默认是admin
   key: '1234567887654321'
-  canPreview: jpg,png,jpeg,gif # 支持预览的格式
 
 management:
   endpoint:

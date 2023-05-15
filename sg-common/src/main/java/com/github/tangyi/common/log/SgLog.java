@@ -1,7 +1,5 @@
 package com.github.tangyi.common.log;
 
-import com.github.tangyi.common.log.OperationType;
-
 import java.lang.annotation.*;
 
 @Target(ElementType.METHOD)
@@ -9,12 +7,12 @@ import java.lang.annotation.*;
 @Documented
 public @interface SgLog {
 
-    /**
-     * 描述
-     *
-     * @return {String}
-     */
-    String value() default "";
+	/**
+	 * 描述
+	 *
+	 * @return {String}
+	 */
+	String value() default "";
 
 	/**
 	 * 操作类型

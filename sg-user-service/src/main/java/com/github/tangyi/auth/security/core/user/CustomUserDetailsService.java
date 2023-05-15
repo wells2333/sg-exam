@@ -19,18 +19,18 @@ public interface CustomUserDetailsService extends UserDetailsService {
     UserDetails loadUserByIdentifierAndTenantCode(String tenantCode, String username) throws UsernameNotFoundException;
 
     /**
-     * 根据社交账号和租户标识查询
+     * 根据手机号和租户标识查询
      */
     UserDetails loadUserBySocialAndTenantCode(String tenantCode, String social, MobileUser mobileUser) throws UsernameNotFoundException;
 
     /**
-	 * 根据微信code和租户标识查询
-	 * 将code换成openId和sessionKey
+	 * 根据微信 code 和租户标识查询
+	 * 将 code 换成 openId 和 sessionKey
      */
     UserDetails loadUserByWxCodeAndTenantCode(String tenantCode, String code, WxUser wxUser) throws UsernameNotFoundException;
 
 	/**
-	 * 根据openId查询用户信息
+	 * 根据 openId 查询用户信息
 	 */
 	CustomUserDetails loadUserByWxOpenIdAndTenantCode(WxUser wxUser, String openId, String tenantCode);
 
@@ -40,7 +40,7 @@ public interface CustomUserDetailsService extends UserDetailsService {
 	UserVo registerUser(WxUser wxUser, String openId, String tenantCode);
 
 	/**
-	 * 转成CustomUserDetails
+	 * 转成 CustomUserDetails
 	 */
 	CustomUserDetails toCustomUserDetails(UserVo userVo);
 }

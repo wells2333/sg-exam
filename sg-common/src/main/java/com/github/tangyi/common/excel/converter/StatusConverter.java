@@ -21,13 +21,13 @@ public class StatusConverter implements Converter<Integer> {
 
 	@Override
 	public Integer convertToJavaData(CellData cellData, ExcelContentProperty contentProperty,
-			GlobalConfiguration globalConfiguration) throws Exception {
+			GlobalConfiguration globalConfiguration) {
 		return StatusEnum.matchByName(cellData.getStringValue()).getValue();
 	}
 
 	@Override
 	public CellData<String> convertToExcelData(Integer value, ExcelContentProperty contentProperty,
-			GlobalConfiguration globalConfiguration) throws Exception {
+			GlobalConfiguration globalConfiguration) {
 		return new CellData<>(StatusEnum.matchByValue(value).getName());
 	}
 }

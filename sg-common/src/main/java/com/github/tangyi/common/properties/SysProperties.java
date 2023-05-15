@@ -19,11 +19,6 @@ public class SysProperties {
      */
     private String key;
 
-    /**
-     * 缓存超时时间
-     */
-    private String cacheExpire;
-
     private String gatewaySecret;
 
     private String defaultImageType;

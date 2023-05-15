@@ -2,6 +2,7 @@ package com.github.tangyi.common.excel;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,9 @@ public abstract class AbstractExcelImportListener<T> extends AnalysisEventListen
 			saveData(dataList);
 			// 存储完成清理
 			dataList.clear();
+		}
+		if (CollectionUtils.isNotEmpty(dataList)) {
+			saveData(dataList);
 		}
 	}
 

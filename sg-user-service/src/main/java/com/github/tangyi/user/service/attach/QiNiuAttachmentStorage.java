@@ -276,8 +276,16 @@ public class QiNiuAttachmentStorage extends AbstractAttachmentStorage {
 
 	@Override
 	public void doDelete(Attachment attachment, String fileName) throws IOException {
-		BucketManager manager = getBucketManager(getAuth(), new Configuration(Region.region2()));
-		manager.delete(qiNiuConfig.getBucket(), fileName);
+		try {
+			BucketManager manager = getBucketManager(getAuth(), new Configuration(Region.region2()));
+			manager.delete(qiNiuConfig.getBucket(), fileName);
+		} catch (QiniuException e) {
+			if (StringUtils.contains(e.getMessage(), "no such file or directory")) {
+				log.warn("Delete attachment failed: no such file or directory, fileName: {}", fileName);
+			} else {
+				throw e;
+			}
+		}
 	}
 
 	@Transactional

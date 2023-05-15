@@ -14,6 +14,4 @@ public class SysConfigDto implements Serializable {
     private String uploadUrl;
 
     private String defaultAvatar;
-
-    private String adminUser;
 }
