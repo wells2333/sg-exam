@@ -17,19 +17,19 @@ import java.util.List;
 public class SubjectDto extends BaseEntity<SubjectDto> {
 
 	/**
-	 * 考试ID
+	 * 考试 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long examinationId;
 
 	/**
-	 * 考试记录ID
+	 * 考试记录 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long examinationRecordId;
 
 	/**
-	 * 题目分类ID
+	 * 题目分类 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long categoryId;
@@ -100,17 +100,17 @@ public class SubjectDto extends BaseEntity<SubjectDto> {
 	private boolean hasMore;
 
 	/**
-	 * 视频ID
+	 * 视频 ID
 	 */
 	private Long videoId;
 
 	/**
-	 * 视频URL
+	 * 视频 URL
 	 */
 	private String videoUrl;
 
 	/**
-	 * 图片ID
+	 * 图片 ID
 	 */
 	private Long imageId;
 

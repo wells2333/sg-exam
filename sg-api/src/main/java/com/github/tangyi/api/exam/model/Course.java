@@ -70,7 +70,7 @@ public class Course extends BaseEntity<Course> {
 	private Double chargePrice;
 
 	/**
-	 * 难度等级，1~5，默认3
+	 * 难度等级，1~5，默认 3
 	 */
 	@Column(name = "level")
 	private Integer level;

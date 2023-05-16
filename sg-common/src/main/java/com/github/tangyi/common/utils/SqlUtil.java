@@ -32,9 +32,9 @@ public class SqlUtil {
 	}
 
 	/**
-	 * h2的索引名必须全局唯一
+	 * h2 的索引名必须全局唯一
 	 *
-	 * @param content sql建表脚本
+	 * @param content sql 建表脚本
 	 * @return 替换索引名为全局唯一
 	 */
 	private static String uniqueKey(String content) {

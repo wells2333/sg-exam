@@ -27,12 +27,12 @@ public class User extends BaseEntity<User> {
 	/**
 	 * 电话
 	 */
-	@Pattern(regexp = "^\\d{11}$", message = "请输入11位手机号")
+	@Pattern(regexp = "^\\d{11}$", message = "请输入 11 位手机号")
 	@Column(name = "phone")
 	private String phone;
 
 	/**
-	 * 头像id
+	 * 头像 ID
 	 */
 	@Column(name = "avatar_id")
 	private Long avatarId;
@@ -69,7 +69,7 @@ public class User extends BaseEntity<User> {
 	private Integer status;
 
 	/**
-	 * 部门id
+	 * 部门 ID
 	 */
 	@Column(name = "dept_id")
 	private Long deptId;
@@ -137,7 +137,7 @@ public class User extends BaseEntity<User> {
 	private String wechat;
 
 	/**
-	 * 家庭角色，参考UserStudentConstant
+	 * 家庭角色，参考 UserStudentConstant
 	 */
 	@Column(name = "family_role")
 	private Integer familyRole;

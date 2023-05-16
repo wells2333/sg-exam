@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class LogInterceptor implements Interceptor {
 
-    private static Logger logger = LoggerFactory.getLogger(LogInterceptor.class);
+    private static final Logger logger = LoggerFactory.getLogger(LogInterceptor.class);
 
     @Override
     public Response intercept(Chain chain) throws IOException {

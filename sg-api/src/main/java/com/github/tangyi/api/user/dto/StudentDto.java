@@ -17,16 +17,16 @@ public class StudentDto implements Serializable {
 	private Long id;
 
 	/**
-	 * 用户id
+	 * 用户 ID
 	 */
-	@Schema(description = "用户id")
+	@Schema(description = "用户 ID")
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long userId;
 
 	/**
-	 * 学生id
+	 * 学生 id
 	 */
-	@Schema(description = "学生id")
+	@Schema(description = "学生 ID")
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long studentId;
 
@@ -75,7 +75,7 @@ public class StudentDto implements Serializable {
 	/**
 	 * 就读年级
 	 */
-	@Schema(description = "就读年级ID")
+	@Schema(description = "就读年级 ID")
 	private String grade;
 
 
@@ -94,14 +94,14 @@ public class StudentDto implements Serializable {
 	/**
 	 * 就读城市
 	 */
-	@Schema(description = "就读城市ID")
+	@Schema(description = "就读城市 ID")
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long cityId;
 
 	/**
-	 * 县id
+	 * 县 id
 	 */
-	@Schema(description = "就读区县ID")
+	@Schema(description = "就读区县 ID")
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long countyId;
 }

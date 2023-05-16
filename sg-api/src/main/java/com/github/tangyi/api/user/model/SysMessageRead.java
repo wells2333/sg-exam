@@ -19,14 +19,14 @@ import javax.persistence.Table;
 public class SysMessageRead extends BaseEntity<SysMessageRead> {
 
 	/**
-	 * 消息ID
+	 * 消息 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "message_id")
 	private Long messageId;
 
 	/**
-	 * 接收人ID
+	 * 接收人 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "receiver_id")

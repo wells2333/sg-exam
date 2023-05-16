@@ -47,7 +47,7 @@ public class UserInfoDto implements Serializable {
 	private String phone;
 
 	/**
-	 * 头像对应的附件id
+	 * 头像对应的附件 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long avatarId;
@@ -80,7 +80,7 @@ public class UserInfoDto implements Serializable {
 	private String deptName;
 
 	/**
-	 * 部门ID
+	 * 部门 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long deptId;

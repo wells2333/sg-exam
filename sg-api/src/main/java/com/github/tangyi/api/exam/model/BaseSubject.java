@@ -14,7 +14,7 @@ import javax.validation.constraints.NotBlank;
 public class BaseSubject<T> extends BaseEntity<T> {
 
 	/**
-	 * 题目分类ID
+	 * 题目分类 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "category_id")
@@ -56,7 +56,7 @@ public class BaseSubject<T> extends BaseEntity<T> {
 	private Integer sort;
 
 	/**
-	 * 语音ID
+	 * 语音 ID
 	 */
 	@Column(name = "speech_id")
 	private Long speechId;

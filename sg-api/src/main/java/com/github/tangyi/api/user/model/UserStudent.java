@@ -12,12 +12,12 @@ import lombok.EqualsAndHashCode;
 public class UserStudent extends BaseEntity<UserStudent> {
 
     /**
-     * 用户id
+     * 用户 ID
      */
     private Long userId;
 
     /**
-     * 学生id
+     * 学生 ID
      */
     private Long studentId;
 

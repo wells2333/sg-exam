@@ -19,21 +19,21 @@ import javax.persistence.Table;
 public class ExamUserFav extends BaseEntity<ExamUserFav> {
 
 	/**
-	 * 目标ID
+	 * 目标 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "target_id")
 	private Long targetId;
 
 	/**
-	 * 用户ID
+	 * 用户 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "user_id")
 	private Long userId;
 
 	/**
-	 * 类型ID，0：考试，1：题目，2：课程
+	 * 类型 ID，0：考试，1：题目，2：课程
 	 */
 	@Column(name = "target_type")
 	private Integer targetType;

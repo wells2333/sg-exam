@@ -20,7 +20,7 @@ public class Menu extends BaseEntity<Menu> {
     private String name;
 
 	/**
-	 * 类型 （1菜单，2权限)
+	 * 类型（1 菜单，2 权限)
 	 */
 	private Byte type;
 
@@ -45,7 +45,7 @@ public class Menu extends BaseEntity<Menu> {
 	private String permission;
 
     /**
-     * 父菜单ID
+     * 父菜单 ID
      */
 	@Column(name = "parent_id")
     private Long parentId;

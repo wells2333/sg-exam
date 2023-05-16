@@ -39,19 +39,19 @@ public class Tenant extends BaseEntity<Tenant> {
 	private Integer initStatus;
 
 	/**
-	 * 默认角色ID，用于菜单分配
+	 * 默认角色 ID，用于菜单分配
 	 */
 	@Column(name = "role_id")
 	private Long roleId;
 
 	/**
-	 * 图片ID
+	 * 图片 ID
 	 */
 	@Column(name = "image_id")
 	private Long imageId;
 
 	/**
-	 * 菜单ID
+	 * 菜单 ID
 	 */
 	@Transient
 	private String menuIds;

@@ -22,7 +22,7 @@ public class OkHttpUtil {
 
 	@SuppressWarnings(value = {"uncheck"})
 	public OkHttpUtil() {
-		// 创建httpClient
+		// 创建 httpClient
 		okHttpClient = new OkHttpClient().newBuilder()
 				// 设置连接的超时时间
 				.connectTimeout(10, TimeUnit.SECONDS)

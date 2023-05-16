@@ -32,7 +32,7 @@ public class SubjectCategory extends BaseEntity<SubjectCategory> {
 	private String categoryDesc;
 
 	/**
-	 * 父分类id
+	 * 父分类 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "parent_id")
@@ -45,7 +45,7 @@ public class SubjectCategory extends BaseEntity<SubjectCategory> {
 	private Integer sort;
 
 	/**
-	 * 类型: 0-私共,1-公有
+	 * 类型：0-私共，1-公有
 	 */
 	@Column(name = "type")
 	private Integer type;

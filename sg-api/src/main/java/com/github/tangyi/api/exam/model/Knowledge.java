@@ -32,7 +32,7 @@ public class Knowledge extends BaseEntity<Knowledge> {
 	private String knowledgeDesc;
 
 	/**
-	 * 附件ID
+	 * 附件 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "attachment_id")

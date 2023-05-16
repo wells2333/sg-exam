@@ -34,7 +34,7 @@ public class ExamCourseChapter extends BaseEntity<ExamCourseChapter> {
     private Long sort;
 
     /**
-     * 课程ID
+     * 课程 ID
      */
     @JsonSerialize(using = ToStringSerializer.class)
     @Column(name = "course_id")

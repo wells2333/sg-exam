@@ -7,9 +7,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DashboardDto
- */
 @Data
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class DashboardDto implements Serializable {

@@ -33,7 +33,7 @@ public class DeptDto extends TreeEntity<DeptDto> {
     private String deptLeader;
 
     /**
-     * 父部门ID
+     * 父部门 ID
      */
 	@JsonSerialize(using = ToStringSerializer.class)
     private Long parentId;

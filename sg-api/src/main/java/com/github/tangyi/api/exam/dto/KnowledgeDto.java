@@ -23,7 +23,7 @@ public class KnowledgeDto extends BaseEntity<KnowledgeDto> {
 	private String knowledgeDesc;
 
 	/**
-	 * 附件ID
+	 * 附件 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long attachmentId;

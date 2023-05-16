@@ -16,9 +16,6 @@ import java.util.Date;
 @Slf4j
 public class MenuDto extends TreeEntity<MenuDto> {
 
-	/**
-	 * 父菜单ID
-	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long parentId;
 

@@ -19,7 +19,7 @@ import javax.persistence.Table;
 public class SysConfig extends BaseEntity<SysConfig> {
 
 	/**
-	 * 配置key
+	 * 配置 key
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "config_key")

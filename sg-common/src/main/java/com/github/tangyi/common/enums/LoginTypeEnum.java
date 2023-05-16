@@ -18,9 +18,9 @@ public enum LoginTypeEnum {
     SMS("SMS", "验证码登录", "/mobile/token"),
 
     /**
-     * QQ登录
+     * QQ 登录
      */
-    QQ("QQ", "QQ登录", "/mobile/token"),
+    QQ("QQ", "QQ 登录", "/mobile/token"),
 
     /**
      * 微信登录
@@ -38,7 +38,7 @@ public enum LoginTypeEnum {
     private String description;
 
     /**
-     * 接口uri
+     * 接口 uri
      */
     private String uri;
 }

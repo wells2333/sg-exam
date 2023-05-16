@@ -29,13 +29,13 @@ public class ExamExaminationMember extends BaseEntity<ExamExaminationMember> {
 	private Long examId;
 
 	/**
-	 * 成员类型，0：全部用户，1：用户ID，2：部门
+	 * 成员类型，0：全部用户，1：用户 ID，2：部门
 	 */
 	@Column(name = "member_type")
 	private Integer memberType;
 
 	/**
-	 * 成员ID
+	 * 成员 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "member_id")

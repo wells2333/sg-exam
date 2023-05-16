@@ -15,7 +15,7 @@ public class SysProperties {
     private String defaultAvatar;
 
     /**
-     * 密码加密解密的key
+     * 密码加密解密的 key
      */
     private String key;
 
@@ -26,7 +26,7 @@ public class SysProperties {
     private Integer defaultImageCount;
 
     /**
-     * logo的后缀名
+     * logo 的后缀名
      */
     private String logoSuffix;
 

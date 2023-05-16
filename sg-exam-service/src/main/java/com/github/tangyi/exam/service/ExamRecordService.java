@@ -186,7 +186,7 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 				List<Examination> examinations = examinationService.findListById(
 						examRecordList.stream().map(ExaminationRecord::getExaminationId).distinct()
 								.toArray(Long[]::new));
-				// 用户id
+				// 用户 ID
 				Set<Long> userIdSet = new HashSet<>();
 				examRecordList.forEach(tempExamRecord -> {
 					// 查找考试记录所属的考试信息
@@ -240,7 +240,7 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 	}
 
 	/**
-	 * 查询过去n天的考试记录数据
+	 * 查询过去 n 天的考试记录数据
 	 */
 	public ExaminationDashboardDto findExamRecordTendency(String tenantCode, int pastDays) {
 		ExaminationDashboardDto dto = new ExaminationDashboardDto();

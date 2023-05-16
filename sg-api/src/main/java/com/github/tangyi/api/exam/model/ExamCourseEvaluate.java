@@ -26,7 +26,7 @@ public class ExamCourseEvaluate extends BaseEntity<ExamCourseEvaluate> {
 	private String evaluateContent;
 
 	/**
-	 * 用户ID
+	 * 用户 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "user_id")
@@ -39,7 +39,7 @@ public class ExamCourseEvaluate extends BaseEntity<ExamCourseEvaluate> {
 	private Integer evaluateLevel;
 
 	/**
-	 * 课程ID
+	 * 课程 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "course_id")

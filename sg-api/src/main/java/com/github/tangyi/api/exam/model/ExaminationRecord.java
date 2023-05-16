@@ -18,7 +18,7 @@ import java.util.Date;
 @Table(name = "exam_examination_record")
 public class ExaminationRecord extends BaseEntity<ExaminationRecord> {
 
-	@NotBlank(message = "用户ID不能为空")
+	@NotBlank(message = "用户 ID 不能为空")
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "user_id")
 	private Long userId;
@@ -27,7 +27,7 @@ public class ExaminationRecord extends BaseEntity<ExaminationRecord> {
 	@Column(name = "type")
 	private Integer type;
 
-	@NotBlank(message = "考试ID不能为空")
+	@NotBlank(message = "考试 ID 不能为空")
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "examination_id")
 	private Long examinationId;

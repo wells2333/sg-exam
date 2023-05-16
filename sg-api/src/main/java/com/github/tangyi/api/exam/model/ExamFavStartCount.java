@@ -19,7 +19,7 @@ import javax.persistence.Table;
 public class ExamFavStartCount extends BaseEntity<ExamFavStartCount> {
 
 	/**
-	 * 目标ID
+	 * 目标 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "target_id")
@@ -33,7 +33,7 @@ public class ExamFavStartCount extends BaseEntity<ExamFavStartCount> {
 	private Long startCount;
 
 	/**
-	 * 类型ID，0：考试，1：题目，2：课程
+	 * 类型 ID，0：考试，1：题目，2：课程
 	 */
 	@Column(name = "target_type")
 	private Integer targetType;

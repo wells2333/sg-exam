@@ -21,14 +21,14 @@ import javax.validation.constraints.NotBlank;
 public class ExamCourseMember extends BaseEntity<ExamCourseMember> {
 
     /**
-     * 课程ID
+     * 课程 ID
      */
     @JsonSerialize(using = ToStringSerializer.class)
     @Column(name = "course_id")
     private Long courseId;
 
     /**
-     * 用户ID
+     * 用户 ID
      */
     @JsonSerialize(using = ToStringSerializer.class)
     @Column(name = "user_id")

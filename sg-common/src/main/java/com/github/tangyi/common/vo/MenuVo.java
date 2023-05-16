@@ -24,7 +24,7 @@ public class MenuVo extends BaseEntity<MenuVo> {
     private String url;
 
     /**
-     * 父菜单ID
+     * 父菜单 ID
      */
     private String parentId;
 
@@ -49,7 +49,7 @@ public class MenuVo extends BaseEntity<MenuVo> {
     private String path;
 
     /**
-     * VUE页面
+     * VUE 页面
      */
     private String component;
 }

@@ -13,7 +13,7 @@ import javax.persistence.Table;
 public class UserAuths extends BaseEntity<UserAuths> {
 
     /**
-     * 用户id
+     * 用户 ID
      */
 	@Column(name = "user_id")
     private Long userId;
@@ -31,7 +31,7 @@ public class UserAuths extends BaseEntity<UserAuths> {
     private String identifier;
 
     /**
-     * 密码凭证，跟授权类型有关，如密码、第三方系统的token等
+     * 密码凭证，跟授权类型有关，如密码、第三方系统的 token 等
      */
 	@Column(name = "credential")
     private String credential;

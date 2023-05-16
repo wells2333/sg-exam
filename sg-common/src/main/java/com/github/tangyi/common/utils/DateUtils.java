@@ -24,42 +24,42 @@ public class DateUtils {
 	}
 
 	/**
-	 * 日期转string
+	 * 日期转 string
 	 */
 	public static String localDateToString(LocalDateTime date) {
 		return date != null ? date.format(FORMATTER) : "";
 	}
 
 	/**
-	 * 日期转string
+	 * 日期转 string
 	 */
 	public static String localDateMillisToString(LocalDateTime date) {
 		return date != null ? date.format(FORMATTER_MILLIS) : "";
 	}
 
 	/**
-	 * LocalDate转Date
+	 * LocalDate 转 Date
 	 */
 	public static Date asDate(LocalDate localDate) {
 		return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
 	}
 
 	/**
-	 * LocalDateTime转Date
+	 * LocalDateTime 转 Date
 	 */
 	public static Date asDate(LocalDateTime localDateTime) {
 		return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
 	}
 
 	/**
-	 * Date转LocalDate
+	 * Date 转 LocalDate
 	 */
 	public static LocalDate asLocalDate(Date date) {
 		return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
 	}
 
 	/**
-	 * Date转LocalDateTime
+	 * Date 转 LocalDateTime
 	 */
 	public static LocalDateTime asLocalDateTime(Date date) {
 		return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
@@ -113,7 +113,7 @@ public class DateUtils {
 	 * 获得周几日期，上一周或下一周，依此类推
 	 * @param week 指定周几
 	 * @param whichWeek 那一周
-	 * @return string 日期 年-月-日
+	 * @return string 日期 年 - 月-日
 	 */
 	public static String getDayOfWhichWeek(DayOfWeek week, int whichWeek) {
 		LocalDate day = LocalDate.now().with(TemporalAdjusters.previous(week)).minusWeeks(whichWeek - 1);
@@ -203,7 +203,7 @@ public class DateUtils {
 	}
 
 	/**
-	 * 获取当前日期, 默认格式为yyyy-MM-dd
+	 * 获取当前日期，默认格式为 yyyy-MM-dd
 	 */
 	public static String getDate() {
 		return dateTimeNow(YYYY_MM_DD);

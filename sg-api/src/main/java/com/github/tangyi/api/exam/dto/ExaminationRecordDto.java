@@ -18,13 +18,13 @@ import java.util.List;
 public class ExaminationRecordDto extends BaseEntity<ExaminationRecordDto> {
 
 	/**
-	 * 考生ID
+	 * 考生 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long userId;
 
 	/**
-	 * 考试ID
+	 * 考试 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long examinationId;

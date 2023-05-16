@@ -32,7 +32,7 @@ public class ExamCourseSection extends BaseEntity<ExamCourseSection> {
 	private Long sort;
 
 	/**
-	 * 章ID
+	 * 章 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "chapter_id")
@@ -46,7 +46,7 @@ public class ExamCourseSection extends BaseEntity<ExamCourseSection> {
 	private Long learnHour;
 
 	/**
-	 * 视频ID
+	 * 视频 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "video_id")

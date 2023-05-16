@@ -47,21 +47,21 @@ public class ExaminationSubjectService extends CrudService<ExaminationSubjectMap
 	}
 
 	/**
-	 * 根据上一题ID查询下一题
+	 * 根据上一题 ID 查询下一题
 	 */
 	public ExaminationSubject getByPreviousId(ExaminationSubject examinationSubject) {
 		return this.dao.getByPreviousId(examinationSubject);
 	}
 
 	/**
-	 * 根据当前题目ID查询上一题
+	 * 根据当前题目 ID 查询上一题
 	 */
 	public ExaminationSubject getPreviousByCurrentId(ExaminationSubject examinationSubject) {
 		return this.dao.getPreviousByCurrentId(examinationSubject);
 	}
 
 	/**
-	 * 根据分类id查询
+	 * 根据分类 ID 查询
 	 */
 	public List<ExaminationSubject> findListByCategoryId(ExaminationSubject examinationSubject) {
 		return this.dao.findListByCategoryId(examinationSubject);
@@ -69,8 +69,6 @@ public class ExaminationSubjectService extends CrudService<ExaminationSubjectMap
 
 	/**
 	 * 查询下一题的序号
-	 * @param examinationId examinationId
-	 * @return Integer
 	 */
 	public Integer nextSubjectNo(Long examinationId) {
 		Integer no = this.dao.findMaxSortByExaminationId(ExamUtil.createEs(examinationId, null));

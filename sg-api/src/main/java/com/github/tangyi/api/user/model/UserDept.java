@@ -9,12 +9,12 @@ import lombok.EqualsAndHashCode;
 public class UserDept extends BaseEntity<UserDept> {
 
     /**
-     * 用户ID
+     * 用户 ID
      */
     private String userId;
 
     /**
-     * 部门ID
+     * 部门 ID
      */
     private String deptId;
 }

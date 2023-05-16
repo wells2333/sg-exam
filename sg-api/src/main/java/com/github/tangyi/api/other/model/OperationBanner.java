@@ -29,19 +29,19 @@ public class OperationBanner extends BaseEntity<OperationBanner> {
 	private Integer operationType;
 
 	/**
-	 * 图片id
+	 * 图片 ID
 	 */
 	@Column(name = "image_id")
 	private String imageId;
 
 	/**
-	 * 图片URL
+	 * 图片 URL
 	 */
 	@Column(name = "image_url")
 	private String imageUrl;
 
 	/**
-	 * 跳转的URL
+	 * 跳转的 URL
 	 */
 	@Column(name = "redirect_url")
 	private String redirectUrl;

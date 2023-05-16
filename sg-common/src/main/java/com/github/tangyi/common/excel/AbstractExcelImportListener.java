@@ -29,7 +29,7 @@ public abstract class AbstractExcelImportListener<T> extends AnalysisEventListen
 	@Override
 	public void invoke(T dataModel, AnalysisContext context) {
 		dataList.add(dataModel);
-		// 达到 BATCH_COUNT 则保存进数据库，防止数据几万条数据在内存，容易OOM
+		// 达到 BATCH_COUNT 则保存进数据库，防止数据几万条数据在内存，容易 OOM
 		if (dataList.size() >= BATCH_COUNT) {
 			saveData(dataList);
 			// 存储完成清理

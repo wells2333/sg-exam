@@ -12,12 +12,12 @@ import lombok.EqualsAndHashCode;
 public class ExaminationAuth extends BaseEntity<ExaminationAuth> {
 
     /**
-     * 学生ID
+     * 学生 ID
      */
     private String userId;
 
     /**
-     * 考试ID
+     * 考试 ID
      */
     private String examinationId;
 }

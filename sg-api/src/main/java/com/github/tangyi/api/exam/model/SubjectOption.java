@@ -18,7 +18,7 @@ import javax.persistence.Table;
 public class SubjectOption extends BaseEntity<SubjectOption> {
 
 	/**
-	 * 选择题ID
+	 * 选择题 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "subject_choices_id")

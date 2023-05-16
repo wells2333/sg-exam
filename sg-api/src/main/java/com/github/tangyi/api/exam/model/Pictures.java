@@ -22,7 +22,7 @@ public class Pictures extends BaseEntity<Pictures> {
 	private String pictureAddress;
 
 	/**
-	 * 附件ID
+	 * 附件 ID
 	 */
 	@Column(name = "attachment_id")
 	private String attachmentId;

@@ -70,7 +70,7 @@ public class Examination extends BaseEntity<Examination> {
 	private Integer status;
 
 	/**
-	 * 封面对应的图片id
+	 * 封面对应的图片 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "image_id")

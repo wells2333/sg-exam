@@ -32,7 +32,7 @@ public class ExamCourseKnowledgePoint extends BaseEntity<ExamCourseKnowledgePoin
 	private Long sort;
 
 	/**
-	 * 节ID
+	 * 节 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "section_id")
@@ -51,7 +51,7 @@ public class ExamCourseKnowledgePoint extends BaseEntity<ExamCourseKnowledgePoin
 	private Integer learnHour;
 
 	/**
-	 * 视频ID
+	 * 视频 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "video_id")

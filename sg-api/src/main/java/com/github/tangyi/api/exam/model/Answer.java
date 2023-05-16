@@ -19,14 +19,14 @@ import java.util.Date;
 public class Answer extends BaseEntity<Answer> {
 
 	/**
-	 * 考试记录id
+	 * 考试记录 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "exam_record_id")
 	private Long examRecordId;
 
 	/**
-	 * 题目ID
+	 * 题目 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "subject_id")

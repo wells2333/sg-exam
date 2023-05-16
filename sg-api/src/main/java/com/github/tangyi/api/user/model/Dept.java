@@ -38,7 +38,7 @@ public class Dept extends BaseEntity<Dept> {
 	private String deptLeader;
 
 	/**
-	 * 父部门ID
+	 * 父部门 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "parent_id")

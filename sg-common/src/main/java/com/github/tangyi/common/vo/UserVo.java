@@ -12,7 +12,7 @@ import java.util.List;
 public class UserVo extends BaseEntity<UserVo> {
 
     /**
-     * 用户id
+     * 用户 ID
      */
     private Long userId;
 
@@ -27,7 +27,7 @@ public class UserVo extends BaseEntity<UserVo> {
     private String identifier;
 
     /**
-     * 密码凭证，跟授权类型有关，如密码、第三方系统的token等
+     * 密码凭证，跟授权类型有关，如密码、第三方系统的 token 等
      */
     private String credential;
 
@@ -42,7 +42,7 @@ public class UserVo extends BaseEntity<UserVo> {
     private String phone;
 
     /**
-     * 头像对应的附件id
+     * 头像对应的附件 ID
      */
     private Long avatarId;
 
@@ -72,7 +72,7 @@ public class UserVo extends BaseEntity<UserVo> {
     private String deptName;
 
     /**
-     * 部门ID
+     * 部门 ID
      */
     private Long deptId;
 
@@ -132,7 +132,7 @@ public class UserVo extends BaseEntity<UserVo> {
     private String wechat;
 
     /**
-     * 家庭角色，参考UserStudentConstant
+     * 家庭角色，参考 UserStudentConstant
      */
     private Integer familyRole;
 

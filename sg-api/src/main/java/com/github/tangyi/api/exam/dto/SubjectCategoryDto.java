@@ -23,7 +23,7 @@ public class SubjectCategoryDto extends TreeEntity<SubjectCategoryDto> {
 	private String categoryDesc;
 
 	/**
-	 * 父分类id
+	 * 父分类 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long parentId;

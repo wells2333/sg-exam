@@ -46,7 +46,7 @@ public class ApiMsg {
 	 */
 	public static final int DENIED = 8;
 
-	// =============== 业务key ================
+	// =============== 业务 key ================
 
 	/**
 	 * 成功
@@ -89,12 +89,12 @@ public class ApiMsg {
 	public static final int KEY_PARAM_VALIDATE = 406;
 
 	/**
-	 * code和提示内容的对应关系
+	 * code 和提示内容的对应关系
 	 */
 	private static final Map<Integer, String> CODE_MAP = new HashMap<>();
 
 	/**
-	 * code和提示内容的对应关系
+	 * code 和提示内容的对应关系
 	 */
 	private static final Map<Integer, String> KEY_MAP = new HashMap<>();
 

@@ -17,14 +17,14 @@ import javax.persistence.Table;
 public class ExaminationSubject extends BaseEntity<ExaminationSubject> {
 
 	/**
-	 * 考试ID
+	 * 考试 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "examination_id")
 	private Long examinationId;
 
 	/**
-	 * 题目ID
+	 * 题目 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "subject_id")

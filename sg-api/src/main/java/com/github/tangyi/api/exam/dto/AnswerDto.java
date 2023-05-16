@@ -24,13 +24,13 @@ public class AnswerDto implements Serializable {
 	private Long id;
 
 	/**
-	 * 考试记录id
+	 * 考试记录 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long examRecordId;
 
 	/**
-	 * 题目ID
+	 * 题目 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long subjectId;
@@ -56,7 +56,7 @@ public class AnswerDto implements Serializable {
 	private Double score;
 
 	/**
-	 * 用户ID
+	 * 用户 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long userId;

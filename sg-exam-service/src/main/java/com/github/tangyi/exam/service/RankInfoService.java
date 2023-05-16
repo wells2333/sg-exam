@@ -34,7 +34,7 @@ public class RankInfoService {
 		Set<ZSetOperations.TypedTuple<String>> typedTuples = redisTemplate.opsForZSet()
 				.reverseRangeByScoreWithScores(AnswerConstant.CACHE_PREFIX_RANK + recordId, 0, Integer.MAX_VALUE);
 		if (typedTuples != null) {
-			// 用户ID列表
+			// 用户 ID 列表
 			Set<Long> userIds = new HashSet<>();
 			typedTuples.forEach(typedTuple -> {
 				ExaminationRecord record = JsonMapper.getInstance()
@@ -66,7 +66,7 @@ public class RankInfoService {
 
 	/**
 	 * 更新排名信息
-	 * 基于Redis的sort set数据结构
+	 * 基于 Redis 的 sort set 数据结构
 	 */
 	public void updateRank(ExaminationRecord record) {
 		redisTemplate.opsForZSet().add(AnswerConstant.CACHE_PREFIX_RANK + record.getExaminationId(),

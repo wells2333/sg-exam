@@ -35,9 +35,6 @@ public class UserDto implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * id
-	 */
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long id;
 
@@ -54,9 +51,9 @@ public class UserDto implements Serializable {
 	private String identifier;
 
 	/**
-	 * 密码凭证，跟授权类型有关，如密码、第三方系统的token等
+	 * 密码凭证，跟授权类型有关，如密码、第三方系统的 token 等
 	 */
-	@Schema(description = "密码，需要使用AES加密", example = "lBTqrKS0kZixOFXeZ0HRng==")
+	@Schema(description = "密码，需要使用 AES 加密", example = "lBTqrKS0kZixOFXeZ0HRng==")
 	private String credential;
 
 	/**
@@ -67,9 +64,9 @@ public class UserDto implements Serializable {
 	private List<Long> role = new ArrayList<>();
 
 	/**
-	 * 部门ID
+	 * 部门 ID
 	 */
-	@Schema(description = "部门ID")
+	@Schema(description = "部门 ID")
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long deptId;
 
@@ -101,20 +98,20 @@ public class UserDto implements Serializable {
 	 * 电话
 	 */
 	@Schema(description = "电话", example = "15521089184")
-	@Pattern(regexp = "^\\d{11}$", message = "请输入11位手机号")
+	@Pattern(regexp = "^\\d{11}$", message = "请输入 11 位手机号")
 	private String phone;
 
 	/**
-	 * 头像id
+	 * 头像 id
 	 */
-	@Schema(description = "头像id", hidden = true)
+	@Schema(description = "头像 id", hidden = true)
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long avatarId;
 
 	/**
-	 * 头像URL
+	 * 头像 URL
 	 */
-	@Schema(description = "头像URL", hidden = true)
+	@Schema(description = "头像 URL", hidden = true)
 	private String avatarUrl;
 
 	/**

@@ -53,7 +53,7 @@ public class GenTable extends BaseEntity<GenTable> {
 	private String className;
 
 	/**
-	 * 使用的模板（crud单表操作 tree树表操作）
+	 * 使用的模板（crud 单表操作 tree 树表操作）
 	 */
 	@Column(name = "tpl_category")
 	private String tplCategory;
@@ -89,7 +89,7 @@ public class GenTable extends BaseEntity<GenTable> {
 	private String functionAuthor;
 
 	/**
-	 * 生成代码方式（0zip压缩包 1自定义路径）
+	 * 生成代码方式（0zip 压缩包 1 自定义路径）
 	 */
 	@Column(name = "gen_type")
 	private String genType;
