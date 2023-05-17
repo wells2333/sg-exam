@@ -35,8 +35,6 @@ public class AnonymousUserAnswerController extends BaseController {
 
 	/**
 	 * 保存答题，返回下一题信息
-	 *
-	 * @param answer          answer
 	 * @param nextType        0：下一题，1：上一题，2：提交
 	 */
 	@PostMapping("anonymousUser/saveAndNext")

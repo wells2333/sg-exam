@@ -121,7 +121,7 @@ public class SubjectImportExportService {
 		List<SubjectDto> subjects = new ArrayList<>();
 		ExaminationSubject es = new ExaminationSubject();
 		List<ExaminationSubject> examinationSubjects = Lists.newArrayList();
-		// 根据题目 id 导出
+		// 根据题目 ID 导出
 		if (ArrayUtils.isNotEmpty(ids)) {
 			for (Long id : ids) {
 				es.setSubjectId(id);

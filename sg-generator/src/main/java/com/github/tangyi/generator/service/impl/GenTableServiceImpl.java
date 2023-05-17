@@ -1,5 +1,6 @@
 package com.github.tangyi.generator.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.tangyi.common.exceptions.ServiceException;
 import com.github.tangyi.common.service.CrudService;
@@ -99,7 +100,6 @@ public class GenTableServiceImpl extends CrudService<GenTableMapper, GenTable> i
 	 * 修改业务
 	 *
 	 * @param genTable 业务信息
-	 * @return 结果
 	 */
 	@Override
 	@Transactional
@@ -404,7 +404,7 @@ public class GenTableServiceImpl extends CrudService<GenTableMapper, GenTable> i
 	 * @param genTable 设置后的生成对象
 	 */
 	public void setTableFromOptions(GenTable genTable) {
-		JSONObject paramsObj = JSONObject.parseObject(genTable.getOptions());
+		JSONObject paramsObj = JSON.parseObject(genTable.getOptions());
 		if (!Objects.isNull(paramsObj)) {
 			String treeCode = paramsObj.getString(GenConstants.TREE_CODE);
 			String treeParentCode = paramsObj.getString(GenConstants.TREE_PARENT_CODE);

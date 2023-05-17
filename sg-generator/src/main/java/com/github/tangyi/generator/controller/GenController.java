@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Tag(name = "代码生成Table管理")
+@Tag(name = "代码生成 Table 管理")
 @AllArgsConstructor
 @RestController
 @RequestMapping("/tool/gen")
@@ -35,7 +35,7 @@ public class GenController extends BaseController {
 	private final IGenTableColumnService genTableColumnService;
 
 	@GetMapping("/list")
-	@Operation(summary = "获取Table列表")
+	@Operation(summary = "获取 Table 列表")
 	public R<PageInfo<GenTable>> genList(@RequestParam Map<String, Object> params,
 			@RequestParam(value = PAGE, required = false, defaultValue = PAGE_DEFAULT) int pageNum,
 			@RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize) {
@@ -48,7 +48,7 @@ public class GenController extends BaseController {
 		GenTable table = genTableService.selectGenTableById(talbleId);
 		List<GenTable> tables = genTableService.selectGenTableAll();
 		List<GenTableColumn> list = genTableColumnService.selectGenTableColumnListByTableId(talbleId);
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("info", table);
 		map.put("rows", list);
 		map.put("tables", tables);
@@ -97,7 +97,7 @@ public class GenController extends BaseController {
 	}
 
 	@DeleteMapping("/{tableId}")
-	@Operation(summary = "删除代码生成", description = "根据ID删除代码生成")
+	@Operation(summary = "删除代码生成", description = "根据 ID 删除代码生成")
 	public R<Boolean> delete(@PathVariable Long tableId) {
 		genTableService.deleteGenTableById(tableId);
 		return R.success(Boolean.TRUE);
@@ -136,7 +136,7 @@ public class GenController extends BaseController {
 	}
 
 	/**
-	 * 生成zip文件
+	 * 生成 zip 文件
 	 */
 	private void genCode(String tableName, HttpServletResponse response, byte[] data) throws IOException {
 		response.reset();

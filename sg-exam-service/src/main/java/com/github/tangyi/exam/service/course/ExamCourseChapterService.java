@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * 课程章Service
+ * 课程章
  */
 @Slf4j
 @Service

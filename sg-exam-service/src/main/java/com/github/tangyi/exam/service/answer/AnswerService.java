@@ -68,7 +68,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> implements 
 	}
 
 	/**
-	 * 根据考试记录ID、题目ID查找答题
+	 * 根据考试记录 ID、题目 ID 查找答题
 	 */
 	public Answer findByRecordIdAndSubjectId(Answer answer) {
 		return this.dao.findByRecordIdAndSubjectId(answer);
@@ -272,7 +272,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> implements 
 			} else {
 				examinationSubject = esService.findByExaminationIdAndSubjectId(examinationSubject);
 			}
-			SgPreconditions.checkNull(examinationSubject, "ID为" + currentSubjectId + "的题目不存在");
+			SgPreconditions.checkNull(examinationSubject, "ID 为" + currentSubjectId + "的题目不存在");
 			// 查询题目的详细信息
 			//subjectDto = subjectService.get(examinationSubject.getSubjectId(), examinationSubject.getType());
 		}
@@ -346,7 +346,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> implements 
 	}
 
 	/**
-	 * 根据examRecordId查询
+	 * 根据 examRecordId 查询
 	 */
 	public List<Answer> findListByExamRecordId(Long examRecordId) {
 		return this.dao.findListByExamRecordId(examRecordId);

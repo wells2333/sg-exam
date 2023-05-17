@@ -30,7 +30,7 @@ public class SpeechController extends BaseController {
 
 	private final SpeechSynthesisService speechSynthesisService;
 
-	@Operation(summary = "获取语音信息", description = "根据语音id获取语音详细信息")
+	@Operation(summary = "获取语音信息", description = "根据语音 ID 获取语音详细信息")
 	@GetMapping("/{id}")
 	public R<SpeechSynthesis> speech(@PathVariable Long id) {
 		return R.success(speechSynthesisService.get(id));
@@ -52,7 +52,7 @@ public class SpeechController extends BaseController {
 	}
 
 	@PutMapping("/{id}")
-	@Operation(summary = "更新语音信息", description = "根据id更新语音的基本信息")
+	@Operation(summary = "更新语音信息", description = "根据 id 更新语音的基本信息")
 	@SgLog(value = "修改语音", operationType = OperationType.UPDATE)
 	public R<Boolean> update(@PathVariable Long id, @RequestBody @Valid SpeechSynthesis speechSynthesis)
 			throws Exception {
@@ -61,7 +61,7 @@ public class SpeechController extends BaseController {
 	}
 
 	@DeleteMapping("/{id}")
-	@Operation(summary = "删除语音", description = "根据ID删除语音")
+	@Operation(summary = "删除语音", description = "根据 ID 删除语音")
 	@SgLog(value = "删除语音", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable Long id) {
 		SpeechSynthesis speechSynthesis = speechSynthesisService.get(id);
@@ -70,7 +70,7 @@ public class SpeechController extends BaseController {
 	}
 
 	@PostMapping("deleteAll")
-	@Operation(summary = "批量删除语音", description = "根据id批量删除语音")
+	@Operation(summary = "批量删除语音", description = "根据 ID 批量删除语音")
 	@SgLog(value = "批量删除语音", operationType = OperationType.DELETE)
 	public R<Boolean> deleteAll(@RequestBody Long[] ids) {
 		return R.success(ArrayUtils.isNotEmpty(ids) ? speechSynthesisService.deleteAll(ids) > 0 : Boolean.FALSE);

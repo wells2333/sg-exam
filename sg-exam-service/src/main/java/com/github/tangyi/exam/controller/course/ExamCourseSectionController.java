@@ -18,7 +18,7 @@ import javax.validation.Valid;
 import java.util.Map;
 
 /**
- * 课程节Controller
+ * 课程节
  */
 @Slf4j
 @RestController

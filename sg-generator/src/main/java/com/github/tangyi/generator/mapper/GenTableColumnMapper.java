@@ -52,7 +52,7 @@ public interface GenTableColumnMapper extends CrudMapper<GenTableColumn> {
 	/**
 	 * 批量删除业务字段
 	 *
-	 * @param ids 需要删除的数据ID
+	 * @param ids 需要删除的数据 ID
 	 * @return 结果
 	 */
 	int deleteGenTableColumnByIds(Long[] ids);

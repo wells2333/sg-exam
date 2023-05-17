@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
- * wx h5扫码登录逻辑
+ * wx h5 扫码登录逻辑
  */
 @Slf4j
 @RestController
@@ -36,7 +36,7 @@ public class WxH5Controller extends BaseController {
 	}
 
 	/**
-	 *  根据二维码标识获取用户openId => 获取用户信息
+	 *  根据二维码标识获取用户 openId => 获取用户信息
 	 */
 	@GetMapping("getOpenId")
 	public R<Object> getOpenId(String sceneStr) {

@@ -36,7 +36,7 @@ public class TenantInitService {
 	 */
 	@Transactional
 	public Role initTenant(Tenant tenant, String identifier) {
-		log.info("Start to init tenant, tenantCode：{}", tenant.getTenantCode());
+		log.info("Start to init tenant, tenantCode:{}", tenant.getTenantCode());
 		StopWatch watch = StopWatchUtil.start();
 		User user = initTenantAuth(tenant, identifier);
 		Role role = initTenantRole(user, tenant, identifier);

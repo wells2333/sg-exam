@@ -171,8 +171,6 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 
 	/**
 	 * 查询课程的详细信息
-	 * @param id id
-	 * @return CourseDetailDto
 	 */
 	public CourseDetailDto getDetail(Long id) {
 		CourseDetailDto dto = new CourseDetailDto();

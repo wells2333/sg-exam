@@ -17,7 +17,7 @@ import javax.validation.Valid;
 import java.util.Map;
 
 /**
- * 课程章Controller
+ * 课程章
  */
 @Slf4j
 @RestController

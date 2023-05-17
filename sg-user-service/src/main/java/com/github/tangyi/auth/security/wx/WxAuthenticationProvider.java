@@ -29,7 +29,7 @@ public class WxAuthenticationProvider implements AuthenticationProvider {
 		UserDetails userDetails = customUserDetailsService.loadUserByWxCodeAndTenantCode(
 				wxAuthenticationToken.getTenantCode(), principal, wxAuthenticationToken.getWxUser());
 		if (userDetails == null) {
-			log.info("Failed to authentication : no credentials provided, principal: {}", principal);
+			log.error("Failed to authentication : no credentials provided, principal: {}", principal);
 			SpringContextHolder.publishEvent(new CustomAuthenticationFailureEvent(authentication, userDetails));
 			throw new BadCredentialsException(
 					messages.getMessage("AbstractUserDetailsAuthenticationProvider.noopBindAccount",

@@ -51,7 +51,7 @@ public class GenTableColumnServiceImpl implements IGenTableColumnService {
 	/**
 	 * 删除业务字段对象
 	 *
-	 * @param ids 需要删除的数据ID
+	 * @param ids 需要删除的数据 ID
 	 * @return 结果
 	 */
 	@Override

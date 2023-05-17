@@ -80,8 +80,8 @@ public class ExaminationActionService {
 
 	@Transactional
 	public StartExamDto start(ExaminationRecord examRecord) {
-		SgPreconditions.checkNull(examRecord.getExaminationId(), "参数校验失败，考试id为空");
-		SgPreconditions.checkNull(examRecord.getUserId(), "参数校验失败，用户id为空");
+		SgPreconditions.checkNull(examRecord.getExaminationId(), "参数校验失败，考试 id 为空");
+		SgPreconditions.checkNull(examRecord.getUserId(), "参数校验失败，用户 id 为空");
 		return this.start(examRecord.getUserId(), SysUtil.getUser(), examRecord.getExaminationId(),
 				SysUtil.getTenantCode());
 	}
@@ -103,7 +103,7 @@ public class ExaminationActionService {
 		examRecordService.insert(record);
 		dto.setExamRecord(record);
 
-		// 根据题目ID，类型获取第一题的详细信息
+		// 根据题目 ID，类型获取第一题的详细信息
 		SubjectDto subjectDto = subjectsService.findFirstSubjectByExaminationId(examinationId);
 		dto.setSubjectDto(subjectDto);
 		dto.setTotal(subjectDto.getTotal());
@@ -140,8 +140,8 @@ public class ExaminationActionService {
 	public StartExamDto anonymousUserStart(Long examinationId, String identifier) {
 		String tenantCode = SysUtil.getTenantCode();
 		// 创建考试记录
-		SgPreconditions.checkNull(examinationId, "参数校验失败，考试id为空");
-		SgPreconditions.checkNull(identifier, "参数校验失败，用户identifier为空");
+		SgPreconditions.checkNull(examinationId, "参数校验失败，考试 id 为空");
+		SgPreconditions.checkNull(identifier, "参数校验失败，用户 identifier 为空");
 		// 查询用户信息
 		R<UserVo> r = null;
 		SgPreconditions.checkBoolean(!RUtil.isSuccess(r), "获取用户" + identifier + "信息失败！");
@@ -202,7 +202,7 @@ public class ExaminationActionService {
 		// 更新考试状态
 		boolean success = examRecordService.update(examRecord) > 0;
 		submitAsync(examRecord.getId(), currentUsername, tenantCode);
-		log.debug("async submit examination, username: {}，time consuming: {}ms", currentUsername,
+		log.debug("async submit examination, username: {}, time consuming: {}ms", currentUsername,
 				System.currentTimeMillis() - start);
 		return success;
 	}
@@ -278,7 +278,7 @@ public class ExaminationActionService {
 		record.setCommonValue(identifier, tenantCode);
 		record.setUserId(user.getUserId());
 
-		// 初始化Answer
+		// 初始化 Answer
 		List<Answer> answers = new ArrayList<>(subjectDtos.size());
 		List<Long> subjectIds = Lists.newArrayListWithExpectedSize(subjectDtos.size());
 		subjectDtos.forEach(subjectDto -> {

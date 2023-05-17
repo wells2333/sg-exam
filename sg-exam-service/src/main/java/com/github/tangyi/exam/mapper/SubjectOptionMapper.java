@@ -13,7 +13,7 @@ public interface SubjectOptionMapper extends CrudMapper<SubjectOption> {
 	List<SubjectOption> getBySubjectChoicesId(SubjectOption subjectOption);
 
 	/**
-	 * 根据选择题ID批量查询
+	 * 根据选择题 ID 批量查询
 	 */
 	List<SubjectOption> getBySubjectChoicesIds(@Param("ids") List<Long> ids);
 

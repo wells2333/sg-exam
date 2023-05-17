@@ -3,12 +3,12 @@ package com.github.tangyi.auth.constant;
 public class SecurityConstant {
 
     /**
-     * 手机登录URL
+     * 手机登录 URL
      */
     public static final String MOBILE_LOGIN_URL = "/mobile/login";
 
     /**
-     * 微信登录URL
+     * 微信登录 URL
      */
     public static final String WX_LOGIN_URL = "/wx/login";
 
@@ -23,7 +23,7 @@ public class SecurityConstant {
     public static final String DEFAULT_TENANT_CODE = "gitee";
 
 	/**
-	 * 登录URL
+	 * 登录 URL
 	 */
 	public static final String LOGIN_URL = "/login";
 

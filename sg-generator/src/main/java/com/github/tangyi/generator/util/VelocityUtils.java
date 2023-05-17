@@ -22,6 +22,9 @@ public class VelocityUtils {
 	/** 默认上级菜单，系统工具 */
 	private static final String DEFAULT_PARENT_MENU_ID = "3";
 
+	private VelocityUtils() {
+	}
+
 	/**
 	 * 设置模板变量信息
 	 *
@@ -180,10 +183,10 @@ public class VelocityUtils {
 	}
 
 	/**
-	 * 获取上级菜单ID字段
+	 * 获取上级菜单 ID 字段
 	 *
 	 * @param paramsObj 生成其他选项
-	 * @return 上级菜单ID字段
+	 * @return 上级菜单 ID 字段
 	 */
 	public static String getParentMenuId(JSONObject paramsObj) {
 		if (!Objects.isNull(paramsObj) && paramsObj.containsKey(GenConstants.PARENT_MENU_ID) && StringUtils.isNotEmpty(

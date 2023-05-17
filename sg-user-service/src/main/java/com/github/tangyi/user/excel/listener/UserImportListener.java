@@ -17,9 +17,6 @@ public class UserImportListener extends AbstractExcelImportListener<UserExcelMod
 		this.userService = userService;
 	}
 
-	/**
-	 * 存储到数据库
-	 */
 	@Override
 	public void saveData(List<UserExcelModel> models) {
 		logger.info("SaveData size: {}", models.size());

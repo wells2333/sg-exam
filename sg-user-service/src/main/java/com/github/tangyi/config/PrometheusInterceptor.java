@@ -31,11 +31,11 @@ public class PrometheusInterceptor extends HandlerInterceptorAdapter {
 		String method = request.getMethod();
 		int status = response.getStatus();
 		// count 请求计数，标签分别为 请求路径，请求方法，response http code
-		// 请求应用总量:  sum(rest_req_total)
-		// 每秒http请求量: sum(rate(rest_req_total[1m])
-		// 请求topk的url:  topk(10, sum(rest_req_total) by (path))
+		// 请求应用总量：sum(rest_req_total)
+		// 每秒 http 请求量：sum(rate(rest_req_total[1m])
+		// 请求 topk 的 url:  topk(10, sum(rest_req_total) by (path))
 		PrometheusComponent.getInstance().counter().labels(uri, method, String.valueOf(status)).inc();
-		// 请求完毕，计数器-1
+		// 请求完毕，计数器 -1
 		PrometheusComponent.getInstance().gauge().labels(uri, method).dec();
 		// 直方图统计
 		Histogram.Timer timer = timerThreadLocal.get();

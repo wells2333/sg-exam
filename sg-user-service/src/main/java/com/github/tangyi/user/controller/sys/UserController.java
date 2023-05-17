@@ -81,7 +81,7 @@ public class UserController extends BaseController {
 	private final ValidateCodeService validateCodeService;
 
 	@GetMapping("/{id}")
-	@Operation(summary = "获取用户信息", description = "根据用户id获取用户详细信息")
+	@Operation(summary = "获取用户信息", description = "根据用户 ID 获取用户详细信息")
 	public R<User> get(@PathVariable Long id) {
 		return R.success(userService.get(id));
 	}
@@ -103,7 +103,7 @@ public class UserController extends BaseController {
 	}
 
 	@GetMapping("anonymousUser/findUserByIdentifier/{identifier}")
-	@Operation(summary = "根据用户唯一标识获取用户详细信息", description = "根据用户name获取用户详细信息")
+	@Operation(summary = "根据用户唯一标识获取用户详细信息", description = "根据用户 name 获取用户详细信息")
 	public R<UserVo> findUserByIdentifier(@PathVariable String identifier,
 			@RequestParam(required = false) Integer identityType, @RequestParam @NotBlank String tenantCode) {
 		return R.success(userService.findUserByIdentifier(identityType, identifier, tenantCode));
@@ -145,7 +145,7 @@ public class UserController extends BaseController {
 	}
 
 	@PutMapping("/{id:[a-zA-Z0-9,]+}")
-	@Operation(summary = "更新用户信息", description = "根据用户id更新用户的基本信息、角色信息")
+	@Operation(summary = "更新用户信息", description = "根据用户 id 更新用户的基本信息、角色信息")
 	@SgLog(value = "修改用户", operationType = OperationType.UPDATE)
 	public R<Boolean> update(@PathVariable Long id, @RequestBody UserDto userDto) {
 		userDto.setTenantCode(TenantHolder.getTenantCode());
@@ -153,7 +153,7 @@ public class UserController extends BaseController {
 	}
 
 	@PutMapping("updateInfo")
-	@Operation(summary = "更新用户基本信息", description = "根据用户id更新用户的基本信息")
+	@Operation(summary = "更新用户基本信息", description = "根据用户 id 更新用户的基本信息")
 	@SgLog(value = "更新用户基本信息", operationType = OperationType.UPDATE)
 	public R<Boolean> updateInfo(@RequestBody UserDto userDto) {
 		Preconditions.checkNotNull(userDto.getId());
@@ -201,7 +201,7 @@ public class UserController extends BaseController {
 	}
 
 	@DeleteMapping("/{id}")
-	@Operation(summary = "删除用户", description = "根据ID删除用户")
+	@Operation(summary = "删除用户", description = "根据 ID 删除用户")
 	@SgLog(value = "删除用户", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable Long id) {
 		User user = userService.get(id);
@@ -212,7 +212,7 @@ public class UserController extends BaseController {
 	}
 
 	@PostMapping("export")
-	@Operation(summary = "导出用户", description = "根据用户id导出用户")
+	@Operation(summary = "导出用户", description = "根据用户 id 导出用户")
 	@SgLog(value = "导出用户", operationType = OperationType.EXPORT)
 	public void exportUser(@RequestBody Long[] ids, HttpServletRequest request, HttpServletResponse response) {
 		List<User> users;
@@ -228,7 +228,7 @@ public class UserController extends BaseController {
 		SgPreconditions.checkCollectionEmpty(users, "无用户数据");
 		// 查询用户授权信息
 		List<UserAuths> userAuths = userAuthsService.getListByUsers(users);
-		// 组装数据，转成dto
+		// 组装数据，转成 dto
 		List<UserInfoDto> userInfoDtos = users.stream().map(tempUser -> {
 			UserInfoDto userDto = new UserInfoDto();
 			userAuths.stream().filter(userAuth -> userAuth.getUserId().equals(tempUser.getId())).findFirst()
@@ -250,14 +250,14 @@ public class UserController extends BaseController {
 	}
 
 	@PostMapping("deleteAll")
-	@Operation(summary = "批量删除用户", description = "根据用户id批量删除用户")
+	@Operation(summary = "批量删除用户", description = "根据用户 id 批量删除用户")
 	@SgLog(value = "批量删除用户", operationType = OperationType.DELETE)
 	public R<Boolean> deleteAll(@RequestBody Long[] ids) {
 		return R.success(ArrayUtils.isNotEmpty(ids) ? userService.deleteAll(ids) > 0 : Boolean.FALSE);
 	}
 
 	@PostMapping(value = "findById")
-	@Operation(summary = "根据ID查询用户", description = "根据ID查询用户")
+	@Operation(summary = "根据 ID 查询用户", description = "根据 ID 查询用户")
 	public R<List<UserVo>> findById(@RequestBody Long[] ids) {
 		return R.success(userService.findUserVoListById(ids));
 	}
@@ -286,7 +286,7 @@ public class UserController extends BaseController {
 	}
 
 	@PutMapping("anonymousUser/resetPassword")
-	@Operation(summary = "重置密码", description = "根据用户id重置密码")
+	@Operation(summary = "重置密码", description = "根据用户 id 重置密码")
 	@SgLog(value = "重置密码", operationType = OperationType.UPDATE)
 	public R<Boolean> resetPassword(@RequestBody UserDto userDto) {
 		userDto.setTenantCode(TenantHolder.getTenantCode());
@@ -294,7 +294,7 @@ public class UserController extends BaseController {
 	}
 
 	@PutMapping("anonymousUser/updateLoginInfo")
-	@Operation(summary = "更新用户登录信息", description = "根据用户id更新用户的登录信息")
+	@Operation(summary = "更新用户登录信息", description = "根据用户 id 更新用户的登录信息")
 	public R<Boolean> updateLoginInfo(@RequestBody UserDto userDto) {
 		return R.success(userService.updateLoginInfo(userDto));
 	}

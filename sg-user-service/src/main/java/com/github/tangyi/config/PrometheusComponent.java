@@ -23,7 +23,7 @@ public class PrometheusComponent implements ApplicationContextAware {
 	private Counter reqCounter;
 
 	/**
-	 * 正在请求的http数量
+	 * 正在请求的 http 数量
 	 */
 	private Gauge reqGauge;
 

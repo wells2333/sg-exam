@@ -10,7 +10,7 @@ import java.util.List;
 public interface UserStudentMapper extends CrudMapper<UserStudent> {
 
     /**
-     * 根据userId查询
+     * 根据 userId 查询
      */
     List<UserStudent> getByUserId(String userId);
 
@@ -20,12 +20,12 @@ public interface UserStudentMapper extends CrudMapper<UserStudent> {
     UserStudent getByStudentId(String studentId);
 
     /**
-     * 根据用户id删除
+     * 根据用户 ID 删除
      */
     int deleteByUserId(String userId);
 
     /**
-     * 根据学生 id 删除
+     * 根据学生 ID 删除
      */
     int deleteByStudentId(String studentId);
 }

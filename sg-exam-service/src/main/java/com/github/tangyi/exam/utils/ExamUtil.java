@@ -138,7 +138,7 @@ public class ExamUtil {
 	}
 
 	/**
-	 * 遍历关系集合，按类型分组题目ID，返回map
+	 * 遍历关系集合，按类型分组题目 ID，返回 map
 	 */
 	public static Map<String, Long[]> groupByType(List<Subjects> subjects) {
 		Map<String, Long[]> idMap = Maps.newHashMapWithExpectedSize(4);

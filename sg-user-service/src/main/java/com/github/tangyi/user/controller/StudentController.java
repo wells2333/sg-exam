@@ -27,7 +27,7 @@ public class StudentController extends BaseController {
 
 	private final StudentService studentService;
 
-	@Operation(summary = "获取学生信息", description = "根据学生id获取学生详细信息")
+	@Operation(summary = "获取学生信息", description = "根据学生 ID 获取学生详细信息")
 	@GetMapping("/{id}")
 	public R<Student> student(@PathVariable Long id) {
 		return R.success(studentService.get(id));
@@ -48,7 +48,7 @@ public class StudentController extends BaseController {
 	}
 
 	@PutMapping
-	@Operation(summary = "更新学生信息", description = "根据学生id更新学生的基本信息")
+	@Operation(summary = "更新学生信息", description = "根据学生 id 更新学生的基本信息")
 	public R<Boolean> update(@RequestBody @Valid StudentDto studentDto) {
 		Student student = new Student();
 		BeanUtils.copyProperties(studentDto, student);
@@ -58,7 +58,7 @@ public class StudentController extends BaseController {
 	}
 
 	@DeleteMapping("/{id}")
-	@Operation(summary = "删除学生", description = "根据ID删除学生")
+	@Operation(summary = "删除学生", description = "根据 ID 删除学生")
 	public R<Boolean> delete(@PathVariable Long id) {
 		Student student = studentService.get(id);
 		student.setCommonValue();
@@ -66,13 +66,13 @@ public class StudentController extends BaseController {
 	}
 
 	@PostMapping("deleteAll")
-	@Operation(summary = "批量删除学生", description = "根据学生id批量删除学生")
+	@Operation(summary = "批量删除学生", description = "根据学生 ID 批量删除学生")
 	public R<Boolean> deleteAll(@RequestBody Long[] ids) {
 		return R.success(studentService.deleteAll(ids) > 0);
 	}
 
 	@RequestMapping(value = "findById", method = RequestMethod.POST)
-	@Operation(summary = "根据ID查询学生", description = "根据ID查询学生")
+	@Operation(summary = "根据 ID 查询学生", description = "根据 ID 查询学生")
 	public R<List<Student>> findById(@RequestBody Long[] ids) {
 		List<Student> studentList = studentService.findListById(ids);
 		return Optional.ofNullable(studentList).isPresent() ? R.success(studentList) : null;

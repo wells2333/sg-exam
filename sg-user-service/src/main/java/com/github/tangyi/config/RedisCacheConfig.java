@@ -20,7 +20,7 @@ import java.time.Duration;
 @Configuration
 public class RedisCacheConfig {
 
-	// 超时时间：24小时
+	// 超时时间：24 小时
 	public static final int DEFAULT_REDIS_CACHE_EXPIRE = EnvUtils.getInt("DEFAULT_REDIS_CACHE_EXPIRE", 24);
 
 	@Value("${spring.redis.host}")

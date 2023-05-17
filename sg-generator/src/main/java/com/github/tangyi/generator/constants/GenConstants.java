@@ -20,7 +20,7 @@ public class GenConstants {
 	/** 树名称字段 */
 	public static final String TREE_NAME = "treeName";
 
-	/** 上级菜单ID字段 */
+	/** 上级菜单 ID 字段 */
 	public static final String PARENT_MENU_ID = "parentMenuId";
 
 	/** 上级菜单名称字段 */
@@ -50,10 +50,10 @@ public class GenConstants {
 	public static final String[] COLUMNNAME_NOT_QUERY = {"id", "create_by", "create_time", "del_flag", "update_by",
 			"update_time", "remark"};
 
-	/** Entity基类字段 */
+	/** Entity 基类字段 */
 	public static final String[] BASE_ENTITY = {"id", "creator", "createTime", "operator", "updateTime", "remark", "tenantCode", "isDeleted"};
 
-	/** Tree基类字段 */
+	/** Tree 基类字段 */
 	public static final String[] TREE_ENTITY = {"parentName", "parentId", "orderNum", "ancestors", "children"};
 
 	/** 文本框 */

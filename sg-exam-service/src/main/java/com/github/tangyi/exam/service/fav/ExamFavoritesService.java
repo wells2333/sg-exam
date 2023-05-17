@@ -53,7 +53,6 @@ public class ExamFavoritesService extends CrudService<UserFavMapper, ExamUserFav
 
 	/**
 	 * 查询收藏次数
-	 * @param list list
 	 */
 	public void findFavCount(List<ExaminationDto> list) {
 		List<Long> ids = list.stream().map(ExaminationDto::getId).collect(Collectors.toList());
@@ -70,7 +69,7 @@ public class ExamFavoritesService extends CrudService<UserFavMapper, ExamUserFav
 	}
 
 	/**
-	 * 获取Redis中的收藏关系数据
+	 * 获取 Redis 中的收藏关系数据
 	 * @return Map
 	 */
 	@Override

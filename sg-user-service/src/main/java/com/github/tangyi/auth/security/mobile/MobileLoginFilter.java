@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * 手机登录filter
+ * 手机登录 filter
  */
 @Slf4j
 public class MobileLoginFilter extends AbstractAuthenticationProcessingFilter {
@@ -67,7 +67,7 @@ public class MobileLoginFilter extends AbstractAuthenticationProcessingFilter {
 		}
 		// 获取手机登录的参数
 		String mobile = StringUtils.defaultIfEmpty(obtainMobile(request), "").trim();
-		// 封装成token
+		// 封装成 token
 		MobileAuthenticationToken mobileAuthenticationToken = new MobileAuthenticationToken(mobile);
 		// 封装其它基本信息
 		setMobileUserDetails(request, mobileAuthenticationToken);
@@ -99,7 +99,7 @@ public class MobileLoginFilter extends AbstractAuthenticationProcessingFilter {
 	protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain,
 			Authentication auth) {
 		CustomUserDetails details = (CustomUserDetails) auth.getPrincipal();
-		// 认证成功，生成token
+		// 认证成功，生成 token
 		userTokenService.generateAndSaveToken(req, res, details);
 	}
 

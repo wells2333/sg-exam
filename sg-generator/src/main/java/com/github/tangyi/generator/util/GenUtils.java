@@ -11,6 +11,10 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Arrays;
 
 public class GenUtils {
+
+	private GenUtils() {
+	}
+
 	/**
 	 * 初始化表信息
 	 */
@@ -32,14 +36,14 @@ public class GenUtils {
 		String columnName = column.getColumnName();
 		column.setTableId(table.getTableId());
 		column.setOperator(table.getOperator());
-		// 设置java字段名
+		// 设置 java 字段名
 		column.setJavaField(StringUtil.toCamelCase(columnName));
 		// 设置默认类型
 		column.setJavaType(GenConstants.TYPE_STRING);
 
 		if (arraysContains(GenConstants.COLUMNTYPE_STR, dataType) || arraysContains(GenConstants.COLUMNTYPE_TEXT,
 				dataType)) {
-			// 字符串长度超过500设置为文本域
+			// 字符串长度超过 500 设置为文本域
 			Integer columnLength = getColumnLength(column.getColumnType());
 			String htmlType = columnLength >= 500 || arraysContains(GenConstants.COLUMNTYPE_TEXT, dataType) ?
 					GenConstants.HTML_TEXTAREA :
@@ -51,7 +55,7 @@ public class GenUtils {
 		} else if (arraysContains(GenConstants.COLUMNTYPE_NUMBER, dataType)) {
 			column.setHtmlType(GenConstants.HTML_INPUT);
 
-			// 如果是浮点型 统一用BigDecimal
+			// 如果是浮点型 统一用 BigDecimal
 			String[] str = StringUtils.split(StringUtils.substringBetween(column.getColumnType(), "(", ")"), ",");
 			if (str != null && str.length == 2 && Integer.parseInt(str[1]) > 0) {
 				column.setJavaType(GenConstants.TYPE_BIGDECIMAL);
@@ -145,7 +149,7 @@ public class GenUtils {
 	}
 
 	/**
-	 * 表名转换成Java类名
+	 * 表名转换成 Java 类名
 	 *
 	 * @param tableName 表名称
 	 * @return 类名
@@ -185,7 +189,7 @@ public class GenUtils {
 	 * @return 替换后的名字
 	 */
 	public static String replaceText(String text) {
-		return RegExUtils.replaceAll(text, "(?:表|若依)", "");
+		return RegExUtils.replaceAll(text, "(?:表 | 若依)", "");
 	}
 
 	/**

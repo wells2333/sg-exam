@@ -19,12 +19,6 @@ public enum SubjectLevel {
 
 	private Integer value;
 
-	/**
-	 * 根据类型返回具体的SubjectLevel
-	 *
-	 * @param value value
-	 * @return SubjectLevelEnum
-	 */
 	public static SubjectLevel matchByValue(Integer value) {
 		for (SubjectLevel item : values()) {
 			if (item.value.equals(value)) {
@@ -34,12 +28,6 @@ public enum SubjectLevel {
 		return NORMAL;
 	}
 
-	/**
-	 * 根据描述返回具体的SubjectLevel
-	 *
-	 * @param name name
-	 * @return SubjectLevelEnum
-	 */
 	public static SubjectLevel matchByName(String name) {
 		for (SubjectLevel item : values()) {
 			if (item.name.equals(name)) {

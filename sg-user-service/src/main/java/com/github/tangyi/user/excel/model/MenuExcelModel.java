@@ -15,7 +15,7 @@ import lombok.Data;
 @ColumnWidth(25)
 public class MenuExcelModel {
 
-	@ExcelProperty(value = "菜单id", converter = LongStringConverter.class)
+	@ExcelProperty(value = "菜单 ID", converter = LongStringConverter.class)
 	private Long id;
 
 	@ExcelProperty("菜单名称")
@@ -27,10 +27,10 @@ public class MenuExcelModel {
 	@ExcelProperty("url")
 	private String url;
 
-	@ExcelProperty("重定向url")
+	@ExcelProperty("重定向 url")
 	private String redirect;
 
-	@ExcelProperty(value = "父菜单ID", converter = LongStringConverter.class)
+	@ExcelProperty(value = "父菜单 ID", converter = LongStringConverter.class)
 	private Long parentId;
 
 	@ExcelProperty("图标")

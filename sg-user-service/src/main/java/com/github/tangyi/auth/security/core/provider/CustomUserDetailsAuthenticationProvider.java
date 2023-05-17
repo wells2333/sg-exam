@@ -17,7 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * 认证Provider，提供获取用户信息、认证、授权等功能
+ * 认证 Provider，提供获取用户信息、认证、授权等功能
  */
 @Slf4j
 public class CustomUserDetailsAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
@@ -55,7 +55,7 @@ public class CustomUserDetailsAuthenticationProvider extends AbstractUserDetails
 	}
 
 	@Override
-	protected void doAfterPropertiesSet() throws Exception {
+	protected void doAfterPropertiesSet() {
 		if (this.userDetailsService == null) {
 			throw new IllegalArgumentException("UserDetailsService can not be null");
 		}
@@ -64,10 +64,6 @@ public class CustomUserDetailsAuthenticationProvider extends AbstractUserDetails
 
 	/**
 	 * 加载用户信息
-	 *
-	 * @param username       username
-	 * @param authentication authentication
-	 * @return UserDetails
 	 */
 	@Override
 	protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication)

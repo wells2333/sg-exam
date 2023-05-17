@@ -6,13 +6,10 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 
 /**
- * 微信登录token
+ * 微信登录 token
  */
 public class WxAuthenticationToken extends AbstractAuthenticationToken {
 
-	/**
-	 * code
-	 */
 	private final Object code;
 
 	private final String tenantCode;

@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -84,6 +85,6 @@ public class UserTokenService {
 				RUtil.out(res, R.error("Failed to login"));
 			}
 		}
-		return null;
+		return Collections.emptyMap();
 	}
 }

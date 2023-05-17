@@ -25,7 +25,7 @@ public class LogController extends BaseController {
 	private final LogService logService;
 
 	@GetMapping("/{id}")
-	@Operation(summary = "获取日志信息", description = "根据日志id获取日志详细信息")
+	@Operation(summary = "获取日志信息", description = "根据日志 ID 获取日志详细信息")
 	public Log log(@PathVariable Long id) {
 		return logService.get(id);
 	}
@@ -45,7 +45,7 @@ public class LogController extends BaseController {
 	}
 
 	@DeleteMapping("/{id}")
-	@Operation(summary = "删除日志", description = "根据ID删除日志")
+	@Operation(summary = "删除日志", description = "根据 ID 删除日志")
 	public R<Boolean> delete(@PathVariable Long id) {
 		Log log = new Log();
 		log.setId(id);
@@ -53,7 +53,7 @@ public class LogController extends BaseController {
 	}
 
 	@PostMapping("deleteAll")
-	@Operation(summary = "批量删除日志", description = "根据日志ids批量删除日志")
+	@Operation(summary = "批量删除日志", description = "根据日志 ids 批量删除日志")
 	public R<Boolean> deleteAll(@RequestBody Long[] ids) {
 		return R.success(ArrayUtils.isNotEmpty(ids) ? logService.deleteAll(ids) > 0 : Boolean.FALSE);
 	}

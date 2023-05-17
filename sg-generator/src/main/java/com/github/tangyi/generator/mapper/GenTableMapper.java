@@ -33,9 +33,9 @@ public interface GenTableMapper extends CrudMapper<GenTable> {
 	List<GenTable> selectGenTableAll();
 
 	/**
-	 * 查询表ID业务信息
+	 * 查询表 ID 业务信息
 	 *
-	 * @param id 业务ID
+	 * @param id 业务 ID
 	 * @return 业务信息
 	 */
 	GenTable selectGenTableById(Long id);
@@ -67,7 +67,7 @@ public interface GenTableMapper extends CrudMapper<GenTable> {
 	/**
 	 * 批量删除业务
 	 *
-	 * @param ids 需要删除的数据ID
+	 * @param ids 需要删除的数据 ID
 	 * @return 结果
 	 */
 	int deleteGenTableByIds(Long[] ids);

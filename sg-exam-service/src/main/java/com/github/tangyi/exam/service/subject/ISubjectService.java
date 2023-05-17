@@ -16,8 +16,7 @@ public interface ISubjectService {
 	List<SubjectDto> getSubjects(List<Long> ids);
 
 	/**
-	 * 根据ID查询上一题、下一题
-	 *
+	 * 根据 ID 查询上一题、下一题
 	 * @param nextType      -1：当前题目，0：下一题，1：上一题
 	 */
 	SubjectDto getNextByCurrentIdAndType(Long examinationId, Long previousId, Integer nextType);

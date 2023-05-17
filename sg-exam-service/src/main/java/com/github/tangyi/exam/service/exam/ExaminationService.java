@@ -253,7 +253,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		es.setExaminationId(subjectDto.getExaminationId());
 		PageInfo<ExaminationSubject> examinationSubjects = examinationSubjectService.findPage(params, pageNum,
 				pageSize);
-		// 根据题目ID查询题目信息
+		// 根据题目 ID 查询题目信息
 		List<SubjectDto> subjectDtoList = Lists.newArrayList();
 		if (CollectionUtils.isNotEmpty(examinationSubjects.getList())) {
 			Long[] subjectIds = examinationSubjects.getList().stream().map(ExaminationSubject::getSubjectId)
@@ -285,7 +285,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	}
 
 	/**
-	 * 根据考试ID查询题目id列表
+	 * 根据考试 ID 查询题目 id 列表
 	 */
 	public List<ExaminationSubject> findListByExaminationId(Long examinationId) {
 		return examinationSubjectService.findListByExaminationId(examinationId);
@@ -299,7 +299,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	}
 
 	/**
-	 * 根据考试ID生成二维码
+	 * 根据考试 ID 生成二维码
 	 */
 	public byte[] produceCode(Long examinationId) {
 		Examination examination = this.get(examinationId);
@@ -319,7 +319,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	}
 
 	/**
-	 * 根据考试ID生成二维码
+	 * 根据考试 ID 生成二维码
 	 */
 	public byte[] produceCodeV2(Long examinationId) {
 		Examination examination = this.get(examinationId);
@@ -346,7 +346,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	}
 
 	/**
-	 * 根据考试ID查询全部题目，不返回题目的答案
+	 * 根据考试 ID 查询全部题目，不返回题目的答案
 	 */
 	@Cacheable(value = ExamCacheName.EXAM_ALL_SUBJECT, key = "#examinationId")
 	public List<SimpleSubjectDto> allSubjects(Long examinationId) {
@@ -370,7 +370,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	}
 
 	/**
-	 * 根据考试ID批量添加题目
+	 * 根据考试 ID 批量添加题目
 	 */
 	@Transactional
 	public Boolean batchAddSubjects(Long id, List<SubjectDto> subjects) {
@@ -381,7 +381,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 			subject.setCategoryName(null);
 			subject.setNewRecord(true);
 			subject.setCommonValue();
-			// 自定义ID
+			// 自定义 ID
 			subject.setId(SnowFlakeId.newId());
 			subject.setSort(nextNo++);
 			if (CollectionUtils.isNotEmpty(subject.getOptions())) {
@@ -390,7 +390,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 					option.setSubjectChoicesId(null);
 				}
 			}
-			// 关联考试ID
+			// 关联考试 ID
 			subject.setExaminationId(id);
 			subjectsService.insert(subject);
 		}
@@ -431,7 +431,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	 */
 	private List<SubjectDto> randomAddSubject(List<Subjects> subjects, int cnt) {
 		StopWatch start = StopWatchUtil.start();
-		// 已经选取的题目ID，用于去重
+		// 已经选取的题目 ID，用于去重
 		Set<Long> idSet = Sets.newHashSetWithExpectedSize(cnt);
 		// 已经选取的题目
 		List<Subjects> tmpSubjects = Lists.newArrayListWithExpectedSize(cnt);
@@ -446,7 +446,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 			if (!idSet.contains(tmp.getId())) {
 				idSet.add(tmp.getId());
 				tmpSubjects.add(tmp);
-				log.info("select subject: {}，size: {}, target size: {}", tmp.getId(), tmpSubjects.size(), cnt);
+				log.info("select subject: {}, size: {}, target size: {}", tmp.getId(), tmpSubjects.size(), cnt);
 			}
 		}
 

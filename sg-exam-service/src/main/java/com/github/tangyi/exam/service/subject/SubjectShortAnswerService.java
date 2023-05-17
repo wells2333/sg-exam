@@ -92,9 +92,6 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
 
 	/**
 	 * 根据上一题 ID 查询下一题
-	 *
-	 * @param examinationId examinationId
-	 * @param previousId    previousId
 	 * @param nextType      0：下一题，1：上一题
 	 */
 	@Override

@@ -56,9 +56,7 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
 	}
 
 	/**
-	 * 根据Authorization header，解析出token里面的信息
-	 * @param request request
-	 * @return UsernamePasswordAuthenticationToken
+	 * 根据 Authorization header，解析出 token 里面的信息
 	 */
 	private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
 		String token = request.getHeader(SecurityConstant.AUTHORIZATION);
@@ -68,7 +66,6 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
 		if (StringUtils.isNotEmpty(token)) {
 			token = token.substring(SecurityConstant.BEARER.length());
 			Claims claims = tokenManager.getTokenBody(token);
-			// 解析出identify
 			String identify = ObjectUtil.toString(claims.get(TokenManager.IDENTIFY));
 			if (StringUtils.isNotEmpty(identify)) {
 				String role = ObjectUtil.toString(claims.get(TokenManager.ROLE_KEY));

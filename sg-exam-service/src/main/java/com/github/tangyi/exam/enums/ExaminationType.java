@@ -19,12 +19,6 @@ public enum ExaminationType {
 
     private Integer value;
 
-    /**
-     * 根据类型返回具体的ExaminationTypeEnum
-     *
-     * @param value value
-     * @return ExaminationTypeEnum
-     */
     public static ExaminationType matchByValue(Integer value) {
         for (ExaminationType item : values()) {
             if (item.value.equals(value)) {
@@ -34,12 +28,6 @@ public enum ExaminationType {
         return FORMAL;
     }
 
-    /**
-     * 根据描述返回具体的ExaminationTypeEnum
-     *
-     * @param name name
-     * @return ExaminationTypeEnum
-     */
     public static ExaminationType matchByName(String name) {
         for (ExaminationType item : values()) {
             if (item.name.equals(name)) {

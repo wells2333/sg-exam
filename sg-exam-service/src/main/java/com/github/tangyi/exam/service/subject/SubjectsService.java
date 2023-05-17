@@ -73,7 +73,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 	private final IExecutorHolder executorHolder;
 
 	/**
-	 * 根据单个题目ID查询题目信息，会有缓存
+	 * 根据单个题目 ID 查询题目信息，会有缓存
 	 */
 	public SubjectDto getSubject(Long id) {
 		return getSubject(id, false);
@@ -172,7 +172,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 	}
 
 	/**
-	 * 根据分类ID查询全部题目
+	 * 根据分类 ID 查询全部题目
 	 * @param categoryId categoryId
 	 * @return List
 	 */
@@ -181,7 +181,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 	}
 
 	/**
-	 * 根据分类ID查询全部题目
+	 * 根据分类 ID 查询全部题目
 	 */
 	public List<Subjects> findIdAndTypeByCategoryId(Long categoryId) {
 		return this.dao.findIdAndTypeByCategoryId(categoryId);
@@ -252,7 +252,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 	 * 查询第一题
 	 */
 	public SubjectDto findFirstSubjectByExaminationId(Long examinationId) {
-		// 第一题的ID
+		// 第一题的 ID
 		ExaminationSubject es = esService.findMinSortByExaminationId(examinationId);
 		SgPreconditions.checkNull(es, "该考试未录入题目");
 		SubjectDto dto = this.getSubject(es.getSubjectId());

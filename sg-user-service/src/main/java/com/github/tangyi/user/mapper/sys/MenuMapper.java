@@ -24,7 +24,7 @@ public interface MenuMapper extends CrudMapper<Menu> {
     int insertBatch(List<Menu> menus);
 
     /**
-     * 根据租户code删除
+     * 根据租户 code 删除
      */
     int deleteByTenantCode(Menu menu);
 }

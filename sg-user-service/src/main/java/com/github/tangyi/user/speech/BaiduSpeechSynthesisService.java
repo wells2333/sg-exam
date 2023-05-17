@@ -42,9 +42,9 @@ public class BaiduSpeechSynthesisService {
 	 */
 	public byte[] synthesis(String text) {
 		HashMap<String, Object> options = Maps.newHashMap();
-		// 语速，取值0-9，默认为5中语速
+		// 语速，取值 0-9，默认为 5 中语速
 		options.put("spd", "5");
-		// 音调，取值0-9，默认为5中语调
+		// 音调，取值 0-9，默认为 5 中语调
 		options.put("pit", "5");
 		options.put("per", BAIDU_PER);
 		// 调用接口

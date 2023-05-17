@@ -45,7 +45,7 @@ public class SubjectCategoryController extends BaseController {
 	}
 
 	@GetMapping(value = "getSubjectCntByParentId")
-	@Operation(summary = "根据父类目ID获取子类目信息和对应题目数量")
+	@Operation(summary = "根据父类目 ID 获取子类目信息和对应题目数量")
 	public R<List<SubjectCategoryDto>> getSubjectCntByParentId(Long parentId) {
 		List<SubjectCategoryDto> categories = categoryService.getCategoryByParentId(parentId);
 		subjectsService.findAndFillSubjectCnt(categories);
@@ -53,7 +53,7 @@ public class SubjectCategoryController extends BaseController {
 	}
 
 	@GetMapping(value = "getCategoryInfo")
-	@Operation(summary = "根据类目ID获取类目信息")
+	@Operation(summary = "根据类目 ID 获取类目信息")
 	public R<SubjectCategoryDto> getCategoryInfo(Long id) {
 		SubjectCategory category = categoryService.get(id);
 		if (category != null) {
@@ -65,7 +65,7 @@ public class SubjectCategoryController extends BaseController {
 	}
 
 	@GetMapping("/{id}")
-	@Operation(summary = "获取分类信息", description = "根据分类id获取分类详细信息")
+	@Operation(summary = "获取分类信息", description = "根据分类 id 获取分类详细信息")
 	public R<SubjectCategory> subjectCategory(@PathVariable Long id) {
 		return R.success(categoryService.get(id));
 	}
@@ -83,7 +83,7 @@ public class SubjectCategoryController extends BaseController {
 	}
 
 	@PutMapping("{id}")
-	@Operation(summary = "更新分类信息", description = "根据分类id更新分类的基本信息")
+	@Operation(summary = "更新分类信息", description = "根据分类 id 更新分类的基本信息")
 	@SgLog(value = "更新分类信息", operationType = OperationType.UPDATE)
 	public R<Boolean> update(@PathVariable Long id, @RequestBody @Valid SubjectCategory subjectCategory) {
 		subjectCategory.setId(id);
@@ -92,7 +92,7 @@ public class SubjectCategoryController extends BaseController {
 	}
 
 	@DeleteMapping("/{id}")
-	@Operation(summary = "删除分类", description = "根据ID删除分类")
+	@Operation(summary = "删除分类", description = "根据 ID 删除分类")
 	@SgLog(value = "删除分类", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable Long id) {
 		SubjectCategory subjectCategory = new SubjectCategory();

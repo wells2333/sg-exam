@@ -49,7 +49,7 @@ public class SysConfigController extends BaseController {
 	}
 
 	@GetMapping(value = "/getByKey")
-	@Operation(summary = "根据key获取系统配置")
+	@Operation(summary = "根据 key 获取系统配置")
 	public R<SysConfig> getByKey(@RequestParam String key) {
 		return R.success(sysConfigService.getByKey(key, SysUtil.getTenantCode()));
 	}

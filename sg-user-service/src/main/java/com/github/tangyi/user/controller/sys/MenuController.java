@@ -77,7 +77,7 @@ public class MenuController extends BaseController {
 	}
 
 	@PutMapping("{id}")
-	@Operation(summary = "更新菜单信息", description = "根据菜单id更新菜单的基本信息")
+	@Operation(summary = "更新菜单信息", description = "根据菜单 ID 更新菜单的基本信息")
 	@SgLog(value = "更新菜单", operationType = OperationType.UPDATE)
 	public R<Boolean> update(@PathVariable Long id, @RequestBody @Valid Menu menu) {
 		menu.setCommonValue();
@@ -86,7 +86,7 @@ public class MenuController extends BaseController {
 	}
 
 	@DeleteMapping("/{id}")
-	@Operation(summary = "删除菜单", description = "根据ID删除菜单")
+	@Operation(summary = "删除菜单", description = "根据 ID 删除菜单")
 	@SgLog(value = "删除菜单", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable Long id) {
 		Menu menu = new Menu();
@@ -95,7 +95,7 @@ public class MenuController extends BaseController {
 	}
 
 	@GetMapping("/{id}")
-	@Operation(summary = "获取菜单信息", description = "根据菜单id获取菜单详细信息")
+	@Operation(summary = "获取菜单信息", description = "根据菜单 ID 获取菜单详细信息")
 	public Menu menu(@PathVariable Long id) {
 		return menuService.get(id);
 	}
@@ -109,7 +109,7 @@ public class MenuController extends BaseController {
 	}
 
 	@GetMapping("anonymousUser/findMenuByRole/{role}")
-	@Operation(summary = "根据角色查找菜单", description = "根据角色id获取角色菜单")
+	@Operation(summary = "根据角色查找菜单", description = "根据角色 id 获取角色菜单")
 	public R<List<Menu>> findMenuByRole(@PathVariable String role, @RequestParam @NotBlank String tenantCode) {
 		return R.success(menuService.findMenuByRole(role, tenantCode));
 	}
@@ -123,7 +123,7 @@ public class MenuController extends BaseController {
 	}
 
 	@GetMapping("roleTree/{roleCode}")
-	@Operation(summary = "根据角色查找菜单", description = "根据角色code获取角色菜单")
+	@Operation(summary = "根据角色查找菜单", description = "根据角色 code 获取角色菜单")
 	public List<String> roleTree(@PathVariable String roleCode) {
 		Stream<Menu> menuStream = menuService.findMenuByRole(roleCode, SysUtil.getTenantCode()).stream();
 		if (Optional.ofNullable(menuStream).isPresent()) {
@@ -133,7 +133,7 @@ public class MenuController extends BaseController {
 	}
 
 	@PostMapping("export")
-	@Operation(summary = "导出菜单", description = "根据菜单id导出菜单")
+	@Operation(summary = "导出菜单", description = "根据菜单 ID 导出菜单")
 	@SgLog(value = "导出菜单", operationType = OperationType.EXPORT)
 	public void exportMenu(@RequestBody Long[] ids, HttpServletRequest request, HttpServletResponse response) {
 		List<Menu> menus;

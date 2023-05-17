@@ -40,7 +40,7 @@ public class SubjectServiceFactory {
 	private final IExecutorHolder executorHolder;
 
 	/**
-	 * 根据题目类型返回对应的BaseSubjectService
+	 * 根据题目类型返回对应的 BaseSubjectService
 	 */
 	public ISubjectService service(Integer type) {
 		if (SubjectType.CHOICES.getValue().equals(type) || SubjectType.MULTIPLE_CHOICES.getValue().equals(type)) {

@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * 判断题Service
+ * 判断题 Service
  */
 @AllArgsConstructor
 @Slf4j
@@ -54,10 +54,7 @@ public class SubjectJudgementService extends CrudService<SubjectJudgementMapper,
 	}
 
 	/**
-	 * 根据上一题ID查询下一题
-	 *
-	 * @param examinationId examinationId
-	 * @param previousId    previousId
+	 * 根据上一题 ID 查询下一题
 	 * @param nextType      0：下一题，1：上一题
 	 */
 	@Override

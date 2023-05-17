@@ -76,13 +76,12 @@ public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
 
 	private String decryptPassword(HttpServletRequest request, String password, String credential) {
 		String uri = request.getRequestURI();
-		if (HttpMethod.POST.matches(request.getMethod()) && StrUtil.containsAnyIgnoreCase(uri, ACCESS_TOKEN_URLS_ARR)) {
-			if (needDecrypt(request)) {
-				if (StringUtils.isNotBlank(credential)) {
-					password = doDecrypt(credential);
-				} else if (StringUtils.isNotBlank(password)) {
-					password = doDecrypt(password);
-				}
+		if (HttpMethod.POST.matches(request.getMethod()) && StrUtil.containsAnyIgnoreCase(uri, ACCESS_TOKEN_URLS_ARR)
+				&& needDecrypt(request)) {
+			if (StringUtils.isNotBlank(credential)) {
+				password = doDecrypt(credential);
+			} else if (StringUtils.isNotBlank(password)) {
+				password = doDecrypt(password);
 			}
 		}
 		return password;

@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * 选择题service
+ * 选择题
  */
 @AllArgsConstructor
 @Service
@@ -84,7 +84,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 	}
 
 	/**
-	 * 根据上一题ID查询下一题
+	 * 根据上一题 ID 查询下一题
 	 */
 	public SubjectChoices getByPreviousId(Long examinationId, SubjectChoices subjectChoices) {
 		ExaminationSubject examinationSubject = new ExaminationSubject();
@@ -98,7 +98,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 	}
 
 	/**
-	 * 根据当前题目ID查询上一题
+	 * 根据当前题目 ID 查询上一题
 	 */
 	public SubjectChoices getPreviousByCurrentId(Long examinationId, SubjectChoices subjectChoices) {
 		ExaminationSubject examinationSubject = new ExaminationSubject();
@@ -328,7 +328,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 	}
 
 	/**
-	 * 根据题目ID查询题目信息和选项
+	 * 根据题目 ID 查询题目信息和选项
 	 */
 	private SubjectChoices getSubjectChoicesById(Long subjectId) {
 		SubjectChoices subjectChoices = this.get(subjectId);

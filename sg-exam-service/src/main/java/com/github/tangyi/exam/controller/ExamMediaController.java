@@ -65,13 +65,13 @@ public class ExamMediaController extends BaseController {
 		return R.success(Boolean.TRUE);
 	}
 
-	@Operation(summary = "获取图片URL")
+	@Operation(summary = "获取图片 URL")
 	@GetMapping("imageUrl/{id}")
 	public R<String> imageUrl(@PathVariable Long id) {
 		return R.success(examMediaService.imageUrl(id));
 	}
 
-	@Operation(summary = "获取视频URL")
+	@Operation(summary = "获取视频 URL")
 	@GetMapping("videoUrl/{id}")
 	public R<String> videoUrl(@PathVariable Long id) {
 		return R.success(examMediaService.videoUrl(id));

@@ -131,10 +131,10 @@ public class AnswerController extends BaseController {
 	}
 
 	/**
-	 * 根据分类ID获取下一题
+	 * 根据分类 ID 获取下一题
 	 */
 	@PostMapping("nextSubjectByCategoryId")
-	@Operation(summary = "根据分类ID获取下一题")
+	@Operation(summary = "根据分类 ID 获取下一题")
 	public R<SubjectDto> nextSubjectByCategoryId(@RequestBody NextSubjectDto next) {
 		SubjectDto dto = subjectsService.nextSubjectByCategoryId(next);
 		if (dto != null) {

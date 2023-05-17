@@ -34,7 +34,7 @@ public class DeptController extends BaseController {
 	}
 
 	@GetMapping("/{id}")
-	@Operation(summary = "获取部门信息", description = "根据部门id获取部门详细信息")
+	@Operation(summary = "获取部门信息", description = "根据部门 ID 获取部门详细信息")
 	public Dept get(@PathVariable Long id) {
 		return deptService.get(id);
 	}
@@ -51,7 +51,7 @@ public class DeptController extends BaseController {
 	}
 
 	@DeleteMapping("/{id}")
-	@Operation(summary = "删除部门", description = "根据ID删除部门")
+	@Operation(summary = "删除部门", description = "根据 ID 删除部门")
 	@SgLog(value = "删除部门", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable Long id) {
 		Dept dept = new Dept();
@@ -61,7 +61,7 @@ public class DeptController extends BaseController {
 	}
 
 	@PutMapping("{id}")
-	@Operation(summary = "更新部门信息", description = "根据部门id更新部门的基本信息")
+	@Operation(summary = "更新部门信息", description = "根据部门 id 更新部门的基本信息")
 	@SgLog(value = "更新部门", operationType = OperationType.UPDATE)
 	public R<Boolean> update(@PathVariable Long id, @RequestBody @Valid Dept dept) {
 		dept.setCommonValue();
@@ -70,7 +70,7 @@ public class DeptController extends BaseController {
 	}
 
 	@RequestMapping(value = "findById", method = RequestMethod.POST)
-	@Operation(summary = "批量查询部门信息", description = "根据Ids批量查询信息")
+	@Operation(summary = "批量查询部门信息", description = "根据 Ids 批量查询信息")
 	public R<List<DeptVo>> findById(@RequestBody Long[] ids) {
 		return R.success(deptService.findById(ids));
 	}

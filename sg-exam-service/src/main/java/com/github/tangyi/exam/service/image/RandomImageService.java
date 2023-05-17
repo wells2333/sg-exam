@@ -13,10 +13,6 @@ public class RandomImageService {
 
 	private final SysProperties sysProperties;
 
-	/**
-	 * get random image url
-	 * @return String
-	 */
 	public String randomImage() {
 		return RandomImageUtil.randomImage(sysProperties.getDefaultImageCount(), sysProperties.getDefaultImageType());
 	}

@@ -30,7 +30,7 @@ public class TenantController extends BaseController {
 
 	private final TenantService tenantService;
 
-	@Operation(summary = "获取租户信息", description = "根据租户id获取租户详细信息")
+	@Operation(summary = "获取租户信息", description = "根据租户 ID 获取租户详细信息")
 	@GetMapping("/{id}")
 	public R<Tenant> get(@PathVariable Long id) {
 		return R.success(tenantService.get(id));
@@ -61,7 +61,7 @@ public class TenantController extends BaseController {
 	}
 
 	@PutMapping("/{id}")
-	@Operation(summary = "更新租户信息", description = "根据租户id更新租户的基本信息")
+	@Operation(summary = "更新租户信息", description = "根据租户 id 更新租户的基本信息")
 	@SgLog(value = "修改租户", operationType = OperationType.UPDATE)
 	public R<Boolean> update(@PathVariable Long id, @RequestBody @Valid Tenant tenant) {
 		tenant.setId(id);
@@ -70,7 +70,7 @@ public class TenantController extends BaseController {
 	}
 
 	@DeleteMapping("/{id}")
-	@Operation(summary = "删除租户", description = "根据ID删除租户")
+	@Operation(summary = "删除租户", description = "根据 ID 删除租户")
 	@SgLog(value = "删除租户", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable Long id) {
 		Tenant tenant = tenantService.get(id);
@@ -78,14 +78,14 @@ public class TenantController extends BaseController {
 	}
 
 	@PostMapping("deleteAll")
-	@Operation(summary = "批量删除租户", description = "根据租户id批量删除租户")
+	@Operation(summary = "批量删除租户", description = "根据租户 ID 批量删除租户")
 	@SgLog(value = "批量删除租户", operationType = OperationType.DELETE)
 	public R<Boolean> deleteAll(@RequestBody Long[] ids) {
 		return R.success(ArrayUtils.isNotEmpty(ids) ? tenantService.deleteAll(ids) > 0 : Boolean.FALSE);
 	}
 
 	@RequestMapping(value = "findById", method = RequestMethod.POST)
-	@Operation(summary = "根据ID查询租户")
+	@Operation(summary = "根据 ID 查询租户")
 	public R<List<Tenant>> findById(@RequestBody Long[] ids) {
 		List<Tenant> tenantList = tenantService.findListById(ids);
 		return Optional.ofNullable(tenantList).isPresent() ? R.success(tenantList) : null;

@@ -31,7 +31,7 @@ public class KnowledgeController extends BaseController {
 	private final KnowledgeService knowledgeService;
 
 	@GetMapping("/{id}")
-	@Operation(summary = "获取知识信息", description = "根据知识id获取知识详细信息")
+	@Operation(summary = "获取知识信息", description = "根据知识 id 获取知识详细信息")
 	public R<Knowledge> get(@PathVariable Long id) {
 		return R.success(knowledgeService.get(id));
 	}
@@ -47,11 +47,11 @@ public class KnowledgeController extends BaseController {
 		// 查询附件
 		Set<Long> attachmentIdSet = new HashSet<>();
 		knowledgePageInfo.getList().forEach(tempKnowledge -> attachmentIdSet.add(tempKnowledge.getAttachmentId()));
-		// 根据附件ID查询附件
+		// 根据附件 ID 查询附件
 		//R<List<AttachmentVo>> returnT = userServiceClient.findAttachmentById(attachmentIdSet.toArray(new Long[0]));
 		R<List<AttachmentVo>> returnT = null;
 		knowledgePageInfo.getList().stream()
-				// 转成Dto
+				// 转成 Dto
 				.map(tempKnowledge -> {
 					KnowledgeDto knowledgeDto = new KnowledgeDto();
 					BeanUtils.copyProperties(tempKnowledge, knowledgeDto);
@@ -61,7 +61,7 @@ public class KnowledgeController extends BaseController {
 				.forEach(tempKnowledgeDto -> {
 					if (returnT != null && CollectionUtils.isNotEmpty(returnT.getResult())) {
 						AttachmentVo tempKnowledgeDtoAttachmentVo = returnT.getResult().stream()
-								// 根据ID过滤
+								// 根据 ID 过滤
 								.filter(tempAttachmentVo -> tempAttachmentVo.getId()
 										.equals(tempKnowledgeDto.getAttachmentId()))
 								// 匹配第一个
@@ -89,7 +89,7 @@ public class KnowledgeController extends BaseController {
 	}
 
 	@PutMapping("{id}")
-	@Operation(summary = "更新知识信息", description = "根据知识id更新知识的基本信息")
+	@Operation(summary = "更新知识信息", description = "根据知识 id 更新知识的基本信息")
 	public R<Boolean> update(@PathVariable Long id, @RequestBody @Valid Knowledge knowledge) {
 		knowledge.setId(id);
 		knowledge.setCommonValue();
@@ -97,7 +97,7 @@ public class KnowledgeController extends BaseController {
 	}
 
 	@DeleteMapping("{id}")
-	@Operation(summary = "删除知识", description = "根据ID删除知识")
+	@Operation(summary = "删除知识", description = "根据 ID 删除知识")
 	@SgLog(value = "删除知识", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable Long id) {
 		boolean success = false;
@@ -113,7 +113,7 @@ public class KnowledgeController extends BaseController {
 	}
 
 	@PostMapping("deleteAll")
-	@Operation(summary = "批量删除知识", description = "根据知识id批量删除知识")
+	@Operation(summary = "批量删除知识", description = "根据知识 id 批量删除知识")
 	@SgLog(value = "批量删除知识", operationType = OperationType.DELETE)
 	public R<Boolean> deleteAll(@RequestBody Long[] ids) {
 		boolean success = false;

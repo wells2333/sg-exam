@@ -60,7 +60,7 @@ public class SpeechSynthesisService extends CrudService<SpeechSynthesisMapper, S
 		String user = SysUtil.getUser();
 		speechSynthesis.setCommonValue(user, tenantCode);
 		SynthesisHandlerContext context = new SynthesisHandlerContext();
-		// 截取前5个字符 + UUID作为文件名
+		// 截取前 5 个字符 + UUID 作为文件名
 		String fileName = speechSynthesis.getText().substring(0, Math.min(5, speechSynthesis.getText().length())) + "_"
 				+ UUID.randomUUID() + ".mp3";
 		context.setFileName(fileName);

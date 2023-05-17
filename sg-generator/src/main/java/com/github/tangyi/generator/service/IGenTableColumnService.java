@@ -33,7 +33,7 @@ public interface IGenTableColumnService {
 	/**
 	 * 删除业务字段信息
 	 *
-	 * @param ids 需要删除的数据ID
+	 * @param ids 需要删除的数据 ID
 	 * @return 结果
 	 */
 	int deleteGenTableColumnByIds(String ids);

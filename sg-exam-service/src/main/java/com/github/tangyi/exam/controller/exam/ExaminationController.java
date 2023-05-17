@@ -37,7 +37,7 @@ public class ExaminationController extends BaseController {
 	}
 
 	@GetMapping("/{id}/detail")
-	@Operation(summary = "获取考试详细信息", description = "根据考试id获取考试详细信息")
+	@Operation(summary = "获取考试详细信息", description = "根据考试 id 获取考试详细信息")
 	public R<ExaminationDto> detail(@PathVariable Long id) {
 		return R.success(examinationService.getDetail(id));
 	}
@@ -49,7 +49,7 @@ public class ExaminationController extends BaseController {
 	}
 
 	@GetMapping("/anonymousUser/{id}")
-	@Operation(summary = "获取考试信息", description = "根据考试id获取考试详细信息")
+	@Operation(summary = "获取考试信息", description = "根据考试 id 获取考试详细信息")
 	public R<Examination> anonymousUserGet(@PathVariable Long id) {
 		return R.success(examinationService.get(id));
 	}
@@ -88,7 +88,7 @@ public class ExaminationController extends BaseController {
 	}
 
 	@PutMapping("{id}")
-	@Operation(summary = "更新考试信息", description = "根据考试id更新考试的基本信息")
+	@Operation(summary = "更新考试信息", description = "根据考试 ID 更新考试的基本信息")
 	@SgLog(value = "更新考试", operationType = OperationType.UPDATE)
 	public R<Boolean> update(@PathVariable Long id, @RequestBody @Valid ExaminationDto examinationDto) {
 		examinationDto.setId(id);
@@ -97,7 +97,7 @@ public class ExaminationController extends BaseController {
 	}
 
 	@DeleteMapping("{id}")
-	@Operation(summary = "删除考试", description = "根据ID删除考试")
+	@Operation(summary = "删除考试", description = "根据 ID 删除考试")
 	@SgLog(value = "删除考试", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable Long id) {
 		Examination examination = examinationService.get(id);
@@ -109,7 +109,7 @@ public class ExaminationController extends BaseController {
 	}
 
 	@PostMapping("deleteAll")
-	@Operation(summary = "批量删除考试", description = "根据考试id批量删除考试")
+	@Operation(summary = "批量删除考试", description = "根据考试 id 批量删除考试")
 	@SgLog(value = "删除考试", operationType = OperationType.DELETE)
 	public R<Boolean> deleteAll(@RequestBody Long[] ids) {
 		return R.success(examinationService.deleteAll(ids) > 0);

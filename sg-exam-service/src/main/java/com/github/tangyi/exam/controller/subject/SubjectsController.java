@@ -50,7 +50,7 @@ public class SubjectsController extends BaseController {
 	private final SubjectFavoritesService subjectFavoritesService;
 
 	@GetMapping("/{id}")
-	@Operation(summary = "获取题目信息", description = "根据题目id获取题目详细信息")
+	@Operation(summary = "获取题目信息", description = "根据题目 ID 获取题目详细信息")
 	public R<SubjectDto> subject(@PathVariable Long id,
 			@RequestParam(value = "findFav", required = false, defaultValue = "false") boolean findFav,
 			@RequestParam(value = "isView", required = false, defaultValue = "false") boolean isView) {
@@ -83,13 +83,13 @@ public class SubjectsController extends BaseController {
 	@SgLog(value = "创建题目", operationType = OperationType.INSERT)
 	public R<SubjectDto> add(@RequestBody @Valid SubjectDto subject) {
 		subject.setCommonValue();
-		// 自定义ID
+		// 自定义 ID
 		subject.setId(SnowFlakeId.newId());
 		return R.success(subjectsService.insert(subject));
 	}
 
 	@PutMapping("{id}")
-	@Operation(summary = "更新题目信息", description = "根据题目id更新题目的基本信息")
+	@Operation(summary = "更新题目信息", description = "根据题目 id 更新题目的基本信息")
 	@SgLog(value = "更新题目", operationType = OperationType.UPDATE)
 	public R<SubjectDto> update(@PathVariable Long id, @RequestBody @Valid SubjectDto subject) {
 		subject.setId(id);
@@ -98,7 +98,7 @@ public class SubjectsController extends BaseController {
 	}
 
 	@DeleteMapping("{id}")
-	@Operation(summary = "删除题目", description = "根据ID删除题目")
+	@Operation(summary = "删除题目", description = "根据 ID 删除题目")
 	@SgLog(value = "删除题目", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable Long id) {
 		subjectsService.physicalDelete(id);
@@ -106,7 +106,7 @@ public class SubjectsController extends BaseController {
 	}
 
 	@GetMapping("template/json")
-	@Operation(summary = "下载题目模板（JSON格式）")
+	@Operation(summary = "下载题目模板（JSON 格式）")
 	public void downloadJSONTemplate(HttpServletResponse res) throws IOException {
 		List<SubjectDto> subjects = subjectImportExportService.demoSubjects();
 		byte[] data = JSON.toJSONString(subjects).getBytes(StandardCharsets.UTF_8);
@@ -120,7 +120,7 @@ public class SubjectsController extends BaseController {
 	}
 
 	@GetMapping("template/excel")
-	@Operation(summary = "下载题目模板（EXCEL格式）")
+	@Operation(summary = "下载题目模板（EXCEL 格式）")
 	public void downloadEXCELTemplate(HttpServletRequest req, HttpServletResponse res) {
 		List<SubjectDto> subjects = subjectImportExportService.demoSubjects();
 		String fileName = "template";
@@ -129,25 +129,25 @@ public class SubjectsController extends BaseController {
 	}
 
 	@PostMapping("importJson")
-	@Operation(summary = "导入JSON格式题目", description = "导入JSON格式题目")
-	@SgLog(value = "导入JSON格式题目", operationType = OperationType.INSERT)
+	@Operation(summary = "导入 JSON 格式题目", description = "导入 JSON 格式题目")
+	@SgLog(value = "导入 JSON 格式题目", operationType = OperationType.INSERT)
 	public R<Boolean> importJSONSubject(Long categoryId,
-			@Parameter(description = "JSON格式题目", required = true) MultipartFile file) throws IOException {
+			@Parameter(description = "JSON 格式题目", required = true) MultipartFile file) throws IOException {
 		log.debug("importJSONSubject, categoryId: {}", categoryId);
 		return R.success(subjectImportExportService.importJSONSubject(categoryId, file));
 	}
 
 	@PostMapping("importExcel")
-	@Operation(summary = "导入EXCEL格式题目", description = "导入EXCEL格式题目")
-	@SgLog(value = "导入EXCEL格式题目", operationType = OperationType.INSERT)
+	@Operation(summary = "导入 EXCEL 格式题目", description = "导入 EXCEL 格式题目")
+	@SgLog(value = "导入 EXCEL 格式题目", operationType = OperationType.INSERT)
 	public R<Boolean> importExcelSubject(Long categoryId,
-			@Parameter(description = "EXCEL格式题目", required = true) MultipartFile file) throws IOException {
+			@Parameter(description = "EXCEL 格式题目", required = true) MultipartFile file) throws IOException {
 		log.debug("importExcelSubject, categoryId: {}", categoryId);
 		return R.success(subjectImportExportService.importExcelSubject(categoryId, file));
 	}
 
 	@PostMapping("export")
-	@Operation(summary = "导出题目", description = "根据分类id导出题目")
+	@Operation(summary = "导出题目", description = "根据分类 id 导出题目")
 	public void exportSubject(@RequestBody Long[] ids, @RequestParam(required = false) Long examinationId,
 			@RequestParam(required = false) Long categoryId, HttpServletRequest request, HttpServletResponse response) {
 		List<SubjectDto> subjects = subjectImportExportService.export(ids, examinationId, categoryId);
@@ -155,14 +155,14 @@ public class SubjectsController extends BaseController {
 	}
 
 	@GetMapping("exportDemoExcel")
-	@Operation(summary = "导出demo题库EXCEL文件")
+	@Operation(summary = "导出 demo 题库 EXCEL 文件")
 	public void ex(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		List<SubjectDto> subjects = subjectImportExportService.demoTxtSubjects();
 		ExcelToolUtil.writeExcel(request, response, ExamUtil.convertSubject(subjects), SubjectExcelModel.class);
 	}
 
 	@PostMapping("deleteAll")
-	@Operation(summary = "批量删除题目", description = "根据题目id批量删除题目")
+	@Operation(summary = "批量删除题目", description = "根据题目 id 批量删除题目")
 	@SgLog(value = "批量删除题目", operationType = OperationType.DELETE)
 	public R<Boolean> deleteAll(@RequestBody Long[] ids) {
 		return R.success(subjectsService.physicalDeleteAll(ids) > 0);
@@ -173,7 +173,7 @@ public class SubjectsController extends BaseController {
 	 * @param type     -1：当前题目，0：下一题，1：上一题
 	 */
 	@GetMapping("subjectAnswer")
-	@Operation(summary = "查询题目和答题", description = "根据题目id查询题目和答题")
+	@Operation(summary = "查询题目和答题", description = "根据题目 id 查询题目和答题")
 	public R<SubjectDto> subjectAnswer(@RequestParam("subjectId") @NotBlank Long subjectId,
 			@RequestParam("examRecordId") @NotBlank Long examRecordId, @RequestParam Integer type,
 			@RequestParam(required = false) Integer nextSubjectSortNo) {
@@ -185,7 +185,7 @@ public class SubjectsController extends BaseController {
 	 * @param type     -1：当前题目，0：下一题，1：上一题
 	 */
 	@GetMapping("anonymousUser/subjectAnswer")
-	@Operation(summary = "查询题目和答题", description = "根据题目id查询题目和答题")
+	@Operation(summary = "查询题目和答题", description = "根据题目 id 查询题目和答题")
 	public R<SubjectDto> anonymousUserSubjectAnswer(@RequestParam("subjectId") @NotBlank Long subjectId,
 			@RequestParam("examRecordId") @NotBlank Long examRecordId,
 			@RequestParam(value = "userId", required = false) String userId, @RequestParam Integer type,
@@ -194,7 +194,7 @@ public class SubjectsController extends BaseController {
 	}
 
 	@GetMapping("nexSubjectNo/{id}")
-	@Operation(summary = "根据分类ID获取下一题的序号")
+	@Operation(summary = "根据分类 ID 获取下一题的序号")
 	public R<Integer> nexSubjectNo(@PathVariable Long id) {
 		return R.success(subjectsService.nextSubjectNo(id));
 	}

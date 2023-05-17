@@ -33,7 +33,7 @@ public class RoleController extends BaseController {
 	private final RoleMenuService roleMenuService;
 
 	@GetMapping("/{id}")
-	@Operation(summary = "获取角色信息", description = "根据角色id获取角色详细信息")
+	@Operation(summary = "获取角色信息", description = "根据角色 ID 获取角色详细信息")
 	public Role get(@PathVariable Long id) {
 		return roleService.get(id);
 	}
@@ -54,7 +54,7 @@ public class RoleController extends BaseController {
 	}
 
 	@PutMapping("{id}")
-	@Operation(summary = "更新角色信息", description = "根据角色id更新角色的基本信息")
+	@Operation(summary = "更新角色信息", description = "根据角色 ID 更新角色的基本信息")
 	@SgLog(value = "修改角色", operationType = OperationType.UPDATE)
 	public R<Boolean> update(@PathVariable Long id, @RequestBody @Valid Role role) {
 		boolean success = false;
@@ -104,7 +104,7 @@ public class RoleController extends BaseController {
 	}
 
 	@DeleteMapping("/{id}")
-	@Operation(summary = "删除角色", description = "根据ID删除角色")
+	@Operation(summary = "删除角色", description = "根据 ID 删除角色")
 	@SgLog(value = "删除角色", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable Long id) {
 		Role role = new Role();
@@ -114,7 +114,7 @@ public class RoleController extends BaseController {
 	}
 
 	@PostMapping("deleteAll")
-	@Operation(summary = "批量删除角色", description = "根据角色id批量删除角色")
+	@Operation(summary = "批量删除角色", description = "根据角色 ID 批量删除角色")
 	@SgLog(value = "批量删除角色", operationType = OperationType.DELETE)
 	public R<Boolean> deleteAll(@RequestBody Long[] ids) {
 		return R.success(ArrayUtils.isNotEmpty(ids) ? roleService.deleteAll(ids) > 0 : Boolean.FALSE);

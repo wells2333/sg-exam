@@ -21,7 +21,7 @@ import java.util.Date;
 @ColumnWidth(15)
 public class UserExcelModel {
 
-	@ExcelProperty(value = "用户id", converter = LongStringConverter.class)
+	@ExcelProperty(value = "用户 ID", converter = LongStringConverter.class)
 	@ColumnWidth(20)
 	private Long id;
 
@@ -45,7 +45,7 @@ public class UserExcelModel {
 	private String email;
 
 	@ExcelProperty("生日")
-	@DateTimeFormat("yyyy年MM月dd日")
+	@DateTimeFormat("yyyy 年 MM 月 dd 日")
 	private Date born;
 
 	@ExcelProperty("备注")
@@ -54,7 +54,7 @@ public class UserExcelModel {
 	@ExcelProperty(value = "状态", converter = StatusConverter.class)
 	private Integer status;
 
-	@ExcelProperty(value = "部门ID", converter = LongStringConverter.class)
+	@ExcelProperty(value = "部门 ID", converter = LongStringConverter.class)
 	@ColumnWidth(20)
 	private Long deptId;
 

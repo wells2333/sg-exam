@@ -49,7 +49,7 @@ public class ExamRecordController extends BaseController {
 	private final ExaminationService examinationService;
 
 	@GetMapping("/{id}")
-	@Operation(summary = "获取考试记录信息", description = "根据考试记录id获取考试记录详细信息")
+	@Operation(summary = "获取考试记录信息", description = "根据考试记录 ID 获取考试记录详细信息")
 	public R<ExaminationRecord> examRecord(@PathVariable Long id) {
 		return R.success(examRecordService.get(id));
 	}
@@ -82,7 +82,7 @@ public class ExamRecordController extends BaseController {
 	}
 
 	@PutMapping("{id}")
-	@Operation(summary = "更新考试记录信息", description = "根据考试记录id更新考试记录的基本信息")
+	@Operation(summary = "更新考试记录信息", description = "根据考试记录 id 更新考试记录的基本信息")
 	@SgLog(value = "新考试记录", operationType = OperationType.UPDATE)
 	public R<Boolean> updateExamRecord(@PathVariable Long id, @RequestBody @Valid ExaminationRecord examRecord) {
 		examRecord.setId(id);
@@ -91,7 +91,7 @@ public class ExamRecordController extends BaseController {
 	}
 
 	@DeleteMapping("{id}")
-	@Operation(summary = "删除考试记录", description = "根据ID删除考试记录")
+	@Operation(summary = "删除考试记录", description = "根据 ID 删除考试记录")
 	@SgLog(value = "删除考试记录", operationType = OperationType.DELETE)
 	public R<Boolean> deleteExamRecord(@PathVariable Long id) {
 		ExaminationRecord examRecord = examRecordService.get(id);
@@ -103,7 +103,7 @@ public class ExamRecordController extends BaseController {
 	}
 
 	@PostMapping("export")
-	@Operation(summary = "导出考试成绩", description = "根据成绩id导出成绩")
+	@Operation(summary = "导出考试成绩", description = "根据成绩 id 导出成绩")
 	public void exportExamRecord(@RequestBody Long[] ids, HttpServletRequest request, HttpServletResponse response) {
 		examRecordService.exportExamRecord(ids, request, response);
 	}
@@ -122,7 +122,7 @@ public class ExamRecordController extends BaseController {
 	}
 
 	@GetMapping("dashboard/examRecordTendency")
-	@Operation(summary = " 查询过去n天的考试记录数据")
+	@Operation(summary = " 查询过去 n 天的考试记录数据")
 	public R<ExaminationDashboardDto> findExamRecordTendency(@RequestParam @NotBlank String tenantCode,
 			@RequestParam @NotBlank Integer pastDays) {
 		return R.success(examRecordService.findExamRecordTendency(tenantCode, pastDays));
@@ -166,7 +166,7 @@ public class ExamRecordController extends BaseController {
 	}
 
 	@GetMapping("/{examinationId}/subjectIds")
-	@Operation(summary = "根据考试ID查询题目id列表")
+	@Operation(summary = "根据考试 ID 查询题目 id 列表")
 	public R<List<ExaminationSubject>> findExaminationSubjectIds(@PathVariable Long examinationId) {
 		List<ExaminationSubject> subjects = examinationService.findListByExaminationId(examinationId);
 		subjects.forEach(BaseEntity::clearCommonValue);
@@ -174,7 +174,7 @@ public class ExamRecordController extends BaseController {
 	}
 
 	@GetMapping("/anonymousUser/{examinationId}/subjectIds")
-	@Operation(summary = "根据考试ID查询题目id列表")
+	@Operation(summary = "根据考试 ID 查询题目 id 列表")
 	public R<List<ExaminationSubject>> anonymousUserFindExaminationSubjectIds(@PathVariable Long examinationId) {
 		List<ExaminationSubject> subjects = examinationService.findListByExaminationId(examinationId);
 		subjects.forEach(BaseEntity::clearCommonValue);
@@ -193,7 +193,7 @@ public class ExamRecordController extends BaseController {
 		}
 	}
 
-	@Operation(summary = "生成二维码(v2)", description = "生成二维码(v2)")
+	@Operation(summary = "生成二维码 (v2)", description = "生成二维码 (v2)")
 	@GetMapping("anonymousUser/generateQrCode/v2/{examinationId}")
 	public void produceCodeV2(@PathVariable Long examinationId, HttpServletResponse response) throws Exception {
 		response.setHeader("Cache-Control", "no-store, no-com.github.tangyi.common.basic.cache");
@@ -207,7 +207,7 @@ public class ExamRecordController extends BaseController {
 	}
 
 	@GetMapping("/{id}/details")
-	@Operation(summary = "成绩详情", description = "根据考试记录id获取成绩详情")
+	@Operation(summary = "成绩详情", description = "根据考试记录 id 获取成绩详情")
 	public R<ExamRecordDetailsDto> details(@PathVariable Long id) {
 		return R.success(actionService.details(id));
 	}

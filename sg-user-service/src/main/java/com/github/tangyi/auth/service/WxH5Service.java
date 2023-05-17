@@ -17,6 +17,7 @@ import com.github.tangyi.common.vo.UserVo;
 import com.github.tangyi.user.service.sys.UserService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -88,7 +89,7 @@ public class WxH5Service {
 		Map<String, Object> data = Maps.newHashMap();
 		Map<String, Object> actionInfo = Maps.newHashMap();
 		Map<String, Object> scene = Maps.newHashMap();
-		// 自定义参数，8位随机数
+		// 自定义参数，8 位随机数
 		String sceneStr = getRandomString(8);
 		scene.put("scene_str", sceneStr);
 		actionInfo.put("scene", scene);
@@ -136,13 +137,13 @@ public class WxH5Service {
 		String text = message.getContent();
 		// 生成二维码时穿过的特殊参数
 		String sceneStr = message.getEventKey();
-		log.info("消息类型: {}, 消息事件: {}, 发送者账号: {}, 接收者微信: {}, 文本消息: {}, 二维码参数: {}", messageType, messageEvent, fromUser,
-				toUser, text, sceneStr);
+		log.info("消息类型：{}, 消息事件：{}, 发送者账号：{}, 接收者微信：{}, 文本消息：{}, 二维码参数：{}", messageType, messageEvent, fromUser, toUser,
+				text, sceneStr);
 		if (messageType.equals("event")) {
-			// 设置租户code
+			// 设置租户 code
 			String tenantCode = SecurityConstant.DEFAULT_TENANT_CODE;
 			TenantHolder.setTenantCode(tenantCode);
-			// 先根据openid从查询出用户信息
+			// 先根据 openid 从查询出用户信息
 			UserVo userVo = userService.findUserByIdentifier(IdentityType.WE_CHAT.getValue(), fromUser, tenantCode);
 			// 没有该用户
 			if (userVo == null) {
@@ -155,7 +156,7 @@ public class WxH5Service {
 			if (userVo != null) {
 				CustomUserDetails details = userDetailsService.toCustomUserDetails(userVo);
 				Map<String, Object> map = userTokenService.generateAndSaveToken(req, res, details, false);
-				if (map != null) {
+				if (MapUtils.isNotEmpty(map)) {
 					saveSceneStr(sceneStr, map);
 				}
 				return R.success("success");
