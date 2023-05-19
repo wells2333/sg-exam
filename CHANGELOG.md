@@ -1,6 +1,13 @@
 sg-exam Releases
 ------------
 
+## Version 0.0.8 (2023-05-20)
+
+改进：
+
+- 升级基础依赖为 jdk 17
+- 修复小程序编译报 "缺少全局配置 pages" 异常，解决办法见：https://github.com/NervJS/taro/issues/13544
+
 ## Version 0.0.7 (2023-05-03)
 
 新功能：
