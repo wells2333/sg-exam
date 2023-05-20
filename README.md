@@ -19,11 +19,7 @@
 > 
 > 支持题库、刷题功能。
 
-> **注意：本版本为 Spring Boot 版本，没有太多中间件依赖，使用、部署都非常方便，并且持续更新维护**
-> 
-> **Spring Cloud 版本依赖了比较多的中间件，代码在 sc 分支**
-> 
-> **Spring Cloud 版本已不再维护！已不再维护！已不再维护！**
+> 本版本为 Spring Boot 版本，没有太多中间件依赖，使用、部署都非常方便，并且持续更新维护。
 
 ### [在线体验](https://www.yunmianshi.com/)
 
@@ -52,9 +48,9 @@
 
 <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/business.png"/>
 
-项目分web前台、后台管理、小程序三部分，前台、小程序主要提供考试功能，后台提供基础管理、考试管理功能。
+项目分 web 前台、后台管理、小程序三部分，前台、小程序主要提供考试功能，后台提供基础管理、考试管理功能。
 
-web前台主要功能：提供在线考试、课程学习、练习等功能。
+web 前台主要功能：提供在线考试、课程学习、练习等功能。
 
 后台主要功能：系统管理（单位管理、用户管理、部门管理、角色管理、菜单管理、操作日志、代码生成），考务管理（课程管理、考试管理、题库管理、成绩管理）。
 
@@ -127,11 +123,11 @@ web前台主要功能：提供在线考试、课程学习、练习等功能。
 
 ## 参与贡献
 
-欢迎提交PR、[issues](https://gitee.com/wells2333/sg-exam)一起完善项目
+欢迎提交 PR、[issues](https://gitee.com/wells2333/sg-exam)一起完善项目
 
 ## 反馈交流
 
-交流QQ群：
+交流 QQ 群：
 
 <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/qq.png" width="160"/>
 
