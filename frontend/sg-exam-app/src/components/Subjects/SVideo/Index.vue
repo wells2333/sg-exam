@@ -65,6 +65,9 @@ export default {
     },
     setAnswer(answer) {
       this.userAnswer = answer
+      if (this.$refs.videoEditor && this.userAnswer !== null) {
+        this.$refs.videoEditor.setContent(this.userAnswer)
+      }
     },
     setSubjectInfo(subject) {
       this.subjectInfo = subject

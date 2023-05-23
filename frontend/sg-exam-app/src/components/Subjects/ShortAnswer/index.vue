@@ -6,12 +6,12 @@
         <span class="subject-title-content"
               v-if="subjectInfo.score !== undefined && subjectInfo.score !== 0">&nbsp;({{ subjectInfo.score }}分)&nbsp;</span>
         <span class="subject-title-content" v-html="subjectInfo.subjectName"/>
-        <div class="subject-video-info" v-if="subjectInfo.subjectVideoId && subjectInfo.subjectVideoName">
-          <sg-video ref="sgVideo"></sg-video>
-        </div>
-        <div class="subject-tinymce">
-          <tinymce ref="editor" :height="height" v-model="userAnswer"/>
-        </div>
+      </div>
+      <div class="subject-video-info" v-if="subjectInfo.subjectVideoId && subjectInfo.subjectVideoName">
+        <sg-video ref="sgVideo"></sg-video>
+      </div>
+      <div class="subject-tinymce">
+        <tinymce ref="shortAnswerEditor" :height="height" v-model="userAnswer"/>
       </div>
     </div>
   </div>
@@ -54,6 +54,9 @@ export default {
     },
     setAnswer(answer) {
       this.userAnswer = answer
+      if (this.$refs.shortAnswerEditor && this.userAnswer !== null) {
+        this.$refs.shortAnswerEditor.setContent(this.userAnswer)
+      }
       this.onChoice(this.subjectInfo.sort)
     },
     setSubjectInfo(subject) {

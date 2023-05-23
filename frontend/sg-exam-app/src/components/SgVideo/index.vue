@@ -131,8 +131,8 @@ export default {
 </script>
 <style lang="scss">
 .sg-video-component {
-  height: 400px;
-  width: 400px;
+  min-height: 400px;
+  width: auto;
   margin: 0 auto;
 }
 
