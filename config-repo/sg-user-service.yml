@@ -39,6 +39,14 @@ qiniu:
   domain-of-bucket: ${QINIU_DOMAIN:www.sg-exam.com}
   expire: 3600  # 链接超时时间，单位秒，默认一小时
 
+# minio 存储配置
+minio:
+  endpoint: ${MINIO_ENDPOINT:http://127.0.0.1:9000}
+  bucket: ${MINIO_BUCKET:yunmianshi}
+  access-key: ${MINIO_ACCESS_KEY:zWXHMYJl99MGISbaVanX}
+  secret-key: ${MINIO_SECRET_KEY:kPDoBRlxpIwMEHje1ve5l6e3TGSGUfwE1ONSzRb4}
+  chunk-size-mb: ${MINIO_CHUNK_SIZE_MB:10}
+
 sms:
   appKey: ${SMS_APP_KEY:test}
   appSecret: ${SMS_APP_SECRET:test}
@@ -57,8 +65,6 @@ wxh5:
 
 sys:
   cacheExpire: 86400 # 缓存失效时间，单位秒，默认一天
-  defaultImageType: .jpeg
-  defaultImageCount: 30
 
 gen:
   author: tangyi
@@ -66,7 +72,7 @@ gen:
   packageName: com.github.tangyi.exam
   # 生成文件路径
   genDir: /Users/tangyi/generate
-  # 自动去除表前缀，默认是false
+  # 自动去除表前缀，默认是 false
   autoRemovePre: true
   # 表前缀（生成类名不会包含表前缀，多个用逗号分隔）
   tablePrefix:

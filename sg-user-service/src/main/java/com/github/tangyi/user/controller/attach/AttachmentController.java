@@ -110,7 +110,7 @@ public class AttachmentController extends BaseController {
 	}
 
 	@GetMapping("download")
-	@Operation(summary = "下载附件", description = "根据ID下载附件")
+	@Operation(summary = "下载附件", description = "根据 ID 下载附件")
 	@SgLog(value = "下载文件", operationType = OperationType.DOWNLOAD)
 	public R<String> download(@NotBlank Long id) {
 		Attachment attachment = attachmentService.getNotNullAttachment(id);
@@ -119,7 +119,7 @@ public class AttachmentController extends BaseController {
 	}
 
 	@DeleteMapping("/{id}")
-	@Operation(summary = "删除附件", description = "根据ID删除附件")
+	@Operation(summary = "删除附件", description = "根据 ID 删除附件")
 	@SgLog(value = "删除附件", operationType = OperationType.DELETE)
 	public R<Boolean> delete(@PathVariable Long id) throws IOException {
 		Attachment attachment = attachmentService.getNotNullAttachment(id);
@@ -192,7 +192,7 @@ public class AttachmentController extends BaseController {
 	@GetMapping("/createRandomImage")
 	@Operation(summary = "生成默认图片")
 	public R<Long> createRandomImage(@RequestParam String groupCode) {
-		return R.success(attachmentManager.randomAttachmentId(groupCode));
+		return R.success(attachmentManager.defaultImage(groupCode));
 	}
 
 	private AttachGroup getAttachGroup(String groupCode) {

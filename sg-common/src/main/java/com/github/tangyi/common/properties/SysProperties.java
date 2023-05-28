@@ -21,10 +21,6 @@ public class SysProperties {
 
     private String gatewaySecret;
 
-    private String defaultImageType;
-
-    private Integer defaultImageCount;
-
     /**
      * logo 的后缀名
      */

@@ -31,5 +31,5 @@ public interface AttachmentManager {
 
 	Attachment getPreviewAttachment(Long id);
 
-	Long randomAttachmentId(String groupCode);
+	Long defaultImage(String groupCode);
 }

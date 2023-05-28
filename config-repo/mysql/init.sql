@@ -7,8 +7,8 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `exam_answer`;
 CREATE TABLE `exam_answer` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `exam_record_id` bigint(20) NOT NULL COMMENT '考试记录id',
-  `subject_id` bigint(20) NOT NULL COMMENT '题目ID',
+  `exam_record_id` bigint(20) NOT NULL COMMENT '考试记录 id',
+  `subject_id` bigint(20) NOT NULL COMMENT '题目 ID',
   `type` tinyint(1) DEFAULT NULL,
   `answer` varchar(255) DEFAULT NULL COMMENT '答案',
   `answer_type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '答题类型，0：正确，1：错误',
@@ -47,7 +47,7 @@ CREATE TABLE `exam_course` (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
   `tenant_code` varchar(16) NOT NULL COMMENT '租户编号',
-  `image_id` bigint DEFAULT NULL COMMENT '图片ID',
+  `image_id` bigint DEFAULT NULL COMMENT '图片 ID',
   `cate_name` varchar(255) DEFAULT NULL COMMENT '类别名称',
   `tags` varchar(255) DEFAULT NULL COMMENT '标签',
   PRIMARY KEY (`id`) USING BTREE
@@ -66,7 +66,7 @@ CREATE TABLE `exam_examination` (
   `end_time` datetime NULL DEFAULT NULL COMMENT '考试结束时间',
   `total_score` int(11) NOT NULL COMMENT '总分',
   `status` tinyint(1) DEFAULT NULL COMMENT '考试状态',
-  `image_id` bigint(20) DEFAULT NULL COMMENT '图片ID',
+  `image_id` bigint(20) DEFAULT NULL COMMENT '图片 ID',
   `course_id` bigint(20) DEFAULT NULL COMMENT '课程',
   `remark` varchar(255) DEFAULT NULL COMMENT '备注',
   `creator` varchar(128) NOT NULL DEFAULT '' COMMENT '创建人',
@@ -95,8 +95,8 @@ CREATE TABLE `exam_examination_favorites` (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
   `tenant_code` varchar(16) NOT NULL COMMENT '租户编号',
-  `examination_id` bigint(20) NOT NULL COMMENT '考试ID',
-  `user_id` bigint(20) NOT NULL COMMENT '用户ID',
+  `examination_id` bigint(20) NOT NULL COMMENT '考试 ID',
+  `user_id` bigint(20) NOT NULL COMMENT '用户 ID',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='用户收藏考试表';
 
@@ -106,9 +106,9 @@ CREATE TABLE `exam_examination_favorites` (
 DROP TABLE IF EXISTS `exam_examination_record`;
 CREATE TABLE `exam_examination_record` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `user_id` bigint(20) NOT NULL COMMENT '用户id',
+  `user_id` bigint(20) NOT NULL COMMENT '用户 id',
   `type` tinyint(1) unsigned zerofill NOT NULL COMMENT '类型',
-  `examination_id` bigint(20) NOT NULL COMMENT '考试ID',
+  `examination_id` bigint(20) NOT NULL COMMENT '考试 ID',
   `start_time` datetime NULL DEFAULT NULL COMMENT '开始时间',
   `end_time` datetime NULL DEFAULT NULL COMMENT '结束时间',
   `score` int(11) DEFAULT NULL COMMENT '成绩',
@@ -133,8 +133,8 @@ CREATE TABLE `exam_examination_record` (
 DROP TABLE IF EXISTS `exam_examination_subject`;
 CREATE TABLE `exam_examination_subject` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `examination_id` bigint(20) DEFAULT NULL COMMENT '考试ID',
-  `subject_id` bigint(20) NOT NULL COMMENT '题目ID',
+  `examination_id` bigint(20) DEFAULT NULL COMMENT '考试 ID',
+  `subject_id` bigint(20) NOT NULL COMMENT '题目 ID',
   `tenant_code` varchar(16) NOT NULL COMMENT '租户编号',
   `sort` int(2) unsigned zerofill NOT NULL COMMENT '排序',
   `creator` varchar(16) NOT NULL DEFAULT '' COMMENT '创建人',
@@ -143,7 +143,7 @@ CREATE TABLE `exam_examination_subject` (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `is_deleted` tinyint(1) unsigned zerofill NOT NULL COMMENT '删除标记 0:正常;1:删除',
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE KEY `idx_examination_id_sort` (`examination_id`,`sort`) USING BTREE COMMENT '考试ID+序号',
+  UNIQUE KEY `idx_examination_id_sort` (`examination_id`,`sort`) USING BTREE COMMENT '考试 ID+序号',
   KEY `idx_subject_id` (`subject_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='考试题目表';
 
@@ -155,7 +155,7 @@ CREATE TABLE `exam_knowledge` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `knowledge_name` varchar(128) NOT NULL COMMENT '知识名称',
   `knowledge_desc` varchar(255) DEFAULT NULL COMMENT '知识描述',
-  `attachment_id` bigint(20) DEFAULT NULL COMMENT '附件ID',
+  `attachment_id` bigint(20) DEFAULT NULL COMMENT '附件 ID',
   `status` tinyint(1) NOT NULL COMMENT '状态',
   `creator` varchar(16) NOT NULL COMMENT '创建人',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -173,7 +173,7 @@ DROP TABLE IF EXISTS `exam_pictures`;
 CREATE TABLE `exam_pictures` (
   `id` bigint(20) NOT NULL COMMENT '主键',
   `picture_address` varchar(255) DEFAULT NULL COMMENT '知识名称',
-  `attachment_id` bigint(20) DEFAULT NULL COMMENT '附件ID',
+  `attachment_id` bigint(20) DEFAULT NULL COMMENT '附件 ID',
   `creator` varchar(16) NOT NULL COMMENT '创建人',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `operator` varchar(16) DEFAULT NULL COMMENT '修改人',
@@ -191,9 +191,9 @@ CREATE TABLE `exam_subject_category` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `category_name` varchar(128) DEFAULT NULL COMMENT '分类名称',
   `category_desc` varchar(255) DEFAULT NULL COMMENT '分类描述',
-  `parent_id` bigint(20) DEFAULT NULL COMMENT '父分类ID',
+  `parent_id` bigint(20) DEFAULT NULL COMMENT '父分类 ID',
   `sort` int(11) DEFAULT NULL COMMENT '排序号',
-  `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '类型: 0-私共,1-公有',
+  `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '类型：0-私共，1-公有',
   `creator` varchar(16) NOT NULL COMMENT '创建人',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `operator` varchar(16) NOT NULL COMMENT '修改人',
@@ -224,7 +224,7 @@ CREATE TABLE `exam_subject_choices` (
   `is_deleted` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
   `tenant_code` varchar(16) NOT NULL DEFAULT '' COMMENT '租户编号',
   `sort` int(10) unsigned zerofill NOT NULL COMMENT '排序',
-  `speech_id` bigint(20) DEFAULT NULL COMMENT '语音ID',
+  `speech_id` bigint(20) DEFAULT NULL COMMENT '语音 ID',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `idx_category_id` (`category_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='选择题表';
@@ -241,8 +241,8 @@ CREATE TABLE `exam_subject_favorites` (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
   `tenant_code` varchar(16) NOT NULL COMMENT '租户编号',
-  `subject_id` bigint(20) NOT NULL COMMENT '题目ID',
-  `user_id` bigint(20) NOT NULL COMMENT '用户ID',
+  `subject_id` bigint(20) NOT NULL COMMENT '题目 ID',
+  `user_id` bigint(20) NOT NULL COMMENT '用户 ID',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户收藏题目表';
 
@@ -252,7 +252,7 @@ CREATE TABLE `exam_subject_favorites` (
 DROP TABLE IF EXISTS `exam_subject_judgement`;
 CREATE TABLE `exam_subject_judgement` (
   `id` bigint(20) NOT NULL COMMENT '主键',
-  `category_id` bigint(20) DEFAULT NULL COMMENT '分类ID',
+  `category_id` bigint(20) DEFAULT NULL COMMENT '分类 ID',
   `subject_name` varchar(5000) NOT NULL DEFAULT '' COMMENT '题目名称',
   `answer` varchar(5000) NOT NULL DEFAULT '' COMMENT '参考答案',
   `score` int(11) NOT NULL DEFAULT '0' COMMENT '分值',
@@ -265,7 +265,7 @@ CREATE TABLE `exam_subject_judgement` (
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
   `tenant_code` varchar(16) NOT NULL DEFAULT '' COMMENT '租户编号',
   `sort` int(10) unsigned zerofill NOT NULL COMMENT '排序',
-  `speech_id` bigint(20) DEFAULT NULL COMMENT '语音ID',
+  `speech_id` bigint(20) DEFAULT NULL COMMENT '语音 ID',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `idx_category_id` (`category_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='简答题表';
@@ -276,7 +276,7 @@ CREATE TABLE `exam_subject_judgement` (
 DROP TABLE IF EXISTS `exam_subject_option`;
 CREATE TABLE `exam_subject_option` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `subject_choices_id` bigint(20) NOT NULL COMMENT '选择题ID',
+  `subject_choices_id` bigint(20) NOT NULL COMMENT '选择题 ID',
   `option_name` varchar(64) NOT NULL DEFAULT '' COMMENT '选项名称',
   `option_content` varchar(5000) NOT NULL DEFAULT '' COMMENT '选项内容',
   `creator` varchar(16) NOT NULL DEFAULT '' COMMENT '创建人',
@@ -295,7 +295,7 @@ CREATE TABLE `exam_subject_option` (
 DROP TABLE IF EXISTS `exam_subject_short_answer`;
 CREATE TABLE `exam_subject_short_answer` (
   `id` bigint(20) NOT NULL COMMENT '主键',
-  `category_id` bigint(20) DEFAULT NULL COMMENT '分类ID',
+  `category_id` bigint(20) DEFAULT NULL COMMENT '分类 ID',
   `subject_name` varchar(5000) NOT NULL COMMENT '题目名称',
   `answer` varchar(5000) NOT NULL COMMENT '参考答案',
   `score` int(11) NOT NULL COMMENT '分值',
@@ -308,7 +308,7 @@ CREATE TABLE `exam_subject_short_answer` (
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
   `tenant_code` varchar(16) NOT NULL DEFAULT '' COMMENT '租户编号',
   `sort` int(10) unsigned zerofill NOT NULL COMMENT '排序',
-  `speech_id` bigint(20) DEFAULT NULL COMMENT '语音ID',
+  `speech_id` bigint(20) DEFAULT NULL COMMENT '语音 ID',
   `judge_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '判分类型，0：自动判分，1：人工判分',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `idx_category_id` (`category_id`)
@@ -320,7 +320,7 @@ CREATE TABLE `exam_subject_short_answer` (
 DROP TABLE IF EXISTS `exam_subject_speech`;
 CREATE TABLE `exam_subject_speech` (
   `id` bigint(20) NOT NULL COMMENT '主键',
-  `category_id` bigint(20) DEFAULT NULL COMMENT '分类ID',
+  `category_id` bigint(20) DEFAULT NULL COMMENT '分类 ID',
   `subject_name` varchar(5000) NOT NULL COMMENT '题目名称',
   `answer` varchar(5000) NOT NULL COMMENT '参考答案',
   `score` int(11) NOT NULL COMMENT '分值',
@@ -333,7 +333,7 @@ CREATE TABLE `exam_subject_speech` (
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
   `tenant_code` varchar(16) NOT NULL DEFAULT '' COMMENT '租户编号',
   `sort` int(10) unsigned zerofill NOT NULL COMMENT '排序',
-  `speech_id` bigint(20) DEFAULT NULL COMMENT '语音ID',
+  `speech_id` bigint(20) DEFAULT NULL COMMENT '语音 ID',
   `judge_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '判分类型，0：自动判分，1：人工判分',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `idx_category_id` (`category_id`)
@@ -345,7 +345,7 @@ CREATE TABLE `exam_subject_speech` (
 DROP TABLE IF EXISTS `exam_subject_video`;
 CREATE TABLE `exam_subject_video` (
   `id` bigint(20) NOT NULL COMMENT '主键',
-  `category_id` bigint(20) DEFAULT NULL COMMENT '分类ID',
+  `category_id` bigint(20) DEFAULT NULL COMMENT '分类 ID',
   `subject_name` varchar(5000) NOT NULL COMMENT '题目名称',
   `answer` varchar(5000) NOT NULL COMMENT '参考答案',
   `score` int(11) NOT NULL COMMENT '分值',
@@ -358,8 +358,8 @@ CREATE TABLE `exam_subject_video` (
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
   `tenant_code` varchar(16) NOT NULL DEFAULT '' COMMENT '租户编号',
   `sort` int(10) unsigned zerofill NOT NULL COMMENT '排序',
-  `speech_id` bigint(20) DEFAULT NULL COMMENT '语音ID',
-  `video_id` bigint(20) DEFAULT NULL COMMENT '视频ID',
+  `speech_id` bigint(20) DEFAULT NULL COMMENT '语音 ID',
+  `video_id` bigint(20) DEFAULT NULL COMMENT '视频 ID',
   `judge_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '判分类型，0：自动判分，1：人工判分',
   `video_name` varchar(255) DEFAULT NULL COMMENT '视频名称',
   PRIMARY KEY (`id`) USING BTREE,
@@ -379,8 +379,8 @@ CREATE TABLE `exam_subjects` (
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
   `tenant_code` varchar(16) NOT NULL COMMENT '租户编号',
   `type` tinyint(1) unsigned zerofill NOT NULL COMMENT '题目类型',
-  `category_id` bigint(20) DEFAULT NULL COMMENT '分类ID',
-  `subject_id` bigint(20) DEFAULT NULL COMMENT '题目ID',
+  `category_id` bigint(20) DEFAULT NULL COMMENT '分类 ID',
+  `subject_id` bigint(20) DEFAULT NULL COMMENT '题目 ID',
   `sort` int NOT NULL DEFAULT '0' COMMENT '序号',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `idx_subject_id` (`subject_id`),
@@ -399,13 +399,13 @@ CREATE TABLE `gen_table` (
   `sub_table_name` varchar(64) DEFAULT NULL COMMENT '关联子表的表名',
   `sub_table_fk_name` varchar(64) DEFAULT NULL COMMENT '子表关联的外键名',
   `class_name` varchar(100) DEFAULT '' COMMENT '实体类名称',
-  `tpl_category` varchar(200) DEFAULT 'crud' COMMENT '使用的模板（crud单表操作 tree树表操作）',
+  `tpl_category` varchar(200) DEFAULT 'crud' COMMENT '使用的模板（crud 单表操作 tree 树表操作）',
   `package_name` varchar(100) DEFAULT NULL COMMENT '生成包路径',
   `module_name` varchar(30) DEFAULT NULL COMMENT '生成模块名',
   `business_name` varchar(30) DEFAULT NULL COMMENT '生成业务名',
   `function_name` varchar(50) DEFAULT NULL COMMENT '生成功能名',
   `function_author` varchar(50) DEFAULT NULL COMMENT '生成功能作者',
-  `gen_type` char(1) DEFAULT '0' COMMENT '生成代码方式（0zip压缩包 1自定义路径）',
+  `gen_type` char(1) DEFAULT '0' COMMENT '生成代码方式（0zip 压缩包 1 自定义路径）',
   `gen_path` varchar(200) DEFAULT '/' COMMENT '生成路径（不填默认项目路径）',
   `options` varchar(1000) DEFAULT NULL COMMENT '其它生成选项',
   `creator` varchar(64) DEFAULT '' COMMENT '创建者',
@@ -428,15 +428,15 @@ CREATE TABLE `gen_table_column` (
   `column_name` varchar(200) DEFAULT NULL COMMENT '列名称',
   `column_comment` varchar(500) DEFAULT NULL COMMENT '列描述',
   `column_type` varchar(100) DEFAULT NULL COMMENT '列类型',
-  `java_type` varchar(500) DEFAULT NULL COMMENT 'JAVA类型',
-  `java_field` varchar(200) DEFAULT NULL COMMENT 'JAVA字段名',
-  `is_pk` char(1) DEFAULT NULL COMMENT '是否主键（1是）',
-  `is_increment` char(1) DEFAULT NULL COMMENT '是否自增（1是）',
-  `is_required` char(1) DEFAULT NULL COMMENT '是否必填（1是）',
-  `is_insert` char(1) DEFAULT NULL COMMENT '是否为插入字段（1是）',
-  `is_edit` char(1) DEFAULT NULL COMMENT '是否编辑字段（1是）',
-  `is_list` char(1) DEFAULT NULL COMMENT '是否列表字段（1是）',
-  `is_query` char(1) DEFAULT NULL COMMENT '是否查询字段（1是）',
+  `java_type` varchar(500) DEFAULT NULL COMMENT 'JAVA 类型',
+  `java_field` varchar(200) DEFAULT NULL COMMENT 'JAVA 字段名',
+  `is_pk` char(1) DEFAULT NULL COMMENT '是否主键（1 是）',
+  `is_increment` char(1) DEFAULT NULL COMMENT '是否自增（1 是）',
+  `is_required` char(1) DEFAULT NULL COMMENT '是否必填（1 是）',
+  `is_insert` char(1) DEFAULT NULL COMMENT '是否为插入字段（1 是）',
+  `is_edit` char(1) DEFAULT NULL COMMENT '是否编辑字段（1 是）',
+  `is_list` char(1) DEFAULT NULL COMMENT '是否列表字段（1 是）',
+  `is_query` char(1) DEFAULT NULL COMMENT '是否查询字段（1 是）',
   `query_type` varchar(200) DEFAULT 'EQ' COMMENT '查询方式（等于、不等于、大于、小于、范围）',
   `html_type` varchar(200) DEFAULT NULL COMMENT '显示类型（文本框、文本域、下拉框、复选框、单选框、日期控件）',
   `dict_type` varchar(200) DEFAULT '' COMMENT '字典类型',
@@ -464,8 +464,8 @@ CREATE TABLE `operation_banner` (
   `tenant_code` varchar(16) NOT NULL COMMENT '租户编号',
   `operation_name` varchar(255) DEFAULT NULL COMMENT '运营位名称',
   `operation_type` tinyint(1) DEFAULT NULL COMMENT '运营位类型',
-  `image_url` varchar(255) DEFAULT NULL COMMENT '图片URL',
-  `redirect_url` varchar(255) DEFAULT NULL COMMENT '跳转的URL',
+  `image_url` varchar(255) DEFAULT NULL COMMENT '图片 URL',
+  `redirect_url` varchar(255) DEFAULT NULL COMMENT '跳转的 URL',
   `operation_desc` varchar(255) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='首页运营位';
@@ -479,7 +479,7 @@ CREATE TABLE `sys_attachment` (
   `attach_name` varchar(255) NOT NULL DEFAULT '' COMMENT '附件名称',
   `attach_type` varchar(128) NOT NULL DEFAULT '' COMMENT '附件类型',
   `attach_size` varchar(255) NOT NULL DEFAULT '' COMMENT '附件大小',
-  `url` varchar(255) DEFAULT NULL COMMENT '预览地址',
+  `url` varchar(1024) DEFAULT NULL COMMENT '预览地址',
   `creator` varchar(128) NOT NULL DEFAULT '' COMMENT '创建人',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `operator` varchar(128) NOT NULL COMMENT '修改人',
@@ -498,7 +498,7 @@ CREATE TABLE `sys_attachment_group` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `group_name` varchar(255) NOT NULL DEFAULT '' COMMENT '分组名称',
   `group_code` varchar(128) NOT NULL DEFAULT '' COMMENT '分组标识',
-  `url_expire` int(20) unsigned zerofill NOT NULL COMMENT 'url过期时间',
+  `url_expire` int(20) unsigned zerofill NOT NULL COMMENT 'url 过期时间',
   `creator` varchar(128) NOT NULL DEFAULT '' COMMENT '创建人',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `operator` varchar(128) NOT NULL COMMENT '修改人',
@@ -520,7 +520,7 @@ CREATE TABLE `sys_dept` (
   `dept_name` varchar(16) DEFAULT NULL COMMENT '部门名称',
   `dept_desc` varchar(128) DEFAULT NULL,
   `dept_leader` varchar(16) DEFAULT NULL,
-  `parent_id` bigint(20) DEFAULT NULL COMMENT '父级部门id',
+  `parent_id` bigint(20) DEFAULT NULL COMMENT '父级部门 id',
   `sort` int(11) DEFAULT NULL COMMENT '排序号',
   `creator` varchar(128) NOT NULL DEFAULT '' COMMENT '创建人',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -558,13 +558,13 @@ CREATE TABLE `sys_log` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `type` tinyint(1) DEFAULT NULL COMMENT '日志类型',
   `title` varchar(128) DEFAULT NULL COMMENT '日志标题',
-  `ip` varchar(16) DEFAULT NULL COMMENT '操作用户的IP地址',
+  `ip` varchar(16) DEFAULT NULL COMMENT '操作用户的 IP 地址',
   `user_agent` varchar(256) DEFAULT NULL COMMENT '操作用户代理信息',
-  `request_uri` varchar(128) DEFAULT NULL COMMENT '操作的URI',
+  `request_uri` varchar(128) DEFAULT NULL COMMENT '操作的 URI',
   `method` varchar(16) DEFAULT NULL COMMENT '操作的方式',
   `params` varchar(255) DEFAULT NULL COMMENT '操作提交的数据',
   `exception` varchar(2000) DEFAULT NULL COMMENT '异常信息',
-  `service_id` varchar(16) DEFAULT NULL COMMENT '服务ID',
+  `service_id` varchar(16) DEFAULT NULL COMMENT '服务 ID',
   `took` varchar(16) DEFAULT NULL COMMENT '耗时',
   `creator` varchar(128) NOT NULL DEFAULT '' COMMENT '创建人',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -584,7 +584,7 @@ CREATE TABLE `sys_menu` (
   `name` varchar(128) DEFAULT NULL COMMENT '菜单名称',
   `permission` varchar(128) DEFAULT NULL COMMENT '权限标识',
   `path` varchar(128) DEFAULT NULL COMMENT '路由地址',
-  `parent_id` bigint(20) DEFAULT NULL COMMENT '父菜单id',
+  `parent_id` bigint(20) DEFAULT NULL COMMENT '父菜单 id',
   `icon` varchar(64) DEFAULT NULL COMMENT '图标',
   `sort` varchar(20) DEFAULT NULL COMMENT '排序',
   `type` varchar(20) DEFAULT NULL COMMENT '类型',
@@ -600,7 +600,7 @@ CREATE TABLE `sys_menu` (
   `tenant_code` varchar(16) DEFAULT NULL COMMENT '租户编号',
   `hide_menu` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否隐藏',
   `redirect` varchar(64) NOT NULL DEFAULT '' COMMENT '重定向地址',
-  `current_active_menu` varchar(64) NOT NULL DEFAULT '' COMMENT '当前tag',
+  `current_active_menu` varchar(64) NOT NULL DEFAULT '' COMMENT '当前 tag',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
@@ -648,7 +648,7 @@ DROP TABLE IF EXISTS `sys_role`;
 CREATE TABLE `sys_role` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `role_name` varchar(16) NOT NULL DEFAULT '' COMMENT '角色名称',
-  `role_code` varchar(64) NOT NULL DEFAULT '' COMMENT '角色code',
+  `role_code` varchar(64) NOT NULL DEFAULT '' COMMENT '角色 code',
   `role_desc` varchar(128) NOT NULL DEFAULT '' COMMENT '角色描述',
   `is_default` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否默认 0-否，1-是',
   `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '启用禁用状态 0-启用，1-禁用',
@@ -657,7 +657,7 @@ CREATE TABLE `sys_role` (
   `operator` varchar(128) NOT NULL DEFAULT '' COMMENT '修改人',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
-  `tenant_code` varchar(16) NOT NULL DEFAULT '' COMMENT '租户code',
+  `tenant_code` varchar(16) NOT NULL DEFAULT '' COMMENT '租户 code',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `index_role_code` (`role_code`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='角色表';
@@ -686,7 +686,7 @@ DROP TABLE IF EXISTS `sys_speech_synthesis`;
 CREATE TABLE `sys_speech_synthesis` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `text` varchar(255) NOT NULL DEFAULT '' COMMENT '文字',
-  `attach_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '附件ID',
+  `attach_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '附件 ID',
   `creator` varchar(128) NOT NULL DEFAULT '' COMMENT '创建人',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `operator` varchar(128) NOT NULL COMMENT '修改人',
@@ -708,12 +708,12 @@ CREATE TABLE `sys_student` (
   `phone` varchar(11) DEFAULT NULL COMMENT '电话号码',
   `born` date DEFAULT NULL,
   `sex` tinyint(1) DEFAULT NULL COMMENT '难度等级',
-  `address` varchar(255) DEFAULT NULL COMMENT '部门id',
+  `address` varchar(255) DEFAULT NULL COMMENT '部门 id',
   `grade` varchar(32) DEFAULT NULL COMMENT '详细描述',
   `school` varchar(32) DEFAULT NULL COMMENT '就读学校',
   `wechat` varchar(64) DEFAULT NULL COMMENT '微信',
-  `city_id` bigint(20) DEFAULT NULL COMMENT '城市id',
-  `county_id` bigint(20) DEFAULT NULL COMMENT '县id',
+  `city_id` bigint(20) DEFAULT NULL COMMENT '城市 id',
+  `county_id` bigint(20) DEFAULT NULL COMMENT '县 id',
   `creator` varchar(16) NOT NULL COMMENT '创建人',
   `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `operator` varchar(16) NOT NULL COMMENT '修改人',
@@ -738,7 +738,7 @@ CREATE TABLE `sys_tenant` (
   `operator` varchar(128) DEFAULT '',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
-  `role_id` bigint(20) DEFAULT NULL COMMENT '角色ID',
+  `role_id` bigint(20) DEFAULT NULL COMMENT '角色 ID',
   `init_status` tinyint(1) DEFAULT '0' COMMENT '初始化状态，0-未初始化，1：初始化中，2：初始化完成',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `idx_tenant_code` (`tenant_code`),
@@ -754,18 +754,18 @@ CREATE TABLE `sys_user` (
     `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
     `name` varchar(16) DEFAULT '' COMMENT '用户姓名',
     `phone` varchar(16) DEFAULT NULL,
-    `avatar_id` bigint(20) DEFAULT NULL COMMENT '头像id',
+    `avatar_id` bigint(20) DEFAULT NULL COMMENT '头像 id',
     `email` varchar(128) DEFAULT NULL COMMENT '邮箱地址',
     `born` date DEFAULT NULL COMMENT '出生日期',
     `status` tinyint(1) NOT NULL DEFAULT '0',
     `gender` tinyint(1) DEFAULT NULL COMMENT '性别',
-    `dept_id` bigint(20) DEFAULT NULL COMMENT '部门id',
+    `dept_id` bigint(20) DEFAULT NULL COMMENT '部门 id',
     `user_desc` varchar(128) DEFAULT NULL COMMENT '详细描述',
-    `parent_uid` bigint(20) DEFAULT NULL COMMENT '父账号id',
-    `street_id` bigint(20) DEFAULT NULL COMMENT '街道id',
-    `county_id` bigint(20) DEFAULT NULL COMMENT '国家id',
-    `city_id` bigint(20) DEFAULT NULL COMMENT '城市id',
-    `province_id` bigint(20) DEFAULT NULL COMMENT '省id',
+    `parent_uid` bigint(20) DEFAULT NULL COMMENT '父账号 id',
+    `street_id` bigint(20) DEFAULT NULL COMMENT '街道 id',
+    `county_id` bigint(20) DEFAULT NULL COMMENT '国家 id',
+    `city_id` bigint(20) DEFAULT NULL COMMENT '城市 id',
+    `province_id` bigint(20) DEFAULT NULL COMMENT '省 id',
     `login_time` datetime DEFAULT NULL COMMENT '最后登录时间',
     `lock_time` datetime DEFAULT NULL COMMENT '锁定账号时间',
     `wechat` varchar(128) DEFAULT NULL COMMENT '微信号',
@@ -789,10 +789,10 @@ CREATE TABLE `sys_user` (
 DROP TABLE IF EXISTS `sys_user_auths`;
 CREATE TABLE `sys_user_auths` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `user_id` bigint(20) NOT NULL COMMENT '用户ID',
+  `user_id` bigint(20) NOT NULL COMMENT '用户 ID',
   `identity_type` tinyint(1) NOT NULL COMMENT '登录类型，手机号、邮箱、用户名或第三方应用名称（微信 微博等）',
   `identifier` varchar(128) NOT NULL COMMENT '标识，手机号、邮箱、用户名或第三方应用的唯一标识',
-  `credential` varchar(512) DEFAULT NULL COMMENT '密码凭证，站内的保存密码，站外的不保存或保存token',
+  `credential` varchar(512) DEFAULT NULL COMMENT '密码凭证，站内的保存密码，站外的不保存或保存 token',
   `creator` varchar(128) NOT NULL COMMENT '创建人',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `operator` varchar(128) NOT NULL COMMENT '修改人',
@@ -819,7 +819,7 @@ CREATE TABLE `sys_user_role` (
   `operator` varchar(128) NOT NULL COMMENT '修改人',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `is_deleted` tinyint(1) DEFAULT NULL COMMENT '删除标记 0:正常;1:删除',
-  `tenant_code` varchar(16) NOT NULL COMMENT '租户code',
+  `tenant_code` varchar(16) NOT NULL COMMENT '租户 code',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `idx_user_id` (`user_id`),
   KEY `idx_role_id` (`role_id`)
@@ -843,9 +843,9 @@ CREATE TABLE `exam_course_section` (
    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
    `title` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '标题',
    `sort` int DEFAULT NULL COMMENT '序号',
-   `chapter_id` bigint DEFAULT NULL COMMENT '章ID',
+   `chapter_id` bigint DEFAULT NULL COMMENT '章 ID',
    `learn_hour` int DEFAULT NULL COMMENT '时长',
-   `video_id` bigint DEFAULT NULL COMMENT '视频ID',
+   `video_id` bigint DEFAULT NULL COMMENT '视频 ID',
    `creator` varchar(128) NOT NULL COMMENT '创建人',
    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
    `operator` varchar(128) DEFAULT NULL COMMENT '修改人',
@@ -862,7 +862,7 @@ CREATE TABLE `exam_course_chapter` (
    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
    `title` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '标题',
    `sort` int DEFAULT NULL COMMENT '序号',
-   `course_id` bigint DEFAULT NULL COMMENT '课程ID',
+   `course_id` bigint DEFAULT NULL COMMENT '课程 ID',
    `creator` varchar(128) NOT NULL COMMENT '创建人',
    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
    `operator` varchar(128) DEFAULT NULL COMMENT '修改人',
@@ -876,7 +876,7 @@ CREATE TABLE `exam_course_chapter` (
 CREATE TABLE `exam_course_evaluate` (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
     `evaluate_content` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '评价内容',
-    `user_id` bigint NOT NULL COMMENT '用户ID',
+    `user_id` bigint NOT NULL COMMENT '用户 ID',
     `evaluate_level` int(1) unsigned zerofill DEFAULT '0',
     `creator` varchar(128) NOT NULL COMMENT '创建人',
     `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -884,9 +884,9 @@ CREATE TABLE `exam_course_evaluate` (
     `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
     `tenant_code` varchar(16) NOT NULL COMMENT '租户编号',
-    `course_id` bigint NOT NULL COMMENT '课程ID',
+    `course_id` bigint NOT NULL COMMENT '课程 ID',
     PRIMARY KEY (`id`) USING BTREE,
-    KEY `idx_course_id` (`course_id`) COMMENT '课程ID'
+    KEY `idx_course_id` (`course_id`) COMMENT '课程 ID'
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='课程评价表';
 
 CREATE TABLE `exam_user_favorites` (
@@ -897,14 +897,14 @@ CREATE TABLE `exam_user_favorites` (
    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
    `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
    `tenant_code` varchar(16) NOT NULL COMMENT '租户编号',
-   `target_id` bigint(20) NOT NULL COMMENT '目标ID',
-   `user_id` bigint(20) NOT NULL COMMENT '用户ID',
-   `target_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '类型ID，0：考试，1：题目，2：课程',
+   `target_id` bigint(20) NOT NULL COMMENT '目标 ID',
+   `user_id` bigint(20) NOT NULL COMMENT '用户 ID',
+   `target_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '类型 ID，0：考试，1：题目，2：课程',
    PRIMARY KEY (`id`),
    UNIQUE KEY `idx_unique` (`user_id`,`target_id`,`target_type`),
-   KEY `idx_user_id` (`user_id`) USING BTREE COMMENT '用户ID索引',
-   KEY `idx_target_id` (`target_id`) USING BTREE COMMENT '目标ID索引',
-   KEY `idx_target_type` (`target_type`) USING BTREE COMMENT '目标ID类型索引'
+   KEY `idx_user_id` (`user_id`) USING BTREE COMMENT '用户 ID 索引',
+   KEY `idx_target_id` (`target_id`) USING BTREE COMMENT '目标 ID 索引',
+   KEY `idx_target_type` (`target_type`) USING BTREE COMMENT '目标 ID 类型索引'
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='用户收藏表';
 
 CREATE TABLE `exam_fav_start_count` (
@@ -915,20 +915,20 @@ CREATE TABLE `exam_fav_start_count` (
     `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
     `tenant_code` varchar(16) NOT NULL COMMENT '租户编号',
-    `target_id` bigint NOT NULL COMMENT '目标ID',
+    `target_id` bigint NOT NULL COMMENT '目标 ID',
     `start_count` bigint NOT NULL DEFAULT '0' COMMENT '开始数量',
-    `target_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '类型ID，0：考试，1：题目，2：课程',
+    `target_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '类型 ID，0：考试，1：题目，2：课程',
     `fav_count` bigint NOT NULL DEFAULT '0' COMMENT '收藏数量',
     PRIMARY KEY (`id`),
-    KEY `idx_target_id` (`target_id`) USING BTREE COMMENT '目标ID索引',
-    KEY `idx_target_type` (`target_type`) USING BTREE COMMENT '目标ID类型索引'
+    KEY `idx_target_id` (`target_id`) USING BTREE COMMENT '目标 ID 索引',
+    KEY `idx_target_type` (`target_type`) USING BTREE COMMENT '目标 ID 类型索引'
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='收藏、开始数量表';
 
 CREATE TABLE `exam_course_knowledge_point` (
    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
    `title` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '知识点标题',
    `sort` int NOT NULL COMMENT '序号',
-   `section_id` bigint NOT NULL COMMENT '节ID',
+   `section_id` bigint NOT NULL COMMENT '节 ID',
    `creator` varchar(128) NOT NULL COMMENT '创建人',
    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
    `operator` varchar(128) DEFAULT NULL COMMENT '修改人',
@@ -941,27 +941,27 @@ CREATE TABLE `exam_course_knowledge_point` (
 
 CREATE TABLE `exam_course_member` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `course_id` bigint DEFAULT NULL COMMENT '课程ID',
+  `course_id` bigint DEFAULT NULL COMMENT '课程 ID',
   `creator` varchar(128) NOT NULL COMMENT '创建人',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `operator` varchar(128) DEFAULT NULL COMMENT '修改人',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
   `tenant_code` varchar(16) NOT NULL COMMENT '租户编号',
-  `user_id` bigint NOT NULL COMMENT '用户ID',
+  `user_id` bigint NOT NULL COMMENT '用户 ID',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `idx_course_id` (`course_id`),
   KEY `idx_user_id` (`user_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='课程学员表';
 
-ALTER TABLE `operation_banner` ADD COLUMN `image_id` bigint(20) NULL COMMENT '图片ID';
+ALTER TABLE `operation_banner` ADD COLUMN `image_id` bigint(20) NULL COMMENT '图片 ID';
 
 ALTER TABLE `sys_tenant` ADD COLUMN `image_id` bigint NULL COMMENT '图片';
 
 ALTER TABLE `exam_course`
     ADD COLUMN `charge_type` tinyint(1) NULL COMMENT '收费类型：0：免费，1：收费',
     ADD COLUMN `charge_price` double(10,2) DEFAULT NULL COMMENT '收费价格',
-    ADD COLUMN `level` tinyint(1) NULL DEFAULT 3 COMMENT '难度等级，1~5，默认3';
+    ADD COLUMN `level` tinyint(1) NULL DEFAULT 3 COMMENT '难度等级，1~5，默认 3';
 
 ALTER TABLE `exam_course`
     MODIFY COLUMN `course_description` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '课程描述';
@@ -975,7 +975,7 @@ ADD COLUMN `course_status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '课程状态�
 
 ALTER TABLE `exam_course_knowledge_point`
     ADD COLUMN `learn_hour` int NULL DEFAULT NULL COMMENT '学习时长',
-    ADD COLUMN `video_id` bigint NULL DEFAULT NULL COMMENT '视频ID',
+    ADD COLUMN `video_id` bigint NULL DEFAULT NULL COMMENT '视频 ID',
     ADD COLUMN `video_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '视频名称',
     ADD COLUMN `content_type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '节内容类型，0：视频，1：图文' AFTER `video_name`;
 
@@ -1093,7 +1093,7 @@ INSERT INTO `sys_menu` VALUES (56, '语音合成', 'speech', '/speech', -1, 'ant
 INSERT INTO `sys_menu` VALUES (57, '语音管理', 'speech:synthesis', '/speech/synthesis', 56, NULL, '1', '0', 'admin', '2022-06-16 22:28:53', 'admin', '2022-11-13 11:48:52', 0, 'speech/synthesis/index', 0, 0, NULL, 'gitee', 0, '', '');
 
 INSERT INTO `sys_menu` VALUES (58, '运营管理', 'operation', '/operation', -1, 'ant-design:bold-outlined', '4', '0', 'admin', '2022-11-12 12:02:00', 'admin', '2022-11-13 11:48:52', 0, 'LAYOUT', 0, 0, NULL, 'gitee', 0, '/operation', '');
-INSERT INTO `sys_menu` VALUES (59, 'Banner管理', 'operation:banner', '/operation/banner', 58, NULL, '1', '0', 'admin', '2022-11-12 12:00:10', 'admin', '2022-11-13 11:48:52', 0, 'operation/banner/index', 0, 0, NULL, 'gitee', 0, '', '');
+INSERT INTO `sys_menu` VALUES (59, 'Banner 管理', 'operation:banner', '/operation/banner', 58, NULL, '1', '0', 'admin', '2022-11-12 12:00:10', 'admin', '2022-11-13 11:48:52', 0, 'operation/banner/index', 0, 0, NULL, 'gitee', 0, '', '');
 
 INSERT INTO `sys_menu` VALUES (60, '个人中心', 'personal', '/personal', -1, 'ant-design:user-outlined', '99', '0', 'admin', '2022-04-15 22:35:22', 'admin', '2022-11-13 11:48:52', 0, 'LAYOUT', 0, NULL, '个人管理', 'gitee', 0, '/personal/details', '');
 INSERT INTO `sys_menu` VALUES (61, '个人资料', 'personal:message', '/personal/details', 60, '', '29', '0', 'admin', '2019-04-26 15:00:11', 'admin', '2022-11-13 11:48:52', 0, 'personal/details/index', 0, NULL, '个人资料', 'gitee', 0, '', '');
@@ -1271,8 +1271,8 @@ INSERT INTO `sys_attachment_group` VALUES (9, '考务图片', 'exam/image', 0000
 -- ----------------------------
 -- 小程序首页运营位
 -- ----------------------------
-INSERT INTO `operation_banner` VALUES (1, 'admin', '2022-11-12 12:42:26', 'admin', '2022-11-12 12:52:00', 0, 'gitee', '运营位Banner1', 0, 'https://cdn.yunmianshi.com/default_image/10.jpeg?e=1668228237&token=8-9rcJPtTrLOJP4fLNWXy_qwiLVc3Exu52iuGlxt:ZW1CihRYlSwQRBlybYWbX8lrz48=', 'https://cdn.yunmianshi.com/default_image/10.jpeg?e=1668228237&token=8-9rcJPtTrLOJP4fLNWXy_qwiLVc3Exu52iuGlxt:ZW1CihRYlSwQRBlybYWbX8lrz48=', '2232323', NULL);
-INSERT INTO `operation_banner` VALUES (2, 'admin', '2022-11-12 12:43:24', 'admin', '2022-11-12 12:51:56', 0, 'gitee', '运营位Banner2', 0, 'https://cdn.yunmianshi.com/default_image/13.jpeg?e=1668228494&token=8-9rcJPtTrLOJP4fLNWXy_qwiLVc3Exu52iuGlxt:REKRNJMtCekDjmrMkSvbLOuWAvM=', 'https://cdn.yunmianshi.com/default_image/13.jpeg?e=1668228494&token=8-9rcJPtTrLOJP4fLNWXy_qwiLVc3Exu52iuGlxt:REKRNJMtCekDjmrMkSvbLOuWAvM=', '3', NULL);
+INSERT INTO `operation_banner` VALUES (1, 'admin', '2022-11-12 12:42:26', 'admin', '2022-11-12 12:52:00', 0, 'gitee', '运营位 Banner1', 0, 'https://cdn.yunmianshi.com/default_image/10.jpeg?e=1668228237&token=8-9rcJPtTrLOJP4fLNWXy_qwiLVc3Exu52iuGlxt:ZW1CihRYlSwQRBlybYWbX8lrz48=', 'https://cdn.yunmianshi.com/default_image/10.jpeg?e=1668228237&token=8-9rcJPtTrLOJP4fLNWXy_qwiLVc3Exu52iuGlxt:ZW1CihRYlSwQRBlybYWbX8lrz48=', '2232323', NULL);
+INSERT INTO `operation_banner` VALUES (2, 'admin', '2022-11-12 12:43:24', 'admin', '2022-11-12 12:51:56', 0, 'gitee', '运营位 Banner2', 0, 'https://cdn.yunmianshi.com/default_image/13.jpeg?e=1668228494&token=8-9rcJPtTrLOJP4fLNWXy_qwiLVc3Exu52iuGlxt:REKRNJMtCekDjmrMkSvbLOuWAvM=', 'https://cdn.yunmianshi.com/default_image/13.jpeg?e=1668228494&token=8-9rcJPtTrLOJP4fLNWXy_qwiLVc3Exu52iuGlxt:REKRNJMtCekDjmrMkSvbLOuWAvM=', '3', NULL);
 
 -- ----------------------------
 -- 考试
@@ -1292,7 +1292,7 @@ INSERT INTO `exam_subject_choices` VALUES (1, 0, '<p>《山行》是描绘了___
 INSERT INTO `exam_subject_choices` VALUES (2, 0, '<p>&ldquo;劝君更尽一杯酒，西出阳关无故人.&rdquo;出自___的名句</p>', 0, 'B', 5, NULL, 1, 'admin', '2022-11-13 14:42:33', 'admin', '2022-11-13 14:42:33', 0, 'gitee', 0000000002, NULL);
 INSERT INTO `exam_subject_choices` VALUES (3, 0, '<p>把&ldquo;春风&rdquo;比作&ldquo;剪刀&rdquo;的是哪首诗？</p>', 0, 'C', 5, NULL, 1, 'admin', '2022-11-13 14:43:13', 'admin', '2022-11-13 14:43:13', 0, 'gitee', 0000000003, NULL);
 INSERT INTO `exam_subject_choices` VALUES (4, 0, '<p>&ldquo;横看成岭侧成峰，远近高低各不同.&rdquo;诗中写的名胜是</p>', 0, 'D', 5, NULL, 1, 'admin', '2022-11-13 14:43:46', 'admin', '2022-11-13 14:43:46', 0, 'gitee', 0000000004, NULL);
-INSERT INTO `exam_subject_choices` VALUES (5, 0, '<p>&ldquo;解落三秋叶，能开二月花.过江千尺浪，入竹万竿斜.&rdquo;这首诗写的是</p>', 0, 'B', 5, NULL, 1, 'admin', '2022-11-13 14:44:29', 'admin', '2022-11-13 14:44:29', 0, 'gitee', 0000000005, NULL);
+INSERT INTO `exam_subject_choices` VALUES (5, 0, '<p>&ldquo;解落三秋叶，能开二月花。过江千尺浪，入竹万竿斜.&rdquo;这首诗写的是</p>', 0, 'B', 5, NULL, 1, 'admin', '2022-11-13 14:44:29', 'admin', '2022-11-13 14:44:29', 0, 'gitee', 0000000005, NULL);
 
 INSERT INTO `exam_subjects` VALUES (1, 'admin', '2022-04-14 22:25:06', 'admin', '2022-04-14 22:25:06', 0, 'gitee', 0, NULL, 1, 1);
 INSERT INTO `exam_subjects` VALUES (2, 'admin', '2022-04-14 22:25:06', 'admin', '2022-04-14 22:25:06', 0, 'gitee', 0, NULL, 2, 2);

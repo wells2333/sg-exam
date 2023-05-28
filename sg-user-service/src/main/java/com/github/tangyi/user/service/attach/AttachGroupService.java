@@ -1,10 +1,10 @@
 package com.github.tangyi.user.service.attach;
 
+import com.github.tangyi.api.user.constant.AttachmentConstant;
 import com.github.tangyi.api.user.model.AttachGroup;
 import com.github.tangyi.api.user.service.IAttachGroupService;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.constants.UserCacheName;
-import com.github.tangyi.user.constants.AttachConstant;
 import com.github.tangyi.user.mapper.attach.AttachGroupMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ public class AttachGroupService extends CrudService<AttachGroupMapper, AttachGro
 
 	public void validateUrlExpire(AttachGroup group) {
 		if (group.getUrlExpire() <= 0) {
-			group.setUrlExpire(AttachConstant.DEFAULT_EXPIRE);
+			group.setUrlExpire(AttachmentConstant.DEFAULT_EXPIRE_SECOND);
 		}
 	}
 

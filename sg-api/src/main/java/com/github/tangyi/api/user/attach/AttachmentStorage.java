@@ -2,33 +2,33 @@ package com.github.tangyi.api.user.attach;
 
 import com.github.tangyi.api.user.model.AttachGroup;
 import com.github.tangyi.api.user.model.Attachment;
+import com.github.tangyi.common.oss.exceptions.OssException;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public interface AttachmentStorage {
 
-	Attachment prepareAttachment(String groupCode, String fileName, String originalFilename, byte[] bytes, String user,
-			String tenantCode);
+    Attachment prepare(String groupCode, String fileName, String originalFilename, byte[] bytes, String user,
+                       String tenantCode);
 
-	Attachment upload(MultipartFileUploadContext context) throws IOException;
+    Attachment upload(MultipartFileUploadContext context) throws IOException;
 
-	Attachment upload(FileUploadContext context) throws IOException, ExecutionException, InterruptedException;
+    Attachment upload(FileUploadContext context) throws OssException;
 
-	Attachment upload(BytesUploadContext context);
+    Attachment upload(BytesUploadContext context);
 
-	boolean delete(Attachment attachment) throws IOException;
+    boolean delete(Attachment attachment) throws IOException;
 
-	boolean deleteAll(List<Attachment> attachments) throws IOException;
+    boolean deleteAll(List<Attachment> attachments) throws IOException;
 
-	String getDownloadUrl(AttachGroup group, String attachName);
+    String getDownloadUrl(AttachGroup group, String attachName);
 
-	String getDownloadUrl(String fileName, long expire);
+    String getDownloadUrl(String fileName, long expire);
 
-	String getPreviewUrl(Long id);
+    String getPreviewUrl(Long id);
 
-	Attachment getPreviewAttachment(Long id);
+    Attachment getPreviewAttachment(Long id);
 
-	Long randomAttachmentId(String groupCode);
+    Long defaultImage(String groupCode);
 }

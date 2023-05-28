@@ -30,7 +30,7 @@ export const columns: BasicColumn[] = [
     customRender: ({record}) => {
       const storageType = record.storageType;
       let color = 'green';
-      let text = '本地磁盘';
+      let text = 'Minio';
       if (storageType !== null && storageType === 1) {
         color = 'blue';
         text = '七牛云';
@@ -39,7 +39,7 @@ export const columns: BasicColumn[] = [
     },
   },
   {
-    title: 'url过期时间',
+    title: 'url 过期时间',
     dataIndex: 'urlExpire',
     width: 120,
     align: 'left',
@@ -99,13 +99,13 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       options: [
         { label: '七牛云', value: 1 },
-        { label: '本地磁盘', value: 2 },
+        { label: 'Minio', value: 2 },
       ],
     },
   },
   {
     field: 'urlExpire',
-    label: 'url过期时间',
+    label: 'url 过期时间',
     component: 'Input',
     required: true,
   },

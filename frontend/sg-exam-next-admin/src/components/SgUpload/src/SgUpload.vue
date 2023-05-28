@@ -79,7 +79,7 @@ export default defineComponent({
     },
     accept: {
       type: String,
-      default: '.jpg,.jpeg,.gif,.png,.webp,.avi,.rmvb,.mov,.wmv,.asf,.dat,.mp4'
+      default: '.jpg,.jpeg,.gif,.png,.webp,.avi,.rmvb,.mov,.wmv,.asf,.dat,.mp4,.pdf,.xml,.doc,.dot'
     },
     showUploadList: {
       type: Boolean,
@@ -236,7 +236,7 @@ export default defineComponent({
           }
           cur += offset
         }
-        // 中间的，取前中后各2各字节
+        // 中间的，取前中后各 2 各字节
         reader.readAsArrayBuffer(new Blob(chunks))
         reader.onload = e => {
           spark.append(e?.target?.result as ArrayBuffer)
@@ -266,7 +266,7 @@ export default defineComponent({
     async function uploadChunks(chunks: Array<Chunk>, hash: any) {
       let index = 0
       const taskPool: Array<Promise<any>> = []
-      // 设置浏览器运行最大并发数  目前6个为当前的主流
+      // 设置浏览器运行最大并发数  目前 6 个为当前的主流
       const max = 6
       let allProgress = index
       while (index < chunks.length) {

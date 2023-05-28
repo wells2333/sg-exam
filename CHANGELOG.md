@@ -3,10 +3,15 @@ sg-exam Releases
 
 ## Version 0.0.8 (2023-05-20)
 
+新功能：
+
+- 附件存储支持 Minio
+
 改进：
 
 - 升级基础依赖为 jdk 17
 - 修复小程序编译报 "缺少全局配置 pages" 异常，解决办法见：https://github.com/NervJS/taro/issues/13544
+- 修复文件分片上传合并后文件可能会损坏 bug
 
 ## Version 0.0.7 (2023-05-03)
 
@@ -98,7 +103,7 @@ sg-exam Releases
 
 改进：
 
-- 代码模块拆分成sg-api、sg-common、sg-exam-service、sg-generator、sg-job、sg-user-service
+- 代码模块拆分成 sg-api、sg-common、sg-exam-service、sg-generator、sg-job、sg-user-service
 - 增加升级版本号脚本，用法：sh ./setup.sh v 5.0.6
 - 删除无效注释
 
@@ -113,13 +118,13 @@ sg-exam Releases
 
 新功能：
 
-- web前端支持展示知识点
+- web 前端支持展示知识点
 - 小程序支持课程
 - 小程序支持富文本展示
 
 改进：
 
-- 修复web前端考试、课程分页bug
+- 修复 web 前端考试、课程分页 bug
 
 ## Version v5.0.3 (2022-12-3)
 
@@ -127,7 +132,7 @@ sg-exam Releases
 
 - 章节支持图文类型内容
 - 章节支持设置知识点
-- 前台课程、考试分页bugfix
+- 前台课程、考试分页 bugfix
 - 课程支持设置排序号、上下架状态
 
 ## Version v5.0.2 (2022-12-1)
@@ -136,11 +141,11 @@ sg-exam Releases
 
 - 考试支持从题库选择题目、随机组卷
 - 支持下载题目的模板文件
-- 题库支持批量导入题目，支持JSON、EXCEL文件导入
+- 题库支持批量导入题目，支持 JSON、EXCEL 文件导入
 
 改进：
 
-- Redis配置优化，支持账号密码配置
+- Redis 配置优化，支持账号密码配置
 
 ## Version v5.0.1 (2022-11-26)
 
@@ -154,15 +159,15 @@ sg-exam Releases
 改进：
 
 - 课程、考试图片上传组件优化
-- 修复单位管理、操作日志等模块若干bug
-- 前端api模块代码优化
-- 更换admin主题
+- 修复单位管理、操作日志等模块若干 bug
+- 前端 api 模块代码优化
+- 更换 admin 主题
 
 ## Version v5.0.0 (2022-11-14)
 
 新功能：
 
-- admin后台支持视频题目、视频上传
+- admin 后台支持视频题目、视频上传
 - 微信小程序支持视频播放
 - 所有题型支持自动判分，而且默认是系统自动判分
 
@@ -195,47 +200,47 @@ sg-exam Releases
 
 改进：
 
-- 合并微服务，合并后只有一个common模块和一个user-service服务
-- 登录、用户权限、附件上传、考务管理均在user-service
-- 数据库只有user-service
+- 合并微服务，合并后只有一个 common 模块和一个 user-service 服务
+- 登录、用户权限、附件上传、考务管理均在 user-service
+- 数据库只有 user-service
 
 ### Version v3.0.0 (2019-6-9)
 
-新功能:
+新功能：
 
-- 支持多租户，增加租户中心->单位管理，表结构增加tenant_code字段
+- 支持多租户，增加租户中心->单位管理，表结构增加 tenant_code 字段
 - 增加登录日志
-- 增加controller层的参数校验逻辑
+- 增加 controller 层的参数校验逻辑
 - 用户管理增加重置密码功能
 
-改进:
+改进：
 
 - 调整后台管理的按钮样式
-- 调整认证逻辑、token加入租户标识
+- 调整认证逻辑、token 加入租户标识
 - 前台、后台的网关地址可通过环境变量配置
 - 方法鉴权优化
 - 调整系统架构图
 - 优化终端管理的授权范围和授权类型
-- 统一前后台的eslint，解决启动报的语法错误问题
+- 统一前后台的 eslint，解决启动报的语法错误问题
 
-Bug修复:
+Bug 修复：
 
-- 修复查看错题时错题不标红的bug
-- 修复swagger文档显示不了的问题
+- 修复查看错题时错题不标红的 bug
+- 修复 swagger 文档显示不了的问题
 - 修复开始答题报错问题
-- 修复注册失败的bug
+- 修复注册失败的 bug
 
 ### Version v3.0.0 (2019-6-19)
 
 新功能：
 
-- 重构exam-service
+- 重构 exam-service
 - 支持简答题和批改功能
 - 一些优化
 
 ### Version v3.0.0 (2019-6-23)
 
-新功能:
+新功能：
 
 - 增加短信验证码登录
 - 增加消息中心服务
@@ -249,7 +254,7 @@ Bug修复:
 
 改进：
 
-- 优化swagger ui配置，增加租户标识请求头
+- 优化 swagger ui 配置，增加租户标识请求头
 - 完善手机号登录
 
 ### Version v3.0.0 (2019-7-4)
@@ -257,11 +262,11 @@ Bug修复:
 改进：
 
 - 重构账号模块，将账号表拆分成用户基本信息表，用户授权表
-- 基本字段create_date、modify_date改为timestamp类型
+- 基本字段 create_date、modify_date 改为 timestamp 类型
 
 ### Version v3.0.0 (2019-7-6)
 
-新功能:
+新功能：
 
 - 支持微信小程序登录
 
@@ -276,7 +281,7 @@ Bug修复:
 改进：
 
 - 优化优化网关的动态路由
-- 学生增加城市id、县id
+- 学生增加城市 id、县 id
 
 ### Version v3.1.0 (2019-7-18)
 
@@ -284,28 +289,28 @@ Bug修复:
 
 - 调整项目结构
 - 调整版本号
-- 去掉热部署部分内容，修复读取缓存报ClassCastException问题
-- 完善登录日志，增加登录IP、耗时等信息
+- 去掉热部署部分内容，修复读取缓存报 ClassCastException 问题
+- 完善登录日志，增加登录 IP、耗时等信息
 
 ### Version v3.2.0-SNAPSHOT (2019-8-18)
 
 改进：
 
-- 升级spring boot、spring cloud版本
+- 升级 spring boot、spring cloud 版本
 - 配置中心增加安全控制
-- 集成elk
+- 集成 elk
 
 ### Version v3.4.0 (2019-9-14)
 
 改进：
 
-- 主键类型改为bigint
+- 主键类型改为 bigint
 - 去掉题目序号
 - 完善多租户
 - 前端优化，题目组件化
 - 完善多选题
 - 调整各服务的端口号
-- 升级spring boot 2.1.8、spring cloud Greenwich.SR3
+- 升级 spring boot 2.1.8、spring cloud Greenwich.SR3
 - 优化统一异常处理
 - 整合前端工程
 
@@ -313,22 +318,22 @@ Bug修复:
 
 改进：
 
-- 修复若干bug
+- 修复若干 bug
 
 ### Version v3.5.0 (2019-12-08)
 
 改进：
 
-- 升级spring boot、spring cloud版本
+- 升级 spring boot、spring cloud 版本
 
-新功能:
+新功能：
 
 - 前台重构
 - 集成七牛云存储
 - 增加成绩排名
 - 增加多选题、判断题
-- 导入导出优化，使用阿里easyexcel库
-- 其它优化，如：引入loadingCache，业务错误码规范等
+- 导入导出优化，使用阿里 easyexcel 库
+- 其它优化，如：引入 loadingCache，业务错误码规范等
 
 ### Version v3.5.0 (2020-01-19)
 
@@ -341,13 +346,13 @@ Bug修复:
 
 新功能：
 
-- 后台首页dashboard，支持监控考试记录数
+- 后台首页 dashboard，支持监控考试记录数
 
 改进：
 
 - 优化题目管理
 - 优化后台样式、路由管理等
-- 升级spring boot版本为2.2.2.RELEASE、spring cloud版本为Hoxton.SR1
+- 升级 spring boot 版本为 2.2.2.RELEASE、spring cloud 版本为 Hoxton.SR1
 
 ### Version v3.6.0 (2020-02-22)
 
@@ -371,15 +376,15 @@ Bug修复:
 
 改进：
 
-- 升级spring boot版本为2.2.5.RELEASE、spring cloud版本为Hoxton.SR3
-- 网关集成ResourceServer
-- 修复若干bug
+- 升级 spring boot 版本为 2.2.5.RELEASE、spring cloud 版本为 Hoxton.SR3
+- 网关集成 ResourceServer
+- 修复若干 bug
 
 ### Version v3.7.0 (2020-03-15)
 
 新功能：
 
-- 支持二维码v2，支持计算每道题的答题时间
+- 支持二维码 v2，支持计算每道题的答题时间
 
 改进：
 
@@ -402,10 +407,10 @@ Bug修复:
 
 新功能：
 
-- 重构，基于Istio、k8s部署
+- 重构，基于 Istio、k8s 部署
 
 ### Version v4.1.0 (2020-11-07)
 
 - 改名：sg-exam
-- Istio+k8s转正
-- 修复若干bug
+- Istio+k8s 转正
+- 修复若干 bug
