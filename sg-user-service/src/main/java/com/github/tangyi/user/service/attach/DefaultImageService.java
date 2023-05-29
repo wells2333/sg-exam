@@ -1,17 +1,15 @@
 package com.github.tangyi.user.service.attach;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
+import cn.hutool.core.io.resource.ResourceUtil;
 import com.github.tangyi.api.user.service.IDefaultImageService;
+import com.github.tangyi.common.utils.EnvUtils;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
+import org.springframework.util.FileCopyUtils;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -19,28 +17,31 @@ import java.util.concurrent.ThreadLocalRandom;
 @Service
 public class DefaultImageService implements IDefaultImageService {
 
-    private final List<String> images = Lists.newArrayList();
+    public static final String DEFAULT_IMAGE_SUFFIX = EnvUtils.getValue("DEFAULT_IMAGE_SUFFIX", ".jpeg");
+
+    private final List<byte[]> images = Lists.newArrayList();
 
     public DefaultImageService() {
         try {
-            String str = FileUtils.readFileToString(ResourceUtils.getFile("classpath:default_image.json"), StandardCharsets.UTF_8);
-            JSONArray array = JSON.parseArray(str);
-            if (array != null && array.size() > 0) {
-                for (Object obj : array) {
-                    images.add(obj.toString());
+            for (int i = 1; i <= 10; i++) {
+                try (InputStream stream = ResourceUtil.getStream("images/" + i + DEFAULT_IMAGE_SUFFIX)) {
+                    byte[] bytes = FileCopyUtils.copyToByteArray(stream);
+                    if (bytes.length > 0) {
+                        images.add(bytes);
+                    }
                 }
             }
             log.info("Init default image finished, size: {}", images.size());
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("Failed to init default image", e);
         }
     }
 
     @Override
-    public String randomImage() {
+    public byte[] randomImage() {
         if (CollectionUtils.isNotEmpty(images)) {
             return images.get(ThreadLocalRandom.current().nextInt(images.size()));
         }
-        return "";
+        return null;
     }
 }

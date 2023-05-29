@@ -1,5 +1,6 @@
 package com.github.tangyi.user.service.attach;
 
+import cn.hutool.core.io.resource.ResourceUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.tangyi.api.user.attach.BytesUploadContext;
@@ -13,6 +14,7 @@ import com.github.tangyi.common.utils.StopWatchUtil;
 import com.github.tangyi.user.thread.ExecutorHolder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import io.micrometer.core.instrument.util.IOUtils;
 import io.minio.*;
 import io.minio.http.Method;
 import lombok.Data;
@@ -21,13 +23,11 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
@@ -63,7 +63,7 @@ public class MinioAttachmentStorage extends AbstractAttachmentStorage {
 
     private void initContentTypes() {
         try {
-            String str = FileUtils.readFileToString(ResourceUtils.getFile("classpath:content_type.json"),
+            String str = IOUtils.toString(ResourceUtil.getStream("content_type.json"),
                     StandardCharsets.UTF_8);
             JSONObject jsonObject = JSON.parseObject(str);
             if (jsonObject != null) {
@@ -72,7 +72,7 @@ public class MinioAttachmentStorage extends AbstractAttachmentStorage {
                 }
             }
             log.info("Init content type finished, size: {}", contentTypeMap.size());
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("Failed to init content types", e);
         }
     }

@@ -23,7 +23,6 @@ import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -159,7 +158,7 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
                 if (course.getImageId() != null && course.getImageId() != 0L) {
                     imageUrl = attachmentManager.getPreviewUrl(course.getImageId());
                 }
-                course.setImageUrl(StringUtils.getIfEmpty(imageUrl, defaultImageService::randomImage));
+                course.setImageUrl(imageUrl);
                 // 报名人数
                 member.setCourseId(course.getId());
                 course.setMemberCount(memberService.findMemberCountByCourseId(member));

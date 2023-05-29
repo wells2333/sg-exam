@@ -1,7 +1,7 @@
 package com.github.tangyi.user.service.attach;
 
 import com.github.tangyi.api.user.attach.AttachmentStorage;
-import com.github.tangyi.api.user.constant.AttachmentConstant;
+import com.github.tangyi.api.user.attach.BytesUploadContext;
 import com.github.tangyi.api.user.model.AttachGroup;
 import com.github.tangyi.api.user.model.Attachment;
 import com.github.tangyi.common.base.SgPreconditions;
@@ -11,6 +11,7 @@ import com.github.tangyi.common.oss.exceptions.OssException;
 import com.github.tangyi.common.utils.EnvUtils;
 import com.github.tangyi.common.utils.FileUtil;
 import com.github.tangyi.common.utils.HashUtil;
+import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.constants.UserCacheName;
 import com.github.tangyi.user.thread.ExecutorHolder;
 import com.google.common.collect.Lists;
@@ -230,8 +231,16 @@ public abstract class AbstractAttachmentStorage implements AttachmentStorage {
     @Override
     @Transactional
     public Long defaultImage(String groupCode) {
-        String fileName = defaultImageService.randomImage();
-        String url = getDownloadUrl(fileName, AttachmentConstant.DEFAULT_EXPIRE_SECOND);
+        BytesUploadContext context = new BytesUploadContext();
+        context.setGroup(groupService.findByGroupCode(groupCode));
+        // ${nanoTime}.jpeg
+        context.setFileName(System.nanoTime() + DefaultImageService.DEFAULT_IMAGE_SUFFIX);
+        context.setBytes(defaultImageService.randomImage());
+        context.setOriginalFilename(context.getFileName());
+        context.setUser(SysUtil.getUser());
+        context.setTenantCode(SysUtil.getTenantCode());
+        Attachment uploadRes = this.upload(context);
+        String url = uploadRes.getUrl();
         Attachment attachment = new Attachment();
         attachment.setCommonValue();
         attachment.setUrl(url);

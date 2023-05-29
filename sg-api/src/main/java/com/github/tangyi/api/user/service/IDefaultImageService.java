@@ -2,5 +2,5 @@ package com.github.tangyi.api.user.service;
 
 public interface IDefaultImageService {
 
-    String randomImage();
+    byte[] randomImage();
 }
