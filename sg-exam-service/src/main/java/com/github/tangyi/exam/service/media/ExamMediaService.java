@@ -18,6 +18,10 @@ public class ExamMediaService {
 
 	private final AttachmentManager attachmentManager;
 
+	public Attachment uploadSpeech(MultipartFile file) {
+		return upload(file, AttachTypeEnum.EXAM_SPEECH);
+	}
+
 	public Attachment uploadVideo(MultipartFile file) {
 		return upload(file, AttachTypeEnum.EXAM_VIDEO);
 	}

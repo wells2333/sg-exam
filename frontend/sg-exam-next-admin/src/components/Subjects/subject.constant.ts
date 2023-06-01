@@ -1,6 +1,8 @@
 export const editorHeight = 120;
 
-export const videoTypes = ['mp4'];
+export const speechTypes = ['.mp3'];
+
+export const videoTypes = ['.mp4'];
 
 export const tinymcePlugins = [
   'image imagetools advlist anchor autolink autosave code codesample  directionality  fullscreen hr insertdatetime link lists media nonbreaking noneditable pagebreak paste preview save searchreplace tabfocus  template  textpattern visualblocks visualchars',
@@ -39,9 +41,7 @@ export const subjectType: any = {
   SubjectChoices: 0,
   SubjectShortAnswer: 1,
   SubjectJudgement: 2,
-  SubjectMultiChoices: 3,
-  SubjectSpeech: 4,
-  SubjectVideo: 5
+  SubjectMultiChoices: 3
 }
 
 export const subjectTypeList: TabItem[] = [
@@ -68,18 +68,6 @@ export const subjectTypeList: TabItem[] = [
     name: '多选题',
     component: 'SubjectChoices',
     disabled: false
-  },
-  {
-    key: subjectType.SubjectSpeech,
-    name: '语音题',
-    component: 'SubjectSpeech',
-    disabled: false
-  },
-  {
-    key: subjectType.SubjectVideo,
-    name: '视频题',
-    component: 'SubjectVideo',
-    disabled: false
   }
 ];
 
@@ -87,16 +75,12 @@ export const COLOR = {
   ZERO: '#87d068',
   ONE: '#2db7f5',
   TWO: '#108ee9',
-  THREE: '#f50',
-  FOUR: '#531dab',
-  FIVE: '#c41d7f'
+  THREE: '#f50'
 }
 
 export const subjectColor:any = {
   '0': COLOR.ZERO,
   '1': COLOR.ONE,
   '2': COLOR.TWO,
-  '3': COLOR.THREE,
-  '4': COLOR.FOUR,
-  '5': COLOR.FIVE
+  '3': COLOR.THREE
 }

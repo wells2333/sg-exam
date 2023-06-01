@@ -9,7 +9,10 @@
           }}分)&nbsp;</span>
         <span class="subject-title-content" v-html="subjectInfo.subjectName"/>
       </div>
-      <div class="subject-video-info" v-if="subjectInfo.subjectVideoId && subjectInfo.subjectVideoName">
+      <div class="subject-speech-info" v-if="subjectInfo.speechId && subjectInfo.speechUrl">
+        <sg-audio ref="sgAudio" :src="subjectInfo.speechUrl"></sg-audio>
+      </div>
+      <div class="subject-video-info" v-if="subjectInfo.subjectVideoId">
         <sg-video ref="sgVideo"></sg-video>
       </div>
       <ul class="subject-options" v-for="option in options" :key="option.id">
@@ -27,12 +30,14 @@
 </template>
 
 <script>
+import SgAudio from '@/components/SgAudio'
 import SgVideo from '@/components/SgVideo'
-import {setVideoSrc, pauseVideo} from '@/utils/busi'
+import {setVideoSrc, pauseVideo, pauseAudio} from '@/utils/busi'
 
 export default {
   name: 'Choices',
   components: {
+    SgAudio,
     SgVideo
   },
   data() {
@@ -78,6 +83,7 @@ export default {
     },
     beforeSave() {
       pauseVideo(this.$refs)
+      pauseAudio(this.$refs)
     }
   }
 }

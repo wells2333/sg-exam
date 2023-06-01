@@ -64,8 +64,4 @@ public class BaseSubject<T> extends BaseEntity<T> {
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "subject_video_id")
 	private Long subjectVideoId;
-
-	@Column(name = "subject_video_name")
-	private String subjectVideoName;
-
 }

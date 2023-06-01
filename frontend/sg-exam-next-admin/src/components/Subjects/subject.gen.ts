@@ -1,11 +1,11 @@
 import {FormSchema} from "/@/components/Form";
 import {h, unref} from "vue";
 import {Tinymce} from "/@/components/Tinymce";
-import {uploadVideo} from "/@/api/exam/examMedia";
+import {uploadVideo, uploadSpeech} from "/@/api/exam/examMedia";
 import {
   addOptionBtnSlot,
   editorHeight,
-  optionPrefix,
+  optionPrefix, speechTypes,
   tinymcePlugins,
   tinymceToolbar,
   videoTypes
@@ -51,6 +51,7 @@ export function generateChoicesSchemas(subjectData: object, defaultOptions: obje
     }
   }
   schemas.push(...gentSubjectNameSchemas());
+  schemas.push(...genUploadSpeechSchemas());
   schemas.push(...genSubjectUploadVideoSchemas());
   schemas.push(...genBasicSchemas());
   schemas.push(...genOptionDividerSchemas());
@@ -232,6 +233,7 @@ export function generateTextAnswer() {
 export function genShortAnswerSchemas() {
   const schemas: any[] = [];
   schemas.push(...gentSubjectNameSchemas());
+  schemas.push(...genUploadSpeechSchemas());
   schemas.push(...genSubjectUploadVideoSchemas());
   schemas.push(...genBasicSchemas());
   schemas.push(...judgeTypeSchemas());
@@ -244,34 +246,11 @@ export function genShortAnswerSchemas() {
 export function genJudgementSchemas() {
   const schemas: any[] = [];
   schemas.push(...gentSubjectNameSchemas());
+  schemas.push(...genUploadSpeechSchemas());
   schemas.push(...genSubjectUploadVideoSchemas());
   schemas.push(...genBasicSchemas());
   schemas.push(...judgeTypeSchemas());
   schemas.push(...generateJudgementAnswer());
-  schemas.push(...genAnswerSchemas());
-  return schemas;
-}
-
-// 语音题
-export function genSpeechSchemas() {
-  const schemas: any[] = [];
-  schemas.push(...genSpeechSubjectNameSchemas());
-  schemas.push(...genSubjectUploadVideoSchemas());
-  schemas.push(...genBasicSchemas());
-  schemas.push(...judgeTypeSchemas());
-  schemas.push(...generateTextAnswer());
-  schemas.push(...genAnswerSchemas());
-  return schemas;
-}
-
-// 视频题
-export function genVideoSchemas() {
-  const schemas: any[] = [];
-  schemas.push(...gentSubjectNameSchemas());
-  schemas.push(...genUploadVideoSchemas());
-  schemas.push(...genBasicSchemas());
-  schemas.push(...judgeTypeSchemas());
-  schemas.push(...generateTextAnswer());
   schemas.push(...genAnswerSchemas());
   return schemas;
 }
@@ -345,7 +324,35 @@ export function generateJudgementAnswer(component: string = 'RadioButtonGroup') 
   }]
 }
 
-// 视频上传
+// 上传语音
+export function genUploadSpeechSchemas() {
+  return [
+    {
+      label: '题目语音',
+      field: 'speechId',
+      component: 'Input',
+      required: false,
+      render: ({model, field}) => {
+        return h(SgUpload, {
+          value: model[field],
+          api: uploadSpeech,
+          accept: speechTypes,
+          type: 'video',
+          handleDone: (value) => {
+            if (value && unref(value)) {
+              model[field] = unref(value).id;
+            }
+          },
+        });
+      },
+      colProps: {
+        span: 12
+      }
+    }
+  ]
+}
+
+// 上传视频
 export function genUploadVideoSchemas() {
   return [
     {
@@ -362,19 +369,10 @@ export function genUploadVideoSchemas() {
           handleDone: (value) => {
             if (value && unref(value)) {
               model[field] = unref(value).id;
-              model['videoName'] = unref(value).name;
             }
           },
         });
       },
-      colProps: {
-        span: 12
-      }
-    },
-    {
-      field: 'videoName',
-      label: '视频名称',
-      component: 'Input',
       colProps: {
         span: 12
       }
@@ -398,19 +396,10 @@ export function genSubjectUploadVideoSchemas() {
           handleDone: (value) => {
             if (value && unref(value)) {
               model[field] = unref(value).id;
-              model['subjectVideoName'] = unref(value).name;
             }
           },
         });
       },
-      colProps: {
-        span: 12
-      }
-    },
-    {
-      field: 'subjectVideoName',
-      label: '视频名称',
-      component: 'Input',
       colProps: {
         span: 12
       }

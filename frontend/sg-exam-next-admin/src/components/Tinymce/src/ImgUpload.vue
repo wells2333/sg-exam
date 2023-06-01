@@ -7,7 +7,7 @@
       :action="uploadUrl"
       :customRequest="customRequest"
       :showUploadList="false"
-      accept=".jpg,.jpeg,.gif,.png,.webp,.avi,.rmvb,.mov,.wmv,.asf,.dat"
+      accept=".jpg,.jpeg,.png"
     >
       <a-button type="primary" v-bind="{ ...getButtonProps }">
         {{ t('component.upload.imgUpload') }}

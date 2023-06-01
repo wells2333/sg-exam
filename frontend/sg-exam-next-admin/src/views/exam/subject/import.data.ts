@@ -6,13 +6,13 @@ import {uploadJSON, uploadEXCEL} from "/@/api/exam/subject";
 export const formSchema: FormSchema[] = [
   {
     field: 'categoryId',
-    label: '分类ID',
+    label: '分类 ID',
     component: 'Input',
     required: true,
     show: false
   },
   {
-    label: 'JSON格式',
+    label: 'JSON 格式',
     field: 'jsonFile',
     component: 'Input',
     render: ({model, field}) => {
@@ -24,7 +24,7 @@ export const formSchema: FormSchema[] = [
         showFileList: false,
         handleFormData: (formData) => {
           const {data} = formData;
-          // 增加分类ID参数
+          // 增加分类 ID 参数
           Object.assign(data, {categoryId: model['categoryId']});
         },
         handleDone: (value) => {
@@ -36,7 +36,7 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
-    label: 'EXCEL格式',
+    label: 'EXCEL 格式',
     field: 'excelFile',
     component: 'Input',
     render: ({model, field}) => {
@@ -48,7 +48,7 @@ export const formSchema: FormSchema[] = [
         showFileList: false,
         handleFormData: (formData) => {
           const {data} = formData;
-          // 增加分类ID参数
+          // 增加分类 ID 参数
           Object.assign(data, {categoryId: model['categoryId']});
         },
         handleDone: (value) => {

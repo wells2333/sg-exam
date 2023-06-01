@@ -20,8 +20,6 @@ import {computed, defineComponent, ref, unref} from 'vue';
 import SubjectChoices from '/@/components/Subjects/SubjectChoices.vue';
 import SubjectShortAnswer from '/@/components/Subjects/SubjectShortAnswer.vue';
 import SubjectJudgement from '/@/components/Subjects/SubjectJudgement.vue';
-import SubjectSpeech from "/@/components/Subjects/SubjectSpeech.vue";
-import SubjectVideo from "/@/components/Subjects/SubjectVideo.vue";
 import {subjectType, subjectTypeList, TabItem} from '/@/components/Subjects/subject.constant';
 import {createSubject, getSubjectInfo, updateSubject} from '/@/api/exam/subject';
 import {getDefaultOptionList} from '/@/api/exam/option';
@@ -41,9 +39,7 @@ export default defineComponent({
     BasicForm,
     SubjectChoices,
     SubjectShortAnswer,
-    SubjectJudgement,
-    SubjectSpeech,
-    SubjectVideo
+    SubjectJudgement
   },
   emits: ['success', 'register'],
   setup(_, {emit}) {
@@ -53,7 +49,7 @@ export default defineComponent({
     let id: string;
     const route = useRoute();
     const examinationId = ref<string>(route.params?.id + '');
-    // 题目类型tab
+    // 题目类型 tab
     const types = ref<Array<TabItem>>([...subjectTypeList]);
     // 默认单选题
     const activeKey = ref<number>(subjectType.SubjectChoices);
@@ -62,7 +58,7 @@ export default defineComponent({
     const [registerModal, {setModalProps, closeModal}] = useModalInner(async (data) => {
       setModalProps({
         afterClose: function () {
-          // 启用全部tab
+          // 启用全部 tab
           unref(types).forEach(e => {
             e.disabled = false;
           });
@@ -86,7 +82,7 @@ export default defineComponent({
           defaultOptions,
           nextSubjectNo
         });
-        // 新增题目，默认切换到单选题tab
+        // 新增题目，默认切换到单选题 tab
         activeKey.value = subjectType.SubjectChoices;
       }
       setSubjectValue(subjectData);
@@ -133,7 +129,7 @@ export default defineComponent({
       const subjectRef = getSubjectRefByKey(key);
       if (subjectRef) {
         isMulti.value = key === subjectType.SubjectMultiChoices;
-        // 切换tab，从新初始化选项，题目序号
+        // 切换 tab，从新初始化选项，题目序号
         const {defaultOptions, nextSubjectNo} = await initDefaultData();
         const data = {
           defaultOptions,
@@ -148,7 +144,7 @@ export default defineComponent({
       }, 20);
     }
 
-    // 禁用其它tab
+    // 禁用其它 tab
     function disabledOtherTab(key: number) {
       unref(types).forEach(e => {
         if (e.key !== key) {

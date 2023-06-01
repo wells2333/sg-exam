@@ -32,7 +32,7 @@ export default defineComponent({
     async function getSubjectValue() {
       const values = await validate();
       const value: SubjectSubmitData = {
-        type: subjectType.SubjectShortAnswer,  // 简答题
+        type: subjectType.SubjectShortAnswer,
         categoryId: unref(categoryId),
         examinationId: unref(examinationId),
         options: [],

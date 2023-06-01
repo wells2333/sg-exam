@@ -117,7 +117,11 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 			dto.setSubjectVideoUrl(attachmentManager.getPreviewUrl(dto.getSubjectVideoId()));
 		}
 		if (dto.getSpeechId() != null) {
-			dto.setSpeechUrl(attachmentManager.getPreviewUrl(dto.getSpeechId()));
+			try {
+				dto.setSpeechUrl(attachmentManager.getPreviewUrl(dto.getSpeechId()));
+			} catch (Exception e) {
+				log.error("Failed to get speech url, subjectId: {}", subjectId, e);
+			}
 		}
 		return dto;
 	}
