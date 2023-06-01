@@ -17,11 +17,7 @@ public enum SubjectType {
 
 	JUDGEMENT("判断", 2, SubjectJudgementService.class, JudgementAnswerHandler.class),
 
-	MULTIPLE_CHOICES("多选", 3, SubjectChoicesService.class, MultipleChoicesAnswerHandler.class),
-
-	SPEECH("语音", 4, SubjectSpeechService.class, SpeechAnswerHandler.class),
-
-	VIDEO("视频", 5, SubjectVideoService.class, VideoAnswerHandler.class);
+	MULTIPLE_CHOICES("多选", 3, SubjectChoicesService.class, MultipleChoicesAnswerHandler.class);
 
 	private static final Map<Integer, SubjectType> VALUE_MAP = Maps.newHashMap();
 

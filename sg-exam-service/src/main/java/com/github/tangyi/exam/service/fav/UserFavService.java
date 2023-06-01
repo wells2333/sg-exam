@@ -163,6 +163,7 @@ public class UserFavService extends CrudService<UserFavMapper, ExamUserFav>
 		return user2FavIdMap;
 	}
 
+	@Transactional
 	public void updateFavRelation(int targetType) {
 		List<ExamUserFav> favorites = Lists.newArrayList();
 		Map<String, Set<String>> user2FavIdMap = getFavRelation(targetType);
@@ -297,7 +298,7 @@ public class UserFavService extends CrudService<UserFavMapper, ExamUserFav>
 			default -> {
 			}
 		}
-		return validkKey(key);
+		return validKey(key);
 	}
 
 	private String getUserFavKey(int targetType) {
@@ -309,7 +310,7 @@ public class UserFavService extends CrudService<UserFavMapper, ExamUserFav>
 			default -> {
 			}
 		}
-		return validkKey(key);
+		return validKey(key);
 	}
 
 	private String getStartCountKey(int targetType) {
@@ -321,10 +322,10 @@ public class UserFavService extends CrudService<UserFavMapper, ExamUserFav>
 			default -> {
 			}
 		}
-		return validkKey(key);
+		return validKey(key);
 	}
 
-	private String validkKey(String key) {
+	private String validKey(String key) {
 		if (StringUtils.isEmpty(key)) {
 			throw new IllegalArgumentException("Invalid targetType");
 		}

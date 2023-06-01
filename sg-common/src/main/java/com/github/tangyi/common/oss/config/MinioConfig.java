@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnExpression("!'${minio}'.isEmpty()")
 public class MinioConfig {
 
+	private boolean enabled;
+
     private String endpoint;
 
     private String bucket;

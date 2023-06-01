@@ -84,13 +84,13 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 
 	@Transactional
 	public int createUser(UserDto userDto) {
-		userDto.setTenantCode(SysUtil.getTenantCode());
+		String tenantCode = SysUtil.getTenantCode();
+		userDto.setTenantCode(tenantCode);
 		User user = new User();
 		BeanUtils.copyProperties(userDto, user);
 		user.setCommonValue();
 		// 保存父子账号关系
-		UserAuths current = findUserAuthsByIdentifier(userDto.getIdentityType(), SysUtil.getUser(),
-				SysUtil.getTenantCode());
+		UserAuths current = findUserAuthsByIdentifier(userDto.getIdentityType(), SysUtil.getUser(), tenantCode);
 		user.setParentUid(current.getUserId());
 		int update = insert(user);
 		if (user.getId() != null) {

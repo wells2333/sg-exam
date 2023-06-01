@@ -61,7 +61,6 @@ public class SubjectDto extends BaseEntity<SubjectDto> {
 	 */
 	private Double score;
 
-
 	/**
 	 * 解析
 	 */

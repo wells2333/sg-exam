@@ -16,29 +16,20 @@ import java.util.stream.Collectors;
 public class SubjectChoicesConverter implements ISubjectConverter<SubjectChoices> {
 
 	@Override
-	public SubjectChoices fromDto(SubjectDto dto) {
-		SubjectChoices subject = new SubjectChoices();
-		BeanUtils.copyProperties(dto, subject);
-		return subject;
+	public SubjectDto convert(SubjectChoices subject) {
+		return this.convert(subject, true);
 	}
 
 	@Override
-	public SubjectDto toDto(SubjectChoices subject) {
-		return this.toDto(subject, true);
-	}
-
-	@Override
-	public SubjectDto toDto(SubjectChoices subject, boolean findAnswer) {
+	public SubjectDto convert(SubjectChoices subject, boolean findAnswer) {
 		if (subject == null) {
 			return null;
 		}
 		SubjectDto subjectDto = new SubjectDto();
 		BeanUtils.copyProperties(subject, subjectDto);
 		SubjectType subjectTypeEnum = SubjectType.matchByValue(subject.getChoicesType());
-		if (subjectTypeEnum != null) {
-			subjectDto.setType(subjectTypeEnum.getValue());
-			subjectDto.setTypeLabel(subjectTypeEnum.getName());
-		}
+		subjectDto.setType(subjectTypeEnum.getValue());
+		subjectDto.setTypeLabel(subjectTypeEnum.getName());
 		if (findAnswer) {
 			Answer answer = new Answer();
 			answer.setAnswer(subject.getAnswer());
@@ -48,10 +39,10 @@ public class SubjectChoicesConverter implements ISubjectConverter<SubjectChoices
 	}
 
 	@Override
-	public List<SubjectDto> toDto(List<SubjectChoices> subjects, boolean findAnswer) {
+	public List<SubjectDto> convert(List<SubjectChoices> subjects, boolean findAnswer) {
 		List<SubjectDto> subjectDtoList = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(subjects)) {
-			subjectDtoList = subjects.stream().map(subject -> toDto(subject, findAnswer)).collect(Collectors.toList());
+			subjectDtoList = subjects.stream().map(subject -> convert(subject, findAnswer)).collect(Collectors.toList());
 		}
 		return subjectDtoList;
 	}

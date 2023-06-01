@@ -38,7 +38,7 @@ public class SubjectJudgementService extends CrudService<SubjectJudgementMapper,
 
 	@Override
 	public SubjectDto getSubject(Long id) {
-		return subjectJudgementConverter.toDto(this.get(id));
+		return subjectJudgementConverter.convert(this.get(id));
 	}
 
 	@Override
@@ -74,7 +74,7 @@ public class SubjectJudgementService extends CrudService<SubjectJudgementMapper,
 
 	@Override
 	public List<SubjectDto> findSubjectListById(Long[] ids) {
-		return subjectJudgementConverter.toDto(this.findListById(ids), true);
+		return subjectJudgementConverter.convert(this.findListById(ids), true);
 	}
 
 	@Override

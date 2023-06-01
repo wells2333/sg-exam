@@ -33,15 +33,8 @@ public class SubjectServiceFactory {
 
 	private final SubjectJudgementService subjectJudgementService;
 
-	private final SubjectSpeechService subjectSpeechService;
-
-	private final SubjectVideoService subjectVideoService;
-
 	private final IExecutorHolder executorHolder;
 
-	/**
-	 * 根据题目类型返回对应的 BaseSubjectService
-	 */
 	public ISubjectService service(Integer type) {
 		if (SubjectType.CHOICES.getValue().equals(type) || SubjectType.MULTIPLE_CHOICES.getValue().equals(type)) {
 			return subjectChoicesService;
@@ -49,19 +42,10 @@ public class SubjectServiceFactory {
 			return subjectShortAnswerService;
 		} else if (SubjectType.JUDGEMENT.getValue().equals(type)) {
 			return subjectJudgementService;
-		} else if (SubjectType.SPEECH.getValue().equals(type)) {
-			return subjectSpeechService;
-		} else if (SubjectType.VIDEO.getValue().equals(type)) {
-			return subjectVideoService;
 		}
 		throw new IllegalArgumentException("subject service not found: " + type);
 	}
 
-	/**
-	 * 批量查询题目
-	 * @param subjects subjects
-	 * @return Collection
-	 */
 	public Collection<SubjectDto> batchGetSubjects(List<Subjects> subjects) {
 		if (CollectionUtils.isEmpty(subjects)) {
 			return Collections.emptyList();

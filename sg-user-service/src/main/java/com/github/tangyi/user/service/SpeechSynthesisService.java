@@ -1,7 +1,6 @@
 package com.github.tangyi.user.service;
 
 import com.github.pagehelper.PageInfo;
-import com.github.tangyi.api.exam.service.ISpeechSynthesisService;
 import com.github.tangyi.api.user.attach.AttachmentManager;
 import com.github.tangyi.api.user.attach.MultipartFileUploadContext;
 import com.github.tangyi.api.user.enums.AttachTypeEnum;
@@ -28,8 +27,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class SpeechSynthesisService extends CrudService<SpeechSynthesisMapper, SpeechSynthesis>
-		implements ISpeechSynthesisService {
+public class SpeechSynthesisService extends CrudService<SpeechSynthesisMapper, SpeechSynthesis> {
 
 	private final AttachmentService attachmentService;
 
@@ -38,13 +36,13 @@ public class SpeechSynthesisService extends CrudService<SpeechSynthesisMapper, S
 	private final BaiduSpeechSynthesisService baiduSpeechSynthesisService;
 
 	@Transactional
-	public boolean addSynthesis(SpeechSynthesis speechSynthesis) throws Exception {
+	public boolean addSynthesis(SpeechSynthesis speechSynthesis) {
 		synthesis(speechSynthesis);
 		return insert(speechSynthesis) > 0;
 	}
 
 	@Transactional
-	public boolean updateSynthesis(SpeechSynthesis speechSynthesis) throws Exception {
+	public boolean updateSynthesis(SpeechSynthesis speechSynthesis) {
 		speechSynthesis.setCommonValue(SysUtil.getUser(), SysUtil.getTenantCode());
 		SpeechSynthesis old = get(speechSynthesis.getId());
 		if (old != null && !old.getText().equals(speechSynthesis.getText())) {

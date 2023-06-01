@@ -7,30 +7,29 @@ import lombok.Getter;
 @Getter
 public enum AttachTypeEnum {
 
-    DEFAULT("default", "默认"),
-    AVATAR("user_avatar", "用户头像"),
-    SPEECH("speech", "语音合成"),
-    EXAM_VIDEO("exam/video", "考务视频"),
-    EXAM_IMAGE("exam/image", "考务图片"),
-    OTHER("other", "其它");
+	DEFAULT("default", "默认"),
+	AVATAR("user_avatar", "用户头像"),
+	SPEECH("speech", "语音合成"),
+	EXAM_VIDEO("exam/video", "考务视频"),
+	EXAM_IMAGE("exam/image", "考务图片"),
+	OTHER("other", "其它");
 
-    // 默认为七牛云存储
-    private final int DEFAULT_STORAGE_TYPE = EnvUtils.getInt("ATTACH_DEFAULT_STORAGE_TYPE",
-            AttachmentConstant.QI_NIU);
+	// 默认为七牛云存储
+	private final int defaultStorageType = EnvUtils.getInt("ATTACH_DEFAULT_STORAGE_TYPE", AttachmentConstant.QI_NIU);
 
-    private final String value;
+	private final String value;
 
-    private final Integer storageType;
+	private final Integer storageType;
 
-    private final String desc;
+	private final String desc;
 
-    AttachTypeEnum(String value, String desc) {
-        this.value = value;
-        this.storageType = DEFAULT_STORAGE_TYPE;
-        this.desc = desc;
-    }
+	AttachTypeEnum(String value, String desc) {
+		this.value = value;
+		this.storageType = defaultStorageType;
+		this.desc = desc;
+	}
 
-    public int getDefaultStorageType() {
-        return DEFAULT_STORAGE_TYPE;
-    }
+	public int getDefaultStorageType() {
+		return defaultStorageType;
+	}
 }

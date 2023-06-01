@@ -5,14 +5,19 @@ import com.github.tangyi.api.exam.constants.AnswerConstant;
 import com.github.tangyi.api.exam.dto.NextSubjectDto;
 import com.github.tangyi.api.exam.dto.SubjectCategoryDto;
 import com.github.tangyi.api.exam.dto.SubjectDto;
-import com.github.tangyi.api.exam.model.*;
-import com.github.tangyi.api.exam.thread.IExecutorHolder;
+import com.github.tangyi.api.exam.model.ExamUserFav;
+import com.github.tangyi.api.exam.model.ExaminationSubject;
+import com.github.tangyi.api.exam.model.SubjectCategory;
+import com.github.tangyi.api.exam.model.SubjectChoices;
+import com.github.tangyi.api.exam.model.SubjectJudgement;
+import com.github.tangyi.api.exam.model.SubjectShortAnswer;
+import com.github.tangyi.api.exam.model.Subjects;
 import com.github.tangyi.api.exam.service.ISubjectsService;
+import com.github.tangyi.api.exam.thread.IExecutorHolder;
 import com.github.tangyi.api.user.attach.AttachmentManager;
 import com.github.tangyi.common.base.BaseEntity;
 import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.base.TreeEntity;
-import com.github.tangyi.common.exceptions.CommonException;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.ExecutorUtils;
 import com.github.tangyi.common.utils.PageUtil;
@@ -22,7 +27,9 @@ import com.github.tangyi.exam.mapper.SubjectsMapper;
 import com.github.tangyi.exam.service.ExaminationSubjectService;
 import com.github.tangyi.exam.service.data.SubjectViewCounterService;
 import com.github.tangyi.exam.service.fav.SubjectFavoritesService;
-import com.github.tangyi.exam.service.subject.converter.*;
+import com.github.tangyi.exam.service.subject.converter.SubjectChoicesConverter;
+import com.github.tangyi.exam.service.subject.converter.SubjectJudgementConverter;
+import com.github.tangyi.exam.service.subject.converter.SubjectShortAnswerConverter;
 import com.github.tangyi.exam.utils.ExamUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -39,7 +46,12 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -58,11 +70,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 
 	private final SubjectShortAnswerConverter subjectShortAnswerConverter;
 
-	private final SubjectJudgementConverter subjectJudgementConverter;
-
-	private final SubjectSpeechConverter subjectSpeechConverter;
-
-	private final SubjectVideoConverter subjectVideoConverter;
+	private final SubjectJudgementConverter judgementConverter;
 
 	private final SubjectFavoritesService subjectFavoritesService;
 
@@ -107,6 +115,9 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 		SubjectDto dto = subjectServiceFactory.service(type).getSubject(subjectId);
 		if (dto.getSubjectVideoId() != null) {
 			dto.setSubjectVideoUrl(attachmentManager.getPreviewUrl(dto.getSubjectVideoId()));
+		}
+		if (dto.getSpeechId() != null) {
+			dto.setSpeechUrl(attachmentManager.getPreviewUrl(dto.getSpeechId()));
 		}
 		return dto;
 	}
@@ -214,11 +225,18 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 		es.setSubjectId(subjectId);
 		es.setExaminationId(dto.getExaminationId());
 		es.setSort(dto.getSort());
-		try {
-			esService.insert(es);
-		} catch (DuplicateKeyException e) {
-			throw new CommonException("序号重复，请修改题目序号");
+		// 序号重复时，尝试递增插入
+		for (int i = 1; i < 10; i++) {
+			try {
+				if (esService.insert(es) > 0) {
+					return;
+				}
+			} catch (DuplicateKeyException e) {
+				es.setSort(dto.getSort() + i);
+				log.warn("Duplicate subject sort, retry {}", es.getSort());
+			}
 		}
+		throw new IllegalArgumentException("题目序号重复，请修改");
 	}
 
 	@Transactional
@@ -237,9 +255,8 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 		SubjectDto subjectDto = new SubjectDto();
 		subjectDto.setId(id);
 		Subjects subjects = this.findBySubjectId(id);
-		if (subjects != null
-				&& subjectServiceFactory.service(getSubjectType(subjectDto.getId())).physicalDeleteSubject(subjectDto)
-				> 0) {
+		ISubjectService subjectService = subjectServiceFactory.service(getSubjectType(subjectDto.getId()));
+		if (subjects != null && subjectService.physicalDeleteSubject(subjectDto) > 0) {
 			this.dao.deleteByPrimaryKey(subjects.getId());
 			ExaminationSubject examinationSubject = new ExaminationSubject();
 			examinationSubject.setSubjectId(subjectDto.getId());
@@ -252,7 +269,6 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 	 * 查询第一题
 	 */
 	public SubjectDto findFirstSubjectByExaminationId(Long examinationId) {
-		// 第一题的 ID
 		ExaminationSubject es = esService.findMinSortByExaminationId(examinationId);
 		SgPreconditions.checkNull(es, "该考试未录入题目");
 		SubjectDto dto = this.getSubject(es.getSubjectId());
@@ -338,47 +354,32 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 					choices = choices.stream().map(SubjectChoices::getId)
 							.map(subjectServiceFactory.getSubjectChoicesService()::get).collect(Collectors.toList());
 				}
-				dtoList.addAll(subjectChoicesConverter.toDto(choices, findAnswer));
+				dtoList.addAll(subjectChoicesConverter.convert(choices, findAnswer));
 			}
 		}
 		if (idMap.containsKey(SubjectType.MULTIPLE_CHOICES.name())) {
 			List<SubjectChoices> choices = subjectServiceFactory.getSubjectChoicesService()
 					.findListById(idMap.get(SubjectType.MULTIPLE_CHOICES.name()));
 			if (CollectionUtils.isNotEmpty(choices)) {
-				// 查找选项信息
 				if (findOptions) {
 					choices = choices.stream().map(SubjectChoices::getId)
 							.map(subjectServiceFactory.getSubjectChoicesService()::get).collect(Collectors.toList());
 				}
-				dtoList.addAll(subjectChoicesConverter.toDto(choices, findAnswer));
+				dtoList.addAll(subjectChoicesConverter.convert(choices, findAnswer));
 			}
 		}
 		if (idMap.containsKey(SubjectType.SHORT_ANSWER.name())) {
 			List<SubjectShortAnswer> shortAnswers = subjectServiceFactory.getSubjectShortAnswerService()
 					.findListById(idMap.get(SubjectType.SHORT_ANSWER.name()));
 			if (CollectionUtils.isNotEmpty(shortAnswers)) {
-				dtoList.addAll(subjectShortAnswerConverter.toDto(shortAnswers, findAnswer));
+				dtoList.addAll(subjectShortAnswerConverter.convert(shortAnswers, findAnswer));
 			}
 		}
 		if (idMap.containsKey((SubjectType.JUDGEMENT.name()))) {
 			List<SubjectJudgement> judgements = subjectServiceFactory.getSubjectJudgementService()
 					.findListById(idMap.get(SubjectType.JUDGEMENT.name()));
 			if (CollectionUtils.isNotEmpty(judgements)) {
-				dtoList.addAll(subjectJudgementConverter.toDto(judgements, findAnswer));
-			}
-		}
-		if (idMap.containsKey((SubjectType.SPEECH.name()))) {
-			List<SubjectSpeech> speeches = subjectServiceFactory.getSubjectSpeechService()
-					.findListById(idMap.get(SubjectType.SPEECH.name()));
-			if (CollectionUtils.isNotEmpty(speeches)) {
-				dtoList.addAll(subjectSpeechConverter.toDto(speeches, findAnswer));
-			}
-		}
-		if (idMap.containsKey((SubjectType.VIDEO.name()))) {
-			List<SubjectVideo> subjectVideos = subjectServiceFactory.getSubjectVideoService()
-					.findListById(idMap.get(SubjectType.VIDEO.name()));
-			if (CollectionUtils.isNotEmpty(subjectVideos)) {
-				dtoList.addAll(subjectVideoConverter.toDto(subjectVideos, findAnswer));
+				dtoList.addAll(judgementConverter.convert(judgements, findAnswer));
 			}
 		}
 		return dtoList;
