@@ -62,7 +62,9 @@ web 前台主要功能：提供在线考试、课程学习、练习等功能。
 
 ## 部署文档 & 操作手册 & 源码解析 & 视频教程
 
-- [SG-EXAM-NEXT](https://m.tb.cn/h.UEs6Duw?tk=G2u6dLgxEQg)
+- 文档获取方式：关注“小傻笔记”公众号，发送“文档”关键词获取
+
+<img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp.jpeg" height="130"/>
 
 - [Roadmap](https://www.yuque.com/tangyi-5ldnl/paf15u/cwvtvfd0a07ozfk2?singleDoc#)
 
