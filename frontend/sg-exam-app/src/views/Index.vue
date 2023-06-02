@@ -28,14 +28,14 @@
                       <el-menu-item index="u-source" @click="open('https://gitee.com/wells2333/sg-exam')">
                         源码地址
                       </el-menu-item>
-                      <el-menu-item index="u-deploy" @click="open('https://mp.weixin.qq.com/s?__biz=Mzg2Mjg2OTcyNA==&amp;mid=2247484080&amp;idx=1&amp;sn=85d5bd3a9d03b710903076ab14b20e92&amp;chksm=ce000303f9778a15c0b7afd21fd82aad685f13eb09a0dafa2c8fad97b6eacd9585dd738a0f0a&token=755573063&lang=zh_CN#rd')">
+                      <el-menu-item index="u-deploy" @click="open('https://www.yuque.com/tangyi-5ldnl/rzv4xd/nl8d6g6mobdgylk7?singleDoc#')">
                         部署文档
                       </el-menu-item>
                       <el-menu-item index="c-log" @click="open('https://gitee.com/wells2333/sg-exam/blob/master/CHANGELOG.md')">
                         更新日志
                       </el-menu-item>
                       <el-menu-item index="c-overview"  @click="open('https://www.yuque.com/tangyi-5ldnl/paf15u/cwvtvfd0a07ozfk2?singleDoc#')">
-                        规划总览
+                        功能规划
                       </el-menu-item>
                       <el-menu-item index="u-admin" @click="openAdmin()">
                         管理后台
@@ -43,7 +43,9 @@
                     </el-submenu>
                     <el-submenu v-if="login" index="/user-info">
                       <template slot="title">
-                        <img :src="userInfo.avatar" style="height: 30px;border-radius: 50%;margin-right: 6px;"/>
+                        <img :src="userInfo.avatar"
+                             style="width: 30px;height: 30px;border-radius: 50%;margin-right:
+                             6px;"/>
                         {{userInfo.identifier}}
                       </template>
                       <el-menu-item index="account" @click="open('/account')">个人中心</el-menu-item>
@@ -113,7 +115,7 @@ export default {
       }
       if (path !== this.$route.fullPath) {
         if (this.$route.fullPath === '/start') {
-          this.$confirm('是否要结束当前考试?', '提示', {
+          this.$confirm('是否要结束当前考试？', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'

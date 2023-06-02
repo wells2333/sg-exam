@@ -11,12 +11,17 @@
     ></audio>
     <div class="w-full">
       <div class="flex items-center w-10/12 mx-auto slide">
-        <el-slider v-show="!controlList.noProcess" v-model="sliderTime" :format-tooltip="formatProcessToolTip" @change="changeCurrentTime" class="slider_time"></el-slider>
+        <el-slider v-show="!controlList.noProcess" v-model="sliderTime"
+                   :format-tooltip="formatProcessToolTip" @change="changeCurrentTime"
+                   class="slider_time"></el-slider>
         <span type="info" class="second">{{ audio.maxTime | formatSecond }}</span>
-      </div>
-      <div class="mt-3 flex items-center w-1/2 mx-auto justify-around">
-        <el-button type="text" icon="el-icon-caret-right" @click="startPlayOrPause">{{audio.playing |
-          transPlayPause}}</el-button>
+        <div class="mt-3 flex items-center w-1/2 mx-auto justify-around">
+          <el-tooltip class="item" effect="dark" :content="audio.playing | transPlayPause" placement="top">
+            <el-button type="text"  class="audio-icon"  :icon="audio.playing ? 'el-icon-video-pause':
+          'el-icon-video-play'" @click="startPlayOrPause">
+            </el-button>
+          </el-tooltip>
+        </div>
       </div>
     </div>
   </div>
@@ -42,7 +47,7 @@ export default {
   props: {
     theSpeeds: {
       type: Array,
-      default () {
+      default() {
         return [1, 1.5, 2]
       }
     },
@@ -51,8 +56,8 @@ export default {
       default: ''
     }
   },
-  data(){
-    return{
+  data() {
+    return {
       url: 'https://wdd.js.org/element-audio/static/falling-star.mp3',
       audio: {
         currentTime: 0,
@@ -63,21 +68,19 @@ export default {
         waiting: true,
         preload: 'auto'
       },
-
       sliderTime: 0,
       volume: 100,
       speeds: this.theSpeeds,
-
       controlList: {
         noProcess: false
       }
     }
   },
-  methods:{
-    setControlList () {
+  methods: {
+    setControlList() {
       let controlList = this.theControlList.split(' ')
       controlList.forEach((item) => {
-        if(this.controlList[item] !== undefined){
+        if (this.controlList[item] !== undefined) {
           this.controlList[item] = true
         }
       })
@@ -99,26 +102,25 @@ export default {
     pausePlay() {
       this.$refs.audio.pause()
     },
-    onPause () {
+    onPause() {
       this.audio.playing = false
     },
-    onError () {
+    onError() {
       this.audio.waiting = true
     },
-    onWaiting (res) {
+    onWaiting(res) {
 
     },
-    onPlay (res) {
-      console.log(res)
+    onPlay(res) {
       this.audio.playing = true
       this.audio.loading = false
-      if(!this.controlList.onlyOnePlaying){
+      if (!this.controlList.onlyOnePlaying) {
         return
       }
       let target = res.target
       let audios = document.getElementsByTagName('audio');
       [...audios].forEach((item) => {
-        if(item !== target){
+        if (item !== target) {
           item.pause()
         }
       })
@@ -153,37 +155,54 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.right{
+.main-wrap {
+  margin-bottom: 10px;
+}
+.right {
   width: 100%;
   display: inline-block;
+
   .slider {
     display: inline-block;
     position: relative;
     top: 14px;
     margin-left: 15px;
   }
-  .slider_time{
+
+  .slider_time {
     width: 100%;
     margin: 0 10px;
   }
-  .slider_voice{
+
+  .slider_voice {
     width: 80px;
   }
+
   .download {
     color: #409EFF;
     margin-left: 15px;
   }
+
   .slide {
     display: flex;
     flex-direction: row;
     align-items: center;
   }
+
   .second {
     color: #909399;
     font-size: 12px;
+    margin-left: -5px;
+    margin-right: 20px;
   }
+
   .dn {
     display: none;
+  }
+  .audio-icon {
+    font-size: 30px;
+    margin-right: 10px;
+    padding: 0;
   }
 }
 

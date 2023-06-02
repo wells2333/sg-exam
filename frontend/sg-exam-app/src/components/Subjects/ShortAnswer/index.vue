@@ -61,6 +61,8 @@ export default {
       this.userAnswer = answer
       if (this.$refs.shortAnswerEditor && this.userAnswer !== null) {
         this.$refs.shortAnswerEditor.setContent(this.userAnswer)
+      } else {
+        this.$refs.shortAnswerEditor.setContent('')
       }
       this.onChoice(this.subjectInfo.sort)
     },
