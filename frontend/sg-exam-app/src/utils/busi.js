@@ -14,6 +14,16 @@ export const pauseVideo = ($refs) => {
   }
 }
 
+export const setAudioSrc = (subject, $refs, autoPlay, timeout = 50) => {
+  if (subject.speechId && subject.speechUrl) {
+    setTimeout(() => {
+      if ($refs.sgAudio !== undefined) {
+        $refs.sgAudio.setSrc(subject.speechUrl, autoPlay)
+      }
+    }, timeout)
+  }
+}
+
 export const pauseAudio = ($refs) => {
   if ($refs.sgAudio !== undefined) {
     $refs.sgAudio.pausePlay()

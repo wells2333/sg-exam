@@ -10,7 +10,7 @@
         <span class="subject-title-content" v-html="subjectInfo.subjectName"/>
       </div>
       <div class="subject-speech-info" v-if="subjectInfo.speechId && subjectInfo.speechUrl">
-        <sg-audio ref="sgAudio" :src="subjectInfo.speechUrl"></sg-audio>
+        <sg-audio ref="sgAudio" :src="subjectInfo.speechUrl" :autoPlay="subjectInfo.autoPlaySpeech"></sg-audio>
       </div>
       <div class="subject-video-info" v-if="subjectInfo.subjectVideoId">
         <sg-video ref="sgVideo"></sg-video>
@@ -32,7 +32,7 @@
 <script>
 import SgAudio from '@/components/SgAudio'
 import SgVideo from '@/components/SgVideo'
-import {setVideoSrc, pauseVideo, pauseAudio} from '@/utils/busi'
+import {setVideoSrc, pauseVideo, pauseAudio, setAudioSrc} from '@/utils/busi'
 
 export default {
   name: 'Choices',
@@ -72,6 +72,7 @@ export default {
         this.setAnswer(subject.answer.answer)
       }
       setVideoSrc(subject, this.$refs)
+      setAudioSrc(subject, this.$refs, subject.autoPlaySpeech)
     },
     getSubjectInfo() {
       this.subjectInfo.options = this.options

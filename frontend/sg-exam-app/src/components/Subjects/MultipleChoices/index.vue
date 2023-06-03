@@ -31,7 +31,7 @@
 import SgAudio from '@/components/SgAudio'
 import SgVideo from '@/components/SgVideo'
 import {isNotEmpty} from '@/utils/util'
-import {setVideoSrc, pauseVideo, pauseAudio} from '@/utils/busi'
+import {setVideoSrc, pauseVideo, pauseAudio, setAudioSrc} from '@/utils/busi'
 
 export default {
   name: 'MultipleChoices',
@@ -78,6 +78,7 @@ export default {
         this.setAnswer(subject.answer.answer)
       }
       setVideoSrc(subject, this.$refs)
+      setAudioSrc(subject, this.$refs, subject.autoPlaySpeech)
     },
     getSubjectInfo() {
       this.subjectInfo.options = this.options

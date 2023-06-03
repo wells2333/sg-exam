@@ -12,6 +12,9 @@
         <result column="sort" property="sort"/>
         <result column="speech_id" property="speechId"/>
         <result column="subject_video_id" property="subjectVideoId"/>
+        <result column="subject_video_url" property="subjectVideoUrl"/>
+        <result column="speech_play_limit" property="speechPlayLimit"/>
+        <result column="auto_play_speech" property="autoPlaySpeech"/>
         <result column="creator" property="creator"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
@@ -47,12 +50,10 @@
         </foreach>
     </delete>
 
-    <!-- 物理删除 -->
     <delete id="physicalDelete">
         DELETE FROM exam_subject_judgement WHERE id = #{id}
     </delete>
 
-    <!-- 物理删除 -->
     <delete id="physicalDeleteAll">
         DELETE FROM exam_subject_judgement WHERE id in
         <foreach item="item" index="index" collection="ids" open="("

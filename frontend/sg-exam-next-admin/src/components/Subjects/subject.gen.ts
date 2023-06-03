@@ -50,10 +50,7 @@ export function generateChoicesSchemas(subjectData: object, defaultOptions: obje
       }
     }
   }
-  schemas.push(...gentSubjectNameSchemas());
-  schemas.push(...genUploadSpeechSchemas());
-  schemas.push(...genSubjectUploadVideoSchemas());
-  schemas.push(...genBasicSchemas());
+  appendCommonSchemas(schemas, []);
   schemas.push(...genOptionDividerSchemas());
   if (answerOptions.length > 0) {
     optionsSchemas.push(generateAnswer(answerOptions, answerOptions[0].value, unref(isMulti)));
@@ -162,6 +159,26 @@ export function genOptionDividerSchemas() {
   ]
 }
 
+export function genSpeechDividerSchemas() {
+  return [
+    {
+      field: 'divider-speech',
+      component: 'Divider',
+      label: '语音配置',
+    }
+  ]
+}
+
+export function genVideoDividerSchemas() {
+  return [
+    {
+      field: 'divider-video',
+      component: 'Divider',
+      label: '视频配置',
+    }
+  ]
+}
+
 export function genAnswerSchemas() {
   return [
     {
@@ -232,11 +249,7 @@ export function generateTextAnswer() {
 // 简答题
 export function genShortAnswerSchemas() {
   const schemas: any[] = [];
-  schemas.push(...gentSubjectNameSchemas());
-  schemas.push(...genUploadSpeechSchemas());
-  schemas.push(...genSubjectUploadVideoSchemas());
-  schemas.push(...genBasicSchemas());
-  schemas.push(...judgeTypeSchemas());
+  appendCommonSchemas(schemas, judgeTypeSchemas());
   schemas.push(...generateTextAnswer());
   schemas.push(...genAnswerSchemas());
   return schemas;
@@ -245,14 +258,22 @@ export function genShortAnswerSchemas() {
 // 判断题
 export function genJudgementSchemas() {
   const schemas: any[] = [];
-  schemas.push(...gentSubjectNameSchemas());
-  schemas.push(...genUploadSpeechSchemas());
-  schemas.push(...genSubjectUploadVideoSchemas());
-  schemas.push(...genBasicSchemas());
-  schemas.push(...judgeTypeSchemas());
+  appendCommonSchemas(schemas, judgeTypeSchemas());
   schemas.push(...generateJudgementAnswer());
   schemas.push(...genAnswerSchemas());
   return schemas;
+}
+
+export function appendCommonSchemas(schemas: any[], afterBasicSchemas: any[]) {
+  schemas.push(...gentSubjectNameSchemas());
+  schemas.push(...genBasicSchemas());
+  if (afterBasicSchemas && afterBasicSchemas.length > 0) {
+    schemas.push(...afterBasicSchemas);
+  }
+  schemas.push(...genSpeechDividerSchemas());
+  schemas.push(...genSpeechSchemas());
+  schemas.push(...genVideoDividerSchemas());
+  schemas.push(...genVideoSchemas());
 }
 
 export function genSpeechSubjectNameSchemas() {
@@ -263,6 +284,7 @@ export function genSpeechSubjectNameSchemas() {
       component: 'InputNumber',
       defaultValue: 1,
       required: true,
+      min: 1,
       colProps: {
         span: 12,
       },
@@ -324,8 +346,7 @@ export function generateJudgementAnswer(component: string = 'RadioButtonGroup') 
   }]
 }
 
-// 上传语音
-export function genUploadSpeechSchemas() {
+export function genSpeechSchemas() {
   return [
     {
       label: '题目语音',
@@ -348,11 +369,35 @@ export function genUploadSpeechSchemas() {
       colProps: {
         span: 12
       }
-    }
+    },
+    {
+      field: 'autoPlaySpeech',
+      label: '自动播放语音',
+      component: 'RadioButtonGroup',
+      defaultValue: 0,
+      componentProps: {
+        options: [
+          {label: '否', value: 0},
+          {label: '是', value: 1},
+        ],
+      },
+      required: true,
+      colProps: {
+        span: 12,
+      },
+    },
+    {
+      field: 'speechPlayLimit',
+      label: '最大播放次数',
+      component: 'InputNumber',
+      min: 0,
+      colProps: {
+        span: 12,
+      },
+    },
   ]
 }
 
-// 上传视频
 export function genUploadVideoSchemas() {
   return [
     {
@@ -380,7 +425,7 @@ export function genUploadVideoSchemas() {
   ]
 }
 
-export function genSubjectUploadVideoSchemas() {
+export function genVideoSchemas() {
   return [
     {
       label: '题目视频',
@@ -403,7 +448,15 @@ export function genSubjectUploadVideoSchemas() {
       colProps: {
         span: 12
       }
-    }
+    },
+    {
+      field: 'subjectVideoUrl',
+      label: '视频 URL',
+      component: 'Input',
+      colProps: {
+        span: 12,
+      },
+    },
   ]
 }
 

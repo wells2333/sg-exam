@@ -64,4 +64,22 @@ public class BaseSubject<T> extends BaseEntity<T> {
 	@JsonSerialize(using = ToStringSerializer.class)
 	@Column(name = "subject_video_id")
 	private Long subjectVideoId;
+
+	/**
+	 * 指定的视频的 URL
+	 */
+	@Column(name = "subject_video_url")
+	private String subjectVideoUrl;
+
+	/**
+	 * 语音最大播放次数
+	 */
+	@Column(name = "speech_play_limit")
+	private Integer speechPlayLimit;
+
+	/**
+	 * 是否自动播放语音，0：否，1：是
+	 */
+	@Column(name = "auto_play_speech")
+	private Integer autoPlaySpeech;
 }

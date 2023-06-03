@@ -146,3 +146,19 @@ ALTER TABLE `sys_attachment` ADD COLUMN `hash` varchar(255) NOT NULL DEFAULT '' 
 ALTER TABLE `sys_attachment` ADD INDEX `idx_hash`(`hash`);
 
 INSERT INTO `sys_attachment_group` (`id`, `group_name`, `group_code`, `url_expire`, `creator`, `create_time`, `operator`, `update_time`, `is_deleted`, `tenant_code`, `remark`, `storage_type`) VALUES (11, '考务语音', 'exam/speech', 00000000002147483647, 'admin', '2023-06-01 22:36:32', 'admin', '2023-06-01 22:36:39', 0, 'gitee', '考务语音', 2);
+
+ALTER TABLE `exam_subject_choices` ADD COLUMN `subject_video_url` varchar(1024) NULL COMMENT '题目视频 URL';
+ALTER TABLE `exam_subject_judgement` ADD COLUMN `subject_video_url` varchar(1024) NULL COMMENT '题目视频 URL';
+ALTER TABLE `exam_subject_short_answer` ADD COLUMN `subject_video_url` varchar(1024) NULL COMMENT '题目视频 URL';
+
+ALTER TABLE `exam_subject_choices`
+    ADD COLUMN `speech_play_limit` int(10) NULL COMMENT '语音最大播放次数',
+    ADD COLUMN `auto_play_speech` tinyint(1) ZEROFILL NOT NULL DEFAULT 0 COMMENT '是否自动播放语音，0：否，1：是';
+
+ALTER TABLE `exam_subject_judgement`
+    ADD COLUMN `speech_play_limit` int(10) NULL COMMENT '语音最大播放次数',
+    ADD COLUMN `auto_play_speech` tinyint(1) ZEROFILL NOT NULL DEFAULT 0 COMMENT '是否自动播放语音，0：否，1：是';
+
+ALTER TABLE `exam_subject_short_answer`
+    ADD COLUMN `speech_play_limit` int(10) NULL COMMENT '语音最大播放次数',
+    ADD COLUMN `auto_play_speech` tinyint(1) ZEROFILL NOT NULL DEFAULT 0 COMMENT '是否自动播放语音，0：否，1：是';

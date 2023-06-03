@@ -48,7 +48,7 @@ public class BaseEntity<T> implements Serializable {
 	protected Date updateTime;
 
 	/**
-	 * 逻辑删除标记: 0正常，1删除
+	 * 逻辑删除标记：0 正常，1 删除
 	 */
 	@Column(name = "is_deleted")
 	private Boolean isDeleted;

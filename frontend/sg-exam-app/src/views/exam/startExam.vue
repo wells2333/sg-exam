@@ -12,7 +12,6 @@
           <judgement ref="judgement" v-show="subject.type === 2" :onChoice="onChoiceFn"/>
           <multiple-choices ref="multipleChoices" v-show="subject.type === 3"
                             :onChoice="onChoiceFn"/>
-          <s-video ref="sVideo" v-show="subject.type === 5" :onChoice="onChoiceFn"></s-video>
           <div class="subject-buttons">
             <el-button plain @click="last" :loading="loadingLast">上一题</el-button>
             <el-button plain @click="next" :loading="loadingNext">下一题</el-button>

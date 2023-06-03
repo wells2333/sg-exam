@@ -1,13 +1,15 @@
 <template>
   <div class="right di main-wrap" v-loading="audio.waiting">
     <audio ref="audio" class="dn"
-           :src="url" :preload="audio.preload"
+           :src="src" :preload="audio.preload"
            @play="onPlay"
            @error="onError"
            @waiting="onWaiting"
            @pause="onPause"
            @timeupdate="onTimeupdate"
            @loadedmetadata="onLoadedmetadata"
+           autoplay="autoplay"
+           muted="muted"
     ></audio>
     <div class="w-full">
       <div class="flex items-center w-10/12 mx-auto slide">
@@ -58,7 +60,8 @@ export default {
   },
   data() {
     return {
-      url: 'https://wdd.js.org/element-audio/static/falling-star.mp3',
+      src: '',
+      autoPlay: 0,
       audio: {
         currentTime: 0,
         maxTime: 0,
@@ -132,6 +135,14 @@ export default {
     onLoadedmetadata(res) {
       this.audio.waiting = false
       this.audio.maxTime = parseInt(res.target.duration)
+      if (this.autoPlay === 1) {
+        // TODO 浏览器限制，不允许自动播放音频
+        this.startPlay()
+      }
+    },
+    setSrc(src, autoPlay) {
+      this.autoPlay = autoPlay
+      this.src = src
     }
   },
   filters: {

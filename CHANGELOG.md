@@ -6,12 +6,14 @@ sg-exam Releases
 新功能：
 
 - 附件存储支持 Minio
+- 题目支持配置播放指定视频的 URL
 
 改进：
 
 - 升级基础依赖为 jdk 17
 - 修复小程序编译报 "缺少全局配置 pages" 异常，解决办法见：https://github.com/NervJS/taro/issues/13544
 - 修复文件分片上传合并后文件可能会损坏 bug
+- web 端界面优化
 
 ## Version 0.0.7 (2023-05-03)
 
