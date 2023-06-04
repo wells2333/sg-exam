@@ -28,6 +28,7 @@ import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,7 +56,7 @@ public class UserFavService extends CrudService<UserFavMapper, ExamUserFav>
 	}
 
 	public PageInfo<ExamUserFav> findUserFavoritesPage(Map<String, Object> params, int pageNum, int pageSize,
-			String targetType) {
+													   String targetType) {
 		params.put("targetType", targetType);
 		return super.findPage(params, pageNum, pageSize);
 	}
@@ -113,6 +114,9 @@ public class UserFavService extends CrudService<UserFavMapper, ExamUserFav>
 	}
 
 	public Set<Long> findUserFavoritesIds(Long userId, int targetType) {
+		if (userId == null) {
+			return Collections.emptySet();
+		}
 		Map<Long, ExamUserFav> favorites = findUserFavorites(userId, targetType);
 		return favorites.keySet();
 	}
@@ -163,6 +167,7 @@ public class UserFavService extends CrudService<UserFavMapper, ExamUserFav>
 		return user2FavIdMap;
 	}
 
+	@Transactional
 	public void updateFavRelation(int targetType) {
 		List<ExamUserFav> favorites = Lists.newArrayList();
 		Map<String, Set<String>> user2FavIdMap = getFavRelation(targetType);
@@ -297,7 +302,7 @@ public class UserFavService extends CrudService<UserFavMapper, ExamUserFav>
 			default -> {
 			}
 		}
-		return validkKey(key);
+		return validKey(key);
 	}
 
 	private String getUserFavKey(int targetType) {
@@ -309,7 +314,7 @@ public class UserFavService extends CrudService<UserFavMapper, ExamUserFav>
 			default -> {
 			}
 		}
-		return validkKey(key);
+		return validKey(key);
 	}
 
 	private String getStartCountKey(int targetType) {
@@ -321,10 +326,10 @@ public class UserFavService extends CrudService<UserFavMapper, ExamUserFav>
 			default -> {
 			}
 		}
-		return validkKey(key);
+		return validKey(key);
 	}
 
-	private String validkKey(String key) {
+	private String validKey(String key) {
 		if (StringUtils.isEmpty(key)) {
 			throw new IllegalArgumentException("Invalid targetType");
 		}

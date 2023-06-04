@@ -1,11 +1,11 @@
 import {FormSchema} from "/@/components/Form";
 import {h, unref} from "vue";
 import {Tinymce} from "/@/components/Tinymce";
-import {uploadVideo} from "/@/api/exam/examMedia";
+import {uploadVideo, uploadSpeech} from "/@/api/exam/examMedia";
 import {
   addOptionBtnSlot,
   editorHeight,
-  optionPrefix,
+  optionPrefix, speechTypes,
   tinymcePlugins,
   tinymceToolbar,
   videoTypes
@@ -50,9 +50,7 @@ export function generateChoicesSchemas(subjectData: object, defaultOptions: obje
       }
     }
   }
-  schemas.push(...gentSubjectNameSchemas());
-  schemas.push(...genSubjectUploadVideoSchemas());
-  schemas.push(...genBasicSchemas());
+  appendCommonSchemas(schemas, []);
   schemas.push(...genOptionDividerSchemas());
   if (answerOptions.length > 0) {
     optionsSchemas.push(generateAnswer(answerOptions, answerOptions[0].value, unref(isMulti)));
@@ -161,6 +159,26 @@ export function genOptionDividerSchemas() {
   ]
 }
 
+export function genSpeechDividerSchemas() {
+  return [
+    {
+      field: 'divider-speech',
+      component: 'Divider',
+      label: '语音配置',
+    }
+  ]
+}
+
+export function genVideoDividerSchemas() {
+  return [
+    {
+      field: 'divider-video',
+      component: 'Divider',
+      label: '视频配置',
+    }
+  ]
+}
+
 export function genAnswerSchemas() {
   return [
     {
@@ -231,10 +249,7 @@ export function generateTextAnswer() {
 // 简答题
 export function genShortAnswerSchemas() {
   const schemas: any[] = [];
-  schemas.push(...gentSubjectNameSchemas());
-  schemas.push(...genSubjectUploadVideoSchemas());
-  schemas.push(...genBasicSchemas());
-  schemas.push(...judgeTypeSchemas());
+  appendCommonSchemas(schemas, judgeTypeSchemas());
   schemas.push(...generateTextAnswer());
   schemas.push(...genAnswerSchemas());
   return schemas;
@@ -243,37 +258,22 @@ export function genShortAnswerSchemas() {
 // 判断题
 export function genJudgementSchemas() {
   const schemas: any[] = [];
-  schemas.push(...gentSubjectNameSchemas());
-  schemas.push(...genSubjectUploadVideoSchemas());
-  schemas.push(...genBasicSchemas());
-  schemas.push(...judgeTypeSchemas());
+  appendCommonSchemas(schemas, judgeTypeSchemas());
   schemas.push(...generateJudgementAnswer());
   schemas.push(...genAnswerSchemas());
   return schemas;
 }
 
-// 语音题
-export function genSpeechSchemas() {
-  const schemas: any[] = [];
-  schemas.push(...genSpeechSubjectNameSchemas());
-  schemas.push(...genSubjectUploadVideoSchemas());
-  schemas.push(...genBasicSchemas());
-  schemas.push(...judgeTypeSchemas());
-  schemas.push(...generateTextAnswer());
-  schemas.push(...genAnswerSchemas());
-  return schemas;
-}
-
-// 视频题
-export function genVideoSchemas() {
-  const schemas: any[] = [];
+export function appendCommonSchemas(schemas: any[], afterBasicSchemas: any[]) {
   schemas.push(...gentSubjectNameSchemas());
-  schemas.push(...genUploadVideoSchemas());
   schemas.push(...genBasicSchemas());
-  schemas.push(...judgeTypeSchemas());
-  schemas.push(...generateTextAnswer());
-  schemas.push(...genAnswerSchemas());
-  return schemas;
+  if (afterBasicSchemas && afterBasicSchemas.length > 0) {
+    schemas.push(...afterBasicSchemas);
+  }
+  schemas.push(...genSpeechDividerSchemas());
+  schemas.push(...genSpeechSchemas());
+  schemas.push(...genVideoDividerSchemas());
+  schemas.push(...genVideoSchemas());
 }
 
 export function genSpeechSubjectNameSchemas() {
@@ -284,6 +284,7 @@ export function genSpeechSubjectNameSchemas() {
       component: 'InputNumber',
       defaultValue: 1,
       required: true,
+      min: 1,
       colProps: {
         span: 12,
       },
@@ -345,7 +346,58 @@ export function generateJudgementAnswer(component: string = 'RadioButtonGroup') 
   }]
 }
 
-// 视频上传
+export function genSpeechSchemas() {
+  return [
+    {
+      label: '题目语音',
+      field: 'speechId',
+      component: 'Input',
+      required: false,
+      render: ({model, field}) => {
+        return h(SgUpload, {
+          value: model[field],
+          api: uploadSpeech,
+          accept: speechTypes,
+          type: 'video',
+          handleDone: (value) => {
+            if (value && unref(value)) {
+              model[field] = unref(value).id;
+            }
+          },
+        });
+      },
+      colProps: {
+        span: 12
+      }
+    },
+    {
+      field: 'autoPlaySpeech',
+      label: '自动播放语音',
+      component: 'RadioButtonGroup',
+      defaultValue: 0,
+      componentProps: {
+        options: [
+          {label: '否', value: 0},
+          {label: '是', value: 1},
+        ],
+      },
+      required: true,
+      colProps: {
+        span: 12,
+      },
+    },
+    {
+      field: 'speechPlayLimit',
+      label: '最大播放次数',
+      component: 'InputNumber',
+      min: 0,
+      colProps: {
+        span: 12,
+      },
+    },
+  ]
+}
+
 export function genUploadVideoSchemas() {
   return [
     {
@@ -362,7 +414,6 @@ export function genUploadVideoSchemas() {
           handleDone: (value) => {
             if (value && unref(value)) {
               model[field] = unref(value).id;
-              model['videoName'] = unref(value).name;
             }
           },
         });
@@ -370,19 +421,11 @@ export function genUploadVideoSchemas() {
       colProps: {
         span: 12
       }
-    },
-    {
-      field: 'videoName',
-      label: '视频名称',
-      component: 'Input',
-      colProps: {
-        span: 12
-      }
     }
   ]
 }
 
-export function genSubjectUploadVideoSchemas() {
+export function genVideoSchemas() {
   return [
     {
       label: '题目视频',
@@ -398,7 +441,6 @@ export function genSubjectUploadVideoSchemas() {
           handleDone: (value) => {
             if (value && unref(value)) {
               model[field] = unref(value).id;
-              model['subjectVideoName'] = unref(value).name;
             }
           },
         });
@@ -408,13 +450,13 @@ export function genSubjectUploadVideoSchemas() {
       }
     },
     {
-      field: 'subjectVideoName',
-      label: '视频名称',
+      field: 'subjectVideoUrl',
+      label: '视频 URL',
       component: 'Input',
       colProps: {
-        span: 12
-      }
-    }
+        span: 12,
+      },
+    },
   ]
 }
 

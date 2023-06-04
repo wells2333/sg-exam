@@ -16,127 +16,130 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SubjectDto extends BaseEntity<SubjectDto> {
 
-	/**
-	 * 考试 ID
-	 */
-	@JsonSerialize(using = ToStringSerializer.class)
-	private Long examinationId;
+    /**
+     * 考试 ID
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long examinationId;
 
-	/**
-	 * 考试记录 ID
-	 */
-	@JsonSerialize(using = ToStringSerializer.class)
-	private Long examinationRecordId;
+    /**
+     * 考试记录 ID
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long examinationRecordId;
 
-	/**
-	 * 题目分类 ID
-	 */
-	@JsonSerialize(using = ToStringSerializer.class)
-	private Long categoryId;
+    /**
+     * 题目分类 ID
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long categoryId;
 
-	/**
-	 * 分类名称
-	 */
-	private String categoryName;
+    /**
+     * 分类名称
+     */
+    private String categoryName;
 
-	/**
-	 * 题目名称
-	 */
-	private String subjectName;
+    /**
+     * 题目名称
+     */
+    private String subjectName;
 
-	/**
-	 * 题目类型
-	 */
-	private Integer type;
+    /**
+     * 题目类型
+     */
+    private Integer type;
 
-	private String typeLabel;
+    private String typeLabel;
 
-	/**
-	 * 选择题类型
-	 */
-	private Integer choicesType;
+    /**
+     * 选择题类型
+     */
+    private Integer choicesType;
 
-	/**
-	 * 分值
-	 */
-	private Double score;
+    /**
+     * 分值
+     */
+    private Double score;
 
+    /**
+     * 解析
+     */
+    private String analysis;
 
-	/**
-	 * 解析
-	 */
-	private String analysis;
+    /**
+     * 难度等级
+     */
+    private Integer level;
 
-	/**
-	 * 难度等级
-	 */
-	private Integer level;
+    /**
+     * 答题
+     */
+    private Answer answer;
 
-	/**
-	 * 答题
-	 */
-	private Answer answer;
+    /**
+     * 选项列表
+     */
+    private List<SubjectOption> options;
 
-	/**
-	 * 选项列表
-	 */
-	private List<SubjectOption> options;
+    private Integer sort;
 
-	private Integer sort;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long speechId;
 
-	@JsonSerialize(using = ToStringSerializer.class)
-	private Long speechId;
+    private String speechUrl;
 
-	private String speechUrl;
+    /**
+     * 题目总数
+     */
+    private Integer total;
 
-	/**
-	 * 题目总数
-	 */
-	private Integer total;
+    /**
+     * 是否还有题目
+     */
+    private boolean hasMore;
 
-	/**
-	 * 是否还有题目
-	 */
-	private boolean hasMore;
+    /**
+     * 视频 ID
+     */
+    private Long videoId;
 
-	/**
-	 * 视频 ID
-	 */
-	private Long videoId;
+    /**
+     * 视频 URL
+     */
+    private String videoUrl;
 
-	/**
-	 * 视频 URL
-	 */
-	private String videoUrl;
+    /**
+     * 图片 ID
+     */
+    private Long imageId;
 
-	/**
-	 * 图片 ID
-	 */
-	private Long imageId;
+    /**
+     * 判分类型
+     */
+    private Integer judgeType;
 
-	/**
-	 * 判分类型
-	 */
-	private Integer judgeType;
+    /**
+     * 视频名称
+     */
+    private String videoName;
 
-	/**
-	 * 视频名称
-	 */
-	private String videoName;
+    /**
+     * 是否已收藏
+     */
+    private boolean favorite;
 
-	/**
-	 * 是否已收藏
-	 */
-	private boolean favorite;
+    /**
+     * 查看次数
+     */
+    private String views;
 
-	/**
-	 * 查看次数
-	 */
-	private String views;
+    private Long subjectVideoId;
 
-	private Long subjectVideoId;
+    private String subjectVideoName;
 
-	private String subjectVideoName;
+    private String subjectVideoUrl;
 
-	private String subjectVideoUrl;
+    private Integer speechPlayLimit;
+
+    private Integer autoPlaySpeech;
 }

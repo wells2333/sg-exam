@@ -100,14 +100,14 @@
                     <div>
                       <div class="user-evaluate-item" v-for="e in evaluates" :key="e.id">
                         <el-row>
-                          <el-col :span="3">
+                          <el-col :span="3" style="color: #666;">
                             {{ e.operatorName }}
                           </el-col>
                           <el-col :span="21">
                             <div>
                               <el-rate v-model="e.evaluateLevel" :disabled="true"></el-rate>
                             </div>
-                            <div class="user-evaluate-item-content">
+                            <div class="user-evaluate-item-content" style="color:#333;">
                               {{ e.evaluateContent }}
                             </div>
                             <div class="user-evaluate-item-time">
@@ -298,7 +298,7 @@ export default {
     handleJoin() {
       const type = this.detail.isUserJoin ? '0' : '1'
       const text = this.detail.isUserJoin ? '取消报名' : '报名'
-      this.$confirm('确定' + text + '吗?', '提示', {
+      this.$confirm('确定' + text + '吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

@@ -178,7 +178,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 			List<SubjectOption> options = subjectOptionService.getBySubjectChoicesId(subjectOption);
 			subject.setOptions(options);
 		}
-		return subjectChoicesConverter.toDto(subject);
+		return subjectChoicesConverter.convert(subject);
 	}
 
 	@Override
@@ -202,7 +202,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		List<SubjectDto> list = Lists.newArrayListWithExpectedSize(choices.size());
 		for (SubjectChoices choice : choices) {
 			choice.setOptions(map.get(choice.getId()));
-			list.add(subjectChoicesConverter.toDto(choice));
+			list.add(subjectChoicesConverter.convert(choice));
 		}
 		return list;
 	}
@@ -219,7 +219,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		} else {
 			subjectChoices = this.getPreviousByCurrentId(examinationId, subjectChoices);
 		}
-		return subjectChoicesConverter.toDto(subjectChoices);
+		return subjectChoicesConverter.convert(subjectChoices);
 	}
 
 	@Override
@@ -247,7 +247,6 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 				option.setCommonValue(subjectChoices.getOperator(), subjectChoices.getTenantCode());
 				option.setSubjectChoicesId(subjectChoices.getId());
 			});
-			// 批量插入
 			subjectOptionService.insertBatch(subjectChoices.getOptions());
 		}
 	}
@@ -299,7 +298,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 	public List<SubjectDto> findSubjectList(SubjectDto subjectDto) {
 		SubjectChoices subjectChoices = new SubjectChoices();
 		BeanUtils.copyProperties(subjectDto, subjectChoices);
-		return subjectChoicesConverter.toDto(this.findList(subjectChoices), true);
+		return subjectChoicesConverter.convert(this.findList(subjectChoices), true);
 	}
 
 	@Override
@@ -313,7 +312,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		Map<String, Object> params = Maps.newHashMap();
 		// TODO
 		PageInfo<SubjectChoices> subjectChoicesPageInfo = this.findPage(params, 1, 10);
-		List<SubjectDto> subjectDtos = subjectChoicesConverter.toDto(subjectChoicesPageInfo.getList(), true);
+		List<SubjectDto> subjectDtos = subjectChoicesConverter.convert(subjectChoicesPageInfo.getList(), true);
 		PageInfo<SubjectDto> subjectDtoPageInfo = new PageInfo<>();
 		subjectDtoPageInfo.setList(subjectDtos);
 		subjectDtoPageInfo.setTotal(subjectChoicesPageInfo.getTotal());
@@ -324,7 +323,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 
 	@Override
 	public List<SubjectDto> findSubjectListById(Long[] ids) {
-		return subjectChoicesConverter.toDto(this.findListById(ids), true);
+		return subjectChoicesConverter.convert(this.findListById(ids), true);
 	}
 
 	/**

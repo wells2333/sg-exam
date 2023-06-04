@@ -1,5 +1,6 @@
 <template>
   <view v-bind="$attrs">
+    <a-video :subject="subject"></a-video>
     <view class="subject-choice-checkbox">
       <view v-for="(option, idx) in options" :key="option.value" :class="genOptionClasses(option)"
             @tap="handleClick(idx)">
@@ -17,10 +18,11 @@
 
 <script lang="ts">
 import {defineComponent, ref, unref } from 'vue';
+import {AVideo} from '../AVideo';
 
 export default defineComponent({
   name: 'Judgement',
-  components: {},
+  components: {AVideo},
   props: {
     subject: {
       type: Object,

@@ -16,19 +16,12 @@ import java.util.stream.Collectors;
 public class SubjectShortAnswerConverter implements ISubjectConverter<SubjectShortAnswer> {
 
 	@Override
-	public SubjectShortAnswer fromDto(SubjectDto dto) {
-		SubjectShortAnswer subject = new SubjectShortAnswer();
-		BeanUtils.copyProperties(dto, subject);
-		return subject;
+	public SubjectDto convert(SubjectShortAnswer subject) {
+		return this.convert(subject, true);
 	}
 
 	@Override
-	public SubjectDto toDto(SubjectShortAnswer subject) {
-		return this.toDto(subject, true);
-	}
-
-	@Override
-	public SubjectDto toDto(SubjectShortAnswer subject, boolean findAnswer) {
+	public SubjectDto convert(SubjectShortAnswer subject, boolean findAnswer) {
 		if (subject == null) {
 			return null;
 		}
@@ -46,10 +39,10 @@ public class SubjectShortAnswerConverter implements ISubjectConverter<SubjectSho
 	}
 
 	@Override
-	public List<SubjectDto> toDto(List<SubjectShortAnswer> subjects, boolean findAnswer) {
+	public List<SubjectDto> convert(List<SubjectShortAnswer> subjects, boolean findAnswer) {
 		List<SubjectDto> subjectDtoList = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(subjects)) {
-			subjectDtoList = subjects.stream().map(subject -> toDto(subject, findAnswer)).collect(Collectors.toList());
+			subjectDtoList = subjects.stream().map(subject -> convert(subject, findAnswer)).collect(Collectors.toList());
 		}
 		return subjectDtoList;
 	}

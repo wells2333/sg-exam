@@ -13,8 +13,6 @@ import {BasicTable, TableAction, useTable} from '/@/components/Table';
 import SubjectChoices from '/@/components/Subjects/SubjectChoices.vue';
 import SubjectShortAnswer from '/@/components/Subjects/SubjectShortAnswer.vue';
 import SubjectJudgement from '/@/components/Subjects/SubjectJudgement.vue';
-import SubjectSpeech from "/@/components/Subjects/SubjectSpeech.vue";
-import SubjectVideo from "/@/components/Subjects/SubjectVideo.vue";
 import SubjectCategoryTree from '../subject/SubjectCategoryTree.vue';
 import {getSubjectList} from '/@/api/exam/subject';
 import {batchAddSubjects} from "/@/api/exam/examination";
@@ -30,8 +28,6 @@ export default defineComponent({
     SubjectChoices,
     SubjectShortAnswer,
     SubjectJudgement,
-    SubjectSpeech,
-    SubjectVideo,
     SubjectCategoryTree,
     PageWrapper,
     BasicTable, TableAction

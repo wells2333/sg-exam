@@ -12,7 +12,6 @@
           <judgement ref="judgement" v-show="subject.type === 2" :onChoice="onChoiceFn"/>
           <multiple-choices ref="multipleChoices" v-show="subject.type === 3"
                             :onChoice="onChoiceFn"/>
-          <s-video ref="sVideo" v-show="subject.type === 5" :onChoice="onChoiceFn"></s-video>
           <div class="subject-buttons">
             <el-button plain @click="last" :loading="loadingLast">上一题</el-button>
             <el-button plain @click="next" :loading="loadingNext">下一题</el-button>
@@ -22,7 +21,7 @@
       <el-col :span="3">
         <div class="tool-bar">
           <div class="current-progress">
-            当前进度: {{ subject.sort }}/{{ cards.length }}
+            当前进度：{{ subject.sort }}/{{ cards.length }}
           </div>
           <div class="answer-card">
             <el-button type="text" icon="el-icon-date" @click="answerCard">答题卡</el-button>
@@ -59,7 +58,6 @@ import Choices from '@/components/Subjects/Choices'
 import MultipleChoices from '@/components/Subjects/MultipleChoices'
 import ShortAnswer from '@/components/Subjects/ShortAnswer'
 import Judgement from '@/components/Subjects/Judgement'
-import SVideo from '@/components/Subjects/SVideo'
 import {nextSubjectType} from '@/const/constant'
 
 export default {
@@ -69,8 +67,7 @@ export default {
     Choices,
     MultipleChoices,
     ShortAnswer,
-    Judgement,
-    SVideo
+    Judgement
   },
   data() {
     return {
@@ -201,7 +198,7 @@ export default {
     },
     // 提交
     submitExam() {
-      this.$confirm('确定要提交吗?', '提示', {
+      this.$confirm('确定要提交吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -224,7 +221,7 @@ export default {
           userId: userInfo.id
         }).then(() => {
           messageSuccess(this, '提交成功')
-          // 清空本地cache
+          // 清空本地 cache
           store.dispatch('ClearExam')
           if (toExamRecord) {
             this.$router.push({name: 'exam-record'})
@@ -362,7 +359,7 @@ export default {
   margin-right: -15px;
 
   > button {
-    margin-top: 5px;
+    margin-top: 10px;
   }
 }
 

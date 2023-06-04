@@ -5,6 +5,20 @@ import {ExamMediaApi} from "/@/api/api";
 // 5min 超时
 const uploadTimeoutSeconds = 500 * 1000;
 
+export function uploadSpeech(
+  params: UploadFileParams,
+  onUploadProgress: (progressEvent: ProgressEvent) => void,
+) {
+  return defHttp.uploadFile(
+    {
+      url: ExamMediaApi.UploadSpeech,
+      onUploadProgress,
+      timeout: uploadTimeoutSeconds
+    },
+    params,
+  );
+}
+
 export function uploadVideo(
   params: UploadFileParams,
   onUploadProgress: (progressEvent: ProgressEvent) => void,

@@ -68,7 +68,7 @@
                 </el-col>
               </el-row>
               <el-row>
-                <el-col :span="12" :offset="6" style="text-align: center">
+                <el-col :span="12" :offset="6" style="text-align: center; margin-top: 20px;">
                   <h4>头像</h4>
                 </el-col>
               </el-row>
@@ -130,7 +130,7 @@ export default {
               notifySuccess(this, '修改成功')
               // 重新拉取用户信息
               store.dispatch('GetUserInfo').then(res => {
-                console.log('重新获取用户信息成功.')
+                console.log('重新获取用户信息成功。')
               }).catch((err) => {
                 console.error(err)
               })
@@ -164,7 +164,7 @@ export default {
       const isJPG = file.type === 'image/jpeg' || file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 2
       if (!isJPG) {
-        this.$message.error('上传头像图片只能是 jpg/png 格式!')
+        this.$message.error('上传头像图片只能是 jpg/png 格式！')
       }
       if (!isLt2M) {
         this.$message.error('上传头像图片大小不能超过 2MB!')
@@ -180,6 +180,11 @@ export default {
     margin-bottom: 20px;
   }
   .avatar-uploader-icon {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
     font-size: 28px;
     color: #8c939d;
     width: 178px;
@@ -191,6 +196,7 @@ export default {
     width: 178px;
     height: 178px;
     display: block;
+    border-radius: 6px;
   }
   .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;

@@ -7,7 +7,10 @@
               v-if="subjectInfo.score !== undefined && subjectInfo.score !== 0">&nbsp;({{ subjectInfo.score }}分)&nbsp;</span>
         <span class="subject-title-content" v-html="subjectInfo.subjectName"/>
       </div>
-      <div class="subject-video-info" v-if="subjectInfo.subjectVideoId && subjectInfo.subjectVideoName">
+      <div class="subject-speech-info" v-if="subjectInfo.speechId && subjectInfo.speechUrl">
+        <sg-audio ref="sgAudio" :src="subjectInfo.speechUrl"></sg-audio>
+      </div>
+      <div class="subject-video-info" v-if="subjectInfo.subjectVideoId">
         <sg-video ref="sgVideo"></sg-video>
       </div>
       <div class="subject-tinymce">
@@ -19,13 +22,15 @@
 
 <script>
 import Tinymce from '@/components/Tinymce'
+import SgAudio from '@/components/SgAudio'
 import SgVideo from '@/components/SgVideo'
-import {setVideoSrc, pauseVideo} from '@/utils/busi'
+import {setVideoSrc, pauseVideo, pauseAudio, setAudioSrc} from '@/utils/busi'
 
 export default {
   name: 'ShortAnswer',
   components: {
     Tinymce,
+    SgAudio,
     SgVideo
   },
   props: {
@@ -56,6 +61,8 @@ export default {
       this.userAnswer = answer
       if (this.$refs.shortAnswerEditor && this.userAnswer !== null) {
         this.$refs.shortAnswerEditor.setContent(this.userAnswer)
+      } else {
+        this.$refs.shortAnswerEditor.setContent('')
       }
       this.onChoice(this.subjectInfo.sort)
     },
@@ -65,12 +72,14 @@ export default {
         this.setAnswer(subject.answer.answer)
       }
       setVideoSrc(subject, this.$refs)
+      setAudioSrc(subject, this.$refs, subject.autoPlaySpeech)
     },
     getSubjectInfo() {
       return this.subjectInfo
     },
     beforeSave() {
       pauseVideo(this.$refs)
+      pauseAudio(this.$refs)
     }
   }
 }

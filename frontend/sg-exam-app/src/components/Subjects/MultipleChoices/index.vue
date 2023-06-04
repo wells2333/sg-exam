@@ -7,7 +7,10 @@
               v-if="subjectInfo.score !== undefined && subjectInfo.score !== 0">({{ subjectInfo.score }}分)&nbsp;</span>
         <div class="subject-title-content" v-html="subjectInfo.subjectName"/>
       </div>
-      <div class="subject-video-info" v-if="subjectInfo.subjectVideoId && subjectInfo.subjectVideoName">
+      <div class="subject-speech-info" v-if="subjectInfo.speechId && subjectInfo.speechUrl">
+        <sg-audio ref="sgAudio" :src="subjectInfo.speechUrl"></sg-audio>
+      </div>
+      <div class="subject-video-info" v-if="subjectInfo.subjectVideoId">
         <sg-video ref="sgVideo"></sg-video>
       </div>
       <ul class="subject-options" v-for="option in options" :key="option.id">
@@ -25,13 +28,15 @@
 </template>
 
 <script>
+import SgAudio from '@/components/SgAudio'
 import SgVideo from '@/components/SgVideo'
 import {isNotEmpty} from '@/utils/util'
-import {setVideoSrc, pauseVideo} from '@/utils/busi'
+import {setVideoSrc, pauseVideo, pauseAudio, setAudioSrc} from '@/utils/busi'
 
 export default {
   name: 'MultipleChoices',
   components: {
+    SgAudio,
     SgVideo
   },
   data() {
@@ -73,6 +78,7 @@ export default {
         this.setAnswer(subject.answer.answer)
       }
       setVideoSrc(subject, this.$refs)
+      setAudioSrc(subject, this.$refs, subject.autoPlaySpeech)
     },
     getSubjectInfo() {
       this.subjectInfo.options = this.options
@@ -93,6 +99,7 @@ export default {
     },
     beforeSave() {
       pauseVideo(this.$refs)
+      pauseAudio(this.$refs)
     }
   }
 }

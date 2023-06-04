@@ -24,8 +24,8 @@ CREATE TABLE `sys_sms` (
 
 CREATE TABLE `sys_message_read` (
     `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `message_id` bigint(20) NOT NULL COMMENT '消息ID',
-    `receiver_id` bigint(20) NOT NULL COMMENT '接收人ID',
+    `message_id` bigint(20) NOT NULL COMMENT '消息 ID',
+    `receiver_id` bigint(20) NOT NULL COMMENT '接收人 ID',
     `creator` varchar(128) NOT NULL COMMENT '创建人',
     `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `operator` varchar(128) NOT NULL COMMENT '修改人',
@@ -39,8 +39,8 @@ CREATE TABLE `sys_message_read` (
 
 CREATE TABLE `sys_message_receiver` (
     `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `message_id` bigint(20) NOT NULL COMMENT '消息ID',
-    `receiver_id` bigint(20) NOT NULL COMMENT '接收人ID',
+    `message_id` bigint(20) NOT NULL COMMENT '消息 ID',
+    `receiver_id` bigint(20) NOT NULL COMMENT '接收人 ID',
     `creator` varchar(128) NOT NULL COMMENT '创建人',
     `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `operator` varchar(128) NOT NULL COMMENT '修改人',
@@ -56,7 +56,7 @@ CREATE TABLE `sys_message_receiver` (
 
 CREATE TABLE `sys_config` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `config_key` varchar(255) NOT NULL COMMENT '配置key',
+  `config_key` varchar(255) NOT NULL COMMENT '配置 key',
   `config_value` varchar(255) NOT NULL DEFAULT '' COMMENT '配置的值',
   `config_desc` varchar(255) NOT NULL DEFAULT '' COMMENT '配置描述',
   `creator` varchar(16) NOT NULL DEFAULT '' COMMENT '创建人',
@@ -76,10 +76,10 @@ INSERT INTO `sys_config` (`id`, `config_key`, `config_value`, `config_desc`, `cr
 INSERT INTO `sys_config` (`id`, `config_key`, `config_value`, `config_desc`, `creator`, `create_time`, `operator`, `update_time`, `is_deleted`, `tenant_code`) VALUES (7, 'sys_wxapp_avatar', 'https://cdn.yunmianshi.com/app/wx/svg/study_v3.svg?e=1677074888&token=8-9rcJPtTrLOJP4fLNWXy_qwiLVc3Exu52iuGlxt:-zqjhckC8BfXnNC51KmilksTx5o=', '小程序首页封面图片', 'admin', '2023-02-21 22:02:47', 'admin', '2023-02-21 22:08:25', 0, 'gitee');
 INSERT INTO `sys_config` (`id`, `config_key`, `config_value`, `config_desc`, `creator`, `create_time`, `operator`, `update_time`, `is_deleted`, `tenant_code`) VALUES (8, 'sys_wxapp_main_title', 'HI，欢迎使用云面试', '小程序首页主标题', 'admin', '2023-02-21 22:02:57', 'admin', '2023-02-21 22:03:38', 0, 'gitee');
 INSERT INTO `sys_config` (`id`, `config_key`, `config_value`, `config_desc`, `creator`, `create_time`, `operator`, `update_time`, `is_deleted`, `tenant_code`) VALUES (9, 'sys_wxapp_sub_title', '提供考试、练习、刷题、在线学习等功能', '小程序首页副标题', 'admin', '2023-02-21 22:03:08', 'admin', '2023-02-21 22:04:01', 0, 'gitee');
-INSERT INTO `sys_config` (`id`, `config_key`, `config_value`, `config_desc`, `creator`, `create_time`, `operator`, `update_time`, `is_deleted`, `tenant_code`) VALUES (10, 'sys_web_main_title', '云职评AI面试', 'web 网站首页主标题', 'admin', '2023-02-21 23:02:27', 'admin', '2023-02-21 23:02:27', 0, 'gitee');
-INSERT INTO `sys_config` (`id`, `config_key`, `config_value`, `config_desc`, `creator`, `create_time`, `operator`, `update_time`, `is_deleted`, `tenant_code`) VALUES (11, 'sys_web_sub_title_one', '采用AI技术，新一代面试管理平台', 'web 网站首页副标题', 'admin', '2023-02-21 23:02:51', 'admin', '2023-02-21 23:03:01', 0, 'gitee');
-INSERT INTO `sys_config` (`id`, `config_key`, `config_value`, `config_desc`, `creator`, `create_time`, `operator`, `update_time`, `is_deleted`, `tenant_code`) VALUES (12, 'sys_web_sub_title_two', '提供私有化、AI面试、肢体测评、笔试、性格测试等功能', 'web 网站首页副标题', 'admin', '2023-02-21 23:03:19', 'admin', '2023-02-21 23:03:19', 0, 'gitee');
-INSERT INTO `sys_config` (`id`, `config_key`, `config_value`, `config_desc`, `creator`, `create_time`, `operator`, `update_time`, `is_deleted`, `tenant_code`) VALUES (13, 'sys_web_copyright', '陕ICP备20002980号-2', '网站 Copyright', 'admin', '2023-02-22 20:54:38', 'admin', '2023-02-22 20:54:38', 0, 'gitee');
+INSERT INTO `sys_config` (`id`, `config_key`, `config_value`, `config_desc`, `creator`, `create_time`, `operator`, `update_time`, `is_deleted`, `tenant_code`) VALUES (10, 'sys_web_main_title', '云职评 AI 面试', 'web 网站首页主标题', 'admin', '2023-02-21 23:02:27', 'admin', '2023-02-21 23:02:27', 0, 'gitee');
+INSERT INTO `sys_config` (`id`, `config_key`, `config_value`, `config_desc`, `creator`, `create_time`, `operator`, `update_time`, `is_deleted`, `tenant_code`) VALUES (11, 'sys_web_sub_title_one', '采用 AI 技术，新一代面试管理平台', 'web 网站首页副标题', 'admin', '2023-02-21 23:02:51', 'admin', '2023-02-21 23:03:01', 0, 'gitee');
+INSERT INTO `sys_config` (`id`, `config_key`, `config_value`, `config_desc`, `creator`, `create_time`, `operator`, `update_time`, `is_deleted`, `tenant_code`) VALUES (12, 'sys_web_sub_title_two', '提供私有化、AI 面试、肢体测评、笔试、性格测试等功能', 'web 网站首页副标题', 'admin', '2023-02-21 23:03:19', 'admin', '2023-02-21 23:03:19', 0, 'gitee');
+INSERT INTO `sys_config` (`id`, `config_key`, `config_value`, `config_desc`, `creator`, `create_time`, `operator`, `update_time`, `is_deleted`, `tenant_code`) VALUES (13, 'sys_web_copyright', '陕 ICP 备 20002980 号 -2', '网站 Copyright', 'admin', '2023-02-22 20:54:38', 'admin', '2023-02-22 20:54:38', 0, 'gitee');
 
 INSERT INTO `sys_menu` (`id`, `name`, `permission`, `path`, `parent_id`, `icon`, `sort`, `type`, `creator`, `create_time`, `operator`, `update_time`, `is_deleted`, `component`, `is_ext`, `keepalive`, `remark`, `tenant_code`, `hide_menu`, `redirect`, `current_active_menu`) VALUES (92, '消息管理', 'sys:message', '/sys/message', 3, NULL, '11', '0', 'admin', '2023-02-18 10:17:38', 'admin', '2023-02-18 10:17:38', 0, 'sys/message/index', 0, 0, NULL, 'gitee', 0, '', '');
 INSERT INTO `sys_menu` (`id`, `name`, `permission`, `path`, `parent_id`, `icon`, `sort`, `type`, `creator`, `create_time`, `operator`, `update_time`, `is_deleted`, `component`, `is_ext`, `keepalive`, `remark`, `tenant_code`, `hide_menu`, `redirect`, `current_active_menu`) VALUES (93, '新增消息', 'sys:message:add', NULL, 92, NULL, '1', '1', 'admin', '2023-02-18 10:29:11', 'admin', '2023-02-18 10:29:11', 0, NULL, 0, NULL, NULL, 'gitee', 1, '', '');
@@ -116,9 +116,9 @@ CREATE TABLE `exam_examination_member` (
    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
    `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
    `tenant_code` varchar(16) NOT NULL COMMENT '租户编号',
-   `member_type` tinyint(1) NOT NULL COMMENT '成员类型，0：全部用户，1：用户ID，2：部门',
-   `member_id` bigint(20) NOT NULL COMMENT '成员ID',
-   `exam_id` bigint(20) NOT NULL COMMENT '考试/课程ID',
+   `member_type` tinyint(1) NOT NULL COMMENT '成员类型，0：全部用户，1：用户 ID，2：部门',
+   `member_id` bigint(20) NOT NULL COMMENT '成员 ID',
+   `exam_id` bigint(20) NOT NULL COMMENT '考试/课程 ID',
    PRIMARY KEY (`id`) USING BTREE,
    KEY `idx_type` (`exam_type`),
    KEY `idx_member_id` (`member_id`),
@@ -131,27 +131,34 @@ ALTER TABLE `sys_attachment_group`
     ADD COLUMN `storage_type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '存储类型，1：七牛，2：本地文件';
 
 ALTER TABLE `exam_subject_choices`
-    ADD COLUMN `subject_video_id` bigint(20) NULL COMMENT '题目视频ID' AFTER `speech_id`,
-ADD COLUMN `subject_video_name` varchar(255) NULL COMMENT '题目视频名称' AFTER `subject_video_id`;
+    ADD COLUMN `subject_video_id` bigint(20) NULL COMMENT '题目视频 ID' AFTER `speech_id`;
 
 ALTER TABLE `exam_subject_judgement`
-    ADD COLUMN `subject_video_id` bigint(20) NULL COMMENT '题目视频ID' AFTER `speech_id`,
-ADD COLUMN `subject_video_name` varchar(255) NULL COMMENT '题目视频名称' AFTER `subject_video_id`;
+    ADD COLUMN `subject_video_id` bigint(20) NULL COMMENT '题目视频 ID' AFTER `speech_id`;
 
 ALTER TABLE `exam_subject_short_answer`
-    ADD COLUMN `subject_video_id` bigint(20) NULL COMMENT '题目视频ID' AFTER `speech_id`,
-ADD COLUMN `subject_video_name` varchar(255) NULL COMMENT '题目视频名称' AFTER `subject_video_id`;
-
-ALTER TABLE `exam_subject_speech`
-    ADD COLUMN `subject_video_id` bigint(20) NULL COMMENT '题目视频ID' AFTER `speech_id`,
-ADD COLUMN `subject_video_name` varchar(255) NULL COMMENT '题目视频名称' AFTER `subject_video_id`;
-
-ALTER TABLE `exam_subject_video`
-    ADD COLUMN `subject_video_id` bigint(20) NULL COMMENT '题目视频ID' AFTER `speech_id`,
-ADD COLUMN `subject_video_name` varchar(255) NULL COMMENT '题目视频名称' AFTER `subject_video_id`;
+    ADD COLUMN `subject_video_id` bigint(20) NULL COMMENT '题目视频 ID' AFTER `speech_id`;
 
 INSERT INTO `sys_config` (`id`, `config_key`, `config_value`, `config_desc`, `creator`, `create_time`, `operator`, `update_time`, `is_deleted`, `tenant_code`) VALUES (14, 'sys_login_show_tenant_code', 'true', '登录页面是否展示单位标识输入框', 'admin', '2023-05-11 22:47:47', 'admin', '2023-05-11 22:48:35', 0, 'gitee');
 
 ALTER TABLE `sys_attachment` ADD COLUMN `hash` varchar(255) NOT NULL DEFAULT '' COMMENT '哈希值';
 
 ALTER TABLE `sys_attachment` ADD INDEX `idx_hash`(`hash`);
+
+INSERT INTO `sys_attachment_group` (`id`, `group_name`, `group_code`, `url_expire`, `creator`, `create_time`, `operator`, `update_time`, `is_deleted`, `tenant_code`, `remark`, `storage_type`) VALUES (11, '考务语音', 'exam/speech', 00000000002147483647, 'admin', '2023-06-01 22:36:32', 'admin', '2023-06-01 22:36:39', 0, 'gitee', '考务语音', 2);
+
+ALTER TABLE `exam_subject_choices` ADD COLUMN `subject_video_url` varchar(1024) NULL COMMENT '题目视频 URL';
+ALTER TABLE `exam_subject_judgement` ADD COLUMN `subject_video_url` varchar(1024) NULL COMMENT '题目视频 URL';
+ALTER TABLE `exam_subject_short_answer` ADD COLUMN `subject_video_url` varchar(1024) NULL COMMENT '题目视频 URL';
+
+ALTER TABLE `exam_subject_choices`
+    ADD COLUMN `speech_play_limit` int(10) NULL COMMENT '语音最大播放次数',
+    ADD COLUMN `auto_play_speech` tinyint(1) ZEROFILL NOT NULL DEFAULT 0 COMMENT '是否自动播放语音，0：否，1：是';
+
+ALTER TABLE `exam_subject_judgement`
+    ADD COLUMN `speech_play_limit` int(10) NULL COMMENT '语音最大播放次数',
+    ADD COLUMN `auto_play_speech` tinyint(1) ZEROFILL NOT NULL DEFAULT 0 COMMENT '是否自动播放语音，0：否，1：是';
+
+ALTER TABLE `exam_subject_short_answer`
+    ADD COLUMN `speech_play_limit` int(10) NULL COMMENT '语音最大播放次数',
+    ADD COLUMN `auto_play_speech` tinyint(1) ZEROFILL NOT NULL DEFAULT 0 COMMENT '是否自动播放语音，0：否，1：是';

@@ -175,6 +175,7 @@ export const formSchema: FormSchema[] = [
         value: model[field],
         url: model['imageUrl'],
         api: uploadImage,
+        accept: '.jpg,.jpeg,.png',
         handleDone: (value) => {
           if (value) {
             model[field] = unref(value).id;
@@ -217,8 +218,6 @@ export const formSchema: FormSchema[] = [
         height: editorHeight,
         plugins: tinymcePlugins,
         toolbar: tinymceToolbar,
-        height: 150,
-        // 指定上传URL
         uploadUrl: ExamMediaApi.UploadImage,
         onChange: (value: string) => {
           model[field] = value;
@@ -279,7 +278,7 @@ export const evaluateSearchFormSchema: FormSchema[] = [
 
 export const memberColumns: BasicColumn[] = [
   {
-    title: '学员ID',
+    title: '学员 ID',
     dataIndex: 'userId',
     width: 160,
     align: 'left',
@@ -323,7 +322,7 @@ export const memberColumns: BasicColumn[] = [
 export const memberSearchFormSchema: FormSchema[] = [
   {
     field: 'userId',
-    label: '学员ID',
+    label: '学员 ID',
     component: 'Input',
     colProps: {span: 8},
   }

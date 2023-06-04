@@ -51,8 +51,12 @@ public class ExamUtil {
 			simple.setScore(dto.getScore());
 			simple.setLevel(dto.getLevel());
 			simple.setSort(dto.getSort());
+			simple.setSpeechUrl(dto.getSpeechUrl());
+			simple.setAutoPlaySpeech(dto.getAutoPlaySpeech());
+			simple.setSpeechPlayLimit(dto.getSpeechPlayLimit());
+			simple.setSubjectVideoUrl(dto.getSubjectVideoUrl());
 
-			List<SimpleSubjectOptionDto> optionDtos = Lists.newArrayList();
+			List<SimpleSubjectOptionDto> optionDtoList = Lists.newArrayList();
 			List<SubjectOption> options = dto.getOptions();
 			if (CollectionUtils.isNotEmpty(options)) {
 				for (SubjectOption option : options) {
@@ -60,10 +64,10 @@ public class ExamUtil {
 					optionDto.setOptionName(option.getOptionName());
 					optionDto.setOptionContent(option.getOptionContent());
 					optionDto.setSort(option.getSort());
-					optionDtos.add(optionDto);
+                    optionDtoList.add(optionDto);
 				}
 			}
-			simple.setOptions(optionDtos);
+			simple.setOptions(optionDtoList);
 			simples.add(simple);
 		}
 		return simples;
@@ -87,9 +91,6 @@ public class ExamUtil {
 		return result;
 	}
 
-	/**
-	 * 替换首尾的逗号
-	 */
 	public static String replaceComma(String str) {
 		if (StringUtils.isNotBlank(str)) {
 			str = str.replaceAll(REGEX_COMMA, "");
@@ -104,37 +105,36 @@ public class ExamUtil {
 		return map;
 	}
 
-	public static List<ExamRecordExcelModel> convertExamRecord(List<ExaminationRecordDto> examinationRecords) {
-		List<ExamRecordExcelModel> examRecordExcelModels = new ArrayList<>(examinationRecords.size());
-		examinationRecords.forEach(examinationRecord -> {
-			ExamRecordExcelModel examRecordExcelModel = new ExamRecordExcelModel();
-			BeanUtils.copyProperties(examinationRecord, examRecordExcelModel);
-			examRecordExcelModels.add(examRecordExcelModel);
+	public static List<ExamRecordExcelModel> convertExamRecord(List<ExaminationRecordDto> records) {
+		List<ExamRecordExcelModel> models = new ArrayList<>(records.size());
+		records.forEach(record -> {
+			ExamRecordExcelModel model = new ExamRecordExcelModel();
+			BeanUtils.copyProperties(record, model);
+			models.add(model);
 		});
-		return examRecordExcelModels;
+		return models;
 	}
 
 	public static List<SubjectExcelModel> convertSubject(List<SubjectDto> dtoList) {
-		List<SubjectExcelModel> subjectExcelModels = new ArrayList<>(dtoList.size());
+		List<SubjectExcelModel> models = new ArrayList<>(dtoList.size());
 		dtoList.forEach(subject -> {
-			SubjectExcelModel subjectExcelModel = new SubjectExcelModel();
-			BeanUtils.copyProperties(subject, subjectExcelModel);
+			SubjectExcelModel model = new SubjectExcelModel();
+			BeanUtils.copyProperties(subject, model);
 			if (CollectionUtils.isNotEmpty(subject.getOptions())) {
 				for (SubjectOption option : subject.getOptions()) {
 					switch (option.getOptionName()) {
-						case "A" -> subjectExcelModel.setOptionA(option.getOptionContent());
-						case "B" -> subjectExcelModel.setOptionB(option.getOptionContent());
-						case "C" -> subjectExcelModel.setOptionC(option.getOptionContent());
-						case "D" -> subjectExcelModel.setOptionD(option.getOptionContent());
-						default -> {
-						}
+						case "A" -> model.setOptionA(option.getOptionContent());
+						case "B" -> model.setOptionB(option.getOptionContent());
+						case "C" -> model.setOptionC(option.getOptionContent());
+						case "D" -> model.setOptionD(option.getOptionContent());
+						default -> {}
 					}
 				}
 			}
-			subjectExcelModel.setAnswer(subject.getAnswer().getAnswer());
-			subjectExcelModels.add(subjectExcelModel);
+			model.setAnswer(subject.getAnswer().getAnswer());
+			models.add(model);
 		});
-		return subjectExcelModels;
+		return models;
 	}
 
 	/**
@@ -156,14 +156,8 @@ public class ExamUtil {
 					} else if (SubjectType.SHORT_ANSWER.getValue().equals(type)) {
 						idMap.put(SubjectType.SHORT_ANSWER.name(),
 								temp.stream().map(Subjects::getSubjectId).distinct().toArray(Long[]::new));
-					} else if (SubjectType.SPEECH.getValue().equals(type)) {
-						idMap.put(SubjectType.SPEECH.name(),
-								temp.stream().map(Subjects::getSubjectId).distinct().toArray(Long[]::new));
-					} else if (SubjectType.VIDEO.getValue().equals(type)) {
-						idMap.put(SubjectType.VIDEO.name(),
-								temp.stream().map(Subjects::getSubjectId).distinct().toArray(Long[]::new));
 					} else {
-						log.error("unknown subject type: {}", type);
+						log.error("Unknown subject type: {}", type);
 					}
 				});
 		return idMap;

@@ -1,16 +1,13 @@
 <template>
   <div class="bg">
-    <!-- 背景 -->
     <svg id="bg_svg" viewBox="0 0 1440 480" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid slice">
       <filter id="blur">
         <feGaussianBlur stdDeviation="5"></feGaussianBlur>
       </filter>
       <image xlink:href="static/img/login/login-bg.jpg" width="1440" height="480" filter="url(#blur)"></image>
     </svg>
-    <!-- 注册、登录表单 -->
     <div class="login-wrap">
       <el-tabs v-model="activeName">
-        <!-- 注册 -->
         <el-tab-pane label="注册" name="/register" class="login-wrap-title">
           <el-form ref="registerForm" :model="register.form" :rules="register.rules" class="register-form" label-position="left" auto-complete="off">
             <el-form-item prop="tenantCode" v-if="sysConfig.sys_login_show_tenant_code && sysConfig.sys_login_show_tenant_code ==='true'">
@@ -45,12 +42,11 @@
           <div class="third-login">
             <el-row>
               <el-col :span="24" class="third-link">
-                陕ICP备20002980号-2
+                陕 ICP 备 20002980 号 -2
               </el-col>
             </el-row>
           </div>
         </el-tab-pane>
-        <!-- 登录 -->
         <el-tab-pane label="登录" name="/login" class="login-wrap-title">
           <div v-if="!useSmsLogin">
             <el-form ref="loginForm" :model="login.form" :rules="login.rules" class="login-form" auto-complete="on" label-position="left">
@@ -65,7 +61,7 @@
                 <span class="forgot-suffix">
                 <span class="forgot-link">
                   <router-link to="/reset-password">
-                    <span>忘记密码?</span>
+                    <span>忘记密码？</span>
                   </router-link>
                 </span>
               </span>
@@ -91,7 +87,6 @@
               </div>
             </el-form>
           </div>
-          <!-- 验证码登录-->
           <div v-else>
             <el-form ref="smsLoginForm" :model="sms.form" :rules="sms.rules" class="login-form" auto-complete="off" label-position="left">
               <el-form-item prop="phone">
@@ -112,7 +107,7 @@
           <div class="third-login">
             <el-row>
               <el-col :span="24" class="third-link">
-                  陕ICP备20002980号-2
+                  陕 ICP 备 20002980 号 -2
               </el-col>
             </el-row>
           </div>
@@ -149,7 +144,7 @@ export default {
       if (!value) {
         callback(new Error('请输入电话号码'))
       } else if (!isValidPhone(value)) {
-        callback(new Error('请输入正确的11位手机号码'))
+        callback(new Error('请输入正确的 11 位手机号码'))
       } else {
         callback()
       }
@@ -170,10 +165,10 @@ export default {
           identifier: [{ required: true, trigger: 'blur', message: '请输入用户名' }],
           credential: [
             { required: true, trigger: 'blur', message: '请输入密码' },
-            { min: 4, trigger: 'blur', message: '密码长度最少为4位' }],
+            { min: 4, trigger: 'blur', message: '密码长度最少为 4 位' }],
           code: [
             { required: true, message: '请输入验证码', trigger: 'blur' },
-            { min: 4, max: 4, message: '验证码长度为4位', trigger: 'blur' }
+            { min: 4, max: 4, message: '验证码长度为 4 位', trigger: 'blur' }
           ]
         },
         loading: false,
@@ -200,10 +195,10 @@ export default {
           email: [{ required: true, trigger: 'blur', message: '请输入邮箱地址' }],
           credential: [
             { required: true, trigger: 'blur', message: '请输入密码' },
-            { min: 4, trigger: 'blur', message: '密码长度最少为4位' }],
+            { min: 4, trigger: 'blur', message: '密码长度最少为 4 位' }],
           code: [
             { required: true, message: '请输入验证码', trigger: 'blur' },
-            { min: 4, max: 4, message: '验证码长度为4位', trigger: 'blur' }
+            { min: 4, max: 4, message: '验证码长度为 4 位', trigger: 'blur' }
           ]
         },
         loading: false,
@@ -268,7 +263,7 @@ export default {
         this.$refs.loginForm.validate(valid => {
           if (valid) {
             this.login.loading = true
-            // 登录，获取token
+            // 登录，获取 token
             this.$store.dispatch('LoginByUsername', this.login.form).then(() => {
               this.login.loading = false
               // 重定向到首页
@@ -311,7 +306,7 @@ export default {
     // 短信验证码登录
     handleSmsLogin () {
       this.useSmsLogin = true
-      // 登录，获取token
+      // 登录，获取 token
       this.$store.dispatch('LoginBySocial', this.sms.form).then(() => {
         // 重定向到首页
         this.$router.push('/')

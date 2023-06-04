@@ -39,7 +39,8 @@
                   </el-submenu>
                   <el-submenu v-if="login" index="/user-info">
                     <template slot="title">
-                      <img :src="userInfo.avatar" style="height: 30px;border-radius: 50%;margin-right: 6px;"/>
+                      <img :src="userInfo.avatar"
+                           style="width: 30px;height: 30px;border-radius: 50%;margin-right: 6px;"/>
                       {{userInfo.identifier}}
                     </template>
                     <el-menu-item index="account" @click="open('/account')">个人中心</el-menu-item>
@@ -98,7 +99,7 @@ export default {
       }
       if (path !== this.$route.fullPath) {
         if (this.$route.fullPath === '/start') {
-          this.$confirm('是否要结束当前考试?', '提示', {
+          this.$confirm('是否要结束当前考试？', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'

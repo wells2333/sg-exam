@@ -702,7 +702,7 @@ img {
       display: block;
     }
     p {
-      font-size: 16px;
+      font-size: 14px;
       line-height: 1.9;
       &:last-child {
         margin-bottom: 0;
@@ -771,7 +771,7 @@ img {
     display: block;
   }
   p {
-    font-size: 16px;
+    font-size: 14px;
     line-height: 1.9;
     &:last-child {
       margin-bottom: 0;
@@ -974,7 +974,7 @@ img {
     display: block;
   }
   p {
-    font-size: 16px;
+    font-size: 14px;
     line-height: 1.9;
     &:last-child {
       margin-bottom: 0;
@@ -1074,7 +1074,7 @@ img {
       h5 {
         font-size: 18px;
         margin-bottom: 5px;
-        color: rgba(0, 0, 0, 0.35);
+        color: #666;
         @media #{$breakpoint-xs} {
           font-size: 14px;
         }

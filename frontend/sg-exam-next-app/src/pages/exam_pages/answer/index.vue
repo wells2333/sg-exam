@@ -37,12 +37,6 @@
               <view v-else-if="item.subject.type === 2">
                 <judgement :subject="item.subject" :answer="item.answer" :standAnswer="item.subject.answer.answer" :disabled="true"></judgement>
               </view>
-              <view v-else-if="item.subject.type === 4">
-
-              </view>
-              <view v-else-if="item.subject.type === 5">
-                <subject-video :subject="item.subject" :answer="item.answer" :standAnswer="item.subject.answer.answer"></subject-video>
-              </view>
             </view>
           </view>
           <view class="answer-text" v-if="item.subject.answer.answer !== undefined && item.subject.answer.answer !== null">
@@ -76,7 +70,6 @@ import Taro from '@tarojs/taro';
 import {Choice} from '../../../components/subject/choice/index';
 import {Judgement} from '../../../components/subject/judgement/index';
 import {ShortAnswer} from '../../../components/subject/shortAnswer/index';
-import {SubjectVideo} from '../../../components/subject/video/index';
 import {showLoading, hideLoading} from '../../../utils/util';
 
 export default {
@@ -84,8 +77,7 @@ export default {
     IconFont,
     'choice': Choice,
     'judgement': Judgement,
-    'short-answer': ShortAnswer,
-    'subject-video': SubjectVideo
+    'short-answer': ShortAnswer
   },
   setup() {
     const currentInstance = Taro.getCurrentInstance();

@@ -148,5 +148,11 @@ export default {
   padding-top: 0 !important;
   position: relative;
   height: 400px !important;
+  .vjs-big-play-button {
+    top: 50%;
+    left: 50%;
+    margin-left: -1.5em;
+    height: -0.75em;
+  }
 }
 </style>

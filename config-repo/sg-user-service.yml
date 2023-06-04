@@ -41,6 +41,7 @@ qiniu:
 
 # minio 存储配置
 minio:
+  enabled: true
   endpoint: ${MINIO_ENDPOINT:http://127.0.0.1:9000}
   bucket: ${MINIO_BUCKET:yunmianshi}
   access-key: ${MINIO_ACCESS_KEY:zWXHMYJl99MGISbaVanX}

@@ -6,11 +6,9 @@ import java.util.List;
 
 public interface ISubjectConverter<T> {
 
-	T fromDto(SubjectDto dto);
+	SubjectDto convert(T subject);
 
-	SubjectDto toDto(T subject);
+	SubjectDto convert(T subject, boolean findAnswer);
 
-	SubjectDto toDto(T subject, boolean findAnswer);
-
-	List<SubjectDto> toDto(List<T> subjects, boolean findAnswer);
+	List<SubjectDto> convert(List<T> subjects, boolean findAnswer);
 }
