@@ -1,18 +1,20 @@
 <template>
   <view v-bind="$attrs">
-    <view class="short-answer-area" v-if="showInput">
-      <nut-textarea v-model="value" @change="handleChange" placeholder="请输入" :disabled="disabled" :max-length="maxLength"/>
-    </view>
+      <a-video :subject="subject"></a-video>
+      <view class="short-answer-area" v-if="showInput">
+        <nut-textarea v-model="value" @change="handleChange" placeholder="请输入" :disabled="disabled" :max-length="maxLength"/>
+      </view>
   </view>
 </template>
 
 <script lang="ts">
 import {defineComponent, ref, unref} from 'vue';
+import {AVideo} from '../AVideo';
 import {isNotEmpty} from '../../../utils/util';
 
 export default defineComponent({
   name: 'ShortAnswer',
-  components: {},
+  components: {AVideo},
   props: {
     subject: {
       type: Object,
@@ -52,7 +54,6 @@ export default defineComponent({
     const showInput = ref<boolean>(props.showInput);
 
     function handleChange(v) {
-      debugger
       value.value = v;
       props.subject.answerValue = v;
       props.subject.checked = true;

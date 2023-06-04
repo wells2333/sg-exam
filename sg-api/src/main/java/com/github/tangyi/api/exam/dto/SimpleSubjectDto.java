@@ -44,4 +44,12 @@ public class SimpleSubjectDto {
 	private List<SimpleSubjectOptionDto> options;
 
 	private Integer sort;
+
+	private String speechUrl;
+
+	private Integer speechPlayLimit;
+
+	private Integer autoPlaySpeech;
+
+	private String subjectVideoUrl;
 }

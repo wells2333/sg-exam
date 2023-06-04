@@ -35,6 +35,7 @@
   display: flex;
   margin: 0.6em 0;
   font-weight: 450;
+  overflow: hidden;
 }
 
 .subject-title-content {
@@ -163,4 +164,14 @@
 
 .home-item-left .label {
   margin: 10px 0;
+}
+
+.subject-audio {
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.subject-video {
+  margin-bottom: 12px;
+  overflow: hidden;
 }

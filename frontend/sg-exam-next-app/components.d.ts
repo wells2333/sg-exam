@@ -7,6 +7,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    AVideo: typeof import('./src/components/subject/AVideo/AVideo.vue')['default']
     Choice: typeof import('./src/components/subject/choice/Choice.vue')['default']
     CourseItem: typeof import('./src/components/course-item/src/CourseItem.vue')['default']
     ExamItem: typeof import('./src/components/exam-item/src/ExamItem.vue')['default']
@@ -39,8 +40,6 @@ declare module '@vue/runtime-core' {
     NutTextarea: typeof import('@nutui/nutui-taro')['Textarea']
     Parser: typeof import('./src/components/parser/src/Parser.vue')['default']
     ShortAnswer: typeof import('./src/components/subject/shortAnswer/ShortAnswer.vue')['default']
-    Speech: typeof import('./src/components/subject/speech/Speech.vue')['default']
-    SubjectVideo: typeof import('./src/components/subject/video/SubjectVideo.vue')['default']
     WebView: typeof import('./src/components/webview/src/WebView.vue')['default']
   }
 }

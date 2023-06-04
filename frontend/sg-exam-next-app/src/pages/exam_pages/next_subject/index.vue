@@ -26,10 +26,6 @@
         <view v-if="subject.type === 0">
           <choice ref="choiceRef" :subject="subject" @update-selected="handleChoiceSelectedChange"></choice>
         </view>
-        <view v-else-if="subject.type === 3" class="subject-options">
-          <choice ref="multiChoiceRef" :subject="subject" :multi="true"
-                  @update-selected="handleChoiceSelectedChange"></choice>
-        </view>
         <view v-else-if="subject.type === 1">
           <short-answer ref="shortAnswerRef" :subject="subject"
                         @update-selected="handleChoiceSelectedChange"></short-answer>
@@ -38,24 +34,9 @@
           <judgement ref="judgementRef" :subject="subject"
                      @update-selected="handleChoiceSelectedChange"></judgement>
         </view>
-        <view v-else-if="subject.type === 4" class="audio-btn-group">
-          <view class="audio-btn">
-            <at-button type="primary" :icon="recordBtnIcon" size="small" @click="handleClickRecordAudio">
-              {{ recordBtnText }}
-            </at-button>
-          </view>
-          <view class="audio-btn">
-            <at-button type="primary" :icon="recordCompleteBtnIcon" size="small" @click="handleRecordAudioComplete">
-              {{ recordCompleteBtnText }}
-            </at-button>
-          </view>
-          <view class="audio-btn">
-            <at-button type="primary" icon="checked" size="small" @click="handleUploadAudio">上传</at-button>
-          </view>
-        </view>
-        <view v-else-if="subject.type === 5">
-          <subject-video ref="videoRef" :subject="subject"
-                         @update-selected="handleChoiceSelectedChange"></subject-video>
+        <view v-else-if="subject.type === 3" class="subject-options">
+            <choice ref="multiChoiceRef" :subject="subject" :multi="true"
+                    @update-selected="handleChoiceSelectedChange"></choice>
         </view>
       </view>
     </view>
@@ -108,15 +89,13 @@ import {initRecorderManager, playAudio, pleaseStartRecord, startRecordAudio, sto
 import {Choice} from '../../../components/subject/choice/index';
 import {Judgement} from '../../../components/subject/judgement/index';
 import {ShortAnswer} from '../../../components/subject/shortAnswer/index';
-import {SubjectVideo} from '../../../components/subject/video/index';
 import {getDuration, parseRes, successMessage, warnMessage, showLoading, hideLoading, showNoMoreData} from '../../../utils/util';
 
 export default {
   components: {
     'choice': Choice,
     'judgement': Judgement,
-    'short-answer': ShortAnswer,
-    'subject-video': SubjectVideo
+    'short-answer': ShortAnswer
   },
   setup() {
     const choiceRef = ref<any>(undefined);

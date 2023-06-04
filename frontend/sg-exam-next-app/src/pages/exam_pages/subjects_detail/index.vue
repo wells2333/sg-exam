@@ -83,7 +83,6 @@ import examApi from '../../../api/exam.api';
 import {Choice} from '../../../components/subject/choice/index';
 import {Judgement} from '../../../components/subject/judgement/index';
 import {ShortAnswer} from '../../../components/subject/shortAnswer/index';
-import {SubjectVideo} from '../../../components/subject/video/index';
 import api from '../../../api/api';
 import {showNoMoreData, showLoading, hideLoading} from '../../../utils/util';
 import {StarFill, Star} from '@nutui/icons-vue-taro';
@@ -95,8 +94,7 @@ export default {
     Star,
     'choice': Choice,
     'judgement': Judgement,
-    'short-answer': ShortAnswer,
-    'subject-video': SubjectVideo
+    'short-answer': ShortAnswer
   },
   setup() {
     const params = Taro.getCurrentInstance().router?.params;

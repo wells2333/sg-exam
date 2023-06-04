@@ -381,6 +381,15 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
                 dtoList.addAll(judgementConverter.convert(judgements, findAnswer));
             }
         }
+        // 获取语音和视频的 URL
+        for (SubjectDto dto : dtoList) {
+            if (dto.getSpeechId() != null) {
+                dto.setSpeechUrl(attachmentManager.getPreviewUrl(dto.getSpeechId()));
+            }
+            if (dto.getSubjectVideoId() != null) {
+                dto.setSubjectVideoUrl(attachmentManager.getPreviewUrl(dto.getSubjectVideoId()));
+            }
+        }
         return dtoList;
     }
 

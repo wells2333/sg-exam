@@ -51,8 +51,12 @@ public class ExamUtil {
 			simple.setScore(dto.getScore());
 			simple.setLevel(dto.getLevel());
 			simple.setSort(dto.getSort());
+			simple.setSpeechUrl(dto.getSpeechUrl());
+			simple.setAutoPlaySpeech(dto.getAutoPlaySpeech());
+			simple.setSpeechPlayLimit(dto.getSpeechPlayLimit());
+			simple.setSubjectVideoUrl(dto.getSubjectVideoUrl());
 
-			List<SimpleSubjectOptionDto> optionDtos = Lists.newArrayList();
+			List<SimpleSubjectOptionDto> optionDtoList = Lists.newArrayList();
 			List<SubjectOption> options = dto.getOptions();
 			if (CollectionUtils.isNotEmpty(options)) {
 				for (SubjectOption option : options) {
@@ -60,10 +64,10 @@ public class ExamUtil {
 					optionDto.setOptionName(option.getOptionName());
 					optionDto.setOptionContent(option.getOptionContent());
 					optionDto.setSort(option.getSort());
-					optionDtos.add(optionDto);
+                    optionDtoList.add(optionDto);
 				}
 			}
-			simple.setOptions(optionDtos);
+			simple.setOptions(optionDtoList);
 			simples.add(simple);
 		}
 		return simples;
