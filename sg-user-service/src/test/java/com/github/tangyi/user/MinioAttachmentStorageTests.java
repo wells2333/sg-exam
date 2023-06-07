@@ -25,7 +25,7 @@ public class MinioAttachmentStorageTests {
     @Test
     public void testUpload() {
         FileUploadContext context = new FileUploadContext();
-        context.setTargetFile(new File("~/Downloads/视频/剪映/服务更新.mp4"));
+        context.setTargetFile(new File("/Users/tangyi/Downloads/视频/剪映/服务更新.mp4"));
         context.setGroup(AttachGroup.of(AttachTypeEnum.DEFAULT));
         context.setUser("admin");
         context.setTenantCode("gitee");

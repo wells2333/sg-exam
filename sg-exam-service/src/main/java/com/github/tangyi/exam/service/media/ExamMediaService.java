@@ -1,9 +1,13 @@
 package com.github.tangyi.exam.service.media;
 
+import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.user.attach.AttachmentManager;
 import com.github.tangyi.api.user.attach.MultipartFileUploadContext;
 import com.github.tangyi.api.user.enums.AttachTypeEnum;
 import com.github.tangyi.api.user.model.Attachment;
+import com.github.tangyi.common.utils.EnvUtils;
+import com.github.tangyi.exam.service.data.RedisCounterService;
+import com.github.tangyi.exam.service.subject.SubjectsService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,34 +20,57 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ExamMediaService {
 
-	private final AttachmentManager attachmentManager;
+    private static final String SPEECH_PLAY_CNT_KEY = "speech_play_cnt:";
 
-	public Attachment uploadSpeech(MultipartFile file) {
-		return upload(file, AttachTypeEnum.EXAM_SPEECH);
-	}
+    private static final int SPEECH_PLAY_CNT_TIMEOUT_SECOND = EnvUtils.getInt("SPEECH_PLAY_CNT_TIMEOUT_SECOND", 600);
 
-	public Attachment uploadVideo(MultipartFile file) {
-		return upload(file, AttachTypeEnum.EXAM_VIDEO);
-	}
+    private final AttachmentManager attachmentManager;
 
-	public Attachment uploadImage(MultipartFile file) {
-		return upload(file, AttachTypeEnum.EXAM_IMAGE);
-	}
+    private final SubjectsService subjectsService;
 
-	public Attachment upload(MultipartFile file, AttachTypeEnum type) {
-		try {
-			return attachmentManager.upload(MultipartFileUploadContext.of(type, file));
-		} catch (IOException e) {
-			log.error("upload exam media failed, type: {}", type.getDesc(), e);
-		}
-		return null;
-	}
+    private final RedisCounterService redisCounterService;
 
-	public String imageUrl(Long id) {
-		return attachmentManager.getPreviewUrl(id);
-	}
+    public Attachment uploadSpeech(MultipartFile file) {
+        return upload(file, AttachTypeEnum.EXAM_SPEECH);
+    }
 
-	public String videoUrl(Long id) {
-		return attachmentManager.getPreviewUrl(id);
-	}
+    public Attachment uploadVideo(MultipartFile file) {
+        return upload(file, AttachTypeEnum.EXAM_VIDEO);
+    }
+
+    public Attachment uploadImage(MultipartFile file) {
+        return upload(file, AttachTypeEnum.EXAM_IMAGE);
+    }
+
+    public Attachment upload(MultipartFile file, AttachTypeEnum type) {
+        try {
+            return attachmentManager.upload(MultipartFileUploadContext.of(type, file));
+        } catch (IOException e) {
+            log.error("upload exam media failed, type: {}", type.getDesc(), e);
+        }
+        return null;
+    }
+
+    public String imageUrl(Long id) {
+        return attachmentManager.getPreviewUrl(id);
+    }
+
+    public String videoUrl(Long id) {
+        return attachmentManager.getPreviewUrl(id);
+    }
+
+    public Boolean playSpeech(Long userId, Long subjectId) {
+        SubjectDto dto = subjectsService.getSubject(subjectId);
+        if (dto != null && dto.getSpeechPlayLimit() != null) {
+            String key = SPEECH_PLAY_CNT_KEY + userId;
+            Long cnt = redisCounterService.get(key, subjectId);
+            if (cnt == null || cnt <= dto.getSpeechPlayLimit()) {
+                redisCounterService.incrCount(key, subjectId);
+                redisCounterService.getAndExpire(key, subjectId, SPEECH_PLAY_CNT_TIMEOUT_SECOND);
+                return Boolean.TRUE;
+            }
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
+    }
 }

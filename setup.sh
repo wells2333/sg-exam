@@ -108,6 +108,57 @@ function logs() {
   docker logs "$(docker ps |grep $SG_EXAM_USER_SERVICE|awk '{print $1}')" -f --tail=100
 }
 
+function install_jdk() {
+  echo ""
+}
+
+function install_docker() {
+    yum install -y yum-utils device-mapper-persistent-data lvm2
+    yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+    yum makecache fast
+    yum -y install docker-ce
+    systemctl enable docker
+    systemctl status docker
+    service docker start
+}
+
+function setup() {
+  echo "Start to setup."
+  cd ~
+  mkdir -p sg-exam
+  cd sg-exam
+  wget https://gitee.com/wells2333/sg-exam/raw/master/setup.sh
+  wget https://gitee.com/wells2333/sg-exam/raw/master/.env
+  wget https://gitee.com/wells2333/sg-exam/raw/master/docker-compose.yml
+  mkdir -p config-repo
+  cd config-repo
+  wget https://gitee.com/wells2333/sg-exam/raw/master/config-repo/application.yml
+  wget https://gitee.com/wells2333/sg-exam/raw/master/config-repo/prometheus.yml
+  wget https://gitee.com/wells2333/sg-exam/raw/master/config-repo/sg-user-service.yml
+
+  mkdir -p env
+  mkdir -p mysql
+  mkdir -p nginx
+  mkdir -p redis
+
+  cd env
+  wget https://gitee.com/wells2333/sg-exam/raw/master/config-repo/env/sg-user-service.env
+  cd ..
+  cd mysql
+  wget https://gitee.com/wells2333/sg-exam/blob/master/config-repo/mysql/init.sql
+  wget https://gitee.com/wells2333/sg-exam/blob/master/config-repo/mysql/update.sql
+  cd ..
+  cd nginx
+  wget https://gitee.com/wells2333/sg-exam/raw/master/config-repo/nginx/nginx.conf
+  wget https://gitee.com/wells2333/sg-exam/raw/master/config-repo/nginx/nginx_ssl.conf
+  cd ..
+
+  cd redis
+  wget https://gitee.com/wells2333/sg-exam/raw/master/config-repo/redis/redis.conf
+  cd ..
+  echo "Setup finished."
+}
+
 function print_usage() {
   echo "Usage: $BASENAME COMMAND
        $BASENAME --help
@@ -121,7 +172,8 @@ function print_usage() {
       stop                Stop services
       restart             Pull docker image and restart services
       logs                Tails the services logs
-      version             Update project version to a specify version"
+      version             Update project version to a specify version
+      setup               Setup config directory from git"
   exit 1
 }
 
@@ -165,6 +217,9 @@ function main() {
     ;;
   version)
     update_version "$version"
+    ;;
+  setup)
+    setup
     ;;
   *)
     echo "$BASENAME: '$cmd' is not a $BASENAME command."

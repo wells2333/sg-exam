@@ -5,6 +5,7 @@ import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.log.OperationType;
 import com.github.tangyi.common.log.SgLog;
 import com.github.tangyi.common.model.R;
+import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.exam.service.media.ExamMediaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -85,4 +86,9 @@ public class ExamMediaController extends BaseController {
         return R.success(examMediaService.videoUrl(id));
     }
 
+    @Operation(summary = "播放语音")
+    @GetMapping("playSpeech")
+    public R<Boolean> playSpeech(@RequestParam Long subjectId) {
+        return R.success(examMediaService.playSpeech(SysUtil.getUserId(), subjectId));
+    }
 }
