@@ -18,7 +18,7 @@ export const setAudioSrc = (subject, $refs, autoPlay, timeout = 50) => {
   if (subject.speechId && subject.speechUrl) {
     setTimeout(() => {
       if ($refs.sgAudio !== undefined) {
-        $refs.sgAudio.setSrc(subject.speechUrl, autoPlay)
+        $refs.sgAudio.setSrc(subject.speechUrl, autoPlay, subject.id)
       }
     }, timeout)
   }

@@ -24,8 +24,8 @@ public class RedisCounterService {
         return longRedisTemplate.opsForValue().get(key + id);
     }
 
-    public Long getAndExpire(String key, Long id, int timeoutSecond) {
-        return longRedisTemplate.opsForValue().getAndExpire(key + id, timeoutSecond, TimeUnit.SECONDS);
+    public void expire(String key, Long id, int timeoutSecond) {
+        longRedisTemplate.opsForValue().getOperations().expire(key + id, timeoutSecond, TimeUnit.SECONDS);
     }
 
     public void setCount(String key, Long id, Long value) {

@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.service.media;
 
+import com.github.tangyi.api.exam.dto.SpeechPlayDto;
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.user.attach.AttachmentManager;
 import com.github.tangyi.api.user.attach.MultipartFileUploadContext;
@@ -52,25 +53,41 @@ public class ExamMediaService {
     }
 
     public String imageUrl(Long id) {
-        return attachmentManager.getPreviewUrl(id);
+        try {
+            return attachmentManager.getPreviewUrl(id);
+        } catch (Exception e) {
+            log.error("Failed to get image url, id: {}", id, e);
+            return "";
+        }
     }
 
     public String videoUrl(Long id) {
-        return attachmentManager.getPreviewUrl(id);
+        try {
+            return attachmentManager.getPreviewUrl(id);
+        } catch (Exception e) {
+            log.error("Failed to get video url, id: {}", id, e);
+            return "";
+        }
     }
 
-    public Boolean playSpeech(Long userId, Long subjectId) {
+    public SpeechPlayDto playSpeech(Long userId, Long subjectId) {
+        SpeechPlayDto playDto = new SpeechPlayDto();
         SubjectDto dto = subjectsService.getSubject(subjectId);
         if (dto != null && dto.getSpeechPlayLimit() != null) {
-            String key = SPEECH_PLAY_CNT_KEY + userId;
-            Long cnt = redisCounterService.get(key, subjectId);
+            Long cnt = getSpeechPlayCnt(userId, subjectId);
             if (cnt == null || cnt <= dto.getSpeechPlayLimit()) {
-                redisCounterService.incrCount(key, subjectId);
-                redisCounterService.getAndExpire(key, subjectId, SPEECH_PLAY_CNT_TIMEOUT_SECOND);
-                return Boolean.TRUE;
+                String key = SPEECH_PLAY_CNT_KEY + userId;
+                Long res = redisCounterService.incrCount(key, subjectId);
+                redisCounterService.expire(key, subjectId, SPEECH_PLAY_CNT_TIMEOUT_SECOND);
+                playDto.setCnt(res);
+                playDto.setLimit(Boolean.TRUE);
             }
-            return Boolean.FALSE;
         }
-        return Boolean.TRUE;
+        return playDto;
+    }
+
+    public Long getSpeechPlayCnt(Long userId, Long subjectId) {
+        String key = SPEECH_PLAY_CNT_KEY + userId;
+        return redisCounterService.get(key, subjectId);
     }
 }

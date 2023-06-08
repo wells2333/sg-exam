@@ -162,3 +162,6 @@ ALTER TABLE `exam_subject_judgement`
 ALTER TABLE `exam_subject_short_answer`
     ADD COLUMN `speech_play_limit` int(10) NULL COMMENT '语音最大播放次数',
     ADD COLUMN `auto_play_speech` tinyint(1) ZEROFILL NOT NULL DEFAULT 0 COMMENT '是否自动播放语音，0：否，1：是';
+
+ALTER TABLE `exam_answer`
+    ADD COLUMN `speech_play_cnt` bigint(20) NULL COMMENT '语音播放次数' AFTER `mark_operator`;

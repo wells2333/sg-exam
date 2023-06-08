@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.controller;
 
+import com.github.tangyi.api.exam.dto.SpeechPlayDto;
 import com.github.tangyi.api.user.model.Attachment;
 import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.log.OperationType;
@@ -88,7 +89,7 @@ public class ExamMediaController extends BaseController {
 
     @Operation(summary = "播放语音")
     @GetMapping("playSpeech")
-    public R<Boolean> playSpeech(@RequestParam Long subjectId) {
+    public R<SpeechPlayDto> playSpeech(@RequestParam Long subjectId) {
         return R.success(examMediaService.playSpeech(SysUtil.getUserId(), subjectId));
     }
 }

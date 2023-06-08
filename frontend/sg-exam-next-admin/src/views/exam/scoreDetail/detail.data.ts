@@ -136,6 +136,12 @@ export const answerColumns: BasicColumn[] = [
     width: 180,
   },
   {
+    dataIndex: 'speechPlayCnt',
+    title: '语音播放数',
+    width: 100,
+    align: 'left',
+  },
+  {
     dataIndex: 'duration',
     title: '耗时',
     width: 100,

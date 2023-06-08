@@ -99,4 +99,9 @@ public class AnswerDto implements Serializable {
 	 * 耗时
 	 */
 	private String duration;
+
+	/**
+	 * 语音播放次数
+	 */
+	private Long speechPlayCnt;
 }

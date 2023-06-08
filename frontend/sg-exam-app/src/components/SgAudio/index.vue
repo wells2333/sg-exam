@@ -30,6 +30,9 @@
 </template>
 
 <script>
+import {playSpeech} from '@/api/exam/examMedia'
+import {messageWarn} from '@/utils/util'
+
 function realFormatSecond(second) {
   let secondType = typeof second
   if (secondType === 'number' || secondType === 'string') {
@@ -61,6 +64,7 @@ export default {
   data() {
     return {
       src: '',
+      subjectId: '',
       autoPlay: 0,
       audio: {
         currentTime: 0,
@@ -100,7 +104,22 @@ export default {
       return this.audio.playing ? this.pausePlay() : this.startPlay()
     },
     startPlay() {
-      this.$refs.audio.play()
+      if (this.subjectId !== '') {
+        playSpeech(this.subjectId).then(e => {
+          if (e && e.data && e.data.result) {
+            const {limit} = e.data.result
+            if (!limit) {
+              this.$refs.audio.play()
+            } else {
+              messageWarn(this, '已达到播放次数限制')
+            }
+          } else {
+            messageWarn(this, '播放语音失败')
+          }
+        }).catch(err => {
+          console.error(err)
+        });
+      }
     },
     pausePlay() {
       this.$refs.audio.pause()
@@ -140,9 +159,10 @@ export default {
         this.startPlay()
       }
     },
-    setSrc(src, autoPlay) {
+    setSrc(src, autoPlay, subjectId) {
       this.autoPlay = autoPlay
       this.src = src
+      this.subjectId = subjectId;
     }
   },
   filters: {

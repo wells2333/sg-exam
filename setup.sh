@@ -123,8 +123,12 @@ function install_docker() {
 }
 
 function setup() {
-  echo "Start to setup."
   cd ~
+  if [ -d "sg-exam" ]; then
+    echo "Directory sg-exam is exists."
+    return
+  fi
+  echo "Start to setup."
   mkdir -p sg-exam
   cd sg-exam
   wget https://gitee.com/wells2333/sg-exam/raw/master/setup.sh

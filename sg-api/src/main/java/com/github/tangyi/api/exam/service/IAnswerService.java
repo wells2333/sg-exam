@@ -8,15 +8,15 @@ import com.github.tangyi.common.service.ICrudService;
 
 public interface IAnswerService extends ICrudService<Answer> {
 
-	SubjectDto saveAndNext(AnswerDto answerDto, Integer type, Integer nextSubjectSortNo);
+    SubjectDto saveAndNext(AnswerDto answerDto, Integer type, Integer nextSubjectSortNo);
 
-	int save(AnswerDto answerDto, String userCode, String tenantCode);
+    int save(AnswerDto answerDto, Long userId, String userCode, String tenantCode);
 
-	int updateScore(Answer answer);
+    int updateScore(Answer answer);
 
-	int markOk(Long recordId);
+    int markOk(Long recordId);
 
-	PageInfo<AnswerDto> answerListInfo(String pageNum, String pageSize, Long recordId, Answer answer);
+    PageInfo<AnswerDto> answerListInfo(String pageNum, String pageSize, Long recordId, Answer answer);
 
-	AnswerDto answerInfo(Long recordId, Long currentSubjectId, Integer nextType);
+    AnswerDto answerInfo(Long recordId, Long currentSubjectId, Integer nextType);
 }

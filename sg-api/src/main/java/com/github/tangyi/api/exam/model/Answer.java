@@ -76,4 +76,10 @@ public class Answer extends BaseEntity<Answer> {
 	 */
 	@Column(name = "end_time")
 	private Date endTime;
+
+	/**
+	 * 语音播放次数
+	 */
+	@Column(name = "speech_play_cnt")
+	private Long speechPlayCnt;
 }

@@ -116,7 +116,7 @@ public class AnswerController extends BaseController {
 	@Operation(summary = "保存答题")
 	@SgLog(value = "保存答题", operationType = OperationType.UPDATE)
 	public R<Boolean> saveAnswer(@RequestBody AnswerDto answer) {
-		return R.success(answerService.save(answer, SysUtil.getUser(), SysUtil.getTenantCode()) > 0);
+		return R.success(answerService.save(answer, SysUtil.getUserId(), SysUtil.getUser(), SysUtil.getTenantCode()) > 0);
 	}
 
 	/**
