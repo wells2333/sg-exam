@@ -12,17 +12,17 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
-
-import { BasicTree, TreeItem } from '/@/components/Tree';
-import { getDeptList } from '/@/api/sys/dept';
+import {useI18n} from '/@/hooks/web/useI18n';
+import {defineComponent, onMounted, ref} from 'vue';
+import {BasicTree, TreeItem} from '/@/components/Tree';
+import {getDeptList} from '/@/api/sys/dept';
 
 export default defineComponent({
   name: 'DeptTree',
-  components: { BasicTree },
-
+  components: {BasicTree},
   emits: ['select'],
-  setup(_, { emit }) {
+  setup(_, {emit}) {
+    const {t} = useI18n();
     const treeData = ref<TreeItem[]>([]);
 
     async function fetch() {
@@ -36,7 +36,7 @@ export default defineComponent({
     onMounted(() => {
       fetch();
     });
-    return { treeData, handleSelect };
+    return {t, treeData, handleSelect};
   },
 });
 </script>

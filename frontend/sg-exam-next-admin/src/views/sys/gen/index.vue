@@ -21,7 +21,7 @@
               color: 'error',
               auth: 'sys:gen:del',
               popConfirm: {
-                title: '是否确认删除',
+                title: t('common.confirmDelText'),
                 confirm: handleDelete.bind(null, record),
                 auth: 'sys:gen:del',
               },
@@ -34,6 +34,7 @@
   </div>
 </template>
 <script lang="ts">
+import {useI18n} from '/@/hooks/web/useI18n';
 import { defineComponent } from 'vue';
 import { BasicTable, useTable, TableAction } from '/@/components/Table';
 import {getGenList, genCode, deleteGen} from '/@/api/sys/gen';
@@ -46,11 +47,12 @@ export default defineComponent({
   name: 'GenManagement',
   components: { BasicTable, GenModal, TableAction },
   setup() {
+    const {t} = useI18n();
     const { hasPermission } = usePermission();
     const [registerModal, { openModal }] = useModal();
     const { createMessage } = useMessage();
     const [registerTable, { reload }] = useTable({
-      title: 'Table列表',
+      title: t('common.modules.sys.codeGen') + t('common.list'),
       api: getGenList,
       columns,
       formConfig: {
@@ -66,7 +68,7 @@ export default defineComponent({
       canResize: false,
       actionColumn: {
         width: 120,
-        title: '操作',
+        title: t('common.operationText'),
         dataIndex: 'action',
         slots: { customRender: 'action' },
         fixed: undefined,
@@ -82,14 +84,15 @@ export default defineComponent({
     }
     async function handleDelete(record: Recordable) {
       await deleteGen(record.tableId);
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       await reload();
     }
     function handleSuccess() {
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       reload();
     }
     return {
+      t,
       hasPermission,
       registerTable,
       registerModal,

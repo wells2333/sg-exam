@@ -4,6 +4,7 @@
   </BasicModal>
 </template>
 <script lang="ts">
+import {useI18n} from '/@/hooks/web/useI18n';
 import { defineComponent, ref, computed, unref } from 'vue';
 import { BasicModal, useModalInner } from '/@/components/Modal';
 import { BasicForm, useForm } from '/@/components/Form/index';
@@ -14,6 +15,7 @@ export default defineComponent({
   components: { BasicModal, BasicForm },
   emits: ['success', 'register'],
   setup(_, { emit }) {
+    const {t} = useI18n();
     const isUpdate = ref(true);
     let id: string;
     let chapterId: string;
@@ -34,7 +36,8 @@ export default defineComponent({
       id = data.record?.id || null;
       chapterId = data?.chapterId || null;
     });
-    const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '编辑'));
+    const getTitle = computed(() => (!unref(isUpdate) ? t('common.addText') :
+      t('common.editText')));
     async function handleSubmit() {
       try {
         const values = await validate();

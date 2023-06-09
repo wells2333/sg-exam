@@ -15,6 +15,7 @@
   </BasicModal>
 </template>
 <script lang="ts">
+import {useI18n} from '/@/hooks/web/useI18n';
 import {Tabs, Tag} from 'ant-design-vue';
 import {computed, defineComponent, ref, unref} from 'vue';
 import SubjectChoices from '/@/components/Subjects/SubjectChoices.vue';
@@ -43,6 +44,7 @@ export default defineComponent({
   },
   emits: ['success', 'register'],
   setup(_, {emit}) {
+    const {t} = useI18n();
     const {createMessage} = useMessage();
     const subRef = ref<any>();
     const isUpdate = ref(true);
@@ -87,7 +89,8 @@ export default defineComponent({
       }
       setSubjectValue(subjectData);
     });
-    const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '编辑'));
+    const getTitle = computed(() => (!unref(isUpdate) ? t('common.addText') :
+      t('common.editText')));
 
     // 重新查询题目信息
     async function fetch() {
@@ -195,6 +198,7 @@ export default defineComponent({
     }
 
     return {
+      t,
       prefixCls: 'subject',
       subRef,
       types,

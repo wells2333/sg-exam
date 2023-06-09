@@ -4,6 +4,7 @@
   </BasicModal>
 </template>
 <script lang="ts">
+import {useI18n} from '/@/hooks/web/useI18n';
 import { defineComponent, ref, computed, unref } from 'vue';
 import { BasicModal, useModalInner } from '/@/components/Modal';
 import { BasicForm, useForm } from '/@/components/Form/index';
@@ -15,6 +16,7 @@ export default defineComponent({
   components: { BasicModal, BasicForm },
   emits: ['success', 'register'],
   setup(_, { emit }) {
+    const {t} = useI18n();
     const isUpdate = ref(true);
     let id: string;
     const [registerForm, { resetFields, setFieldsValue, updateSchema, validate }] = useForm({
@@ -38,7 +40,8 @@ export default defineComponent({
         componentProps: { treeData },
       });
     });
-    const getTitle = computed(() => (!unref(isUpdate) ? '新增部门' : '编辑部门'));
+    const getTitle = computed(() => (!unref(isUpdate) ? t('common.addText') :
+      t('common.editText')));
     async function handleSubmit() {
       try {
         const values = await validate();
@@ -54,7 +57,7 @@ export default defineComponent({
         setModalProps({ confirmLoading: false });
       }
     }
-    return { registerModal, registerForm, getTitle, handleSubmit };
+    return { t, registerModal, registerForm, getTitle, handleSubmit };
   },
 });
 </script>

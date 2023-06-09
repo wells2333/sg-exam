@@ -1,5 +1,6 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" width="60%" @ok="handleSubmit">
+  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" width="60%"
+              @ok="handleSubmit">
     <BasicForm @register="registerForm">
       <template #remoteSearch="{ model, field }">
         <ApiSelect
@@ -20,29 +21,32 @@
   </BasicModal>
 </template>
 <script lang="ts">
+import {useI18n} from '/@/hooks/web/useI18n';
 import {defineComponent, computed, ref, unref} from 'vue';
-import { BasicModal, useModalInner } from '/@/components/Modal';
-import { BasicForm, useForm, ApiSelect} from '/@/components/Form/index';
-import { formSchema } from './message.data';
+import {BasicModal, useModalInner} from '/@/components/Modal';
+import {BasicForm, useForm, ApiSelect} from '/@/components/Form/index';
+import {formSchema} from './message.data';
 import {getMessageInfo, createMessage, updateMessage} from '/@/api/sys/message';
 import {getSelectDeptList, getSelectUserList} from "/@/api/sys/select";
+
 export default defineComponent({
   name: 'MessageModal',
-  components: { BasicModal, BasicForm, ApiSelect },
+  components: {BasicModal, BasicForm, ApiSelect},
   emits: ['success', 'register'],
-  setup(_, { emit }) {
+  setup(_, {emit}) {
+    const {t} = useI18n();
     const isUpdate = ref(true);
     let id: string;
     const name = ref<string>('');
     const searchParams = computed<Recordable>(() => {
-      return { name: unref(name) };
+      return {name: unref(name)};
     });
-    const [registerForm, { setFieldsValue, resetFields, validate, updateSchema }] = useForm({
+    const [registerForm, {setFieldsValue, resetFields, validate, updateSchema}] = useForm({
       labelWidth: 100,
       schemas: formSchema,
       showActionButtonGroup: false,
     });
-    const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
+    const [registerModal, {setModalProps, closeModal}] = useModalInner(async (data) => {
       await resetFields();
       id = data.record?.id || null;
       isUpdate.value = !!data?.isUpdate;
@@ -50,7 +54,7 @@ export default defineComponent({
       updateSchema([
         {
           field: 'receiverDeptId',
-          componentProps: { treeData },
+          componentProps: {treeData},
         },
       ]);
       if (unref(isUpdate)) {
@@ -64,14 +68,14 @@ export default defineComponent({
         });
       } else {
       }
-      setModalProps({ confirmLoading: false });
+      setModalProps({confirmLoading: false});
     });
     const getTitle = computed(() => '查看');
 
     async function handleSubmit() {
       try {
         const values = await validate();
-        setModalProps({ confirmLoading: true });
+        setModalProps({confirmLoading: true});
         if (id) {
           await updateMessage(id, values);
         } else {
@@ -80,7 +84,7 @@ export default defineComponent({
         closeModal();
         emit('success');
       } finally {
-        setModalProps({ confirmLoading: false });
+        setModalProps({confirmLoading: false});
       }
     }
 
@@ -89,6 +93,7 @@ export default defineComponent({
     }
 
     return {
+      t,
       searchParams,
       registerModal,
       registerForm,

@@ -2,24 +2,24 @@
   <BasicModal v-bind="$attrs" @register="registerModal" title="知识点管理" @ok="handleSubmit">
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button v-if="hasPermission(['exam:course:edit'])" type="primary" @click="handleCreate"> 新增</a-button>
+        <a-button v-if="hasPermission(['exam:course:edit'])" type="primary" @click="handleCreate"> {{ t('common.addText') }}</a-button>
       </template>
       <template #action="{ record }">
         <TableAction
           :actions="[
             {
               icon: 'clarity:note-edit-line',
-              tooltip: '编辑',
+              tooltip: t('common.editText'),
               onClick: handleEdit.bind(null, record),
               auth: 'exam:course:edit'
             },
             {
               icon: 'ant-design:delete-outlined',
               color: 'error',
-              tooltip: '删除',
+              tooltip: t('common.delText'),
               auth: 'exam:course:edit',
               popConfirm: {
-                title: '是否确认删除',
+                title: t('common.confirmDelText'),
                 confirm: handleDelete.bind(null, record),
               },
             },
@@ -31,6 +31,7 @@
   </BasicModal>
 </template>
 <script lang="ts">
+import { useI18n } from '/@/hooks/web/useI18n';
 import {defineComponent, ref, unref} from 'vue';
 import {BasicUpload} from '/@/components/Upload';
 import {BasicTable, TableAction, useTable} from '/@/components/Table';
@@ -48,11 +49,11 @@ export default defineComponent({
   name: 'KnowledgePointManagement',
   components: {BasicModal, BasicTable, PointDataModal, TableAction, BasicUpload},
   setup() {
+    const { t } = useI18n();
     const {hasPermission} = usePermission();
     const [registerPointDataModal, {openModal: openPointDataModal}] = useModal();
     const {createMessage} = useMessage();
     const sectionId = ref<string>('');
-    // 列表
     const [registerTable, {reload}] = useTable({
       title: '知识点列表',
       api: (arg) => {
@@ -77,14 +78,13 @@ export default defineComponent({
       canResize: false,
       actionColumn: {
         width: 150,
-        title: '操作',
+        title: t('common.operationText'),
         dataIndex: 'action',
         slots: {customRender: 'action'},
         fixed: undefined,
       },
     });
 
-    // 当前页面弹窗配置
     const [registerModal, { setModalProps, closeModal }] = useModalInner( (data) => {
       setModalProps({ confirmLoading: false });
       sectionId.value = data.record?.id || null;
@@ -108,12 +108,12 @@ export default defineComponent({
 
     async function handleDelete(record: Recordable) {
       await deleteExamCourseKnowledgePoint(record.id);
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       await reload();
     }
 
     function handleSuccess() {
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       reload();
     }
 
@@ -121,6 +121,7 @@ export default defineComponent({
       closeModal();
     }
     return {
+      t,
       hasPermission,
       registerTable,
       registerModal,

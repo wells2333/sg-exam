@@ -19,6 +19,7 @@
   </BasicModal>
 </template>
 <script lang="ts">
+import { useI18n } from '/@/hooks/web/useI18n';
 import { message, Upload } from 'ant-design-vue';
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons-vue';
 import { BasicModal, useModalInner } from '/@/components/Modal';
@@ -32,6 +33,7 @@ export default defineComponent({
   components: { BasicModal, UploadOutlined, Upload,  LoadingOutlined, PlusOutlined,},
   emits: ['success', 'register'],
   setup(_, { emit }) {
+    const { t } = useI18n();
     const loading = ref<boolean>(false);
     const imageUrl = ref<string>('');
     let exam = ref<Object>({});
@@ -72,15 +74,16 @@ export default defineComponent({
 
     const fileList = ref([]);
     return {
+      t,
       loading,
       imageUrl,
-      customRequest,
       action: UserService + 'v1/attachment/upload',
       fileList,
       headers: {
         authorization: 'authorization-text',
       },
       registerModal,
+      customRequest,
       handleSubmit
     };
   },

@@ -2,7 +2,7 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate"> 新增 </a-button>
+        <a-button type="primary" @click="handleCreate"> {{ t('common.addText') }}</a-button>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -15,7 +15,7 @@
               icon: 'ant-design:delete-outlined',
               color: 'error',
               popConfirm: {
-                title: '是否确认删除',
+                title: t('common.confirmDelText'),
                 confirm: handleDelete.bind(null, record),
               },
             },
@@ -23,27 +23,29 @@
         />
       </template>
     </BasicTable>
-    <BannerModal @register="registerModal" @success="handleSuccess" />
+    <BannerModal @register="registerModal" @success="handleSuccess"/>
   </div>
 </template>
 <script lang="ts">
+import {useI18n} from '/@/hooks/web/useI18n';
 import {defineComponent} from 'vue';
-import { BasicTable, useTable, TableAction } from '/@/components/Table';
-import { getBannerList, deleteBanner } from '/@/api/operation/banner';
-import { useModal } from '/@/components/Modal';
+import {BasicTable, useTable, TableAction} from '/@/components/Table';
+import {getBannerList, deleteBanner} from '/@/api/operation/banner';
+import {useModal} from '/@/components/Modal';
 import BannerModal from './BannerModal.vue';
-import { columns, searchFormSchema } from './banner.data';
+import {columns, searchFormSchema} from './banner.data';
 import {useMessage} from "/@/hooks/web/useMessage";
 
 export default defineComponent({
   name: 'BannerManagement',
-  components: { BasicTable, BannerModal, TableAction },
+  components: {BasicTable, BannerModal, TableAction},
   setup() {
-    const [registerModal, { openModal }] = useModal();
-    const { createMessage } = useMessage();
-    const [registerImageModal, { openModal: openImageModal }] = useModal();
-    const [registerTable, { reload }] = useTable({
-      title: '运营位列表',
+    const {t} = useI18n();
+    const [registerModal, {openModal}] = useModal();
+    const {createMessage} = useMessage();
+    const [registerImageModal, {openModal: openImageModal}] = useModal();
+    const [registerTable, {reload}] = useTable({
+      title: t('common.modules.banner.banner') + t('common.list'),
       api: getBannerList,
       columns,
       formConfig: {
@@ -59,9 +61,9 @@ export default defineComponent({
       canResize: false,
       actionColumn: {
         width: 120,
-        title: '操作',
+        title: t('common.operationText'),
         dataIndex: 'action',
-        slots: { customRender: 'action' },
+        slots: {customRender: 'action'},
         fixed: undefined,
       },
     });
@@ -71,28 +73,35 @@ export default defineComponent({
         isUpdate: false,
       });
     }
+
     function handleEdit(record: Recordable) {
       openModal(true, {
         record,
         isUpdate: true,
       });
     }
+
     function handleUpload(record: Recordable) {
       openImageModal(true, record);
     }
+
     async function handleDelete(record: Recordable) {
       await deleteBanner(record.id);
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       await reload();
     }
+
     function handleSuccess() {
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       reload();
     }
+
     function handleUploadSuccess() {
       reload();
     }
+
     return {
+      t,
       registerTable,
       registerModal,
       registerImageModal,

@@ -38,7 +38,7 @@
         <FormItem>
           <!-- No logic, you need to deal with it yourself -->
           <Checkbox v-model:checked="remember" size="small">
-            {{ t('sys.login.remember') }}
+            {{ t('sys.login.rememberMe') }}
           </Checkbox>
         </FormItem>
       </ACol>

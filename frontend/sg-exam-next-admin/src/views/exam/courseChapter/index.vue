@@ -3,7 +3,7 @@
     <BasicTable @register="registerTable">
       <template #toolbar>
         <a-button v-if="hasPermission(['exam:course:edit'])" type="primary" @click="handleCreate">
-          新增
+          {{ t('common.addText') }}
         </a-button>
       </template>
       <template #action="{ record }">
@@ -17,17 +17,17 @@
             },
             {
               icon: 'clarity:note-edit-line',
-              tooltip: '编辑',
+              tooltip: t('common.editText'),
               onClick: handleEdit.bind(null, record),
               auth: 'exam:course:edit'
             },
             {
               icon: 'ant-design:delete-outlined',
-              tooltip: '删除',
+              tooltip: t('common.delText'),
               color: 'error',
               auth: 'exam:course:del',
               popConfirm: {
-                title: '是否确认删除',
+                title: t('common.confirmDelText'),
                 confirm: handleDelete.bind(null, record),
               },
             },
@@ -42,6 +42,7 @@
 </template>
 
 <script lang="ts">
+import { useI18n } from '/@/hooks/web/useI18n';
 import {defineComponent, ref, unref} from 'vue';
 import {Divider} from 'ant-design-vue';
 import {useRoute} from 'vue-router';
@@ -68,6 +69,7 @@ export default defineComponent({
     SectionModal
   },
   setup() {
+    const { t } = useI18n();
     const {hasPermission} = usePermission();
     const { createMessage } = useMessage();
     const [registerModal, {openModal}] = useModal();
@@ -95,7 +97,7 @@ export default defineComponent({
       canResize: false,
       actionColumn: {
         width: 120,
-        title: '操作',
+        title: t('common.operationText'),
         dataIndex: 'action',
         slots: {customRender: 'action'},
         fixed: undefined,
@@ -124,12 +126,12 @@ export default defineComponent({
 
     async function handleDelete(record: Recordable) {
       await deleteChapter(record.id);
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       await reload();
     }
 
     function handleSuccess() {
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       reload();
     }
 
@@ -141,6 +143,7 @@ export default defineComponent({
     }
 
     return {
+      t,
       hasPermission,
       registerModal,
       registerSectionModal,

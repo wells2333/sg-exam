@@ -98,12 +98,14 @@ public class WxH5Service {
 		data.put("action_name", "QR_STR_SCENE");
 		data.put("action_info", actionInfo);
 		String res = OkHttpUtil.getInstance().postJson(url, Maps.newHashMap(), data);
-		JSONObject resJson = JSON.parseObject(res);
 		Map<String, Object> map = Maps.newHashMap();
-		map.put("ticket", resJson.get("ticket").toString());
-		map.put("expire_seconds", resJson.get("expire_seconds").toString());
-		map.put("url", resJson.get("url").toString());
-		map.put("scene_str", sceneStr);
+		JSONObject resJson = JSON.parseObject(res);
+		if (resJson != null) {
+			map.put("ticket", resJson.get("ticket").toString());
+			map.put("expire_seconds", resJson.get("expire_seconds").toString());
+			map.put("url", resJson.get("url").toString());
+			map.put("scene_str", sceneStr);
+		}
 		return map;
 	}
 

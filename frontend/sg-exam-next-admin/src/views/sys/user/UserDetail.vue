@@ -10,23 +10,26 @@
   </BasicDrawer>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
-import { Description } from '/@/components/Description';
-import { retrieveDetailFormSchema } from './user.data';
+import {useI18n} from '/@/hooks/web/useI18n';
+import {defineComponent, ref} from 'vue';
+import {BasicDrawer, useDrawerInner} from '/@/components/Drawer';
+import {Description} from '/@/components/Description';
+import {retrieveDetailFormSchema} from './user.data';
 
 const record = ref({});
 
 export default defineComponent({
   name: 'UserDetailDrawer',
-  components: { BasicDrawer, Description },
+  components: {BasicDrawer, Description},
   emits: ['success', 'register'],
   setup(_) {
+    const {t} = useI18n();
     const [registerDrawer] = useDrawerInner(async (data) => {
       record.value = data.record;
     });
 
     return {
+      t,
       registerDrawer,
       record,
       retrieveDetailFormSchema,

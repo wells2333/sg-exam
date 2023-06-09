@@ -14,7 +14,7 @@
               color: 'error',
               auth: 'sys:log:del',
               popConfirm: {
-                title: '是否确认删除',
+                title: t('common.confirmDelText'),
                 confirm: handleDelete.bind(null, record),
               },
             }
@@ -22,25 +22,28 @@
         />
       </template>
     </BasicTable>
-    <LogModal @register="registerModal" @success="handleSuccess" />
+    <LogModal @register="registerModal" @success="handleSuccess"/>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { BasicTable, useTable, TableAction } from '/@/components/Table';
-import { getLogList, deleteLog } from '/@/api/sys/log';
-import { useModal } from '/@/components/Modal';
+import {useI18n} from '/@/hooks/web/useI18n';
+import {defineComponent} from 'vue';
+import {BasicTable, useTable, TableAction} from '/@/components/Table';
+import {getLogList, deleteLog} from '/@/api/sys/log';
+import {useModal} from '/@/components/Modal';
 import LogModal from './LogModal.vue';
-import { columns, searchFormSchema } from './log.data';
+import {columns, searchFormSchema} from './log.data';
 import {useMessage} from "/@/hooks/web/useMessage";
+
 export default defineComponent({
   name: 'LogManagement',
-  components: { BasicTable, LogModal, TableAction },
+  components: {BasicTable, LogModal, TableAction},
   setup() {
-    const [registerModal, { openModal }] = useModal();
-    const { createMessage } = useMessage();
-    const [registerTable, { reload }] = useTable({
-      title: '操作日志',
+    const {t} = useI18n();
+    const [registerModal, {openModal}] = useModal();
+    const {createMessage} = useMessage();
+    const [registerTable, {reload}] = useTable({
+      title: t('common.modules.sys.log') + t('common.list'),
       api: getLogList,
       columns,
       formConfig: {
@@ -56,28 +59,33 @@ export default defineComponent({
       canResize: false,
       actionColumn: {
         width: 120,
-        title: '操作',
+        title: t('common.operationText'),
         dataIndex: 'action',
-        slots: { customRender: 'action' },
+        slots: {customRender: 'action'},
         fixed: undefined,
       },
     });
+
     function handleEdit(record: Recordable) {
       openModal(true, {
         record,
         isUpdate: true,
       });
     }
+
     async function handleDelete(record: Recordable) {
       await deleteLog(record.id);
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       await reload();
     }
+
     function handleSuccess() {
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       reload();
     }
+
     return {
+      t,
       registerTable,
       registerModal,
       handleEdit,

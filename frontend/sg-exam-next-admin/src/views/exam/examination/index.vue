@@ -2,7 +2,8 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button v-if="hasPermission(['exam:exam:add'])" type="primary" @click="handleCreate"> 新增
+        <a-button v-if="hasPermission(['exam:exam:add'])" type="primary" @click="handleCreate">
+          {{ t('common.addText') }}
         </a-button>
       </template>
       <template #action="{ record }">
@@ -16,17 +17,17 @@
             },
             {
               icon: 'clarity:note-edit-line',
-              tooltip: '编辑',
+              tooltip: t('common.editText'),
               onClick: handleEdit.bind(null, record),
               auth: 'exam:exam:edit'
             },
             {
               icon: 'ant-design:delete-outlined',
-              tooltip: '删除',
+              tooltip: t('common.delText'),
               color: 'error',
               auth: 'exam:exam:del',
               popConfirm: {
-                title: '是否确认删除',
+                title: t('common.confirmDelText'),
                 confirm: handleDelete.bind(null, record),
               },
             },
@@ -38,6 +39,7 @@
   </div>
 </template>
 <script lang="ts">
+import { useI18n } from '/@/hooks/web/useI18n';
 import {defineComponent} from 'vue';
 import {BasicTable, TableAction, useTable} from '/@/components/Table';
 import {deleteExamination, getExaminationList} from '/@/api/exam/examination';
@@ -53,13 +55,14 @@ export default defineComponent({
   name: 'ExaminationManagement',
   components: {BasicTable, ExaminationModal, ExaminationDetailDrawer, TableAction},
   setup() {
+    const { t } = useI18n();
     const {hasPermission} = usePermission();
     const { createMessage } = useMessage();
     const [registerModal, {openModal}] = useModal();
     const [registerExamImageModal] = useModal();
     const go = useGo();
     const [registerTable, {reload}] = useTable({
-      title: '考试列表',
+      title: t('common.modules.exam.examination') + t('common.list'),
       api: getExaminationList,
       columns,
       formConfig: {
@@ -75,7 +78,7 @@ export default defineComponent({
       canResize: false,
       actionColumn: {
         width: 200,
-        title: '操作',
+        title: t('common.operationText'),
         dataIndex: 'action',
         slots: {customRender: 'action'},
         fixed: undefined,
@@ -97,12 +100,12 @@ export default defineComponent({
 
     async function handleDelete(record: Recordable) {
       await deleteExamination(record.id);
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       await reload();
     }
 
     function handleSuccess() {
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       reload();
     }
 
@@ -111,6 +114,7 @@ export default defineComponent({
     }
 
     return {
+      t,
       hasPermission,
       registerTable,
       registerModal,

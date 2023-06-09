@@ -36,7 +36,7 @@
               auth: 'sys:user:del',
               tooltip: '删除此账号',
               popConfirm: {
-                title: '是否确认删除',
+                title: t('common.confirmDelText'),
                 confirm: handleDelete.bind(null, record),
               },
             },
@@ -49,18 +49,15 @@
   </PageWrapper>
 </template>
 <script lang="ts">
+import {useI18n} from '/@/hooks/web/useI18n';
 import {defineComponent, reactive} from 'vue';
-
 import {BasicTable, TableAction, useTable} from '/@/components/Table';
-
 import {deleteUser, getUserList, resetPassword} from '/@/api/sys/user';
 import {PageWrapper} from '/@/components/Page';
 import DeptTree from './DeptTree.vue';
-
 import {useModal} from '/@/components/Modal';
 import UserModal from './UserModal.vue';
 import UserDetailDrawer from './UserDetail.vue';
-
 import {useDrawer} from '/@/components/Drawer';
 import {columns, searchFormSchema} from './user.data';
 import {useMessage} from "/@/hooks/web/useMessage";
@@ -71,13 +68,14 @@ export default defineComponent({
   name: 'UserManagement',
   components: {BasicTable, PageWrapper, DeptTree, UserModal, UserDetailDrawer, TableAction},
   setup() {
+    const {t} = useI18n();
     const {hasPermission} = usePermission();
     const {createMessage} = useMessage();
     const [registerDetailDrawer, {openDrawer: openDetailDrawer}] = useDrawer();
     const [registerModal, {openModal}] = useModal();
     const searchInfo = reactive<Recordable>({});
     const [registerTable, {reload}] = useTable({
-      title: '用户列表',
+      title: t('common.modules.sys.user') + t('common.list'),
       api: getUserList,
       rowKey: 'id',
       columns,
@@ -94,7 +92,7 @@ export default defineComponent({
       },
       actionColumn: {
         width: 160,
-        title: '操作',
+        title: t('common.operationText'),
         dataIndex: 'action',
         slots: {customRender: 'action'},
       },
@@ -123,12 +121,12 @@ export default defineComponent({
 
     async function handleDelete(record: Recordable) {
       await deleteUser(record.id);
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       await reload();
     }
 
     function handleSuccess() {
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       reload();
     }
 
@@ -142,6 +140,7 @@ export default defineComponent({
     }
 
     return {
+      t,
       hasPermission,
       registerTable,
       registerModal,

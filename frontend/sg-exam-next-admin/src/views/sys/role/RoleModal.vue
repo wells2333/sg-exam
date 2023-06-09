@@ -1,5 +1,6 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" width="60%" @ok="handleSubmit">
+  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" width="60%"
+              @ok="handleSubmit">
     <BasicForm @register="registerForm">
       <template #menu>
         <BasicTree
@@ -16,10 +17,11 @@
   </BasicModal>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed, unref } from 'vue';
-import { BasicForm, useForm } from '/@/components/Form/index';
-import { formSchema } from './role.data';
-import { BasicModal, useModalInner } from '/@/components/Modal';
+import {useI18n} from '/@/hooks/web/useI18n';
+import {defineComponent, ref, computed, unref} from 'vue';
+import {BasicForm, useForm} from '/@/components/Form/index';
+import {formSchema} from './role.data';
+import {BasicModal, useModalInner} from '/@/components/Modal';
 import {BasicTree, TreeItem} from "/@/components/Tree";
 import {getMenuList} from "/@/api/sys/menu";
 import {createRole, getRoleMenus, updateRole} from "/@/api/sys/role";
@@ -27,23 +29,24 @@ import {filterMenuIds} from "/@/utils/menuUtil";
 
 export default defineComponent({
   name: 'RoleModal',
-  components: { BasicModal, BasicForm, BasicTree },
+  components: {BasicModal, BasicForm, BasicTree},
   emits: ['success', 'register'],
-  setup(_, { emit }) {
+  setup(_, {emit}) {
+    const {t} = useI18n();
     const isUpdate = ref(true);
     let id: string;
     const treeData = ref<TreeItem[]>([]);
     const checkedMenuIds = ref<string[]>([]);
     const allCheckedMenuIds = ref<string[]>([]);
-    const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
+    const [registerForm, {resetFields, setFieldsValue, validate}] = useForm({
       labelWidth: 90,
       schemas: formSchema,
       showActionButtonGroup: false,
     });
 
-    const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
+    const [registerModal, {setModalProps, closeModal}] = useModalInner(async (data) => {
       resetFields();
-      setModalProps({ confirmLoading: false });
+      setModalProps({confirmLoading: false});
       if (unref(treeData).length === 0) {
         treeData.value = (await getMenuList()) as any as TreeItem[];
       }
@@ -57,9 +60,9 @@ export default defineComponent({
             roleAllMenuIds.push(menu.menuId);
           });
         }
-        // 完整菜单树的全部菜单ID
+        // 完整菜单树的全部菜单 ID
         let menuIds = [...roleAllMenuIds];
-        // 过滤处理掉不完全勾选的父节点ID
+        // 过滤处理掉不完全勾选的父节点 ID
         filterMenuIds(treeData, menuIds);
         checkedMenuIds.value = menuIds;
         allCheckedMenuIds.value = [...roleAllMenuIds];
@@ -72,7 +75,8 @@ export default defineComponent({
       }
     });
 
-    const getTitle = computed(() => (!unref(isUpdate) ? '新增角色' : '编辑角色'));
+    const getTitle = computed(() => (!unref(isUpdate) ? t('common.addText') :
+      t('common.editText')));
 
     async function handleSubmit() {
       try {
@@ -80,7 +84,7 @@ export default defineComponent({
         if (allCheckedMenuIds.value.length > 0) {
           values.menuIds = allCheckedMenuIds.value.join(',');
         }
-        setModalProps({ confirmLoading: true });
+        setModalProps({confirmLoading: true});
         if (id) {
           await updateRole(id, values);
         } else {
@@ -89,7 +93,7 @@ export default defineComponent({
         closeModal();
         emit('success');
       } finally {
-        setModalProps({ confirmLoading: false });
+        setModalProps({confirmLoading: false});
       }
     }
 
@@ -98,6 +102,7 @@ export default defineComponent({
     }
 
     return {
+      t,
       registerModal,
       registerForm,
       getTitle,

@@ -13,6 +13,7 @@
   </BasicModal>
 </template>
 <script lang="ts">
+import { useI18n } from '/@/hooks/web/useI18n';
 import {defineComponent, ref, unref} from 'vue';
 import {BasicModal, useModalInner} from '/@/components/Modal';
 import {BasicForm, useForm} from '/@/components/Form/index';
@@ -33,6 +34,7 @@ export default defineComponent({
   },
   emits: ['success', 'register'],
   setup(_, {emit}) {
+    const { t } = useI18n();
     const {createMessage} = useMessage();
     const cateTreeRef = ref<any>(undefined);
     const examinationId = ref<string>('');
@@ -77,7 +79,7 @@ export default defineComponent({
 
     async function handleSelectCategory(categoryId = '') {
       await setFieldsValue({categoryId});
-      // 根据分类ID查询题目数量
+      // 根据分类 ID 查询题目数量
       if (categoryId !== '') {
         const res = await getSubjectCountByCategoryId(categoryId);
         subjectCnt.value = Number(res);
@@ -87,6 +89,7 @@ export default defineComponent({
     }
 
     return {
+      t,
       cateTreeRef,
       subjectCnt,
       registerForm,

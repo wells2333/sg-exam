@@ -7,7 +7,7 @@
                   @click="handleManageCategory"> 分类管理
         </a-button>
         <a-button v-if="hasPermission(['exam:subject:bank:add'])" type="primary"
-                  @click="handleCreate"> 手动添加
+                  @click="handleCreate"> {{ t('common.addText') }}
         </a-button>
         <a-button v-if="hasPermission(['exam:subject:bank:import'])" type="primary"
                   @click="handleImport"> 批量导入
@@ -26,7 +26,7 @@
               color: 'error',
               auth: 'exam:subject:bank:del',
               popConfirm: {
-                title: '是否确认删除',
+                title: t('common.confirmDelText'),
                 confirm: handleDelete.bind(null, record),
               },
             },
@@ -41,6 +41,7 @@
   </PageWrapper>
 </template>
 <script lang="ts">
+import { useI18n } from '/@/hooks/web/useI18n';
 import {defineComponent, reactive, ref, unref} from 'vue';
 import {BasicTable, TableAction, useTable} from '/@/components/Table';
 import {deleteSubject, getSubjectList} from '/@/api/exam/subject';
@@ -66,6 +67,7 @@ export default defineComponent({
     CategoryModal
   },
   setup() {
+    const { t } = useI18n();
     const {hasPermission} = usePermission();
     const categoryTreeRef = ref<any>(undefined);
     const [registerModal, {openModal}] = useModal();
@@ -74,7 +76,7 @@ export default defineComponent({
     const {createMessage} = useMessage();
     const searchInfo = reactive<Recordable>({});
     const [registerTable, {reload}] = useTable({
-      title: '题目列表',
+      title: t('common.modules.exam.subject') + t('common.list'),
       api: (arg) => {
         const {categoryId} = searchInfo;
         if (categoryId === undefined) {
@@ -101,7 +103,7 @@ export default defineComponent({
       canResize: false,
       actionColumn: {
         width: 80,
-        title: '操作',
+        title: t('common.operationText'),
         dataIndex: 'action',
         slots: {customRender: 'action'},
         fixed: undefined,
@@ -136,12 +138,12 @@ export default defineComponent({
 
     async function handleDelete(record: Recordable) {
       await deleteSubject(record.id);
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       await reload();
     }
 
     function handleSuccess() {
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       reload();
     }
 
@@ -182,6 +184,7 @@ export default defineComponent({
     }
 
     return {
+      t,
       hasPermission,
       registerTable,
       registerModal,

@@ -1,5 +1,6 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit" width="60%">
+  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit"
+              width="60%">
     <BasicForm @register="registerForm">
       <template #remoteSearch="{ model, field }">
         <ApiSelect
@@ -20,38 +21,40 @@
   </BasicModal>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed, unref } from 'vue';
-import { BasicModal, useModalInner } from '/@/components/Modal';
-import { BasicForm, useForm, ApiSelect } from '/@/components/Form/index';
-import { formSchema } from './examination.data';
-import { createExamination, getExaminationMembers, updateExamination } from "/@/api/exam/examination";
+import {useI18n} from '/@/hooks/web/useI18n';
+import {defineComponent, ref, computed, unref} from 'vue';
+import {BasicModal, useModalInner} from '/@/components/Modal';
+import {BasicForm, useForm, ApiSelect} from '/@/components/Form/index';
+import {formSchema} from './examination.data';
+import {createExamination, getExaminationMembers, updateExamination} from "/@/api/exam/examination";
 import {getSelectDeptList, getSelectUserList} from "/@/api/sys/select";
 
 export default defineComponent({
   name: 'ExaminationModal',
-  components: { BasicModal, BasicForm, ApiSelect },
+  components: {BasicModal, BasicForm, ApiSelect},
   emits: ['success', 'register'],
-  setup(_, { emit }) {
+  setup(_, {emit}) {
+    const {t} = useI18n();
     const isUpdate = ref(true);
     let id: string;
     const name = ref<string>('');
     const searchParams = computed<Recordable>(() => {
-      return { name: unref(name) };
+      return {name: unref(name)};
     });
-    const [registerForm, { resetFields, setFieldsValue, updateSchema, validate }] = useForm({
+    const [registerForm, {resetFields, setFieldsValue, updateSchema, validate}] = useForm({
       labelWidth: 100,
       schemas: formSchema,
       showActionButtonGroup: false,
     });
-    const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
+    const [registerModal, {setModalProps, closeModal}] = useModalInner(async (data) => {
       resetFields();
-      setModalProps({ confirmLoading: false });
+      setModalProps({confirmLoading: false});
       isUpdate.value = !!data?.isUpdate;
       const treeData = await getSelectDeptList();
       updateSchema([
         {
           field: 'deptMember',
-          componentProps: { treeData },
+          componentProps: {treeData},
         },
       ]);
       if (unref(isUpdate)) {
@@ -76,12 +79,13 @@ export default defineComponent({
       }
       id = data.record?.id || null;
     });
-    const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '编辑'));
+    const getTitle = computed(() => (!unref(isUpdate) ? t('common.addText') :
+      t('common.editText')));
 
     async function handleSubmit() {
       try {
         const values = await validate();
-        setModalProps({ confirmLoading: true });
+        setModalProps({confirmLoading: true});
         if (values.examTime) {
           values.startTime = values.examTime[0];
           values.endTime = values.examTime[1];
@@ -102,7 +106,7 @@ export default defineComponent({
         closeModal();
         emit('success');
       } finally {
-        setModalProps({ confirmLoading: false });
+        setModalProps({confirmLoading: false});
       }
     }
 
@@ -111,6 +115,7 @@ export default defineComponent({
     }
 
     return {
+      t,
       searchParams,
       registerModal,
       registerForm,

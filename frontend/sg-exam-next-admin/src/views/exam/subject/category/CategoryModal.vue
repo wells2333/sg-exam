@@ -5,7 +5,7 @@
       <BasicTable @register="registerTable" @fetch-success="onFetchSuccess">
         <template #toolbar>
           <a-button v-if="hasPermission(['exam:subject:category:add'])" type="primary"
-                    @click="handleCreate"> 新增分类
+                    @click="handleCreate"> {{ t('common.addText') }}
           </a-button>
         </template>
         <template #action="{ record }">
@@ -21,7 +21,7 @@
               color: 'error',
               auth: 'exam:subject:category:del',
               popConfirm: {
-                title: '是否确认删除',
+                title: t('common.confirmDelText'),
                 confirm: handleDelete.bind(null, record),
               },
             },
@@ -34,6 +34,7 @@
   </div>
 </template>
 <script lang="ts">
+import { useI18n } from '/@/hooks/web/useI18n';
 import {defineComponent, nextTick} from 'vue';
 import {BasicTable, TableAction, useTable} from '/@/components/Table';
 import {deleteCategory, getSubjectCategoryTree} from '/@/api/exam/subjectCategory';
@@ -48,6 +49,7 @@ export default defineComponent({
   components: {BasicTable, CategoryDataModal, TableAction, BasicModal},
   emits: ['success', 'register'],
   setup(_, {emit}) {
+    const { t } = useI18n();
     const {hasPermission} = usePermission();
     const {createMessage} = useMessage();
     // 新增、编辑弹框
@@ -75,7 +77,7 @@ export default defineComponent({
       canResize: false,
       actionColumn: {
         width: 80,
-        title: '操作',
+        title: t('common.operationText'),
         dataIndex: 'action',
         slots: {customRender: 'action'},
         fixed: undefined,
@@ -97,12 +99,12 @@ export default defineComponent({
 
     async function handleDelete(record: Recordable) {
       await deleteCategory(record.id);
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       await reload();
     }
 
     function handleSuccess() {
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       reload();
     }
 
@@ -121,6 +123,7 @@ export default defineComponent({
     }
 
     return {
+      t,
       hasPermission,
       registerCategoryModal,
       registerTable,

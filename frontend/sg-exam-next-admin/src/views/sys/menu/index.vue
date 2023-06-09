@@ -2,7 +2,9 @@
   <div>
     <BasicTable @register="registerTable" @fetch-success="onFetchSuccess">
       <template #toolbar>
-        <a-button v-if="hasPermission(['sys:menu:add'])" type="primary" @click="handleCreate"> 新增菜单 </a-button>
+        <a-button v-if="hasPermission(['sys:menu:add'])" type="primary" @click="handleCreate">
+          {{ t('common.addText') }}
+        </a-button>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -17,7 +19,7 @@
               color: 'error',
               auth: 'sys:menu:del',
               popConfirm: {
-                title: '是否确认删除',
+                title: t('common.confirmDelText'),
                 confirm: handleDelete.bind(null, record),
               },
             },
@@ -25,31 +27,30 @@
         />
       </template>
     </BasicTable>
-    <MenuDrawer @register="registerDrawer" @success="handleSuccess" />
+    <MenuDrawer @register="registerDrawer" @success="handleSuccess"/>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, nextTick } from 'vue';
-
-import { BasicTable, useTable, TableAction } from '/@/components/Table';
-import { getMenuList, deleteMenu } from '/@/api/sys/menu';
-
-import { useDrawer } from '/@/components/Drawer';
+import {useI18n} from '/@/hooks/web/useI18n';
+import {defineComponent, nextTick} from 'vue';
+import {BasicTable, useTable, TableAction} from '/@/components/Table';
+import {getMenuList, deleteMenu} from '/@/api/sys/menu';
+import {useDrawer} from '/@/components/Drawer';
 import MenuDrawer from './MenuDrawer.vue';
-
-import { columns, searchFormSchema } from './menu.data';
-import { usePermission } from '/@/hooks/web/usePermission';
+import {columns, searchFormSchema} from './menu.data';
+import {usePermission} from '/@/hooks/web/usePermission';
 import {useMessage} from "/@/hooks/web/useMessage";
 
 export default defineComponent({
   name: 'MenuManagement',
-  components: { BasicTable, MenuDrawer, TableAction },
+  components: {BasicTable, MenuDrawer, TableAction},
   setup() {
-    const { hasPermission } = usePermission();
-    const { createMessage } = useMessage();
-    const [registerDrawer, { openDrawer }] = useDrawer();
-    const [registerTable, { reload, expandAll }] = useTable({
-      title: '菜单列表',
+    const {t} = useI18n();
+    const {hasPermission} = usePermission();
+    const {createMessage} = useMessage();
+    const [registerDrawer, {openDrawer}] = useDrawer();
+    const [registerTable, {reload, expandAll}] = useTable({
+      title: t('common.modules.sys.menu') + t('common.list'),
       api: getMenuList,
       columns,
       formConfig: {
@@ -66,9 +67,9 @@ export default defineComponent({
       canResize: false,
       actionColumn: {
         width: 80,
-        title: '操作',
+        title: t('common.operationText'),
         dataIndex: 'action',
-        slots: { customRender: 'action' },
+        slots: {customRender: 'action'},
         fixed: undefined,
       },
     });
@@ -88,12 +89,12 @@ export default defineComponent({
 
     async function handleDelete(record: Recordable) {
       await deleteMenu(record.id);
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       await reload();
     }
 
     function handleSuccess() {
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       reload();
     }
 
@@ -102,6 +103,7 @@ export default defineComponent({
     }
 
     return {
+      t,
       hasPermission,
       registerTable,
       registerDrawer,

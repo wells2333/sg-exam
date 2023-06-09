@@ -7,34 +7,35 @@
     width="50%"
     @ok="handleSubmit"
   >
-    <BasicForm @register="registerForm" />
+    <BasicForm @register="registerForm"/>
   </BasicDrawer>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed, unref } from 'vue';
-import { BasicForm, useForm } from '/@/components/Form/index';
-import { formSchema } from './menu.data';
-import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
-
-import { getMenuList, createMenu, updateMenu  } from '/@/api/sys/menu';
+import {useI18n} from '/@/hooks/web/useI18n';
+import {defineComponent, ref, computed, unref} from 'vue';
+import {BasicForm, useForm} from '/@/components/Form/index';
+import {formSchema} from './menu.data';
+import {BasicDrawer, useDrawerInner} from '/@/components/Drawer';
+import {getMenuList, createMenu, updateMenu} from '/@/api/sys/menu';
 
 export default defineComponent({
   name: 'MenuDrawer',
-  components: { BasicDrawer, BasicForm },
+  components: {BasicDrawer, BasicForm},
   emits: ['success', 'register'],
-  setup(_, { emit }) {
+  setup(_, {emit}) {
+    const {t} = useI18n();
     const isUpdate = ref(true);
     let id: string;
-    const [registerForm, { resetFields, setFieldsValue, updateSchema, validate }] = useForm({
+    const [registerForm, {resetFields, setFieldsValue, updateSchema, validate}] = useForm({
       labelWidth: 100,
       schemas: formSchema,
       showActionButtonGroup: false,
-      baseColProps: { lg: 12, md: 24 },
+      baseColProps: {lg: 12, md: 24},
     });
 
-    const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
+    const [registerDrawer, {setDrawerProps, closeDrawer}] = useDrawerInner(async (data) => {
       resetFields();
-      setDrawerProps({ confirmLoading: false });
+      setDrawerProps({confirmLoading: false});
       isUpdate.value = !!data?.isUpdate;
 
       if (unref(isUpdate)) {
@@ -46,16 +47,17 @@ export default defineComponent({
       const treeData = await getMenuList();
       updateSchema({
         field: 'parentId',
-        componentProps: { treeData },
+        componentProps: {treeData},
       });
     });
 
-    const getTitle = computed(() => (!unref(isUpdate) ? '新增菜单' : '编辑菜单'));
+    const getTitle = computed(() => (!unref(isUpdate) ? t('common.addText') :
+      t('common.editText')));
 
     async function handleSubmit() {
       try {
         const values = await validate();
-        setDrawerProps({ confirmLoading: true });
+        setDrawerProps({confirmLoading: true});
         if (id) {
           await updateMenu(id, values);
         } else {
@@ -64,11 +66,11 @@ export default defineComponent({
         closeDrawer();
         emit('success');
       } finally {
-        setDrawerProps({ confirmLoading: false });
+        setDrawerProps({confirmLoading: false});
       }
     }
 
-    return { registerDrawer, registerForm, getTitle, handleSubmit };
+    return {t, registerDrawer, registerForm, getTitle, handleSubmit};
   },
 });
 </script>

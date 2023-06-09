@@ -2,7 +2,7 @@
   <div class="m-4 mr-0 overflow-hidden bg-white">
     <BasicTree
       ref="basicTreeRef"
-      title="题目分类"
+      :title="t('common.modules.exam.category')"
       toolbar
       :clickRowToExpand="false"
       :treeData="treeData"
@@ -12,6 +12,7 @@
   </div>
 </template>
 <script lang="ts">
+import {useI18n} from '/@/hooks/web/useI18n';
 import {defineComponent, onMounted, ref, unref} from 'vue';
 import {BasicTree, TreeItem} from '/@/components/Tree';
 import {getSubjectCategoryTree} from '/@/api/exam/subjectCategory';
@@ -21,6 +22,7 @@ export default defineComponent({
   components: {BasicTree},
   emits: ['select'],
   setup(_, {emit}) {
+    const {t} = useI18n();
     const treeData = ref<TreeItem[]>([]);
     const basicTreeRef = ref<any>(undefined);
 
@@ -46,7 +48,8 @@ export default defineComponent({
     function reloadTree() {
       fetch();
     }
-    return {basicTreeRef, treeData, handleSelect, resetSelectedKeys, reloadTree};
+
+    return {t, basicTreeRef, treeData, handleSelect, resetSelectedKeys, reloadTree};
   },
 });
 </script>

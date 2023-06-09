@@ -2,7 +2,7 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate"> 手动添加</a-button>
+        <a-button type="primary" @click="handleCreate"> {{ t('common.addText') }} </a-button>
         <a-button type="primary" @click="handleSelectSubjects"> 从题库选择</a-button>
         <a-button type="primary" @click="handleRandomSelectSubjects"> 随机组题</a-button>
       </template>
@@ -17,7 +17,7 @@
               icon: 'ant-design:delete-outlined',
               color: 'error',
               popConfirm: {
-                title: '是否确认删除',
+                title: t('common.confirmDelText'),
                 confirm: handleDelete.bind(null, record),
               },
             },
@@ -31,6 +31,7 @@
   </div>
 </template>
 <script lang="ts">
+import { useI18n } from '/@/hooks/web/useI18n';
 import {defineComponent, ref} from 'vue';
 import {BasicTable, TableAction, useTable} from '/@/components/Table';
 import {useModal} from '/@/components/Modal';
@@ -47,6 +48,7 @@ export default defineComponent({
   name: 'SubjectManagement',
   components: {BasicTable, TableAction, SubjectModal, SelectSubjectModal, RandomSubjectModal},
   setup() {
+    const { t } = useI18n();
     const [registerModal, {openModal}] = useModal();
     const [registerSelectSubjectModal, {openModal: openSelectSubjectModal}] = useModal();
     const [registerRandomSubjectModal, {openModal: openRandomSubjectModal}] = useModal();
@@ -54,7 +56,7 @@ export default defineComponent({
     const route = useRoute();
     const examinationId = ref<any>(route.params?.id);
     const [registerTable, {reload}] = useTable({
-      title: '题目列表',
+      title: t('common.modules.exam.subject') + t('common.list'),
       api: getExaminationSubjectList,
       searchInfo: {
         examinationId
@@ -73,7 +75,7 @@ export default defineComponent({
       canResize: false,
       actionColumn: {
         width: 180,
-        title: '操作',
+        title: t('common.operationText'),
         dataIndex: 'action',
         slots: {customRender: 'action'},
         fixed: undefined,
@@ -98,12 +100,12 @@ export default defineComponent({
 
     async function handleDelete(record: Recordable) {
       await deleteSubject(record.id);
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       await reload();
     }
 
     function handleSuccess() {
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       reload();
     }
 
@@ -133,6 +135,7 @@ export default defineComponent({
     }
 
     return {
+      t,
       registerTable,
       registerModal,
       registerSelectSubjectModal,

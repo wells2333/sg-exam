@@ -17,7 +17,7 @@
           :actions="[
             {
               icon: 'ant-design:align-left-outlined',
-              tooltip: '查看详情',
+              tooltip: 't('common.viewText')详情',
               onClick: handleView.bind(null, record),
             },
             {
@@ -38,6 +38,7 @@
   </div>
 </template>
 <script>
+import { useI18n } from '/@/hooks/web/useI18n';
 import {defineComponent, onMounted, ref, unref} from 'vue';
 import {Divider} from 'ant-design-vue';
 import {useRoute} from 'vue-router';
@@ -63,6 +64,7 @@ export default defineComponent({
     ScoreDetailModal
   },
   setup() {
+    const { t } = useI18n();
     const [registerModal, {openModal}] = useModal();
     const route = useRoute();
     const go = useGo();
@@ -81,7 +83,7 @@ export default defineComponent({
       scroll: {y: 300},
       actionColumn: {
         width: 150,
-        title: '操作',
+        title: t('common.operationText'),
         dataIndex: 'action',
         slots: {customRender: 'action'},
         fixed: undefined,
@@ -155,6 +157,7 @@ export default defineComponent({
       fetch();
     });
     return {
+      t,
       registerModal,
       scoreDetailSchema,
       score,

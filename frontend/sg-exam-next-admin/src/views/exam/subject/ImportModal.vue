@@ -5,10 +5,10 @@
     <p style="color: red">2. 按模板填写题目内容</p>
     <div>
       <a-button class="template-btn" type="primary" preIcon="carbon:cloud-download"
-                @click="handleDownloadJSONTemplate">JSON模板下载
+                @click="handleDownloadJSONTemplate">JSON 模板下载
       </a-button>
       <a-button class="template-btn" type="primary" preIcon="carbon:cloud-download"
-                @click="handleDownloadEXCELTemplate">EXCEL模板下载
+                @click="handleDownloadEXCELTemplate">EXCEL 模板下载
       </a-button>
     </div>
     <p style="color: red">3. 上传</p>
@@ -18,6 +18,7 @@
   </BasicModal>
 </template>
 <script lang="ts">
+import { useI18n } from '/@/hooks/web/useI18n';
 import {defineComponent} from 'vue';
 import {BasicModal, useModalInner} from '/@/components/Modal';
 import {BasicForm, useForm} from '/@/components/Form/index';
@@ -35,6 +36,7 @@ export default defineComponent({
   },
   emits: ['success', 'register'],
   setup(_, {emit}) {
+    const { t } = useI18n();
     const {createMessage} = useMessage();
     const [registerForm, {resetFields, setFieldsValue}] = useForm({
       labelWidth: 100,
@@ -70,6 +72,7 @@ export default defineComponent({
     }
 
     return {
+      t,
       registerForm,
       registerModal,
       handleSubmit,
@@ -85,7 +88,6 @@ export default defineComponent({
   top: 20px;
 }
 
-// 按钮居中
 .ant-modal-footer {
   text-align: center !important;
 }

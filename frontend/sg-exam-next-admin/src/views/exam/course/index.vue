@@ -3,7 +3,7 @@
     <BasicTable @register="registerTable">
       <template #toolbar>
         <a-button v-if="hasPermission(['exam:course:add'])" type="primary" @click="handleCreate">
-          新增课程
+          {{ t('common.addText') }}
         </a-button>
       </template>
       <template #action="{ record }">
@@ -29,17 +29,17 @@
             },
             {
               icon: 'clarity:note-edit-line',
-              tooltip: '编辑',
+              tooltip: t('common.editText'),
               onClick: handleEdit.bind(null, record),
               auth: 'exam:course:edit'
             },
             {
               icon: 'ant-design:delete-outlined',
-               tooltip: '删除',
+               tooltip: t('common.delText'),
               color: 'error',
               auth: 'exam:course:del',
               popConfirm: {
-                title: '是否确认删除',
+                title: t('common.confirmDelText'),
                 confirm: handleDelete.bind(null, record),
               },
             },
@@ -63,6 +63,7 @@ import CourseImageModal from './CourseImageModal.vue';
 import EvaluateModal from './EvaluateModal.vue';
 import MemberModal from './MemberModal.vue';
 import {columns, searchFormSchema} from './course.data';
+import {useI18n} from '/@/hooks/web/useI18n';
 import {usePermission} from '/@/hooks/web/usePermission';
 import {useGo} from "/@/hooks/web/usePage";
 import {useMessage} from "/@/hooks/web/useMessage";
@@ -71,6 +72,7 @@ export default defineComponent({
   name: 'CourseManagement',
   components: {BasicTable, CourseModal, CourseImageModal, EvaluateModal, MemberModal, TableAction},
   setup() {
+    const {t} = useI18n();
     const {hasPermission} = usePermission();
     const {createMessage} = useMessage();
     const [registerModal, {openModal}] = useModal();
@@ -79,7 +81,7 @@ export default defineComponent({
     const [registerMemberModal, {openModal: openMemberModal}] = useModal();
     const go = useGo();
     const [registerTable, {reload}] = useTable({
-      title: '课程列表',
+      title: t('common.modules.exam.course') + t('common.list'),
       api: getCourseList,
       columns,
       formConfig: {
@@ -95,7 +97,7 @@ export default defineComponent({
       canResize: false,
       actionColumn: {
         width: 200,
-        title: '操作',
+        title: t('common.operationText'),
         dataIndex: 'action',
         slots: {customRender: 'action'},
         fixed: undefined,
@@ -137,12 +139,12 @@ export default defineComponent({
 
     async function handleDelete(record: Recordable) {
       await deleteCourse(record.id);
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       await reload();
     }
 
     function handleSuccess() {
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       reload();
     }
 
@@ -151,6 +153,7 @@ export default defineComponent({
     }
 
     return {
+      t,
       hasPermission,
       registerTable,
       registerModal,

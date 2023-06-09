@@ -2,7 +2,9 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button v-if="hasPermission(['tenant:tenant:add'])" type="primary" @click="handleCreate"> 新增单位 </a-button>
+        <a-button v-if="hasPermission(['tenant:tenant:add'])" type="primary" @click="handleCreate">
+          {{ t('common.addText') }}
+        </a-button>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -17,7 +19,7 @@
               color: 'error',
               auth: 'tenant:tenant:del',
               popConfirm: {
-                title: '是否确认删除',
+                title: t('common.confirmDelText'),
                 confirm: handleDelete.bind(null, record),
                 auth: 'tenant:tenant:del'
               },
@@ -26,28 +28,30 @@
         />
       </template>
     </BasicTable>
-    <TenantModal @register="registerModal" @success="handleSuccess" />
+    <TenantModal @register="registerModal" @success="handleSuccess"/>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { BasicTable, useTable, TableAction } from '/@/components/Table';
-import { getTenantList, deleteTenant } from '/@/api/sys/tenant';
-import { useModal } from '/@/components/Modal';
+import {useI18n} from '/@/hooks/web/useI18n';
+import {defineComponent} from 'vue';
+import {BasicTable, useTable, TableAction} from '/@/components/Table';
+import {getTenantList, deleteTenant} from '/@/api/sys/tenant';
+import {useModal} from '/@/components/Modal';
 import TenantModal from './TenantModal.vue';
-import { columns, searchFormSchema } from './tenant.data';
+import {columns, searchFormSchema} from './tenant.data';
 import {useMessage} from "/@/hooks/web/useMessage";
-import { usePermission } from '/@/hooks/web/usePermission';
+import {usePermission} from '/@/hooks/web/usePermission';
 
 export default defineComponent({
   name: 'TenantManagement',
-  components: { BasicTable, TenantModal, TableAction },
+  components: {BasicTable, TenantModal, TableAction},
   setup() {
-    const { hasPermission } = usePermission();
-    const [registerModal, { openModal }] = useModal();
-    const { createMessage } = useMessage();
-    const [registerTable, { reload }] = useTable({
-      title: '单位列表',
+    const {t} = useI18n();
+    const {hasPermission} = usePermission();
+    const [registerModal, {openModal}] = useModal();
+    const {createMessage} = useMessage();
+    const [registerTable, {reload}] = useTable({
+      title: t('common.modules.sys.tenant') + t('common.list'),
       api: getTenantList,
       columns,
       formConfig: {
@@ -63,9 +67,9 @@ export default defineComponent({
       canResize: false,
       actionColumn: {
         width: 120,
-        title: '操作',
+        title: t('common.operationText'),
         dataIndex: 'action',
-        slots: { customRender: 'action' },
+        slots: {customRender: 'action'},
         fixed: undefined,
       },
     });
@@ -82,16 +86,20 @@ export default defineComponent({
         isUpdate: true,
       });
     }
+
     async function handleDelete(record: Recordable) {
       await deleteTenant(record.id);
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       await reload();
     }
+
     function handleSuccess() {
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       reload();
     }
+
     return {
+      t,
       hasPermission,
       registerTable,
       registerModal,

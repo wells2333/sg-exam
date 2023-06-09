@@ -1,16 +1,17 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" title="学员列表" @ok="handleSubmit" width="90%">
+  <BasicModal v-bind="$attrs" @register="registerModal" title="学员列表" @ok="handleSubmit"
+              width="90%">
     <BasicTable @register="registerTable">
       <template #action="{ record }">
         <TableAction
           :actions="[
             {
               icon: 'ant-design:delete-outlined',
-               tooltip: '删除',
+               tooltip: t('common.delText'),
               color: 'error',
               auth: 'exam:course:del',
               popConfirm: {
-                title: '是否确认删除',
+                title: t('common.confirmDelText'),
                 confirm: handleDeleteMember.bind(null, record),
               },
             },
@@ -21,6 +22,7 @@
   </BasicModal>
 </template>
 <script lang="ts">
+import {useI18n} from '/@/hooks/web/useI18n';
 import {defineComponent, ref} from 'vue';
 import {BasicTable, TableAction, useTable} from '/@/components/Table';
 import {BasicModal, useModalInner} from '/@/components/Modal';
@@ -33,6 +35,7 @@ export default defineComponent({
   components: {BasicModal, BasicTable, TableAction},
   emits: ['success', 'register'],
   setup(_) {
+    const {t} = useI18n();
     const {createMessage} = useMessage();
     const courseId = ref<string>(undefined);
     let id: string;
@@ -60,7 +63,7 @@ export default defineComponent({
       canResize: false,
       actionColumn: {
         width: 120,
-        title: '操作',
+        title: t('common.operationText'),
         dataIndex: 'action',
         slots: {customRender: 'action'},
         fixed: undefined,
@@ -76,7 +79,7 @@ export default defineComponent({
 
     async function handleDeleteMember(record: Recordable) {
       await deleteExamCourseMember(record.id);
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       await reload();
     }
 
@@ -84,7 +87,7 @@ export default defineComponent({
       closeModal();
     }
 
-    return {registerTable, registerModal, handleDeleteMember, handleSubmit};
+    return {t, registerTable, registerModal, handleDeleteMember, handleSubmit};
   },
 });
 </script>

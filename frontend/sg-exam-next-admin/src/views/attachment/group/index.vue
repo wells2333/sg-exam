@@ -2,7 +2,7 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate"> 新增分组 </a-button>
+        <a-button type="primary" @click="handleCreate"> {{ t('common.addText') }}</a-button>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -23,26 +23,29 @@
         />
       </template>
     </BasicTable>
-    <AttachGroupModal @register="registerModal" @success="handleSuccess" />
+    <AttachGroupModal @register="registerModal" @success="handleSuccess"/>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { BasicUpload } from '/@/components/Upload';
-import { BasicTable, useTable, TableAction } from '/@/components/Table';
-import { getAttachGroupList, deleteAttachGroup } from '/@/api/attachment/group';
-import { useModal } from '/@/components/Modal';
+import {useI18n} from '/@/hooks/web/useI18n';
+import {defineComponent} from 'vue';
+import {BasicUpload} from '/@/components/Upload';
+import {BasicTable, useTable, TableAction} from '/@/components/Table';
+import {getAttachGroupList, deleteAttachGroup} from '/@/api/attachment/group';
+import {useModal} from '/@/components/Modal';
 import AttachGroupModal from './AttachGroupModal.vue';
-import { columns, searchFormSchema } from './group.data';
+import {columns, searchFormSchema} from './group.data';
 import {useMessage} from "/@/hooks/web/useMessage";
+
 export default defineComponent({
   name: 'AttachGroupManagement',
-  components: { BasicTable, AttachGroupModal, TableAction, BasicUpload },
+  components: {BasicTable, AttachGroupModal, TableAction, BasicUpload},
   setup() {
-    const [registerModal, { openModal }] = useModal();
-    const { createMessage } = useMessage();
-    const [registerTable, { reload }] = useTable({
-      title: '分组列表',
+    const {t} = useI18n();
+    const [registerModal, {openModal}] = useModal();
+    const {createMessage} = useMessage();
+    const [registerTable, {reload}] = useTable({
+      title: t('common.modules.attachment.group') + t('common.list'),
       api: getAttachGroupList,
       columns,
       formConfig: {
@@ -58,9 +61,9 @@ export default defineComponent({
       canResize: false,
       actionColumn: {
         width: 150,
-        title: '操作',
+        title: t('common.operationText'),
         dataIndex: 'action',
-        slots: { customRender: 'action' },
+        slots: {customRender: 'action'},
         fixed: undefined,
       },
     });
@@ -70,6 +73,7 @@ export default defineComponent({
         isUpdate: false,
       });
     }
+
     function handleEdit(record: Recordable) {
       openModal(true, {
         record,
@@ -80,16 +84,19 @@ export default defineComponent({
     async function handleDelete(record: Recordable) {
       const result = await deleteAttachGroup(record.id);
       if (result) {
-        createMessage.success('删除成功');
+        createMessage.success(t('common.delSuccessText'));
         await reload();
       } else {
-        createMessage.error('删除失败');
+        createMessage.error(t('common.delFailedText'));
       }
     }
+
     function handleSuccess() {
       reload();
     }
+
     return {
+      t,
       registerTable,
       registerModal,
       handleCreate,

@@ -2,7 +2,9 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button v-if="hasPermission(['sys:role:add'])" type="primary" @click="handleCreate"> 新增角色 </a-button>
+        <a-button v-if="hasPermission(['sys:role:add'])" type="primary" @click="handleCreate">
+          {{ t('common.addText') }}
+        </a-button>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -17,7 +19,7 @@
               color: 'error',
                auth: 'sys:role:del',
               popConfirm: {
-                title: '是否确认删除',
+                title: t('common.confirmDelText'),
                 confirm: handleDelete.bind(null, record),
               },
             },
@@ -25,28 +27,30 @@
         />
       </template>
     </BasicTable>
-    <RoleModal @register="registerModal" @success="handleSuccess" />
+    <RoleModal @register="registerModal" @success="handleSuccess"/>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { BasicTable, useTable, TableAction } from '/@/components/Table';
-import { getRoleList, deleteRole } from '/@/api/sys/role';
-import { useModal } from '/@/components/Modal';
+import {useI18n} from '/@/hooks/web/useI18n';
+import {defineComponent} from 'vue';
+import {BasicTable, useTable, TableAction} from '/@/components/Table';
+import {getRoleList, deleteRole} from '/@/api/sys/role';
+import {useModal} from '/@/components/Modal';
 import RoleModal from './RoleModal.vue';
-import { columns, searchFormSchema } from './role.data';
+import {columns, searchFormSchema} from './role.data';
 import {useMessage} from "/@/hooks/web/useMessage";
-import { usePermission } from '/@/hooks/web/usePermission';
+import {usePermission} from '/@/hooks/web/usePermission';
 
 export default defineComponent({
   name: 'RoleManagement',
-  components: { BasicTable, RoleModal, TableAction },
+  components: {BasicTable, RoleModal, TableAction},
   setup() {
-    const { hasPermission } = usePermission();
-    const { createMessage } = useMessage();
-    const [registerModal, { openModal }] = useModal();
-    const [registerTable, { reload }] = useTable({
-      title: '角色列表',
+    const {t} = useI18n();
+    const {hasPermission} = usePermission();
+    const {createMessage} = useMessage();
+    const [registerModal, {openModal}] = useModal();
+    const [registerTable, {reload}] = useTable({
+      title: t('common.modules.sys.role') + t('common.list'),
       api: getRoleList,
       columns,
       formConfig: {
@@ -59,9 +63,9 @@ export default defineComponent({
       showIndexColumn: false,
       actionColumn: {
         width: 80,
-        title: '操作',
+        title: t('common.operationText'),
         dataIndex: 'action',
-        slots: { customRender: 'action' },
+        slots: {customRender: 'action'},
         fixed: undefined,
       },
     });
@@ -81,16 +85,17 @@ export default defineComponent({
 
     async function handleDelete(record: Recordable) {
       await deleteRole(record.id);
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       await reload();
     }
 
     function handleSuccess() {
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       reload();
     }
 
     return {
+      t,
       hasPermission,
       registerTable,
       registerModal,

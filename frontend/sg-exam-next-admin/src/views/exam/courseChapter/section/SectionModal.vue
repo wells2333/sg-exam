@@ -3,7 +3,7 @@
     <BasicTable @register="registerTable">
       <template #toolbar>
         <a-button v-if="hasPermission(['exam:course:edit'])" type="primary" @click="handleCreate">
-          新增
+          {{ t('common.addText') }}
         </a-button>
       </template>
       <template #action="{ record }">
@@ -17,17 +17,17 @@
             },
             {
               icon: 'clarity:note-edit-line',
-              tooltip: '编辑',
+              tooltip: t('common.editText'),
               onClick: handleEdit.bind(null, record),
               auth: 'exam:course:edit'
             },
             {
               icon: 'ant-design:delete-outlined',
-              tooltip: '删除',
+              tooltip: t('common.delText'),
               color: 'error',
               auth: 'exam:course:del',
               popConfirm: {
-                title: '是否确认删除',
+                title: t('common.confirmDelText'),
                 confirm: handleDelete.bind(null, record),
               },
             },
@@ -40,6 +40,7 @@
   </BasicModal>
 </template>
 <script lang="ts">
+import { useI18n } from '/@/hooks/web/useI18n';
 import {defineComponent, ref, unref} from 'vue';
 import {BasicModal, useModal, useModalInner} from '/@/components/Modal';
 import {BasicForm} from '/@/components/Form/index';
@@ -63,6 +64,7 @@ export default defineComponent({
   },
   emits: ['success', 'register'],
   setup(_) {
+    const { t } = useI18n();
     const {hasPermission} = usePermission();
     const { createMessage } = useMessage();
     const chapterId = ref<object>();
@@ -86,10 +88,10 @@ export default defineComponent({
       bordered: true,
       showIndexColumn: false,
       canResize: false,
-      immediate: false, // 关闭立即请求，由reload触发
+      immediate: false, // 关闭立即请求，由 reload 触发
       actionColumn: {
         width: 120,
-        title: '操作',
+        title: t('common.operationText'),
         dataIndex: 'action',
         slots: {customRender: 'action'},
         fixed: undefined,
@@ -129,12 +131,12 @@ export default defineComponent({
 
     async function handleDelete(record: Recordable) {
       await deleteSection(record.id);
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       await reload();
     }
 
     function handleSectionDataSuccess() {
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       reload();
     }
 
@@ -150,6 +152,7 @@ export default defineComponent({
     }
 
     return {
+      t,
       hasPermission,
       registerModal,
       registerTable,

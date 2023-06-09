@@ -8,6 +8,7 @@
   </BasicModal>
 </template>
 <script lang="ts">
+import { useI18n } from '/@/hooks/web/useI18n';
 import {defineComponent, reactive, ref} from 'vue';
 import {BasicTable, TableAction, useTable} from '/@/components/Table';
 import SubjectChoices from '/@/components/Subjects/SubjectChoices.vue';
@@ -34,6 +35,7 @@ export default defineComponent({
   },
   emits: ['success', 'register'],
   setup(_, {emit}) {
+    const { t } = useI18n();
     const {createMessage} = useMessage();
     const examinationId = ref<string>('');
     const subjectSearchInfo = reactive<Recordable>({});
@@ -105,6 +107,7 @@ export default defineComponent({
     }
 
     return {
+      t,
       prefixCls: 'subject',
       examinationId,
       registerModal,
@@ -121,7 +124,6 @@ export default defineComponent({
   top: 20px;
 }
 
-// 按钮居中
 .ant-modal-footer {
   text-align: center !important;
 }

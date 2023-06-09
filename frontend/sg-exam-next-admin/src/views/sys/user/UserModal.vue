@@ -1,25 +1,27 @@
 <template>
   <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+    <BasicForm @register="registerForm"/>
   </BasicModal>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed, unref } from 'vue';
-import { BasicModal, useModalInner } from '/@/components/Modal';
-import { BasicForm, useForm } from '/@/components/Form/index';
-import { userFormSchema } from './user.data';
-import { getDeptList } from '/@/api/sys/dept';
-import { createUser, updateUser } from '/@/api/sys/user';
+import {useI18n} from '/@/hooks/web/useI18n';
+import {defineComponent, ref, computed, unref} from 'vue';
+import {BasicModal, useModalInner} from '/@/components/Modal';
+import {BasicForm, useForm} from '/@/components/Form/index';
+import {userFormSchema} from './user.data';
+import {getDeptList} from '/@/api/sys/dept';
+import {createUser, updateUser} from '/@/api/sys/user';
 
 export default defineComponent({
   name: 'UserModal',
-  components: { BasicModal, BasicForm },
+  components: {BasicModal, BasicForm},
   emits: ['success', 'register'],
-  setup(_, { emit }) {
+  setup(_, {emit}) {
+    const {t} = useI18n();
     const isUpdate = ref(true);
     const rowId = ref('');
     let id: string;
-    const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
+    const [registerForm, {setFieldsValue, updateSchema, resetFields, validate}] = useForm({
       labelWidth: 100,
       schemas: userFormSchema,
       showActionButtonGroup: false,
@@ -28,9 +30,9 @@ export default defineComponent({
       },
     });
 
-    const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
+    const [registerModal, {setModalProps, closeModal}] = useModalInner(async (data) => {
       resetFields();
-      setModalProps({ confirmLoading: false });
+      setModalProps({confirmLoading: false});
       isUpdate.value = !!data?.isUpdate;
 
       if (unref(isUpdate)) {
@@ -48,17 +50,18 @@ export default defineComponent({
         },
         {
           field: 'deptId',
-          componentProps: { treeData },
+          componentProps: {treeData},
         },
       ]);
     });
 
-    const getTitle = computed(() => (!unref(isUpdate) ? '新增账号' : '编辑账号'));
+    const getTitle = computed(() => (!unref(isUpdate) ? t('common.addText') :
+      t('common.editText')));
 
     async function handleSubmit() {
       try {
         const values = await validate();
-        setModalProps({ confirmLoading: true });
+        setModalProps({confirmLoading: true});
         if (!Array.isArray(values.role)) {
           values.role = new Array(values.role);
         }
@@ -68,13 +71,13 @@ export default defineComponent({
           await createUser(values);
         }
         closeModal();
-        emit('success', { isUpdate: unref(isUpdate), values: { ...values, id: rowId.value } });
+        emit('success', {isUpdate: unref(isUpdate), values: {...values, id: rowId.value}});
       } finally {
-        setModalProps({ confirmLoading: false });
+        setModalProps({confirmLoading: false});
       }
     }
 
-    return { registerModal, registerForm, getTitle, handleSubmit };
+    return {t, registerModal, registerForm, getTitle, handleSubmit};
   },
 });
 </script>

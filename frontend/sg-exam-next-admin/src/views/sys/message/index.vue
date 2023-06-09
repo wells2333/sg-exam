@@ -2,7 +2,9 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button v-if="hasPermission(['sys:message:add'])" type="primary" @click="handleCreate"> 新增消息 </a-button>
+        <a-button v-if="hasPermission(['sys:message:add'])" type="primary" @click="handleCreate">
+          {{ t('common.addText') }}
+        </a-button>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -17,7 +19,7 @@
               color: 'error',
               auth: 'sys:message:del',
               popConfirm: {
-                title: '是否确认删除',
+                title: t('common.confirmDelText'),
                 confirm: handleDelete.bind(null, record),
               },
             }
@@ -25,27 +27,30 @@
         />
       </template>
     </BasicTable>
-    <MessageModal @register="registerModal" @success="handleSuccess" />
+    <MessageModal @register="registerModal" @success="handleSuccess"/>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { BasicTable, useTable, TableAction } from '/@/components/Table';
-import { getMessageList, deleteMessage } from '/@/api/sys/message';
-import { useModal } from '/@/components/Modal';
+import {useI18n} from '/@/hooks/web/useI18n';
+import {defineComponent} from 'vue';
+import {BasicTable, useTable, TableAction} from '/@/components/Table';
+import {getMessageList, deleteMessage} from '/@/api/sys/message';
+import {useModal} from '/@/components/Modal';
 import MessageModal from './MessageModal.vue';
-import { columns, searchFormSchema } from './message.data';
+import {columns, searchFormSchema} from './message.data';
 import {useMessage} from "/@/hooks/web/useMessage";
 import {usePermission} from "/@/hooks/web/usePermission";
+
 export default defineComponent({
   name: 'MessageManagement',
-  components: { BasicTable, MessageModal, TableAction },
+  components: {BasicTable, MessageModal, TableAction},
   setup() {
-    const { hasPermission } = usePermission();
-    const [registerModal, { openModal }] = useModal();
-    const { createMessage } = useMessage();
-    const [registerTable, { reload }] = useTable({
-      title: '消息管理',
+    const {t} = useI18n();
+    const {hasPermission} = usePermission();
+    const [registerModal, {openModal}] = useModal();
+    const {createMessage} = useMessage();
+    const [registerTable, {reload}] = useTable({
+      title: t('common.modules.sys.message') + t('common.list'),
       api: getMessageList,
       columns,
       formConfig: {
@@ -61,9 +66,9 @@ export default defineComponent({
       canResize: false,
       actionColumn: {
         width: 120,
-        title: '操作',
+        title: t('common.operationText'),
         dataIndex: 'action',
-        slots: { customRender: 'action' },
+        slots: {customRender: 'action'},
         fixed: undefined,
       },
     });
@@ -80,16 +85,20 @@ export default defineComponent({
         isUpdate: true,
       });
     }
+
     async function handleDelete(record: Recordable) {
       await deleteMessage(record.id);
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       await reload();
     }
+
     function handleSuccess() {
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       reload();
     }
+
     return {
+      t,
       hasPermission,
       registerTable,
       registerModal,

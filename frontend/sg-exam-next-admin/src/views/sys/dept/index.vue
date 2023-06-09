@@ -2,7 +2,7 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button v-if="hasPermission(['sys:dept:add'])" type="primary" @click="handleCreate"> 新增部门 </a-button>
+        <a-button v-if="hasPermission(['sys:dept:add'])" type="primary" @click="handleCreate"> {{ t('common.addText') }} </a-button>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -17,7 +17,7 @@
               color: 'error',
                auth: 'sys:dept:del',
               popConfirm: {
-                title: '是否确认删除',
+                title: t('common.confirmDelText'),
                 confirm: handleDelete.bind(null, record),
               },
             },
@@ -29,6 +29,7 @@
   </div>
 </template>
 <script lang="ts">
+import {useI18n} from '/@/hooks/web/useI18n';
 import { defineComponent } from 'vue';
 import { BasicTable, useTable, TableAction } from '/@/components/Table';
 import { getDeptList, deleteDept } from '/@/api/sys/dept';
@@ -41,11 +42,12 @@ export default defineComponent({
   name: 'DeptManagement',
   components: { BasicTable, DeptModal, TableAction },
   setup() {
+    const {t} = useI18n();
     const { hasPermission } = usePermission();
     const { createMessage } = useMessage();
     const [registerModal, { openModal }] = useModal();
     const [registerTable, { reload }] = useTable({
-      title: '部门列表',
+      title: t('common.modules.sys.dept') + t('common.list'),
       api: getDeptList,
       columns,
       formConfig: {
@@ -62,7 +64,7 @@ export default defineComponent({
       canResize: false,
       actionColumn: {
         width: 80,
-        title: '操作',
+        title: t('common.operationText'),
         dataIndex: 'action',
         slots: { customRender: 'action' },
         fixed: undefined,
@@ -81,14 +83,15 @@ export default defineComponent({
     }
     async function handleDelete(record: Recordable) {
       await deleteDept([record.id]);
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       await reload();
     }
     function handleSuccess() {
-      createMessage.success('操作成功');
+      createMessage.success(t('common.operationSuccessText'));
       reload();
     }
     return {
+      t,
       hasPermission,
       registerTable,
       registerModal,

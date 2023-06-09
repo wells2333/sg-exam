@@ -44,6 +44,7 @@
   </div>
 </template>
 <script lang="ts">
+import { useI18n } from '/@/hooks/web/useI18n';
 import { defineComponent } from 'vue';
 import { BasicUpload } from '/@/components/Upload';
 import { BasicTable, useTable, TableAction } from '/@/components/Table';
@@ -57,11 +58,12 @@ export default defineComponent({
   name: 'AttachmentManagement',
   components: { BasicTable, AttachmentModal, AttachmentInfoModal, TableAction, BasicUpload },
   setup() {
+    const { t } = useI18n();
     const [registerModal, { openModal }] = useModal();
     const [registerInfoModal, { openModal: openInfoModal }] = useModal();
     const { createMessage } = useMessage();
     const [registerTable, { reload }] = useTable({
-      title: '附件列表',
+      title: t('common.modules.attachment.attach') + t('common.list'),
       api: getAttachmentList,
       columns,
       formConfig: {
@@ -120,6 +122,7 @@ export default defineComponent({
       reload();
     }
     return {
+      t,
       registerTable,
       registerModal,
       registerInfoModal,

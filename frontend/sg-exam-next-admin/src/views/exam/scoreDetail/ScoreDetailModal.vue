@@ -38,6 +38,7 @@
   </BasicModal>
 </template>
 <script lang="ts">
+import { useI18n } from '/@/hooks/web/useI18n';
 import { defineComponent, ref, computed, unref } from 'vue';
 import { BasicModal, useModalInner } from '/@/components/Modal';
 import { BasicForm } from '/@/components/Form/index';
@@ -53,6 +54,7 @@ export default defineComponent({
   components: { BasicModal, BasicForm, Description, [Divider.name]: Divider},
   emits: ['success', 'register'],
   setup(_, { emit }) {
+    const { t } = useI18n();
     const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
       record.value = data.record;
       subject.value = data.record.subject;
@@ -67,7 +69,7 @@ export default defineComponent({
       emit('success');
       setModalProps({ confirmLoading: false });
     }
-    return { record, subject, answer, registerModal, getTitle, handleSubmit };
+    return { t, record, subject, answer, registerModal, getTitle, handleSubmit };
   },
 });
 </script>
