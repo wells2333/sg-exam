@@ -15,7 +15,7 @@
                          active-text-color="#232323"
                          :unique-opened=true
                          @select="handleSelect">
-                  <el-menu-item index="/index" @click="open('/home')">首页</el-menu-item>
+                  <el-menu-item index="/index" @click="open('/home')">{{$t('home')}}</el-menu-item>
                   <el-menu-item index="/exams" @click="open('/exams')">考试</el-menu-item>
                   <el-menu-item index="/courses" @click="open('/courses')">课程</el-menu-item>
                   <el-submenu index="/other">

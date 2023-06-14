@@ -118,7 +118,7 @@ export default {
           }
         }).catch(err => {
           console.error(err)
-        });
+        })
       }
     },
     pausePlay() {
@@ -162,7 +162,7 @@ export default {
     setSrc(src, autoPlay, subjectId) {
       this.autoPlay = autoPlay
       this.src = src
-      this.subjectId = subjectId;
+      this.subjectId = subjectId
     }
   },
   filters: {

@@ -8,31 +8,32 @@
     <el-row>
       <el-col :span="20" :offset="2" style="margin-top:10px;">
         <el-card class="box-card">
-          <el-form ref="form" :rules="rules" :label-position="labelPosition" :model="userInfo" label-width="100px" style="width: 90%;">
+          <el-form ref="form" :rules="rules" :label-position="labelPosition" :model="userInfo"
+                   label-width="140px" style="width: 90%;">
             <el-row>
               <el-col :span="12" :offset="6">
-                <el-form-item label="账号：" prop="identifier">
+                <el-form-item :label="$t('username') + '：'" prop="identifier">
                   <el-input v-model="userInfo.identifier" auto-complete="off" type="identifier"/>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="12" :offset="6">
-                <el-form-item label="旧密码：" prop="oldPassword">
+                <el-form-item :label="$t('oldPassword') + '：'" prop="oldPassword">
                   <el-input v-model="userInfo.oldPassword" auto-complete="off" type="password"/>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="12" :offset="6">
-                <el-form-item label="新密码：" prop="newPassword">
+                <el-form-item :label="$t('newPassword') + '：'" prop="newPassword">
                   <el-input v-model="userInfo.newPassword" auto-complete="off" type="password"/>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="12" :offset="6">
-                <el-form-item label="确认新密码" prop="newPassword1">
+                <el-form-item :label="$t('confirm') + '：'" prop="newPassword1">
                   <el-input v-model="userInfo.newPassword1" auto-complete="off" type="password"/>
                 </el-form-item>
               </el-col>
@@ -40,7 +41,7 @@
             <el-row>
               <el-col :span="12" :offset="8">
                 <el-form-item>
-                  <el-button type="primary" @click="update">保存</el-button>
+                  <el-button type="primary" @click="update">{{$t('save')}}</el-button>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -76,7 +77,7 @@ export default {
         if (!isNotEmpty(value)) {
           callback(new Error('请再次输入密码'))
         } else if (value !== this.userInfo.newPassword) {
-          callback(new Error('两次输入密码不一致!'))
+          callback(new Error('两次输入密码不一致！'))
         } else {
           callback()
         }

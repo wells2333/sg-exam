@@ -12,6 +12,8 @@ import './icons' // icon
 import * as filters from './filters' // global filters
 import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
 
+import i18n from './locales/vueIN'
+
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)
@@ -26,6 +28,7 @@ new Vue({
   el: '#app',
   router,
   store,
+  i18n,
   components: { App },
   template: '<App/>'
 })

@@ -16,15 +16,15 @@
                            active-text-color="#232323"
                            :unique-opened=true
                            @select="handleSelect">
-                    <el-menu-item index="/index" @click="open('/home')">首页</el-menu-item>
-                    <el-menu-item index="/exams" @click="open('/exams')">考试</el-menu-item>
-                    <el-menu-item index="/courses" @click="open('/courses')">课程</el-menu-item>
+                    <el-menu-item index="/index" @click="open('/home')">{{$t('home')}}</el-menu-item>
+                    <el-menu-item index="/exams" @click="open('/exams')">{{$t('examination')}}</el-menu-item>
+                    <el-menu-item index="/courses" @click="open('/courses')">{{$t('course') }}</el-menu-item>
                     <el-submenu index="/other">
-                      <template slot="title">记录</template>
+                      <template slot="title">{{$t('record')}}</template>
                       <el-menu-item index="exam-record" @click="open('/exam-record')">考试记录</el-menu-item>
                     </el-submenu>
                     <el-submenu index="/u">
-                      <template slot="title">帮助</template>
+                      <template slot="title">{{$t('help')}}</template>
                       <el-menu-item index="u-source" @click="open('https://gitee.com/wells2333/sg-exam')">
                         源码地址
                       </el-menu-item>
@@ -54,8 +54,8 @@
                     </el-submenu>
                   </el-menu>
                   <div class="register-login-area" v-if="!login">
-                    <a class="btn" target="_blank" @click="open('/register')">注册</a>
-                    <a class="btn" target="_blank" @click="open('/login')">登录</a>
+                    <a class="btn" target="_blank" @click="open('/register')">{{$t('register')}}</a>
+                    <a class="btn" target="_blank" @click="open('/login')">{{$t('login')}}</a>
                   </div>
                 </div>
               </div>
