@@ -119,7 +119,7 @@ const zh = {
       }
     },
     records: {
-
+      records: '考试记录'
     },
     exams: {
       total: '全部',
@@ -153,13 +153,32 @@ const zh = {
       correctNumber: '正确题数',
       inCorrectNumber: '错误题数',
       subjectList: '错题列表',
-      userAnswer : '考生答案',
+      userAnswer: '考生答案',
       answer: '参考答案',
       analysis: '解析',
       right: '正确',
       wrong: '错误',
       loadSubjectFailed: '加载错题失败',
       operator: '评卷人：系统自动评分'
+    }
+  },
+  personal: {
+    account: {
+      identifier: '账号',
+      name: '姓名',
+      gender: '性别',
+      born: '出生日期',
+      phone: '电话号码',
+      email: '邮箱',
+      avatar: '头像',
+      inputIdentifier: '请输入账号',
+      modifySuccess: '修改成功',
+      modifyFailed: '修改失败',
+      avatarUploadSuccess: '头像上传成功',
+      avatarUploadFailed: '头像上传失败',
+      avatarUploadFormat: '上传头像图片只能是 jpg/png 格式！',
+      avatarUploadSize: '上传头像图片大小不能超过 2MB!'
+
     }
   }
 }

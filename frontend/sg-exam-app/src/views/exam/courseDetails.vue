@@ -206,7 +206,7 @@ export default {
       },
       likes: [{
         id: 1,
-        courseName: $t('exam.course.demoCourseName'),
+        courseName: this.$t('exam.course.demoCourseName'),
         price: '$20'
       }],
       evaluates: [],
@@ -225,7 +225,7 @@ export default {
       getCourseDetail(this.courseId).then(res => {
         this.detail = res.data.result
         this.course = res.data.result.course
-        this.joinBtnText = this.detail.isUserJoin === true ? $t('exam.course.cancelRegistration') : $t('exam.course.registration')
+        this.joinBtnText = this.detail.isUserJoin === true ? this.$t('exam.course.cancelRegistration') : this.$t('exam.course.registration')
         setTimeout(() => {
           this.loading = false
         }, 500)
@@ -249,7 +249,7 @@ export default {
     },
     handleClickSection(section) {
       if (this.detail.isUserJoin !== true) {
-        messageWarn(this, $t('exam.course.pleaseRegistration'))
+        messageWarn(this, this.$t('exam.course.pleaseRegistration'))
         return
       }
       this.$router.push({
@@ -259,7 +259,7 @@ export default {
     },
     handleClickPoint(section, point) {
       if (this.detail.isUserJoin !== true) {
-        messageWarn(this, $t('exam.course.pleaseRegistration'))
+        messageWarn(this, this.$t('exam.course.pleaseRegistration'))
         return
       }
       this.$router.push({
@@ -269,15 +269,15 @@ export default {
     },
     handleSubmitEvaluate() {
       if (this.detail.isUserJoin !== true) {
-        messageWarn(this, $t('exam.course.pleaseRegistration'))
+        messageWarn(this, this.$t('exam.course.pleaseRegistration'))
         return
       }
       if (this.hasEvaluate) {
-        messageWarn(this, $t('exam.course.doNotResubmit'))
+        messageWarn(this, this.$t('exam.course.doNotResubmit'))
         return
       }
       if (this.evaluate.evaluateContent === '') {
-        this.evaluate.evaluateContent = $t('exam.course.defaultEvaluate')
+        this.evaluate.evaluateContent = this.$t('exam.course.defaultEvaluate')
       }
       addObj({
         courseId: this.courseId,
@@ -286,10 +286,10 @@ export default {
         if (res.data.code === 0) {
           this.evaluate.evaluateContent = ''
           this.hasEvaluate = true
-          messageSuccess(this, $t('exam.course.submitSuccess'))
+          messageSuccess(this, this.$t('exam.course.submitSuccess'))
           this.getEvaluateList()
         } else {
-          messageWarn(this, $t('exam.course.submitFailed'))
+          messageWarn(this, this.$t('exam.course.submitFailed'))
         }
       }).catch(error => {
         console.error(error)
@@ -297,20 +297,20 @@ export default {
     },
     handleJoin() {
       const type = this.detail.isUserJoin ? '0' : '1'
-      const text = this.detail.isUserJoin ? $t('exam.course.cancelRegistration') : $t('exam.course.registration')
-      this.$confirm($t('sure') + text + '？', $('tips'), {
-        confirmButtonText: $t('sure'),
-        cancelButtonText: $t('cancel'),
+      const text = this.detail.isUserJoin ? this.$t('exam.course.cancelRegistration') : this.$t('exam.course.registration')
+      this.$confirm(this.$t('sure') + text + '？', this.$('tips'), {
+        confirmButtonText: this.$t('sure'),
+        cancelButtonText: this.$t('cancel'),
         type: 'warning'
       }).then(() => {
         joinCourse(this.courseId, type).then(res => {
           if (res.data.result) {
-            messageSuccess(this, text + $t('success'))
+            messageSuccess(this, text + this.$t('success'))
             this.getCourseInfo()
           }
         }).catch(error => {
           console.error(error)
-          messageWarn(this, text + $t('failed'))
+          messageWarn(this, text + this.$t('failed'))
         })
       }).catch(error => {
         console.error(error)

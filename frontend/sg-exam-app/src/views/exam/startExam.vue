@@ -131,7 +131,7 @@ export default {
       this.$router.push({name: 'exams'})
     },
     startExam() {
-      messageSuccess(this, $t('exam.startExam.startExam'))
+      messageSuccess(this, this.$t('exam.startExam.startExam'))
       setTimeout(() => {
         this.setSubjectInfo(this.subject)
       }, 100)
@@ -140,7 +140,7 @@ export default {
       for (let i = 0; i < this.cards.length; i++) {
         if (this.cards[i].subjectId === this.subject.id) {
           if (i === 0) {
-            messageSuccess(this, $t('exam.startExam.isFirst'))
+            messageSuccess(this, this.$t('exam.startExam.isFirst'))
             break
           }
           let {sort} = this.cards[i - 1]
@@ -153,7 +153,7 @@ export default {
       for (let i = 0; i < this.cards.length; i++) {
         if (this.cards[i].subjectId === this.subject.id) {
           if (i === this.cards.length - 1) {
-            messageSuccess(this, $t('exam.startExam.isLast'))
+            messageSuccess(this, this.$t('exam.startExam.isLast'))
             break
           }
           let {sort} = this.cards[i + 1]
@@ -182,7 +182,7 @@ export default {
         this.endLoading(nextType)
       }).catch((error) => {
         console.log(error)
-        messageFail(this, $t('exam.startExam.getSubjectFailed'))
+        messageFail(this, this.$t('exam.startExam.getSubjectFailed'))
         this.endLoading(nextType)
       })
     },
@@ -196,9 +196,9 @@ export default {
       this.dialogVisible = false
     },
     submitExam() {
-      this.$confirm($t('confirmSubmit'), $t('tips'), {
-        confirmButtonText: $t('sure'),
-        cancelButtonText: $t('cancel'),
+      this.$confirm(this.$t('confirmSubmit'), this.$t('tips'), {
+        confirmButtonText: this.$t('sure'),
+        cancelButtonText: this.$t('cancel'),
         type: 'warning'
       }).then(() => {
         this.doSubmitExam(this.tempAnswer, this.exam.id, this.examRecord.id, this.userInfo, true)
@@ -218,17 +218,17 @@ export default {
           examRecordId,
           userId: userInfo.id
         }).then(() => {
-          messageSuccess(this, $t('submit') + $t('success'))
+          messageSuccess(this, this.$t('submit') + this.$t('success'))
           // 清空本地 cache
           store.dispatch('ClearExam')
           if (toExamRecord) {
             this.$router.push({name: 'exam-record'})
           }
         }).catch(() => {
-          messageFail(this, $t('submit') + $t('failed'))
+          messageFail(this, this.$t('submit') + this.$t('failed'))
         })
       }).catch(() => {
-        messageFail(this, $t('submit') + $t('failed'))
+        messageFail(this, this.$t('submit') + this.$t('failed'))
       })
     },
     toggleOption(answer) {
@@ -307,9 +307,9 @@ export default {
       next()
       return
     }
-    this.$confirm($t('exam.startExam.confirmExit'), $t('tips'), {
-      confirmButtonText: $t('sure'),
-      cancelButtonText: $t('cancel'),
+    this.$confirm(this.$t('exam.startExam.confirmExit'), this.$t('tips'), {
+      confirmButtonText: this.$t('sure'),
+      cancelButtonText: this.$t('cancel'),
       type: 'warning'
     }).then(() => {
       next()

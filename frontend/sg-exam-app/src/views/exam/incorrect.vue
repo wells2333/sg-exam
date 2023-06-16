@@ -203,18 +203,18 @@ export default {
           this.loading = false
         }).catch(error => {
           console.error(error)
-          notifyFail(this, $t('exam.incorrect.loadSubjectFailed'))
+          notifyFail(this, this.$t('exam.incorrect.loadSubjectFailed'))
           this.loading = false
         })
       })
     },
     scrollList() {
       if (this.isLastPage) {
-        messageWarn(this, $t('load.noMoreData'))
+        messageWarn(this, this.$t('load.noMoreData'))
         return
       }
       if (this.loading) {
-        messageWarn(this, $t('load.loading'))
+        messageWarn(this, this.$t('load.loading'))
         return
       }
       this.loading = true
@@ -227,7 +227,7 @@ export default {
           this.isLastPage = isLastPage
           this.loading = false
         }).catch(() => {
-          messageWarn(this, $t('load.loadFailed'))
+          messageWarn(this, this.$t('load.loadFailed'))
           this.loading = false
         })
       }, 500)

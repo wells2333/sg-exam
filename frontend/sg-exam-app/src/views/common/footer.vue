@@ -59,14 +59,14 @@ export default {
   methods: {
     openLayer() {
       this.$notify.info({
-        title: $t('common.legalNotices'),
+        title: this.$t('common.legalNotices'),
         message: '此仅为个人练习开源模仿项目，仅供学习参考，承担不起任何法律问题',
         offset: 70
       })
     },
     openPrivacy() {
       this.$notify.info({
-        title: $t('common.privacyPolicy'),
+        title: this.$t('common.privacyPolicy'),
         message: '本网站将不会严格遵守有关法律法规和本隐私政策所载明的内容收集、使用您的信息',
         offset: 70
       })

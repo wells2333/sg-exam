@@ -163,7 +163,7 @@ export default {
           this.subjectCount = result.subjectCount
         }
       }).catch(() => {
-        notifyFail(this, $t('homePage.loadFailed'))
+        notifyFail(this, this.$t('homePage.loadFailed'))
       })
     },
     getPopularCourses: function () {
@@ -176,7 +176,7 @@ export default {
           }
         }
       }).catch(() => {
-        notifyFail(this, $t('homePage.loadCoursesFailed'))
+        notifyFail(this, this.$t('homePage.loadCoursesFailed'))
       })
     },
     courseDetail: function (course) {

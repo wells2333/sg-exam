@@ -139,17 +139,17 @@ export default {
         this.updateExamList(list)
         this.loading = false
       }).catch(() => {
-        messageWarn(this, $t('load.loadFailed'))
+        messageWarn(this, this.$t('load.loadFailed'))
         this.loading = false
       })
     },
     scrollList () {
       if (this.isLastPage) {
-        messageWarn(this, $t('load.noMoreData'))
+        messageWarn(this, this.$t('load.noMoreData'))
         return
       }
       if (this.loading) {
-        messageWarn(this, $t('load.loading'))
+        messageWarn(this, this.$t('load.loading'))
         return
       }
       this.loading = true
@@ -162,7 +162,7 @@ export default {
           this.isLastPage = isLastPage
           this.loading = false
         }).catch(() => {
-          messageWarn(this, $t('load.loadFailed'))
+          messageWarn(this, this.$t('load.loadFailed'))
         })
       }, 1000)
     },
@@ -172,31 +172,31 @@ export default {
       getCurrentTime().then(response => {
         const currentTime = moment(response.data.data)
         if (currentTime.isAfter(exam.endTime)) {
-          messageWarn(this, $t('exam.exams.end'))
+          messageWarn(this, this.$t('exam.exams.end'))
         } else if (currentTime.isBefore(exam.startTime)) {
-          messageWarn(this, $t('exam.exams.notStarted'))
+          messageWarn(this, this.$t('exam.exams.notStarted'))
         } else {
-          this.$confirm($t('exam.exams.sureStart'), $t('tips'), {
-            confirmButtonText: $t('sure'),
-            cancelButtonText: $t('cancel'),
+          this.$confirm(this.$t('exam.exams.sureStart'), this.$t('tips'), {
+            confirmButtonText: this.$t('sure'),
+            cancelButtonText: this.$t('cancel'),
             type: 'warning'
           }).then(() => {
             // 开始考试
             store.dispatch('StartExam', this.tempExamRecord).then(() => {
               if (this.examRecord === undefined || this.subject === undefined) {
-                messageWarn(this, $t('exam.exams.startFailed'))
+                messageWarn(this, this.$t('exam.exams.startFailed'))
                 return
               }
               this.$router.push({ path: `/start/${exam.id}` })
             }).catch(() => {
-              messageWarn(this, $t('exam.exams.startFailed'))
+              messageWarn(this, this.$t('exam.exams.startFailed'))
             })
           }).catch((err) => {
             console.error(err)
           })
         }
       }).catch(() => {
-        messageFail(this, $t('exam.exams.startFailed'))
+        messageFail(this, this.$t('exam.exams.startFailed'))
       })
     },
     getAvatar (avatar) {

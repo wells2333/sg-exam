@@ -96,17 +96,17 @@ export default {
         this.isLastPage = isLastPage
         this.listLoading = false
       }).catch(() => {
-        messageWarn(this, $t('load.noMoreData'))
+        messageWarn(this, this.$t('load.noMoreData'))
         this.listLoading = false
       })
     },
     scrollList () {
       if (this.isLastPage) {
-        messageWarn(this, $t('load.noMoreData'))
+        messageWarn(this, this.$t('load.noMoreData'))
         return
       }
       if (this.listLoading) {
-        messageWarn(this, $t('load.loading'))
+        messageWarn(this, this.$t('load.loading'))
         return
       }
       this.listLoading = true
@@ -119,7 +119,7 @@ export default {
           this.isLastPage = isLastPage
           this.listLoading = false
         }).catch(() => {
-          messageWarn(this, $t('load.loadFailed'))
+          messageWarn(this, this.$t('load.loadFailed'))
           this.listLoading = false
         })
       }, 1000)
