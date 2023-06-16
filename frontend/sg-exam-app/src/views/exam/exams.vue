@@ -2,21 +2,21 @@
   <div class="content-container">
     <div class="search-form">
       <el-form ref="examForm" :inline="true" :model="query" label-width="100px" class="examForm">
-        <el-form-item label="考试名称" prop="examinationName">
-          <el-input v-model="query.examinationName" autocomplete="off" placeholder="考试名称" />
+        <el-form-item :label="$t('exam.examinationName')" prop="examinationName">
+          <el-input v-model="query.examinationName" autocomplete="off" :placeholder="$t('exam.examinationName')" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('examForm')">搜索</el-button>
-          <el-button @click="resetForm('examForm')">重置</el-button>
+          <el-button type="primary" @click="submitForm('examForm')">{{ $t('search') }}</el-button>
+          <el-button @click="resetForm('examForm')">{{ $t('reset') }}</el-button>
         </el-form-item>
       </el-form>
     </div>
     <div class="category-list">
       <ul>
-        <li :class="activeTag === '1' ? 'active' : ''" @click="changeTag('1')">全部</li>
-        <li :class="activeTag === '2' ? 'active' : ''" @click="changeTag('2')">最新发布</li>
-        <li :class="activeTag === '3' ? 'active' : ''" @click="changeTag('3')">最多点击</li>
-        <li :class="activeTag === '4' ? 'active' : ''" @click="changeTag('4')">参数人数</li>
+        <li :class="activeTag === '1' ? 'active' : ''" @click="changeTag('1')">{{$t('exam.exams.total')}}</li>
+        <li :class="activeTag === '2' ? 'active' : ''" @click="changeTag('2')">{{$t('exam.exams.latestRelease')}}</li>
+        <li :class="activeTag === '3' ? 'active' : ''" @click="changeTag('3')">{{$t('exam.exams.mostClicks')}}</li>
+        <li :class="activeTag === '4' ? 'active' : ''" @click="changeTag('4')">{{$t('exam.exams.parameters')}}</li>
       </ul>
     </div>
     <div class="exam-card-list">
@@ -52,7 +52,7 @@
     </div>
     <el-row style="text-align: center; margin-bottom: 50px;">
       <el-col :span="24">
-        <el-button v-if="!isLastPage" type="default" @click="scrollList" :loading="loading" style="margin-bottom: 100px;">加载更多</el-button>
+        <el-button v-if="!isLastPage" type="default" @click="scrollList" :loading="loading" style="margin-bottom: 100px;">{{ $t('load.loadMore') }}</el-button>
       </el-col>
     </el-row>
   </div>
@@ -124,11 +124,9 @@ export default {
       this.query.examinationName = this.$route.query.query
     }
     this.query.page = 1
-    // 加载考试列表
     this.getExamList()
   },
   methods: {
-    // 加载考试列表
     getExamList (reset = false) {
       this.loading = true
       fetchList(this.query).then(response => {
@@ -141,18 +139,17 @@ export default {
         this.updateExamList(list)
         this.loading = false
       }).catch(() => {
-        messageWarn(this, '加载考试失败！')
+        messageWarn(this, $t('load.loadFailed'))
         this.loading = false
       })
     },
-    // 列表滚动
     scrollList () {
       if (this.isLastPage) {
-        messageWarn(this, '暂无更多数据！')
+        messageWarn(this, $t('load.noMoreData'))
         return
       }
       if (this.loading) {
-        messageWarn(this, '正在拼命加载！')
+        messageWarn(this, $t('load.loading'))
         return
       }
       this.loading = true
@@ -165,45 +162,41 @@ export default {
           this.isLastPage = isLastPage
           this.loading = false
         }).catch(() => {
-          messageWarn(this, '加载考试失败！')
+          messageWarn(this, $t('load.loadFailed'))
         })
       }, 1000)
     },
-    // 开始考试
     startExam (exam) {
       this.tempExamRecord.examinationId = exam.id
       this.tempExamRecord.userId = this.userInfo.id
       getCurrentTime().then(response => {
-        // 校验考试时间
         const currentTime = moment(response.data.data)
-        // 校验结束时间
         if (currentTime.isAfter(exam.endTime)) {
-          messageWarn(this, '考试已结束')
+          messageWarn(this, $t('exam.exams.end'))
         } else if (currentTime.isBefore(exam.startTime)) {
-          // 考试未开始
-          messageWarn(this, '考试未开始')
+          messageWarn(this, $t('exam.exams.notStarted'))
         } else {
-          this.$confirm('确定要开始吗?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
+          this.$confirm($t('exam.exams.sureStart'), $t('tips'), {
+            confirmButtonText: $t('sure'),
+            cancelButtonText: $t('cancel'),
             type: 'warning'
           }).then(() => {
             // 开始考试
             store.dispatch('StartExam', this.tempExamRecord).then(() => {
               if (this.examRecord === undefined || this.subject === undefined) {
-                messageWarn(this, '开始考试失败')
+                messageWarn(this, $t('exam.exams.startFailed'))
                 return
               }
               this.$router.push({ path: `/start/${exam.id}` })
             }).catch(() => {
-              messageWarn(this, '开始考试失败')
+              messageWarn(this, $t('exam.exams.startFailed'))
             })
-          }).catch(() => {
-            console.log('取消考试')
+          }).catch((err) => {
+            console.error(err)
           })
         }
       }).catch(() => {
-        messageFail(this, '开始考试失败！')
+        messageFail(this, $t('exam.exams.startFailed'))
       })
     },
     getAvatar (avatar) {
@@ -217,7 +210,6 @@ export default {
       this.query.examinationName = ''
       this.getExamList(true)
     },
-    // 切换tag
     changeTag (tag) {
       this.activeTag = tag
       if (tag === '2') {
@@ -269,7 +261,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" rel="stylesheet/scss" scoped>
   .exam-empty {
     font-size: 13px;

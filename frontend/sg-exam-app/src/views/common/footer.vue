@@ -4,21 +4,21 @@
       <div class="site-info">
         <el-row>
           <el-col :span="6" :offset="2" class="footer-col">
-            <h4>链接</h4>
-            <a target="_blank" href="https://gitee.com/wells2333/sg-exam">码云</a>
-            <a target="_blank" href="https://github.com/wells2333/sg-exam">GitHub</a>
+            <h4>{{$t('common.link')}}</h4>
+            <a target="_blank" href="https://gitee.com/wells2333/sg-exam">{{$t('common.gitee')}}</a>
+            <a target="_blank" href="https://github.com/wells2333/sg-exam">{{$t('common.github')}}</a>
             <a target="_blank" href="javascript:void(0);"
-               onclick="window.open(window.location.origin + '/admin');return false;">管理后台</a>
-            <a target="_blank" href="https://gitee.com/wells2333/sg-exam/blob/master/CHANGELOG.md">更新日志</a>
+               onclick="window.open(window.location.origin + '/admin');return false;">{{$t('common.admin')}}</a>
+            <a target="_blank" href="https://gitee.com/wells2333/sg-exam/blob/master/CHANGELOG.md">{{$t('common.changeLog')}}</a>
           </el-col>
           <el-col :span="6" class="footer-col">
-            <h4>工具</h4>
+            <h4>{{$t('common.tool')}}</h4>
             <a target="_blank" href="http://element-cn.eleme.io">Element Ui</a>
             <a target="_blank" href="https://cn.vuejs.org/">Vue</a>
           </el-col>
           <el-col :span="6" class="footer-col">
-            <h4>社区</h4>
-            <a target="_blank" href="https://gitee.com/wells2333/sg-exam/issues">反馈建议</a>
+            <h4>{{$t('common.community')}}</h4>
+            <a target="_blank" href="https://gitee.com/wells2333/sg-exam/issues">{{$t('common.feedback')}}</a>
           </el-col>
         </el-row>
       </div>
@@ -30,10 +30,10 @@
           <div class="copyright">
             <h4 class="content-c2" style="text-align: center;">Copyright ©2022</h4>
             <ul class="privacy">
-              <li class="content-c1"><a class="content-c0" @click="openLayer">法律声明</a></li>
-              <li class="content-c1"><a class="content-c0" @click="openPrivacy">隐私条款</a></li>
+              <li class="content-c1"><a class="content-c0" @click="openLayer">{{$t('common.legalNotices')}}</a></li>
+              <li class="content-c1"><a class="content-c0" @click="openPrivacy">{{$t('common.privacyPolicy')}}</a></li>
               <li class="content-c1"><a class="content-c0" target="_blank"
-                                        href="https://gitee.com/wells2333/sg-exam">开发者中心</a>
+                                        href="https://gitee.com/wells2333/sg-exam">{{$t('common.developerCenter')}}</a>
               </li>
             </ul>
           </div>
@@ -43,7 +43,7 @@
         <el-col :span="12" :offset="6">
           <div class="cop">
             <a class="content-c3" href="https://beian.miit.gov.cn/" target="_blank">
-              <span class="content-c3">陕ICP备20002980号-2</span>
+              <span class="content-c3">陕 ICP 备 20002980 号 -2</span>
             </a>
           </div>
         </el-col>
@@ -59,14 +59,14 @@ export default {
   methods: {
     openLayer() {
       this.$notify.info({
-        title: '法律声明',
+        title: $t('common.legalNotices'),
         message: '此仅为个人练习开源模仿项目，仅供学习参考，承担不起任何法律问题',
         offset: 70
       })
     },
     openPrivacy() {
       this.$notify.info({
-        title: '隐私条款',
+        title: $t('common.privacyPolicy'),
         message: '本网站将不会严格遵守有关法律法规和本隐私政策所载明的内容收集、使用您的信息',
         offset: 70
       })

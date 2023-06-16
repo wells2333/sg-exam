@@ -19,7 +19,7 @@
               <span><i class="fa fa-circle" aria-hidden="true"></i></span>
               <a href="#">{{ course.college }} &amp; {{ course.major }}</a>
             </div>
-            <div class="price">{{ course.chargeType === 1 ? '收费' : '免费' }}
+            <div class="price">{{ course.chargeType === 1 ? $t('exam.course.charge') : $t('exam.course.free') }}
               <h6 v-if="course.chargePrice > 0">{{ course.chargePrice }}</h6>
             </div>
           </div>
@@ -30,21 +30,21 @@
               <el-tabs v-model="activeName" @tab-click="handleClick">
                 <el-tab-pane name="desc">
                   <span slot="label">
-                    <el-button type="default" class="course-content-btn">课程介绍</el-button>
+                    <el-button type="default" class="course-content-btn">{{$t('exam.course.courseIntroduction')}}</el-button>
                   </span>
                   <div class="clever-description">
                     <div class="about-course mb-30">
-                      <h4>课程介绍</h4>
+                      <h4>{{$t('exam.course.courseIntroduction')}}</h4>
                       <p v-html="course.courseDescription"></p>
                     </div>
                   </div>
                 </el-tab-pane>
                 <el-tab-pane name="chapter">
                   <span slot="label">
-                    <el-button type="default" class="course-content-btn">课程章节</el-button>
+                    <el-button type="default" class="course-content-btn">{{$t('exam.course.chapter')}}</el-button>
                   </span>
                   <div class="about-curriculum mb-30">
-                    <h4>课程章节</h4>
+                    <h4>{{$t('exam.course.chapter')}}</h4>
                     <transition name="fade-transform" mode="out-in"
                                 v-for="chapter in detail.chapters" :key="chapter.chapter.id">
                       <div class="chapter-container">
@@ -56,7 +56,7 @@
                             <span class="section-learn-hour">
                               <i class="el-icon-caret-right"></i>&nbsp;{{
                                 section.section.learnHour
-                              }}小时
+                              }}{{$t('exam.course.hour')}}
                             </span>
                           </p>
                           <div class="point-container" v-for="point in section.points"
@@ -66,7 +66,7 @@
                               <span class="section-learn-hour">
                               <i class="el-icon-caret-right"></i>&nbsp;{{
                                   point.learnHour
-                                }}小时
+                                }}{{$t('exam.course.hour')}}
                             </span>
                             </p>
                           </div>
@@ -77,14 +77,14 @@
                 </el-tab-pane>
                 <el-tab-pane name="evaluate">
                   <span slot="label">
-                    <el-button type="default" class="course-content-btn">课程评价</el-button>
+                    <el-button type="default" class="course-content-btn">{{$t('exam.course.courseEvaluation')}}</el-button>
                   </span>
                   <div class="about-review mb-30">
-                    <h4>课程评价</h4>
+                    <h4>{{$t('exam.course.courseEvaluation')}}</h4>
                     <div>
                       <el-form :model="evaluate">
                         <el-form-item label="">
-                          <el-input type="textarea" :rows="3" placeholder="请输入评价内容"
+                          <el-input type="textarea" :rows="3" :placeholder="$t('exam.course.inputEvaluation')"
                                     v-model="evaluate.evaluateContent"></el-input>
                         </el-form-item>
                         <el-form-item label="">
@@ -92,7 +92,7 @@
                         </el-form-item>
                         <el-form-item>
                           <el-button type="primary" class="clever-btn"
-                                     @click="handleSubmitEvaluate">提交
+                                     @click="handleSubmitEvaluate">{{$t('submit')}}
                           </el-button>
                         </el-form-item>
                       </el-form>
@@ -121,19 +121,19 @@
                 </el-tab-pane>
                 <el-tab-pane name="members">
                   <span slot="label">
-                    <el-button type="default" class="course-content-btn">报名学员</el-button>
+                    <el-button type="default" class="course-content-btn">{{$t('exam.course.registerStudents')}}</el-button>
                   </span>
                   <div class="about-members mb-30">
-                    <h4>报名学员</h4>
-                    <p>已报名学员：{{ detail.memberCount }}</p>
+                    <h4>{{$t('exam.course.registerStudents')}}</h4>
+                    <p>{{$t('exam.course.registerStudents1')}}：{{ detail.memberCount }}</p>
                   </div>
                 </el-tab-pane>
                 <el-tab-pane>
                   <span slot="label">
-                    <el-button type="default" class="course-content-btn">学习交流</el-button>
+                    <el-button type="default" class="course-content-btn">{{$t('exam.course.studyExchange')}}</el-button>
                   </span>
                   <div class="about-review mb-30">
-                    <h4>学习交流</h4>
+                    <h4>{{$t('exam.course.studyExchange')}}</h4>
                     <p></p>
                   </div>
                 </el-tab-pane>
@@ -145,28 +145,28 @@
                   {{ joinBtnText }}
                 </el-button>
                 <div class="sidebar-widget">
-                  <h4>课程特色</h4>
+                  <h4>{{$t('exam.course.courseFeatures')}}</h4>
                   <ul class="features-list">
                     <li>
-                      <h6><i class="el-icon-alarm-clock"></i>课时</h6>
+                      <h6><i class="el-icon-alarm-clock"></i>{{$t('exam.course.learnHour')}}</h6>
                       <h6>{{ detail.learnHour }}</h6>
                     </li>
                     <li>
-                      <h6><i class="el-icon-bell"></i>章节</h6>
+                      <h6><i class="el-icon-bell"></i>{{$t('exam.course.chapter1')}}</h6>
                       <h6>{{ detail.chapterSize }}</h6>
                     </li>
                     <li>
-                      <h6><i class="el-icon-files"></i>学员数</h6>
+                      <h6><i class="el-icon-files"></i>{{$t('exam.course.memberCount')}}</h6>
                       <h6>{{ detail.memberCount }}</h6>
                     </li>
                     <li>
-                      <h6><i class="el-icon-files"></i>好评数</h6>
+                      <h6><i class="el-icon-files"></i>{{$t('exam.course.evaluatesCount')}}</h6>
                       <h6>{{ evaluates.length }}</h6>
                     </li>
                   </ul>
                 </div>
                 <div class="sidebar-widget">
-                  <h4>猜你喜欢</h4>
+                  <h4>{{$t('exam.course.youMayAlsoLike')}}</h4>
                   <div class="single--courses d-flex align-items-center" v-for="course in likes"
                        :key="course.id">
                     <div class="thumb">
@@ -206,7 +206,7 @@ export default {
       },
       likes: [{
         id: 1,
-        courseName: '应用文写作',
+        courseName: $t('exam.course.demoCourseName'),
         price: '$20'
       }],
       evaluates: [],
@@ -225,7 +225,7 @@ export default {
       getCourseDetail(this.courseId).then(res => {
         this.detail = res.data.result
         this.course = res.data.result.course
-        this.joinBtnText = this.detail.isUserJoin === true ? '取消报名' : '报名'
+        this.joinBtnText = this.detail.isUserJoin === true ? $t('exam.course.cancelRegistration') : $t('exam.course.registration')
         setTimeout(() => {
           this.loading = false
         }, 500)
@@ -249,7 +249,7 @@ export default {
     },
     handleClickSection(section) {
       if (this.detail.isUserJoin !== true) {
-        messageWarn(this, '请先报名')
+        messageWarn(this, $t('exam.course.pleaseRegistration'))
         return
       }
       this.$router.push({
@@ -259,7 +259,7 @@ export default {
     },
     handleClickPoint(section, point) {
       if (this.detail.isUserJoin !== true) {
-        messageWarn(this, '请先报名')
+        messageWarn(this, $t('exam.course.pleaseRegistration'))
         return
       }
       this.$router.push({
@@ -269,15 +269,15 @@ export default {
     },
     handleSubmitEvaluate() {
       if (this.detail.isUserJoin !== true) {
-        messageWarn(this, '请先报名')
+        messageWarn(this, $t('exam.course.pleaseRegistration'))
         return
       }
       if (this.hasEvaluate) {
-        messageWarn(this, '请勿重复提交')
+        messageWarn(this, $t('exam.course.doNotResubmit'))
         return
       }
       if (this.evaluate.evaluateContent === '') {
-        this.evaluate.evaluateContent = '用户默认好评'
+        this.evaluate.evaluateContent = $t('exam.course.defaultEvaluate')
       }
       addObj({
         courseId: this.courseId,
@@ -286,10 +286,10 @@ export default {
         if (res.data.code === 0) {
           this.evaluate.evaluateContent = ''
           this.hasEvaluate = true
-          messageSuccess(this, '提交成功')
+          messageSuccess(this, $t('exam.course.submitSuccess'))
           this.getEvaluateList()
         } else {
-          messageWarn(this, '提交失败')
+          messageWarn(this, $t('exam.course.submitFailed'))
         }
       }).catch(error => {
         console.error(error)
@@ -297,20 +297,20 @@ export default {
     },
     handleJoin() {
       const type = this.detail.isUserJoin ? '0' : '1'
-      const text = this.detail.isUserJoin ? '取消报名' : '报名'
-      this.$confirm('确定' + text + '吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      const text = this.detail.isUserJoin ? $t('exam.course.cancelRegistration') : $t('exam.course.registration')
+      this.$confirm($t('sure') + text + '？', $('tips'), {
+        confirmButtonText: $t('sure'),
+        cancelButtonText: $t('cancel'),
         type: 'warning'
       }).then(() => {
         joinCourse(this.courseId, type).then(res => {
           if (res.data.result) {
-            messageSuccess(this, text + '成功')
+            messageSuccess(this, text + $t('success'))
             this.getCourseInfo()
           }
         }).catch(error => {
           console.error(error)
-          messageWarn(this, text + '失败')
+          messageWarn(this, text + $t('failed'))
         })
       }).catch(error => {
         console.error(error)

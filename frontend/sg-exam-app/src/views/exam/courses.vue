@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="clever-category bg-img" style="background-image: url(static/img/bg-img/bg2.jpg);">
-      <h3>热门课程</h3>
+      <h3>{{$t('exam.course.courses.popularCourses')}}</h3>
     </div>
     <div class="content-container">
       <div class="course-card-list">
@@ -19,25 +19,24 @@
             </div>
             <div class="seat-rating-fee d-flex justify-content-between">
               <div class="seat-rating h-100 d-flex align-items-center">
-                <div class="seat" title="已报名学员人数">
+                <div class="seat" :title="$t('exam.course.courses.registerStudentsCnt')">
                   <i class="el-icon-user-solid" aria-hidden="true"></i> {{course.memberCount}}
                 </div>
-                <div class="rating" title="难度等级">
+                <div class="rating" :title="$t('exam.course.courses.level')">
                   <i class="el-icon-star-on" aria-hidden="true"></i> {{course.level}}
                 </div>
               </div>
               <div :class="course.chargeType === 0 ? 'course-fee h-100' : 'course-charge h-100'">
-                <a href="#">{{course.chargeType === 0 ? '免费' : '$' + course.chargePrice}}</a>
+                <a href="#">{{course.chargeType === 0 ? $t('exam.course.free') : '$' + course.chargePrice}}</a>
               </div>
             </div>
           </div>
         </transition>
-        <!-- 对齐 -->
         <i v-if="courseList !== undefined && courseList.length > 0" v-for="count in (courseList.length)" :key="count"></i>
       </div>
       <el-row style="text-align: center; margin-bottom: 50px;">
         <el-col :span="24">
-          <el-button v-if="!isLastPage" type="default" @click="scrollList" :loading="loading" style="margin-bottom: 100px;">加载更多</el-button>
+          <el-button v-if="!isLastPage" type="default" @click="scrollList" :loading="loading" style="margin-bottom: 100px;">{{$t('load.loadMore')}}</el-button>
         </el-col>
       </el-row>
     </div>
@@ -70,7 +69,6 @@ export default {
   },
   methods: {
     simpleStrFilter: simpleStrFilter,
-    // 加载课程列表
     getCourseList () {
       this.loading = true
       courseList(this.query).then(response => {
@@ -80,7 +78,7 @@ export default {
         this.isLastPage = isLastPage
         this.loading = false
       }).catch(() => {
-        notifyFail(this, '加载数据失败！')
+        notifyFail(this, $t('load.loadFailed'))
         this.loading = false
       })
     },
@@ -89,11 +87,11 @@ export default {
     },
     scrollList () {
       if (this.isLastPage) {
-        messageWarn(this, '暂无更多数据！')
+        messageWarn(this, $t('load.noMoreData'))
         return
       }
       if (this.loading) {
-        messageWarn(this, '正在拼命加载！')
+        messageWarn(this, $t('load.loading'))
         return
       }
       this.loading = true
@@ -106,7 +104,7 @@ export default {
           this.isLastPage = isLastPage
           this.loading = false
         }).catch(() => {
-          messageWarn(this, '加载数据失败！')
+          messageWarn(this, $t('load.loadFailed'))
           this.loading = false
         })
       }, 500)

@@ -50,7 +50,7 @@
                 </div>
               </div>
               <div class="section-button">
-                <el-button type="primary" class="clever-btn mb-30 w-10" @click="goBack">返回
+                <el-button type="primary" class="clever-btn mb-30 w-10" @click="goBack">{{$t('return')}}
                 </el-button>
               </div>
             </div>

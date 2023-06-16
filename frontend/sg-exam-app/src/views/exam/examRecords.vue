@@ -9,40 +9,40 @@
           @cell-dblclick="handleDetail"
           highlight-current-row
           style="width: 100%;">
-          <el-table-column label="考试名称" align="center">
+          <el-table-column :label="$t('exam.examinationName')" align="center">
             <template slot-scope="scope">
               <span :title="scope.row.examinationName">{{ scope.row.examinationName }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="考试类型" min-width="90" align="center">
+          <el-table-column :label="$t('exam.examinationType')" min-width="90" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.type | examTypeFilter }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="考试时间" sortable prop="start_time" min-width="90" align="center">
+          <el-table-column :label="$t('exam.examinationType')" sortable prop="start_time" min-width="90" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.startTime | fmtDate('yyyy-MM-dd hh:mm') }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="状态" min-width="90" align="center">
+          <el-table-column :label="$t('exam.status')" min-width="90" align="center">
             <template slot-scope="scope">
               <el-tag :type="scope.row.submitStatus | simpleTagStatusFilter(3)">{{ scope.row.submitStatus | submitStatusFilter }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="成绩" sortable prop="score" align="center" width="120px">
+          <el-table-column :label="$t('exam.score')" sortable prop="score" align="center" width="120px">
             <template slot-scope="scope">
               <span>{{ scope.row.score }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" align="center">
+          <el-table-column :label="$t('operation')" align="center">
             <template slot-scope="scope">
-              <el-button type="success" size="mini" @click="handleDetail(scope.row)" :disabled="scope.row.submitStatus !== 3">成绩详情</el-button>
+              <el-button type="success" size="mini" @click="handleDetail(scope.row)" :disabled="scope.row.submitStatus !== 3">{{$t('exam.scoreDetail')}}</el-button>
             </template>
           </el-table-column>
         </el-table>
         <el-row style="text-align: center; margin-bottom: 50px;">
           <el-col :span="24">
-            <el-button v-if="!isLastPage" type="default" @click="scrollList" :loading="listLoading" style="margin-top:20px; margin-bottom: 100px;">加载更多</el-button>
+            <el-button v-if="!isLastPage" type="default" @click="scrollList" :loading="listLoading" style="margin-top:20px; margin-bottom: 100px;">{{$t('load.loadMore')}}</el-button>
           </el-col>
         </el-row>
       </el-col>
@@ -79,7 +79,6 @@ export default {
     }
   },
   computed: {
-    // 获取用户信息
     ...mapState({
       userInfo: state => state.user.userInfo
     })
@@ -89,7 +88,6 @@ export default {
     this.getList()
   },
   methods: {
-    // 加载考试记录
     getList () {
       fetchList(this.listQuery).then(response => {
         const { total, isLastPage, list } = response.data.result
@@ -98,17 +96,17 @@ export default {
         this.isLastPage = isLastPage
         this.listLoading = false
       }).catch(() => {
-        messageWarn(this, '暂无更多数据！')
+        messageWarn(this, $t('load.noMoreData'))
         this.listLoading = false
       })
     },
     scrollList () {
       if (this.isLastPage) {
-        messageWarn(this, '暂无更多数据！')
+        messageWarn(this, $t('load.noMoreData'))
         return
       }
       if (this.listLoading) {
-        messageWarn(this, '正在拼命加载！')
+        messageWarn(this, $t('load.loading'))
         return
       }
       this.listLoading = true
@@ -121,7 +119,7 @@ export default {
           this.isLastPage = isLastPage
           this.listLoading = false
         }).catch(() => {
-          messageWarn(this, '加载数据失败！')
+          messageWarn(this, $t('load.loadFailed'))
           this.listLoading = false
         })
       }, 1000)
@@ -146,7 +144,6 @@ export default {
         }
       })
     },
-    // 查看成绩详情
     handleDetail (row) {
       store.dispatch('SetIncorrectRecord', { id: row.id }).then(() => {
         this.$router.push({ name: 'incorrect' })

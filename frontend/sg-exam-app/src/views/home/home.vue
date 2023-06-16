@@ -6,7 +6,7 @@
           <h2>{{sysConfig.sys_web_main_title}}</h2>
           <h4>{{sysConfig.sys_web_sub_title_one}}</h4>
           <h4>{{sysConfig.sys_web_sub_title_two}}</h4>
-          <router-link to="/courses" class="btn clever-btn">开始使用</router-link>
+          <router-link to="/courses" class="btn clever-btn">{{$t('homePage.startUsing')}}</router-link>
         </div>
       </el-col>
     </el-row>
@@ -21,7 +21,7 @@
               <h2>
                 <count-to :start-val="0" :end-val="userCount" :duration="2600" class="counter"/>
               </h2>
-              <h5>用户数</h5>
+              <h5>{{$t('homePage.userCnt')}}</h5>
             </div>
           </transition>
         </el-col>
@@ -34,7 +34,7 @@
               <h2>
                 <count-to :start-val="0" :end-val="examinationCount" :duration="2600" class="counter"/>
               </h2>
-              <h5>考试数</h5>
+              <h5>{{$t('homePage.examinationCnt')}}</h5>
             </div>
           </transition>
         </el-col>
@@ -47,7 +47,7 @@
               <h2>
                 <count-to :start-val="0" :end-val="subjectCount" :duration="2600" class="counter"/>
               </h2>
-              <h5>题目数</h5>
+              <h5>{{$t('homePage.subjectCnt')}}</h5>
             </div>
           </transition>
         </el-col>
@@ -60,7 +60,7 @@
               <h2>
                 <count-to :start-val="0" :end-val="courseCount" :duration="2600" class="counter"/>
               </h2>
-              <h5>课程数</h5>
+              <h5>{{$t('homePage.courseCnt')}}</h5>
             </div>
           </transition>
         </el-col>
@@ -71,7 +71,7 @@
       <el-row>
         <el-col :span="24">
           <div class="section-heading">
-            <h3>热门课程</h3>
+            <h3>{{$t('homePage.popularCourses')}}</h3>
           </div>
         </el-col>
       </el-row>
@@ -96,7 +96,7 @@
                   </div>
                 </div>
                 <div class="course-fee h-100">
-                  <a href="#" class="free">{{course.chargeType === 0 ? '免费' : '$' + course.chargePrice}}</a>
+                  <a href="#" class="free">{{course.chargeType === 0 ? $t('exam.course.free') : '$' + course.chargePrice}}</a>
                 </div>
               </div>
             </div>
@@ -163,7 +163,7 @@ export default {
           this.subjectCount = result.subjectCount
         }
       }).catch(() => {
-        notifyFail(this, '加载首页数据失败！')
+        notifyFail(this, $t('homePage.loadFailed'))
       })
     },
     getPopularCourses: function () {
@@ -176,7 +176,7 @@ export default {
           }
         }
       }).catch(() => {
-        notifyFail(this, '加载热门课程数据失败！')
+        notifyFail(this, $t('homePage.loadCoursesFailed'))
       })
     },
     courseDetail: function (course) {

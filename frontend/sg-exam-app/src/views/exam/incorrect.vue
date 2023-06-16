@@ -4,49 +4,49 @@
       <el-row v-show="!examRecordLoading">
         <el-row>
           <el-col :span="20" :offset="2">
-            <el-divider>成绩详情</el-divider>
+            <el-divider>{{$t('exam.scoreDetail')}}</el-divider>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="20" :offset="2">
             <el-row>
               <el-col :span="8">
-                <label class="el-form-item__label">考试名称: {{
+                <label class="el-form-item__label">{{$t('exam.examinationName')}}：{{
                     examRecordDetail.examinationName
                   }}</label>
               </el-col>
               <el-col :span="8">
-                <label class="el-form-item__label">考生姓名: {{
+                <label class="el-form-item__label">{{$t('exam.incorrect.userName')}}：{{
                     examRecordDetail.userName
                   }}</label>
               </el-col>
               <el-col :span="8">
-                <label class="el-form-item__label">总得分: {{ examRecordDetail.score }}</label>
+                <label class="el-form-item__label">{{$t('exam.incorrect.score')}}：{{ examRecordDetail.score }}</label>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="8">
-                <label class="el-form-item__label">开始时间:
+                <label class="el-form-item__label">{{$t('exam.incorrect.startTime')}}：
                   {{ examRecordDetail.startTime | fmtDate('yyyy-MM-dd hh:mm') }}</label>
               </el-col>
               <el-col :span="8">
-                <label class="el-form-item__label">结束时间:
+                <label class="el-form-item__label">{{$t('exam.incorrect.endTime')}}：
                   {{ examRecordDetail.endTime | fmtDate('yyyy-MM-dd hh:mm') }}</label>
               </el-col>
               <el-col :span="8">
-                <label class="el-form-item__label">耗时: {{ examRecordDetail.duration }}</label>
+                <label class="el-form-item__label">{{$t('exam.incorrect.duration')}}：{{ examRecordDetail.duration }}</label>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="8">
-                <label class="el-form-item__label">评卷人: 系统自动评分</label>
+                <label class="el-form-item__label">{{$t('exam.incorrect.operator')}}</label>
               </el-col>
               <el-col :span="8">
-                <label class="el-form-item__label">正确题数: </label>
+                <label class="el-form-item__label">{{$t('exam.incorrect.correctNumber')}}：</label>
                 <el-tag type="success" effect="dark">{{ examRecordDetail.correctNumber }}</el-tag>
               </el-col>
               <el-col :span="8">
-                <label class="el-form-item__label">错误题数: </label>
+                <label class="el-form-item__label">{{$t('exam.incorrect.inCorrectNumber')}}：</label>
                 <el-tag type="danger" effect="dark">{{
                     examRecordDetail.inCorrectNumber
                   }}
@@ -58,7 +58,7 @@
       </el-row>
       <el-row v-show="!examRecordLoading">
         <el-col :span="20" :offset="2">
-          <el-divider>错题列表</el-divider>
+          <el-divider>{{$t('exam.incorrect.subjectList')}}</el-divider>
         </el-col>
       </el-row>
       <el-row v-for="(tempIncorrectAnswer) in list"
@@ -94,34 +94,34 @@
             <!-- 简答题 -->
             <div v-if="tempIncorrectAnswer.subject.type === 1">
               <p>
-                考生答案：<span v-html="tempIncorrectAnswer.answer"></span>
+                {{$t('exam.incorrect.userAnswer')}}：<span v-html="tempIncorrectAnswer.answer"></span>
               </p>
             </div>
             <!-- 判断 -->
             <div v-if="tempIncorrectAnswer.subject.type === 2">
               <p>
-                考生答案：{{ tempIncorrectAnswer.answer === '0' ? '正确' : '错误' }}
+                {{$t('exam.incorrect.userAnswer')}}：{{ tempIncorrectAnswer.answer === '0' ? $t('exam.incorrect.right') : $t('exam.incorrect.wrong') }}
               </p>
             </div>
             <!-- 语音 -->
             <div v-if="tempIncorrectAnswer.subject.type === 4">
               <p>
-                考生答案：<span v-html="tempIncorrectAnswer.answer"></span>
+                {{$t('exam.incorrect.userAnswer')}}：<span v-html="tempIncorrectAnswer.answer"></span>
               </p>
             </div>
             <!-- 视频 -->
             <div v-if="tempIncorrectAnswer.subject.type === 5">
               <p>
-                考生答案：<span v-html="tempIncorrectAnswer.answer"></span>
+                {{$t('exam.incorrect.userAnswer')}}：<span v-html="tempIncorrectAnswer.answer"></span>
               </p>
             </div>
             <p class="subject-content-answer"
                v-if="tempIncorrectAnswer.subject.answer !== undefined">
-              参考答案：<span v-html="tempIncorrectAnswer.subject.answer.answer"></span>
+              {{$t('exam.incorrect.answer')}}：<span v-html="tempIncorrectAnswer.subject.answer.answer"></span>
             </p>
             <p class="subject-content-analysis"
                v-if="tempIncorrectAnswer.subject.analysis !== ''">
-              解析：<span v-html="tempIncorrectAnswer.subject.analysis"></span>
+              {{$t('exam.incorrect.analysis')}}：<span v-html="tempIncorrectAnswer.subject.analysis"></span>
             </p>
           </div>
         </el-col>
@@ -129,7 +129,7 @@
       <el-row style="text-align: center; margin-bottom: 50px;">
         <el-col :span="24">
           <el-button v-if="!isLastPage" type="default" @click="scrollList" :loading="loading"
-                     style="margin-bottom: 100px;">加载更多
+                     style="margin-bottom: 100px;">{{$t('load.loadMore')}}
           </el-button>
         </el-col>
       </el-row>
@@ -203,18 +203,18 @@ export default {
           this.loading = false
         }).catch(error => {
           console.error(error)
-          notifyFail(this, '加载错题失败')
+          notifyFail(this, $t('exam.incorrect.loadSubjectFailed'))
           this.loading = false
         })
       })
     },
     scrollList() {
       if (this.isLastPage) {
-        messageWarn(this, '暂无更多数据！')
+        messageWarn(this, $t('load.noMoreData'))
         return
       }
       if (this.loading) {
-        messageWarn(this, '正在拼命加载！')
+        messageWarn(this, $t('load.loading'))
         return
       }
       this.loading = true
@@ -227,7 +227,7 @@ export default {
           this.isLastPage = isLastPage
           this.loading = false
         }).catch(() => {
-          messageWarn(this, '加载数据失败！')
+          messageWarn(this, $t('load.loadFailed'))
           this.loading = false
         })
       }, 500)
@@ -277,7 +277,6 @@ export default {
   text-align: center;
 }
 
-/* 题目 */
 .subject-title {
   color: #333333;
   font-size: 16px;
@@ -298,7 +297,6 @@ export default {
   }
 }
 
-/* 题目选项 */
 .subject-option {
   padding-bottom: 10px;
   padding-left: 10px;
@@ -352,7 +350,6 @@ export default {
       font-weight: normal;
     }
 
-    /* 选项名称 */
     .subject-option-prefix {
       font-size: 16px;
       display: inline-block

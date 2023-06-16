@@ -3,9 +3,9 @@
     <el-row :gutter="30">
       <el-col :span="16" :offset="3">
         <div class="subject-box-card">
-          <div class="subject-exam-title">{{ exam.examinationName }}（共{{
+          <div class="subject-exam-title">{{ exam.examinationName }}（{{
               cards.length
-            }}题，合计{{ exam.totalScore }}分）
+            }}{{$t('exam.startExam.subject')}}，{{ exam.totalScore }}{{$t('exam.startExam.score')}}）
           </div>
           <choices ref="choices" v-show="subject.type === 0" :onChoice="onChoiceFn"/>
           <short-answer ref="shortAnswer" v-show="subject.type === 1" :onChoice="onChoiceFn"/>
@@ -13,24 +13,24 @@
           <multiple-choices ref="multipleChoices" v-show="subject.type === 3"
                             :onChoice="onChoiceFn"/>
           <div class="subject-buttons">
-            <el-button plain @click="last" :loading="loadingLast">上一题</el-button>
-            <el-button plain @click="next" :loading="loadingNext">下一题</el-button>
+            <el-button plain @click="last" :loading="loadingLast">{{$t('exam.startExam.last')}}</el-button>
+            <el-button plain @click="next" :loading="loadingNext">{{$t('exam.startExam.next')}}</el-button>
           </div>
         </div>
       </el-col>
       <el-col :span="3">
         <div class="tool-bar">
           <div class="current-progress">
-            当前进度：{{ subject.sort }}/{{ cards.length }}
+            {{$t('exam.startExam.progress')}}：{{ subject.sort }}/{{ cards.length }}
           </div>
           <div class="answer-card">
-            <el-button type="text" icon="el-icon-date" @click="answerCard">答题卡</el-button>
+            <el-button type="text" icon="el-icon-date" @click="answerCard">{{$t('exam.startExam.answerCard')}}</el-button>
           </div>
-          <el-button type="success" icon="el-icon-date" @click="submitExam">提交</el-button>
+          <el-button type="success" icon="el-icon-date" @click="submitExam">{{$t('submit')}}</el-button>
         </div>
       </el-col>
     </el-row>
-    <el-dialog title="答题卡" :visible.sync="dialogVisible" width="50%" top="10vh" center>
+    <el-dialog :title="$t('exam.startExam.answerCard')" :visible.sync="dialogVisible" width="50%" top="10vh" center>
       <div class="answer-card-title">{{ exam.examinationName }}（共{{
           cards.length
         }}题，合计{{ exam.totalScore }}分）
@@ -131,7 +131,7 @@ export default {
       this.$router.push({name: 'exams'})
     },
     startExam() {
-      messageSuccess(this, '考试开始')
+      messageSuccess(this, $t('exam.startExam.startExam'))
       setTimeout(() => {
         this.setSubjectInfo(this.subject)
       }, 100)
@@ -140,7 +140,7 @@ export default {
       for (let i = 0; i < this.cards.length; i++) {
         if (this.cards[i].subjectId === this.subject.id) {
           if (i === 0) {
-            messageSuccess(this, '已经是第一题了')
+            messageSuccess(this, $t('exam.startExam.isFirst'))
             break
           }
           let {sort} = this.cards[i - 1]
@@ -153,7 +153,7 @@ export default {
       for (let i = 0; i < this.cards.length; i++) {
         if (this.cards[i].subjectId === this.subject.id) {
           if (i === this.cards.length - 1) {
-            messageSuccess(this, '已经是最后一题了')
+            messageSuccess(this, $t('exam.startExam.isLast'))
             break
           }
           let {sort} = this.cards[i + 1]
@@ -182,11 +182,10 @@ export default {
         this.endLoading(nextType)
       }).catch((error) => {
         console.log(error)
-        messageFail(this, '获取题目失败')
+        messageFail(this, $t('exam.startExam.getSubjectFailed'))
         this.endLoading(nextType)
       })
     },
-    // 答题卡
     answerCard() {
       this.dialogVisible = true
     },
@@ -196,11 +195,10 @@ export default {
       this.saveCurrentSubjectAndGetNextSubject(nextSubjectType.current, subjectSortNo, subjectId)
       this.dialogVisible = false
     },
-    // 提交
     submitExam() {
-      this.$confirm('确定要提交吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm($t('confirmSubmit'), $t('tips'), {
+        confirmButtonText: $t('sure'),
+        cancelButtonText: $t('cancel'),
         type: 'warning'
       }).then(() => {
         this.doSubmitExam(this.tempAnswer, this.exam.id, this.examRecord.id, this.userInfo, true)
@@ -220,17 +218,17 @@ export default {
           examRecordId,
           userId: userInfo.id
         }).then(() => {
-          messageSuccess(this, '提交成功')
+          messageSuccess(this, $t('submit') + $t('success'))
           // 清空本地 cache
           store.dispatch('ClearExam')
           if (toExamRecord) {
             this.$router.push({name: 'exam-record'})
           }
         }).catch(() => {
-          messageFail(this, '提交题目失败')
+          messageFail(this, $t('submit') + $t('failed'))
         })
       }).catch(() => {
-        messageFail(this, '提交题目失败')
+        messageFail(this, $t('submit') + $t('failed'))
       })
     },
     toggleOption(answer) {
@@ -309,9 +307,9 @@ export default {
       next()
       return
     }
-    this.$confirm('确认退出吗？', '提示', {
-      confirmButtonText: '是',
-      cancelButtonText: '否',
+    this.$confirm($t('exam.startExam.confirmExit'), $t('tips'), {
+      confirmButtonText: $t('sure'),
+      cancelButtonText: $t('cancel'),
       type: 'warning'
     }).then(() => {
       next()
