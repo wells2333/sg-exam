@@ -94,11 +94,11 @@ const en = {
   },
   exam: {
     examinationName: 'Examination name',
-    examinationType: 'Examination type',
-    examinationTime: 'Examination time',
+    examinationType: 'Type',
+    examinationTime: 'Time',
     status: 'Status',
     score: 'Score',
-    scoreDetail: 'Score Detail',
+    scoreDetail: 'Detail',
     course: {
       courseIntroduction: 'Course Introduction',
       chapter: 'Chapter',
@@ -134,10 +134,10 @@ const en = {
       records: 'Records'
     },
     exams: {
-      total: 'Total',
+      all: 'All',
       latestRelease: 'Latest release',
       mostClicks: 'Most clicks',
-      parameters: 'parameters',
+      parameters: 'Parameters',
       end: 'The exam has ended',
       notStarted: 'Exam not started',
       sureStart: 'Are you sure you want to start?',
@@ -153,8 +153,8 @@ const en = {
       getSubjectFailed: 'Failed to get subject',
       confirmExit: 'confirm exit?',
       startExam: 'Start exam',
-      subject: 'subject',
-      score: 'score'
+      subject: 'Subject count',
+      score: 'Total score'
     },
     incorrect: {
       userName: 'UserName',
@@ -171,7 +171,7 @@ const en = {
       right: 'Right',
       wrong: 'Wrong',
       loadSubjectFailed: 'Failed to get subjects',
-      operator: 'Reviewed by: automatically rated by the system'
+      operator: 'Reviewed: automatically rated by the system'
     }
   },
   personal: {

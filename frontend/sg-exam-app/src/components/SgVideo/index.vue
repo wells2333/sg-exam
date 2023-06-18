@@ -88,12 +88,12 @@ export default {
       this.playerOptions.sources = [{src}]
     },
     play() {
-      if (this.$refs.sgVideoPlayer &&  this.$refs.sgVideoPlayer.player) {
+      if (this.$refs.sgVideoPlayer && this.$refs.sgVideoPlayer.player) {
         this.$refs.sgVideoPlayer.player.play()
       }
     },
     pause() {
-      if (this.$refs.sgVideoPlayer &&  this.$refs.sgVideoPlayer.player) {
+      if (this.$refs.sgVideoPlayer && this.$refs.sgVideoPlayer.player) {
         this.$refs.sgVideoPlayer.player.pause()
       }
     },

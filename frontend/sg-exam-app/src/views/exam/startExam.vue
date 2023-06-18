@@ -3,9 +3,13 @@
     <el-row :gutter="30">
       <el-col :span="16" :offset="3">
         <div class="subject-box-card">
-          <div class="subject-exam-title">{{ exam.examinationName }}（{{
-              cards.length
-            }}{{$t('exam.startExam.subject')}}，{{ exam.totalScore }}{{$t('exam.startExam.score')}}）
+          <div class="subject-exam-title">{{ exam.examinationName }}
+          </div>
+          <div style="padding-top: 6px;">
+            {{$t('exam.startExam.subject')}}: {{ cards.length }}
+          </div>
+          <div style="padding-top: 6px;">
+            {{$t('exam.startExam.score')}}: {{ exam.totalScore }}
           </div>
           <choices ref="choices" v-show="subject.type === 0" :onChoice="onChoiceFn"/>
           <short-answer ref="shortAnswer" v-show="subject.type === 1" :onChoice="onChoiceFn"/>
@@ -322,7 +326,7 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss" scoped>
 .subject-box {
-  margin-top: 50px;
+  margin-top: 30px;
   margin-left: 20px;
 }
 
@@ -331,7 +335,12 @@ export default {
   min-height: 400px;
 }
 
+.subject-exam-title {
+  font-size: 22px;
+}
+
 .subject-buttons {
+  margin-top: 30px;
   text-align: center;
 }
 

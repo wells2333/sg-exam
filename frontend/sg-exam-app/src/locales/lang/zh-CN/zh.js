@@ -135,7 +135,7 @@ const zh = {
       records: '考试记录'
     },
     exams: {
-      total: '全部',
+      all: '全部',
       latestRelease: '最新发布',
       mostClicks: '最多点击',
       parameters: '参数人数',
@@ -154,8 +154,8 @@ const zh = {
       getSubjectFailed: '获取题目失败',
       confirmExit: '确认退出吗？',
       startExam: '考试开始',
-      subject: '题',
-      score: '分'
+      subject: '题目数',
+      score: '总分'
     },
     incorrect: {
       userName: '考生姓名',

@@ -2,7 +2,7 @@
   <div class="content-container">
     <div class="search-form">
       <el-form ref="examForm" :inline="true" :model="query" label-width="100px" class="examForm">
-        <el-form-item :label="$t('exam.examinationName')" prop="examinationName">
+        <el-form-item label="" prop="examinationName">
           <el-input v-model="query.examinationName" autocomplete="off" :placeholder="$t('exam.examinationName')" />
         </el-form-item>
         <el-form-item>
@@ -13,7 +13,7 @@
     </div>
     <div class="category-list">
       <ul>
-        <li :class="activeTag === '1' ? 'active' : ''" @click="changeTag('1')">{{$t('exam.exams.total')}}</li>
+        <li :class="activeTag === '1' ? 'active' : ''" @click="changeTag('1')">{{$t('exam.exams.all')}}</li>
         <li :class="activeTag === '2' ? 'active' : ''" @click="changeTag('2')">{{$t('exam.exams.latestRelease')}}</li>
         <li :class="activeTag === '3' ? 'active' : ''" @click="changeTag('3')">{{$t('exam.exams.mostClicks')}}</li>
         <li :class="activeTag === '4' ? 'active' : ''" @click="changeTag('4')">{{$t('exam.exams.parameters')}}</li>

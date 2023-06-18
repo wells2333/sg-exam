@@ -69,9 +69,7 @@
               <div class="subject-title">
                 <span class="subject-title-number">{{ tempIncorrectAnswer.subject.sort }} .</span>
                 <span
-                  v-html="tempIncorrectAnswer.subject.subjectName"></span>（{{
-                  tempIncorrectAnswer.subject.score
-                }}分）
+                  v-html="tempIncorrectAnswer.subject.subjectName"></span>
               </div>
               <div v-if="tempIncorrectAnswer.subject.subjectVideoUrl">
                 <sg-video ref="sgVideo" :src="tempIncorrectAnswer.subject.subjectVideoUrl"></sg-video>

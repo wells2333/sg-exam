@@ -2,7 +2,7 @@
   <div class="content-container">
     <el-row>
       <el-col :span="20" :offset="2" style="margin-top:10px;">
-        <el-form ref="form" :rules="rules" :label-position="labelPosition" :model="userInfo" label-width="100px" style="width: 90%;">
+        <el-form ref="form" :rules="rules" :label-position="labelPosition" :model="userInfo" label-width="200px" style="width: 90%;">
           <el-row>
             <el-col :span="12">
               <el-row>

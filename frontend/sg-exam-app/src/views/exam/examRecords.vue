@@ -19,7 +19,7 @@
               <span>{{ transformExaminationType(scope.row.type) }}</span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('exam.examinationType')" sortable prop="start_time" min-width="90" align="center">
+          <el-table-column :label="$t('exam.examinationTime')" sortable prop="start_time" min-width="90" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.startTime | fmtDate('yyyy-MM-dd hh:mm') }}</span>
             </template>
