@@ -1,4 +1,5 @@
 const zh = {
+  copyRight: '陕 ICP 备 20002980 号 -2',
   home: '首页',
   examination: '考试',
   course: '课程',
@@ -67,8 +68,20 @@ const zh = {
     changeLog: '更新日志',
     feedback: '反馈建议',
     legalNotices: '法律声明',
+    legalNoticesContent: '此仅为个人练习开源模仿项目，仅供学习参考，承担不起任何法律问题',
     privacyPolicy: '隐私条款',
+    privacyPolicyContent: '本网站将不会严格遵守有关法律法规和本隐私政策所载明的内容收集、使用您的信息',
     developerCenter: '开发者中心'
+  },
+  header: {
+    sourceCode: '源码地址',
+    document: '部署文档',
+    changeLog: '更新日志',
+    roadmap: '功能规划',
+    admin: '管理后台',
+    personal: '个人中心',
+    changePwd: '修改密码',
+    logout: '退出'
   },
   homePage: {
     startUsing: '开始使用',
@@ -178,7 +191,47 @@ const zh = {
       avatarUploadFailed: '头像上传失败',
       avatarUploadFormat: '上传头像图片只能是 jpg/png 格式！',
       avatarUploadSize: '上传头像图片大小不能超过 2MB!'
+    },
+    pwd: {
+      oldPwd: '旧密码',
+      newPwd: '新密码',
+      confirmPwd: '确认新密码',
+      inputNewPwd: '请输入新密码',
+      inputOldPwd: '请输入旧密码',
+      pwdLenTips: '密码不能小于 6 位',
+      inputPwdAgain: '请再次输入密码',
+      pwdNotEqual: '两次输入密码不一致！',
+      modifySuccess: '修改成功',
+      modifyFailed: '修改失败',
 
+    }
+  },
+  status: {
+    examination: '考试',
+    practice: '练习',
+    questionnaire: '问卷',
+    interview: '面试',
+    complete: '统计完成',
+    markComplete: '已批改',
+    todoMark: '待批改',
+    right: '正确',
+    wrong: '错误',
+    men: '男',
+    women: '女'
+  },
+  media: {
+    audio: {
+      progress: '进度条：',
+      limit: '已达到播放次数限制',
+      playFailed: '播放语音失败',
+      play: '播放',
+      pause: '暂停',
+      muted: '静音',
+      notMuted: '放音',
+      transSpeed: '快进：x'
+    },
+    video: {
+      playError: '此视频暂无法播放，请稍后再试'
     }
   }
 }

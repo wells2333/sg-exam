@@ -94,7 +94,7 @@ export default {
     },
     formatProcessToolTip(index = 0) {
       index = parseInt(this.audio.maxTime / 100 * index)
-      return '进度条：' + realFormatSecond(index)
+      return this.$t('media.audio.progress') + realFormatSecond(index)
     },
     changeCurrentTime(index) {
       this.pausePlay()
@@ -111,10 +111,10 @@ export default {
             if (!limit) {
               this.$refs.audio.play()
             } else {
-              messageWarn(this, '已达到播放次数限制')
+              messageWarn(this, this.$t('media.audio.limit'))
             }
           } else {
-            messageWarn(this, '播放语音失败')
+            messageWarn(this, this.$t('media.audio.playFailed'))
           }
         }).catch(err => {
           console.error(err)
@@ -170,13 +170,13 @@ export default {
       return realFormatSecond(second)
     },
     transPlayPause(value) {
-      return value ? '暂停' : '播放'
+      return value ? this.$t('media.audio.pause') : this.$t('media.audio.play')
     },
     transMutedOrNot(value) {
-      return value ? '放音' : '静音'
+      return value ? this.$t('media.audio.notMuted') : this.$t('media.audio.muted')
     },
     transSpeed(value) {
-      return '快进：x' + value
+      return this.$t('media.audio.transSpeed') + value
     }
   },
   created() {

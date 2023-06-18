@@ -16,7 +16,7 @@
           </el-table-column>
           <el-table-column :label="$t('exam.examinationType')" min-width="90" align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.type | examTypeFilter }}</span>
+              <span>{{ transformExaminationType(scope.row.type) }}</span>
             </template>
           </el-table-column>
           <el-table-column :label="$t('exam.examinationType')" sortable prop="start_time" min-width="90" align="center">
@@ -26,10 +26,10 @@
           </el-table-column>
           <el-table-column :label="$t('exam.status')" min-width="90" align="center">
             <template slot-scope="scope">
-              <el-tag :type="scope.row.submitStatus | simpleTagStatusFilter(3)">{{ scope.row.submitStatus | submitStatusFilter }}</el-tag>
+              <el-tag :type="transformStatusTag(scope.row.submitStatus, 3)">{{ transformSubmitStatus(scope.row.submitStatus)}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('exam.score')" sortable prop="score" align="center" width="120px">
+          <el-table-column :label="$t('exam.score')" prop="score" align="center" width="120px">
             <template slot-scope="scope">
               <span>{{ scope.row.score }}</span>
             </template>
@@ -150,6 +150,27 @@ export default {
       }).catch((error) => {
         console.error(error)
       })
+    },
+    transformExaminationType (type) {
+      const examType = {
+        0: this.$t('status.examination'),
+        1: this.$t('status.practice'),
+        2: this.$t('status.questionnaire'),
+        3: this.$t('status.interview')
+      }
+      return examType[type]
+    },
+    transformStatusTag (status, expectStatus) {
+      return status === expectStatus ? 'success' : 'warning'
+    },
+    transformSubmitStatus (status) {
+      const typeMap = {
+        0: this.$t('status.todoMark'),
+        1: this.$t('status.todoMark'),
+        2: this.$t('status.markComplete'),
+        3: this.$t('status.complete')
+      }
+      return typeMap[status]
     }
   }
 }
@@ -169,7 +190,6 @@ export default {
   .incorrect-answer-gray-box-title {
     text-align: center;
   }
-  /* 题目 */
   .subject-title {
     color: #333333;
     font-size: 16px;
@@ -187,7 +207,6 @@ export default {
       text-align: right;
     }
   }
-  /* 题目选项 */
   .subject-option {
     padding-bottom: 10px;
     padding-left: 10px;

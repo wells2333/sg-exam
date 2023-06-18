@@ -43,7 +43,7 @@
         <el-col :span="12" :offset="6">
           <div class="cop">
             <a class="content-c3" href="https://beian.miit.gov.cn/" target="_blank">
-              <span class="content-c3">陕 ICP 备 20002980 号 -2</span>
+              <span class="content-c3">{{$t('copyRight')}}</span>
             </a>
           </div>
         </el-col>
@@ -60,14 +60,14 @@ export default {
     openLayer() {
       this.$notify.info({
         title: this.$t('common.legalNotices'),
-        message: '此仅为个人练习开源模仿项目，仅供学习参考，承担不起任何法律问题',
+        message: this.$t('common.legalNoticesContent'),
         offset: 70
       })
     },
     openPrivacy() {
       this.$notify.info({
         title: this.$t('common.privacyPolicy'),
-        message: '本网站将不会严格遵守有关法律法规和本隐私政策所载明的内容收集、使用您的信息',
+        message: this.$t('common.privacyPolicyContent'),
         offset: 70
       })
     }

@@ -17,40 +17,30 @@
                          active-text-color="#232323"
                          :unique-opened=true
                          @select="handleSelect">
-                  <el-menu-item index="/index" @click="open('/home')">{{ $t('home') }}
-                  </el-menu-item>
-                  <el-menu-item index="/exams" @click="open('/exams')">{{ $t('examination') }}
-                  </el-menu-item>
-                  <el-menu-item index="/courses" @click="open('/courses')">{{
-                      $t('course')
-                    }}
-                  </el-menu-item>
-                  <el-submenu index="/other">
-                    <template slot="title">{{ $t('record') }}</template>
-                    <el-menu-item index="exam-record"
-                                  @click="open('/exam-record')">{{$t('exam.records.records')}}
-                    </el-menu-item>
-                  </el-submenu>
+                  <el-menu-item index="/index" @click="open('/home')">{{ $t('home') }}</el-menu-item>
+                  <el-menu-item index="/exams" @click="open('/exams')">{{ $t('examination') }}</el-menu-item>
+                  <el-menu-item index="/courses" @click="open('/courses')">{{ $t('course') }}</el-menu-item>
+                  <el-menu-item index="/exam-record" @click="open('/exam-record')">{{$t('exam.records.records')}}</el-menu-item>
                   <el-submenu index="/u">
                     <template slot="title">{{ $t('help') }}</template>
                     <el-menu-item index="u-source"
                                   @click="open('https://gitee.com/wells2333/sg-exam')">
-                      源码地址
+                      {{$t('header.sourceCode')}}
                     </el-menu-item>
                     <el-menu-item index="u-deploy"
                                   @click="open('https://www.yuque.com/tangyi-5ldnl/rzv4xd/nl8d6g6mobdgylk7?singleDoc#')">
-                      部署文档
+                      {{$t('header.document')}}
                     </el-menu-item>
                     <el-menu-item index="c-log"
                                   @click="open('https://gitee.com/wells2333/sg-exam/blob/master/CHANGELOG.md')">
-                      更新日志
+                      {{$t('header.changeLog')}}
                     </el-menu-item>
                     <el-menu-item index="c-overview"
                                   @click="open('https://www.yuque.com/tangyi-5ldnl/paf15u/cwvtvfd0a07ozfk2?singleDoc#')">
-                      功能规划
+                      {{$t('header.roadmap')}}
                     </el-menu-item>
                     <el-menu-item index="u-admin" @click="openAdmin()">
-                      管理后台
+                      {{$t('header.admin')}}
                     </el-menu-item>
                   </el-submenu>
                   <el-submenu v-if="login" index="/user-info">
@@ -60,10 +50,10 @@
                              6px;"/>
                       {{ userInfo.identifier }}
                     </template>
-                    <el-menu-item index="account" @click="open('/account')">个人中心</el-menu-item>
-                    <el-menu-item index="password" @click="open('/password')">修改密码
+                    <el-menu-item index="account" @click="open('/account')">{{$t('header.personal')}}</el-menu-item>
+                    <el-menu-item index="password" @click="open('/password')">{{$t('header.changePwd')}}
                     </el-menu-item>
-                    <el-menu-item index="logOut" @click="logOut">退出</el-menu-item>
+                    <el-menu-item index="logOut" @click="logOut">{{$t('header.logout')}}</el-menu-item>
                   </el-submenu>
                 </el-menu>
                 <div class="register-login-area" v-if="!login">

@@ -1,7 +1,5 @@
 import { validatenull } from '@/utils/validate'
-/**
- * 存储sessionStorage
- */
+
 export const setStore = (params) => {
   const {
     name,
@@ -14,12 +12,9 @@ export const setStore = (params) => {
     type: type,
     datetime: new Date().getTime()
   }
-  // 直接放到sessionStorage
   window.sessionStorage.setItem(name, JSON.stringify(obj))
 }
-/**
- * 获取sessionStorage
- */
+
 export const getStore = (params) => {
   const {
     name
@@ -38,9 +33,7 @@ export const getStore = (params) => {
   }
   return content
 }
-/**
- * 删除sessionStorage
- */
+
 export const removeStore = params => {
   const {
     name

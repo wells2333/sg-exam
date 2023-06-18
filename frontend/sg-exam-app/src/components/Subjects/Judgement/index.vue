@@ -4,7 +4,7 @@
       <div class="subject-title">
         {{ subjectInfo.sort }}.
         <span class="subject-title-content"
-              v-if="subjectInfo.score !== undefined && subjectInfo.score !== 0">&nbsp;({{ subjectInfo.score }}分)&nbsp;</span>
+              v-if="subjectInfo.score !== undefined && subjectInfo.score !== 0">&nbsp;({{ subjectInfo.score }}{{$t('exam.startExam.score')}})&nbsp;</span>
         <span class="subject-title-content" v-html="subjectInfo.subjectName"/>
       </div>
       <div class="subject-speech-info" v-if="subjectInfo.speechId && subjectInfo.speechUrl">
@@ -45,8 +45,8 @@ export default {
         score: 0
       },
       options: [
-        {id: 1, optionName: '正确'},
-        {id: 2, optionName: '错误'}
+        {id: 1, optionName: this.$t('status.right')},
+        {id: 2, optionName: this.$t('status.wrong')}
       ],
       userAnswer: ''
     }

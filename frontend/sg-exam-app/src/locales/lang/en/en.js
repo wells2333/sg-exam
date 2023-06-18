@@ -1,4 +1,5 @@
 const en = {
+  copyRight: '陕 ICP 备 20002980 号 -2',
   home: 'Home',
   examination: 'Examination',
   course: 'Course',
@@ -8,13 +9,18 @@ const en = {
   login: 'Login',
   usernamePasswordLogin: 'Username Login',
   search: 'Search',
+  reset: 'Reset',
   username: 'Username',
   usernameOrEmail: 'Username or email',
   password: 'Password',
   oldPassword: 'Old Password',
   newPassword: 'New Password',
   confirm: 'Confirm',
+  sure: 'Confirm',
+  cancel: 'Cancel',
   save: 'Save',
+  submit: 'Submit',
+  confirmSubmit: 'Confirm submit?',
   tenantCode: 'TenantCode',
   email: 'Email',
   validationCode: 'Validation code',
@@ -26,6 +32,16 @@ const en = {
   send: 'Send',
   sendSuccess: 'Send success',
   registerSuccess: 'Register success',
+  success: 'Success',
+  failed: 'Failed',
+  operation: 'Operation',
+  return: 'Return',
+  load: {
+    loadMore: 'Load more',
+    loadFailed: 'Load Failed!',
+    noMoreData: 'No more data!',
+    loading: 'Loading'
+  },
   validate: {
     inputUsername: 'Please input username',
     inputEmail: 'Please input email',
@@ -40,6 +56,182 @@ const en = {
   language: {
     zh: '中文',
     en: 'English'
+  },
+  common: {
+    link: 'Link',
+    tool: 'Tool',
+    community: 'Community',
+    gitee: 'Gitee',
+    github: 'Github',
+    admin: 'Admin',
+    changeLog: 'Changelog',
+    feedback: 'Feedback',
+    legalNotices: 'Legal Notice',
+    legalNoticesContent: 'This is only for personal practice open-source imitation project, for learning reference only, and cannot bear any legal issues',
+    privacyPolicy: 'Privacy Policy',
+    privacyPolicyContent: 'This website will not strictly comply with relevant laws and regulations and the content stated in this privacy policy to collect and use your information',
+    developerCenter: 'Developer Center'
+  },
+  header: {
+    sourceCode: 'Source Code',
+    document: 'Document',
+    changeLog: 'ChangeLog',
+    roadmap: 'Roadmap',
+    admin: 'Admin',
+    personal: 'Personal',
+    changePwd: 'Change Password',
+    logout: 'Logout'
+  },
+  homePage: {
+    startUsing: 'Start using',
+    userCnt: 'User',
+    examinationCnt: 'Examination',
+    subjectCnt: 'Subject',
+    courseCnt: 'Course',
+    popularCourses: 'Popular courses',
+    loadFailed: 'Load failed!',
+    loadCoursesFailed: 'Load popular courses failed!'
+  },
+  exam: {
+    examinationName: 'Examination name',
+    examinationType: 'Examination type',
+    examinationTime: 'Examination time',
+    status: 'Status',
+    score: 'Score',
+    scoreDetail: 'Score Detail',
+    course: {
+      courseIntroduction: 'Course Introduction',
+      chapter: 'Chapter',
+      courseEvaluation: 'Evaluation',
+      inputEvaluation: 'Please enter the evaluation content',
+      studyExchange: 'Study exchange',
+      registerStudents: 'Register students',
+      registerStudents1: 'Registered students',
+      courseFeatures: 'Course features',
+      learnHour: 'Learn hour',
+      chapter1: 'Chapter',
+      memberCount: 'Student count',
+      evaluatesCount: 'Evaluates count',
+      youMayAlsoLike: 'Guess you like',
+      hour: 'hour',
+      charge: 'charge',
+      free: 'free',
+      registration: 'Registration',
+      cancelRegistration: 'Cancel registration',
+      pleaseRegistration: 'Please registration',
+      submitSuccess: 'Submit success',
+      submitFailed: 'Submit failed',
+      doNotResubmit: 'Do not resubmit',
+      defaultEvaluate: 'User default positive reviews',
+      demoCourseName: 'Writing',
+      courses: {
+        popularCourses: 'Popular courses',
+        registerStudentsCnt: 'Register students Count',
+        level: 'Difficulty level'
+      }
+    },
+    records: {
+      records: 'Records'
+    },
+    exams: {
+      total: 'Total',
+      latestRelease: 'Latest release',
+      mostClicks: 'Most clicks',
+      parameters: 'parameters',
+      end: 'The exam has ended',
+      notStarted: 'Exam not started',
+      sureStart: 'Are you sure you want to start?',
+      startFailed: 'Start failed'
+    },
+    startExam: {
+      last: 'Previous',
+      next: 'Next',
+      progress: 'progress',
+      answerCard: 'Answer Card',
+      isFirst: 'It\'s already the first subject',
+      isLast: 'It\'s already the last subject',
+      getSubjectFailed: 'Failed to get subject',
+      confirmExit: 'confirm exit?',
+      startExam: 'Start exam',
+      subject: 'subject',
+      score: 'score'
+    },
+    incorrect: {
+      userName: 'UserName',
+      score: 'Total score',
+      startTime: 'Start time',
+      endTime: 'End time',
+      duration: 'Duration',
+      correctNumber: 'Correct count',
+      inCorrectNumber: 'Incorrect count',
+      subjectList: 'Subject list',
+      userAnswer: 'Your answer',
+      answer: 'Answer',
+      analysis: 'Analysis',
+      right: 'Right',
+      wrong: 'Wrong',
+      loadSubjectFailed: 'Failed to get subjects',
+      operator: 'Reviewed by: automatically rated by the system'
+    }
+  },
+  personal: {
+    account: {
+      identifier: 'Account',
+      name: 'Name',
+      gender: 'Gender',
+      born: 'Date of birth',
+      phone: 'Phone',
+      email: 'Email',
+      avatar: 'Avatar',
+      inputIdentifier: 'Please enter an account',
+      modifySuccess: 'Successfully modified',
+      modifyFailed: 'Modification failed',
+      avatarUploadSuccess: 'Successfully uploaded the avatar',
+      avatarUploadFailed: 'Failed to upload avatar',
+      avatarUploadFormat: 'Uploading avatar images can only be in jpg/png format!',
+      avatarUploadSize: 'The size of the uploaded avatar image cannot exceed 2MB!'
+    },
+    pwd: {
+      oldPwd: 'Old password',
+      newPwd: 'New password',
+      confirmPwd: 'Confirm new password',
+      inputNewPwd: 'Please enter a new password',
+      inputOldPwd: 'Please enter your old password',
+      pwdLenTips: 'Password cannot be less than 6 digits',
+      inputPwdAgain: 'Please enter the password again',
+      pwdNotEqual: 'The two passwords entered do not match!',
+      modifySuccess: 'Successfully modified',
+      modifyFailed: 'Modification failed',
+
+    }
+  },
+  status: {
+    examination: 'examination',
+    practice: 'practice',
+    questionnaire: 'questionnaire',
+    interview: 'interview',
+    complete: 'Statistics completed',
+    markComplete: 'Corrected',
+    todoMark: 'To be corrected',
+    right: 'Right',
+    wrong: 'Wrong',
+    men: 'Men',
+    women: 'Women'
+  },
+  media: {
+    audio: {
+      progress: 'Progress bar:',
+      limit: 'Reached playback limit',
+      playFailed: 'Failed to play voice',
+      play: 'Play',
+      pause: 'Pause',
+      muted: 'Muted',
+      notMuted: 'Play',
+      transSpeed: 'Fast forward: x'
+    },
+    video: {
+      playError: 'This video cannot be played at the moment. Please try again later'
+    }
   }
 }
 

@@ -51,7 +51,7 @@ export default {
         playbackRates: [0.7, 1.0, 1.5, 2.0],
         sources: [],
         poster: this.cover_url,
-        notSupportedMessage: '此视频暂无法播放，请稍后再试',
+        notSupportedMessage: this.$t('media.video.playError'),
         controlBar: {
           timeDivider: true,
           durationDisplay: true,
@@ -88,10 +88,14 @@ export default {
       this.playerOptions.sources = [{src}]
     },
     play() {
-      this.$refs.sgVideoPlayer.player.play()
+      if (this.$refs.sgVideoPlayer &&  this.$refs.sgVideoPlayer.player) {
+        this.$refs.sgVideoPlayer.player.play()
+      }
     },
     pause() {
-      this.$refs.sgVideoPlayer.player.pause()
+      if (this.$refs.sgVideoPlayer &&  this.$refs.sgVideoPlayer.player) {
+        this.$refs.sgVideoPlayer.player.pause()
+      }
     },
     onPlayerPlay(player) {
 

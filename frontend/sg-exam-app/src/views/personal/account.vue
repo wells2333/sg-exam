@@ -23,8 +23,8 @@
                 <el-col :span="24">
                   <el-form-item :label="$t('personal.account.gender') + '：'" prop="sex">
                     <el-radio-group v-model="userInfo.gender">
-                      <el-radio :label="0">男</el-radio>
-                      <el-radio :label="1">女</el-radio>
+                      <el-radio :label="0">{{$t('status.men')}}</el-radio>
+                      <el-radio :label="1">{{$t('status.women')}}</el-radio>
                     </el-radio-group>
                   </el-form-item>
                 </el-col>
@@ -100,7 +100,9 @@ export default {
       labelPosition: 'right',
       disabled: true,
       rules: {
-        identifier: [{ required: true, message: this.$t('personal.account.inputIdentifier'),
+        identifier: [{
+          required: true,
+          message: this.$t('personal.account.inputIdentifier'),
           trigger: 'change' }]
       },
       headers: {

@@ -6,7 +6,7 @@
         <span class="subject-title-content"
               v-if="subjectInfo.score !== undefined && subjectInfo.score !== 0">&nbsp;({{
             subjectInfo.score
-          }}分)&nbsp;</span>
+          }}{{$t('exam.startExam.score')}})&nbsp;</span>
         <span class="subject-title-content" v-html="subjectInfo.subjectName"/>
       </div>
       <div class="subject-speech-info" v-if="subjectInfo.speechId && subjectInfo.speechUrl">

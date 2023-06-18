@@ -50,7 +50,7 @@
           <div class="third-login">
             <el-row>
               <el-col :span="24" class="third-link">
-                陕 ICP 备 20002980 号 -2
+                {{$t('copyRight')}}
               </el-col>
             </el-row>
           </div>
@@ -129,7 +129,7 @@
           <div class="third-login">
             <el-row>
               <el-col :span="24" class="third-link">
-                  陕 ICP 备 20002980 号 -2
+                {{$t('copyRight')}}
               </el-col>
             </el-row>
           </div>
