@@ -17,7 +17,7 @@
           :actions="[
             {
               icon: 'ant-design:align-left-outlined',
-              tooltip: 't('common.viewText')详情',
+              tooltip: t('common.viewText') + '详情',
               onClick: handleView.bind(null, record),
             },
             {
