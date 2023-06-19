@@ -202,8 +202,7 @@ const zh = {
       inputPwdAgain: '请再次输入密码',
       pwdNotEqual: '两次输入密码不一致！',
       modifySuccess: '修改成功',
-      modifyFailed: '修改失败',
-
+      modifyFailed: '修改失败'
     }
   },
   status: {

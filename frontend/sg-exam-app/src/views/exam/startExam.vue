@@ -35,15 +35,10 @@
       </el-col>
     </el-row>
     <el-dialog :title="$t('exam.startExam.answerCard')" :visible.sync="dialogVisible" width="50%" top="10vh" center>
-      <div class="answer-card-title">{{ exam.examinationName }}（共{{
-          cards.length
-        }}题，合计{{ exam.totalScore }}分）
-      </div>
-      <div class="answer-card-split"></div>
       <el-row class="answer-card-content">
-        <el-button :class="value.isAnswer ? 'answer-card-btn' : ''" circle
+        <el-button :class="value.isAnswer ? 'answer-card-btn' : ''"
                    v-for="(value, index) in cards" :key="index"
-                   @click="toSubject(value.subjectId, value.sort)">
+                   @click="toSubject(value.subjectId, value.sort)" style="padding: 12px;">
           &nbsp;{{ value.sort }}&nbsp;
         </el-button>
       </el-row>
@@ -78,6 +73,7 @@ export default {
       loadingLast: false,
       loadingNext: false,
       loadingSubmit: false,
+      saving: false,
       startTime: 0,
       endTime: 0,
       option: '',
@@ -168,34 +164,40 @@ export default {
     },
     // 保存当前题目，同时根据序号加载下一题
     saveCurrentSubjectAndGetNextSubject(nextType, nextSubjectSort, subjectId = undefined) {
-      const answerId = isNotEmpty(this.tempAnswer) ? this.tempAnswer.id : ''
-      const answer = this.getAnswer(answerId)
-      const ref = this.getSubjectRef()
-      if (ref) {
-        ref.beforeSave()
+      if (this.saving) {
+        return;
       }
-      this.startLoading(nextType)
-      saveAndNext(answer, nextType, nextSubjectSort, subjectId).then(response => {
-        if (response.data.result !== null) {
-          const subject = response.data.result
-          store.dispatch('SetSubjectInfo', subject).then(() => {
-            this.setSubjectInfo(subject)
-          })
+      try {
+        this.saving = true
+        const answerId = isNotEmpty(this.tempAnswer) ? this.tempAnswer.id : ''
+        const answer = this.getAnswer(answerId)
+        const ref = this.getSubjectRef()
+        if (ref) {
+          ref.beforeSave()
         }
-        this.subjectStartTime = moment().format('YYYY-MM-DD HH:mm:ss')
-        this.endLoading(nextType)
-      }).catch((error) => {
-        console.log(error)
-        messageFail(this, this.$t('exam.startExam.getSubjectFailed'))
-        this.endLoading(nextType)
-      })
+        this.startLoading(nextType)
+        saveAndNext(answer, nextType, nextSubjectSort, subjectId).then(response => {
+          if (response.data.result !== null) {
+            const subject = response.data.result
+            store.dispatch('SetSubjectInfo', subject).then(() => {
+              this.setSubjectInfo(subject)
+            })
+          }
+          this.subjectStartTime = moment().format('YYYY-MM-DD HH:mm:ss')
+          this.endLoading(nextType)
+        }).catch((error) => {
+          console.log(error)
+          messageFail(this, this.$t('exam.startExam.getSubjectFailed'))
+          this.endLoading(nextType)
+        })
+      } finally {
+        this.saving = false
+      }
     },
     answerCard() {
       this.dialogVisible = true
     },
-    // 跳转题目
     toSubject(subjectId, subjectSortNo) {
-      // 保存当前题目，同时加载下一题
       this.saveCurrentSubjectAndGetNextSubject(nextSubjectType.current, subjectSortNo, subjectId)
       this.dialogVisible = false
     },
@@ -215,15 +217,13 @@ export default {
         ref.beforeSave()
       }
       const answerId = isNotEmpty(answer) ? answer.id : ''
-      saveAndNext(this.getAnswer(answerId), 0).then(response => {
-        // 提交到后台
+      saveAndNext(this.getAnswer(answerId), 0).then(() => {
         store.dispatch('SubmitExam', {
           examinationId,
           examRecordId,
           userId: userInfo.id
         }).then(() => {
           messageSuccess(this, this.$t('submit') + this.$t('success'))
-          // 清空本地 cache
           store.dispatch('ClearExam')
           if (toExamRecord) {
             this.$router.push({name: 'exam-record'})

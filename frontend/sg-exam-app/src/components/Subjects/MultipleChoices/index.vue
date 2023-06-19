@@ -2,7 +2,7 @@
   <div>
     <div class="subject-content">
       <div class="subject-title">
-        {{ subjectInfo.sort }}.
+        {{ subjectInfo.sort }}.&nbsp;
         <div class="subject-title-content" v-html="subjectInfo.subjectName"/>
       </div>
       <div class="subject-speech-info" v-if="subjectInfo.speechId && subjectInfo.speechUrl">

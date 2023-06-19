@@ -21,7 +21,7 @@ Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
 
-new Vue({
+let vue = new Vue({
   el: '#app',
   router,
   store,
@@ -29,3 +29,5 @@ new Vue({
   components: { App },
   template: '<App/>'
 })
+
+Vue.use(vue)

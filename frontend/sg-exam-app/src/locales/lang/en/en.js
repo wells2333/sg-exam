@@ -201,8 +201,7 @@ const en = {
       inputPwdAgain: 'Please enter the password again',
       pwdNotEqual: 'The two passwords entered do not match!',
       modifySuccess: 'Successfully modified',
-      modifyFailed: 'Modification failed',
-
+      modifyFailed: 'Modification failed'
     }
   },
   status: {
