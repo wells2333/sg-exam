@@ -15,9 +15,9 @@
         <TableAction
           :actions="[
             {
-              icon: 'ant-design:copy-filled',
-              onClick: handleGetDownloadUrl.bind(null, record),
-              tooltip: '复制下载地址'
+              icon: 'ant-design:eye-filled',
+              onClick: handlePreview.bind(null, record),
+              tooltip: '预览'
             },
             {
               icon: 'ant-design:arrow-down-outlined',
@@ -45,7 +45,7 @@
 </template>
 <script lang="ts">
 import { useI18n } from '/@/hooks/web/useI18n';
-import { defineComponent } from 'vue';
+import { defineComponent, unref } from 'vue';
 import { BasicUpload } from '/@/components/Upload';
 import { BasicTable, useTable, TableAction } from '/@/components/Table';
 import { getAttachmentList, uploadApi, getDownloadUrl, download, deleteAttachment } from '/@/api/attachment/attach';
@@ -54,6 +54,8 @@ import AttachmentModal from './AttachmentModal.vue';
 import AttachmentInfoModal from './AttachmentInfoModal.vue';
 import { columns, searchFormSchema } from './attach.data';
 import {useMessage} from "/@/hooks/web/useMessage";
+import {getSysDefaultConfig} from "/@/api/sys/config";
+
 export default defineComponent({
   name: 'AttachmentManagement',
   components: { BasicTable, AttachmentModal, AttachmentInfoModal, TableAction, BasicUpload },
@@ -97,11 +99,11 @@ export default defineComponent({
         isUpdate: true,
       });
     }
-    async function handleGetDownloadUrl(record: Recordable) {
-      const result = await getDownloadUrl(record.id);
-      openInfoModal(true, {
-        result
-      });
+    async function handlePreview(record: Recordable) {
+      const sysConfig = await getSysDefaultConfig();
+      const url = sysConfig.sys_file_preview_url;
+      const result = await download(record.id);
+      window.open(url + encodeURIComponent(btoa(result)));
     }
 
     async function handleDownload(record: Recordable) {
@@ -128,7 +130,7 @@ export default defineComponent({
       registerInfoModal,
       handleCreate,
       handleEdit,
-      handleGetDownloadUrl,
+      handlePreview,
       handleDownload,
       handleDelete,
       handleSuccess,

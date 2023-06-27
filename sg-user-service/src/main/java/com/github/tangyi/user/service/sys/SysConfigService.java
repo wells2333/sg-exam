@@ -29,7 +29,7 @@ public class SysConfigService extends CrudService<SysConfigMapper, SysConfig>
 	private static final List<String> SYS_DEFAULT_KEYS = Lists.newArrayList(SYS_WEB_NAME, SYS_WEB_MAIN_TITLE,
 			SYS_WEB_SUB_TITLE_ONE, SYS_WEB_SUB_TITLE_TWO, SYS_WEB_COPYRIGHT, SYS_AVATAR, SYS_ADMIN_MAIN_TITLE,
 			SYS_ADMIN_SUB_TITLE, SYS_WXAPP_AVATAR, SYS_WXAPP_MAIN_TITLE, SYS_WXAPP_SUB_TITLE,
-			SYS_LOGIN_SHOW_TENANT_CODE);
+			SYS_LOGIN_SHOW_TENANT_CODE, SYS_FILE_PREVIEW_URL);
 
 	@Override
 	@Cacheable(value = SYS_CONFIG, key = "#id")

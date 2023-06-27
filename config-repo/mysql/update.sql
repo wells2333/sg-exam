@@ -165,3 +165,5 @@ ALTER TABLE `exam_subject_short_answer`
 
 ALTER TABLE `exam_answer`
     ADD COLUMN `speech_play_cnt` bigint(20) NULL COMMENT '语音播放次数' AFTER `mark_operator`;
+
+INSERT INTO `sys_config` (`id`, `config_key`, `config_value`, `config_desc`, `creator`, `create_time`, `operator`, `update_time`, `is_deleted`, `tenant_code`) VALUES (15, 'sys_file_preview_url', 'http://127.0.0.1:8012/onlinePreview?url=', '附件在线预览地址', 'admin', '2023-06-27 22:36:38', 'admin', '2023-06-27 22:36:38', 0, 'gitee');

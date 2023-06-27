@@ -61,4 +61,9 @@ public interface ConfigKey {
 	 * 登录页面是否展示单位标识输入框
 	 */
 	String SYS_LOGIN_SHOW_TENANT_CODE = "sys_login_show_tenant_code";
+
+	/**
+	 * 附件预览地址
+	 */
+	String SYS_FILE_PREVIEW_URL = "sys_file_preview_url";
 }

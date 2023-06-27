@@ -62,6 +62,16 @@ services:
     networks:
       - my-network
 
+  kkFileView:
+    image: keking/kkfileview:4.1.0
+    container_name: kkFileView
+    hostname: kkFileView
+    restart: always
+    ports:
+      - "8012:8012"
+    networks:
+      - my-network
+
 networks:
   my-network:
     name: my-network
