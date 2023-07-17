@@ -94,6 +94,13 @@ public class Course extends BaseEntity<Course> {
 	private Integer courseStatus;
 
 	/**
+	 * 课件
+	 */
+	@JsonSerialize(using = ToStringSerializer.class)
+	@Column(name = "attach_id")
+	private Long attachId;
+
+	/**
 	 * 报名人数
 	 */
 	@Transient
@@ -110,4 +117,10 @@ public class Course extends BaseEntity<Course> {
 	 */
 	@Transient
 	private Long favCount;
+
+	/**
+	 * 课件 URL
+	 */
+	@Transient
+	private String attachUrl;
 }

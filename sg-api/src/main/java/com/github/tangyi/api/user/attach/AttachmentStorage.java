@@ -10,7 +10,7 @@ import java.util.List;
 public interface AttachmentStorage {
 
     Attachment prepare(String groupCode, String fileName, String originalFilename, byte[] bytes, String user,
-                       String tenantCode);
+                       String tenantCode, String hash);
 
     Attachment upload(MultipartFileUploadContext context) throws IOException;
 
@@ -22,7 +22,7 @@ public interface AttachmentStorage {
 
     boolean deleteAll(List<Attachment> attachments) throws IOException;
 
-    String getDownloadUrl(AttachGroup group, String attachName);
+    String getDownloadUrl(AttachGroup group, String attachName, String hash);
 
     String getDownloadUrl(String fileName, long expire);
 

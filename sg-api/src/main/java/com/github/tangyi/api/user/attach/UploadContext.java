@@ -12,6 +12,8 @@ public class UploadContext {
 
 	private String tenantCode;
 
+	private String hash;
+
 	public UploadContext group(AttachGroup group) {
 		this.group = group;
 		return this;
@@ -24,6 +26,11 @@ public class UploadContext {
 
 	public UploadContext tenantCode(String tenantCode) {
 		this.tenantCode = tenantCode;
+		return this;
+	}
+
+	public UploadContext hash(String hash) {
+		this.hash = hash;
 		return this;
 	}
 }

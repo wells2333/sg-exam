@@ -64,7 +64,7 @@ public class QiNiuAttachmentStorage extends AbstractAttachmentStorage {
         String groupCode = context.getGroup().getGroupCode();
         MultipartFile file = context.getMultipartFile();
         return this.upload(groupCode, file.getOriginalFilename(), file.getOriginalFilename(), file.getBytes(),
-                context.getUser(), context.getTenantCode());
+                context.getUser(), context.getTenantCode(), context.getHash());
     }
 
     @Override
@@ -74,7 +74,7 @@ public class QiNiuAttachmentStorage extends AbstractAttachmentStorage {
         String groupCode = context.getGroup().getGroupCode();
         File targetFile = context.getTargetFile();
         Attachment attachment = prepare(groupCode, targetFile.getName(), targetFile.getName(), null,
-                context.getUser(), context.getTenantCode());
+                context.getUser(), context.getTenantCode(), context.getHash());
         String key = preUpload(attachment);
         this.uploadChunks(targetFile, key, context.isDeleteTargetFileAfterUploaded());
         doAfterUpload(attachment, key, key, watch);
@@ -86,13 +86,13 @@ public class QiNiuAttachmentStorage extends AbstractAttachmentStorage {
     public Attachment upload(BytesUploadContext context) {
         String groupCode = context.getGroup().getGroupCode();
         return this.upload(groupCode, context.getFileName(), context.getOriginalFilename(), context.getBytes(),
-                context.getUser(), context.getTenantCode());
+                context.getUser(), context.getTenantCode(), context.getHash());
     }
 
     @Transactional
     public Attachment upload(String groupCode, String fileName, String originalFilename, byte[] bytes, String user,
-                             String tenantCode) {
-        Attachment attachment = prepare(groupCode, fileName, originalFilename, bytes, user, tenantCode);
+                             String tenantCode, String hash) {
+        Attachment attachment = prepare(groupCode, fileName, originalFilename, bytes, user, tenantCode, hash);
         upload(attachment, bytes);
         return attachment;
     }

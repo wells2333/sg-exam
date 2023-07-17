@@ -188,6 +188,7 @@ export default defineComponent({
         data = result.data.result;
       } else if (params.file) {
         const file = params.file as File
+        // md5 值
         const hash = await calculateHash(file)
         const prepareData = {
           attachName: file.name,

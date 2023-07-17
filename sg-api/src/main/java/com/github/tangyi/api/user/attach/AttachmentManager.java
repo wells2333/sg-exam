@@ -9,27 +9,27 @@ import java.util.concurrent.ExecutionException;
 
 public interface AttachmentManager {
 
-	Attachment upload(MultipartFileUploadContext context) throws IOException;
+    Attachment upload(MultipartFileUploadContext context) throws IOException;
 
-	Attachment upload(FileUploadContext context) throws IOException, ExecutionException, InterruptedException;
+    Attachment upload(FileUploadContext context) throws IOException, ExecutionException, InterruptedException;
 
-	Attachment upload(BytesUploadContext context);
+    Attachment upload(BytesUploadContext context);
 
-	Attachment prepareUploadChunks(AttachGroup group, Attachment attachment);
+    Attachment prepareUploadChunks(AttachGroup group, Attachment attachment);
 
-	Boolean uploadChunk(ChunkUploadContext context) throws IOException;
+    Boolean uploadChunk(ChunkUploadContext context) throws IOException;
 
-	Attachment mergeChunks(String hash) throws IOException, ExecutionException, InterruptedException;
+    Attachment mergeChunks(String hash) throws IOException;
 
-	boolean delete(Attachment attachment) throws IOException;
+    boolean delete(Attachment attachment) throws IOException;
 
-	boolean deleteAll(AttachGroup group, List<Attachment> attachments) throws IOException;
+    boolean deleteAll(AttachGroup group, List<Attachment> attachments) throws IOException;
 
-	String getDownloadUrl(AttachGroup group, String attachName);
+    String getDownloadUrl(AttachGroup group, String attachName, String hash);
 
-	String getPreviewUrl(Long id);
+    String getPreviewUrl(Long id);
 
-	Attachment getPreviewAttachment(Long id);
+    Attachment getPreviewAttachment(Long id);
 
-	Long defaultImage(String groupCode);
+    Long defaultImage(String groupCode);
 }

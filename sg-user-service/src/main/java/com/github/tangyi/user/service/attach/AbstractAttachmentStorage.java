@@ -62,7 +62,7 @@ public abstract class AbstractAttachmentStorage implements AttachmentStorage {
 
     @Override
     public Attachment prepare(String groupCode, String fileName, String originalFilename, byte[] bytes, String user,
-                              String tenantCode) {
+                              String tenantCode, String hash) {
         SgPreconditions.checkNull(groupCode, "groupCode is null");
         Attachment attachment = new Attachment();
         attachment.setCommonValue(user, tenantCode);
@@ -72,6 +72,7 @@ public abstract class AbstractAttachmentStorage implements AttachmentStorage {
         }
         attachment.setAttachName(originalFilename);
         attachment.setGroupCode(groupCode);
+        attachment.setHash(hash);
         return attachment;
     }
 
@@ -79,7 +80,7 @@ public abstract class AbstractAttachmentStorage implements AttachmentStorage {
         SgPreconditions.checkNull(attachment, "attachment is null");
         SgPreconditions.checkNull(attachment.getGroupCode(), "groupCode must not null");
         // groupCode 作为目录
-        return getShardName(attachment.getGroupCode(), attachment.getAttachName());
+        return getShardName(attachment.getGroupCode(), attachment.getAttachName(), attachment.getHash());
     }
 
     @Transactional
@@ -89,7 +90,7 @@ public abstract class AbstractAttachmentStorage implements AttachmentStorage {
         if (attachmentService.delete(attachment) > 0 && attachment.getGroupCode() != null) {
             AttachGroup group = groupService.findByGroupCode(attachment.getGroupCode());
             if (group != null) {
-                String fileName = getShardName(group.getGroupCode(), attachment.getAttachName());
+                String fileName = getShardName(group.getGroupCode(), attachment.getAttachName(), attachment.getHash());
                 log.info("Deleting file {} ...", fileName);
                 doDelete(attachment, fileName);
                 log.info("File has been deleted, fileName: {}", fileName);
@@ -111,8 +112,8 @@ public abstract class AbstractAttachmentStorage implements AttachmentStorage {
         return result;
     }
 
-    public String getDownloadUrl(AttachGroup group, String attachName) {
-        String fileName = getShardName(group.getGroupCode(), attachName);
+    public String getDownloadUrl(AttachGroup group, String attachName, String hash) {
+        String fileName = getShardName(group.getGroupCode(), attachName, hash);
         return getDownloadUrl(fileName, group.getUrlExpire());
     }
 
@@ -127,7 +128,7 @@ public abstract class AbstractAttachmentStorage implements AttachmentStorage {
         if (attachment != null && StringUtils.isEmpty(attachment.getUrl())) {
             AttachGroup group = groupService.findByGroupCode(attachment.getGroupCode());
             if (group != null) {
-                String fileName = getShardName(group.getGroupCode(), attachment.getAttachName());
+                String fileName = getShardName(group.getGroupCode(), attachment.getAttachName(), attachment.getHash());
                 String url = getDownloadUrl(fileName, group.getUrlExpire());
                 attachment.setUrl(url);
             }
@@ -141,16 +142,16 @@ public abstract class AbstractAttachmentStorage implements AttachmentStorage {
 
     public abstract Map<String, Object> doUploadChunk(ChunkUploadContext context, byte[] chunkData, int chunkNumber) throws OssException;
 
-    protected String getShardName(String groupCode, String fileName) {
+    protected String getShardName(String groupCode, String fileName, String hash) {
         if (groupCode != null) {
-            int shardId = HashUtil.getShardId(fileName, ATTACHMENT_STORAGE_SHARD_SIZE);
+            String id = fileName;
+            if (StringUtils.isNotBlank(hash)) {
+                id = hash;
+            }
+            int shardId = HashUtil.getShardId(id, ATTACHMENT_STORAGE_SHARD_SIZE);
             return getName(groupCode, shardId, fileName);
         }
         return fileName;
-    }
-
-    protected String getName(String groupCode, String fileName) {
-        return getName(groupCode, -1, fileName);
     }
 
     protected String getName(String groupCode, int shardId, String fileName) {

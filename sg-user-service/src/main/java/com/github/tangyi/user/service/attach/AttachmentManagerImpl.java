@@ -91,7 +91,7 @@ public class AttachmentManagerImpl implements AttachmentManager {
             AttachmentStorage storage = getManager(group);
             String user = SysUtil.getUser();
             Attachment prepare = storage.prepare(group.getGroupCode(), attachment.getAttachName(),
-                    attachment.getAttachName(), null, user, tenantCode);
+                    attachment.getAttachName(), null, user, tenantCode, hash);
             prepare.setHash(attachment.getHash());
             attachmentService.insert(prepare);
             log.info("Prepare upload chunks finished, hash: {}, id: {}", hash, prepare.getId());
@@ -133,7 +133,7 @@ public class AttachmentManagerImpl implements AttachmentManager {
     }
 
     @Override
-    public Attachment mergeChunks(String hash) throws IOException, ExecutionException, InterruptedException {
+    public Attachment mergeChunks(String hash) throws IOException {
         String tenantCode = SysUtil.getTenantCode();
         Attachment prepare = attachmentService.findByHash(hash, tenantCode);
         SgPreconditions.checkNull(prepare, "Chunks are not prepare");
@@ -162,8 +162,8 @@ public class AttachmentManagerImpl implements AttachmentManager {
     }
 
     @Override
-    public String getDownloadUrl(AttachGroup group, String attachName) {
-        return getManager(group).getDownloadUrl(group, attachName);
+    public String getDownloadUrl(AttachGroup group, String attachName, String hash) {
+        return getManager(group).getDownloadUrl(group, attachName, hash);
     }
 
     @Override
@@ -199,7 +199,7 @@ public class AttachmentManagerImpl implements AttachmentManager {
             String user = SysUtil.getUser();
             AttachmentStorage storage = getManager(group);
             FileUploadContext context = new FileUploadContext();
-            context.group(group).user(user).tenantCode(tenantCode);
+            context.group(group).user(user).tenantCode(tenantCode).hash(hash);
             context.setTargetFile(targetFile);
             Attachment attachment = storage.upload(context);
             long took = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);

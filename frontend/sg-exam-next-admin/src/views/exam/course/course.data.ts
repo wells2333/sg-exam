@@ -186,6 +186,26 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
+    label: '课件',
+    field: 'attachId',
+    component: 'Input',
+    render: ({model, field}) => {
+      return h(SgUpload, {
+        value: model[field],
+        url: model['attachUrl'],
+        api: uploadImage,
+        accept: '.pdf,.xml,.doc,.dot,.zip',
+        type: 'pdf',
+        handleDone: (value) => {
+          if (value) {
+            model[field] = unref(value).id;
+          }
+        },
+      });
+    },
+    colProps: { span: 24 },
+  },
+  {
     field: 'college',
     label: '学院',
     component: 'Input',

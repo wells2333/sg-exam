@@ -15,6 +15,7 @@
         <result column="simple_desc" property="simpleDesc"/>
         <result column="sort" property="sort"/>
         <result column="course_status" property="courseStatus"/>
+        <result column="attach_id" property="attachId"/>
         <result column="creator" property="creator"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
