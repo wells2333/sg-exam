@@ -134,7 +134,9 @@
                   </span>
                   <div class="about-review mb-30">
                     <h4>{{$t('exam.course.studyExchange')}}</h4>
-                    <p></p>
+                    <p>
+                      {{$t('exam.course.courseAttach')}}：<a :href="courseAttachUrl" target="_blank">{{courseAttachName}}</a>
+                    </p>
                   </div>
                 </el-tab-pane>
               </el-tabs>
@@ -187,7 +189,7 @@
   </div>
 </template>
 <script>
-import {getCourseDetail, joinCourse} from '@/api/exam/course'
+import {getCourseDetail, joinCourse, getCourseAttach} from '@/api/exam/course'
 import {addObj, getEvaluateList} from '@/api/exam/courseEvaluate'
 import {messageSuccess, messageWarn} from '@/utils/util'
 
@@ -211,13 +213,16 @@ export default {
       }],
       evaluates: [],
       hasEvaluate: false,
-      joinBtnText: ''
+      joinBtnText: '',
+      courseAttachName: '',
+      courseAttachUrl: ''
     }
   },
   created() {
     this.courseId = this.$route.query.courseId
     this.getCourseInfo()
     this.getEvaluateList()
+    this.getAttach()
   },
   methods: {
     getCourseInfo() {
@@ -240,6 +245,17 @@ export default {
         if (code === 0) {
           this.evaluates = res.data.result.list
         }
+      }).catch(error => {
+        console.error(error)
+      })
+    },
+    getAttach() {
+      getCourseAttach(this.courseId).then(res => {
+          const {code, result} = res.data
+          if (code === 0) {
+            this.courseAttachName = result.attachName
+            this.courseAttachUrl = result.attachUrl
+          }
       }).catch(error => {
         console.error(error)
       })

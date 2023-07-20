@@ -196,6 +196,7 @@ export const formSchema: FormSchema[] = [
         api: uploadImage,
         accept: '.pdf,.xml,.doc,.dot,.zip',
         type: 'pdf',
+        groupCode: 'course/attach',
         handleDone: (value) => {
           if (value) {
             model[field] = unref(value).id;

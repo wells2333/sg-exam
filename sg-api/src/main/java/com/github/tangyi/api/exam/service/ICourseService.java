@@ -17,4 +17,6 @@ public interface ICourseService extends ICrudService<Course> {
 	CourseDetailDto getDetail(Long id);
 
 	Boolean joinCourse(Long courseId, Long userId, String type);
+
+	CourseDetailDto getCourseAttach(Long courseId);
 }

@@ -242,4 +242,19 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
             return memberService.deleteByCourseIdAndUserId(member) > 0;
         }
     }
+
+    @Override
+    public CourseDetailDto getCourseAttach(Long courseId) {
+        Course course = this.get(courseId);
+        if (course != null && course.getAttachId() != null) {
+            Attachment attachment = attachmentService.get(course.getAttachId());
+            if (attachment != null) {
+                CourseDetailDto dto = new CourseDetailDto();
+                dto.setAttachName(attachment.getAttachName());
+                dto.setAttachUrl(attachment.getUrl());
+                return dto;
+            }
+        }
+        return null;
+    }
 }

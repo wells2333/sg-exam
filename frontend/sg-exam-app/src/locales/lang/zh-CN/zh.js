@@ -106,6 +106,7 @@ const zh = {
       courseEvaluation: '课程评价',
       inputEvaluation: '请输入评价内容',
       studyExchange: '学习交流',
+      courseAttach: '课件',
       registerStudents: '报名学员',
       registerStudents1: '已报名学员',
       courseFeatures: '课程特色',

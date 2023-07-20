@@ -446,7 +446,7 @@ CREATE TABLE `sys_attachment_group` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `group_name` varchar(255) NOT NULL DEFAULT '' COMMENT '分组名称',
   `group_code` varchar(128) NOT NULL DEFAULT '' COMMENT '分组标识',
-  `url_expire` int(20) unsigned zerofill NOT NULL COMMENT 'url 过期时间',
+  `url_expire` bigint(20) unsigned zerofill NOT NULL COMMENT 'url 过期时间',
   `creator` varchar(128) NOT NULL DEFAULT '' COMMENT '创建人',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `operator` varchar(128) NOT NULL COMMENT '修改人',

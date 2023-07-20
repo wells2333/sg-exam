@@ -38,4 +38,8 @@ public class CourseDetailDto {
 	 * 用户是否已报名
 	 */
 	private Boolean isUserJoin;
+
+	private String attachName;
+
+	private String attachUrl;
 }

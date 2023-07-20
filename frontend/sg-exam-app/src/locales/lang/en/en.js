@@ -105,6 +105,7 @@ const en = {
       courseEvaluation: 'Evaluation',
       inputEvaluation: 'Please enter the evaluation content',
       studyExchange: 'Study exchange',
+      courseAttach: 'Attachment',
       registerStudents: 'Register students',
       registerStudents1: 'Registered students',
       courseFeatures: 'Course features',

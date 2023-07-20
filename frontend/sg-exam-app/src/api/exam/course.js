@@ -77,3 +77,10 @@ export function joinCourse (id, type) {
     method: 'post'
   })
 }
+
+export function getCourseAttach (id) {
+  return request({
+    url: baseCourseUrl + id + '/attach',
+    method: 'get'
+  })
+}
