@@ -171,3 +171,5 @@ INSERT INTO `sys_config` (`id`, `config_key`, `config_value`, `config_desc`, `cr
 ALTER TABLE `exam_course` ADD COLUMN `attach_id` bigint(20) NULL COMMENT '课件 ID' AFTER `course_status`;
 
 INSERT INTO `sys_attachment_group` (`id`, `group_name`, `group_code`, `url_expire`, `creator`, `create_time`, `operator`, `update_time`, `is_deleted`, `tenant_code`, `remark`, `storage_type`) VALUES (12, '课程课件', 'course/attach', 00000000033233472000, 'admin', '2023-07-20 22:27:40', 'admin', '2023-07-20 22:27:40', 0, 'gitee', NULL, 2);
+
+ALTER TABLE `sys_attachment` ADD COLUMN `upload_id` varchar(255) NULL COMMENT '多分片上传的 uploadId';

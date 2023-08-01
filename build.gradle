@@ -53,7 +53,7 @@ subprojects {
         implementation 'com.google.zxing:javase:3.4.0'
         implementation 'org.springdoc:springdoc-openapi-ui:1.6.8'
         implementation 'com.github.axet:kaptcha:0.0.9'
-        implementation 'com.qiniu:qiniu-java-sdk:7.8.0'
+        implementation 'com.qiniu:qiniu-java-sdk:7.13.1'
         compileOnly 'org.projectlombok:lombok:1.18.24'
         annotationProcessor 'org.projectlombok:lombok:1.18.24'
         implementation 'com.h2database:h2:2.1.212'

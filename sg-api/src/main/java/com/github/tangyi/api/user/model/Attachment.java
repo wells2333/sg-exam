@@ -53,6 +53,12 @@ public class Attachment extends BaseEntity<Attachment> {
 	private String hash;
 
 	/**
+	 * 多分片上传的 uploadId
+	 */
+	@Column(name = "upload_id")
+	private String uploadId;
+
+	/**
 	 * 上传结果
 	 */
 	@Transient

@@ -192,12 +192,13 @@ export default defineComponent({
         const hash = await calculateHash(file)
         const prepareData = {
           attachName: file.name,
-          hash
+          hash,
+          attachSize: file.size
         }
         const prepareRes = await prepareUploadChunks(groupCode.value, prepareData)
         if (prepareRes) {
           const chunks = createFileChunks(file, ChunkSize, hash)
-          data = await uploadChunks(chunks, hash)
+          data = await uploadChunks(chunks, hash, prepareRes)
         } else {
           message.error("准备上传文件失败")
         }
@@ -211,6 +212,8 @@ export default defineComponent({
         uploadPercent.value = 100;
         message.success('上传成功');
         emit('done', file);
+      } else {
+        message.warning('上传失败');
       }
     }
 
@@ -264,21 +267,27 @@ export default defineComponent({
       return chunks.value
     }
 
-    async function uploadChunks(chunks: Array<Chunk>, hash: any) {
+    async function uploadChunks(chunks: Array<Chunk>, hash: any, prepareRes: any) {
       let index = 0
       const taskPool: Array<Promise<any>> = []
       // 设置浏览器运行最大并发数  目前 6 个为当前的主流
       const max = 6
       let allProgress = index
+      let uploadId = ''
+      if (prepareRes) {
+        uploadId = prepareRes.uploadId
+      }
       while (index < chunks.length) {
         const chunk = chunks[index]
         const params = {
           file: chunk.chunk,
           data: {
-            filename: chunk.filename
+            filename: chunk.filename,
+            uploadId
           }
         };
-        const task = uploadChunk(params, chunk.hash, chunk.index, (progress) => {
+        // 分片 ID 从 1 开始
+        const task = uploadChunk(params, chunk.hash, chunk.index + 1, (progress) => {
             if (progress.loaded === progress.total) {
               allProgress++;
               let percent = Math.floor(((allProgress / chunks.length) * 100) * 10) / 10
