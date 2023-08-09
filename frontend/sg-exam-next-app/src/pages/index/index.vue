@@ -198,10 +198,7 @@ export default {
     }
 
     async function handleWxLogin() {
-      if (wx === undefined) {
-        return;
-      }
-      wx.getUserProfile({
+      Taro.getUserProfile({
         desc: '用于完善用户资料',
         success: (res) => {
           const {userInfo} = res;
