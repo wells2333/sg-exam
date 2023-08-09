@@ -1,4 +1,6 @@
-const local = 'http://192.168.100.16:9183';
+import Taro from "@tarojs/taro";
+
+const local = 'https://www.yunmianshi.com';
 
 class domain {
     baseUrl: String
@@ -8,11 +10,12 @@ class domain {
 
     getBaseUrl() {
         // wx 为空，非小程序模式
-        if (wx === undefined) {
+        const { miniProgram } = Taro.getAccountInfoSync();
+        if(!miniProgram) {
             this.baseUrl = local;
             return this.baseUrl;
         }
-        const { miniProgram: { envVersion } } = wx.getAccountInfoSync();
+        const { envVersion } = miniProgram
         console.log("envVersion: " + envVersion);
         switch (envVersion) {
             case "develop":
