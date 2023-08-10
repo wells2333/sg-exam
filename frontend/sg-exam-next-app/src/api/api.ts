@@ -1,7 +1,8 @@
 import Taro from "@tarojs/taro"
 import domain from "./domain";
 
-export const USER_SERVICE = domain.getBaseUrl() + "/sg-user-service";
+const env = Taro.getEnv();
+export const USER_SERVICE = env === 'WEB' ? "/api/sg-user-service": domain.getBaseUrl() + "/sg-user-service";
 
 interface result<T = any> {
     code: number
@@ -163,7 +164,7 @@ class api {
                 method,
                 header: { 'Authorization': token, 'Tenant-Code': tenantCode },
                 success: res => {
-                    const { code, result } = res.data;
+                    const { code, result } = res.data || {};
                     // token 失效
                     if (code === 1 && result === 401) {
                         Taro.clearStorageSync();
