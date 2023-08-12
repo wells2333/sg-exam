@@ -101,6 +101,7 @@ const zh = {
     score: '成绩',
     scoreDetail: '成绩详情',
     course: {
+      courseName: '课程名称',
       courseIntroduction: '课程介绍',
       chapter: '课程章节',
       courseEvaluation: '课程评价',
