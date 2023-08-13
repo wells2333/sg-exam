@@ -10,7 +10,11 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
-import org.apache.lucene.index.*;
+import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
@@ -42,9 +46,7 @@ public class LuceneIndexManager {
 
 	private IndexWriter indexWriter;
 
-	private IndexReader indexReader;
-
-	private IndexSearcher indexSearcher;
+	private DirectoryReader directoryReader;
 
 	private Analyzer analyzer;
 
@@ -79,7 +81,7 @@ public class LuceneIndexManager {
 		Document document = new Document();
 		document.add(new StringField(DocField.ID, indexDoc.getId(), Field.Store.YES));
 		document.add(new StringField(DocField.TYPE, type.getType(), Field.Store.YES));
-		document.add(new StringField(DocField.CONTENT, indexDoc.getContent(), Field.Store.YES));
+		document.add(new TextField(DocField.CONTENT, indexDoc.getContent(), Field.Store.YES));
 		return document;
 	}
 
@@ -103,8 +105,7 @@ public class LuceneIndexManager {
 			IndexWriterConfig config = new IndexWriterConfig(this.analyzer);
 			this.indexWriter = new IndexWriter(directory, config);
 			this.commitAndForceMerge();
-			this.indexReader = DirectoryReader.open(directory);
-			this.indexSearcher = new IndexSearcher(this.indexReader);
+			this.directoryReader = DirectoryReader.open(directory);
 			// 文档监控
 			this.docStatsExecutor = Executors.newScheduledThreadPool(1,
 					new ThreadFactoryBuilder().setNamePrefix("lucene-doc-stats").build());
@@ -156,9 +157,11 @@ public class LuceneIndexManager {
 				BooleanClause.Occur.MUST);
 		BooleanClause queryTerm = new BooleanClause(queryParser.parse(query), BooleanClause.Occur.MUST);
 		BooleanQuery booleanQuery = new BooleanQuery.Builder().add(typeTerm).add(queryTerm).build();
+		DirectoryReader newDirectoryReader = DirectoryReader.openIfChanged(this.directoryReader);
+		List<IndexDoc> indexDocs = Lists.newArrayList();
+		IndexSearcher indexSearcher = new IndexSearcher(newDirectoryReader);
 		TopDocs topDocs = indexSearcher.search(booleanQuery, size);
 		ScoreDoc[] arr = topDocs.scoreDocs;
-		List<IndexDoc> indexDocs = Lists.newArrayList();
 		for (ScoreDoc scoreDoc : arr) {
 			Document document = indexSearcher.doc(scoreDoc.doc);
 			indexDocs.add(
@@ -174,9 +177,6 @@ public class LuceneIndexManager {
 		}
 		if (this.docStatsExecutor != null) {
 			this.docStatsExecutor.shutdownNow();
-		}
-		if (this.indexReader != null) {
-			this.indexReader.close();
 		}
 		if (this.indexWriter != null) {
 			this.indexWriter.close();

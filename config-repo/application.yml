@@ -82,6 +82,7 @@ ignore:
     - /v1/config/getDefaultSysConfig
     - /v1/course/popularCourses
     - /v1/home/**
+    - /v1/search/**
 
 logging:
   level:

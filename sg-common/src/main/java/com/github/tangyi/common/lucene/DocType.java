@@ -17,4 +17,13 @@ public enum DocType {
 	public void setType(String type) {
 		this.type = type;
 	}
+
+	public static DocType matchByType(String type) {
+		for (DocType item : DocType.values()) {
+			if (item.type.equals(type)) {
+				return item;
+			}
+		}
+		return null;
+	}
 }
