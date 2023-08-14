@@ -11,7 +11,6 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
@@ -35,20 +34,18 @@ public class LuceneIndexManager {
 
 	private static final String LUCENE_INDEX_DIR = EnvUtils.getValue("LUCENE_INDEX_DIR");
 
-	private static final int LUCENE_INDEX_SEGMENT_NUM = EnvUtils.getInt("LUCENE_INDEX_SEGMENT_NUM", 1);
-
 	private static final int LUCENE_INDEX_DOC_STATS_DELAY_SECOND = EnvUtils.getInt(
 			"LUCENE_INDEX_DOC_STATS_DELAY_SECOND", 30);
 
-	private String indexDir;
+	private final String indexDir;
 
-	private Directory directory;
+	private final Directory directory;
 
-	private IndexWriter indexWriter;
+	private final IndexWriter indexWriter;
 
-	private DirectoryReader directoryReader;
+	private final Analyzer analyzer;
 
-	private Analyzer analyzer;
+	private SearcherManager searcherManager;
 
 	private ScheduledExecutorService docStatsExecutor;
 
@@ -85,6 +82,24 @@ public class LuceneIndexManager {
 		return document;
 	}
 
+	private void initSearcherManager() throws IOException {
+		this.searcherManager = new SearcherManager(indexWriter, false, false, new SearcherFactory());
+		ControlledRealTimeReopenThread<?> thread = new ControlledRealTimeReopenThread<>(indexWriter, searcherManager,
+				5.0, 0.025);
+		thread.setDaemon(true);
+		thread.setName("update-index-reader");
+		thread.start();
+	}
+
+	private void initDocStatTask() {
+		this.docStatsExecutor = Executors.newScheduledThreadPool(1,
+				new ThreadFactoryBuilder().setNamePrefix("lucene-doc-stats").build());
+		this.docStatsTask = (RunnableScheduledFuture<?>) this.docStatsExecutor.scheduleWithFixedDelay(() -> {
+			IndexWriter.DocStats docStats = this.indexWriter.getDocStats();
+			log.info("Lucene index doc stats, numDocs: {}", docStats.numDocs);
+		}, 3, LUCENE_INDEX_DOC_STATS_DELAY_SECOND, TimeUnit.SECONDS);
+	}
+
 	private void addShutdownHook() {
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			try {
@@ -102,26 +117,21 @@ public class LuceneIndexManager {
 			this.directory = FSDirectory.open(new File(indexDir).toPath());
 			// 使用 IK 分词器
 			this.analyzer = new IKAnalyzer();
-			IndexWriterConfig config = new IndexWriterConfig(this.analyzer);
-			this.indexWriter = new IndexWriter(directory, config);
-			this.commitAndForceMerge();
-			this.directoryReader = DirectoryReader.open(directory);
-			// 文档监控
-			this.docStatsExecutor = Executors.newScheduledThreadPool(1,
-					new ThreadFactoryBuilder().setNamePrefix("lucene-doc-stats").build());
-			this.docStatsTask = (RunnableScheduledFuture<?>) this.docStatsExecutor.scheduleWithFixedDelay(() -> {
-				IndexWriter.DocStats docStats = this.indexWriter.getDocStats();
-				log.info("Lucene index doc stats, numDocs: {}", docStats.numDocs);
-			}, 3, LUCENE_INDEX_DOC_STATS_DELAY_SECOND, TimeUnit.SECONDS);
+			this.indexWriter = new IndexWriter(directory, new IndexWriterConfig(this.analyzer));
+			// 清空索引
+			this.indexWriter.deleteAll();
+			this.initSearcherManager();
+			this.initDocStatTask();
 		} catch (Exception e) {
 			log.error("Failed to init LuceneIndexManager.", e);
+			throw new RuntimeException(e);
 		}
-		addShutdownHook();
+		this.addShutdownHook();
 	}
 
 	public void addDocument(IndexDoc indexDoc, DocType type) throws IOException {
 		this.indexWriter.addDocument(toDocument(indexDoc, type));
-		this.flushAndCommit();
+		this.indexWriter.commit();
 	}
 
 	public void updateDocument(IndexDoc doc, DocType type) throws IOException {
@@ -134,32 +144,15 @@ public class LuceneIndexManager {
 		this.indexWriter.deleteDocuments(new Term(DocField.ID, doc.getId()), new Term(DocField.TYPE, type.getType()));
 	}
 
-	public void flushAndCommit() throws IOException {
-		this.indexWriter.flush();
-		this.indexWriter.commit();
-	}
-
-	public void commitAndForceMerge() throws IOException {
-		this.flushAndCommit();
-		this.forceMerge();
-	}
-
-	public void forceMerge() throws IOException {
-		int segment = LUCENE_INDEX_SEGMENT_NUM;
-		log.info("Start to forceMerge, segment: {}", segment);
-		this.indexWriter.forceMerge(segment);
-		log.info("ForceMerge done.");
-	}
-
 	public List<IndexDoc> search(DocType type, String query, int size) throws IOException, ParseException {
 		QueryParser queryParser = new QueryParser(DocField.CONTENT, this.analyzer);
 		BooleanClause typeTerm = new BooleanClause(new TermQuery(new Term(DocField.TYPE, type.getType())),
 				BooleanClause.Occur.MUST);
 		BooleanClause queryTerm = new BooleanClause(queryParser.parse(query), BooleanClause.Occur.MUST);
 		BooleanQuery booleanQuery = new BooleanQuery.Builder().add(typeTerm).add(queryTerm).build();
-		DirectoryReader newDirectoryReader = DirectoryReader.openIfChanged(this.directoryReader);
 		List<IndexDoc> indexDocs = Lists.newArrayList();
-		IndexSearcher indexSearcher = new IndexSearcher(newDirectoryReader);
+		this.searcherManager.maybeRefresh();
+		IndexSearcher indexSearcher = searcherManager.acquire();
 		TopDocs topDocs = indexSearcher.search(booleanQuery, size);
 		ScoreDoc[] arr = topDocs.scoreDocs;
 		for (ScoreDoc scoreDoc : arr) {

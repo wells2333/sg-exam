@@ -21,5 +21,7 @@ public class MinioConfig {
 
     private String secretKey;
 
+	private String accessDomain;
+
     private int chunkSizeMb;
 }
