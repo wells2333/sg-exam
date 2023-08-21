@@ -2,7 +2,7 @@ package com.github.tangyi.common.lucene;
 
 public enum DocType {
 
-	COURSE("course"), EXAM("exam");
+	COURSE("course"), EXAM("exam"), OTHER("other");
 
 	private String type;
 

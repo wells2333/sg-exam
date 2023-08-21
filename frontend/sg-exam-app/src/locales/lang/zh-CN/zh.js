@@ -234,6 +234,14 @@ const zh = {
     video: {
       playError: '此视频暂无法播放，请稍后再试'
     }
+  },
+  searchForm: {
+    q: '请输入关键词',
+    course: '课程',
+    exam: '考试',
+    other: '其它',
+    searchSuccess: '搜索成功',
+    searchFailed: '搜索失败'
   }
 }
 

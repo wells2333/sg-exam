@@ -9,7 +9,7 @@
               <div class="classynav">
                 <div class="search-area hidden-sm-only">
                   <el-input type="search" prefix-icon="el-icon-search" v-model="query" name="search"
-                            id="search" :placeholder="$t('search')" @keyup.enter="search()"/>
+                            id="search" :placeholder="$t('search')" @keyup.enter.native="search()"/>
                 </div>
                 <el-menu :default-active="activeIndex"
                          mode="horizontal"
@@ -188,7 +188,7 @@ export default {
     },
     search() {
       if (isNotEmpty(this.query)) {
-        this.$router.push({name: 'exams', query: {query: this.query}})
+        this.$router.push({name: 'search', query: {query: this.query}})
       }
     },
     todo() {

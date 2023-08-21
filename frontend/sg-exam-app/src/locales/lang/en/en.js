@@ -233,6 +233,14 @@ const en = {
     video: {
       playError: 'This video cannot be played at the moment. Please try again later'
     }
+  },
+  searchForm: {
+    q: 'Please input keyword',
+    course: 'Course',
+    exam: 'Examination',
+    other: 'Other',
+    searchSuccess: 'Search success',
+    searchFailed: 'Search failed'
   }
 }
 

@@ -9,5 +9,7 @@ public class IndexDoc {
 
 	private String id;
 
+	private String type;
+
 	private String content;
 }

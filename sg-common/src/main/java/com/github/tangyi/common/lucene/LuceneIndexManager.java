@@ -21,6 +21,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -110,6 +111,20 @@ public class LuceneIndexManager {
 		}));
 	}
 
+	private Query parseQ(DocType type, String q) throws ParseException {
+		Query query;
+		QueryParser queryParser = new QueryParser(DocField.CONTENT, this.analyzer);
+		if (type != null) {
+			BooleanClause typeTerm = new BooleanClause(new TermQuery(new Term(DocField.TYPE, type.getType())),
+					BooleanClause.Occur.MUST);
+			BooleanClause queryTerm = new BooleanClause(queryParser.parse(q), BooleanClause.Occur.MUST);
+			query = new BooleanQuery.Builder().add(typeTerm).add(queryTerm).build();
+		} else {
+			query = queryParser.parse(q);
+		}
+		return query;
+	}
+
 	public LuceneIndexManager() {
 		try {
 			this.indexDir = getLuceneIndexDir();
@@ -144,21 +159,19 @@ public class LuceneIndexManager {
 		this.indexWriter.deleteDocuments(new Term(DocField.ID, doc.getId()), new Term(DocField.TYPE, type.getType()));
 	}
 
-	public List<IndexDoc> search(DocType type, String query, int size) throws IOException, ParseException {
-		QueryParser queryParser = new QueryParser(DocField.CONTENT, this.analyzer);
-		BooleanClause typeTerm = new BooleanClause(new TermQuery(new Term(DocField.TYPE, type.getType())),
-				BooleanClause.Occur.MUST);
-		BooleanClause queryTerm = new BooleanClause(queryParser.parse(query), BooleanClause.Occur.MUST);
-		BooleanQuery booleanQuery = new BooleanQuery.Builder().add(typeTerm).add(queryTerm).build();
+	public List<IndexDoc> search(@Nullable DocType type, String q, int size) throws IOException, ParseException {
 		List<IndexDoc> indexDocs = Lists.newArrayList();
 		this.searcherManager.maybeRefresh();
 		IndexSearcher indexSearcher = searcherManager.acquire();
-		TopDocs topDocs = indexSearcher.search(booleanQuery, size);
+		TopDocs topDocs = indexSearcher.search(parseQ(type, q), size);
 		ScoreDoc[] arr = topDocs.scoreDocs;
 		for (ScoreDoc scoreDoc : arr) {
 			Document document = indexSearcher.doc(scoreDoc.doc);
-			indexDocs.add(
-					IndexDoc.builder().id(document.get(DocField.ID)).content(document.get(DocField.CONTENT)).build());
+			indexDocs.add(IndexDoc.builder()//
+					.id(document.get(DocField.ID))//
+					.type(document.get(DocField.TYPE))//
+					.content(document.get(DocField.CONTENT))//
+					.build());
 		}
 		return indexDocs;
 	}
