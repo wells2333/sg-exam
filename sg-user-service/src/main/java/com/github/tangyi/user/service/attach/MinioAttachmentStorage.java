@@ -253,16 +253,18 @@ public class MinioAttachmentStorage extends AbstractAttachmentStorage {
 						GetPresignedObjectUrlArgs.builder().method(Method.GET).bucket(minioConfig.getBucket())
 								.object(fileName).expiry((int) expire, TimeUnit.SECONDS).build());
 			} else {
-				url = minioClient.getPresignedObjectUrl(
-						GetPresignedObjectUrlArgs.builder().method(Method.GET).bucket(minioConfig.getBucket())
-								.object(fileName).build());
+				// 直接拼接出访问路径
+				url = minioConfig.getEndpoint() + "/" + minioConfig.getBucket() + "/" + fileName;
 			}
 			// 替换访问域名
 			if (StringUtils.isNotEmpty(url) && StringUtils.isNotEmpty(minioConfig.getAccessDomain())) {
 				UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(url).build();
 				String path = uriComponents.getPath();
 				String query = uriComponents.getQuery();
-				url = minioConfig.getAccessDomain() + path + "?" + query;
+				url = minioConfig.getAccessDomain() + path;
+				if (StringUtils.isNotEmpty(query)) {
+					url = url + "?" + query;
+				}
 			}
 		} catch (Exception e) {
 			log.error("Failed to get download url, fileName: {}", fileName, e);
