@@ -25,6 +25,7 @@ services:
       - "4004:4004"
     volumes:
       - ./config-repo/:/config-repo/
+      - ./logs/:/logs/
 
   redis:
     image: redis:latest

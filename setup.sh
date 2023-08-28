@@ -5,15 +5,15 @@ BASENAME=$(basename "$0")
 SG_EXAM_APP="sg-exam-app"
 SG_EXAM_NEXT_ADMIN="sg-exam-next-admin"
 SG_EXAM_NEXT_APP="sg-exam-next-app"
-SG_EXAM_USER_SERVICE="sg-exam-user-service"
+SG_EXAM_USER_SERVICE="sg-user-service"
 
 function update_version() {
   local version="$1"
   echo "Updating project version to $version ..."
-  sed -i "" "s/version = '[0-9].[0-9].[0-9]'/version = '$version'/" build.gradle
-  sed -i "" "s/version=[0-9].[0-9].[0-9]/version=$version/" gradle.properties
-  sed -i "" "s/SG_EXAM_VERSION=[0-9].[0-9].[0-9]/SG_EXAM_VERSION=$version/" .env
-  sed -i "" "s/version-[0-9].[0-9].[0-9]/version-$version/" README.md
+  sed -i "" "s/version = '[0-9]\{1,2\}.[0-9]\{1,2\}.[0-9]\{1,2\}'/version = '$version'/" build.gradle
+  sed -i "" "s/version=[0-9]\{1,2\}.[0-9]\{1,2\}.[0-9]\{1,2\}/version=$version/" gradle.properties
+  sed -i "" "s/SG_EXAM_VERSION=[0-9]\{1,2\}.[0-9]\{1,2\}.[0-9]\{1,2\}/SG_EXAM_VERSION=$version/" .env
+  sed -i "" "s/version-[0-9]\{1,2\}.[0-9]\{1,2\}.[0-9]\{1,2\}/version-$version/" README.md
   cd sg-api && update_build "$version"
   cd ../sg-common && update_build "$version"
   cd ../sg-exam-service && update_build "$version"
@@ -30,12 +30,12 @@ function update_version() {
 
 function update_build() {
   local version="$1"
-  sed -i "" "s/version '[0-9].[0-9].[0-9]'/version '$version'/" build.gradle
+  sed -i "" "s/version '[0-9]\{1,2\}.[0-9]\{1,2\}.[0-9]\{1,2\}'/version '$version'/" build.gradle
 }
 
 function update_package_json() {
   local version="$1"
-  sed -i "" "s/\"version\": \"[0-9].[0-9].[0-9]\"/\"version\": \"$version\"/" package.json
+  sed -i "" "s/\"version\": \"[0-9]\{1,2\}.[0-9]\{1,2\}.[0-9]\{1,2\}\"/\"version\": \"$version\"/" package.json
 }
 
 function build_web() {
@@ -100,7 +100,7 @@ function start_service() {
 
 function stop_service() {
   echo "Stopping services ..."
-  docker-compose stop
+  docker-compose stop -t 60
   echo "Services has been stopped successfully."
 }
 
@@ -123,26 +123,37 @@ function install_docker() {
 }
 
 function setup() {
-  cd ~
+  echo "Start to setup, current directory: $(pwd)"
   if [ -d "sg-exam" ]; then
     echo "Directory sg-exam is exists."
     return
   fi
-  echo "Start to setup."
   mkdir -p sg-exam
+  echo "Create directory sg-exam."
   cd sg-exam
   wget https://gitee.com/wells2333/sg-exam/raw/master/setup.sh
   wget https://gitee.com/wells2333/sg-exam/raw/master/.env
   wget https://gitee.com/wells2333/sg-exam/raw/master/docker-compose.yml
+  # 删除所有 build 的配置
+  sed -e "/build:/d" docker-compose.yml > docker-compose.yml
+
+  echo "Create directory config-repo."
   mkdir -p config-repo
   cd config-repo
   wget https://gitee.com/wells2333/sg-exam/raw/master/config-repo/application.yml
   wget https://gitee.com/wells2333/sg-exam/raw/master/config-repo/prometheus.yml
   wget https://gitee.com/wells2333/sg-exam/raw/master/config-repo/sg-user-service.yml
 
+  echo "Create directory env."
   mkdir -p env
+
+  echo "Create directory mysql."
   mkdir -p mysql
+
+  echo "Create directory nginx."
   mkdir -p nginx
+
+  echo "Create directory redis."
   mkdir -p redis
 
   cd env
@@ -165,19 +176,19 @@ function setup() {
 
 function print_usage() {
   echo "Usage: $BASENAME COMMAND
-       $BASENAME --help
+       $BASENAME -help
   A online examination application.
   Commands:
-      help                Get detailed help and usage
-      build_f             Build frontend services
-      build               Build backend services and docker image
-      push                Push docker image to registry
-      start               Start services
-      stop                Stop services
-      restart             Pull docker image and restart services
-      logs                Tails the services logs
-      version             Update project version to a specify version
-      setup               Setup config directory from git"
+      -help                Get detailed help and usage
+      -build_f             Build frontend services
+      -build               Build backend services and docker image
+      -push                Push docker image to registry
+      -start               Start services
+      -stop                Stop services
+      -restart             Pull docker image and restart services
+      -logs                Tails the services logs
+      -version             Update project version to a specify version
+      -setup               Setup config directory from git"
   exit 1
 }
 
@@ -194,40 +205,40 @@ function main() {
     print_usage
     exit
     ;;
-  build_f)
+  -build_f | --build_f | build_f)
     build_frontend
     ;;
-  build_admin)
+  -build_admin | --build_admin | build_admin)
     build_admin
     ;;
-  build)
+  -build | --build | build)
     build_service
     ;;
-  push)
+  -push | --push | push)
     push_service
     ;;
-  start)
+  -start | --start | start)
     start_service
     ;;
-  stop)
+  -stop | --stop | stop)
     stop_service
     ;;
-  restart)
+  -restart | --restart | restart)
     stop_service
     start_service
     ;;
-  logs)
+  -logs | --logs | logs)
     logs
     ;;
-  version)
+  -version | --version | version)
     update_version "$version"
     ;;
-  setup)
+  -setup | --setup | setup)
     setup
     ;;
   *)
     echo "$BASENAME: '$cmd' is not a $BASENAME command."
-    echo "Run '$BASENAME --help' for more information."
+    echo "Run '$BASENAME -help' for more information."
     exit 1
     ;;
   esac

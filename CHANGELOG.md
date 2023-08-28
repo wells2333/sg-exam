@@ -7,6 +7,7 @@ sg-exam Releases
 
 - 前端全文搜索页面优化
 - MinIO 展示路径获取逻辑优化
+- 启动脚本、docker-compose.yml 优化
 
 ## Version 0.0.10 (2023-08-13)
 
