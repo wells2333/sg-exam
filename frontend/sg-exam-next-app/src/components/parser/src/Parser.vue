@@ -1,5 +1,5 @@
 <template>
-  <view v-if="env === 'WEAPP'">
+  <view v-if="env">
     <wx-parse :class="customClass" :html="html" key={Math.random()}></wx-parse>
   </view>
   <view v-else>
@@ -11,6 +11,7 @@
 import wxParse from '../../wxparse/index';
 import Taro from '@tarojs/taro';
 import {watch} from 'vue';
+import { isWeapp } from '../../../utils/envUtil'
 
 export default {
   components: {
@@ -27,7 +28,6 @@ export default {
     }
   },
   setup(props) {
-    const env = Taro.getEnv();
     watch(
         () => props.html,
         async (html) => {
@@ -35,7 +35,7 @@ export default {
         {flush: 'post'},
     );
     return {
-      env
+      env: isWeapp()
     }
   }
 }
