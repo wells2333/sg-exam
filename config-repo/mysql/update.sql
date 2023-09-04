@@ -171,3 +171,24 @@ INSERT INTO `sys_config` (`id`, `config_key`, `config_value`, `config_desc`, `cr
 ALTER TABLE `exam_course` ADD COLUMN `attach_id` bigint(20) NULL COMMENT '课件 ID' AFTER `course_status`;
 
 INSERT INTO `sys_attachment_group` (`id`, `group_name`, `group_code`, `url_expire`, `creator`, `create_time`, `operator`, `update_time`, `is_deleted`, `tenant_code`, `remark`, `storage_type`) VALUES (12, '课程课件', 'course/attach', 00000000033233472000, 'admin', '2023-07-20 22:27:40', 'admin', '2023-07-20 22:27:40', 0, 'gitee', NULL, 2);
+
+ALTER TABLE `sys_attachment` ADD COLUMN `upload_id` varchar(255) NULL COMMENT '多分片上传的 uploadId';
+
+-- 2023年08月24日23:05:58
+CREATE TABLE `sys_attachment_chunk` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `chunk_name` varchar(255) NOT NULL DEFAULT '' COMMENT '分块名称',
+    `chunk_number` int(10) NOT NULL DEFAULT '0' COMMENT '分块编号',
+    `chunk_data_size` int(10) NOT NULL DEFAULT '0' COMMENT '分块大小',
+    `chunk_status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '分块状态，0：待上传，1：上传成功，2：上传失败，3：已合并',
+    `creator` varchar(128) NOT NULL DEFAULT '' COMMENT '创建人',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `operator` varchar(128) NOT NULL COMMENT '修改人',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    `is_deleted` tinyint(1) unsigned zerofill NOT NULL COMMENT '删除标记',
+    `tenant_code` varchar(16) NOT NULL DEFAULT '' COMMENT '租户编号',
+    `chunk_upload_res` varchar(1024) NOT NULL COMMENT '分块上传返回值',
+    `hash` varchar(255) NOT NULL DEFAULT '' COMMENT '哈希值',
+    PRIMARY KEY (`id`) USING BTREE,
+    KEY `idx_hash` (`hash`)
+) ENGINE=InnoDB AUTO_INCREMENT=600 DEFAULT CHARSET=utf8 COMMENT='附件分块表';

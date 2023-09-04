@@ -170,7 +170,11 @@ export default {
       return realFormatSecond(second)
     },
     transPlayPause(value) {
-      return value ? this.$t('media.audio.pause') : this.$t('media.audio.play')
+      if (this) {
+        return value ? this.$t('media.audio.pause') : this.$t('media.audio.play')
+      } else {
+        return ''
+      }
     },
     transMutedOrNot(value) {
       return value ? this.$t('media.audio.notMuted') : this.$t('media.audio.muted')

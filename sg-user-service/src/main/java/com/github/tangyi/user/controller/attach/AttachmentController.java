@@ -12,6 +12,7 @@ import com.github.tangyi.common.log.OperationType;
 import com.github.tangyi.common.log.SgLog;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.properties.SysProperties;
+import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.common.vo.AttachmentVo;
 import com.github.tangyi.user.service.attach.AttachGroupService;
 import com.github.tangyi.user.service.attach.AttachmentService;
@@ -34,7 +35,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -78,16 +78,20 @@ public class AttachmentController extends BaseController {
     @Operation(summary = "上传文件分片")
     public R<Boolean> uploadChunk(
             @Parameter(description = "要上传的文件", required = true) @RequestParam("file") MultipartFile file,
-            @RequestParam("hash") String hash, @RequestParam("index") Integer index) throws IOException {
+            @RequestParam("hash") String hash, @RequestParam("index") Integer index,
+            @RequestParam(value = "uploadId", required = false) String uploadId) throws IOException {
         ChunkUploadContext context = new ChunkUploadContext();
         context.setMultipartFile(file);
+        context.setUploadId(uploadId);
         context.hash(hash).index(index);
+        context.setUser(SysUtil.getUser());
+        context.setTenantCode(SysUtil.getTenantCode());
         return R.success(attachmentManager.uploadChunk(context));
     }
 
     @PostMapping("mergeChunks")
     @Operation(summary = "合并文件分片")
-    public R<Attachment> mergeChunks(@RequestParam String hash) throws IOException {
+    public R<Attachment> mergeChunks(@RequestParam String hash) {
         return R.success(attachmentManager.mergeChunks(hash));
     }
 

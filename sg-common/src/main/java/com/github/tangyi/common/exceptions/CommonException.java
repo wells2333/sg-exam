@@ -4,7 +4,7 @@ import java.io.Serial;
 
 public class CommonException extends RuntimeException {
 
-	@Serial
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public CommonException() {
@@ -20,6 +20,6 @@ public class CommonException extends RuntimeException {
     }
 
     public CommonException(Throwable throwable, String msg) {
-        super(throwable);
+        super(msg, throwable);
     }
 }

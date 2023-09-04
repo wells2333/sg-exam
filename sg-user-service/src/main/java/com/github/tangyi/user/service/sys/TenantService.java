@@ -54,7 +54,11 @@ public class TenantService extends CrudService<TenantMapper, Tenant> implements 
 		if (CollectionUtils.isNotEmpty(page.getList())) {
 			for (Tenant tenant : page.getList()) {
 				if (tenant.getImageId() != null) {
-					tenant.setImageUrl(attachmentManager.getPreviewUrl(tenant.getImageId()));
+					try {
+						tenant.setImageUrl(attachmentManager.getPreviewUrl(tenant.getImageId()));
+					} catch (Exception e) {
+						log.error("Failed to get tenant image url, id: {}", tenant.getImageId(), e);
+					}
 				}
 			}
 		}

@@ -19,6 +19,8 @@ public class ChunkUploadContext extends UploadContext {
 
 	private String filename;
 
+	private String uploadId;
+
 	public static ChunkUploadContext of(AttachTypeEnum type, MultipartFile file) {
 		return of(AttachGroup.of(type), file, SysUtil.getUser(), SysUtil.getTenantCode());
 	}

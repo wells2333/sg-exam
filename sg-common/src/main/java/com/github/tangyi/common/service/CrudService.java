@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public abstract class CrudService<D extends CrudMapper<T>, T extends BaseEntity<T>> extends BaseService
+public abstract class CrudService<D extends CrudMapper<T>, T extends BaseEntity<T>> extends IndexCrudService
 		implements ICrudService<T> {
 
 	@Autowired

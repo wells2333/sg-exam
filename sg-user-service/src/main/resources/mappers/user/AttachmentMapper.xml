@@ -9,6 +9,7 @@
         <result column="group_code" property="groupCode"/>
         <result column="url" property="url"/>
         <result column="hash" property="hash"/>
+        <result column="upload_id" property="uploadId"/>
         <result column="creator" property="creator"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>

@@ -46,6 +46,7 @@ minio:
   bucket: ${MINIO_BUCKET:yunmianshi}
   access-key: ${MINIO_ACCESS_KEY:zWXHMYJl99MGISbaVanX}
   secret-key: ${MINIO_SECRET_KEY:kPDoBRlxpIwMEHje1ve5l6e3TGSGUfwE1ONSzRb4}
+  access-domain: ${MINIO_ACCESS_DOMAIN:}
   chunk-size-mb: ${MINIO_CHUNK_SIZE_MB:10}
 
 sms:

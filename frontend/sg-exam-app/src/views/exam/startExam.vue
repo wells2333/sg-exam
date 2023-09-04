@@ -165,7 +165,7 @@ export default {
     // 保存当前题目，同时根据序号加载下一题
     saveCurrentSubjectAndGetNextSubject(nextType, nextSubjectSort, subjectId = undefined) {
       if (this.saving) {
-        return;
+        return
       }
       try {
         this.saving = true

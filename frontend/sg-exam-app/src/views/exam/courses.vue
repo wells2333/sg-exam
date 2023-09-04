@@ -4,6 +4,17 @@
       <h3>{{$t('exam.course.courses.popularCourses')}}</h3>
     </div>
     <div class="content-container">
+      <div class="search-form">
+        <el-form ref="examForm" :inline="true" :model="query" label-width="100px" class="examForm">
+          <el-form-item label="" prop="courseName">
+            <el-input v-model="query.courseName" autocomplete="off" :placeholder="$t('exam.course.courseName')" />
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="submitForm('examForm')">{{ $t('search') }}</el-button>
+            <el-button @click="resetForm('examForm')">{{ $t('reset') }}</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
       <div class="course-card-list">
         <transition name="fade-transform" mode="out-in" v-for="course in courseList" :key="course.id">
           <div class="single-popular-course" v-show="course.show" @click="handleStartCourse(course)">
@@ -69,9 +80,20 @@ export default {
   },
   methods: {
     simpleStrFilter: simpleStrFilter,
-    getCourseList () {
+    submitForm () {
+      this.query.page = 1
+      this.getCourseList(true)
+    },
+    resetForm () {
+      this.query.courseName = ''
+      this.getCourseList(true)
+    },
+    getCourseList (reset = false) {
       this.loading = true
       courseList(this.query).then(response => {
+        if (reset) {
+          this.courseList = []
+        }
         const { total, isLastPage, list } = response.data.result
         this.updateCourseList(list)
         this.total = total

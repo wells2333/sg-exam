@@ -41,6 +41,11 @@ export const constantRouterMap = [
         component: () => import('@/views/exam/exams')
       },
       {
+        path: '/exam-details',
+        name: 'exam-details',
+        component: () => import('@/views/exam/examDetails')
+      },
+      {
         path: '/start/:id',
         name: 'start',
         component: () => import('@/views/exam/startExam')
@@ -94,7 +99,12 @@ export const constantRouterMap = [
         path: '/reset-password',
         name: 'reset-password',
         component: () => import('@/views/personal/resetPassword')
-      }
+      },
+      {
+        path: '/search',
+        name: 'search',
+        component: () => import('@/views/exam/search')
+      },
     ]
   },
   {
