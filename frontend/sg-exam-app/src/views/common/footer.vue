@@ -13,7 +13,7 @@
           </el-col>
           <el-col :span="6" class="footer-col">
             <h4>{{$t('common.tool')}}</h4>
-            <a target="_blank" href="http://element-cn.eleme.io">Element Ui</a>
+            <a target="_blank" href="https://element.eleme.cn/#/zh-CN">Element UI</a>
             <a target="_blank" href="https://cn.vuejs.org/">Vue</a>
           </el-col>
           <el-col :span="6" class="footer-col">

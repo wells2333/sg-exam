@@ -468,11 +468,13 @@ export default {
     vertical-align: middle;
     margin-right: 5px;
   }
-  .sms-code-input {
-    width: 55%;
-  }
-  .sms-code-send {
-    width: 40% !important;
-    margin-left: 10px;
+  .login-form {
+    .sms-code-input {
+      width: 55% ;
+    }
+    .sms-code-send {
+      width: 40% !important;
+      margin-left: 10px;
+    }
   }
 </style>

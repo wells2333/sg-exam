@@ -11,7 +11,7 @@
             </view>
             <view class="subject-choice-checkbox__title">
               <view class="subject-choice-option-name">
-                <nut-tag color="gray" plain round size="30">{{option.value}}</nut-tag>
+                <view class="subject-choice-option-tag">{{ option.value }}</view>
               </view>
               <view v-html="option.label" class="choice-option-label"></view>
             </view>
@@ -178,8 +178,8 @@ export default defineComponent({
 }
 
 .subject-choice-checkbox__option-wrap {
-  border-radius: 8px;
-  padding: 10px 10px;
+  // border-radius: 8px;
+  // padding: 10px 10px;
 }
 
 .subject-choice-checkbox__option-cnt {
@@ -199,6 +199,15 @@ export default defineComponent({
 .subject-choice-option-name {
   margin-left: 6px;
   margin-right: 16px;
+  .subject-choice-option-tag {
+    border: 1px solid grey;
+    background: #fff;
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    text-align: center;
+    line-height: 32px;
+  }
 }
 
 .at-checkbox__option--selected {

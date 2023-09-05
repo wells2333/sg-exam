@@ -34,7 +34,7 @@
             </div>
           </el-row>
           <div class="search-res-items">
-            <div v-for="(item, index) in list" :key="index" class="search-res-item" @click="handleClickItem(item)">
+            <div v-for="item in list" :key="item.id" class="search-res-item" @click="handleClickItem(item)">
               <el-row>
                 <el-col :span="2">
                   <div class="item-thumb">
