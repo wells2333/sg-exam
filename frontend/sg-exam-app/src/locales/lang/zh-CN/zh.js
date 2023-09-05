@@ -137,14 +137,24 @@ const zh = {
       records: '考试记录'
     },
     exams: {
+      examRemark: '考试介绍',
+      examAttention: '注意事项',
+      examTime: '考试时间',
+      unLimitTime: '无限制',
       all: '全部',
       latestRelease: '最新发布',
       mostClicks: '最多点击',
       parameters: '参数人数',
       end: '考试已结束',
       notStarted: '考试未开始',
+      start: '开始考试',
       sureStart: '确定要开始吗？',
-      startFailed: '开始考试失败'
+      startFailed: '开始考试失败',
+      evaluation: '考试评价',
+      inputEvaluation: '请输入评价内容',
+      submitSuccess: '提交成功',
+      doNotResubmit: '请勿重复提交',
+      defaultEvaluate: '用户默认好评'
     },
     startExam: {
       last: '上一题',

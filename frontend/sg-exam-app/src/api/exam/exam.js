@@ -2,6 +2,13 @@ import request from '@/router/axios'
 
 const baseExaminationUrl = '/sg-user-service/v1/examination/'
 
+export function canStart (id) {
+  return request({
+    url: baseExaminationUrl + 'canStart?id=' + id,
+    method: 'get'
+  })
+}
+
 export function fetchList (query) {
   return request({
     url: baseExaminationUrl + 'userExaminationList',
@@ -21,6 +28,14 @@ export function fetchAllSubjectList (query) {
 export function getObj (id, query) {
   return request({
     url: baseExaminationUrl + id,
+    method: 'get',
+    params: query
+  })
+}
+
+export function getObjDetail (id, query) {
+  return request({
+    url: baseExaminationUrl + id + '/detail',
     method: 'get',
     params: query
   })

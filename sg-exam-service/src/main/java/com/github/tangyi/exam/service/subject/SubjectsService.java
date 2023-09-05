@@ -104,18 +104,10 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
     public SubjectDto getSubject(Long subjectId, Integer type) {
         SubjectDto dto = subjectServiceFactory.service(type).getSubject(subjectId);
         if (StringUtils.isEmpty(dto.getSubjectVideoUrl()) && dto.getSubjectVideoId() != null) {
-            try {
-                dto.setSubjectVideoUrl(attachmentManager.getPreviewUrl(dto.getSubjectVideoId()));
-            } catch (Exception e) {
-                log.error("Failed to get video url, subjectId: {}", subjectId, e);
-            }
-        }
+			dto.setSubjectVideoUrl(attachmentManager.getPreviewUrlIgnoreException(dto.getSubjectVideoId()));
+		}
         if (dto.getSpeechId() != null) {
-            try {
-                dto.setSpeechUrl(attachmentManager.getPreviewUrl(dto.getSpeechId()));
-            } catch (Exception e) {
-                log.error("Failed to get speech url, subjectId: {}", subjectId, e);
-            }
+			dto.setSpeechUrl(attachmentManager.getPreviewUrlIgnoreException(dto.getSpeechId()));
         }
         return dto;
     }
@@ -384,10 +376,10 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
         // 获取语音和视频的 URL
         for (SubjectDto dto : dtoList) {
             if (dto.getSpeechId() != null) {
-                dto.setSpeechUrl(attachmentManager.getPreviewUrl(dto.getSpeechId()));
+                dto.setSpeechUrl(attachmentManager.getPreviewUrlIgnoreException(dto.getSpeechId()));
             }
             if (dto.getSubjectVideoId() != null) {
-                dto.setSubjectVideoUrl(attachmentManager.getPreviewUrl(dto.getSubjectVideoId()));
+                dto.setSubjectVideoUrl(attachmentManager.getPreviewUrlIgnoreException(dto.getSubjectVideoId()));
             }
         }
         return dtoList;

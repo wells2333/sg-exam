@@ -157,21 +157,17 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 	}
 
 	public void initCourseInfo(List<Course> courses) {
-		try {
-			ExamCourseMember member = new ExamCourseMember();
-			for (Course course : courses) {
-				// 图片
-				String imageUrl = null;
-				if (course.getImageId() != null && course.getImageId() != 0L) {
-					imageUrl = attachmentManager.getPreviewUrl(course.getImageId());
-				}
-				course.setImageUrl(imageUrl);
-				// 报名人数
-				member.setCourseId(course.getId());
-				course.setMemberCount(memberService.findMemberCountByCourseId(member));
+		ExamCourseMember member = new ExamCourseMember();
+		for (Course course : courses) {
+			// 图片
+			String imageUrl = null;
+			if (course.getImageId() != null && course.getImageId() != 0L) {
+				imageUrl = attachmentManager.getPreviewUrlIgnoreException(course.getImageId());
 			}
-		} catch (Exception e) {
-			log.error("initCourseInfo failed", e);
+			course.setImageUrl(imageUrl);
+			// 报名人数
+			member.setCourseId(course.getId());
+			course.setMemberCount(memberService.findMemberCountByCourseId(member));
 		}
 	}
 

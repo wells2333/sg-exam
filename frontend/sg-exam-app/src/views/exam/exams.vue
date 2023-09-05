@@ -25,12 +25,12 @@
           <div>
             <a href="javascript: void(-1);" class="card-item-snapshoot"
                :style="'background-image: url(' + exam.imageUrl + ');'"
-               @click="startExam(exam)">
+               @click="handleClickExam(exam)">
             </a>
           </div>
           <div class="card-item-detail">
             <div>
-              <a href="javascript:void(-1);" @click="startExam(exam)"></a>
+              <a href="javascript:void(-1);" @click="handleClickExam(exam)"></a>
               <h3>
                 <div class="card-item-name mb-12">
                   {{ exam.examinationName  | simpleStrFilter }}
@@ -60,10 +60,7 @@
 <script>
 import {mapGetters, mapState} from 'vuex'
 import { fetchList } from '@/api/exam/exam'
-import { getCurrentTime } from '@/api/exam/examRecord'
-import { isNotEmpty, messageFail, messageWarn, getAttachmentPreviewUrl, formatDate } from '@/utils/util'
-import store from '@/store'
-import moment from 'moment'
+import { isNotEmpty, messageWarn, getAttachmentPreviewUrl, formatDate } from '@/utils/util'
 import PanThumb from '@/components/PanThumb'
 
 export default {
@@ -95,11 +92,6 @@ export default {
         pageSize: 6,
         examinationName: '',
         status: 1
-      },
-      tempExamRecord: {
-        id: null,
-        userId: null,
-        examinationId: null
       },
       // 默认全部
       activeTag: '1'
@@ -166,38 +158,8 @@ export default {
         })
       }, 1000)
     },
-    startExam (exam) {
-      this.tempExamRecord.examinationId = exam.id
-      this.tempExamRecord.userId = this.userInfo.id
-      getCurrentTime().then(response => {
-        const currentTime = moment(response.data.data)
-        if (currentTime.isAfter(exam.endTime)) {
-          messageWarn(this, this.$t('exam.exams.end'))
-        } else if (currentTime.isBefore(exam.startTime)) {
-          messageWarn(this, this.$t('exam.exams.notStarted'))
-        } else {
-          this.$confirm(this.$t('exam.exams.sureStart'), this.$t('tips'), {
-            confirmButtonText: this.$t('sure'),
-            cancelButtonText: this.$t('cancel'),
-            type: 'warning'
-          }).then(() => {
-            // 开始考试
-            store.dispatch('StartExam', this.tempExamRecord).then(() => {
-              if (this.examRecord === undefined || this.subject === undefined) {
-                messageWarn(this, this.$t('exam.exams.startFailed'))
-                return
-              }
-              this.$router.push({ path: `/start/${exam.id}` })
-            }).catch(() => {
-              messageWarn(this, this.$t('exam.exams.startFailed'))
-            })
-          }).catch((err) => {
-            console.error(err)
-          })
-        }
-      }).catch(() => {
-        messageFail(this, this.$t('exam.exams.startFailed'))
-      })
+    handleClickExam (exam) {
+      this.$router.push({name: 'exam-details', query: {examId: exam.id}})
     },
     getAvatar (avatar) {
       return getAttachmentPreviewUrl(this.sysConfig, avatar)

@@ -1,41 +1,36 @@
 package com.github.tangyi.common.service;
 
-import com.github.tangyi.common.exceptions.CommonException;
 import com.github.tangyi.common.lucene.DocType;
 import com.github.tangyi.common.lucene.IndexDoc;
-import com.github.tangyi.common.lucene.LuceneIndexManager;
+import com.github.tangyi.common.lucene.IndexDocOperation;
+import com.github.tangyi.common.lucene.LuceneMessageManager;
+import com.github.tangyi.common.utils.SpringContextHolder;
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.IOException;
 
 public abstract class IndexCrudService extends BaseService {
 
 	public void addIndex(Long id, DocType type, String... contents) {
-		try {
-			String content = StringUtils.join(contents, " ");
-			IndexDoc doc = IndexDoc.builder().id(id.toString()).content(content).build();
-			LuceneIndexManager.getInstance().addDocument(doc, type);
-		} catch (IOException e) {
-			throw new CommonException(e);
-		}
+		String content = StringUtils.join(contents, " ");
+		IndexDoc doc = new IndexDoc();
+		doc.setId(id.toString());
+		doc.setContent(content);
+		SpringContextHolder.getApplicationContext().getBean(LuceneMessageManager.class)
+				.sendMessage(doc, type, IndexDocOperation.ADD);
 	}
 
 	public void updateIndex(Long id, DocType type, String... contents) {
-		try {
-			String content = StringUtils.join(contents, " ");
-			IndexDoc doc = IndexDoc.builder().id(id.toString()).content(content).build();
-			LuceneIndexManager.getInstance().updateDocument(doc, type);
-		} catch (IOException e) {
-			throw new CommonException(e);
-		}
+		String content = StringUtils.join(contents, " ");
+		IndexDoc doc = new IndexDoc();
+		doc.setId(id.toString());
+		doc.setContent(content);
+		SpringContextHolder.getApplicationContext().getBean(LuceneMessageManager.class)
+				.sendMessage(doc, type, IndexDocOperation.UPDATE);
 	}
 
 	public void deleteIndex(Long id, DocType type) {
-		try {
-			IndexDoc doc = IndexDoc.builder().id(id.toString()).build();
-			LuceneIndexManager.getInstance().deleteDocument(doc, type);
-		} catch (IOException e) {
-			throw new CommonException(e);
-		}
+		IndexDoc doc = new IndexDoc();
+		doc.setId(id.toString());
+		SpringContextHolder.getApplicationContext().getBean(LuceneMessageManager.class)
+				.sendMessage(doc, type, IndexDocOperation.DEL);
 	}
 }

@@ -89,7 +89,7 @@
 <script>
 import OMain from './common/main'
 import {mapGetters, mapState} from 'vuex'
-import {isNotEmpty, messageWarn} from '@/utils/util'
+import {messageWarn} from '@/utils/util'
 
 export default {
   components: {
@@ -187,7 +187,7 @@ export default {
       }
     },
     search() {
-      if (isNotEmpty(this.query)) {
+      if (this.query && this.query !== '') {
         this.$router.push({name: 'search', query: {query: this.query}})
       }
     },

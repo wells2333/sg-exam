@@ -483,7 +483,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 				UserVo tempUserVo = new UserVo();
 				BeanUtils.copyProperties(tempUser, tempUserVo);
 				if (tempUser.getAvatarId() != null) {
-					tempUserVo.setAvatarUrl(attachmentManager.getPreviewUrl(tempUser.getAvatarId()));
+					tempUserVo.setAvatarUrl(attachmentManager.getPreviewUrlIgnoreException(tempUser.getAvatarId()));
 				}
 				userVos.add(tempUserVo);
 			}
@@ -564,11 +564,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 		Map<Long, String> result = Maps.newHashMapWithExpectedSize(users.size());
 		for (User user : users) {
 			if (user.getAvatarId() != null) {
-				try {
-					result.put(user.getId(), attachmentManager.getPreviewUrl(user.getAvatarId()));
-				} catch (Exception e) {
-					log.error("findUserAvatarUrl failed, userId: {}", user.getId(), e);
-				}
+				result.put(user.getId(), attachmentManager.getPreviewUrlIgnoreException(user.getAvatarId()));
 			}
 		}
 		return result;
@@ -590,14 +586,10 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	}
 
 	private void getUserAvatar(UserInfoDto userInfoDto, User user) {
-		try {
-			if (user.getAvatarId() != null && user.getAvatarId() != 0L) {
-				userInfoDto.setAvatar(attachmentManager.getPreviewUrl(user.getAvatarId()));
-			} else {
-				userInfoDto.setAvatar(DEFAULT_AVATAR_URL);
-			}
-		} catch (Exception e) {
-			log.error("getUserAvatar failed", e);
+		if (user.getAvatarId() != null && user.getAvatarId() != 0L) {
+			userInfoDto.setAvatar(attachmentManager.getPreviewUrlIgnoreException(user.getAvatarId()));
+		} else {
+			userInfoDto.setAvatar(DEFAULT_AVATAR_URL);
 		}
 	}
 

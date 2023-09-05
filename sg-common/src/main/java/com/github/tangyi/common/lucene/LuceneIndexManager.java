@@ -167,11 +167,11 @@ public class LuceneIndexManager {
 		ScoreDoc[] arr = topDocs.scoreDocs;
 		for (ScoreDoc scoreDoc : arr) {
 			Document document = indexSearcher.doc(scoreDoc.doc);
-			indexDocs.add(IndexDoc.builder()//
-					.id(document.get(DocField.ID))//
-					.type(document.get(DocField.TYPE))//
-					.content(document.get(DocField.CONTENT))//
-					.build());
+			IndexDoc indexDoc = new IndexDoc();
+			indexDoc.setId(document.get(DocField.ID));
+			indexDoc.setType(document.get(DocField.TYPE));
+			indexDoc.setContent(document.get(DocField.CONTENT));
+			indexDocs.add(indexDoc);
 		}
 		return indexDocs;
 	}

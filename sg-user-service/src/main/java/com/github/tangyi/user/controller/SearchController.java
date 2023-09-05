@@ -226,10 +226,6 @@ public class SearchController extends BaseController {
 		if (imageId == null) {
 			return;
 		}
-		try {
-			resItem.setImageUrl(attachmentManager.getPreviewUrl(imageId));
-		} catch (Exception e) {
-			log.error("Failed to init image url, imageId: {}", imageId, e);
-		}
+		resItem.setImageUrl(attachmentManager.getPreviewUrlIgnoreException(imageId));
 	}
 }

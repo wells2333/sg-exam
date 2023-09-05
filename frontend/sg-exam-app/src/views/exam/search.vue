@@ -34,7 +34,7 @@
             </div>
           </el-row>
           <div class="search-res-items">
-            <div v-for="item in list" class="search-res-item" @click="handleClickItem(item)">
+            <div v-for="(item, index) in list" :key="index" class="search-res-item" @click="handleClickItem(item)">
               <el-row>
                 <el-col :span="2">
                   <div class="item-thumb">
@@ -69,7 +69,7 @@
           <div class="search-rank">
             <h3>热搜榜</h3>
             <div class="hot-search">
-              <el-row class="hot-search-item" v-for="(item, index) in rankWords">
+              <el-row class="hot-search-item" v-for="(item, index) in rankWords" :key="index">
                 <i class="num">{{index + 1}}</i>
                 <a href="javaScript:void(0);" @click="clickRank(item.title)">
                   {{item.title}}
@@ -107,6 +107,9 @@ export default {
   },
   methods: {
     submitForm() {
+      if (this.query.q === undefined || this.query.q === '') {
+        return
+      }
       searchDetailByQuery({q: this.query.q, itemType: this.query.itemType}).then(res => {
         this.list = []
         const {code, result} = res.data
@@ -115,7 +118,7 @@ export default {
           return
         }
         if (result === null) {
-          return;
+          return
         }
         const {items} = result
         if (items) {
@@ -157,7 +160,7 @@ export default {
     clickRank(rankWord) {
       this.query.q = rankWord
       this.submitForm()
-    },
+    }
   }
 }
 </script>

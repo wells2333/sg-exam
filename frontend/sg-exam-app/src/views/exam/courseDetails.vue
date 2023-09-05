@@ -251,11 +251,11 @@ export default {
     },
     getAttach() {
       getCourseAttach(this.courseId).then(res => {
-          const {code, result} = res.data
-          if (code === 0) {
-            this.courseAttachName = result.attachName
-            this.courseAttachUrl = result.attachUrl
-          }
+        const {code, result} = res.data
+        if (code === 0) {
+          this.courseAttachName = result.attachName
+          this.courseAttachUrl = result.attachUrl
+        }
       }).catch(error => {
         console.error(error)
       })

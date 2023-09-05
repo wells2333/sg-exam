@@ -12,12 +12,12 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 /**
- * 课程评价 exam_course_evaluate
+ * 考试评价 exam_exam_evaluate
  */
 @Data
-@Table(name = "exam_course_evaluate")
+@Table(name = "exam_exam_evaluate")
 @EqualsAndHashCode(callSuper = true)
-public class ExamCourseEvaluate extends BaseEntity<ExamCourseEvaluate> {
+public class ExamExamEvaluate extends BaseEntity<ExamExamEvaluate> {
 
 	/**
 	 * 评价内容
@@ -39,17 +39,17 @@ public class ExamCourseEvaluate extends BaseEntity<ExamCourseEvaluate> {
 	 * 课程 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)
-	@Column(name = "course_id")
-	private Long courseId;
+	@Column(name = "exam_id")
+	private Long examId;
 
 	@Column(name = "operator_name")
 	private String operatorName;
 
 	/**
-	 * 课程名称
+	 * 考试名称
 	 */
 	@Transient
-	private String courseName;
+	private String examName;
 
 	@Transient
 	private String evaluateTime;
@@ -78,20 +78,20 @@ public class ExamCourseEvaluate extends BaseEntity<ExamCourseEvaluate> {
 		return evaluateLevel;
 	}
 
-	public void setCourseId(Long courseId) {
-		this.courseId = courseId;
+	public Long getExamId() {
+		return examId;
 	}
 
-	public Long getCourseId() {
-		return courseId;
+	public void setExamId(Long examId) {
+		this.examId = examId;
 	}
 
-	public String getCourseName() {
-		return courseName;
+	public String getExamName() {
+		return examName;
 	}
 
-	public void setCourseName(String courseName) {
-		this.courseName = courseName;
+	public void setExamName(String examName) {
+		this.examName = examName;
 	}
 
 	public String getOperatorName() {

@@ -53,21 +53,11 @@ public class ExamMediaService {
     }
 
     public String imageUrl(Long id) {
-        try {
-            return attachmentManager.getPreviewUrl(id);
-        } catch (Exception e) {
-            log.error("Failed to get image url, id: {}", id, e);
-            return "";
-        }
+		return attachmentManager.getPreviewUrlIgnoreException(id);
     }
 
     public String videoUrl(Long id) {
-        try {
-            return attachmentManager.getPreviewUrl(id);
-        } catch (Exception e) {
-            log.error("Failed to get video url, id: {}", id, e);
-            return "";
-        }
+		return attachmentManager.getPreviewUrlIgnoreException(id);
     }
 
     public SpeechPlayDto playSpeech(Long userId, Long subjectId) {

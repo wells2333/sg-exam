@@ -13,7 +13,9 @@ public class LuceneIndexManagerTests {
 
 	@Test
 	public void testAddDocument() throws IOException, ParseException {
-		IndexDoc doc = IndexDoc.builder().id("1").content("test 测试").build();
+		IndexDoc doc = new IndexDoc();
+		doc.setId("1");
+		doc.setContent("test 测试");
 		LuceneIndexManager.getInstance().addDocument(doc, DocType.COURSE);
 		List<IndexDoc> docs = LuceneIndexManager.getInstance().search(DocType.COURSE, "测试", 50);
 		System.out.println(docs);

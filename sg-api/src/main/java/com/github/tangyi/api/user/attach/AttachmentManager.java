@@ -28,7 +28,9 @@ public interface AttachmentManager {
 
     String getPreviewUrl(Long id);
 
-    Attachment getPreviewAttachment(Long id);
+	String getPreviewUrlIgnoreException(Long id);
+
+	Attachment getPreviewAttachment(Long id);
 
     Long defaultImage(String groupCode);
 }

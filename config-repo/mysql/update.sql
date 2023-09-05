@@ -192,3 +192,21 @@ CREATE TABLE `sys_attachment_chunk` (
     PRIMARY KEY (`id`) USING BTREE,
     KEY `idx_hash` (`hash`)
 ) ENGINE=InnoDB AUTO_INCREMENT=600 DEFAULT CHARSET=utf8 COMMENT='附件分块表';
+
+-- 2023年08月30日22:57:03
+CREATE TABLE `exam_exam_evaluate` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `evaluate_content` varchar(512) NOT NULL DEFAULT '' COMMENT '评价内容',
+    `user_id` bigint(20) NOT NULL COMMENT '用户ID',
+    `evaluate_level` int(1) unsigned zerofill DEFAULT '0',
+    `creator` varchar(128) NOT NULL COMMENT '创建人',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `operator` varchar(128) DEFAULT NULL COMMENT '修改人',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0:正常;1:删除',
+    `tenant_code` varchar(16) NOT NULL COMMENT '租户编号',
+    `exam_id` bigint(20) NOT NULL COMMENT '考试 ID',
+    `operator_name` varchar(16) DEFAULT NULL COMMENT '评论人名称',
+    PRIMARY KEY (`id`) USING BTREE,
+    KEY `idx_exam_id` (`exam_id`) COMMENT '考试 ID'
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='考试评价表';

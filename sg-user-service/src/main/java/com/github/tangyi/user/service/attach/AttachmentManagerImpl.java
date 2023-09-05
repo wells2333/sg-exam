@@ -161,7 +161,19 @@ public class AttachmentManagerImpl implements AttachmentManager {
         return getManager(group).getPreviewUrl(id);
     }
 
-    @Override
+	@Override
+	public String getPreviewUrlIgnoreException(Long id) {
+		try {
+			AttachGroup group = getAttachGroupByAttachmentId(id);
+			return getManager(group).getPreviewUrl(id);
+		} catch (Exception e) {
+			log.error("Failed to get previewUrl, attachmentId: {}", id, e);
+		}
+		return null;
+
+	}
+
+	@Override
     public Attachment getPreviewAttachment(Long id) {
         AttachGroup group = getAttachGroupByAttachmentId(id);
         return getManager(group).getPreviewAttachment(id);
