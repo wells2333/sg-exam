@@ -104,7 +104,7 @@ export const constantRouterMap = [
         path: '/search',
         name: 'search',
         component: () => import('@/views/exam/search')
-      },
+      }
     ]
   },
   {
