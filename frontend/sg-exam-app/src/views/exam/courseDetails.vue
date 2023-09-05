@@ -314,7 +314,7 @@ export default {
     handleJoin() {
       const type = this.detail.isUserJoin ? '0' : '1'
       const text = this.detail.isUserJoin ? this.$t('exam.course.cancelRegistration') : this.$t('exam.course.registration')
-      this.$confirm(this.$t('sure') + text + '?', this.$('tips'), {
+      this.$confirm(this.$t('sure') + text + '?', this.$t('tips'), {
         confirmButtonText: this.$t('sure'),
         cancelButtonText: this.$t('cancel'),
         type: 'warning'
