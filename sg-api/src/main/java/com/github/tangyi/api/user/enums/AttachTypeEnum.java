@@ -15,8 +15,8 @@ public enum AttachTypeEnum {
 	EXAM_IMAGE("exam/image", "考务图片"),
 	OTHER("other", "其它");
 
-	// 默认为七牛云存储
-	private final int defaultStorageType = EnvUtils.getInt("ATTACH_DEFAULT_STORAGE_TYPE", AttachmentConstant.QI_NIU);
+	// 默认为 MinIO
+	private final int defaultStorageType = EnvUtils.getInt("ATTACH_DEFAULT_STORAGE_TYPE", AttachmentConstant.MINIO);
 
 	private final String value;
 
