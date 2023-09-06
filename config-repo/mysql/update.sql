@@ -128,7 +128,7 @@ CREATE TABLE `exam_examination_member` (
 ) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8 COMMENT='考试成员表';
 
 ALTER TABLE `sys_attachment_group`
-    ADD COLUMN `storage_type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '存储类型，1：七牛，2：本地文件';
+    ADD COLUMN `storage_type` tinyint(1) NOT NULL DEFAULT 2 COMMENT '存储类型，1：七牛，2：MinIO';
 
 ALTER TABLE `exam_subject_choices`
     ADD COLUMN `subject_video_id` bigint(20) NULL COMMENT '题目视频 ID' AFTER `speech_id`;
