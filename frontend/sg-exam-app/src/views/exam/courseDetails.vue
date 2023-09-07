@@ -99,15 +99,16 @@
                     </div>
                     <div>
                       <div class="user-evaluate-item" v-for="e in evaluates" :key="e.id">
-                        <el-row>
-                          <el-col :span="3" style="color: #666;">
-                            {{ e.operatorName }}
+                        <el-row class="user-evaluate-item-bg">
+                          <el-col :span="2" >
+                            <img width="40" height="40" class="user-evaluate-item-avatar" src="static/img/bg-img/yml.jpg">
                           </el-col>
-                          <el-col :span="21">
-                            <div>
-                              <el-rate v-model="e.evaluateLevel" :disabled="true"></el-rate>
+                          <el-col :span="22">
+                            <div class="user-evaluate-item-top">
+                              <span style="color: #333; margin-right: 15px;">{{ e.operatorName }}</span>
+                              <el-rate v-model="e.evaluateLevel" :disabled="true" style="height: 100%; line-height: initial;"></el-rate>
                             </div>
-                            <div class="user-evaluate-item-content" style="color:#333;">
+                            <div class="user-evaluate-item-content" style="color:#666;">
                               {{ e.evaluateContent }}
                             </div>
                             <div class="user-evaluate-item-time">
@@ -392,15 +393,31 @@ export default {
   color: rgba(0, 0, 0, .3);
 }
 .user-evaluate-item {
-  margin-top: 20px;
+  margin-top: 26px;
+  .user-evaluate-item-bg {
+    border-bottom: 1px solid rgba(233,233,233,.6);
+    padding-bottom: 20px;
+  }
+  .user-evaluate-item-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+  .user-evaluate-item-top{
+    font-size: 13px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 23px;
+  }
 }
 .user-evaluate-item-content {
-  margin-top: 10px;
+  margin-top: 8px;
 }
 .user-evaluate-item-time {
   font-size: 12px;
-  margin-top: 8px;
-  color: rgba(0, 0, 0, .3);
+  margin-top: 10px;
+  color: #999;
 }
 .point-container {
   margin-left: 32px;
