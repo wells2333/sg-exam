@@ -101,7 +101,7 @@
                       <div class="user-evaluate-item" v-for="e in evaluates" :key="e.id">
                         <el-row class="user-evaluate-item-bg">
                           <el-col :span="2" >
-                            <img width="40" height="40" class="user-evaluate-item-avatar" src="static/img/bg-img/yml.jpg">
+                            <img width="40" height="40" class="user-evaluate-item-avatar" :src="e.avatarUrl ? e.avatarUrl:'https://yunmianshi.com/attach-storage/yunmianshi/default/124/user.png'">
                           </el-col>
                           <el-col :span="22">
                             <div class="user-evaluate-item-top">
