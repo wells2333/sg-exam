@@ -54,6 +54,9 @@ public class ExamCourseEvaluate extends BaseEntity<ExamCourseEvaluate> {
 	@Transient
 	private String evaluateTime;
 
+	@Transient
+	private String avatarUrl;
+
 	public void setEvaluateContent(String evaluateContent) {
 		this.evaluateContent = evaluateContent;
 	}
@@ -108,6 +111,14 @@ public class ExamCourseEvaluate extends BaseEntity<ExamCourseEvaluate> {
 
 	public void setEvaluateTime(String evaluateTime) {
 		this.evaluateTime = evaluateTime;
+	}
+
+	public String getAvatarUrl() {
+		return avatarUrl;
+	}
+
+	public void setAvatarUrl(String avatarUrl) {
+		this.avatarUrl = avatarUrl;
 	}
 
 	@Override

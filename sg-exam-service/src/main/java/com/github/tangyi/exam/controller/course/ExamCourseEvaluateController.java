@@ -3,6 +3,7 @@ package com.github.tangyi.exam.controller.course;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.model.Course;
 import com.github.tangyi.api.exam.model.ExamCourseEvaluate;
+import com.github.tangyi.api.user.attach.AttachmentManager;
 import com.github.tangyi.api.user.model.User;
 import com.github.tangyi.api.user.service.IUserService;
 import com.github.tangyi.common.base.BaseController;
@@ -36,6 +37,8 @@ public class ExamCourseEvaluateController extends BaseController {
 
 	private final IUserService userService;
 
+	private final AttachmentManager attachmentManager;
+
 	@GetMapping("/list")
 	@Operation(summary = "查询课程评价列表")
 	public R<PageInfo<ExamCourseEvaluate>> list(@RequestParam Map<String, Object> condition,
@@ -49,6 +52,10 @@ public class ExamCourseEvaluateController extends BaseController {
 				Course course = courseService.get(evaluate.getCourseId());
 				if (course != null) {
 					evaluate.setCourseName(course.getCourseName());
+				}
+				User user = userService.get(evaluate.getUserId());
+				if (user != null && user.getAvatarId() != null) {
+					evaluate.setAvatarUrl(attachmentManager.getPreviewUrlIgnoreException(user.getAvatarId()));
 				}
 				evaluate.setEvaluateTime(format.format(evaluate.getUpdateTime()));
 			}

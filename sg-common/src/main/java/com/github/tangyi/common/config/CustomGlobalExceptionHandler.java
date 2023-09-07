@@ -34,7 +34,7 @@ public class CustomGlobalExceptionHandler {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<Object> validationBodyException(MethodArgumentNotValidException ex, HttpHeaders headers,
 			HttpStatus status) {
-		log.error("validationBodyException", ex);
+		log.error("[validationBodyException]", ex);
 		List<String> errors = ex.getBindingResult().getFieldErrors().stream()
 				.map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList());
 		R<List<String>> responseBean = new R<>(errors, ApiMsg.KEY_ERROR, ex.getMessage());
@@ -43,38 +43,38 @@ public class CustomGlobalExceptionHandler {
 
 	@ExceptionHandler(HttpMessageConversionException.class)
 	public ResponseEntity<R<String>> parameterTypeException(HttpMessageConversionException e) {
-		log.error("parameterTypeException", e);
+		log.error("[parameterTypeException]", e);
 		return new ResponseEntity<>(R.error(e.getMessage()), HttpStatus.OK);
 	}
 
 	@ExceptionHandler(CommonException.class)
 	public ResponseEntity<R<String>> handleCommonException(Exception e) {
-		log.error("handleCommonException", e);
+		log.error("[handleCommonException]", e);
 		return new ResponseEntity<>(R.error(e.getMessage()), HttpStatus.OK);
 	}
 
 	@ExceptionHandler(BindException.class)
 	public ResponseEntity<Object> validExceptionHandler(BindException e) {
-		log.error("validExceptionHandler", e);
+		log.error("[validExceptionHandler]", e);
 		Exception ex = parseBindingResult(e.getBindingResult());
 		return new ResponseEntity<>(R.error(ex.getMessage()), HttpStatus.OK);
 	}
 
 	@ExceptionHandler({BadSqlGrammarException.class, SQLSyntaxErrorException.class, SQLException.class})
 	public ResponseEntity<Object> handleSQLException(SQLException e) {
-		log.error("handleSQLException", e);
+		log.error("[handleSQLException]", e);
 		return new ResponseEntity<>(R.error("数据库操作异常"), HttpStatus.OK);
 	}
 
 	@ExceptionHandler(IOException.class)
 	public ResponseEntity<R<String>> handleIOException(Exception e) {
-		log.error("handleIOException", e);
+		log.error("[handleIOException]", e);
 		return new ResponseEntity<>(R.error(e.getMessage()), HttpStatus.OK);
 	}
 
 	@ExceptionHandler(QiniuException.class)
 	public ResponseEntity<R<String>> handleQiniuException(QiniuException e) {
-		log.error("handleQiniuException", e);
+		log.error("[handleQiniuException]", e);
 		String msg = "文件操作失败";
 		R<String> responseBean = new R<>(null, ApiMsg.KEY_ERROR, msg);
 		return new ResponseEntity<>(responseBean, HttpStatus.OK);
@@ -82,13 +82,13 @@ public class CustomGlobalExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<R<String>> handleException(Exception e) {
-		log.error("handleException", e);
+		log.error("[handleException]", e);
 		return new ResponseEntity<>(R.error(e.getMessage()), HttpStatus.OK);
 	}
 
 	@ExceptionHandler(Throwable.class)
 	public ResponseEntity<R<String>> handleThrowable(Exception e) {
-		log.error("handleThrowable", e);
+		log.error("[handleThrowable]", e);
 		return new ResponseEntity<>(R.error(e.getMessage()), HttpStatus.OK);
 	}
 

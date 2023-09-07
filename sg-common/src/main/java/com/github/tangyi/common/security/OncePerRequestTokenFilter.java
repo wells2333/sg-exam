@@ -11,6 +11,7 @@ import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.model.UserToken;
 import com.github.tangyi.common.properties.FilterIgnorePropertiesConfig;
 import com.github.tangyi.common.security.exceptions.TokenExpireException;
+import com.github.tangyi.common.security.exceptions.TokenInvalidException;
 import com.github.tangyi.common.utils.ObjectUtil;
 import com.github.tangyi.common.utils.RUtil;
 import io.jsonwebtoken.Claims;
@@ -36,6 +37,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class OncePerRequestTokenFilter extends OncePerRequestFilter {
 
+	private static final int BEARER_LENGTH = SecurityConstant.BEARER.length();
+
 	private final TokenManager tokenManager;
 
 	private final List<AntPathRequestMatcher> matchers = Lists.newArrayList();
@@ -54,82 +57,94 @@ public class OncePerRequestTokenFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		if (isIgnoreUrl(request)) {
+		if (this.isIgnoreUrl(request)) {
 			filterChain.doFilter(request, response);
-		} else {
-			try {
-				parseToken(request);
-				filterChain.doFilter(request, response);
-			} catch (CommonException e) {
-				RUtil.out(response, R.error(ApiMsg.KEY_TOKEN, e.getMessage()));
-			}
+			return;
+		}
+
+		try {
+			this.parseToken(request);
+			filterChain.doFilter(request, response);
+		} catch (CommonException e) {
+			RUtil.out(response, R.error(ApiMsg.KEY_TOKEN, e.getMessage()));
 		}
 	}
 
+	private boolean isIgnoreUrl(HttpServletRequest request) {
+		for (AntPathRequestMatcher matcher : this.matchers) {
+			if (matcher.matcher(request).isMatch()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void parseToken(HttpServletRequest request) {
+		String authorization = this.getAuthorization(request);
+		String token = authorization.substring(BEARER_LENGTH);
+		Claims claims = this.parseToken(token);
+		String identify = ObjectUtil.toString(claims.get(TokenManager.IDENTIFY));
+		if (StringUtils.isNotEmpty(identify) && SecurityContextHolder.getContext().getAuthentication() == null) {
+			String userId = ObjectUtil.toString(claims.get(TokenManager.USER_ID));
+			String id = ObjectUtil.toString(claims.get(TokenManager.ID));
+			String tenantCode = ObjectUtil.toString(claims.get(TokenManager.TENANT_CODE));
+			UserToken userToken = this.tokenManager.getToken(userId);
+			if (userToken == null) {
+				throw new TokenExpireException("token已失效，请重新登录");
+			}
+			if (!userToken.getUserId().toString().equals(userId)) {
+				throw new TokenExpireException("token校验失败，请重新登录");
+			}
+			if (!userToken.getId().equals(id)) {
+				throw new TokenExpireException("已在其它端登录");
+			}
+			this.updateExpireSecondsIfNecessary(userToken);
+			this.setAuthentication(userToken, userId, identify, tenantCode);
+		}
+	}
+
+	private String getAuthorization(HttpServletRequest request) {
 		String authorization = request.getHeader(SecurityConstant.AUTHORIZATION);
 		if (StringUtils.isEmpty(authorization)) {
 			authorization = request.getParameter(SecurityConstant.AUTHORIZATION);
 		}
 		SgPreconditions.checkBoolean(StringUtils.isEmpty(authorization), "无用户凭证");
 		SgPreconditions.checkBoolean(!authorization.startsWith(SecurityConstant.BEARER), "token非法");
-		String token = authorization.substring(SecurityConstant.BEARER.length());
-		Claims claims = parseTokenBody(token);
-		String identify = ObjectUtil.toString(claims.get(TokenManager.IDENTIFY));
-		String userId = ObjectUtil.toString(claims.get(TokenManager.USER_ID));
-		String id = ObjectUtil.toString(claims.get(TokenManager.ID));
-		String tenantCode = ObjectUtil.toString(claims.get(TokenManager.TENANT_CODE));
-		if (StringUtils.isNotEmpty(identify) && SecurityContextHolder.getContext().getAuthentication() == null) {
-			UserToken userToken = tokenManager.getToken(userId);
-			if (userToken == null || !userToken.getUserId().toString().equals(userId)) {
-				throw new TokenExpireException("token已失效，请重新登录");
-			}
-			if (!userToken.getId().equals(id)) {
-				throw new TokenExpireException("已在其它端登录");
-			}
-			// "记住我" 续期 7 天
-			long expire = userToken.isRemember() ?
-					TimeUnit.DAYS.toSeconds(TokenManager.TOKEN_REMEMBER_EXPIRE) :
-					TimeUnit.MINUTES.toSeconds(TokenManager.TOKEN_EXPIRE);
-			// token 接近过期则自动续期 240 分钟
-			Duration duration = Duration.between(LocalDateTime.now(), userToken.getExpiresAt());
-			if (duration.toMinutes() < TokenManager.TOKEN_EXPIRE) {
-				tokenManager.expireToken(userToken, (int) expire);
-			}
-			String role = userToken.getRole();
-			Collection<GrantedAuthority> authorities = Lists.newArrayList();
-			if (StringUtils.isNotEmpty(role)) {
-				for (String r : role.split(CommonConstant.COMMA)) {
-					authorities.add((GrantedAuthority) () -> r);
-				}
-			}
-			CustomUserDetails details = new CustomUserDetails(Long.valueOf(userId), identify, "", authorities,
-					tenantCode);
-			JwtAuthenticationToken authentication = new JwtAuthenticationToken(details, authorities);
-			authentication.setAuthenticated(true);
-			SecurityContextHolder.getContext().setAuthentication(authentication);
-		}
+		return authorization;
 	}
 
-	private Claims parseTokenBody(String token) {
-		Claims claims;
+	private Claims parseToken(String token) {
 		try {
-			claims = tokenManager.getTokenBody(token);
+			return this.tokenManager.getTokenBody(token);
 		} catch (Exception e) {
-			log.error("Failed to parse token body", e);
-			throw new TokenExpireException("Failed to parse token body");
+			throw new TokenInvalidException("Failed to parse token.");
 		}
-		return claims;
 	}
 
-	private boolean isIgnoreUrl(HttpServletRequest request) {
-		boolean match = false;
-		for (AntPathRequestMatcher matcher : matchers) {
-			if (matcher.matcher(request).isMatch()) {
-				match = true;
-				break;
+	private void updateExpireSecondsIfNecessary(UserToken userToken) {
+		Duration duration = Duration.between(LocalDateTime.now(), userToken.getExpiresAt());
+		// token 接近过期则自动续期
+		if (duration.toMinutes() < TokenManager.TOKEN_AUTO_RESET_EXPIRE_MINUTE) {
+			// "记住我" 续期 7 天
+			long expireSeconds = userToken.isRemember() ?
+					TimeUnit.DAYS.toSeconds(TokenManager.TOKEN_REMEMBER_EXPIRE_DAY) :
+					TimeUnit.MINUTES.toSeconds(TokenManager.TOKEN_EXPIRE_MINUTE);
+			log.info("Reset expire seconds, userId: {}, expireSeconds: {}", userToken.getUserId(), expireSeconds);
+			this.tokenManager.updateExpireSeconds(userToken, (int) expireSeconds);
+		}
+	}
+
+	private void setAuthentication(UserToken userToken, String userId, String identify, String tenantCode) {
+		String role = userToken.getRole();
+		Collection<GrantedAuthority> authorities = Lists.newArrayList();
+		if (StringUtils.isNotEmpty(role)) {
+			for (String r : role.split(CommonConstant.COMMA)) {
+				authorities.add((GrantedAuthority) () -> r);
 			}
 		}
-		return match;
+		CustomUserDetails details = new CustomUserDetails(Long.valueOf(userId), identify, "", authorities, tenantCode);
+		JwtAuthenticationToken authentication = new JwtAuthenticationToken(details, authorities);
+		authentication.setAuthenticated(true);
+		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}
 }
