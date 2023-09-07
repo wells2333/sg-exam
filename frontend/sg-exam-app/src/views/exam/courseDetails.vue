@@ -27,10 +27,10 @@
         <div class="single-course-content padding-80">
           <el-row class="my-content-container ml-100 mr-100">
             <el-col :span="18" style="padding-right: 40px;">
-              <el-tabs v-model="activeName" @tab-click="handleClick">
+              <el-tabs v-model="activeName">
                 <el-tab-pane name="desc">
                   <span slot="label">
-                    <el-button type="default" class="course-content-btn">{{$t('exam.course.courseIntroduction')}}</el-button>
+                    <span class="course-content-btn">{{$t('exam.course.courseIntroduction')}}</span>
                   </span>
                   <div class="clever-description">
                     <div class="about-course mb-30">
@@ -41,7 +41,7 @@
                 </el-tab-pane>
                 <el-tab-pane name="chapter">
                   <span slot="label">
-                    <el-button type="default" class="course-content-btn">{{$t('exam.course.chapter')}}</el-button>
+                    <span class="course-content-btn">{{$t('exam.course.chapter')}}</span>
                   </span>
                   <div class="about-curriculum mb-30">
                     <h4>{{$t('exam.course.chapter')}}</h4>
@@ -77,7 +77,7 @@
                 </el-tab-pane>
                 <el-tab-pane name="evaluate">
                   <span slot="label">
-                    <el-button type="default" class="course-content-btn">{{$t('exam.course.courseEvaluation')}}</el-button>
+                    <span class="course-content-btn">{{$t('exam.course.courseEvaluation')}}</span>
                   </span>
                   <div class="about-review mb-30">
                     <h4>{{$t('exam.course.courseEvaluation')}}</h4>
@@ -121,16 +121,16 @@
                 </el-tab-pane>
                 <el-tab-pane name="members">
                   <span slot="label">
-                    <el-button type="default" class="course-content-btn">{{$t('exam.course.registerStudents')}}</el-button>
+                    <span class="course-content-btn">{{$t('exam.course.registerStudents')}}</span>
                   </span>
                   <div class="about-members mb-30">
                     <h4>{{$t('exam.course.registerStudents')}}</h4>
                     <p>{{$t('exam.course.registerStudents1')}}：{{ detail.memberCount }}</p>
                   </div>
                 </el-tab-pane>
-                <el-tab-pane>
+                <el-tab-pane name="learn">
                   <span slot="label">
-                    <el-button type="default" class="course-content-btn">{{$t('exam.course.studyExchange')}}</el-button>
+                    <span class="course-content-btn">{{$t('exam.course.studyExchange')}}</span>
                   </span>
                   <div class="about-review mb-30">
                     <h4>{{$t('exam.course.studyExchange')}}</h4>
@@ -353,6 +353,10 @@ export default {
   text-align: center;
   margin-right: 10px;
   margin-bottom: 10px;
+  white-space: nowrap;
+  cursor: pointer;
+  background: #FFF;
+  border: 1px solid #DCDFE6;
 }
 .clever-btn {
   display: inline-block;
