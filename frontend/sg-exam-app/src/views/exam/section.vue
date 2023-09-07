@@ -5,21 +5,19 @@
         <el-col :span="6">
           <transition name="el-fade-in">
             <div class="section-title mb-30 sidebar-widget">
-              <div v-for="chapter in detail.chapters" :key="chapter.chapter.id">
+              <div v-for="(chapter, index) in detail.chapters" class="chapters-item" :key="chapter.chapter.id" @click="toggleIcon(chapter, index)">
                 <div class="chapter-container">
-                  <p>{{ chapter.chapter.title }}</p>
-                  <div class="section-container"
+                  <div class="chapter-title-box">
+                    <p class="chapter-title">{{ chapter.chapter.title }}</p>
+                    <i :class="(chapter.sectionHeight ? 'el-icon-arrow-up':'el-icon-arrow-down')"></i>
+                  </div>
+                  <div class="section-container" :style="{height: chapter.sectionHeight + 'px', display: chapter.sectionHeight ? 'block': 'none'}">
+                    <div class="section-container-item"
                        v-for="section in chapter.sections" :key="section.section.id">
-                    <p
-                      :class="(pointId === undefined && section.section.id === sectionId) ? 'section-title-selected section-title' : 'section-title'"
-                      @click="handleClickSection(section.section)">
-                      {{ section.section.title }}</p>
-
-                    <div class="point-container" v-for="point in section.points" :key="point.id">
                       <p
-                        :class="point.id === pointId ? 'point-title-selected point-title':  'point-title'"
-                        @click="handleClickPoint(point)">
-                       {{ point.title }}</p>
+                        :class="((pointId === undefined || pointId === -1) && section.section.id === sectionId) ? 'section-title-selected section-title' : 'section-title'"
+                        @click.stop="handleClickSection(section)">
+                        {{ section.section.title }}</p>
                     </div>
                   </div>
                 </div>
@@ -38,6 +36,14 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;
                     <i class="el-icon-time"></i> {{operator}}
                   </div>
+                </div>
+                <div class="points-box" v-if="currSec && currSec.points">
+                     <div class="points-item" v-for="point in currSec.points" :key="point.id">
+                        <p
+                          :class="point.id === pointId ? 'point-title-selected point-title':  'point-title'"
+                          @click="handleClickPoint(point)">
+                        {{ point.title }}</p>
+                      </div>
                 </div>
                 <div v-if="contentType === 0" class="section-video">
                   <sg-video v-if="videoUrl !== undefined && videoUrl !== null && videoUrl !== ''" ref="sectionVideo"></sg-video>
@@ -83,6 +89,8 @@ export default {
       contentType: 0,
       clickSectionId: undefined,
       clickPointId: undefined,
+      currChapt: undefined,
+      currSec: undefined,
       title: undefined,
       content: undefined,
       operator: '',
@@ -107,6 +115,12 @@ export default {
       }
       getCourseDetail(courseId).then(res => {
         this.detail = res.data.result
+        const { chapters } = res.data.result
+        chapters.forEach(item => {
+          const { sections } = item
+          item.sectionHeight = sections.length * 30
+          item.secHeight = item.sectionHeight
+        })
       }).catch(error => {
         console.error(error)
       })
@@ -123,6 +137,7 @@ export default {
         setTimeout(() => {
           const { title, content, operator, updateTime } = res.data.result.section
           this.section = res.data.result.section
+          this.handleSection(this.section)
           this.title = title
           this.content = content
           this.operator = operator
@@ -172,14 +187,36 @@ export default {
         this.$refs.sectionVideo.pause()
       }
     },
-    handleClickSection(sec) {
+    handleSection(sec, isInit = false) {
+      const tmp = JSON.parse(JSON.stringify(sec))
+      if (tmp.points) {
+        const res = tmp.points
+        res.unshift({
+          id: -1,
+          title: '章节概览',
+          secId: tmp.section.id
+        })
+        if (!this.pointId) {
+          this.pointId = -1
+        }
+        this.currSec = tmp
+      }
+    },
+    handleClickSection(section) {
+      const { section: sec, points } = section
+      if (points && points.length > 0) {
+        this.handleSection(section)
+      } else {
+        this.pointId = undefined
+        this.currSec = undefined
+      }
       this.clickPointId = undefined
-      this.pointId = undefined
       if (this.clickSectionId !== undefined && this.clickSectionId === sec.id) {
         return
       }
       this.sectionId = sec.id
       this.clickSectionId = sec.id
+      // 当前下的知识点
       this.getSection(sec.id)
     },
     handleClickPoint(point) {
@@ -190,6 +227,11 @@ export default {
       }
       this.pointId = point.id
       this.clickPointId = point.id
+      if (point.id === -1) {
+        // 章节概览
+        this.getSection(point.secId)
+        return
+      }
       this.getPoint(point.id)
     },
     goBack() {
@@ -197,6 +239,10 @@ export default {
         this.$refs.sectionVideo.pause()
       }
       this.$router.go(-1)
+    },
+    toggleIcon(opt, index) {
+      this.detail.chapters[index].sectionHeight = this.detail.chapters[index].sectionHeight ? 0 : opt.secHeight
+      this.detail = Object.assign({}, this.detail)
     }
   }
 }
@@ -219,8 +265,29 @@ export default {
 
 .chapter-container {
   cursor: pointer;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  .chapter-title-box {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    .chapter-title{
+      font-weight: bold;
+      font-size: 18px;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
 }
-
+.section-container {
+  transition: height .3s ease;
+  .section-title {
+    height: 30px;
+    line-height: 30px;
+  }
+}
 .section-title {
   margin-left: 10px;
   cursor: pointer;
@@ -251,9 +318,27 @@ export default {
   padding-top: 20px;
 }
 
-.point-container {
-  margin-left: 30px;
+.points-box {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  .points-item {
+    padding: 0 15px;
+    margin-right: 14px;
+    background: #F6F7FB;
+    border-radius: 3px;
+    font-size: 12px;
+    color: #4c4c4c;
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
 }
+
 .title-tips {
   font-size: 12px;
   color: grey;
