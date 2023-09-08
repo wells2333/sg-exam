@@ -1,10 +1,11 @@
 import { setStore, getStore } from '@/utils/store'
+import { SYS_CONFIG } from '@/utils/storeMap'
 import { getSysConfig } from '@/api/admin/sys'
 
 const sysConfig = {
   state: {
     sysConfig: getStore({
-      name: 'sys_config'
+      name: SYS_CONFIG
     }) || {}
   },
   actions: {
@@ -25,7 +26,7 @@ const sysConfig = {
     SET_SYS_CONFIG: (state, sysConfig) => {
       state.sysConfig = sysConfig
       setStore({
-        name: 'sys_config',
+        name: SYS_CONFIG,
         content: state.sysConfig
       })
     }

@@ -1,17 +1,17 @@
 import { start } from '@/api/exam/examRecord'
 import {setStore, getStore} from '@/utils/store'
 import { submit } from '@/api/exam/answer'
-
+import { PRACTICE, PRACTICE_RECORD, PRACTICE_SUBJECT } from '@/utils/storeMap'
 const practice = {
   state: {
     practice: getStore({
-      name: 'practice'
+      name: PRACTICE
     }) || {},
     practiceRecord: getStore({
-      name: 'practiceRecord'
+      name: PRACTICE_RECORD
     }) || {},
     practiceSubject: getStore({
-      name: 'practiceSubject'
+      name: PRACTICE_SUBJECT
     }) || {}
   },
   actions: {
@@ -47,21 +47,21 @@ const practice = {
     SET_PRACTICE: (state, practice) => {
       state.practice = practice
       setStore({
-        name: 'practice',
+        name: PRACTICE,
         content: state.practice
       })
     },
     SET_PRACTICE_RECORD: (state, practiceRecord) => {
       state.practiceRecord = practiceRecord
       setStore({
-        name: 'practiceRecord',
+        name: PRACTICE_RECORD,
         content: state.practiceRecord
       })
     },
     SET_PRACTICE_SUBJECT: (state, practiceSubject) => {
       state.practiceSubject = practiceSubject
       setStore({
-        name: 'practiceSubject',
+        name: PRACTICE_SUBJECT,
         content: state.practiceSubject
       })
     }

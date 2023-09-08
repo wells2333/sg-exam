@@ -92,6 +92,7 @@
 import {searchDetailByQuery, searchRank} from '@/api/exam/search'
 import {messageSuccess, messageWarn} from '@/utils/util'
 import {removeStore, getStore, setStore} from '@/utils/store'
+import { SEARCH_HISTORY } from '@/utils/storeMap'
 
 export default {
   data() {
@@ -110,7 +111,7 @@ export default {
       this.query.q = this.$route.query.query
       this.submitForm(true)
       this.history = getStore({
-        name: 'searchHistory'
+        name: SEARCH_HISTORY
       })
     }
     this.getSearchRankWords()
@@ -118,7 +119,7 @@ export default {
   methods: {
     deleteHistory() {
       removeStore({
-        name: 'searchHistory'
+        name: SEARCH_HISTORY
       })
       this.history = []
     },
@@ -128,7 +129,7 @@ export default {
       }
       if (!isInit) {
         const tmp = getStore({
-          name: 'searchHistory'
+          name: SEARCH_HISTORY
         })
         let res = []
         if (tmp && tmp.length > 0) {
@@ -141,7 +142,7 @@ export default {
           res.push(this.query.q)
         }
         setStore({
-          name: 'searchHistory',
+          name: SEARCH_HISTORY,
           content: res
         })
         this.history = res

@@ -91,6 +91,7 @@ import OMain from './common/main'
 import {mapGetters, mapState} from 'vuex'
 import {messageWarn} from '@/utils/util'
 import {setStore, getStore} from '@/utils/store'
+import { SEARCH_HISTORY } from '@/utils/storeMap'
 
 export default {
   components: {
@@ -191,7 +192,7 @@ export default {
       if (this.query && this.query !== '') {
         this.$router.push({name: 'search', query: {query: this.query}})
         const tmp = getStore({
-          name: 'searchHistory'
+          name: SEARCH_HISTORY
         })
         let res = []
         if (tmp && tmp.length > 0) {
@@ -204,7 +205,7 @@ export default {
           res.push(this.query)
         }
         setStore({
-          name: 'searchHistory',
+          name: SEARCH_HISTORY,
           content: res
         })
       }

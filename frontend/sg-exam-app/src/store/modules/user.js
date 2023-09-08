@@ -1,18 +1,20 @@
 import {loginByUsername, loginBySocial, registerByUsername, logout, getUserInfo} from '@/api/admin/login'
 import { setToken, removeToken, setRefreshToken, removeRefreshToken } from '@/utils/auth'
 import { setStore, getStore } from '@/utils/store'
+import { TOKEN, USERINFO, REFRESH_TOKEN, ROLES, PERMISSIONS, TENANTCODE, SYS_CONFIG } from '@/utils/storeMap'
+
 import { encryption } from '@/utils/util'
 
 const user = {
   state: {
     userInfo: getStore({
-      name: 'userInfo'
+      name: USERINFO
     }) || {},
     permissions: getStore({
-      name: 'permissions'
+      name: PERMISSIONS
     }) || {},
     roles: getStore({
-      name: 'roles'
+      name: ROLES
     }) || [],
     menu: getStore({
       name: 'menu'
@@ -21,16 +23,16 @@ const user = {
       name: 'isInitMenu'
     }) || false,
     token: getStore({
-      name: 'token'
+      name: TOKEN
     }) || '',
     refresh_token: getStore({
-      name: 'refresh_token'
+      name: REFRESH_TOKEN
     }) || '',
     tenantCode: getStore({
-      name: 'tenantCode'
+      name: TENANTCODE
     }) || '',
     sysConfig: getStore({
-      name: 'sys_config'
+      name: SYS_CONFIG
     }) || ''
   },
   actions: {
@@ -143,28 +145,28 @@ const user = {
     SET_TOKEN: (state, token) => {
       state.token = token
       setStore({
-        name: 'token',
+        name: TOKEN,
         content: state.token
       })
     },
     SET_USER_INFO: (state, userInfo) => {
       state.userInfo = userInfo
       setStore({
-        name: 'userInfo',
+        name: USERINFO,
         content: state.userInfo
       })
     },
     SET_REFRESH_TOKEN: (state, rfToken) => {
       state.refresh_token = rfToken
       setStore({
-        name: 'refresh_token',
+        name: REFRESH_TOKEN,
         content: state.refresh_token
       })
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
       setStore({
-        name: 'roles',
+        name: ROLES,
         content: state.roles
       })
     },
@@ -175,14 +177,14 @@ const user = {
       }
       state.permissions = list
       setStore({
-        name: 'permissions',
+        name: PERMISSIONS,
         content: state.permissions
       })
     },
     SET_TENANT_CODE: (state, tenantCode) => {
       state.tenantCode = tenantCode
       setStore({
-        name: 'tenantCode',
+        name: TENANTCODE,
         content: state.tenantCode
       })
     }

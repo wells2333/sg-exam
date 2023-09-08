@@ -1,23 +1,25 @@
 import { start } from '@/api/exam/examRecord'
 import {setStore, getStore} from '@/utils/store'
+import { EXAM, EXAM_RECORD, SUBJECT, INCORRECT_RECORD, CARDS } from '@/utils/storeMap'
+
 import { submit } from '@/api/exam/answer'
 
 const exam = {
   state: {
     exam: getStore({
-      name: 'exam'
+      name: EXAM
     }) || {},
     examRecord: getStore({
-      name: 'examRecord'
+      name: EXAM_RECORD
     }) || {},
     subject: getStore({
-      name: 'subject'
+      name: SUBJECT
     }) || {},
     incorrectRecord: getStore({
-      name: 'incorrectRecord'
+      name: INCORRECT_RECORD
     }) || {},
     cards: getStore({
-      name: 'cards'
+      name: CARDS
     }) || {}
   },
   actions: {
@@ -62,35 +64,35 @@ const exam = {
     SET_EXAM: (state, exam) => {
       state.exam = exam
       setStore({
-        name: 'exam',
+        name: EXAM,
         content: state.exam
       })
     },
     SET_EXAM_RECORD: (state, examRecord) => {
       state.examRecord = examRecord
       setStore({
-        name: 'examRecord',
+        name: EXAM_RECORD,
         content: state.examRecord
       })
     },
     SET_SUBJECT: (state, subject) => {
       state.subject = subject
       setStore({
-        name: 'subject',
+        name: SUBJECT,
         content: state.subject
       })
     },
     SET_INCORRECT_RECORD: (state, incorrectRecord) => {
       state.incorrectRecord = incorrectRecord
       setStore({
-        name: 'incorrectRecord',
+        name: INCORRECT_RECORD,
         content: state.incorrectRecord
       })
     },
     SET_CARDS: (state, cards) => {
       state.cards = cards
       setStore({
-        name: 'cards',
+        name: CARDS,
         content: state.cards
       })
     }
