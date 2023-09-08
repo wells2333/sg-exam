@@ -175,7 +175,7 @@ export default {
       }
     }
     return {
-      useSmsLogin: true,
+      useSmsLogin: false,
       activeName: '/login',
       login: {
         form: {
