@@ -174,6 +174,7 @@ export default {
         callback()
       }
     }
+    // TODO
     return {
       useSmsLogin: false,
       activeName: '/login',
