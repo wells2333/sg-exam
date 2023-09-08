@@ -46,7 +46,7 @@ public class AttachGroupService extends CrudService<AttachGroupMapper, AttachGro
 
 	@Override
 	@Transactional
-	@CacheEvict(value = UserCacheName.ATTACHMENT_GROUP, key = "#group.id")
+	@CacheEvict(value = UserCacheName.ATTACHMENT_GROUP, key = "#group.groupCode")
 	public int update(AttachGroup group) {
 		group.setCommonValue();
 		validateUrlExpire(group);
@@ -55,7 +55,7 @@ public class AttachGroupService extends CrudService<AttachGroupMapper, AttachGro
 
 	@Override
 	@Transactional
-	@CacheEvict(value = UserCacheName.ATTACHMENT_GROUP, key = "#group.id")
+	@CacheEvict(value = UserCacheName.ATTACHMENT_GROUP, key = "#group.groupCode")
 	public int delete(AttachGroup group) {
 		return super.delete(group);
 	}

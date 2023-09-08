@@ -5,7 +5,11 @@ import com.github.tangyi.common.constant.SecurityConstant;
 import com.github.tangyi.common.model.UserToken;
 import com.github.tangyi.common.utils.EnvUtils;
 import com.github.tangyi.common.utils.ObjectUtil;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.CompressionCodecs;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -23,8 +27,9 @@ public class TokenManager {
 
 	private static final String TOKEN_SIGN_KEY = EnvUtils.getValue("TOKEN_SIGN_KEY", "123456");
 
-	public static final long TOKEN_EXPIRE = EnvUtils.getLong("TOKEN_EXPIRE", 240);
-	public static final long TOKEN_REMEMBER_EXPIRE = EnvUtils.getLong("TOKEN_REMEMBER_EXPIRE_SECONDS", 7);
+	public static final long TOKEN_EXPIRE_MINUTE = EnvUtils.getLong("TOKEN_EXPIRE_MINUTE", 240);
+	public static final long TOKEN_AUTO_RESET_EXPIRE_MINUTE = EnvUtils.getLong("TOKEN_AUTO_RESET_EXPIRE_MINUTE", 10);
+	public static final long TOKEN_REMEMBER_EXPIRE_DAY = EnvUtils.getLong("TOKEN_REMEMBER_EXPIRE_DAY", 7);
 	public static final String ID = "id";
 	public static final String ROLE_KEY = "role";
 	public static final String IDENTIFY = "identify";
@@ -47,7 +52,7 @@ public class TokenManager {
 		body.put(LOGIN_TYPE, userToken.getLoginType());
 		body.put(ROLE_KEY, userToken.getRole());
 		body.put(IDENTIFY, userToken.getIdentify());
-		return createToken(userToken, body);
+		return this.createToken(userToken, body);
 	}
 
 	public String createToken(UserToken userToken, Map<String, String> body) {
@@ -60,9 +65,12 @@ public class TokenManager {
 		return SecurityConstant.BEARER + builder.compressWith(CompressionCodecs.GZIP).compact();
 	}
 
-	public boolean saveToken(UserToken userToken, int expire) {
+	public boolean saveToken(UserToken userToken, int expireSeconds) {
 		try {
-			redisTemplate.opsForValue().set(tokenKey(userToken.getUserId()), userToken, expire, TimeUnit.SECONDS);
+			this.redisTemplate.opsForValue()
+					.set(tokenKey(userToken.getUserId()), userToken, expireSeconds, TimeUnit.SECONDS);
+			log.info("Execute save token finished, userId: {}, expireSeconds: {}", userToken.getUserId(),
+					expireSeconds);
 			return true;
 		} catch (Exception e) {
 			log.error("Failed to save token", e);
@@ -71,20 +79,22 @@ public class TokenManager {
 	}
 
 	public UserToken getToken(String userId) {
-		return (UserToken) redisTemplate.opsForValue().get(TOKEN_KEY_PREFIX + userId);
+		return (UserToken) this.redisTemplate.opsForValue().get(TOKEN_KEY_PREFIX + userId);
 	}
 
-	public void expireToken(UserToken userToken, int expire) {
-		redisTemplate.expire(tokenKey(userToken.getUserId()), expire, TimeUnit.SECONDS);
+	public void updateExpireSeconds(UserToken userToken, int expireSeconds) {
+		this.redisTemplate.expire(tokenKey(userToken.getUserId()), expireSeconds, TimeUnit.SECONDS);
+		log.info("Execute expire token finished, userId: {}, expireSeconds: {}", userToken.getUserId(), expireSeconds);
 	}
 
 	@SuppressWarnings("unchecked")
 	public Boolean tokenExist(Long userId) {
-		return redisTemplate.hasKey(tokenKey(userId));
+		return this.redisTemplate.hasKey(tokenKey(userId));
 	}
 
 	public void deleteToken(Long userId) {
-		redisTemplate.delete(tokenKey(userId));
+		this.redisTemplate.delete(tokenKey(userId));
+		log.info("Execute delete token finished, userId: {}", userId);
 	}
 
 	private String tokenKey(Long userId) {
@@ -105,6 +115,7 @@ public class TokenManager {
 	}
 
 	public void refreshToken(Long id) {
-		redisTemplate.opsForValue().set(TOKEN_KEY_PREFIX + id, null, System.currentTimeMillis() + 1000L * 60);
+		this.redisTemplate.opsForValue().set(TOKEN_KEY_PREFIX + id, null, System.currentTimeMillis() + 1000L * 60);
+		log.info("Execute refresh token finished, id: {}", id);
 	}
 }

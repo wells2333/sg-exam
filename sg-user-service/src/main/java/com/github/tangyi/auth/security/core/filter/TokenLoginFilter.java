@@ -102,7 +102,7 @@ public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
 			target = target.replaceAll("%2B", "\\+");
 			target = AesUtil.decryptAES(target, sysProperties.getKey()).trim();
 		} catch (Exception e) {
-			log.error("credential password fail, password: {}", target, e);
+			log.error("Failed to decrypt credential., credential: {}", target, e);
 		}
 		return target;
 	}
