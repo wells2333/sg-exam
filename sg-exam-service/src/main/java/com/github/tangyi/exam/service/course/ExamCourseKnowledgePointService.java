@@ -46,6 +46,7 @@ public class ExamCourseKnowledgePointService
 		return dto;
 	}
 
+	@Override
 	public List<KnowledgePointDto> getPoints(Long sectionId) {
 		List<KnowledgePointDto> dtoList = Lists.newArrayList();
 		List<ExamCourseKnowledgePoint> points = findListBySectionId(sectionId);

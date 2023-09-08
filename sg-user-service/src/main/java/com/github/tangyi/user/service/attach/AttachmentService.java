@@ -2,7 +2,7 @@ package com.github.tangyi.user.service.attach;
 
 import com.github.tangyi.api.user.model.Attachment;
 import com.github.tangyi.api.user.service.IAttachmentService;
-import com.github.tangyi.common.exceptions.CommonException;
+import com.github.tangyi.common.exceptions.AttachNotExistException;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.constants.UserCacheName;
 import com.github.tangyi.user.mapper.attach.AttachmentMapper;
@@ -22,7 +22,7 @@ public class AttachmentService extends CrudService<AttachmentMapper, Attachment>
 	public Attachment getNotNullAttachment(Long id) {
 		Attachment attachment = this.get(id);
 		if (attachment == null) {
-			throw new CommonException("attachment does not exist, id: " + id);
+			throw new AttachNotExistException("attachment does not exist, id: " + id);
 		}
 		return attachment;
 	}

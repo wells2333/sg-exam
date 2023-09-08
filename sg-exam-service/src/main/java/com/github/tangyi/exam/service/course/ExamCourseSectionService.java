@@ -2,6 +2,7 @@ package com.github.tangyi.exam.service.course;
 
 import com.github.tangyi.api.exam.dto.CourseSectionDto;
 import com.github.tangyi.api.exam.model.ExamCourseSection;
+import com.github.tangyi.api.exam.service.IExamCourseKnowledgePointService;
 import com.github.tangyi.api.exam.service.IExamCourseSectionService;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.constants.ExamCacheName;
@@ -27,6 +28,8 @@ public class ExamCourseSectionService extends CrudService<ExamCourseSectionMappe
 
 	private final ExamMediaService mediaService;
 
+	private final IExamCourseKnowledgePointService knowledgePointService;
+
 	@Override
 	@Cacheable(value = ExamCacheName.SECTION, key = "#id")
 	public ExamCourseSection get(Long id) {
@@ -38,6 +41,7 @@ public class ExamCourseSectionService extends CrudService<ExamCourseSectionMappe
 		ExamCourseSection section = this.get(id);
 		if (section != null && section.getVideoId() != null) {
 			dto.setVideoUrl(mediaService.videoUrl(section.getVideoId()));
+			dto.setPoints(knowledgePointService.getPoints(section.getId()));
 		}
 		dto.setSection(section);
 		return dto;

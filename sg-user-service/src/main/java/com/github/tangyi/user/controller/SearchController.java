@@ -10,7 +10,6 @@ import com.github.tangyi.common.lucene.DocType;
 import com.github.tangyi.common.lucene.IndexDoc;
 import com.github.tangyi.common.lucene.LuceneIndexManager;
 import com.github.tangyi.common.model.R;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,6 +20,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -88,7 +88,7 @@ public class SearchController extends BaseController {
 	public R<SearchResItemList> search(@RequestParam String q, @RequestParam(required = false) String itemType,
 			@RequestParam(value = PAGE, required = false, defaultValue = PAGE_DEFAULT) int pageNum,
 			@RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize) {
-		Preconditions.checkArgument(StringUtils.isNotEmpty(q), "query must not be empty");
+		q = this.rewriteQIfNecessary(q);
 		SearchResItemList res = null;
 		try {
 			res = this.doSearch(q, itemType, pageSize);
@@ -112,7 +112,7 @@ public class SearchController extends BaseController {
 			@RequestParam(required = false) String itemType,
 			@RequestParam(value = PAGE, required = false, defaultValue = PAGE_DEFAULT) int pageNum,
 			@RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize) {
-		Preconditions.checkArgument(StringUtils.isNotEmpty(q), "query must not be empty");
+		q = this.rewriteQIfNecessary(q);
 		SearchDetailResItemList res = null;
 		try {
 			SearchResItemList itemList = this.doSearch(q, itemType, pageSize);
@@ -141,6 +141,19 @@ public class SearchController extends BaseController {
 				.sorted(Map.Entry.comparingByValue(Comparator.comparingInt(AtomicInteger::get).reversed())).limit(limit)
 				.forEach(e -> itemList.getItems().add(SearchResItem.builder().title(e.getKey()).build()));
 		return R.success(itemList);
+	}
+
+	private String rewriteQIfNecessary(String q) {
+		String newQ = q;
+		if (StringUtils.isEmpty(q)) {
+			if (MapUtils.isNotEmpty(this.rankWordMap)) {
+				newQ = CollectionUtils.get(this.rankWordMap, 0).getKey();
+			}
+		}
+		if (StringUtils.isEmpty(newQ)) {
+			newQ = "热门";
+		}
+		return newQ;
 	}
 
 	private SearchResItemList doSearch(String q, String itemType, int pageSize) throws IOException, ParseException {
