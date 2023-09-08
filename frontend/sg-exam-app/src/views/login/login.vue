@@ -114,8 +114,11 @@
               <el-form-item prop="code">
                 <el-input class="sms-code-input" :placeholder="$t('validationCode')" v-model="sms.form.code"
                           name="code" type="text" auto-complete="off"/>
-                <el-button class="sms-code-send" @click="handleSendSms"
-                           :loading="sms.sending">{{$t('send')}}
+                <el-button class="sms-code-send" @click="handleSendSms" :loading="sms.sending" v-if="!sms.isStart">
+                  {{$t('send')}}
+                </el-button>
+                <el-button class="sms-code-send sms-code-disabled" disabled v-else>
+                  {{$t('cutdown', { count: sms.countValue})}}
                 </el-button>
               </el-form-item>
               <el-form-item>
@@ -172,7 +175,7 @@ export default {
       }
     }
     return {
-      useSmsLogin: false,
+      useSmsLogin: true,
       activeName: '/login',
       login: {
         form: {
@@ -241,6 +244,8 @@ export default {
         },
         loading: false,
         sending: false,
+        isStart: false,
+        countValue: 60,
         rules: {
           phone: [{ required: true, message: this.$t('validate.inputPhoneNumber'), trigger: 'blur', validator: validPhone }]
         }
@@ -340,6 +345,8 @@ export default {
       this.$refs.smsLoginForm.validate(valid => {
         if (valid) {
           this.sms.sending = true
+          this.sms.isStart = true
+          this.countDown()
           sendSms(this.sms.form.phone).then(() => {
             this.sms.form.code = ''
             this.$message.success(this.$t('sendSuccess'))
@@ -354,6 +361,16 @@ export default {
           return false
         }
       })
+    },
+    countDown() {
+      const timer = setInterval(() => {
+        this.sms.countValue = this.sms.countValue - 1
+        if (this.sms.countValue <= 0) {
+          clearInterval(timer)
+          this.sms.countValue = 60
+          this.sms.isStart = false
+        }
+      }, 1000)
     },
     openMsg () {
       this.$message.warning('你咋忘不了吃呢？')
@@ -475,6 +492,18 @@ export default {
     .sms-code-send {
       width: 40% !important;
       margin-left: 10px;
+    }
+    .sms-code-disabled {
+      cursor: not-allowed;
+      color: #dcdfe6;
+      font-size: 12px;
+      padding: 13px 0;
+      text-align: center;
+      &:hover, &:focus, &:visited {
+        color: #dcdfe6;
+        border-color: #DCDFE6;
+        background-color: #FFF;
+      }
     }
   }
 </style>

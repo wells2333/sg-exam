@@ -31,6 +31,7 @@ const zh = {
   phoneNumber: '手机号码',
   sendValidationCode: '发送验证码',
   send: '发送',
+  cutdown: '{count}秒后重新获取',
   sendSuccess: '发送成功',
   registerSuccess: '注册成功',
   success: '成功',

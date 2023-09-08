@@ -30,6 +30,7 @@ const en = {
   phoneNumber: 'Phone Number',
   sendValidationCode: 'Send validation code',
   send: 'Send',
+  cutdown: 'Reacquire in {count}s',
   sendSuccess: 'Send success',
   registerSuccess: 'Register success',
   success: 'Success',
