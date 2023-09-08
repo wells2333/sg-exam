@@ -1,6 +1,6 @@
 import { setStore, getStore, removeStore } from '@/utils/store'
 import { TENANT_CODE } from '../../config/prod.env'
-import { TOKEN, REFRESH_TOKEN, TENANT_CODE as TENANT_CODE_STORE } from '@/utils/storeMap'
+import { TOKEN, REFRESH_TOKEN, TENANTCODE } from '@/utils/storeMap'
 export function getToken () {
   return getStore({ name: TOKEN })
 }
@@ -29,5 +29,5 @@ export function getTenantCode () {
   if (TENANT_CODE !== undefined) {
     return TENANT_CODE
   }
-  return getStore({ name: TENANT_CODE_STORE })
+  return getStore({ name: TENANTCODE })
 }
