@@ -60,10 +60,15 @@
           <div class="search-history">
             <div class="search-history-title">
               <h3>搜索历史</h3>
-              <i class="el-icon-delete">全部清除</i>
+              <i class="el-icon-delete" @click="deleteHistory" v-if="history.length > 0">全部清除</i>
             </div>
             <div class="search-history-content">
-              <p class="search-empty">你还没搜索过喔～</p>
+              <div class="history-list" v-if="history.length > 0">
+                <span class="history-item" v-for="(item, index) in history" :key="index" @click="clickRank(item)">
+                  {{ item }}
+                </span>
+              </div>
+              <p class="search-empty" v-else>你还没搜索过喔～</p>
             </div>
           </div>
           <div class="search-rank">
@@ -86,6 +91,7 @@
 <script>
 import {searchDetailByQuery, searchRank} from '@/api/exam/search'
 import {messageSuccess, messageWarn} from '@/utils/util'
+import {removeStore, getStore, setStore} from '@/utils/store'
 
 export default {
   data() {
@@ -95,21 +101,54 @@ export default {
       query: {
         q: ''
       },
-      rankWords: []
+      rankWords: [],
+      history: []
     }
   },
   created() {
     if (this.$route.query.query !== '') {
       this.query.q = this.$route.query.query
-      this.submitForm()
+      this.submitForm(true)
+      this.history = getStore({
+        name: 'searchHistory'
+      })
     }
     this.getSearchRankWords()
   },
   methods: {
-    submitForm() {
+    deleteHistory() {
+      removeStore({
+        name: 'searchHistory'
+      })
+      this.history = []
+    },
+    submitForm(isInit = false) {
       if (this.query.q === undefined || this.query.q === '') {
         return
       }
+      if (!isInit) {
+        const tmp = getStore({
+          name: 'searchHistory'
+        })
+        let res = []
+        if (tmp && tmp.length > 0) {
+          res = tmp
+          let index = tmp.findIndex(item => item === this.query.q)
+          if (index === -1) {
+            res.push(this.query.q)
+          }
+        } else {
+          res.push(this.query.q)
+        }
+        setStore({
+          name: 'searchHistory',
+          content: res
+        })
+        this.history = res
+      }
+      this.getSearchList()
+    },
+    getSearchList() {
       searchDetailByQuery({q: this.query.q, itemType: this.query.itemType}).then(res => {
         this.list = []
         const {code, result} = res.data
@@ -141,6 +180,7 @@ export default {
     resetForm() {
       this.query.q = ''
       this.query.itemType = ''
+      this.getSearchList()
     },
     changeTag(tag) {
       this.activeTag = tag
@@ -167,7 +207,7 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss" scoped>
 .filter-items {
-  margin: 0 auto 30px;
+  margin: 0 auto 22px;
   padding: 15px 10px;
   width: 98%;
   box-shadow: 0 5px 15px 0 rgba(82, 94, 102, .1);
@@ -313,6 +353,7 @@ export default {
   font-weight: normal;
   color: #8a8a8a;
   cursor: pointer;
+  font-size: 13px;
 }
 
 .search-empty {
@@ -320,4 +361,25 @@ export default {
   color: #b5b5b5;
   text-align: center;
 }
+.search-history-content {
+  padding-top: 10px;
+  .history-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    .history-item {
+      padding: 2px 12px;
+      font-size: 12px;
+      color: #3e454d;
+      cursor: pointer;
+      background: #f2f5f7;
+      border-radius: 16px;
+
+      &:hover {
+        color: #2080f7;
+      }
+    }
+  }
+}
+
 </style>
