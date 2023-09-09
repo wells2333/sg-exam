@@ -402,8 +402,9 @@ export default {
     width: 40px;
     height: 40px;
     border-radius: 50%;
+    cursor: pointer;
   }
-  .user-evaluate-item-top{
+  .user-evaluate-item-top {
     font-size: 13px;
     display: flex;
     flex-direction: row;

@@ -54,15 +54,16 @@
                   </div>
                   <div>
                     <div class="user-evaluate-item" v-for="e in evaluates" :key="e.id">
-                      <el-row>
-                        <el-col :span="3" style="color: #666;">
-                          {{ e.operatorName }}
+                      <el-row class="user-evaluate-item-bg">
+                        <el-col :span="2" >
+                          <img width="40" height="40" class="user-evaluate-item-avatar" :src="e.avatarUrl ? e.avatarUrl:'https://yunmianshi.com/attach-storage/yunmianshi/default/124/user.png'">
                         </el-col>
-                        <el-col :span="21">
-                          <div>
-                            <el-rate v-model="e.evaluateLevel" :disabled="true"></el-rate>
+                        <el-col :span="22">
+                          <div class="user-evaluate-item-top">
+                            <span style="color: #333; margin-right: 15px;">{{ e.operatorName }}</span>
+                            <el-rate v-model="e.evaluateLevel" :disabled="true" style="height: 100%; line-height: initial;"></el-rate>
                           </div>
-                          <div class="user-evaluate-item-content" style="color:#333;">
+                          <div class="user-evaluate-item-content" style="color:#666;">
                             {{ e.evaluateContent }}
                           </div>
                           <div class="user-evaluate-item-time">
@@ -92,6 +93,7 @@
 <script>
 import { messageFail, messageWarn, messageSuccess } from '@/utils/util'
 import { getObjDetail, canStart } from '@/api/exam/exam'
+import {addObj, getExamEvaluateList} from '@/api/exam/examEvaluate'
 import store from '@/store'
 import {mapGetters, mapState} from 'vuex'
 
@@ -128,6 +130,7 @@ export default {
   created() {
     this.examId = this.$route.query.examId
     this.getExamInfo()
+    this.getExamEvaluateList()
   },
   methods: {
     getExamInfo() {
@@ -140,6 +143,16 @@ export default {
       }).catch(error => {
         console.error(error)
         this.loading = false
+      })
+    },
+    getExamEvaluateList() {
+      getExamEvaluateList({examId: this.examId}).then(res => {
+        const {code} = res.data
+        if (code === 0) {
+          this.evaluates = res.data.result.list
+        }
+      }).catch(error => {
+        console.error(error)
       })
     },
     handleStartExam() {
@@ -183,8 +196,53 @@ export default {
       if (this.evaluate.evaluateContent === '') {
         this.evaluate.evaluateContent = this.$t('exam.exams.defaultEvaluate')
       }
-      messageSuccess(this, this.$t('exam.exams.submitSuccess'))
+      addObj({
+        examId: this.examId,
+        ...this.evaluate
+      }).then(res => {
+        if (res.data.code === 0) {
+          this.evaluate.evaluateContent = ''
+          this.hasEvaluate = true
+          messageSuccess(this, this.$t('exam.exams.submitSuccess'))
+          this.getExamEvaluateList()
+        } else {
+          messageWarn(this, this.$t('exam.exams.submitFailed'))
+        }
+      }).catch(error => {
+        console.error(error)
+      })
     }
   }
 }
 </script>
+
+<style lang="scss" rel="stylesheet/scss" scoped>
+.user-evaluate-item {
+  margin-top: 26px;
+  .user-evaluate-item-bg {
+    border-bottom: 1px solid rgba(233,233,233,.6);
+    padding-bottom: 20px;
+  }
+  .user-evaluate-item-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  .user-evaluate-item-top {
+    font-size: 13px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 23px;
+  }
+}
+.user-evaluate-item-content {
+  margin-top: 8px;
+}
+.user-evaluate-item-time {
+  font-size: 12px;
+  margin-top: 10px;
+  color: #999;
+}
+</style>
