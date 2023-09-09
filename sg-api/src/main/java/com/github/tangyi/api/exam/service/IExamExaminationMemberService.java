@@ -9,6 +9,8 @@ public interface IExamExaminationMemberService extends ICrudService<ExamExaminat
 
 	List<ExamExaminationMember> findListByExamId(Long examId);
 
+	Integer findMemberCountByExamId(Long examId);
+
 	int insertBatch(List<ExamExaminationMember> members);
 
 	int deleteByExamId(Long memberId);

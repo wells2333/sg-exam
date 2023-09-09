@@ -11,6 +11,12 @@ public class IndexDoc {
 
 	private String content;
 
+	private long updateTime;
+
+	private long clickCnt;
+
+	private long joinCnt;
+
 	public IndexDoc() {
 
 	}

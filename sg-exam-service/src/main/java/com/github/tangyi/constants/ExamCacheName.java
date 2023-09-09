@@ -44,6 +44,8 @@ public interface ExamCacheName {
 
 	String EVALUATE = "course:evaluate";
 
+	String EXAM_EVALUATE = "exam:evaluate";
+
 	String KNOWLEDGE_POINT = "knowledge:point";
 
 	String USER_FAVORITES = "user:favorites";

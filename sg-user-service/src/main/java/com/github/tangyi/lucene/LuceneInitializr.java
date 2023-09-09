@@ -2,11 +2,13 @@ package com.github.tangyi.lucene;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.tangyi.api.exam.model.Course;
+import com.github.tangyi.api.exam.model.ExamCourseMember;
 import com.github.tangyi.api.exam.model.Examination;
 import com.github.tangyi.api.exam.service.ICourseService;
+import com.github.tangyi.api.exam.service.IExamCourseMemberService;
+import com.github.tangyi.api.exam.service.IExamExaminationMemberService;
 import com.github.tangyi.api.exam.service.IExaminationService;
 import com.github.tangyi.common.cache.CommonCache;
-import com.github.tangyi.common.lucene.DocType;
 import com.github.tangyi.common.service.IndexCrudService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,10 @@ public class LuceneInitializr {
 
 	private final IExaminationService examinationService;
 
+	private final IExamCourseMemberService courseMemberService;
+
+	private final IExamExaminationMemberService examinationMemberService;
+
 	interface Initializr {
 		List<Long> getIds();
 
@@ -48,10 +54,14 @@ public class LuceneInitializr {
 		public void init() {
 			List<Long> ids = getIds();
 			if (CollectionUtils.isNotEmpty(ids)) {
+				ExamCourseMember member = new ExamCourseMember();
 				for (Long id : ids) {
 					Course course = courseService.get(id);
 					if (course != null) {
-						super.addIndex(id, DocType.COURSE, course.getCourseName(), course.getCourseDescription());
+						member.setCourseId(course.getId());
+						Integer memberCnt = courseMemberService.findMemberCountByCourseId(member);
+						long joinCnt = memberCnt == null ? 0 : memberCnt;
+						courseService.addIndex(course, joinCnt, joinCnt);
 					}
 				}
 				log.info("Add course to index finished, size: {}", ids.size());
@@ -76,7 +86,9 @@ public class LuceneInitializr {
 				for (Long id : ids) {
 					Examination examination = examinationService.get(id);
 					if (examination != null) {
-						super.addIndex(id, DocType.EXAM, examination.getExaminationName());
+						Integer memberCnt = examinationMemberService.findMemberCountByExamId(examination.getId());
+						long joinCnt = memberCnt == null ? 0 : memberCnt;
+						examinationService.addIndex(examination, joinCnt, joinCnt);
 					}
 				}
 				log.info("Add examination to index finished, size: {}", ids.size());
@@ -85,10 +97,13 @@ public class LuceneInitializr {
 	}
 
 	public LuceneInitializr(CommonCache commonCache, ICourseService courseService,
-			IExaminationService examinationService) {
+			IExaminationService examinationService, IExamCourseMemberService courseMemberService,
+			IExamExaminationMemberService examinationMemberService) {
 		this.cache = commonCache.getCache();
 		this.courseService = courseService;
 		this.examinationService = examinationService;
+		this.courseMemberService = courseMemberService;
+		this.examinationMemberService = examinationMemberService;
 		List<Initializr> initializers = Lists.newArrayList(new CourseInitializr(), new ExamInitializr());
 		new Thread(() -> {
 			log.info("Start to execute lucene initializr.");

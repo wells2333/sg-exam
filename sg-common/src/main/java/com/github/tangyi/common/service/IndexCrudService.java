@@ -1,30 +1,32 @@
 package com.github.tangyi.common.service;
 
-import com.github.tangyi.common.lucene.DocType;
-import com.github.tangyi.common.lucene.IndexDoc;
-import com.github.tangyi.common.lucene.IndexDocOperation;
-import com.github.tangyi.common.lucene.LuceneMessageManager;
+import com.github.tangyi.common.lucene.*;
 import com.github.tangyi.common.utils.SpringContextHolder;
 import org.apache.commons.lang3.StringUtils;
 
 public abstract class IndexCrudService extends BaseService {
 
-	public void addIndex(Long id, DocType type, String... contents) {
-		String content = StringUtils.join(contents, " ");
+	private static final String BLANK_SPACE = " ";
+
+	public void addIndex(IndexCrudParam param) {
+		String content = StringUtils.join(param.getContents(), BLANK_SPACE);
 		IndexDoc doc = new IndexDoc();
-		doc.setId(id.toString());
+		doc.setId(param.getId().toString());
 		doc.setContent(content);
+		doc.setUpdateTime(param.getUpdateTime());
+		doc.setClickCnt(param.getClickCnt());
+		doc.setJoinCnt(param.getJoinCnt());
 		SpringContextHolder.getApplicationContext().getBean(LuceneMessageManager.class)
-				.sendMessage(doc, type, IndexDocOperation.ADD);
+				.sendMessage(doc, param.getType(), IndexDocOperation.ADD);
 	}
 
-	public void updateIndex(Long id, DocType type, String... contents) {
-		String content = StringUtils.join(contents, " ");
+	public void updateIndex(IndexCrudParam param) {
+		String content = StringUtils.join(param.getContents(), BLANK_SPACE);
 		IndexDoc doc = new IndexDoc();
-		doc.setId(id.toString());
+		doc.setId(param.getId().toString());
 		doc.setContent(content);
 		SpringContextHolder.getApplicationContext().getBean(LuceneMessageManager.class)
-				.sendMessage(doc, type, IndexDocOperation.UPDATE);
+				.sendMessage(doc, param.getType(), IndexDocOperation.UPDATE);
 	}
 
 	public void deleteIndex(Long id, DocType type) {

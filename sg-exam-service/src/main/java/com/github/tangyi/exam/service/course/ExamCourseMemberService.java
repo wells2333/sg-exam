@@ -47,6 +47,7 @@ public class ExamCourseMemberService extends CrudService<ExamCourseMemberMapper,
 		return list;
 	}
 
+	@Override
 	public Integer findMemberCountByCourseId(ExamCourseMember member) {
 		return this.dao.findMemberCountByCourseId(member);
 	}

@@ -14,6 +14,7 @@ import com.github.tangyi.common.constant.Group;
 import com.github.tangyi.common.constant.Status;
 import com.github.tangyi.common.exceptions.CommonException;
 import com.github.tangyi.common.lucene.DocType;
+import com.github.tangyi.common.lucene.IndexCrudParam;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.constants.ExamCacheName;
@@ -114,7 +115,7 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 		}
 		int update = super.insert(course);
 		if (update > 0) {
-			super.addIndex(course.getId(), DocType.COURSE, course.getCourseName(), course.getCourseDescription());
+			this.addIndex(course, 0, 0);
 		}
 		return update;
 	}
@@ -125,7 +126,7 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 	public int update(Course course) {
 		int update = super.update(course);
 		if (update > 0) {
-			super.updateIndex(course.getId(), DocType.COURSE, course.getCourseName(), course.getCourseDescription());
+			this.updateIndex(course);
 		}
 		return update;
 	}
@@ -154,6 +155,20 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 			update += this.delete(course);
 		}
 		return update;
+	}
+
+	@Override
+	public void addIndex(Course course, long clickCnt, long joinCnt) {
+		super.addIndex(this.buildIndexCrudParam(course, joinCnt, joinCnt));
+	}
+
+	@Override
+	public void updateIndex(Course course) {
+		ExamCourseMember member = new ExamCourseMember();
+		member.setCourseId(course.getId());
+		Integer memberCnt = memberService.findMemberCountByCourseId(member);
+		long joinCnt = memberCnt == null ? 0 : memberCnt;
+		super.updateIndex(this.buildIndexCrudParam(course, joinCnt, joinCnt));
 	}
 
 	public void initCourseInfo(List<Course> courses) {
@@ -259,5 +274,16 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 			}
 		}
 		return null;
+	}
+
+	private IndexCrudParam buildIndexCrudParam(Course course, long clickCnt, long joinCnt) {
+		return IndexCrudParam.builder() //
+				.id(course.getId()) //
+				.type(DocType.COURSE) //
+				.contents(Lists.newArrayList(course.getCourseName(), course.getCourseDescription())) //
+				.updateTime(course.getUpdateTime().getTime()) //
+				.clickCnt(clickCnt) //
+				.joinCnt(joinCnt) //
+				.build(); //
 	}
 }

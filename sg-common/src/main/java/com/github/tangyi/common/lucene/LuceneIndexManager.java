@@ -7,10 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.StringField;
-import org.apache.lucene.document.TextField;
+import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
@@ -60,6 +57,9 @@ public class LuceneIndexManager {
 		static String ID = "id";
 		static String TYPE = "type";
 		static String CONTENT = "content";
+		static String UPDATE_TIME = "update_time";
+		static String CLICK_CNT = "click_cnt";
+		static String JOIN_CNT = "join_cnt";
 	}
 
 	public static LuceneIndexManager getInstance() {
@@ -80,6 +80,9 @@ public class LuceneIndexManager {
 		document.add(new StringField(DocField.ID, indexDoc.getId(), Field.Store.YES));
 		document.add(new StringField(DocField.TYPE, type.getType(), Field.Store.YES));
 		document.add(new TextField(DocField.CONTENT, indexDoc.getContent(), Field.Store.YES));
+		document.add(new LongPoint(DocField.UPDATE_TIME, indexDoc.getUpdateTime()));
+		document.add(new LongPoint(DocField.CLICK_CNT, indexDoc.getClickCnt()));
+		document.add(new LongPoint(DocField.JOIN_CNT, indexDoc.getJoinCnt()));
 		return document;
 	}
 

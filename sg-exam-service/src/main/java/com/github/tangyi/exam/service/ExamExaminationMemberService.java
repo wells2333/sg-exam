@@ -34,6 +34,11 @@ public class ExamExaminationMemberService extends CrudService<ExamExaminationMem
 	}
 
 	@Override
+	public Integer findMemberCountByExamId(Long examId) {
+		return this.dao.findMemberCountByExamId(examId);
+	}
+
+	@Override
 	@Transactional
 	public int insert(ExamExaminationMember examExaminationMember) {
 		examExaminationMember.setCommonValue();

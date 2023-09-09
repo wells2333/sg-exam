@@ -39,4 +39,8 @@ public interface IExaminationService extends ICrudService<Examination> {
 	Boolean batchAddSubjects(Long id, List<SubjectDto> subjects);
 
 	Boolean randomAddSubjects(Long id, RandomSubjectDto params);
+
+	void addIndex(Examination examination, long clickCnt, long joinCnt);
+
+	void updateIndex(Examination examination);
 }

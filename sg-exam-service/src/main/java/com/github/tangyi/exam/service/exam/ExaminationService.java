@@ -6,12 +6,13 @@ import com.github.tangyi.api.exam.model.*;
 import com.github.tangyi.api.exam.service.IExaminationService;
 import com.github.tangyi.api.user.attach.AttachmentManager;
 import com.github.tangyi.api.user.model.User;
-import com.github.tangyi.api.user.service.IDefaultImageService;
 import com.github.tangyi.api.user.service.IUserService;
 import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.constant.Group;
 import com.github.tangyi.common.constant.Status;
 import com.github.tangyi.common.exceptions.CommonException;
+import com.github.tangyi.common.lucene.DocType;
+import com.github.tangyi.common.lucene.IndexCrudParam;
 import com.github.tangyi.common.properties.SysProperties;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.*;
@@ -63,8 +64,6 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
     private final CourseService courseService;
 
     private final ExamFavoritesService examFavoritesService;
-
-    private final IDefaultImageService defaultImageService;
 
     private final ExamExaminationMemberService memberService;
 
@@ -131,8 +130,20 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
         if (examination.getImageId() == null) {
             examination.setImageId(attachmentManager.defaultImage(Group.DEFAULT));
         }
-        addExaminationMembers(examinationDto, user, tenantCode);
-        return super.insert(examination);
+        this.addExaminationMembers(examinationDto, user, tenantCode);
+        int update = super.insert(examination);
+		if (update > 0) {
+			IndexCrudParam param = IndexCrudParam.builder() //
+					.id(examination.getId()) //
+					.type(DocType.EXAM) //
+					.contents(Lists.newArrayList(examination.getExaminationName(), examination.getRemark())) //
+					.updateTime(examination.getUpdateTime().getTime()) //
+					.clickCnt(0) //
+					.joinCnt(0) //
+					.build(); //
+			super.addIndex(param);
+		}
+		return update;
     }
 
     @Override
@@ -187,9 +198,23 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
         if (course != null) {
             examination.setCourseId(course.getId());
         }
-        memberService.deleteByExamId(examination.getId());
-        addExaminationMembers(examinationDto, user, tenantCode);
-        return super.update(examination);
+		this.memberService.deleteByExamId(examination.getId());
+        this.addExaminationMembers(examinationDto, user, tenantCode);
+        int update =  super.update(examination);
+		if (update > 0) {
+			Integer memberCnt = this.memberService.findMemberCountByExamId(examination.getId());
+			long joinCnt = memberCnt == null ? 0 : memberCnt;
+			IndexCrudParam param = IndexCrudParam.builder() //
+					.id(examination.getId()) //
+					.type(DocType.EXAM) //
+					.contents(Lists.newArrayList(examination.getExaminationName(), examination.getRemark())) //
+					.updateTime(examination.getUpdateTime().getTime()) //
+					.clickCnt(joinCnt) //
+					.joinCnt(joinCnt) //
+					.build(); //
+			super.updateIndex(param);
+		}
+		return update;
     }
 
     @Transactional
@@ -214,7 +239,11 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
     @CacheEvict(value = {ExamCacheName.EXAMINATION, ExamCacheName.EXAM_ALL_SUBJECT}, key = "#examination.id")
     public int delete(Examination examination) {
         this.deleteExaminationSubject(new Long[]{examination.getId()});
-        return super.delete(examination);
+		int update = super.delete(examination);
+		if (update > 0) {
+			super.deleteIndex(examination.getId(), DocType.EXAM);
+		}
+		return update;
     }
 
     @Override
@@ -222,7 +251,13 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
     @CacheEvict(value = {ExamCacheName.EXAMINATION, ExamCacheName.EXAM_ALL_SUBJECT}, allEntries = true)
     public int deleteAll(Long[] ids) {
         this.deleteExaminationSubject(ids);
-        return super.deleteAll(ids);
+        int update =  super.deleteAll(ids);
+		if (update > 0) {
+			for (Long id : ids) {
+				super.deleteIndex(id, DocType.EXAM);
+			}
+		}
+		return update;
     }
 
     @Transactional
@@ -341,6 +376,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
     /**
      * 查询下一题的序号
      */
+	@Override
     public Integer nextSubjectNo(Long examinationId) {
         return examinationSubjectService.nextSubjectNo(examinationId);
     }
@@ -416,7 +452,19 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
         return Boolean.TRUE;
     }
 
-    @Transactional
+	@Override
+	public void addIndex(Examination examination, long clickCnt, long joinCnt) {
+		super.addIndex(this.buildIndexCrudParam(examination, joinCnt, joinCnt));
+	}
+
+	@Override
+	public void updateIndex(Examination examination) {
+		Integer memberCnt = this.memberService.findMemberCountByExamId(examination.getId());
+		long joinCnt = memberCnt == null ? 0 : memberCnt;
+		super.updateIndex(this.buildIndexCrudParam(examination, joinCnt, joinCnt));
+	}
+
+	@Transactional
     public void clearCurrentSubjects(Long id) {
         List<SimpleSubjectDto> subjects = allSubjects(id);
         if (CollectionUtils.isNotEmpty(subjects)) {
@@ -500,4 +548,15 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 			examinationDto.setImageUrl(attachmentManager.getPreviewUrlIgnoreException(examinationDto.getImageId()));
 		}
     }
+
+	private IndexCrudParam buildIndexCrudParam(Examination examination, long clickCnt, long joinCnt) {
+		return IndexCrudParam.builder() //
+				.id(examination.getId()) //
+				.type(DocType.EXAM) //
+				.contents(Lists.newArrayList(examination.getExaminationName(), examination.getRemark())) //
+				.updateTime(examination.getUpdateTime().getTime()) //
+				.clickCnt(clickCnt) //
+				.joinCnt(joinCnt) //
+				.build(); //
+	}
 }

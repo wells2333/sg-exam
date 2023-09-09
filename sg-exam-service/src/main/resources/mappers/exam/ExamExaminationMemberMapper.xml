@@ -47,6 +47,10 @@
         SELECT * FROM exam_examination_member a WHERE a.exam_id = #{examId}
     </select>
 
+    <select id="findMemberCountByExamId" resultType="Integer">
+        SELECT COUNT(1) FROM exam_examination_member a WHERE a.exam_id = #{examId}
+    </select>
+
     <insert id="insertBatch">
         INSERT INTO exam_examination_member (
         exam_type, exam_id, member_type, member_id, creator, create_time, operator, update_time, is_deleted, tenant_code
