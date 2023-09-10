@@ -96,7 +96,7 @@ public class OncePerRequestTokenFilter extends OncePerRequestFilter {
 				throw new TokenExpireException("token校验失败，请重新登录");
 			}
 			if (!userToken.getId().equals(id)) {
-				throw new TokenExpireException("已在其它端登录");
+				throw new TokenExpireException("token已失效");
 			}
 			this.updateExpireSecondsIfNecessary(userToken);
 			this.setAuthentication(userToken, userId, identify, tenantCode);
@@ -142,7 +142,7 @@ public class OncePerRequestTokenFilter extends OncePerRequestFilter {
 				authorities.add((GrantedAuthority) () -> r);
 			}
 		}
-		CustomUserDetails details = new CustomUserDetails(Long.valueOf(userId), identify, "", authorities, tenantCode);
+		CustomUserDetails details = new CustomUserDetails(Long.valueOf(userId), identify, authorities, tenantCode);
 		JwtAuthenticationToken authentication = new JwtAuthenticationToken(details, authorities);
 		authentication.setAuthenticated(true);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
