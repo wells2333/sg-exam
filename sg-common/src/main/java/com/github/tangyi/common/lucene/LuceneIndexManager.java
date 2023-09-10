@@ -136,9 +136,9 @@ public class LuceneIndexManager {
 
 	private TopDocs doSearch(IndexSearcher indexSearcher, @Nullable DocType type, String q, int size, String sortField,
 			String sortOrder) throws ParseException, IOException {
-		this.validSortParams(sortField, sortOrder);
 		TopDocs topDocs;
-		if (sortField != null) {
+		if (sortField != null && sortOrder != null) {
+			this.validSortParams(sortField, sortOrder);
 			boolean reverse = "desc".equals(sortOrder);
 			Sort sort = new Sort(new SortField(sortField, SortField.Type.LONG, reverse));
 			topDocs = indexSearcher.search(parseQ(type, q), size, sort);
