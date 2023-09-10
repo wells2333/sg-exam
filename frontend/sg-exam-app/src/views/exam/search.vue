@@ -34,7 +34,7 @@
             </div>
           </el-row>
           <div class="search-res-items">
-            <div v-for="item in list" :key="item.id" class="search-res-item" @click="handleClickItem(item)">
+            <div v-for="item in list" :key="item.key" class="search-res-item" @click="handleClickItem(item)">
               <el-row>
                 <el-col :span="2">
                   <div class="item-thumb">
@@ -93,6 +93,7 @@ import {searchDetailByQuery, searchRank} from '@/api/exam/search'
 import {messageSuccess, messageWarn} from '@/utils/util'
 import {removeStore, getStore, setStore} from '@/utils/store'
 import { SEARCH_HISTORY } from '@/utils/storeMap'
+import { v4 as uuidv4 } from 'uuid'
 
 export default {
   data() {
@@ -161,8 +162,13 @@ export default {
           return
         }
         const {items} = result
+        const list = []
         if (items) {
-          items.forEach(e => this.list.push(e))
+          items.forEach(e => {
+            e.key = uuidv4()
+            list.push(e)
+          })
+          this.list = list
         }
         messageSuccess(this, this.$t('searchForm.searchSuccess'))
       }).catch(() => {
