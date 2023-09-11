@@ -28,6 +28,11 @@ public class CustomUserDetails extends User {
 
 	private LoginTypeEnum loginType;
 
+	public CustomUserDetails(Long id, String username, Collection<? extends GrantedAuthority> authorities,
+			String tenantCode) {
+		this(id, username, "", authorities, tenantCode);
+	}
+
 	public CustomUserDetails(Long id, String username, String password,
 			Collection<? extends GrantedAuthority> authorities, String tenantCode) {
 		super(username, password, authorities);

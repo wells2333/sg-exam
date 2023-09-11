@@ -1,8 +1,10 @@
 package com.github.tangyi.common.lucene;
 
 import cn.hutool.core.thread.ThreadFactoryBuilder;
+import com.github.tangyi.common.constant.PageConstant;
 import com.github.tangyi.common.utils.EnvUtils;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +24,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RunnableScheduledFuture;
 import java.util.concurrent.ScheduledExecutorService;
@@ -34,6 +37,9 @@ public class LuceneIndexManager {
 
 	private static final int LUCENE_INDEX_DOC_STATS_DELAY_SECOND = EnvUtils.getInt(
 			"LUCENE_INDEX_DOC_STATS_DELAY_SECOND", 30);
+
+	private static final Set<String> VALID_SORT_FIELDS = Sets.newHashSet(DocField.UPDATE_TIME, DocField.CLICK_CNT,
+			DocField.JOIN_CNT);
 
 	private final String indexDir;
 
@@ -54,12 +60,12 @@ public class LuceneIndexManager {
 	}
 
 	private static final class DocField {
-		static String ID = "id";
-		static String TYPE = "type";
-		static String CONTENT = "content";
-		static String UPDATE_TIME = "update_time";
-		static String CLICK_CNT = "click_cnt";
-		static String JOIN_CNT = "join_cnt";
+		private static final String ID = "id";
+		private static final String TYPE = "type";
+		private static final String CONTENT = "content";
+		private static final String UPDATE_TIME = "update_time";
+		private static final String CLICK_CNT = "click_cnt";
+		private static final String JOIN_CNT = "join_cnt";
 	}
 
 	public static LuceneIndexManager getInstance() {
@@ -128,6 +134,29 @@ public class LuceneIndexManager {
 		return query;
 	}
 
+	private TopDocs doSearch(IndexSearcher indexSearcher, @Nullable DocType type, String q, int size, String sortField,
+			String sortOrder) throws ParseException, IOException {
+		TopDocs topDocs;
+		if (sortField != null && sortOrder != null) {
+			this.validSortParams(sortField, sortOrder);
+			boolean reverse = "desc".equals(sortOrder);
+			Sort sort = new Sort(new SortField(sortField, SortField.Type.LONG, reverse));
+			topDocs = indexSearcher.search(parseQ(type, q), size, sort);
+		} else {
+			topDocs = indexSearcher.search(parseQ(type, q), size);
+		}
+		return topDocs;
+	}
+
+	private void validSortParams(String sortField, String sortOrder) {
+		if (!VALID_SORT_FIELDS.contains(sortField)) {
+			throw new IllegalArgumentException("Invalid sortField: " + sortField);
+		}
+		if (!PageConstant.VALID_SORT_ORDER.contains(sortOrder)) {
+			throw new IllegalArgumentException("Invalid sortOrder: " + sortOrder);
+		}
+	}
+
 	public LuceneIndexManager() {
 		try {
 			this.indexDir = getLuceneIndexDir();
@@ -163,10 +192,15 @@ public class LuceneIndexManager {
 	}
 
 	public List<IndexDoc> search(@Nullable DocType type, String q, int size) throws IOException, ParseException {
+		return this.search(type, q, size, null, null);
+	}
+
+	public List<IndexDoc> search(@Nullable DocType type, String q, int size, String sortField, String sortOrder)
+			throws IOException, ParseException {
 		List<IndexDoc> indexDocs = Lists.newArrayList();
 		this.searcherManager.maybeRefresh();
 		IndexSearcher indexSearcher = searcherManager.acquire();
-		TopDocs topDocs = indexSearcher.search(parseQ(type, q), size);
+		TopDocs topDocs = this.doSearch(indexSearcher, type, q, size, sortField, sortOrder);
 		ScoreDoc[] arr = topDocs.scoreDocs;
 		for (ScoreDoc scoreDoc : arr) {
 			Document document = indexSearcher.doc(scoreDoc.doc);

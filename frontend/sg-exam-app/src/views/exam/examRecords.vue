@@ -64,7 +64,7 @@ export default {
       listLoading: true,
       tableKey: 0,
       listQuery: {
-        pageNum: 1,
+        page: 1,
         pageSize: 10,
         courseId: '',
         sort: 'id',
@@ -111,7 +111,7 @@ export default {
       }
       this.listLoading = true
       setTimeout(() => {
-        this.listQuery.pageNum++
+        this.listQuery.page++
         fetchList(this.listQuery).then(response => {
           const { total, isLastPage, list } = response.data.result
           this.updateList(list)

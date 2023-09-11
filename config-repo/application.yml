@@ -71,6 +71,7 @@ ignore:
     - /**/mobile/login
     - /**/wx/login
     - /**/token/validToken
+    - /**/token/refreshToken
     - /**/h2/**
     - /**/v1/sms/**
     - /**/v1/mobile/sendSms/**

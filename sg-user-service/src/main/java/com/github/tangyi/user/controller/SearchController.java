@@ -87,11 +87,13 @@ public class SearchController extends BaseController {
 	@Operation(summary = "根据关键词搜索，只返回 ID")
 	public R<SearchResItemList> search(@RequestParam String q, @RequestParam(required = false) String itemType,
 			@RequestParam(value = PAGE, required = false, defaultValue = PAGE_DEFAULT) int pageNum,
-			@RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize) {
+			@RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize,
+			@RequestParam(value = SORT_FIELD, required = false) String sortField,
+			@RequestParam(value = SORT_ORDER, required = false) String sortOrder) {
 		q = this.rewriteQIfNecessary(q);
 		SearchResItemList res = null;
 		try {
-			res = this.doSearch(q, itemType, pageSize);
+			res = this.doSearch(q, itemType, pageSize, sortField, sortOrder);
 		} catch (Exception e) {
 			log.error("Failed to search, itemType: {}, query: {}", itemType, q, e);
 		} finally {
@@ -111,11 +113,13 @@ public class SearchController extends BaseController {
 	public R<SearchDetailResItemList> searchDetail(@RequestParam String q,
 			@RequestParam(required = false) String itemType,
 			@RequestParam(value = PAGE, required = false, defaultValue = PAGE_DEFAULT) int pageNum,
-			@RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize) {
+			@RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize,
+			@RequestParam(value = SORT_FIELD, required = false) String sortField,
+			@RequestParam(value = SORT_ORDER, required = false) String sortOrder) {
 		q = this.rewriteQIfNecessary(q);
 		SearchDetailResItemList res = null;
 		try {
-			SearchResItemList itemList = this.doSearch(q, itemType, pageSize);
+			SearchResItemList itemList = this.doSearch(q, itemType, pageSize, sortField, sortOrder);
 			res = this.parseItems(itemList);
 		} catch (Exception e) {
 			log.error("Failed to search, itemType: {}, query: {}", itemType, q, e);
@@ -156,11 +160,12 @@ public class SearchController extends BaseController {
 		return newQ;
 	}
 
-	private SearchResItemList doSearch(String q, String itemType, int pageSize) throws IOException, ParseException {
+	private SearchResItemList doSearch(String q, String itemType, int pageSize, String sortField, String sortOrder)
+			throws IOException, ParseException {
 		long startNs = System.nanoTime();
 		SearchResItemList res = new SearchResItemList();
 		DocType docType = DocType.matchByType(itemType);
-		List<IndexDoc> indexDocs = LuceneIndexManager.getInstance().search(docType, q, pageSize);
+		List<IndexDoc> indexDocs = LuceneIndexManager.getInstance().search(docType, q, pageSize, sortField, sortOrder);
 		if (CollectionUtils.isNotEmpty(indexDocs)) {
 			for (IndexDoc indexDoc : indexDocs) {
 				res.getItems().add(SearchResItem.builder().id(indexDoc.getId()).type(indexDoc.getType()).build());
