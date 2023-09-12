@@ -16,7 +16,7 @@
                     {{ item.createTime }}
                 </div>
             </el-col>
-        </el-row>    
+        </el-row>
     </div>
 </template>
 
