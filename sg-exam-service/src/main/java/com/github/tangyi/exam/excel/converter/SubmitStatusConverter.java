@@ -2,8 +2,9 @@ package com.github.tangyi.exam.excel.converter;
 
 import com.alibaba.excel.converters.Converter;
 import com.alibaba.excel.enums.CellDataTypeEnum;
-import com.alibaba.excel.metadata.CellData;
 import com.alibaba.excel.metadata.GlobalConfiguration;
+import com.alibaba.excel.metadata.data.ReadCellData;
+import com.alibaba.excel.metadata.data.WriteCellData;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
 import com.github.tangyi.exam.enums.SubmitStatus;
 
@@ -23,15 +24,15 @@ public class SubmitStatusConverter implements Converter<Integer> {
 	}
 
 	@Override
-	public Integer convertToJavaData(CellData cellData, ExcelContentProperty contentProperty,
+	public Integer convertToJavaData(ReadCellData<?> cellData, ExcelContentProperty contentProperty,
 			GlobalConfiguration globalConfiguration) {
 		return SubmitStatus.matchByName(cellData.getStringValue()).getValue();
 	}
 
 	@Override
-	public CellData<String> convertToExcelData(Integer value, ExcelContentProperty contentProperty,
+	public WriteCellData<String> convertToExcelData(Integer value, ExcelContentProperty contentProperty,
 			GlobalConfiguration globalConfiguration) {
-		return new CellData<>(SubmitStatus.matchByValue(value).getName());
+		return new WriteCellData<>(SubmitStatus.matchByValue(value).getName());
 	}
 }
 
