@@ -67,17 +67,13 @@ export function getUserInfo(token) {
 /**
  * 刷新token
  */
-export function refreshToken() {
-  //  grant_type为refresh_token
-  const grantType = 'refresh_token'
-  const scope = 'read'
-  const refreshToken = getRefreshToken()
+export function refreshToken(token) {
   return request({
-    url: '/sg-user-service/oauth/token',
+    url: '/sg-user-service/v1/token/refreshToken',
     headers: {
-      'Authorization': ''
+      'Authorization': token
     },
-    method: 'post',
-    params: {grant_type: grantType, scope, refresh_token: refreshToken}
+    method: 'get',
+    params: {}
   })
 }
