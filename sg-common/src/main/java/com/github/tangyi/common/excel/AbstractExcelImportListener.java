@@ -2,6 +2,7 @@ package com.github.tangyi.common.excel;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,18 +32,17 @@ public abstract class AbstractExcelImportListener<T> extends AnalysisEventListen
 		dataList.add(dataModel);
 		// 达到 BATCH_COUNT 则保存进数据库，防止数据几万条数据在内存，容易 OOM
 		if (dataList.size() >= BATCH_COUNT) {
-			saveData(dataList);
+			this.saveData(Lists.newArrayList(dataList));
 			// 存储完成清理
 			dataList.clear();
 		}
 		if (CollectionUtils.isNotEmpty(dataList)) {
-			saveData(dataList);
+			this.saveData(Lists.newArrayList(dataList));
 		}
 	}
 
 	@Override
 	public void doAfterAllAnalysed(AnalysisContext context) {
-		saveData(dataList);
 		logger.info("All data is parsed!");
 	}
 
