@@ -55,8 +55,8 @@
         SELECT COUNT(1) FROM exam_examination a WHERE a.is_deleted = 0
     </select>
 
-    <select id="findAllIds" resultType="java.lang.Long">
-        SELECT a.id FROM exam_examination a WHERE a.is_deleted = 0
+    <select id="findIdsOrderByIdAsc" resultType="java.lang.Long">
+        SELECT a.id FROM exam_examination a WHERE a.id >= #{minId} AND a.is_deleted = 0 ORDER BY a.id ASC LIMIT #{pageSize}
     </select>
 
     <select id="findList" resultMap="examinationResultMap">

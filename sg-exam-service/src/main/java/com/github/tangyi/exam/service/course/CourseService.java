@@ -54,6 +54,8 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 
 	private final CourseFavoritesService courseFavoritesService;
 
+	private final CourseIdFetcher courseIdFetcher;
+
 	@Override
 	public Long findAllCourseCount() {
 		return this.dao.findAllCourseCount();
@@ -70,7 +72,7 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 	}
 
 	public List<Long> findAllIds() {
-		return this.dao.findAllIds();
+		return this.courseIdFetcher.fetchAll(0, Collections.emptyMap());
 	}
 
 	public List<Course> popularCourses(String findFav) {

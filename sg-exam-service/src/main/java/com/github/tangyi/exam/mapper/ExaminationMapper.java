@@ -13,7 +13,7 @@ public interface ExaminationMapper extends CrudMapper<Examination> {
 
 	Long findAllExaminationCount();
 
-	List<Long> findAllIds();
+	List<Long> findIdsOrderByIdAsc(@Param("minId") long minId, @Param("pageSize") int pageSize, @Param("params") Map<String, Object> params);
 
 	List<Examination> findUserExaminations(@Param("params") Map<String, Object> params);
 
