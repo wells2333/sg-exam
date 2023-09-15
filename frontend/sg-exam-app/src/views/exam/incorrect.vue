@@ -61,22 +61,22 @@
           <el-divider>{{$t('exam.incorrect.subjectList')}}</el-divider>
         </el-col>
       </el-row>
-      <el-row v-for="(tempIncorrectAnswer) in list"
-              :key="tempIncorrectAnswer.id">
+      <el-row v-for="(item) in list"
+              :key="item.id">
         <el-col :span="20" :offset="2">
-          <div class="subject-content" v-show="tempIncorrectAnswer.show">
+          <div class="subject-content" v-show="item.show">
             <div class="subject-content-option">
               <div class="subject-title">
-                <span class="subject-title-number">{{ tempIncorrectAnswer.subject.sort }} .</span>
+                <span class="subject-title-number">{{ item.subject.sort }} .</span>
                 <span
-                  v-html="tempIncorrectAnswer.subject.subjectName"></span>
+                  v-html="item.subject.subjectName"></span>
               </div>
-              <div v-if="tempIncorrectAnswer.subject.subjectVideoUrl">
-                <sg-video ref="sgVideo" :src="tempIncorrectAnswer.subject.subjectVideoUrl"></sg-video>
+              <div v-if="item.subject.subjectVideoUrl">
+                <sg-video ref="sgVideo" :src="item.subject.subjectVideoUrl"></sg-video>
               </div>
               <!-- 选择题 -->
               <div>
-                <ul class="subject-options" v-for="option in tempIncorrectAnswer.subject.options"
+                <ul class="subject-options" v-for="option in item.subject.options"
                     :key="option.id">
                   <li class="subject-option" :class="getClass(option.right)">
                     <label>
@@ -90,36 +90,41 @@
               </div>
             </div>
             <!-- 简答题 -->
-            <div v-if="tempIncorrectAnswer.subject.type === 1">
+            <div v-if="item.subject.type === 1">
               <p>
-                {{$t('exam.incorrect.userAnswer')}}：<span v-html="tempIncorrectAnswer.answer"></span>
+                {{$t('exam.incorrect.userAnswer')}}：<span v-html="item.answer"></span>
               </p>
             </div>
             <!-- 判断 -->
-            <div v-if="tempIncorrectAnswer.subject.type === 2">
+            <div v-if="item.subject.type === 2">
               <p>
-                {{$t('exam.incorrect.userAnswer')}}：{{ tempIncorrectAnswer.answer === '0' ? $t('exam.incorrect.right') : $t('exam.incorrect.wrong') }}
+                {{$t('exam.incorrect.userAnswer')}}：{{ item.answer === '正确' ? $t('exam.incorrect.right') : $t('exam.incorrect.wrong') }}
               </p>
             </div>
             <!-- 语音 -->
-            <div v-if="tempIncorrectAnswer.subject.type === 4">
+            <div v-if="item.subject.type === 4">
               <p>
-                {{$t('exam.incorrect.userAnswer')}}：<span v-html="tempIncorrectAnswer.answer"></span>
+                {{$t('exam.incorrect.userAnswer')}}：<span v-html="item.answer"></span>
               </p>
             </div>
             <!-- 视频 -->
-            <div v-if="tempIncorrectAnswer.subject.type === 5">
+            <div v-if="item.subject.type === 5">
               <p>
-                {{$t('exam.incorrect.userAnswer')}}：<span v-html="tempIncorrectAnswer.answer"></span>
+                {{$t('exam.incorrect.userAnswer')}}：<span v-html="item.answer"></span>
               </p>
             </div>
             <p class="subject-content-answer"
-               v-if="tempIncorrectAnswer.subject.answer !== undefined">
-              {{$t('exam.incorrect.answer')}}：<span v-html="tempIncorrectAnswer.subject.answer.answer"></span>
+               v-if="item.subject.answer !== undefined">
+              {{$t('exam.incorrect.answer')}}：
+              <span v-if="item.subject.type === 2" :class="
+              getJudgeClass(item.answer, item.subject.answer.answer)">
+                {{ item.subject.answer.answer === '0' ? $t('exam.incorrect.right') : $t('exam.incorrect.wrong') }}
+              </span>
+              <span v-else v-html="item.subject.answer.answer"></span>
             </p>
             <p class="subject-content-analysis"
-               v-if="tempIncorrectAnswer.subject.analysis !== ''">
-              {{$t('exam.incorrect.analysis')}}：<span v-html="tempIncorrectAnswer.subject.analysis"></span>
+               v-if="item.subject.analysis !== ''">
+              {{$t('exam.incorrect.analysis')}}：<span v-html="item.subject.analysis"></span>
             </p>
           </div>
         </el-col>
@@ -149,6 +154,7 @@ export default {
   },
   data() {
     return {
+      recordId: undefined,
       loading: true,
       examRecordLoading: true,
       total: 0,
@@ -158,7 +164,7 @@ export default {
       listQuery: {
         sort: 'subject_id',
         order: ' asc',
-        pageNum: 1,
+        page: 1,
         pageSize: 10,
         answerType: 1
       },
@@ -177,23 +183,25 @@ export default {
   },
   computed: {
     ...mapState({
-      userInfo: state => state.user.userInfo,
-      incorrectRecord: state => state.exam.incorrectRecord
+      userInfo: state => state.user.userInfo
     })
   },
   created() {
-    this.getRecordDetail()
+    this.recordId = this.$route.query.recordId
+    if (this.recordId) {
+      this.getRecordDetail()
+    }
   },
   methods: {
     getRecordDetail() {
       this.loading = true
       this.examRecordLoading = true
-      examRecordDetails(this.incorrectRecord.id).then(response => {
+      examRecordDetails(this.recordId).then(response => {
         setTimeout(() => {
           this.examRecordDetail = response.data.result.record
           this.examRecordLoading = false
         }, 500)
-        getAnswerListInfo(this.incorrectRecord.id, this.listQuery).then(response => {
+        getAnswerListInfo(this.recordId, this.listQuery).then(response => {
           const {total, isLastPage, list} = response.data
           this.updateList(list)
           this.total = total
@@ -217,8 +225,8 @@ export default {
       }
       this.loading = true
       setTimeout(() => {
-        this.listQuery.pageNum++
-        getAnswerListInfo(this.incorrectRecord.id, this.listQuery).then(response => {
+        this.listQuery.page++
+        getAnswerListInfo(this.recordId, this.listQuery).then(response => {
           const {total, isLastPage, list} = response.data
           this.updateList(list)
           this.total = total
@@ -259,6 +267,15 @@ export default {
       }
     },
     getClass(right) {
+      return answerType[right]
+    },
+    getJudgeClass(userAnswer, standardAnswer) {
+      let right = false;
+      if (userAnswer === '正确') {
+        right = standardAnswer === '0';
+      } else if (userAnswer === '错误') {
+        right = standardAnswer === '1';
+      }
       return answerType[right]
     }
   }

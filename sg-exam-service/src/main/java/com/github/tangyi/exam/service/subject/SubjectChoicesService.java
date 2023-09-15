@@ -10,6 +10,7 @@ import com.github.tangyi.api.exam.model.SubjectOption;
 import com.github.tangyi.common.base.BaseEntity;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.constants.ExamCacheName;
+import com.github.tangyi.exam.enums.SubjectType;
 import com.github.tangyi.exam.mapper.SubjectChoicesMapper;
 import com.github.tangyi.exam.service.ExaminationSubjectService;
 import com.github.tangyi.exam.service.subject.converter.SubjectChoicesConverter;
@@ -228,7 +229,11 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		SubjectChoices subjectChoices = new SubjectChoices();
 		BeanUtils.copyProperties(subjectDto, subjectChoices);
 		subjectChoices.setAnswer(subjectDto.getAnswer().getAnswer());
-		subjectChoices.setChoicesType(subjectDto.getType());
+		if (SubjectType.MULTIPLE_CHOICES.getValue().equals(subjectDto.getType())) {
+			subjectChoices.setChoicesType(SubjectType.MULTIPLE_CHOICES.getValue());
+		} else {
+			subjectChoices.setChoicesType(SubjectType.CHOICES.getValue());
+		}
 		if (insert(subjectChoices) > 0) {
 			insertOptions(subjectChoices);
 		}

@@ -2,12 +2,12 @@ package com.github.tangyi.common.excel;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
+import com.github.tangyi.common.utils.EnvUtils;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,32 +17,24 @@ public abstract class AbstractExcelImportListener<T> extends AnalysisEventListen
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-	/**
-	 * 每隔 3000 条存储数据库
-	 */
-	private static final int BATCH_COUNT = 3000;
+	private static final int BATCH_COUNT = EnvUtils.getInt("EXCEL_IMPORT_BATCH_SIZE", 1000);
 
-	/**
-	 * 需要导入的数据
-	 */
-	private final List<T> dataList = new ArrayList<>();
+	private final List<T> dataList = Lists.newArrayListWithExpectedSize(BATCH_COUNT);
 
 	@Override
 	public void invoke(T dataModel, AnalysisContext context) {
-		dataList.add(dataModel);
-		// 达到 BATCH_COUNT 则保存进数据库，防止数据几万条数据在内存，容易 OOM
-		if (dataList.size() >= BATCH_COUNT) {
+		this.dataList.add(dataModel);
+		if (this.dataList.size() >= BATCH_COUNT) {
 			this.saveData(Lists.newArrayList(dataList));
-			// 存储完成清理
-			dataList.clear();
-		}
-		if (CollectionUtils.isNotEmpty(dataList)) {
-			this.saveData(Lists.newArrayList(dataList));
+			this.dataList.clear();
 		}
 	}
 
 	@Override
 	public void doAfterAllAnalysed(AnalysisContext context) {
+		if (CollectionUtils.isNotEmpty(this.dataList)) {
+			this.saveData(Lists.newArrayList(this.dataList));
+		}
 		logger.info("All data is parsed!");
 	}
 

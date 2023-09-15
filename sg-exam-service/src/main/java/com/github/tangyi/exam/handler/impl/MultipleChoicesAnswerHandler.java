@@ -6,8 +6,10 @@ import com.github.tangyi.common.constant.CommonConstant;
 import com.github.tangyi.exam.enums.SubjectType;
 import com.github.tangyi.exam.handler.AbstractAnswerHandler;
 import com.github.tangyi.exam.service.subject.SubjectsService;
+import com.github.tangyi.exam.utils.ExamUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -34,17 +36,17 @@ public class MultipleChoicesAnswerHandler extends AbstractAnswerHandler {
 	}
 
 	public void judgeOptionRight(Answer answer, SubjectDto subject) {
-		//		String userAnswer = answer.getAnswer();
-		//		String correctAnswer = subject.getAnswer().getAnswer();
-		//		if (StringUtils.isNotBlank(userAnswer) && StringUtils.isNotBlank(correctAnswer)) {
-		//			String[] userAnswers = AnswerHandlerUtil.replaceComma(userAnswer).split(CommonConstant.COMMA);
-		//			String[] correctAnswers = AnswerHandlerUtil.replaceComma(correctAnswer).split(CommonConstant.COMMA);
-		//			subject.getOptions().forEach(option -> {
-		//				if (ArrayUtils.contains(correctAnswers, option.getOptionName())) {
-		//					option.setRight(ArrayUtils.contains(userAnswers, option.getOptionName()) ? TRUE : FALSE);
-		//				}
-		//			});
-		//		}
+		String userAnswer = answer.getAnswer();
+		String correctAnswer = subject.getAnswer().getAnswer();
+		if (StringUtils.isNotBlank(userAnswer) && StringUtils.isNotBlank(correctAnswer)) {
+			String[] userAnswers = ExamUtil.replaceComma(userAnswer).split(CommonConstant.COMMA);
+			String[] correctAnswers = ExamUtil.replaceComma(correctAnswer).split(CommonConstant.COMMA);
+			subject.getOptions().forEach(option -> {
+				if (ArrayUtils.contains(correctAnswers, option.getOptionName())) {
+					option.setRight(ArrayUtils.contains(userAnswers, option.getOptionName()) ? TRUE : FALSE);
+				}
+			});
+		}
 	}
 
 	@Override

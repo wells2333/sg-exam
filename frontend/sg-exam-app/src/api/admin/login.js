@@ -1,5 +1,4 @@
 import request from '@/router/axios'
-import {getRefreshToken} from '@/utils/auth'
 
 const DEFAULT_TENANT_CODE = 'gitee'
 

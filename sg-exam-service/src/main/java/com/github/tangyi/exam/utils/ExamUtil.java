@@ -116,7 +116,7 @@ public class ExamUtil {
 	}
 
 	public static List<SubjectExcelModel> convertSubject(List<SubjectDto> dtoList) {
-		List<SubjectExcelModel> models = new ArrayList<>(dtoList.size());
+		List<SubjectExcelModel> models = Lists.newArrayListWithExpectedSize(dtoList.size());
 		dtoList.forEach(subject -> {
 			SubjectExcelModel model = new SubjectExcelModel();
 			BeanUtils.copyProperties(subject, model);
