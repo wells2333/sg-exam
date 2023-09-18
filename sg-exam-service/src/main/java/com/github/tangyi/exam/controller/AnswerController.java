@@ -116,7 +116,8 @@ public class AnswerController extends BaseController {
 	@Operation(summary = "保存答题")
 	@SgLog(value = "保存答题", operationType = OperationType.UPDATE)
 	public R<Boolean> saveAnswer(@RequestBody AnswerDto answer) {
-		return R.success(answerService.save(answer, SysUtil.getUserId(), SysUtil.getUser(), SysUtil.getTenantCode()) > 0);
+		return R.success(
+				answerService.save(answer, SysUtil.getUserId(), SysUtil.getUser(), SysUtil.getTenantCode()) > 0);
 	}
 
 	/**
@@ -204,9 +205,9 @@ public class AnswerController extends BaseController {
 	/**
 	 * 获取排名数据，成绩由高到底排序，返回姓名、头像、分数信息
 	 */
-	@GetMapping("record/{recordId}/rankInfo")
+	@GetMapping("rankInfo")
 	@Operation(summary = "排名列表")
-	public R<List<RankInfoDto>> rankInfo(@PathVariable Long recordId) {
-		return R.success(rankInfoService.getRankInfo(recordId));
+	public R<List<RankInfoDto>> rankInfo(@RequestParam Long examinationId) {
+		return R.success(rankInfoService.getRankInfo(examinationId));
 	}
 }

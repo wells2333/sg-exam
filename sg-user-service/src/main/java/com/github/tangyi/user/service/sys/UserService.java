@@ -585,6 +585,21 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 		return false;
 	}
 
+	@Override
+	public UserVo getUserInfo(Long id) {
+		User user = this.get(id);
+		if (user == null) {
+			return null;
+		}
+
+		UserVo userVo = new UserVo();
+		BeanUtils.copyProperties(user, userVo);
+		if (user.getAvatarId() != null) {
+			userVo.setAvatarUrl(attachmentManager.getPreviewUrlIgnoreException(user.getAvatarId()));
+		}
+		return userVo;
+	}
+
 	private void getUserAvatar(UserInfoDto userInfoDto, User user) {
 		if (user.getAvatarId() != null && user.getAvatarId() != 0L) {
 			userInfoDto.setAvatar(attachmentManager.getPreviewUrlIgnoreException(user.getAvatarId()));

@@ -156,13 +156,12 @@ public class ExaminationActionService {
      */
     @Transactional
     public Boolean submit(Long recordId, String operator, String tenantCode) {
-        // 已提交的题目
         List<Answer> answerList = answerService.findListByExamRecordId(recordId);
         if (CollectionUtils.isEmpty(answerList)) {
             return Boolean.FALSE;
         }
-        // 成绩
-        ExaminationRecord record = new ExaminationRecord();
+
+        ExaminationRecord record = this.examRecordService.get(recordId);
         Long[] subjectIds = answerList.stream().map(Answer::getSubjectId).toArray(Long[]::new);
         Map<Integer, List<Answer>> distinct = distinctAnswer(subjectIds, answerList);
         AnswerHandleResult result = answerHandleService.handleAll(distinct);

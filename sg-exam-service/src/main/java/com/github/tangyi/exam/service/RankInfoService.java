@@ -3,19 +3,21 @@ package com.github.tangyi.exam.service;
 import com.github.tangyi.api.exam.constants.AnswerConstant;
 import com.github.tangyi.api.exam.dto.RankInfoDto;
 import com.github.tangyi.api.exam.model.ExaminationRecord;
-import com.github.tangyi.common.model.R;
+import com.github.tangyi.api.user.service.IUserService;
 import com.github.tangyi.common.utils.JsonMapper;
-import com.github.tangyi.common.utils.RUtil;
 import com.github.tangyi.common.vo.UserVo;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Slf4j
@@ -25,39 +27,37 @@ public class RankInfoService {
 
 	private final RedisTemplate<String, String> redisTemplate;
 
+	private final IUserService userService;
+
+	private String getRankKey(Long examinationId) {
+		return AnswerConstant.CACHE_PREFIX_RANK + examinationId;
+	}
+
 	/**
 	 * 获取排名数据
 	 */
-	public List<RankInfoDto> getRankInfo(Long recordId) {
-		List<RankInfoDto> rankInfos = new ArrayList<>();
-		// 查询缓存
-		Set<ZSetOperations.TypedTuple<String>> typedTuples = redisTemplate.opsForZSet()
-				.reverseRangeByScoreWithScores(AnswerConstant.CACHE_PREFIX_RANK + recordId, 0, Integer.MAX_VALUE);
-		if (typedTuples != null) {
-			// 用户 ID 列表
-			Set<Long> userIds = new HashSet<>();
-			typedTuples.forEach(typedTuple -> {
-				ExaminationRecord record = JsonMapper.getInstance()
-						.fromJson(typedTuple.getValue(), ExaminationRecord.class);
-				if (record != null) {
-					RankInfoDto rankInfo = new RankInfoDto();
-					rankInfo.setUserId(record.getUserId());
-					userIds.add(record.getUserId());
-					rankInfo.setScore(typedTuple.getScore());
-					rankInfos.add(rankInfo);
-				}
-			});
-			if (!userIds.isEmpty()) {
-				R<List<UserVo>> userResponse = null;
-				if (RUtil.isSuccess(userResponse)) {
-					rankInfos.forEach(rankInfo -> {
-						userResponse.getResult().stream().filter(user -> user.getId().equals(rankInfo.getUserId()))
-								.findFirst().ifPresent(user -> {
-									// 设置考生信息
-									rankInfo.setName(user.getName());
-									rankInfo.setAvatarUrl(user.getAvatarUrl());
-								});
-					});
+	public List<RankInfoDto> getRankInfo(Long examinationId) {
+		String key = this.getRankKey(examinationId);
+		Set<ZSetOperations.TypedTuple<String>> tuples = redisTemplate.opsForZSet()
+				.reverseRangeByScoreWithScores(key, 0, Integer.MAX_VALUE);
+		if (tuples == null) {
+			return Collections.emptyList();
+		}
+
+		int rankNum = 1;
+		List<RankInfoDto> rankInfos = Lists.newArrayListWithExpectedSize(tuples.size());
+		for (ZSetOperations.TypedTuple<String> tuple : tuples) {
+			ExaminationRecord record = JsonMapper.getInstance().fromJson(tuple.getValue(), ExaminationRecord.class);
+			if (record != null) {
+				RankInfoDto rankInfo = new RankInfoDto();
+				rankInfo.setUserId(record.getUserId());
+				rankInfo.setScore(tuple.getScore());
+				rankInfo.setRankNum(rankNum++);
+				rankInfos.add(rankInfo);
+				UserVo userVo = userService.getUserInfo(record.getUserId());
+				if (userVo != null) {
+					rankInfo.setName(userVo.getName());
+					rankInfo.setAvatarUrl(userVo.getAvatarUrl());
 				}
 			}
 		}
@@ -66,10 +66,15 @@ public class RankInfoService {
 
 	/**
 	 * 更新排名信息
-	 * 基于 Redis 的 sort set 数据结构
 	 */
 	public void updateRank(ExaminationRecord record) {
-		redisTemplate.opsForZSet().add(AnswerConstant.CACHE_PREFIX_RANK + record.getExaminationId(),
-				JsonMapper.getInstance().toJson(record), record.getScore());
+		try {
+			String key = this.getRankKey(record.getExaminationId());
+			String value = JsonMapper.getInstance().toJson(record);
+			redisTemplate.opsForZSet().add(key, value, record.getScore());
+			log.info("Update rank finished, examinationId: {}, score: {}", record.getExaminationId(), record.getScore());
+		} catch (Exception e) {
+			log.error("Failed to update rank, examinationId: {}", record.getExaminationId(), e);
+		}
 	}
 }

@@ -270,11 +270,11 @@ export default {
       return answerType[right]
     },
     getJudgeClass(userAnswer, standardAnswer) {
-      let right = false;
+      let right = false
       if (userAnswer === '正确') {
-        right = standardAnswer === '0';
+        right = standardAnswer === '0'
       } else if (userAnswer === '错误') {
-        right = standardAnswer === '1';
+        right = standardAnswer === '1'
       }
       return answerType[right]
     }

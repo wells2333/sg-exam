@@ -11,4 +11,7 @@ public interface IUserService extends ICrudService<User> {
 	List<UserVo> findUserVoListById(Long[] ids);
 
 	Long findAllUserCount();
+
+	UserVo getUserInfo(Long id);
+
 }
