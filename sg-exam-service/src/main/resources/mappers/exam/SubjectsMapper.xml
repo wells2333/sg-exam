@@ -6,6 +6,7 @@
         <result column="subject_id" property="subjectId"/>
         <result column="category_id" property="categoryId"/>
         <result column="type" property="type"/>
+        <result column="sort" property="sort"/>
         <result column="creator" property="creator"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
@@ -32,7 +33,7 @@
                 ORDER BY #{params.sortField} #{params.sortOrder}
             </when>
             <otherwise>
-                ORDER BY id ASC
+                ORDER BY sort ASC
             </otherwise>
         </choose>
     </select>
@@ -54,14 +55,17 @@
         <foreach item="item" index="index" collection="subjectIds" open="("
                  separator="," close=")">#{item}
         </foreach>
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findByCategoryId" resultMap="subjectTypeResultMap">
         SELECT * FROM exam_subjects a WHERE a.category_id = #{categoryId}
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findIdAndTypeByCategoryId" resultMap="subjectTypeResultMap">
         SELECT id, subject_id, type FROM exam_subjects a WHERE a.category_id = #{categoryId}
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findByCategoryIds" resultMap="subjectTypeResultMap">
@@ -69,10 +73,11 @@
         <foreach item="item" index="index" collection="categoryIds" open="("
                  separator="," close=")">#{item}
         </foreach>
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findByType" resultMap="subjectTypeResultMap">
-        SELECT * FROM exam_subjects a WHERE a.type = #{type}
+        SELECT * FROM exam_subjects a WHERE a.type = #{type} ORDER BY a.sort ASC
     </select>
 
     <select id="findMaxSortByCategoryId" resultType="Integer">
