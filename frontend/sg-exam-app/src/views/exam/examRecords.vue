@@ -37,6 +37,7 @@
           <el-table-column :label="$t('operation')" align="center">
             <template slot-scope="scope">
               <el-button type="success" size="mini" @click="handleDetail(scope.row)" :disabled="scope.row.submitStatus !== 3">{{$t('exam.scoreDetail')}}</el-button>
+              <el-button type="success" size="mini" @click="handleScore(scope.row)">{{$t('exam.scoreRank')}}</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -47,11 +48,20 @@
         </el-row>
       </el-col>
     </el-row>
+    <el-dialog :title="$t('exam.scoreRank')" :visible.sync="dialogTableVisible">
+      <el-table :data="gridData">
+        <el-table-column property="rankNum" label="排名" width="150"></el-table-column>
+        <el-table-column property="name" label="姓名" width="200"></el-table-column>
+        <el-table-column property="score" label="分数"></el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 <script>
 import { mapState } from 'vuex'
 import { fetchList } from '@/api/exam/examRecord'
+import { examRankInfo } from '@/api/exam/answer'
+
 import store from '@/store'
 import { messageWarn } from '@/utils/util'
 
@@ -75,7 +85,9 @@ export default {
         score: '',
         correctNumber: '',
         inCorrectNumber: ''
-      }
+      },
+      dialogTableVisible: false,
+      gridData: []
     }
   },
   computed: {
@@ -150,6 +162,21 @@ export default {
       }).catch((error) => {
         console.error(error)
       })
+    },
+    handleScore (row) {
+      const { examinationId } = row
+      if (examinationId) {
+        examRankInfo({
+          examinationId
+        }).then(response => {
+          console.log(response, 'OK')
+          const { result } = response.data
+          this.gridData = result
+          this.dialogTableVisible = true
+        }).catch((error) => {
+          console.error(error)
+        })
+      }
     },
     transformExaminationType (type) {
       const examType = {

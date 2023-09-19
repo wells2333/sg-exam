@@ -117,3 +117,12 @@ export function anonymousUserSubmitAll (obj, examinationId, identifier) {
     data: obj
   })
 }
+
+// 查询考试排名
+export function examRankInfo (query) {
+  return request({
+    url: baseAnswerUrl + 'rankInfo',
+    method: 'get',
+    params: query
+  })
+}

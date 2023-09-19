@@ -100,6 +100,7 @@ const en = {
     status: 'Status',
     score: 'Score',
     scoreDetail: 'Detail',
+    scoreRank: 'Rank',
     course: {
       courseName: 'Course Name',
       courseIntroduction: 'Course Introduction',
