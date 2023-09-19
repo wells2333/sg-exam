@@ -101,6 +101,7 @@ const zh = {
     status: '状态',
     score: '成绩',
     scoreDetail: '成绩详情',
+    scoreRank: '考试排名',
     course: {
       courseName: '课程名称',
       courseIntroduction: '课程介绍',
