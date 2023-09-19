@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SubjectImportListener extends AbstractExcelImportListener<SubjectExcelModel> {
 
@@ -24,10 +25,10 @@ public class SubjectImportListener extends AbstractExcelImportListener<SubjectEx
 
 	private final String tenantCode;
 
-	private final int nextNo;
+	private final AtomicInteger nextNo;
 
 	public SubjectImportListener(SubjectImportExportService importExportService, Long examinationId,
-			Long categoryId, String creator, String tenantCode, int nextNo) {
+			Long categoryId, String creator, String tenantCode, AtomicInteger nextNo) {
 		this.importExportService = importExportService;
 		this.examinationId = examinationId;
 		this.categoryId = categoryId;
@@ -40,13 +41,12 @@ public class SubjectImportListener extends AbstractExcelImportListener<SubjectEx
 	public void saveData(List<SubjectExcelModel> models) {
 		logger.info("SaveData size: {}, creator: {}, tenantCode: {}", models.size(), creator, tenantCode);
 		List<SubjectDto> subjects = Lists.newArrayListWithExpectedSize(models.size());
-		int sort = this.nextNo;
 		for (SubjectExcelModel model : models) {
 			SubjectDto dto = new SubjectDto();
 			dto.setNewRecord(true);
 			dto.setCommonValue(creator, tenantCode);
 			BeanUtils.copyProperties(model, dto);
-			dto.setSort(sort++);
+			dto.setSort(nextNo.incrementAndGet());
 			List<SubjectOption> options = Lists.newArrayListWithExpectedSize(4);
 			if (StringUtils.isNotEmpty(model.getOptionA())) {
 				options.add(newOption("A", model.getOptionA(), 1));

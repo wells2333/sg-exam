@@ -38,6 +38,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Service
@@ -114,6 +115,8 @@ public class SubjectImportExportService {
 				subject.setCommonValue(creator, tenantCode);
 				subjectsService.update(subject);
 			}
+			log.info("Import subject finished, categoryId: {}, examinationId: {}, sort: {}, creator: {}", categoryId,
+					examinationId, subject.getSort(), creator);
 		}
 	}
 
@@ -191,12 +194,13 @@ public class SubjectImportExportService {
 	public Boolean importExcelSubject(Long categoryId, MultipartFile file) throws IOException {
 		String user = SysUtil.getUser();
 		String tenantCode = SysUtil.getTenantCode();
+		Integer maxNo = subjectsService.findMaxSortByCategoryId(categoryId);
+		AtomicInteger nextNo = new AtomicInteger(maxNo == null ? 0 : maxNo);
 		ListeningExecutorService executor = executorHolder.getImportExecutor();
 		// 数据读取到内存
 		byte[] data = IOUtils.toByteArray(file.getInputStream());
 		ListenableFuture<Boolean> future = executor.submit(() -> {
 			try (InputStream in = new BufferedInputStream(new ByteArrayInputStream(data))) {
-				int nextNo = subjectsService.nextSubjectNo(categoryId);
 				SubjectImportListener listener = new SubjectImportListener(this, null, categoryId, user, tenantCode,
 						nextNo);
 				ExcelToolUtil.readExcel(in, SubjectExcelModel.class, listener);

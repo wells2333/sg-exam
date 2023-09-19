@@ -98,7 +98,7 @@
             <!-- 判断 -->
             <div v-if="item.subject.type === 2">
               <p>
-                {{$t('exam.incorrect.userAnswer')}}：{{ item.answer === '正确' ? $t('exam.incorrect.right') : $t('exam.incorrect.wrong') }}
+                {{$t('exam.incorrect.userAnswer')}}：{{ processJudgementUserAnswer(item.answer) }}
               </p>
             </div>
             <!-- 语音 -->
@@ -118,7 +118,7 @@
               {{$t('exam.incorrect.answer')}}：
               <span v-if="item.subject.type === 2" :class="
               getJudgeClass(item.answer, item.subject.answer.answer)">
-                {{ item.subject.answer.answer === '0' ? $t('exam.incorrect.right') : $t('exam.incorrect.wrong') }}
+                {{ getJudgementStdAnswerText(item.subject.answer.answer) }}
               </span>
               <span v-else v-html="item.subject.answer.answer"></span>
             </p>
@@ -270,6 +270,10 @@ export default {
       return answerType[right]
     },
     getJudgeClass(userAnswer, standardAnswer) {
+      if (userAnswer === null || userAnswer === undefined) {
+        return ''
+      }
+
       let right = false
       if (userAnswer === '正确') {
         right = standardAnswer === '0'
@@ -277,6 +281,16 @@ export default {
         right = standardAnswer === '1'
       }
       return answerType[right]
+    },
+    processJudgementUserAnswer(answer) {
+      if (answer === null || answer === undefined) {
+        return ''
+      }
+
+      return answer === '正确' ? this.$t('exam.incorrect.right') : this.$t('exam.incorrect.wrong')
+    },
+    getJudgementStdAnswerText(answer) {
+      return answer === '0' ? this.$t('exam.incorrect.right') : this.$t('exam.incorrect.wrong')
     }
   }
 }

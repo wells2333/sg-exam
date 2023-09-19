@@ -93,6 +93,15 @@ export const answerColumns: BasicColumn[] = [
     title: '参考答案',
     width: 80,
     align: 'left',
+    customRender:({ record }) => {
+      let text = '';
+      if (record.subject.answer.answer === '0') {
+        text = '正确';
+      } else if (record.subject.answer.answer === '1') {
+        text = '错误';
+      }
+      return text;
+    }
   },
   {
     dataIndex: 'markStatus',
