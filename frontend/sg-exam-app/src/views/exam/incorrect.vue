@@ -98,7 +98,10 @@
             <!-- 判断 -->
             <div v-if="item.subject.type === 2">
               <p>
-                {{$t('exam.incorrect.userAnswer')}}：{{ processJudgementUserAnswer(item.answer) }}
+                {{$t('exam.incorrect.userAnswer')}}：
+                <span :class="getJudgeClass(item.answer, item.subject.answer.answer)">
+                  {{ processJudgementUserAnswer(item.answer) }}
+                </span>
               </p>
             </div>
             <!-- 语音 -->
@@ -116,8 +119,7 @@
             <p class="subject-content-answer"
                v-if="item.subject.answer !== undefined">
               {{$t('exam.incorrect.answer')}}：
-              <span v-if="item.subject.type === 2" :class="
-              getJudgeClass(item.answer, item.subject.answer.answer)">
+              <span v-if="item.subject.type === 2">
                 {{ getJudgementStdAnswerText(item.subject.answer.answer) }}
               </span>
               <span v-else v-html="item.subject.answer.answer"></span>
