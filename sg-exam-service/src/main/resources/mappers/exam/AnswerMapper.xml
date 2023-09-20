@@ -117,6 +117,12 @@
                 <if test="item.markStatus != null">
                     mark_status = #{item.markStatus,jdbcType=TINYINT},
                 </if>
+                <if test="item.markOperator != null">
+                    mark_operator = #{item.markOperator},
+                </if>
+                <if test="item.startTime != null">
+                    start_time = #{item.startTime,jdbcType=TIMESTAMP},
+                </if>
                 <if test="item.endTime != null">
                     end_time = #{item.endTime,jdbcType=TIMESTAMP},
                 </if>

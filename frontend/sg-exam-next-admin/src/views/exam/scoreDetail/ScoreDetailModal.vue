@@ -18,16 +18,16 @@
         <a-divider />
         <div class="subject-title">
           <span class="subject-title-content">考生答案：</span>
-          <span class="subject-title-content" v-if="subject.type === 2 && answer.answer === '0'">正确</span>
-          <span class="subject-title-content" v-else-if="subject.type === 2 && answer.answer === '1'">错误</span>
-          <span class="subject-title-content" v-else v-html="answer.answer"></span>
+          <span class="subject-title-content" v-if="subject.type === 2 && record.answer === '0'">正确</span>
+          <span class="subject-title-content" v-else-if="subject.type === 2 && record.answer === '1'">错误</span>
+          <span class="subject-title-content" v-else v-html="record.answer"></span>
 
         </div>
         <div class="subject-title">
           <span class="subject-title-content">参考答案：</span>
-          <span class="subject-title-content" v-if="subject.type === 2 && record.answer === '0'">正确</span>
-          <span class="subject-title-content" v-else-if="subject.type === 2 && record.answer === '1'">错误</span>
-          <span class="subject-title-content" v-else v-html="record.answer"></span>
+          <span class="subject-title-content" v-if="subject.type === 2 && answer.answer === '0'">正确</span>
+          <span class="subject-title-content" v-else-if="subject.type === 2 && answer.answer === '1'">错误</span>
+          <span class="subject-title-content" v-else v-html="answer.answer"></span>
         </div>
         <div class="subject-title">
           <span class="subject-title-content">解析：</span>

@@ -10,8 +10,29 @@ import org.springframework.stereotype.Component;
 @Component
 public class JudgementAnswerHandler extends AbstractAnswerHandler {
 
+	private static final String RIGHT = "正确";
+
+	private static final String RIGHT_FLAG = "0";
+
+	private static final String WRONG = "错误";
+
+	private static final String WRONG_FLAG = "1";
+
 	public JudgementAnswerHandler(SubjectsService subjectsService) {
 		super(subjectsService);
+	}
+
+	/**
+	 * 转换类型，把中文转成数字
+	 */
+	private String convertAnswer(JudgeContext judgeContext) {
+		String answer = judgeContext.getAnswer().getAnswer();
+		if (RIGHT.equals(answer)) {
+			answer = RIGHT_FLAG;
+		} else if (WRONG.equals(answer)) {
+			answer = WRONG_FLAG;
+		}
+		return answer;
 	}
 
 	@Override
@@ -21,7 +42,8 @@ public class JudgementAnswerHandler extends AbstractAnswerHandler {
 
 	@Override
 	public boolean judgeRight(JudgeContext judgeContext) {
-		return judgeContext.getSubject().getAnswer().getAnswer().equalsIgnoreCase(judgeContext.getAnswer().getAnswer());
+		String answer = this.convertAnswer(judgeContext);
+		return judgeContext.getSubject().getAnswer().getAnswer().equalsIgnoreCase(answer);
 	}
 
 	@Override

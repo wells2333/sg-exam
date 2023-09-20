@@ -411,6 +411,10 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
         return super.dao.findByType(type);
     }
 
+	public Integer findMaxSortByCategoryId(Long categoryId) {
+		return this.dao.findMaxSortByCategoryId(categoryId);
+	}
+
     public Integer nextSubjectNo(Long categoryId) {
         Integer no = this.dao.findMaxSortByCategoryId(categoryId);
         return no == null ? 1 : no + 1;
