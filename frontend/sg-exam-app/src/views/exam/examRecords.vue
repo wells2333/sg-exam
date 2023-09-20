@@ -48,10 +48,28 @@
         </el-row>
       </el-col>
     </el-row>
-    <el-dialog :title="$t('exam.scoreRank')" :visible.sync="dialogTableVisible">
+    <el-dialog :title="$t('exam.scoreRank')" :visible.sync="dialogTableVisible" width="35%">
       <el-table :data="gridData">
-        <el-table-column property="rankNum" label="排名" width="150"></el-table-column>
-        <el-table-column property="name" label="姓名" width="200"></el-table-column>
+        <el-table-column label="排名" width="120">
+          <template slot-scope="scope">
+            <div style="display: flex; align-items: center;">
+              <div style="width: 26px; height: 26px; margin-right: 10px">
+                <img width="100%" height="100%" src="https://yunmianshi.com/attach-storage/yunmianshi/exam/image/10/champion.png" v-if="scope.row.rankNum === 1">
+                <img width="100%" height="100%" src="https://yunmianshi.com/attach-storage/yunmianshi/exam/image/10/runnerUp.png" v-if="scope.row.rankNum === 2">
+                <img width="100%" height="100%" src="https://yunmianshi.com/attach-storage/yunmianshi/exam/image/10/secondRunnerUp.png" v-if="scope.row.rankNum === 3">
+              </div>
+              <span>{{ scope.row.rankNum }}</span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="用户ID" width="250">
+          <template slot-scope="scope">
+            <div style="display: flex; align-items: center;">
+              <img width="40" height="40" style="margin-right: 10px" :src="scope.row.avatarUrl ? scope.row.avatarUrl:'https://yunmianshi.com/attach-storage/yunmianshi/default/124/user.png'">
+              <span >{{ scope.row.name }}</span>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column property="score" label="分数"></el-table-column>
       </el-table>
     </el-dialog>
