@@ -53,7 +53,7 @@
         <el-table-column label="排名" width="120">
           <template slot-scope="scope">
             <div style="display: flex; align-items: center;">
-              <div style="width: 26px; height: 26px; margin-right: 10px">
+              <div style="width: 26px; height: 26px; margin-right: 10px; cursor: pointer;">
                 <img width="100%" height="100%" src="https://yunmianshi.com/attach-storage/yunmianshi/exam/image/10/champion.png" v-if="scope.row.rankNum === 1">
                 <img width="100%" height="100%" src="https://yunmianshi.com/attach-storage/yunmianshi/exam/image/10/runnerUp.png" v-if="scope.row.rankNum === 2">
                 <img width="100%" height="100%" src="https://yunmianshi.com/attach-storage/yunmianshi/exam/image/10/secondRunnerUp.png" v-if="scope.row.rankNum === 3">
@@ -62,10 +62,10 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="用户ID" width="250">
+        <el-table-column label="账号" width="200">
           <template slot-scope="scope">
-            <div style="display: flex; align-items: center;">
-              <img width="40" height="40" style="margin-right: 10px" :src="scope.row.avatarUrl ? scope.row.avatarUrl:'https://yunmianshi.com/attach-storage/yunmianshi/default/124/user.png'">
+            <div style="display: flex; align-items: center; cursor: pointer;">
+              <img style="margin-right: 10px;width: 30px; height: 30px; border-radius: 50%;" :src="scope.row.avatarUrl ? scope.row.avatarUrl:'https://yunmianshi.com/attach-storage/yunmianshi/default/124/user.png'">
               <span >{{ scope.row.name }}</span>
             </div>
           </template>

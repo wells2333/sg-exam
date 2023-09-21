@@ -4,11 +4,8 @@ import com.github.tangyi.api.exam.constants.AnswerConstant;
 import com.github.tangyi.api.exam.dto.RankInfoDto;
 import com.github.tangyi.api.exam.model.ExaminationRecord;
 import com.github.tangyi.api.user.service.IUserService;
-import com.github.tangyi.common.utils.JsonMapper;
 import com.github.tangyi.common.vo.UserVo;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -17,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Slf4j
@@ -47,14 +43,14 @@ public class RankInfoService {
 		int rankNum = 1;
 		List<RankInfoDto> rankInfos = Lists.newArrayListWithExpectedSize(tuples.size());
 		for (ZSetOperations.TypedTuple<String> tuple : tuples) {
-			ExaminationRecord record = JsonMapper.getInstance().fromJson(tuple.getValue(), ExaminationRecord.class);
-			if (record != null) {
+			if (tuple != null && tuple.getValue() != null) {
+				Long userId = Long.valueOf(tuple.getValue());
 				RankInfoDto rankInfo = new RankInfoDto();
-				rankInfo.setUserId(record.getUserId());
+				rankInfo.setUserId(userId);
 				rankInfo.setScore(tuple.getScore());
 				rankInfo.setRankNum(rankNum++);
 				rankInfos.add(rankInfo);
-				UserVo userVo = userService.getUserInfo(record.getUserId());
+				UserVo userVo = userService.getUserInfo(userId);
 				if (userVo != null) {
 					rankInfo.setName(userVo.getName());
 					rankInfo.setAvatarUrl(userVo.getAvatarUrl());
@@ -70,9 +66,10 @@ public class RankInfoService {
 	public void updateRank(ExaminationRecord record) {
 		try {
 			String key = this.getRankKey(record.getExaminationId());
-			String value = JsonMapper.getInstance().toJson(record);
+			String value = record.getUserId() + "";
 			redisTemplate.opsForZSet().add(key, value, record.getScore());
-			log.info("Update rank finished, examinationId: {}, score: {}", record.getExaminationId(), record.getScore());
+			log.info("Update rank finished, examinationId: {}, userId: {}, score: {}", record.getExaminationId(), value,
+					record.getScore());
 		} catch (Exception e) {
 			log.error("Failed to update rank, examinationId: {}", record.getExaminationId(), e);
 		}
