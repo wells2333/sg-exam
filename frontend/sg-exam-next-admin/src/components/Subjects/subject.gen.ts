@@ -228,18 +228,7 @@ export function generateTextAnswer() {
   return [{
     label: '参考答案',
     field: 'answer',
-    component: 'Input',
-    render: ({model, field}) => {
-      return h(Tinymce, {
-        value: model[field],
-        height: editorHeight,
-        plugins: tinymcePlugins,
-        toolbar: tinymceToolbar,
-        onChange: (value: string) => {
-          model[field] = value;
-        },
-      });
-    },
+    component: 'InputTextArea',
     colProps: {
       span: 24
     }

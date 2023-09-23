@@ -49,8 +49,6 @@ public class ExaminationActionService {
 
     private final SubjectsService subjectsService;
 
-    private final SubjectServiceFactory subjectServiceFactory;
-
     private final AnswerService answerService;
 
     private final AnswerHandleService answerHandleService;
@@ -61,25 +59,21 @@ public class ExaminationActionService {
 
     private final ExamFavoritesService examFavoritesService;
 
-    public ExaminationActionService(ExaminationService examinationService,
-                                    ExaminationSubjectService examinationSubjectService,
-                                    ExamRecordService examRecordService,
-                                    SubjectsService subjectsService, SubjectServiceFactory subjectServiceFactory,
-                                    AnswerService answerService,
-                                    AnswerHandleService answerHandleService, RankInfoService rankInfoService,
-                                    IExecutorHolder executorHolder,
-                                    ExamFavoritesService examFavoritesService) {
-        this.examinationService = examinationService;
-        this.examinationSubjectService = examinationSubjectService;
-        this.examRecordService = examRecordService;
-        this.subjectsService = subjectsService;
-        this.subjectServiceFactory = subjectServiceFactory;
-        this.answerService = answerService;
-        this.answerHandleService = answerHandleService;
-        this.rankInfoService = rankInfoService;
-        this.executorHolder = executorHolder;
-        this.examFavoritesService = examFavoritesService;
-    }
+	public ExaminationActionService(ExaminationService examinationService,
+			ExaminationSubjectService examinationSubjectService, ExamRecordService examRecordService,
+			SubjectsService subjectsService, AnswerService answerService, AnswerHandleService answerHandleService,
+			RankInfoService rankInfoService, IExecutorHolder executorHolder,
+			ExamFavoritesService examFavoritesService) {
+		this.examinationService = examinationService;
+		this.examinationSubjectService = examinationSubjectService;
+		this.examRecordService = examRecordService;
+		this.subjectsService = subjectsService;
+		this.answerService = answerService;
+		this.answerHandleService = answerHandleService;
+		this.rankInfoService = rankInfoService;
+		this.executorHolder = executorHolder;
+		this.examFavoritesService = examFavoritesService;
+	}
 
     @Transactional
     public StartExamDto start(ExaminationRecord examRecord) {
@@ -156,31 +150,34 @@ public class ExaminationActionService {
      */
     @Transactional
     public Boolean submit(Long recordId, String operator, String tenantCode) {
-        List<Answer> answerList = answerService.findListByExamRecordId(recordId);
+        List<Answer> answerList = this.answerService.findListByExamRecordId(recordId);
         if (CollectionUtils.isEmpty(answerList)) {
             return Boolean.FALSE;
         }
 
         ExaminationRecord record = this.examRecordService.get(recordId);
         Long[] subjectIds = answerList.stream().map(Answer::getSubjectId).toArray(Long[]::new);
-        Map<Integer, List<Answer>> distinct = distinctAnswer(subjectIds, answerList);
-        AnswerHandleResult result = answerHandleService.handleAll(distinct);
+        Map<Integer, List<Answer>> distinct = this.distinctAnswer(subjectIds, answerList);
+        AnswerHandleResult result = this.answerHandleService.handleAll(distinct);
         // 记录总分、正确题目数、错误题目数
         record.setScore(result.getScore());
         record.setCorrectNumber(result.getCorrectNum());
         record.setInCorrectNumber(result.getInCorrectNum());
         // 更新答题状态
         List<Answer> updates = distinct.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
-        answerService.batchUpdate(updates);
+		this.answerService.batchUpdate(updates);
         // 更新状态为统计完成，否则需要阅卷完成后才更改统计状态
-        record.setSubmitStatus(SubmitStatusEnum.CALCULATED.getValue());
+		SubmitStatusEnum submitStatus = result.isHasHumanJudgeSubject() ?
+				SubmitStatusEnum.SUBMITTED :
+				SubmitStatusEnum.CALCULATED;
+		record.setSubmitStatus(submitStatus.getValue());
         // 保存成绩
         record.setCommonValue(operator, tenantCode);
         record.setId(recordId);
         record.setEndTime(record.getCreateTime());
-        examRecordService.update(record);
+		this.examRecordService.update(record);
         // 更新排名数据
-        rankInfoService.updateRank(record);
+		this.rankInfoService.updateRank(record);
         return Boolean.TRUE;
     }
 

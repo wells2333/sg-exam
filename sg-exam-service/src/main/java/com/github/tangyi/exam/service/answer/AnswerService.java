@@ -21,6 +21,7 @@ import com.github.tangyi.exam.handler.IAnswerHandler;
 import com.github.tangyi.exam.mapper.AnswerMapper;
 import com.github.tangyi.exam.service.ExamRecordService;
 import com.github.tangyi.exam.service.ExaminationSubjectService;
+import com.github.tangyi.exam.service.RankInfoService;
 import com.github.tangyi.exam.service.media.ExamMediaService;
 import com.github.tangyi.exam.service.subject.SubjectsService;
 import com.github.tangyi.exam.utils.ExamUtil;
@@ -54,7 +55,9 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> implements 
 
     private final ExamMediaService examMediaService;
 
-    @Override
+	private final RankInfoService rankInfoService;
+
+	@Override
     @Cacheable(value = ExamCacheName.ANSWER, key = "#id")
     public Answer get(Long id) {
         return super.get(id);
@@ -140,6 +143,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> implements 
         if (record != null) {
             record.setCommonValue();
             record.setSubmitStatus(SubmitStatusEnum.CALCULATED.getValue());
+			this.rankInfoService.updateRank(record);
             return examRecordService.update(record);
         }
         return -1;

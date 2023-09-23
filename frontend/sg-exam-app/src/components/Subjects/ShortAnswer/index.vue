@@ -12,7 +12,8 @@
         <sg-video ref="sgVideo"></sg-video>
       </div>
       <div class="subject-tinymce">
-        <tinymce ref="shortAnswerEditor" :height="height" v-model="userAnswer"/>
+        <el-input type="textarea" rows="10" v-model="userAnswer">
+        </el-input>
       </div>
     </div>
   </div>
@@ -57,10 +58,8 @@ export default {
     },
     setAnswer(answer) {
       this.userAnswer = answer
-      if (this.$refs.shortAnswerEditor && this.userAnswer !== null) {
-        this.$refs.shortAnswerEditor.setContent(this.userAnswer)
-      } else {
-        this.$refs.shortAnswerEditor.setContent('')
+      if (this.userAnswer === null) {
+        this.userAnswer = ''
       }
       this.onChoice(this.subjectInfo.sort)
     },

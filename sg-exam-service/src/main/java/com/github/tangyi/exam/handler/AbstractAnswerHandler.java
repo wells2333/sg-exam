@@ -41,15 +41,20 @@ public abstract class AbstractAnswerHandler implements IAnswerHandler {
 		HandleContext handleContext = new HandleContext();
 		AtomicInteger rightCount = handleContext.getRightCount();
 		AtomicDouble totalScore = handleContext.getTotalScore();
-		Map<Long, SubjectDto> subjectMap = subjectsToMap(getSubjects(answers));
+		Map<Long, SubjectDto> subjectMap = this.subjectsToMap(this.getSubjects(answers));
+		boolean hasHumanJudgeSubject = false;
 		for (Answer answer : answers) {
 			SubjectDto subject = subjectMap.get(answer.getSubjectId());
-			if (subject != null && notAutoJudge(subject)) {
-				JudgeContext judgeContext = new JudgeContext(handleContext, subject, answer);
-				judge(handleContext, judgeContext);
-				double score = judgeContext.getScore().get();
-				if (judgeContext.getJudgeDone().get() && score > 0) {
-					totalScore.addAndGet(score);
+			if (subject != null) {
+				if (this.isAutoJudge(subject)) {
+					JudgeContext judgeContext = new JudgeContext(handleContext, subject, answer);
+					this.judge(handleContext, judgeContext);
+					double score = judgeContext.getScore().get();
+					if (judgeContext.getJudgeDone().get() && score > 0) {
+						totalScore.addAndGet(score);
+					}
+				} else {
+					hasHumanJudgeSubject = true;
 				}
 			}
 		}
@@ -57,6 +62,7 @@ public abstract class AbstractAnswerHandler implements IAnswerHandler {
 		result.setScore(totalScore.get());
 		result.setCorrectNum(rightCount.get());
 		result.setInCorrectNum(answers.size() - rightCount.get());
+		result.setHasHumanJudgeSubject(hasHumanJudgeSubject);
 		return result;
 	}
 
@@ -72,8 +78,8 @@ public abstract class AbstractAnswerHandler implements IAnswerHandler {
 				judgeContext.getSubject().getAnswer().getAnswer());
 	}
 
-	private boolean notAutoJudge(SubjectDto subject) {
-		return !MarkConstant.AUTO_JUDGE.equals(subject.getJudgeType());
+	private boolean isAutoJudge(SubjectDto subject) {
+		return subject.getJudgeType() == null || MarkConstant.AUTO_JUDGE.equals(subject.getJudgeType());
 	}
 
 	private Map<Long, SubjectDto> subjectsToMap(List<SubjectDto> subjects) {

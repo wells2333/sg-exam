@@ -19,4 +19,9 @@ public class AnswerHandleResult {
 	 * 错误题目数
 	 */
 	private int inCorrectNum;
+
+	/**
+	 * 是否有人工判分的题目
+	 */
+	private boolean hasHumanJudgeSubject;
 }

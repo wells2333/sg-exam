@@ -78,16 +78,21 @@ public class ExamUtil {
 		int score = 0;
 		int correctNum = 0;
 		int inCorrectNum = 0;
+		boolean hasHumanJudgeSubject = false;
 		for (AnswerHandleResult tempResult : results) {
 			if (tempResult != null) {
 				score += tempResult.getScore();
 				correctNum += tempResult.getCorrectNum();
 				inCorrectNum += tempResult.getInCorrectNum();
+				if (tempResult.isHasHumanJudgeSubject()) {
+					hasHumanJudgeSubject = true;
+				}
 			}
 		}
 		result.setScore(score);
 		result.setCorrectNum(correctNum);
 		result.setInCorrectNum(inCorrectNum);
+		result.setHasHumanJudgeSubject(hasHumanJudgeSubject);
 		return result;
 	}
 
