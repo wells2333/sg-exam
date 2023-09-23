@@ -123,6 +123,7 @@ const en = {
       registration: 'Registration',
       cancelRegistration: 'Cancel registration',
       pleaseRegistration: 'Please registration',
+      startLearn: 'Learn',
       submitSuccess: 'Submit success',
       submitFailed: 'Submit failed',
       doNotResubmit: 'Do not resubmit',

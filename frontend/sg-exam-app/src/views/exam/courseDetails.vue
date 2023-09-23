@@ -24,7 +24,7 @@
             </div>
           </div>
         </div>
-        <div class="single-course-content padding-80">
+        <div class="single-course-content padding-50">
           <el-row class="my-content-container ml-100 mr-100">
             <el-col :span="18" style="padding-right: 40px;">
               <el-tabs v-model="activeName">
@@ -128,8 +128,11 @@
             </el-col>
             <el-col :span="6">
               <div class="course-sidebar">
-                <el-button type="primary" class="clever-btn mb-30 w-100" @click="handleJoin">
-                  {{ joinBtnText }}
+                <el-button type="primary" class="clever-btn mb-12 w-100" @click="handleJoin">
+                  {{ this.detail.isUserJoin === true ? this.$t('exam.course.cancelRegistration') : this.$t('exam.course.registration') }}
+                </el-button>
+                <el-button v-if="this.detail.isUserJoin === true" type="primary" class="clever-btn mb-30 w-100" style="margin-left: 0;" @click="handleStartLearn">
+                  {{ $t('exam.course.startLearn') }}
                 </el-button>
                 <div class="sidebar-widget">
                   <h4>{{$t('exam.course.courseFeatures')}}</h4>
@@ -202,7 +205,6 @@ export default {
       }],
       evaluates: [],
       hasEvaluate: false,
-      joinBtnText: '',
       courseAttachName: '',
       courseAttachUrl: ''
     }
@@ -219,7 +221,6 @@ export default {
       getCourseDetail(this.courseId).then(res => {
         this.detail = res.data.result
         this.course = res.data.result.course
-        this.joinBtnText = this.detail.isUserJoin === true ? this.$t('exam.course.cancelRegistration') : this.$t('exam.course.registration')
         setTimeout(() => {
           this.loading = false
         }, 500)
@@ -320,6 +321,26 @@ export default {
       }).catch(error => {
         console.error(error)
       })
+    },
+    handleStartLearn() {
+      if (this.detail.isUserJoin !== true) {
+        messageWarn(this, this.$t('exam.course.pleaseRegistration'))
+        return
+      }
+
+      const chapters = this.detail.chapters
+      if (chapters && chapters.length > 0) {
+        const chapter = chapters[0]
+        const courseId = chapter.chapter.courseId
+        const sections = chapter.sections
+        if (sections && sections.length > 0) {
+          const sectionId = sections[0].section.id
+          this.$router.push({
+            name: 'course-section',
+            query: {sectionId: sectionId, courseId}
+          })
+        }
+      }
     }
   }
 }

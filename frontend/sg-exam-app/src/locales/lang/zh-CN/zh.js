@@ -124,6 +124,7 @@ const zh = {
       registration: '报名',
       cancelRegistration: '取消报名',
       pleaseRegistration: '请先报名',
+      startLearn: '开始学习',
       submitSuccess: '提交成功',
       submitFailed: '提交失败',
       doNotResubmit: '请勿重复提交',
