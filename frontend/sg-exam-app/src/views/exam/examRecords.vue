@@ -175,11 +175,13 @@ export default {
       })
     },
     handleDetail (row) {
-      store.dispatch('SetIncorrectRecord', { id: row.id }).then(() => {
-        this.$router.push({ name: 'incorrect', query: {recordId: row.id} })
-      }).catch((error) => {
-        console.error(error)
-      })
+      if (row.submitStatus === 3) {
+        store.dispatch('SetIncorrectRecord', { id: row.id }).then(() => {
+          this.$router.push({ name: 'incorrect', query: {recordId: row.id} })
+        }).catch((error) => {
+          console.error(error)
+        })
+      }
     },
     handleScore (row) {
       const { examinationId } = row

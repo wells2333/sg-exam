@@ -3,7 +3,8 @@
     <div class="search-form">
       <el-form ref="examForm" :inline="true" :model="query" label-width="100px" class="examForm">
         <el-form-item label="" prop="examinationName">
-          <el-input v-model="query.examinationName" autocomplete="off" :placeholder="$t('exam.examinationName')" />
+          <el-input v-model="query.examinationName" autocomplete="off" :placeholder="$t('exam.examinationName')"
+          @keyup.enter.native="submitForm('examForm')"/>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('examForm')">{{ $t('search') }}</el-button>

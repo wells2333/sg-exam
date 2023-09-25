@@ -92,7 +92,8 @@
             <!-- 简答题 -->
             <div v-if="item.subject.type === 1">
               <p>
-                {{$t('exam.incorrect.userAnswer')}}：<span v-html="item.answer"></span>
+                {{ $t('exam.incorrect.userAnswer') }}：<span
+                :class="getShortAnswerClass(item.answer, item.subject.answer.answer)">{{ item.answer }}</span>
               </p>
             </div>
             <!-- 判断 -->
@@ -107,13 +108,15 @@
             <!-- 语音 -->
             <div v-if="item.subject.type === 4">
               <p>
-                {{$t('exam.incorrect.userAnswer')}}：<span v-html="item.answer"></span>
+                {{$t('exam.incorrect.userAnswer')}}：<span
+                :class="getShortAnswerClass(item.answer, item.subject.answer.answer)">{{ item.answer }}</span>
               </p>
             </div>
             <!-- 视频 -->
             <div v-if="item.subject.type === 5">
               <p>
-                {{$t('exam.incorrect.userAnswer')}}：<span v-html="item.answer"></span>
+                {{$t('exam.incorrect.userAnswer')}}：<span
+                :class="getShortAnswerClass(item.answer, item.subject.answer.answer)">{{ item.answer }}</span>
               </p>
             </div>
             <p class="subject-content-answer"
@@ -269,6 +272,14 @@ export default {
       }
     },
     getClass(right) {
+      return answerType[right]
+    },
+    getShortAnswerClass(userAnswer, standardAnswer) {
+      if (userAnswer === null || userAnswer === undefined) {
+        return ''
+      }
+
+      let right = userAnswer === standardAnswer
       return answerType[right]
     },
     getJudgeClass(userAnswer, standardAnswer) {

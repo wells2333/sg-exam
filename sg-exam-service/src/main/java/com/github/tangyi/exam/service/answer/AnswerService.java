@@ -107,32 +107,30 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> implements 
         answer.setMarkStatus(AnswerConstant.MARKED);
         answer.setMarkOperator(user);
         Long recordId = oldAnswer.getExamRecordId();
-        if (!oldAnswer.getAnswerType().equals(answer.getAnswerType())) {
-            ExaminationRecord record = new ExaminationRecord();
-            record.setId(recordId);
-            record = examRecordService.get(record.getId());
-            SgPreconditions.checkNull(record, "examRecord is null");
-            Double oldScore = record.getScore();
-            SubjectDto subject = subjectsService.getSubject(oldAnswer.getSubjectId());
-            SgPreconditions.checkNull(subject, "subject is null");
-            double score = ObjectUtil.doubleValue(subject.getScore());
-            // 题目得分
-            answer.setScore(AnswerConstant.RIGHT.equals(answer.getAnswerType()) ? score : 0d);
-            // 更新答题
-            update(answer);
-            // 重新计算总分
-            Integer totalScore = sumScoreByAnswerType(recordId, AnswerConstant.RIGHT);
-            record.setScore(totalScore.doubleValue());
-            // 正确、错误题目数量
-            Integer correctNumber = countByAnswerType(recordId, AnswerConstant.RIGHT);
-            Integer inCorrectNumber = countByAnswerType(recordId, AnswerConstant.WRONG);
-            record.setCorrectNumber(correctNumber);
-            record.setInCorrectNumber(inCorrectNumber);
-            if (examRecordService.update(record) > 0) {
-                log.info("Update answer success, examRecordId: {}, oldScore: {}, newScore: {}",
-                        oldAnswer.getExamRecordId(), oldScore, record.getScore());
-            }
-        }
+		ExaminationRecord record = new ExaminationRecord();
+		record.setId(recordId);
+		record = examRecordService.get(record.getId());
+		SgPreconditions.checkNull(record, "examRecord is null");
+		Double oldScore = record.getScore();
+		SubjectDto subject = subjectsService.getSubject(oldAnswer.getSubjectId());
+		SgPreconditions.checkNull(subject, "subject is null");
+		double score = ObjectUtil.doubleValue(subject.getScore());
+		// 题目得分
+		answer.setScore(AnswerConstant.RIGHT.equals(answer.getAnswerType()) ? score : 0d);
+		// 更新答题
+		update(answer);
+		// 重新计算总分
+		Integer totalScore = sumScoreByAnswerType(recordId, AnswerConstant.RIGHT);
+		record.setScore(totalScore.doubleValue());
+		// 正确、错误题目数量
+		Integer correctNumber = countByAnswerType(recordId, AnswerConstant.RIGHT);
+		Integer inCorrectNumber = countByAnswerType(recordId, AnswerConstant.WRONG);
+		record.setCorrectNumber(correctNumber);
+		record.setInCorrectNumber(inCorrectNumber);
+		if (examRecordService.update(record) > 0) {
+			log.info("Update answer success, examRecordId: {}, oldScore: {}, newScore: {}",
+					oldAnswer.getExamRecordId(), oldScore, record.getScore());
+		}
         return 1;
     }
 
