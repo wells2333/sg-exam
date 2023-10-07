@@ -438,18 +438,17 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	@Transactional
 	public Boolean randomAddSubjects(Long id, RandomSubjectDto params) {
 		// 校验分类是否存在
-		SubjectCategory category = subjectCategoryService.get(params.getCategoryId());
+		SubjectCategory category = this.subjectCategoryService.get(params.getCategoryId());
 		SgPreconditions.checkNull(category, "题目分类不存在");
 		// 根据分类查询题目
-		List<Subjects> subjects = subjectsService.findIdAndTypeByCategoryId(category.getId());
+		List<Subjects> subjects = this.subjectsService.findIdAndTypeByCategoryId(category.getId());
 		SgPreconditions.checkCollectionEmpty(subjects, "该分类下的题目数量为空");
 		// 数量校验
 		Integer cnt = params.getSubjectCount();
 		SgPreconditions.checkBoolean(cnt > subjects.size(), "分类下的题目数量不足" + cnt);
-		List<SubjectDto> result = randomAddSubject(subjects, cnt);
+		List<SubjectDto> result = this.randomAddSubject(subjects, cnt);
 		if (CollectionUtils.isNotEmpty(result)) {
-			clearCurrentSubjects(id);
-			batchAddSubjects(id, result);
+			this.batchAddSubjects(id, result);
 		}
 		return Boolean.TRUE;
 	}
@@ -467,7 +466,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	}
 
 	@Transactional
-	public void clearCurrentSubjects(Long id) {
+	public void clearSubjects(Long id) {
 		List<SimpleSubjectDto> subjects = allSubjects(id);
 		if (CollectionUtils.isNotEmpty(subjects)) {
 			for (SimpleSubjectDto subject : subjects) {

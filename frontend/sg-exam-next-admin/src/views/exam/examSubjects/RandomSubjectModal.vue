@@ -3,9 +3,12 @@
               width="60%">
     <PageWrapper dense contentClass="flex">
       <SubjectCategoryTree ref="cateTreeRef" class="w-1/3 xl:w-1/3" @select="handleSelectCategory"/>
-      <div>
+      <div style="margin-left: 20px;">
         <div>
-          <p>该分类下的题目数量：{{subjectCnt}}</p>
+          <p>现有题目数：{{currentCnt}}</p>
+        </div>
+        <div>
+          <p>该分类下的题目数：{{subjectCnt}}</p>
         </div>
         <BasicForm @register="registerForm"/>
       </div>
@@ -39,6 +42,7 @@ export default defineComponent({
     const cateTreeRef = ref<any>(undefined);
     const examinationId = ref<string>('');
     const subjectCnt = ref<number>(0);
+    const currentCnt = ref<number>(0);
     const [registerForm, {resetFields, validate, setFieldsValue}] = useForm({
       labelWidth: 100,
       schemas: formSchema,
@@ -49,6 +53,7 @@ export default defineComponent({
       resetFields();
       setModalProps({confirmLoading: false});
       examinationId.value = data?.examinationId || null;
+      currentCnt.value = data?.currentCnt || null;
       if (cateTreeRef.value !== undefined) {
         unref(cateTreeRef).resetSelectedKeys();
       }
@@ -92,6 +97,7 @@ export default defineComponent({
       t,
       cateTreeRef,
       subjectCnt,
+      currentCnt,
       registerForm,
       registerModal,
       handleSubmit,

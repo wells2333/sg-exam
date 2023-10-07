@@ -55,7 +55,7 @@ export default defineComponent({
     const {createMessage} = useMessage();
     const route = useRoute();
     const examinationId = ref<any>(route.params?.id);
-    const [registerTable, {reload}] = useTable({
+    const [registerTable, {reload, getPaginationRef}] = useTable({
       title: t('common.modules.exam.subject') + t('common.list'),
       api: getExaminationSubjectList,
       searchInfo: {
@@ -79,7 +79,7 @@ export default defineComponent({
         dataIndex: 'action',
         slots: {customRender: 'action'},
         fixed: undefined,
-      },
+      }
     });
 
     function handleCreate() {
@@ -120,9 +120,11 @@ export default defineComponent({
     }
 
     function handleRandomSelectSubjects() {
+      const paginationRef = getPaginationRef();
       openRandomSubjectModal(true, {
         isUpdate: false,
-        examinationId
+        examinationId,
+        currentCnt: paginationRef.total
       });
     }
 

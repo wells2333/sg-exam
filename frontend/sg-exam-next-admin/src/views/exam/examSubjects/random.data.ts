@@ -13,5 +13,9 @@ export const formSchema: FormSchema[] = [
     label: '目标题目数量',
     component: 'InputNumber',
     required: true,
+    componentProps: {
+      min: 0,
+      max: 10000
+    }
   }
 ]
