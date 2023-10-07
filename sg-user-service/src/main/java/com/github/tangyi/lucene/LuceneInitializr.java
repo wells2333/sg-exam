@@ -6,10 +6,11 @@ import com.github.tangyi.api.exam.model.ExamCourseMember;
 import com.github.tangyi.api.exam.model.Examination;
 import com.github.tangyi.api.exam.service.ICourseService;
 import com.github.tangyi.api.exam.service.IExamCourseMemberService;
-import com.github.tangyi.api.exam.service.IExamExaminationMemberService;
+import com.github.tangyi.api.exam.service.IExamPermissionService;
 import com.github.tangyi.api.exam.service.IExaminationService;
 import com.github.tangyi.common.cache.CommonCache;
 import com.github.tangyi.common.service.IndexCrudService;
+import com.github.tangyi.constants.ExamConstant;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -32,7 +33,7 @@ public class LuceneInitializr {
 
 	private final IExamCourseMemberService courseMemberService;
 
-	private final IExamExaminationMemberService examinationMemberService;
+	private final IExamPermissionService examinationMemberService;
 
 	interface Initializr {
 		List<Long> getIds();
@@ -86,7 +87,8 @@ public class LuceneInitializr {
 				for (Long id : ids) {
 					Examination examination = examinationService.get(id);
 					if (examination != null) {
-						Integer memberCnt = examinationMemberService.findMemberCountByExamId(examination.getId());
+						Integer memberCnt = examinationMemberService.findCount(ExamConstant.PERMISSION_TYPE_EXAM,
+								examination.getId());
 						long joinCnt = memberCnt == null ? 0 : memberCnt;
 						examinationService.addIndex(examination, joinCnt, joinCnt);
 					}
@@ -98,7 +100,7 @@ public class LuceneInitializr {
 
 	public LuceneInitializr(CommonCache commonCache, ICourseService courseService,
 			IExaminationService examinationService, IExamCourseMemberService courseMemberService,
-			IExamExaminationMemberService examinationMemberService) {
+			IExamPermissionService examinationMemberService) {
 		this.cache = commonCache.getCache();
 		this.courseService = courseService;
 		this.examinationService = examinationService;

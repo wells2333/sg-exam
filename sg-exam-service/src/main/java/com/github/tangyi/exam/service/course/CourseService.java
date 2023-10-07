@@ -9,7 +9,9 @@ import com.github.tangyi.api.exam.model.*;
 import com.github.tangyi.api.exam.service.ICourseService;
 import com.github.tangyi.api.user.attach.AttachmentManager;
 import com.github.tangyi.api.user.model.Attachment;
+import com.github.tangyi.api.user.model.User;
 import com.github.tangyi.api.user.service.IAttachmentService;
+import com.github.tangyi.api.user.service.IUserService;
 import com.github.tangyi.common.constant.Group;
 import com.github.tangyi.common.constant.Status;
 import com.github.tangyi.common.exceptions.CommonException;
@@ -18,12 +20,16 @@ import com.github.tangyi.common.lucene.IndexCrudParam;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.constants.ExamCacheName;
+import com.github.tangyi.constants.ExamConstant;
 import com.github.tangyi.exam.mapper.CourseMapper;
+import com.github.tangyi.exam.service.ExamPermissionService;
 import com.github.tangyi.exam.service.fav.CourseFavoritesService;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -38,7 +44,9 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class CourseService extends CrudService<CourseMapper, Course> implements ICourseService {
+public class CourseService extends CrudService<CourseMapper, Course> implements ICourseService, ExamConstant {
+
+	private final IUserService userService;
 
 	private final IAttachmentService attachmentService;
 
@@ -55,6 +63,8 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 	private final CourseFavoritesService courseFavoritesService;
 
 	private final CourseIdFetcher courseIdFetcher;
+
+	private final ExamPermissionService examPermissionService;
 
 	@Override
 	public Long findAllCourseCount() {
@@ -75,8 +85,31 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 		return this.courseIdFetcher.fetchAll(0, Collections.emptyMap());
 	}
 
+	@Override
+	public PageInfo<Course> userCourseList(Map<String, Object> params, int pageNum, int pageSize) {
+		Long userId = SysUtil.getUserId();
+		params.put("userId", userId);
+		User user = userService.get(userId);
+		Preconditions.checkNotNull(user, "user not found");
+		Long deptId = user.getDeptId();
+		if (deptId != null) {
+			params.put("deptId", deptId);
+		}
+		return this.findUserCourses(params, pageNum, pageSize);
+	}
+
+	@Override
+	public PageInfo<Course> findUserCourses(Map<String, Object> params, int pageNum, int pageSize) {
+		this.commonPageParam(params, pageNum, pageSize);
+		return new PageInfo<>(this.dao.findUserCourses(params));
+	}
+
+	@Override
 	public List<Course> popularCourses(String findFav) {
-		PageInfo<Course> page = this.findPage(Maps.newHashMap(), 1, 10);
+		Map<String, Object> params = Maps.newHashMap();
+		// 只查询无权限控制的课程
+		params.put("accessType", ExamConstant.ACCESS_TYPE_ALL);
+		PageInfo<Course> page = this.findPage(params, 1, 10);
 		List<Course> courses = page.getList();
 		if (Boolean.parseBoolean(findFav)) {
 			courseFavoritesService.findAndFillUserFavorites(courses);
@@ -117,6 +150,7 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 		}
 		int update = super.insert(course);
 		if (update > 0) {
+			this.addCourseMembers(course, SysUtil.getUser(), SysUtil.getTenantCode());
 			this.addIndex(course, 0, 0);
 		}
 		return update;
@@ -128,6 +162,8 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 	public int update(Course course) {
 		int update = super.update(course);
 		if (update > 0) {
+			this.examPermissionService.deletePermission(PERMISSION_TYPE_COURSE, course.getId());
+			this.addCourseMembers(course, SysUtil.getUser(), SysUtil.getTenantCode());
 			this.updateIndex(course);
 		}
 		return update;
@@ -276,6 +312,24 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 			}
 		}
 		return null;
+	}
+
+	@Transactional
+	public void addCourseMembers(Course course, String user, String tenantCode) {
+		// 未发布
+		if (!EXAM_STATUS_PUBLISHED.equals(course.getCourseStatus())) {
+			return;
+		}
+		Long id = course.getId();
+		// 用户 ID
+		examPermissionService.addPermissions(id, course.getMembers(), PERMISSION_TYPE_COURSE, PERMISSION_ID_TYPE_USER,
+				user, tenantCode);
+		// 部门 ID
+		String deptMember = course.getDeptMember();
+		if (StringUtils.isNotEmpty(deptMember)) {
+			examPermissionService.addPermissions(id, Collections.singletonList(Long.valueOf(deptMember)),
+					PERMISSION_TYPE_COURSE, PERMISSION_ID_TYPE_DEPT, user, tenantCode);
+		}
 	}
 
 	private IndexCrudParam buildIndexCrudParam(Course course, long clickCnt, long joinCnt) {

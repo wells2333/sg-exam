@@ -20,7 +20,7 @@ import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.constants.ExamConstant;
 import com.github.tangyi.exam.enums.ExaminationType;
 import com.github.tangyi.exam.mapper.ExaminationMapper;
-import com.github.tangyi.exam.service.ExamExaminationMemberService;
+import com.github.tangyi.exam.service.ExamPermissionService;
 import com.github.tangyi.exam.service.ExaminationSubjectService;
 import com.github.tangyi.exam.service.course.CourseService;
 import com.github.tangyi.exam.service.fav.ExamFavoritesService;
@@ -65,7 +65,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 
 	private final ExamFavoritesService examFavoritesService;
 
-	private final ExamExaminationMemberService memberService;
+	private final ExamPermissionService examPermissionService;
 
 	private final IUserService userService;
 
@@ -88,7 +88,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 
 	@Override
 	public PageInfo<Examination> findUserExaminations(Map<String, Object> params, int pageNum, int pageSize) {
-		commonPageParam(params, pageNum, pageSize);
+		this.commonPageParam(params, pageNum, pageSize);
 		return new PageInfo<>(this.dao.findUserExaminations(params));
 	}
 
@@ -99,23 +99,6 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		List<Course> courses = courseService.findListById(ids);
 		Map<Long, Course> courseMap = toCourseMap(courses);
 		return toDto(examination, courseMap);
-	}
-
-	@Override
-	public MemberDto getMembers(Long id) {
-		MemberDto dto = new MemberDto();
-		List<ExamExaminationMember> members = memberService.findListByExamId(id);
-		if (CollectionUtils.isNotEmpty(members)) {
-			List<Long> userMembers = dto.getUserMembers();
-			for (ExamExaminationMember member : members) {
-				if (EXAM_MEMBER_TYPE_USER.equals(member.getMemberType())) {
-					userMembers.add(member.getMemberId());
-				} else if (EXAM_MEMBER_TYPE_DEPT.equals(member.getMemberType())) {
-					dto.setDeptMember(member.getMemberId().toString());
-				}
-			}
-		}
-		return dto;
 	}
 
 	@Override
@@ -177,7 +160,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	}
 
 	public PageInfo<?> findUserFavoritesPage(PageInfo<ExamUserFav> page) {
-		List<Long> examIds = page.getList().stream().map(ExamUserFav::getTargetId).collect(Collectors.toList());
+		List<Long> examIds = page.getList().stream().map(ExamUserFav::getTargetId).toList();
 		List<Examination> examinations = findListById(examIds.toArray(Long[]::new));
 		List<ExaminationDto> dtoList = toDtoList(examinations);
 		for (ExaminationDto dto : dtoList) {
@@ -200,11 +183,11 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		if (course != null) {
 			examination.setCourseId(course.getId());
 		}
-		this.memberService.deleteByExamId(examination.getId());
+		this.examPermissionService.deletePermission(PERMISSION_TYPE_EXAM, examination.getId());
 		this.addExaminationMembers(examinationDto, user, tenantCode);
 		int update = super.update(examination);
 		if (update > 0) {
-			Integer memberCnt = this.memberService.findMemberCountByExamId(examination.getId());
+			Integer memberCnt = this.examPermissionService.findCount(PERMISSION_TYPE_EXAM, examination.getId());
 			long joinCnt = memberCnt == null ? 0 : memberCnt;
 			IndexCrudParam param = IndexCrudParam.builder() //
 					.id(examination.getId()) //
@@ -227,12 +210,13 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		}
 		Long id = dto.getId();
 		// 用户 ID
-		memberService.addMembers(id, dto.getMembers(), EXAM_MEMBER_EXAM, EXAM_MEMBER_TYPE_USER, user, tenantCode);
+		examPermissionService.addPermissions(id, dto.getMembers(), PERMISSION_TYPE_EXAM, PERMISSION_ID_TYPE_USER,
+				user, tenantCode);
 		// 部门 ID
 		String deptMember = dto.getDeptMember();
 		if (StringUtils.isNotEmpty(deptMember)) {
-			memberService.addMembers(id, Collections.singletonList(Long.valueOf(deptMember)), EXAM_MEMBER_EXAM,
-					EXAM_MEMBER_TYPE_DEPT, user, tenantCode);
+			examPermissionService.addPermissions(id, Collections.singletonList(Long.valueOf(deptMember)),
+					PERMISSION_TYPE_EXAM, PERMISSION_ID_TYPE_DEPT, user, tenantCode);
 		}
 	}
 
@@ -460,7 +444,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 
 	@Override
 	public void updateIndex(Examination examination) {
-		Integer memberCnt = this.memberService.findMemberCountByExamId(examination.getId());
+		Integer memberCnt = this.examPermissionService.findCount(PERMISSION_TYPE_EXAM, examination.getId());
 		long joinCnt = memberCnt == null ? 0 : memberCnt;
 		super.updateIndex(this.buildIndexCrudParam(examination, joinCnt, joinCnt));
 	}

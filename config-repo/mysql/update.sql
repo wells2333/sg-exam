@@ -210,3 +210,7 @@ CREATE TABLE `exam_exam_evaluate` (
     PRIMARY KEY (`id`) USING BTREE,
     KEY `idx_exam_id` (`exam_id`) COMMENT '考试 ID'
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='考试评价表';
+
+-- 2023年10月07日20:41:50
+ALTER TABLE `exam_course`
+    ADD COLUMN `access_type` tinyint(1) NOT NULL COMMENT '权限控制，0：全部用户，1：指定用户，2：指定部门';

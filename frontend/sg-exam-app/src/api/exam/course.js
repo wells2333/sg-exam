@@ -4,15 +4,7 @@ const baseCourseUrl = '/sg-user-service/v1/course/'
 
 export function courseList (query) {
   return request({
-    url: baseCourseUrl + 'courseList',
-    method: 'get',
-    params: query
-  })
-}
-
-export function fetchCourseList (query) {
-  return request({
-    url: baseCourseUrl + 'courseList',
+    url: baseCourseUrl + 'userCourseList',
     method: 'get',
     params: query
   })

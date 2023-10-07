@@ -8,6 +8,9 @@ export const getCourseList = (params?: object) =>
 export const getAllCourses = (params?: object) =>
   defHttp.get<ApiRes>({url: CourseApi.AllCourses, params});
 
+export const getCourseMembers = (id?: object) =>
+  defHttp.get<ApiRes>({url: CourseApi.Base + '/' + id + '/getMembers'});
+
 export const createCourse = (params?: object
 ) => {
   return defHttp.post<ApiRes>(

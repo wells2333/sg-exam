@@ -78,7 +78,7 @@ class examApi {
     }
 
     async courseList(params: object) {
-        return api.fetchExam<Sg.ExamInfo>("/v1/course/courseList", params, "GET");
+        return api.fetchExam<Sg.ExamInfo>("/v1/course/userCourseList", params, "GET");
     }
 
     async popularCourses() {

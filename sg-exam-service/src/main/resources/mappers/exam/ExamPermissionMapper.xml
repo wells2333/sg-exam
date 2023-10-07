@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.github.tangyi.exam.mapper.ExamExaminationMemberMapper">
-    <resultMap id="examExaminationMemberResultMap" type="com.github.tangyi.api.exam.model.ExamExaminationMember">
+<mapper namespace="com.github.tangyi.exam.mapper.ExamPermissionMapper">
+    <resultMap id="examExaminationMemberResultMap" type="com.github.tangyi.api.exam.model.ExamPermission">
         <id column="id" property="id"/>
         <result column="exam_type" property="examType"/>
         <result column="exam_id" property="examId"/>
@@ -43,12 +43,12 @@
         </foreach>
     </select>
 
-    <select id="findListByExamId" resultMap="examExaminationMemberResultMap">
-        SELECT * FROM exam_examination_member a WHERE a.exam_id = #{examId}
+    <select id="findPermissionList" resultMap="examExaminationMemberResultMap">
+        SELECT * FROM exam_examination_member a WHERE a.exam_id = #{examId} AND a.exam_type = #{examType}
     </select>
 
-    <select id="findMemberCountByExamId" resultType="Integer">
-        SELECT COUNT(1) FROM exam_examination_member a WHERE a.exam_id = #{examId}
+    <select id="findCount" resultType="Integer">
+        SELECT COUNT(1) FROM exam_examination_member a WHERE a.exam_id = #{examId} AND a.exam_type = #{examType}
     </select>
 
     <insert id="insertBatch">
@@ -82,7 +82,7 @@
         </foreach>
     </delete>
 
-    <delete id="deleteByExamId">
-        DELETE FROM exam_examination_member WHERE exam_id = #{examId}
+    <delete id="deletePermission">
+        DELETE FROM exam_examination_member WHERE exam_id = #{examId} AND exam_type = #{examType}
     </delete>
 </mapper>

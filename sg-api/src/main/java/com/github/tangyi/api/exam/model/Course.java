@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Data
 @Table(name = "exam_course")
@@ -101,6 +102,12 @@ public class Course extends BaseEntity<Course> {
 	private Long attachId;
 
 	/**
+	 * 权限控制，0：全部用户，1：指定用户，2：指定部门
+	 */
+	@Column(name = "access_type")
+	private Integer accessType;
+
+	/**
 	 * 报名人数
 	 */
 	@Transient
@@ -123,4 +130,16 @@ public class Course extends BaseEntity<Course> {
 	 */
 	@Transient
 	private String attachUrl;
+
+	/**
+	 * 成员 ID
+	 */
+	@Transient
+	private List<Long> members;
+
+	/**
+	 * 部门 ID
+	 */
+	@Transient
+	private String deptMember;
 }

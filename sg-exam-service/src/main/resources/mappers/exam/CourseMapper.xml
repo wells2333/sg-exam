@@ -16,6 +16,7 @@
         <result column="sort" property="sort"/>
         <result column="course_status" property="courseStatus"/>
         <result column="attach_id" property="attachId"/>
+        <result column="access_type" property="accessType"/>
         <result column="creator" property="creator"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
@@ -30,11 +31,39 @@
             <if test="params.tenantCode != null and params.tenantCode != ''">
                 AND tenant_code = #{params.tenantCode}
             </if>
+            <if test="params.accessType != null">
+                AND access_type = #{params.accessType}
+            </if>
             <if test="params.courseName != null and params.courseName != ''">
                 AND (course_name like CONCAT('%',#{params.courseName},'%'))
             </if>
         </if>
         ORDER BY sort ASC
+    </select>
+
+    <select id="findUserCourses" resultMap="courseResultMap">
+        SELECT *
+        FROM exam_course a
+        WHERE a.is_deleted = 0 AND a.course_status = 1 AND a.tenant_code = #{params.tenantCode}
+        <if test="params.courseName != null and params.courseName != ''">
+            AND (a.course_name LIKE CONCAT('%',#{params.courseName},'%'))
+        </if>
+        AND (
+        a.access_type = 0
+        <if test="params.userId != null">
+            OR (a.access_type = 1 AND a.id IN (SELECT exam_id
+            FROM exam_examination_member
+            WHERE exam_type = 0
+            AND member_type = 1
+            AND member_id = #{params.userId}))
+        </if>
+        <if test="params.deptId != null">
+            OR (a.access_type = 2 AND a.id IN (SELECT exam_id
+            FROM exam_examination_member
+            WHERE exam_type = 0 AND member_type = 2 AND member_id = #{params.deptId}))
+        </if>
+        )
+        ORDER BY sort DESC
     </select>
 
     <select id="findAllCourseCount" resultType="java.lang.Long">

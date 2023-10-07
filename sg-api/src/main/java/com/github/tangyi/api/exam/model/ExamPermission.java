@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @Data
 @Table(name = "exam_examination_member")
 @EqualsAndHashCode(callSuper = true)
-public class ExamExaminationMember extends BaseEntity<ExamExaminationMember> {
+public class ExamPermission extends BaseEntity<ExamPermission> {
 
 	/**
 	 * 类型，0：课程，1：考试

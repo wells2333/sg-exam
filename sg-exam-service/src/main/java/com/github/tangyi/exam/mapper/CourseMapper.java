@@ -14,4 +14,7 @@ public interface CourseMapper extends CrudMapper<Course> {
 	Long findAllCourseCount();
 
 	List<Long> findIdsOrderByIdAsc(@Param("minId") long minId, @Param("pageSize") int pageSize, @Param("params") Map<String, Object> params);
+
+	List<Course> findUserCourses(@Param("params") Map<String, Object> params);
+
 }

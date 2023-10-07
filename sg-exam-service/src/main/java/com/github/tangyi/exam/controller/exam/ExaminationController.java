@@ -6,11 +6,13 @@ import com.github.tangyi.api.exam.dto.MemberDto;
 import com.github.tangyi.api.exam.dto.RandomSubjectDto;
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.Examination;
+import com.github.tangyi.api.exam.service.IExamPermissionService;
 import com.github.tangyi.api.exam.service.IExaminationService;
 import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.log.OperationType;
 import com.github.tangyi.common.log.SgLog;
 import com.github.tangyi.common.model.R;
+import com.github.tangyi.constants.ExamConstant;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -29,6 +31,8 @@ import java.util.Map;
 public class ExaminationController extends BaseController {
 
 	private final IExaminationService examinationService;
+
+	private final IExamPermissionService examPermissionService;
 
 	@GetMapping("canStart")
 	@Operation(summary = "查询是否能开始考试", description = "查询是否能开始考试")
@@ -63,7 +67,7 @@ public class ExaminationController extends BaseController {
 	@GetMapping("/{id}/getMembers")
 	@Operation(summary = "获取考试成员 ID", description = "根据考试 ID 获取考试成员 ID")
 	public R<MemberDto> getMembers(@PathVariable Long id) {
-		return R.success(examinationService.getMembers(id));
+		return R.success(examPermissionService.getMembers(ExamConstant.PERMISSION_TYPE_EXAM, id));
 	}
 
 	@GetMapping("/anonymousUser/{id}")
