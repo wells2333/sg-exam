@@ -20,6 +20,7 @@ export default defineAppConfig({
             'all_subject/index',
             'next_subject/index',
             'record/index',
+            'record/rank',
             'answer/index',
             'favorite/index',
         ]
