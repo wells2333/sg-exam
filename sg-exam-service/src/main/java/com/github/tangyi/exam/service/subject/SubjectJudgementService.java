@@ -91,10 +91,20 @@ public class SubjectJudgementService extends CrudService<SubjectJudgementMapper,
 	@Transactional
 	@CacheEvict(value = ExamCacheName.SUBJECT_JUDGEMENT, key = "#subjectDto.id")
 	public int updateSubject(SubjectDto subjectDto) {
-		SubjectJudgement subjectJudgement = new SubjectJudgement();
-		BeanUtils.copyProperties(subjectDto, subjectJudgement);
-		subjectJudgement.setAnswer(subjectDto.getAnswer().getAnswer());
-		return this.update(subjectJudgement);
+		SubjectJudgement judgement = new SubjectJudgement();
+		BeanUtils.copyProperties(subjectDto, judgement);
+		judgement.setAnswer(subjectDto.getAnswer().getAnswer());
+		return this.update(judgement);
+	}
+
+	@Override
+	@Transactional
+	@CacheEvict(value = ExamCacheName.SUBJECT_JUDGEMENT, key = "#subjectId")
+	public int updateSubjectSort(Long subjectId, Integer sort) {
+		SubjectJudgement judgement = new SubjectJudgement();
+		judgement.setId(subjectId);
+		judgement.setSort(sort);
+		return this.update(judgement);
 	}
 
 	@Override

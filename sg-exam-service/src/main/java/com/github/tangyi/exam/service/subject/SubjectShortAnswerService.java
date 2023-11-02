@@ -113,11 +113,19 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
 	@Transactional
 	@CacheEvict(value = ExamCacheName.SUBJECT_SHORT_ANSWER, key = "#subjectDto.id")
 	public int updateSubject(SubjectDto subjectDto) {
-		SubjectShortAnswer subjectShortAnswer = new SubjectShortAnswer();
-		BeanUtils.copyProperties(subjectDto, subjectShortAnswer);
+		SubjectShortAnswer subject = new SubjectShortAnswer();
+		BeanUtils.copyProperties(subjectDto, subject);
 		// 参考答案
-		subjectShortAnswer.setAnswer(subjectDto.getAnswer().getAnswer());
-		return this.update(subjectShortAnswer);
+		subject.setAnswer(subjectDto.getAnswer().getAnswer());
+		return this.update(subject);
+	}
+
+	@Override
+	public int updateSubjectSort(Long subjectId, Integer sort) {
+		SubjectShortAnswer subject = new SubjectShortAnswer();
+		subject.setId(subjectId);
+		subject.setSort(sort);
+		return this.update(subject);
 	}
 
 	@Override

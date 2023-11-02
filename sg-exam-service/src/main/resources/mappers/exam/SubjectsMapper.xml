@@ -76,6 +76,12 @@
         ORDER BY a.sort ASC
     </select>
 
+    <select id="findByCategoryIdAndMaxSort" resultMap="subjectTypeResultMap">
+        SELECT id, subject_id, sort FROM exam_subjects a WHERE a.category_id = #{categoryId}
+        AND a.sort > #{sort}
+        ORDER BY a.sort ASC
+    </select>
+
     <select id="findByType" resultMap="subjectTypeResultMap">
         SELECT * FROM exam_subjects a WHERE a.type = #{type} ORDER BY a.sort ASC
     </select>

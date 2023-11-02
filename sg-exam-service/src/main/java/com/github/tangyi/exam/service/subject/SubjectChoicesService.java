@@ -269,6 +269,16 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 
 	@Override
 	@Transactional
+	@CacheEvict(value = ExamCacheName.SUBJECT_CHOICES, key = "#subjectId")
+	public int updateSubjectSort(Long subjectId, Integer sort) {
+		SubjectChoices subjectChoices = new SubjectChoices();
+		subjectChoices.setId(subjectId);
+		subjectChoices.setSort(sort);
+		return this.update(subjectChoices);
+	}
+
+	@Override
+	@Transactional
 	@CacheEvict(value = ExamCacheName.SUBJECT_CHOICES, key = "#subjectDto.id")
 	public int deleteSubject(SubjectDto subjectDto) {
 		SubjectChoices subjectChoices = new SubjectChoices();

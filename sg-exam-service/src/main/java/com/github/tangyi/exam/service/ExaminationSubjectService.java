@@ -6,12 +6,15 @@ import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.exam.mapper.ExaminationSubjectMapper;
 import com.github.tangyi.exam.utils.ExamUtil;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 public class ExaminationSubjectService extends CrudService<ExaminationSubjectMapper, ExaminationSubject> {
@@ -32,6 +35,10 @@ public class ExaminationSubjectService extends CrudService<ExaminationSubjectMap
 
 	public List<ExaminationSubject> findListByExaminationId(Long examinationId) {
 		return this.dao.findListByExaminationId(examinationId);
+	}
+
+	public List<ExaminationSubject> findListByExaminationIdAndMaxSort(Long examinationId, Integer maxSort) {
+		return this.dao.findListByExaminationIdAndMaxSort(examinationId, maxSort);
 	}
 
 	public ExaminationSubject findByExaminationIdAndSubjectId(ExaminationSubject examinationSubject) {
@@ -90,5 +97,19 @@ public class ExaminationSubjectService extends CrudService<ExaminationSubjectMap
 			return update(es);
 		}
 		return -1;
+	}
+
+	@Transactional
+	public void resetSubjectsSort(Long examinationId, Integer maxSort) {
+		List<ExaminationSubject> subjects = this.findListByExaminationIdAndMaxSort(examinationId, maxSort);
+		if (CollectionUtils.isEmpty(subjects)) {
+			return;
+		}
+		for (ExaminationSubject subject : subjects) {
+			subject.setSort(subject.getSort() - 1);
+			this.update(subject);
+		}
+		log.info("Reset subject sort finished, examinationId: {}, maxSort: {}, update size: {}", examinationId, maxSort,
+				subjects.size());
 	}
 }

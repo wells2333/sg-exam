@@ -137,7 +137,7 @@ export default defineComponent({
     }
 
     async function handleDelete(record: Recordable) {
-      await deleteSubject(record.id);
+      await deleteSubject(record.id, undefined, record.categoryId);
       createMessage.success(t('common.operationSuccessText'));
       await reload();
     }

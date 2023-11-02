@@ -31,6 +31,8 @@ public interface ISubjectService {
 
 	int updateSubject(SubjectDto subjectDto);
 
+	int updateSubjectSort(Long subjectId, Integer sort);
+
 	int deleteSubject(SubjectDto subjectDto);
 
 	int deleteAllSubject(Long[] ids);

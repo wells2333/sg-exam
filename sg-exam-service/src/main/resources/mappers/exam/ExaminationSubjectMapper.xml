@@ -18,6 +18,11 @@
         SELECT * FROM exam_examination_subject a WHERE a.examination_id = #{examinationId} ORDER BY sort ASC
     </select>
 
+    <select id="findListByExaminationIdAndMaxSort" resultMap="examinationSubjectResultMap">
+        SELECT * FROM exam_examination_subject a WHERE a.examination_id = #{examinationId}
+        AND a.sort > #{maxSort} ORDER BY sort ASC
+    </select>
+
     <select id="findByExaminationIdAndSubjectId" resultMap="examinationSubjectResultMap">
         SELECT * FROM exam_examination_subject a WHERE a.examination_id = #{examinationId} AND a.subject_id = #{subjectId}
     </select>

@@ -29,12 +29,17 @@ export const updateSubject = (id: string, params?: object
   );
 };
 
-export const deleteSubject = (id: string, params?: object
-) => {
+export const deleteSubject = (id: string, examinationId?: any, categoryId?: any) => {
+  let url = SubjectsApi.Base + '/' + id + '?';
+  if (examinationId) {
+    url = url + '&examinationId=' + examinationId
+  }
+  if (categoryId) {
+    url = url + '&categoryId=' + categoryId
+  }
   return defHttp.delete<ApiRes>(
     {
-      url: SubjectsApi.Base + '/' + id,
-      params,
+      url: url
     }
   );
 };

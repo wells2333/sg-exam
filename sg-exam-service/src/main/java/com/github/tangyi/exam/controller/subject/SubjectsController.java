@@ -100,9 +100,9 @@ public class SubjectsController extends BaseController {
 	@DeleteMapping("{id}")
 	@Operation(summary = "删除题目", description = "根据 ID 删除题目")
 	@SgLog(value = "删除题目", operationType = OperationType.DELETE)
-	public R<Boolean> delete(@PathVariable Long id) {
-		subjectsService.physicalDelete(id);
-		return R.success(Boolean.TRUE);
+	public R<Boolean> delete(@PathVariable Long id, @RequestParam(required = false) Long examinationId,
+			@RequestParam(required = false) Long categoryId) {
+		return R.success(this.subjectsService.physicalDeleteAndResetSort(id, examinationId, categoryId));
 	}
 
 	@GetMapping("template/json")

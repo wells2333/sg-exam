@@ -32,7 +32,7 @@
 </template>
 <script lang="ts">
 import { useI18n } from '/@/hooks/web/useI18n';
-import {defineComponent, ref} from 'vue';
+import {defineComponent, ref, unref} from 'vue';
 import {BasicTable, TableAction, useTable} from '/@/components/Table';
 import {useModal} from '/@/components/Modal';
 import {columns, searchFormSchema} from '../subject/subject.data';
@@ -99,7 +99,7 @@ export default defineComponent({
     }
 
     async function handleDelete(record: Recordable) {
-      await deleteSubject(record.id);
+      await deleteSubject(record.id, unref(examinationId));
       createMessage.success(t('common.operationSuccessText'));
       await reload();
     }

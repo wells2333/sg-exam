@@ -2,6 +2,7 @@ package com.github.tangyi.exam.mapper;
 
 import com.github.tangyi.api.exam.model.ExaminationSubject;
 import com.github.tangyi.common.base.CrudMapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,6 +15,9 @@ public interface ExaminationSubjectMapper extends CrudMapper<ExaminationSubject>
 	List<ExaminationSubject> findListBySubjectId(ExaminationSubject examinationSubject);
 
 	List<ExaminationSubject> findListByExaminationId(Long examinationId);
+
+	List<ExaminationSubject> findListByExaminationIdAndMaxSort(@Param("examinationId") Long examinationId,
+			@Param("maxSort") Integer maxSort);
 
 	ExaminationSubject findByExaminationIdAndSubjectId(ExaminationSubject examinationSubject);
 
