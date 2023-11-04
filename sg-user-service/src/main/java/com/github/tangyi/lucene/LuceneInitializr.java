@@ -9,6 +9,7 @@ import com.github.tangyi.api.exam.service.IExamCourseMemberService;
 import com.github.tangyi.api.exam.service.IExamPermissionService;
 import com.github.tangyi.api.exam.service.IExaminationService;
 import com.github.tangyi.common.cache.CommonCache;
+import com.github.tangyi.common.config.EmbeddedMysqlConfig;
 import com.github.tangyi.common.service.IndexCrudService;
 import com.github.tangyi.constants.ExamConstant;
 import com.google.common.collect.Lists;
@@ -108,6 +109,15 @@ public class LuceneInitializr {
 		this.examinationMemberService = examinationMemberService;
 		List<Initializr> initializers = Lists.newArrayList(new CourseInitializr(), new ExamInitializr());
 		new Thread(() -> {
+			while (!EmbeddedMysqlConfig.INITIALIZED) {
+				try {
+					TimeUnit.SECONDS.sleep(1);
+				} catch (InterruptedException e) {
+					log.error("Wait MySQL init failed.", e);
+					throw new RuntimeException(e);
+				}
+			}
+
 			log.info("Start to execute lucene initializr.");
 			for (Initializr initializr : initializers) {
 				initializr.init();

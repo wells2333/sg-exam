@@ -59,7 +59,7 @@ subprojects {
         implementation 'com.jianggujin:IKAnalyzer-lucene:8.0.0'
         compileOnly 'org.projectlombok:lombok:1.18.24'
         annotationProcessor 'org.projectlombok:lombok:1.18.24'
-        implementation 'com.h2database:h2:2.1.212'
+        implementation 'com.wix:wix-embedded-mysql:4.6.1'
         testImplementation 'junit:junit:4.13.2'
         testImplementation 'uk.org.webcompere:system-stubs-jupiter:2.0.2'
         testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'

@@ -26,15 +26,15 @@ public class EmbeddedRedisConfig {
                     .setting("maxmemory 128M")
                     .build();
             this.redis.start();
-            log.info("Embedded redis started successfully");
+            log.info("Embedded redis started successfully.");
         } catch (Exception e) {
-            log.error("Failed to start embedded redis", e);
+            log.error("Failed to start embedded redis.", e);
         }
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (redis != null) {
                 redis.stop();
-                log.info("Embedded redis stopped successfully");
+                log.info("Embedded redis stopped successfully.");
             }
         }));
     }

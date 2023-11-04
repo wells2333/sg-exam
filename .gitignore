@@ -33,6 +33,7 @@ istio-1.5.*
 **/*.bin
 **/*.lock
 logs
+mysql_tmp
 data
 sg-api/build/
 sg-common/build/

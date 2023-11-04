@@ -88,7 +88,7 @@ spring:
     url: jdbc:mysql://${SG_DB_USER_HOST:localhost}:${SG_DB_USER_POST:3306}/${SG_DB_USER_NAME:sg-exam-user}?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CTT&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&allowPublicKeyRetrieval=true
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ${SG_DB_USER_USERNAME:root}
+    username: ${SG_DB_USER_USERNAME:sg}
     password: ${SG_DB_USER_PASSWORD:123456}
     hikari:
       minimum-idle: 5
