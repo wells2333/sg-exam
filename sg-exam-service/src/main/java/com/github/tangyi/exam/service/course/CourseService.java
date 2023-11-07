@@ -101,7 +101,11 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 	@Override
 	public PageInfo<Course> findUserCourses(Map<String, Object> params, int pageNum, int pageSize) {
 		this.commonPageParam(params, pageNum, pageSize);
-		return new PageInfo<>(this.dao.findUserCourses(params));
+		List<Course> courses = this.dao.findUserCourses(params);
+		if (CollectionUtils.isNotEmpty(courses)) {
+			this.initCourseInfo(courses);
+		}
+		return new PageInfo<>(courses);
 	}
 
 	@Override
