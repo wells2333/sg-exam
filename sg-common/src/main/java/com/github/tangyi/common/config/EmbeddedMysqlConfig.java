@@ -48,7 +48,7 @@ public class EmbeddedMysqlConfig {
 
 		try {
 			log.info("Starting embedded MySQL...");
-			MysqldConfig config = MysqldConfig.aMysqldConfig(Version.v5_6_21)//
+			MysqldConfig config = MysqldConfig.aMysqldConfig(Version.v5_7_latest)//
 					.withCharset(Charset.UTF8)//
 					.withPort(3306)//
 					// 默认的账号密码
