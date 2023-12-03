@@ -2,6 +2,7 @@ package com.github.tangyi.auth.security.core.filter;
 
 import cn.hutool.core.util.StrUtil;
 import com.github.tangyi.auth.constant.SecurityConstant;
+import com.github.tangyi.auth.security.core.event.CustomAuthenticationSuccessEvent;
 import com.github.tangyi.auth.service.UserTokenService;
 import com.github.tangyi.common.constant.CommonConstant;
 import com.github.tangyi.common.model.CustomUserDetails;
@@ -10,6 +11,7 @@ import com.github.tangyi.common.properties.SysProperties;
 import com.github.tangyi.common.utils.AesUtil;
 import com.github.tangyi.common.utils.EnvUtils;
 import com.github.tangyi.common.utils.RUtil;
+import com.github.tangyi.common.utils.SpringContextHolder;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -112,6 +114,7 @@ public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
 			Authentication auth) {
 		CustomUserDetails details = (CustomUserDetails) auth.getPrincipal();
 		userTokenService.generateAndSaveToken(req, res, details);
+		SpringContextHolder.publishEvent(new CustomAuthenticationSuccessEvent(auth, details));
 	}
 
 	@Override

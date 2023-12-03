@@ -29,6 +29,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.RunnableScheduledFuture;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public class LuceneIndexManager {
@@ -48,6 +49,8 @@ public class LuceneIndexManager {
 	private final IndexWriter indexWriter;
 
 	private final Analyzer analyzer;
+
+	private final AtomicInteger docNum;
 
 	private SearcherManager searcherManager;
 
@@ -106,7 +109,11 @@ public class LuceneIndexManager {
 				new ThreadFactoryBuilder().setNamePrefix("lucene-doc-stats").build());
 		this.docStatsTask = (RunnableScheduledFuture<?>) this.docStatsExecutor.scheduleWithFixedDelay(() -> {
 			IndexWriter.DocStats docStats = this.indexWriter.getDocStats();
-			log.info("Lucene index doc stats, numDocs: {}", docStats.numDocs);
+			int currentDocNum = docStats.numDocs;
+			if (currentDocNum != docNum.get()) {
+				docNum.set(currentDocNum);
+				log.info("Lucene index doc stats, numDocs: {}", currentDocNum);
+			}
 		}, 3, LUCENE_INDEX_DOC_STATS_DELAY_SECOND, TimeUnit.SECONDS);
 	}
 
@@ -164,6 +171,7 @@ public class LuceneIndexManager {
 			this.directory = FSDirectory.open(new File(indexDir).toPath());
 			// 使用 IK 分词器
 			this.analyzer = new IKAnalyzer();
+			this.docNum = new AtomicInteger(0);
 			this.indexWriter = new IndexWriter(directory, new IndexWriterConfig(this.analyzer));
 			// 清空索引
 			this.indexWriter.deleteAll();
