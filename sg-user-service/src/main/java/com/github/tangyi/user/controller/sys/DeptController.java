@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 @Tag(name = "部门管理")
@@ -29,8 +30,8 @@ public class DeptController extends BaseController {
 	 */
 	@GetMapping(value = "deptList")
 	@Operation(summary = "获取部门列表")
-	public R<List<DeptDto>> list() {
-		return R.success(deptService.deptList());
+	public R<List<DeptDto>> list(@RequestParam Map<String, Object> condition) {
+		return R.success(deptService.deptList(condition));
 	}
 
 	@GetMapping("/{id}")

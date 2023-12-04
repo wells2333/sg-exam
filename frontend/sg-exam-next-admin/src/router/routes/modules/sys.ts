@@ -47,14 +47,6 @@ const dashboard: AppRouteModule = {
         // affix: true,
         title: t('routes.sys.menu'),
       },
-    },{
-      path: 'dept',
-      name: '部门管理',
-      component: () => import('/@/views/sys/dept/index.vue'),
-      meta: {
-        // affix: true,
-        title: t('routes.sys.dept'),
-      },
     },
   ],
 };

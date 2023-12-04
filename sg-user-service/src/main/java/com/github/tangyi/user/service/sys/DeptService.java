@@ -17,11 +17,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,8 +42,9 @@ public class DeptService extends CrudService<DeptMapper, Dept> implements IDeptS
 	 * 查询树形部门集合
 	 */
 	@Override
-	public List<DeptDto> deptList() {
+	public List<DeptDto> deptList(Map<String, Object> condition) {
 		Dept dept = new Dept();
+		Optional.ofNullable(condition.get("deptName")).ifPresent(deptName -> dept.setDeptName(deptName.toString()));
 		dept.setTenantCode(SysUtil.getTenantCode());
 		Stream<Dept> deptStream = this.findList(dept).stream();
 		if (Optional.ofNullable(deptStream).isPresent()) {

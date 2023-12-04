@@ -1,12 +1,14 @@
 <template>
-  <div>
-    <BasicTable @register="registerTable">
-      <template #toolbar>
-        <a-button v-if="hasPermission(['sys:dept:add'])" type="primary" @click="handleCreate"> {{ t('common.addText') }} </a-button>
-      </template>
-      <template #action="{ record }">
-        <TableAction
-          :actions="[
+  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit"
+              width="60%">
+    <div>
+      <BasicTable @register="registerTable">
+        <template #toolbar>
+          <a-button v-if="hasPermission(['sys:dept:add'])" type="primary" @click="handleCreate"> {{ t('common.addText') }} </a-button>
+        </template>
+        <template #action="{ record }">
+          <TableAction
+            :actions="[
             {
               icon: 'clarity:note-edit-line',
               onClick: handleEdit.bind(null, record),
@@ -22,30 +24,43 @@
               },
             },
           ]"
-        />
-      </template>
-    </BasicTable>
-    <DeptModal @register="registerModal" @success="handleSuccess" />
-  </div>
+          />
+        </template>
+      </BasicTable>
+      <DeptModal @register="registerDeptModal" @success="handleSuccess" />
+    </div>
+  </BasicModal>
 </template>
 <script lang="ts">
+import {computed, defineComponent} from 'vue';
 import {useI18n} from '/@/hooks/web/useI18n';
-import { defineComponent } from 'vue';
-import { BasicTable, useTable, TableAction } from '/@/components/Table';
-import { getDeptList, deleteDept } from '/@/api/sys/dept';
-import { useModal } from '/@/components/Modal';
-import DeptModal from './DeptModal.vue';
-import { columns, searchFormSchema } from './dept.data';
-import { usePermission } from '/@/hooks/web/usePermission';
+import {BasicModal, useModal, useModalInner} from '/@/components/Modal';
+import {BasicForm} from '/@/components/Form/index';
 import {useMessage} from "/@/hooks/web/useMessage";
+import {BasicTable, TableAction, useTable} from "/@/components/Table";
+import DeptModal from './DeptModal.vue';
+import { usePermission } from '/@/hooks/web/usePermission';
+import {deleteDept, getDeptList} from "/@/api/sys/dept";
+import {columns, searchFormSchema} from "./dept.data";
 export default defineComponent({
-  name: 'DeptManagement',
-  components: { BasicTable, DeptModal, TableAction },
-  setup() {
+  name: 'DeptListModal',
+  components: {
+    BasicTable,
+    DeptModal,
+    TableAction,
+    BasicModal,
+    BasicForm
+  },
+  emits: ['success', 'register'],
+  setup(_) {
     const {t} = useI18n();
     const { hasPermission } = usePermission();
-    const { createMessage } = useMessage();
-    const [registerModal, { openModal }] = useModal();
+    const {createMessage} = useMessage();
+    const [registerModal, {setModalProps, closeModal}] = useModalInner(async (data) => {
+      setModalProps({confirmLoading: false});
+    })
+    const getTitle = computed(() => t('routes.sys.dept'));
+
     const [registerTable, { reload }] = useTable({
       title: t('common.modules.sys.dept') + t('common.list'),
       api: getDeptList,
@@ -70,13 +85,17 @@ export default defineComponent({
         fixed: undefined,
       },
     });
+    const [registerDeptModal, { openModal:openDeptModal }] = useModal();
+    function handleSubmit() {
+      closeModal();
+    }
     function handleCreate() {
-      openModal(true, {
+      openDeptModal(true, {
         isUpdate: false,
       });
     }
     function handleEdit(record: Recordable) {
-      openModal(true, {
+      openDeptModal(true, {
         record,
         isUpdate: true,
       });
@@ -90,11 +109,15 @@ export default defineComponent({
       createMessage.success(t('common.operationSuccessText'));
       reload();
     }
+
     return {
       t,
       hasPermission,
-      registerTable,
       registerModal,
+      registerTable,
+      registerDeptModal,
+      handleSubmit,
+      getTitle,
       handleCreate,
       handleEdit,
       handleDelete,
@@ -103,3 +126,14 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="less">
+.ant-modal-wrap .ant-modal {
+  top: 20px;
+}
+
+// 按钮居中
+.ant-modal-footer {
+  text-align: center !important;
+}
+</style>

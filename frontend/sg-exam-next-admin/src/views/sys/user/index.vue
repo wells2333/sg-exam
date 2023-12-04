@@ -3,6 +3,8 @@
     <DeptTree class="w-1/4 xl:w-1/7" @select="handleSelect"/>
     <BasicTable @register="registerTable" class="w-3/4 xl:w-4/5" :searchInfo="searchInfo">
       <template #toolbar>
+        <a-button v-if="hasPermission(['sys:dept:add'])" type="primary" @click="handleManageDept"> 部门管理
+        </a-button>
         <a-button v-if="hasPermission(['sys:user:add'])" type="primary" @click="handleCreate">新增账号
         </a-button>
       </template>
@@ -46,6 +48,7 @@
     </BasicTable>
     <UserDetailDrawer @register="registerDetailDrawer"/>
     <UserModal @register="registerModal" @success="handleSuccess"/>
+    <DeptListModal @register="registerDeptListModal" @success="handleSuccess"/>
   </PageWrapper>
 </template>
 <script lang="ts">
@@ -63,16 +66,19 @@ import {columns, searchFormSchema} from './user.data';
 import {useMessage} from "/@/hooks/web/useMessage";
 import {usePermission} from '/@/hooks/web/usePermission';
 import {ApiRes} from "/@/api/constant";
+import DeptListModal from './DeptListModal.vue';
 
 export default defineComponent({
   name: 'UserManagement',
-  components: {BasicTable, PageWrapper, DeptTree, UserModal, UserDetailDrawer, TableAction},
+  components: {BasicTable, PageWrapper, DeptTree, UserModal, UserDetailDrawer, TableAction, DeptListModal},
   setup() {
     const {t} = useI18n();
     const {hasPermission} = usePermission();
     const {createMessage} = useMessage();
     const [registerDetailDrawer, {openDrawer: openDetailDrawer}] = useDrawer();
     const [registerModal, {openModal}] = useModal();
+    const [registerDeptListModal, {openModal: openDeptListModal}] = useModal();
+
     const searchInfo = reactive<Recordable>({});
     const [registerTable, {reload}] = useTable({
       title: t('common.modules.sys.user') + t('common.list'),
@@ -139,11 +145,17 @@ export default defineComponent({
       openDetailDrawer(true, {record});
     }
 
+    function handleManageDept() {
+      openDeptListModal(true, {
+      });
+    }
+
     return {
       t,
       hasPermission,
       registerTable,
       registerModal,
+      registerDeptListModal,
       registerDetailDrawer,
       handleCreate,
       handleEdit,
@@ -152,6 +164,7 @@ export default defineComponent({
       handleSuccess,
       handleSelect,
       handleView,
+      handleManageDept,
       searchInfo,
     };
   },

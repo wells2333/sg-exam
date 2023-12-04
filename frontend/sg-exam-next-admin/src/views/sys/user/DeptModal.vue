@@ -10,7 +10,6 @@ import { BasicModal, useModalInner } from '/@/components/Modal';
 import { BasicForm, useForm } from '/@/components/Form/index';
 import { formSchema } from './dept.data';
 import { getDeptList, createDept, updateDept } from '/@/api/sys/dept';
-import {createTenant, updateTenant} from "/@/api/sys/tenant";
 export default defineComponent({
   name: 'DeptModal',
   components: { BasicModal, BasicForm },

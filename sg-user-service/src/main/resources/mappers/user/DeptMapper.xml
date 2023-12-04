@@ -18,6 +18,9 @@
 
     <select id="findList" resultMap="deptResultMap">
         SELECT * FROM sys_dept a WHERE a.is_deleted = 0 AND a.tenant_code = #{tenantCode}
+        <if test="deptName != null and deptName != ''">
+            AND (dept_name like CONCAT('%',#{deptName},'%'))
+        </if>
     </select>
 
     <select id="findListById" resultMap="deptResultMap">

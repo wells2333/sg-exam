@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +43,6 @@ public class SelectService {
 	}
 
 	public List<DeptDto> deptList() {
-		return deptService.deptList();
+		return deptService.deptList(Collections.emptyMap());
 	}
 }

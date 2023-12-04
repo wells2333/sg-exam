@@ -1147,10 +1147,9 @@ INSERT INTO `sys_menu` VALUES (12, '删除用户', 'sys:user:del', NULL, 10, '',
 INSERT INTO `sys_menu` VALUES (13, '修改用户', 'sys:user:edit', NULL, 10, '', '3', '1', 'admin', '2019-04-26 16:26:46', 'admin', '2022-11-13 11:48:52', 0, NULL, 0, NULL, NULL, 'gitee', 0, '', '');
 INSERT INTO `sys_menu` VALUES (14, '导出用户', 'sys:user:export', NULL, 10, '', '4', '1', 'admin', '2019-04-26 16:27:08', 'admin', '2022-11-13 11:48:52', 0, NULL, 0, NULL, NULL, 'gitee', 0, '', '');
 INSERT INTO `sys_menu` VALUES (15, '导入用户', 'sys:user:import', NULL, 10, '', '5', '1', 'admin', '2019-04-26 16:27:26', 'admin', '2022-11-13 11:48:52', 0, NULL, 0, NULL, NULL, 'gitee', 0, '', '');
-INSERT INTO `sys_menu` VALUES (16, '部门管理', 'sys:dept', '/sys/dept', 3, '', '8', '0', 'admin', '2019-04-26 16:13:09', 'admin', '2022-11-13 11:48:52', 0, 'sys/dept/index', 0, NULL, '部门管理', 'gitee', 0, '', '');
-INSERT INTO `sys_menu` VALUES (17, '新增部门', 'sys:dept:add', NULL, 16, '', '1', '1', 'admin', '2019-04-26 16:30:01', 'admin', '2022-11-13 11:48:52', 0, NULL, 0, NULL, NULL, 'gitee', 0, '', '');
-INSERT INTO `sys_menu` VALUES (18, '修改部门', 'sys:dept:edit', NULL, 16, '', '2', '1', 'admin', '2019-04-26 16:30:33', 'admin', '2022-11-13 11:48:52', 0, NULL, 0, NULL, NULL, 'gitee', 0, '', '');
-INSERT INTO `sys_menu` VALUES (19, '删除部门', 'sys:dept:del', NULL, 16, '', '3', '1', 'admin', '2019-04-26 16:31:08', 'admin', '2022-11-13 11:48:52', 0, NULL, 0, NULL, NULL, 'gitee', 0, '', '');
+INSERT INTO `sys_menu` VALUES (17, '新增部门', 'sys:dept:add', NULL, 10, '', '1', '1', 'admin', '2019-04-26 16:30:01', 'admin', '2022-11-13 11:48:52', 0, NULL, 0, NULL, NULL, 'gitee', 0, '', '');
+INSERT INTO `sys_menu` VALUES (18, '修改部门', 'sys:dept:edit', NULL, 10, '', '2', '1', 'admin', '2019-04-26 16:30:33', 'admin', '2022-11-13 11:48:52', 0, NULL, 0, NULL, NULL, 'gitee', 0, '', '');
+INSERT INTO `sys_menu` VALUES (19, '删除部门', 'sys:dept:del', NULL, 10, '', '3', '1', 'admin', '2019-04-26 16:31:08', 'admin', '2022-11-13 11:48:52', 0, NULL, 0, NULL, NULL, 'gitee', 0, '', '');
 INSERT INTO `sys_menu` VALUES (20, '角色管理', 'sys:role', '/sys/role', 3, '', '9', '0', 'admin', '2019-04-26 16:14:56', 'admin', '2022-11-13 11:48:52', 0, 'sys/role/index', 0, NULL, '角色管理', 'gitee', 0, '', '');
 INSERT INTO `sys_menu` VALUES (21, '新增角色', 'sys:role:add', NULL, 20, '', '1', '1', 'admin', '2019-04-26 16:33:11', 'admin', '2022-11-13 11:48:52', 0, NULL, 0, NULL, NULL, 'gitee', 0, '', '');
 INSERT INTO `sys_menu` VALUES (22, '修改角色', 'sys:role:edit', NULL, 20, '', '2', '1', 'admin', '2019-04-26 16:33:28', 'admin', '2022-11-13 11:48:52', 0, NULL, 0, NULL, NULL, 'gitee', 0, '', '');
@@ -1394,7 +1393,6 @@ INSERT INTO `sys_role_menu` VALUES (12, 1, 12, NULL, '2022-05-18 22:38:51', '', 
 INSERT INTO `sys_role_menu` VALUES (13, 1, 13, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
 INSERT INTO `sys_role_menu` VALUES (14, 1, 14, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
 INSERT INTO `sys_role_menu` VALUES (15, 1, 15, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
-INSERT INTO `sys_role_menu` VALUES (16, 1, 16, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
 INSERT INTO `sys_role_menu` VALUES (17, 1, 17, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
 INSERT INTO `sys_role_menu` VALUES (18, 1, 18, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');
 INSERT INTO `sys_role_menu` VALUES (19, 1, 19, NULL, '2022-05-18 22:38:51', '', NULL, NULL, '');

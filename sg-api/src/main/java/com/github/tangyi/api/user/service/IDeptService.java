@@ -6,10 +6,11 @@ import com.github.tangyi.common.service.ICrudService;
 import com.github.tangyi.common.vo.DeptVo;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IDeptService extends ICrudService<Dept> {
 
-	List<DeptVo> findById(Long[] ids);
+    List<DeptVo> findById(Long[] ids);
 
-	List<DeptDto> deptList();
+    List<DeptDto> deptList(Map<String, Object> condition);
 }

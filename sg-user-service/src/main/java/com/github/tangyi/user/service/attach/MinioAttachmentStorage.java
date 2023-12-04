@@ -32,6 +32,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ConnectException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Comparator;
@@ -112,6 +113,8 @@ public class MinioAttachmentStorage extends AbstractAttachmentStorage {
 				minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
 				log.info("Make bucket finish, bucket: {}", bucket);
 			}
+		} catch (ConnectException e) {
+			log.warn("Failed to connect to MinIO.");
 		} catch (Exception e) {
 			log.error("Failed to check or create bucket: {}", bucket, e);
 		}
