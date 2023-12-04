@@ -450,18 +450,23 @@ img {
   background-color: $white-color;
   cursor: pointer;
   img {
-    height: 200px;
     overflow: hidden;
     display: block;
     width: 100%;
-    border-radius: 6px 6px 0 0;
+    height: 152px;
+    margin-bottom: 8px;
+    border-radius: 8px 8px 0 0;
   }
   .course-content {
-    padding: 25px;
-    height: 140px;
+    padding: 0 8px 8px 8px;
     overflow: hidden;
     h4 {
       margin-bottom: 5px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
     .meta {
       margin-bottom: 15px;
@@ -483,6 +488,8 @@ img {
     }
     p {
       margin-bottom: 0;
+      font-size: 12px;
+      margin-bottom: 8px;
     }
   }
   .seat-rating-fee {
@@ -490,7 +497,6 @@ img {
     bottom: 0;
     display: inline-flex;
     width: 100%;
-    height: 40px;
     background-color: $bg-gray;
     border-radius: 0 0 6px 6px;
     .seat-rating {
