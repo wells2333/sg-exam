@@ -217,7 +217,6 @@ export default {
       margin-right: 0;
     }
     .card-item-snapshoot {
-      border: 1px solid rgba(0,0,0,.15);
       background-origin: border-box;
       background-size: cover;
       background-color: #f0f0f0;
