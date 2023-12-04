@@ -203,14 +203,19 @@ export default {
   overflow: auto;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  flex-direction: row;
+  justify-content: flex-start;
   .single-popular-course {
-    width: 30%;
+    width: calc((100% - 72px) / 4);
+    box-sizing: border-box;
     position: relative;
-    margin-bottom: 40px;
+    margin: 0 24px 24px 0;
     border-radius: 6px;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    border: 1px solid #ebebeb;
+
+    &:nth-of-type(4n+0) {
+      margin-right: 0;
+    }
     .card-item-snapshoot {
       border: 1px solid rgba(0,0,0,.15);
       background-origin: border-box;
