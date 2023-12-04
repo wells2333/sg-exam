@@ -33,16 +33,16 @@
             <div>
               <a href="javascript:void(-1);" @click="handleClickExam(exam)"></a>
               <h3>
-                <div class="card-item-name mb-12">
+                <div class="card-item-name">
                   {{ exam.examinationName  | simpleStrFilter }}
                 </div>
               </h3>
             </div>
             <div class="card-item-course">
-              <div class="card-item-course-detail mb-12" v-if="exam.course !== undefined && exam.course !== null">
+              <div class="card-item-course-detail" v-if="exam.course !== undefined && exam.course !== null">
                 <a href="#">{{ exam.course.courseName }}</a>
               </div>
-              <div class="card-item-course-detail mb-12">
+              <div class="card-item-course-detail">
                 <a href="#">{{ exam.startTime }}~{{ exam.endTime }}</a>
               </div>
             </div>
@@ -265,29 +265,33 @@ export default {
     overflow: auto;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
-    flex-direction: row;
+    justify-content: flex-start;
     .card-item {
-      width: 30%;
+      width: calc((100% - 72px) / 4);
+      box-sizing: border-box;
       position: relative;
-      margin-bottom: 100px;
+      margin: 0 24px 24px 0;
       border-radius: 6px;
       box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+      border: 1px solid #ebebeb;
+      &:nth-of-type(4n+0) {
+        margin-right: 0;
+      }
       .card-item-snapshoot {
-        border: 1px solid rgba(0,0,0,.15);
         background-origin: border-box;
         background-size: cover;
         background-color: #f0f0f0;
         background-position: 49% 38% ;
-        height: 172px;
+        height: 152px;
         display: block;
         border-radius: 6px 6px 0 0;
       }
       .card-item-detail {
-        padding: 20px;
+        padding: 10px 20px;
         .card-item-name {
           display: -webkit-box;
           overflow: hidden;
+          margin-bottom: 5px;
         }
         .card-item-course {
           --x-height-multiplier: 0.342;
@@ -301,7 +305,8 @@ export default {
             a {
               color: rgba(0, 0, 0, 0.4);
               display: inline-block;
-              font-size: 14px;
+              font-size: 12px;
+              color: #5a5a5a;
               font-weight: 400;
               margin-right: 10px;
               &:hover {
