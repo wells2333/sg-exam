@@ -70,8 +70,8 @@ public class ExaminationSubjectService extends CrudService<ExaminationSubjectMap
 	/**
 	 * 根据分类 ID 查询
 	 */
-	public List<ExaminationSubject> findListByCategoryId(ExaminationSubject examinationSubject) {
-		return this.dao.findListByCategoryId(examinationSubject);
+	public List<ExaminationSubject> findListByCategoryId(Long categoryId) {
+		return this.dao.findListByCategoryId(categoryId);
 	}
 
 	/**

@@ -148,7 +148,7 @@ public class SubjectsController extends BaseController {
 
 	@PostMapping("export")
 	@Operation(summary = "导出题目", description = "根据分类 id 导出题目")
-	public void exportSubject(@RequestBody Long[] ids, @RequestParam(required = false) Long examinationId,
+	public void exportSubject(@RequestParam(required = false) Long[] ids, @RequestParam(required = false) Long examinationId,
 			@RequestParam(required = false) Long categoryId, HttpServletRequest request, HttpServletResponse response) {
 		List<SubjectDto> subjects = subjectImportExportService.export(ids, examinationId, categoryId);
 		ExcelToolUtil.writeExcel(request, response, ExamUtil.convertSubject(subjects), SubjectExcelModel.class);

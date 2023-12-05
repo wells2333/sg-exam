@@ -135,7 +135,7 @@ public class SubjectImportExportService {
 			examinationSubjects = examinationSubjectService.findListByExaminationId(examinationId);
 		} else if (categoryId != null) {
 			// 根据分类 ID、类型导出
-			examinationSubjects = examinationSubjectService.findListByCategoryId(es);
+			examinationSubjects = examinationSubjectService.findListByCategoryId(categoryId);
 		}
 		if (CollectionUtils.isNotEmpty(examinationSubjects)) {
 			for (ExaminationSubject temp : examinationSubjects) {

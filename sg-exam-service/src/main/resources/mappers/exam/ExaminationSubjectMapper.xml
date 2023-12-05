@@ -71,6 +71,14 @@
         SELECT * FROM exam_examination_subject a
         WHERE a.subject_id <![CDATA[<]]> #{subjectId} AND a.examination_id = #{examinationId} ORDER BY sort DESC LIMIT 1
     </select>
+    <select id="findListByCategoryId" resultType="com.github.tangyi.api.exam.model.ExaminationSubject">
+        SELECT
+            a.subject_id
+        FROM
+            exam_subjects a
+        WHERE
+            a.category_id = #{categoryId}
+    </select>
 
     <delete id="delete">
         DELETE FROM exam_examination_subject WHERE id = #{id}

@@ -54,5 +54,5 @@ public interface ExaminationSubjectMapper extends CrudMapper<ExaminationSubject>
 	/**
 	 * 根据分类 id 查询
 	 */
-	List<ExaminationSubject> findListByCategoryId(ExaminationSubject examinationSubject);
+	List<ExaminationSubject> findListByCategoryId(Long categoryId);
 }
