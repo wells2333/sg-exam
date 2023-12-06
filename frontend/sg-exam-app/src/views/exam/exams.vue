@@ -273,6 +273,7 @@ export default {
       position: relative;
       position: relative;
     }
+    
   }
 
   .exam-card-list {
