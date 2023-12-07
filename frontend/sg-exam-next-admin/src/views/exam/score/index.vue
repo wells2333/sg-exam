@@ -5,38 +5,44 @@
         <TableAction
           :actions="[
             {
-              icon: 'ant-design:align-left-outlined',
+              icon: 'ant-design:eye-outlined',
               onClick: handleView.bind(null, record),
                tooltip: t('common.viewText'),
+            },
+            {
+              icon: 'ant-design:align-left-outlined',
+              onClick: handleAnalysis.bind(null, record),
+               tooltip: t('common.modules.exam.scoreAnalysis'),
             }
           ]"
         />
       </template>
     </BasicTable>
-    <ScoreModal @register="registerModal" @success="handleSuccess"/>
+    <ScoreListModal @register="registerModal" @success="handleSuccess"/>
+    <ScoreAnalysisModal @register="registerScoreAnalysisModal" @success="handleScoreAnalysisModelSuccess"/>
   </div>
 </template>
 <script lang="ts">
 import {useI18n} from '/@/hooks/web/useI18n';
 import {defineComponent} from 'vue';
 import {BasicTable, useTable, TableAction} from '/@/components/Table';
-import {getScoreList} from '/@/api/exam/score';
+import {getExaminationList} from '/@/api/exam/examination';
 import {useModal} from '/@/components/Modal';
-import ScoreModal from './ScoreModal.vue';
-import {columns, searchFormSchema} from './score.data';
-import {useGo} from "/@/hooks/web/usePage";
+import ScoreListModal from './ScoreListModal.vue';
+import ScoreAnalysisModal from './ScoreAnalysisModal.vue';
+import {examColumns, searchFormSchema} from './score.data';
 
 export default defineComponent({
   name: 'ScoreManagement',
-  components: {BasicTable, ScoreModal, TableAction},
+  components: {BasicTable, TableAction, ScoreListModal, ScoreAnalysisModal},
   setup() {
     const {t} = useI18n();
-    const go = useGo();
     const [registerModal, {openModal}] = useModal();
+    const [registerScoreAnalysisModal, {openModal: openScoreAnalysisModal}] = useModal();
     const [registerTable, {reload}] = useTable({
       title: t('common.modules.exam.score') + t('common.list'),
-      api: getScoreList,
-      columns,
+      api: getExaminationList,
+      columns: examColumns,
       formConfig: {
         labelWidth: 120,
         schemas: searchFormSchema,
@@ -58,32 +64,34 @@ export default defineComponent({
     });
 
     function handleView(record: Recordable) {
-      go('/exam/score_detail/' + record.id);
-    }
-
-    function handleEdit(record: Recordable) {
       openModal(true, {
-        record,
-        isUpdate: true,
+        id: record.id
       });
     }
 
-    function handleDelete(record: Recordable) {
-      console.log(record);
+    function handleAnalysis(record: Recordable) {
+      openScoreAnalysisModal(true, {
+        id: record.id
+      });
     }
 
-    function handleSuccess() {
-      reload();
+    async function handleSuccess() {
+      await reload();
+    }
+
+    async function handleScoreAnalysisModelSuccess() {
+      await reload();
     }
 
     return {
       t,
       registerTable,
       registerModal,
+      registerScoreAnalysisModal,
       handleView,
-      handleEdit,
-      handleDelete,
-      handleSuccess
+      handleAnalysis,
+      handleSuccess,
+      handleScoreAnalysisModelSuccess
     };
   },
 });

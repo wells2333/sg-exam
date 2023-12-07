@@ -45,7 +45,8 @@ export default {
       examination: '考试',
       subject: '题目',
       score: '成绩',
-      category: '分类'
+      category: '分类',
+      scoreAnalysis: '成绩分析'
     },
     banner: {
       banner: '运营位'

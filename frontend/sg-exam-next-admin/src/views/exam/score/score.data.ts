@@ -1,7 +1,7 @@
 import { BasicColumn } from '/@/components/Table';
 import { FormSchema } from '/@/components/Table';
 import { h } from 'vue';
-import { Tag } from 'ant-design-vue';
+import {Image, Tag} from 'ant-design-vue';
 import { examColor } from "/@/views/exam/examination/examination.data";
 
 export const submitStatus = {
@@ -10,6 +10,50 @@ export const submitStatus = {
   2: 'magenta',
   3: 'green'
 }
+
+export const examColumns: BasicColumn[] = [
+  {
+    title: '考试名称',
+    dataIndex: 'examinationName',
+    width: 160,
+    align: 'left',
+  },
+  {
+    title: '类型',
+    dataIndex: 'type',
+    width: 80,
+    customRender: ({ record }) => {
+      const color = examColor[record.type];
+      return h(Tag, { color: color }, () => record.typeLabel);
+    },
+  },
+  {
+    title: '图片',
+    dataIndex: 'imageUrl',
+    width: 100,
+    style: {
+      cursor: 'pointer'
+    },
+    customRender: ({ record }) => {
+      return h(Image, { src: record.imageUrl, height: '40px', alt: record.examinationName });
+    },
+  },
+  {
+    title: '开始时间',
+    dataIndex: 'startTime',
+    width: 180,
+  },
+  {
+    title: '更新时间',
+    dataIndex: 'updateTime',
+    width: 180,
+  },
+  {
+    title: '操作人',
+    dataIndex: 'operator',
+    width: 100,
+  },
+]
 
 export const columns: BasicColumn[] = [
   {
@@ -53,11 +97,6 @@ export const columns: BasicColumn[] = [
   {
     title: "考试时间",
     dataIndex: 'startTime',
-    width: 180,
-  },
-  {
-    title: '更新时间',
-    dataIndex: 'updateTime',
     width: 180,
   },
   {
