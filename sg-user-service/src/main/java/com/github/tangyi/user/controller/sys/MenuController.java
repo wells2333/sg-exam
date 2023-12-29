@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -131,6 +132,23 @@ public class MenuController extends BaseController {
 		}
 		return Collections.emptyList();
 	}
+
+	@GetMapping("roleTreeNoTenant")
+	@Operation(summary = "根据当前角色查找菜单,无租户", description = "根据当前角色查找菜单,无租户")
+	public R<List<MenuDto>> roleTreeNoTenant() {
+		Collection<? extends GrantedAuthority> authorities = SysUtil.getAuthorities();
+		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
+		GrantedAuthority firstAuthority = null;
+		List<String> list = new ArrayList<>();
+		if (iterator.hasNext()) {
+			firstAuthority = iterator.next();
+			String roleCode = firstAuthority.getAuthority();
+			list.add(roleCode);
+		}
+		List<MenuDto> roleNoTeNantCode = menuService.findByRoleNoTeNantCode(list);
+		return R.success(roleNoTeNantCode);
+	}
+
 
 	@PostMapping("export")
 	@Operation(summary = "导出菜单", description = "根据菜单 ID 导出菜单")

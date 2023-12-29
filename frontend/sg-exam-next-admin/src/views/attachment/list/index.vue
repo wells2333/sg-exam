@@ -100,10 +100,8 @@ export default defineComponent({
       });
     }
     async function handlePreview(record: Recordable) {
-      const sysConfig = await getSysDefaultConfig();
-      const url = sysConfig.sys_file_preview_url;
       const result = await download(record.id);
-      window.open(url + encodeURIComponent(btoa(result)));
+      window.open(result);
     }
 
     async function handleDownload(record: Recordable) {

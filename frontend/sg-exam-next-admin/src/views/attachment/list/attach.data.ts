@@ -1,3 +1,5 @@
+import { h, unref } from 'vue';
+import { Image, Tag } from 'ant-design-vue';
 import { BasicColumn } from '/@/components/Table';
 import { FormSchema } from '/@/components/Table';
 
@@ -14,6 +16,24 @@ export const columns: BasicColumn[] = [
     width: 200,
     align: 'left',
   },
+
+  {
+    title: '内容显示',
+    dataIndex: 'url',
+    width: 160,
+    align: 'left',
+    style: {
+      cursor: 'pointer',
+    },
+    customRender: ({ record }) => {
+      if (record.url == '') {
+        return h('div', { style: { fontSize: '16px', color: 'red' } }, '无法显示');
+      } else {
+        return h(Image, { src: record.url, height: '40px' });
+      }
+    },
+  },
+
   {
     title: '附件类型',
     dataIndex: 'attachType',
@@ -44,7 +64,7 @@ export const columns: BasicColumn[] = [
   {
     title: '操作人',
     dataIndex: 'operator',
-  }
+  },
 ];
 
 export const searchFormSchema: FormSchema[] = [
@@ -65,7 +85,7 @@ export const searchFormSchema: FormSchema[] = [
     label: '附件分组',
     component: 'Input',
     colProps: { span: 4 },
-  }
+  },
 ];
 
 export const formSchema: FormSchema[] = [

@@ -86,6 +86,11 @@ public class MenuService extends CrudService<MenuMapper, Menu> implements IMenuS
 		return menuMapper.findByRole(role, tenantCode);
 	}
 
+	@Cacheable(value = ROLE_MENU_NO_TENANT, key = "#role", unless = "#result == null")
+	public List<MenuDto> findByRoleNoTeNantCode(List<String> role ) {
+		return toMenuDto(menuMapper.findByRoleNoTeNantCode(role),null,true);
+	}
+
 	@Override
 	@Cacheable(value = UserCacheName.ALL_MENU, key = "#menu.tenantCode", unless = "#result == null")
 	public List<Menu> findAllList(Menu menu) {

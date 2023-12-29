@@ -19,6 +19,13 @@ public interface MenuMapper extends CrudMapper<Menu> {
     List<Menu> findByRole(@Param("role") String role, @Param("tenantCode") String tenantCode);
 
     /**
+     * 根据角色查找菜单,无租户
+     *
+     * @param role 角色标识
+     */
+    List<Menu> findByRoleNoTeNantCode(@Param("role") List<String> role);
+
+    /**
      * 批量插入
      */
     int insertBatch(List<Menu> menus);

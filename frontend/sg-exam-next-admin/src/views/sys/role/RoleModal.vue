@@ -23,7 +23,7 @@ import {BasicForm, useForm} from '/@/components/Form/index';
 import {formSchema} from './role.data';
 import {BasicModal, useModalInner} from '/@/components/Modal';
 import {BasicTree, TreeItem} from "/@/components/Tree";
-import {getMenuList} from "/@/api/sys/menu";
+import {roleTreeNoTenant} from "/@/api/sys/menu";
 import {createRole, getRoleMenus, updateRole} from "/@/api/sys/role";
 import {filterMenuIds} from "/@/utils/menuUtil";
 
@@ -48,7 +48,7 @@ export default defineComponent({
       resetFields();
       setModalProps({confirmLoading: false});
       if (unref(treeData).length === 0) {
-        treeData.value = (await getMenuList()) as any as TreeItem[];
+        treeData.value = (await roleTreeNoTenant()) as any as TreeItem[];
       }
       isUpdate.value = !!data?.isUpdate;
       id = data.record?.id || null;
