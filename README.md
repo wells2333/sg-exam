@@ -129,7 +129,11 @@ web 前台主要功能：提供在线考试、课程学习、练习等功能。
 
 ## 反馈交流
 
-交流 QQ 群：
+微信交流群：
+
+<img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wechat2.png" width="160"/>
+
+QQ 交流群：
 
 <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/qq.png" width="160"/>
 
