@@ -38,7 +38,7 @@ export default defineComponent({
   setup() {
     const {t} = useI18n();
     const [registerModal, {openModal}] = useModal();
-    const [registerScoreAnalysisModal, {openModal: openScoreAnalysisModal}] = useModal();
+    const [registerScoreAnalysisModal, {openModal: openScoreAnalysisModal, closeModal: closeScoreAnalysisModal}] = useModal();
     const [registerTable, {reload}] = useTable({
       title: t('common.modules.exam.score') + t('common.list'),
       api: getExaminationList,
@@ -80,6 +80,7 @@ export default defineComponent({
     }
 
     async function handleScoreAnalysisModelSuccess() {
+      closeScoreAnalysisModal();
       await reload();
     }
 

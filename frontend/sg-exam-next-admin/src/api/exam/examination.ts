@@ -1,6 +1,6 @@
 import {defHttp} from '/@/utils/http/axios';
 import {ApiRes} from "/@/api/constant";
-import {ExaminationApi} from "/@/api/api";
+import {AnswerApi, ExaminationApi} from "/@/api/api";
 
 export const getExaminationList = (params?: object) =>
   defHttp.get<ApiRes>({url: ExaminationApi.ExaminationList, params});
@@ -65,3 +65,5 @@ export const randomAddSubjects = (id?: string, params?: object) => {
   );
 }
 
+export const getScoreAnalysis = (examinationId?: string) =>
+  defHttp.get<ApiRes>({url: AnswerApi.Analysis, params: {examinationId}});
