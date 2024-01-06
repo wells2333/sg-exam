@@ -1,10 +1,7 @@
 package com.github.tangyi.exam.controller;
 
 import com.github.pagehelper.PageInfo;
-import com.github.tangyi.api.exam.dto.AnswerDto;
-import com.github.tangyi.api.exam.dto.NextSubjectDto;
-import com.github.tangyi.api.exam.dto.RankInfoDto;
-import com.github.tangyi.api.exam.dto.SubjectDto;
+import com.github.tangyi.api.exam.dto.*;
 import com.github.tangyi.api.exam.model.Answer;
 import com.github.tangyi.api.exam.service.IAnswerService;
 import com.github.tangyi.common.base.BaseController;
@@ -209,5 +206,11 @@ public class AnswerController extends BaseController {
 	@Operation(summary = "排名列表")
 	public R<List<RankInfoDto>> rankInfo(@RequestParam Long examinationId) {
 		return R.success(rankInfoService.getRankInfo(examinationId));
+	}
+
+	@GetMapping("analysis")
+	@Operation(summary = "成绩分析")
+	public R<AnswerAnalysisDto> analysis(@RequestParam Long examinationId) {
+		return R.success(answerService.analysis(examinationId));
 	}
 }

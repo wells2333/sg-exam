@@ -10,6 +10,9 @@ export const getMenuList = () => {
 export const userMenuList = () => {
   return defHttp.get<getMenuListResultModel>({url: MenuApi.Base + '/userMenu'});
 }
+export const roleTreeNoTenant = () => {
+  return defHttp.get<getMenuListResultModel>({url: MenuApi.Base + '/roleTreeNoTenant'});
+}
 
 export const userPermissions = () => {
   return defHttp.get<getMenuListResultModel>({url: MenuApi.Base + '/userPermissions'});

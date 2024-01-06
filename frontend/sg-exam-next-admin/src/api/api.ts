@@ -14,7 +14,8 @@ export const AttachmentGroupApi = {
 
 export const AnswerApi = {
   AnswerList: ExamService + '/v1/answer/answerList',
-  Base: ExamService + '/v1/answer'
+  Base: ExamService + '/v1/answer',
+  Analysis: ExamService + '/v1/answer/analysis',
 }
 
 export const ChapterApi = {

@@ -132,6 +132,7 @@ export const userFormSchema: FormSchema[] = [
       api: getAllRoleList,
       labelField: 'roleName',
       valueField: 'id',
+      mode: 'multiple',
     },
     required: true,
   },
