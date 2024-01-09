@@ -23,7 +23,6 @@ import java.util.List;
 public class MarkAnswerService {
 
 	private final ExamRecordService examRecordService;
-
 	private final AnswerService answerService;
 
 	/**

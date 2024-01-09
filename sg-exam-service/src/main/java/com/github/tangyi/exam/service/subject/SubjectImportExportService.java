@@ -46,9 +46,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SubjectImportExportService {
 
 	private final SubjectsService subjectsService;
-
 	private final ExaminationSubjectService examinationSubjectService;
-
 	private final IExecutorHolder executorHolder;
 
 	@Transactional

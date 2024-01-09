@@ -16,15 +16,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SubjectImportListener extends AbstractExcelImportListener<SubjectExcelModel> {
 
 	private final SubjectImportExportService importExportService;
-
 	private final Long examinationId;
-
 	private final Long categoryId;
-
 	private final String creator;
-
 	private final String tenantCode;
-
 	private final AtomicInteger nextNo;
 
 	public SubjectImportListener(SubjectImportExportService importExportService, Long examinationId,

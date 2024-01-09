@@ -26,6 +26,7 @@ public interface PageConstant {
 
 	String COLUMNS_FOR_ORDER_BY = EnvUtils.getValue("COLUMNS_FOR_ORDER_BY",
 			"id,createTime,updateTime,sortNo,lastLoginTime");
+
 	Set<String> VALID_COLUMNS_FOR_ORDER_BY = Stream.of(COLUMNS_FOR_ORDER_BY.split(","))
 			.collect(Collectors.toCollection(HashSet::new));
 

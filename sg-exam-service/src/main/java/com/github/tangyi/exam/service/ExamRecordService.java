@@ -47,9 +47,7 @@ import java.util.stream.Collectors;
 public class ExamRecordService extends CrudService<ExamRecordMapper, ExaminationRecord> {
 
 	private final ExaminationService examinationService;
-
 	private final IUserService userService;
-
 	private final IDeptService deptService;
 
 	@Override

@@ -15,9 +15,8 @@ public enum ExaminationType {
 
 	INTERVIEW("面试", 3);
 
-    private String name;
-
-    private Integer value;
+    private final String name;
+    private final Integer value;
 
     public static ExaminationType matchByValue(Integer value) {
         for (ExaminationType item : values()) {

@@ -16,12 +16,6 @@ public class QRCodeUtils {
 	// 二维码尺寸
 	private static final int QRCODE_SIZE = 360;
 
-	// LOGO 宽度
-	private static final int LOGO_WIDTH = 60;
-
-	// LOGO 高度
-	private static final int LOGO_HEIGHT = 60;
-
 	private QRCodeUtils() {
 	}
 

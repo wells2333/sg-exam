@@ -15,7 +15,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public interface IAnswerHandler {
 
 	String TRUE = Boolean.TRUE.toString();
-
 	String FALSE = Boolean.FALSE.toString();
 
 	/**

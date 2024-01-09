@@ -41,44 +41,44 @@ public class KnowledgeController extends BaseController {
 	public R<PageInfo<KnowledgeDto>> list(@RequestParam Map<String, Object> condition,
 			@RequestParam(value = PAGE, required = false, defaultValue = PAGE_DEFAULT) int pageNum,
 			@RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize) {
-		PageInfo<Knowledge> knowledgePageInfo = knowledgeService.findPage(condition, pageNum, pageSize);
-		PageInfo<KnowledgeDto> knowledgeDtoPageInfo = new PageInfo<>();
-		List<KnowledgeDto> knowledgeDtoList = new ArrayList<>();
+		PageInfo<Knowledge> pageInfo = knowledgeService.findPage(condition, pageNum, pageSize);
+		PageInfo<KnowledgeDto> dtoPageInfo = new PageInfo<>();
+		List<KnowledgeDto> list = new ArrayList<>();
 		// 查询附件
 		Set<Long> attachmentIdSet = new HashSet<>();
-		knowledgePageInfo.getList().forEach(tempKnowledge -> attachmentIdSet.add(tempKnowledge.getAttachmentId()));
+		pageInfo.getList().forEach(tempKnowledge -> attachmentIdSet.add(tempKnowledge.getAttachmentId()));
 		// 根据附件 ID 查询附件
 		//R<List<AttachmentVo>> returnT = userServiceClient.findAttachmentById(attachmentIdSet.toArray(new Long[0]));
 		R<List<AttachmentVo>> returnT = null;
-		knowledgePageInfo.getList().stream()
+		pageInfo.getList().stream()
 				// 转成 Dto
 				.map(tempKnowledge -> {
-					KnowledgeDto knowledgeDto = new KnowledgeDto();
-					BeanUtils.copyProperties(tempKnowledge, knowledgeDto);
-					return knowledgeDto;
+					KnowledgeDto dto = new KnowledgeDto();
+					BeanUtils.copyProperties(tempKnowledge, dto);
+					return dto;
 				})
 				// 遍历
 				.forEach(tempKnowledgeDto -> {
 					if (returnT != null && CollectionUtils.isNotEmpty(returnT.getResult())) {
-						AttachmentVo tempKnowledgeDtoAttachmentVo = returnT.getResult().stream()
+						AttachmentVo vo = returnT.getResult().stream()
 								// 根据 ID 过滤
 								.filter(tempAttachmentVo -> tempAttachmentVo.getId()
 										.equals(tempKnowledgeDto.getAttachmentId()))
 								// 匹配第一个
 								.findFirst().orElse(null);
 						// 设置附件名称、附件大小
-						if (tempKnowledgeDtoAttachmentVo != null) {
-							tempKnowledgeDto.setAttachName(tempKnowledgeDtoAttachmentVo.getAttachName());
-							tempKnowledgeDto.setAttachSize(tempKnowledgeDtoAttachmentVo.getAttachSize());
+						if (vo != null) {
+							tempKnowledgeDto.setAttachName(vo.getAttachName());
+							tempKnowledgeDto.setAttachSize(vo.getAttachSize());
 						}
 					}
-					knowledgeDtoList.add(tempKnowledgeDto);
+					list.add(tempKnowledgeDto);
 				});
-		knowledgeDtoPageInfo.setList(knowledgeDtoList);
-		knowledgeDtoPageInfo.setTotal(knowledgePageInfo.getTotal());
-		knowledgeDtoPageInfo.setPageNum(knowledgePageInfo.getPageNum());
-		knowledgeDtoPageInfo.setPageSize(knowledgePageInfo.getPageSize());
-		return R.success(knowledgeDtoPageInfo);
+		dtoPageInfo.setList(list);
+		dtoPageInfo.setTotal(pageInfo.getTotal());
+		dtoPageInfo.setPageNum(pageInfo.getPageNum());
+		dtoPageInfo.setPageSize(pageInfo.getPageSize());
+		return R.success(dtoPageInfo);
 	}
 
 	@PostMapping

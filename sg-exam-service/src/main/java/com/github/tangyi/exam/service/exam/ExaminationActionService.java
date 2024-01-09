@@ -42,19 +42,12 @@ import java.util.stream.Collectors;
 public class ExaminationActionService {
 
     private final ExaminationService examinationService;
-
     private final ExaminationSubjectService examinationSubjectService;
-
     private final ExamRecordService examRecordService;
-
     private final SubjectsService subjectsService;
-
     private final AnswerService answerService;
-
     private final AnswerHandleService answerHandleService;
-
     private final RankInfoService rankInfoService;
-
     private final IExecutorHolder executorHolder;
 
     private final ExamFavoritesService examFavoritesService;

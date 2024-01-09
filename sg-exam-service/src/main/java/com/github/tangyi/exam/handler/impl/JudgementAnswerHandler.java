@@ -11,11 +11,8 @@ import org.springframework.stereotype.Component;
 public class JudgementAnswerHandler extends AbstractAnswerHandler {
 
 	private static final String RIGHT = "正确";
-
 	private static final String RIGHT_FLAG = "0";
-
 	private static final String WRONG = "错误";
-
 	private static final String WRONG_FLAG = "1";
 
 	public JudgementAnswerHandler(SubjectsService subjectsService) {

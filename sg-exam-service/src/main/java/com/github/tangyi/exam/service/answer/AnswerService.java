@@ -50,19 +50,12 @@ import java.util.stream.Collectors;
 public class AnswerService extends CrudService<AnswerMapper, Answer> implements IAnswerService {
 
 	private final SubjectsService subjectsService;
-
 	private final ExamRecordService examRecordService;
-
 	private final ExaminationSubjectService esService;
-
 	private final AnswerHandlerFactory handlerFactory;
-
 	private final ExamMediaService examMediaService;
-
 	private final RankInfoService rankInfoService;
-
 	private final IUserService userService;
-
 	private final IExaminationService examinationService;
 
 	@Override
@@ -197,15 +190,15 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> implements 
 	public int save(AnswerDto answerDto, Long userId, String userCode, String tenantCode) {
 		Answer answer = new Answer();
 		BeanUtils.copyProperties(answerDto, answer);
-		Answer tempAnswer = this.findByRecordIdAndSubjectId(answer);
+		Answer temp = this.findByRecordIdAndSubjectId(answer);
 		Long speechPlayCnt = examMediaService.getSpeechPlayCnt(userId, answerDto.getSubjectId());
-		if (tempAnswer != null) {
-			tempAnswer.setCommonValue(userCode, tenantCode);
-			tempAnswer.setAnswer(answer.getAnswer());
-			tempAnswer.setType(answer.getType());
-			tempAnswer.setEndTime(tempAnswer.getUpdateTime());
-			tempAnswer.setSpeechPlayCnt(speechPlayCnt);
-			return this.update(tempAnswer);
+		if (temp != null) {
+			temp.setCommonValue(userCode, tenantCode);
+			temp.setAnswer(answer.getAnswer());
+			temp.setType(answer.getType());
+			temp.setEndTime(temp.getUpdateTime());
+			temp.setSpeechPlayCnt(speechPlayCnt);
+			return this.update(temp);
 		} else {
 			answer.setNewRecord(true);
 			answer.setCommonValue(userCode, tenantCode);
@@ -279,20 +272,20 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> implements 
 		if (currentSubjectId == null) {
 			subjectDto = subjectsService.findFirstSubjectByExaminationId(record.getExaminationId());
 		} else {
-			ExaminationSubject examinationSubject = new ExaminationSubject();
-			examinationSubject.setExaminationId(record.getExaminationId());
-			examinationSubject.setSubjectId(currentSubjectId);
+			ExaminationSubject es = new ExaminationSubject();
+			es.setExaminationId(record.getExaminationId());
+			es.setSubjectId(currentSubjectId);
 			// 查询该考试和指定序号的题目的关联信息
 			// 下一题
 			if (AnswerConstant.NEXT.equals(nextType)) {
-				examinationSubject = esService.getByPreviousId(examinationSubject);
+				es = esService.getByPreviousId(es);
 			} else if (AnswerConstant.PREVIOUS.equals(nextType)) {
 				// 上一题
-				examinationSubject = esService.getPreviousByCurrentId(examinationSubject);
+				es = esService.getPreviousByCurrentId(es);
 			} else {
-				examinationSubject = esService.findByExaminationIdAndSubjectId(examinationSubject);
+				es = esService.findByExaminationIdAndSubjectId(es);
 			}
-			SgPreconditions.checkNull(examinationSubject, "ID 为" + currentSubjectId + "的题目不存在");
+			SgPreconditions.checkNull(es, "ID 为" + currentSubjectId + "的题目不存在");
 			// 查询题目的详细信息
 			//subjectDto = subjectService.get(examinationSubject.getSubjectId(), examinationSubject.getType());
 		}

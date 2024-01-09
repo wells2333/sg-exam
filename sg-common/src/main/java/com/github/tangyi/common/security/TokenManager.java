@@ -5,11 +5,7 @@ import com.github.tangyi.common.constant.SecurityConstant;
 import com.github.tangyi.common.model.UserToken;
 import com.github.tangyi.common.utils.EnvUtils;
 import com.github.tangyi.common.utils.ObjectUtil;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.CompressionCodecs;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -60,8 +56,10 @@ public class TokenManager {
 		if (MapUtils.isNotEmpty(body)) {
 			body.forEach(builder::claim);
 		}
-		builder.setIssuedAt(new Date(userToken.getIssuedAt().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()))
-				.setId(userToken.getId()).signWith(SignatureAlgorithm.HS512, TOKEN_SIGN_KEY);
+		Date issuedAt = new Date(userToken.getIssuedAt().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+		builder.setIssuedAt(issuedAt)    //
+				.setId(userToken.getId())    //
+				.signWith(SignatureAlgorithm.HS512, TOKEN_SIGN_KEY);
 		return SecurityConstant.BEARER + builder.compressWith(CompressionCodecs.GZIP).compact();
 	}
 

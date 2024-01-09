@@ -27,7 +27,6 @@ public class ExamCourseSectionService extends CrudService<ExamCourseSectionMappe
 		implements IExamCourseSectionService, ExamCacheName {
 
 	private final ExamMediaService mediaService;
-
 	private final IExamCourseKnowledgePointService knowledgePointService;
 
 	@Override

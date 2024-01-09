@@ -134,7 +134,7 @@ public class QiNiuAttachmentStorage extends AbstractAttachmentStorage {
             log.info("Generate upload id finished, fileName: {}, uploadId: {}", fileName, uploadId);
             attachment.setUploadId(uploadId);
         } catch (Exception e) {
-            throw new QiNiuAttachException("Failed to generate upload id, fileName: " + fileName);
+            throw new QiNiuAttachException(e, "Failed to generate upload id, fileName: " + fileName);
         }
         return attachment;
     }

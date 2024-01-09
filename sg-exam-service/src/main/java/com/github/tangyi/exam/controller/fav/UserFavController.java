@@ -32,17 +32,11 @@ import java.util.Map;
 public class UserFavController extends BaseController {
 
 	private final UserFavService userFavService;
-
 	private final ExamFavoritesService examFavoritesService;
-
 	private final SubjectFavoritesService subjectFavoritesService;
-
 	private final CourseFavoritesService courseFavoritesService;
-
 	private final ExaminationService examinationService;
-
 	private final CourseService courseService;
-
 	private final SubjectsService subjectsService;
 
 	@GetMapping("/list")

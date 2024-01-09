@@ -28,11 +28,8 @@ import java.util.stream.Collectors;
 public class SubjectServiceFactory {
 
 	private final SubjectChoicesService subjectChoicesService;
-
 	private final SubjectShortAnswerService subjectShortAnswerService;
-
 	private final SubjectJudgementService subjectJudgementService;
-
 	private final IExecutorHolder executorHolder;
 
 	public ISubjectService service(Integer type) {

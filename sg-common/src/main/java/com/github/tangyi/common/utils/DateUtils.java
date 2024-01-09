@@ -12,12 +12,9 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class DateUtils {
 
-	public static String YYYY_MM_DD = "yyyy-MM-dd";
-
+	public static final String YYYY_MM_DD = "yyyy-MM-dd";
 	public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
 	public static final DateTimeFormatter FORMATTER_DAY = DateTimeFormatter.ofPattern("MM-dd");
-
 	public static final DateTimeFormatter FORMATTER_MILLIS = DateTimeFormatter.ofPattern("yyyyMMddhhmmssSSS");
 
 	private DateUtils() {

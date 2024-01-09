@@ -52,23 +52,14 @@ import java.util.stream.Collectors;
 public class SubjectsService extends CrudService<SubjectsMapper, Subjects> implements ISubjectsService {
 
 	private final SubjectServiceFactory subjectServiceFactory;
-
 	private final ExaminationSubjectService esService;
-
 	private final SubjectCategoryService subjectCategoryService;
-
 	private final SubjectChoicesConverter subjectChoicesConverter;
-
 	private final SubjectShortAnswerConverter subjectShortAnswerConverter;
-
 	private final SubjectJudgementConverter judgementConverter;
-
 	private final SubjectFavoritesService subjectFavoritesService;
-
 	private final SubjectViewCounterService subjectViewCounterService;
-
 	private final AttachmentManager attachmentManager;
-
 	private final IExecutorHolder executorHolder;
 
 	public ISubjectService service(Long subjectId) {

@@ -9,9 +9,8 @@ public enum StatusEnum {
 
 	ENABLE("启用", 0), DISABLE("禁用", 1);
 
-	private String name;
-
-	private Integer value;
+	private final String name;
+	private final Integer value;
 
 	public static StatusEnum matchByValue(Integer value) {
 		for (StatusEnum item : StatusEnum.values()) {

@@ -11,6 +11,10 @@ import java.util.Collection;
 
 public class SgPreconditions {
 
+	private SgPreconditions() {
+
+	}
+
 	public static void checkNull(Object obj, String msg) {
 		if (obj == null) {
 			throw new CommonException(msg);

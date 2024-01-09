@@ -23,9 +23,7 @@ public class BaseEntity<T> implements Serializable {
 
 	@Serial
 	private static final long serialVersionUID = 1L;
-
 	public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-
 	public static final String TIMEZONE = "GMT+8";
 
 	@Id
@@ -67,13 +65,13 @@ public class BaseEntity<T> implements Serializable {
 	}
 
 	public void setCommonValue(String userCode, String tenantCode) {
-		Date currentDate = new Date();
+		Date now = new Date();
 		if (this.isNewRecord()) {
-			this.createTime = currentDate;
+			this.createTime = now;
 			this.creator = userCode;
 		}
 		if (this.updateTime == null) {
-			this.updateTime = currentDate;
+			this.updateTime = now;
 		}
 		this.operator = userCode;
 		if (this.isDeleted == null) {

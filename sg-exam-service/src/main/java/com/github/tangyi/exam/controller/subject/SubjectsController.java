@@ -42,11 +42,8 @@ import java.util.Map;
 public class SubjectsController extends BaseController {
 
 	private final SubjectsService subjectsService;
-
 	private final AnswerService answerService;
-
 	private final SubjectImportExportService subjectImportExportService;
-
 	private final SubjectFavoritesService subjectFavoritesService;
 
 	@GetMapping("/{id}")

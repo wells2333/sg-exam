@@ -32,11 +32,8 @@ import java.util.Map;
 public class ExamCourseEvaluateController extends BaseController {
 
 	private final ExamCourseEvaluateService examCourseEvaluateService;
-
 	private final CourseService courseService;
-
 	private final IUserService userService;
-
 	private final AttachmentManager attachmentManager;
 
 	@GetMapping("/list")

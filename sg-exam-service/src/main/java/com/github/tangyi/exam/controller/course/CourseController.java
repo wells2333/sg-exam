@@ -31,7 +31,6 @@ import java.util.Map;
 public class CourseController extends BaseController {
 
 	private final ICourseService courseService;
-
 	private final IExamPermissionService examPermissionService;
 
 	@GetMapping("/{id}")

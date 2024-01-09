@@ -24,11 +24,8 @@ import java.util.Map;
 public class HomeController extends BaseController {
 
 	private final IUserService userService;
-
 	private final ICourseService courseService;
-
 	private final IExaminationService examinationService;
-
 	private final SubjectsService subjectsService;
 
 	@GetMapping("summary")

@@ -23,7 +23,6 @@ import java.util.List;
 public class AnonymousUserAnswerController extends BaseController {
 
 	private final AnswerService answerService;
-
 	private final ExaminationActionService actionService;
 
 	@PostMapping("anonymousUser/submitAll/{examinationId}")

@@ -12,9 +12,8 @@ public enum SubmitStatus {
 
 	SUBMITTED("已提交", 0), UN_SUBMITTED("未提交", 1);
 
-	private String name;
-
-	private Integer value;
+	private final String name;
+	private final Integer value;
 
 	public static SubmitStatus matchByValue(Integer value) {
 		for (SubmitStatus item : values()) {

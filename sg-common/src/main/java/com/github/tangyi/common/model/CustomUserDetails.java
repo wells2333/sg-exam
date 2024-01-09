@@ -19,13 +19,9 @@ public class CustomUserDetails extends User {
 	private static final long serialVersionUID = 1L;
 
 	private String tenantCode;
-
 	private Long id;
-
 	private String phone;
-
 	private long startNanoTime;
-
 	private LoginTypeEnum loginType;
 
 	public CustomUserDetails(Long id, String username, Collection<? extends GrantedAuthority> authorities,

@@ -37,9 +37,7 @@ public class SubjectChoicesService extends CrudService<SubjectChoicesMapper, Sub
 		implements ISubjectService {
 
 	private final SubjectOptionService subjectOptionService;
-
 	private final ExaminationSubjectService examinationSubjectService;
-
 	private final SubjectChoicesConverter subjectChoicesConverter;
 
 	@Override

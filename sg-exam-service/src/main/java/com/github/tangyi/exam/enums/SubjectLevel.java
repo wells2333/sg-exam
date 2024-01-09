@@ -15,9 +15,8 @@ public enum SubjectLevel {
 
 	MORE_DIFFICULT("非常难", 3);
 
-	private String name;
-
-	private Integer value;
+	private final String name;
+	private final Integer value;
 
 	public static SubjectLevel matchByValue(Integer value) {
 		for (SubjectLevel item : values()) {

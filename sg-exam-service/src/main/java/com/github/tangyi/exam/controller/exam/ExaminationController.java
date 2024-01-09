@@ -31,7 +31,6 @@ import java.util.Map;
 public class ExaminationController extends BaseController {
 
 	private final IExaminationService examinationService;
-
 	private final IExamPermissionService examPermissionService;
 
 	@GetMapping("canStart")

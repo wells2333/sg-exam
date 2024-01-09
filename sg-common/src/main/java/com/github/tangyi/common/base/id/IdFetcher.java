@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public abstract class IdFetcher implements IIdFetcher {
 
-	public static final String ID = "id";
+	protected static final String ID = "id";
 
 	@Override
 	public List<Long> fetchAll(long tableMinId, Map<String, Object> params) {
@@ -31,7 +31,7 @@ public abstract class IdFetcher implements IIdFetcher {
 			minId = list.get(list.size() - 1) + 1;
 		}
 		long took = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
-		log.info("Fetch ids finished, minId: {}, size: {}, times: {}, took: {}ms", tableMinId, ids.size(), times, took);
+		log.info("Fetch ids finished, size: {}, times: {}, took: {}ms", ids.size(), times, took);
 		return ids;
 	}
 }

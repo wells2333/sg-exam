@@ -42,11 +42,8 @@ public class UserFavService extends CrudService<UserFavMapper, ExamUserFav>
 		implements IUserFavService, UserFavConstant, ExamCacheName {
 
 	private final RedisTemplate<String, Long> longRedisTemplate;
-
 	private final RedisCounterService redisCounterService;
-
 	private final UserFavMapper userFavoritesMapper;
-
 	private final ExamFavStartCountMapper favStartCountMapper;
 
 	@Override

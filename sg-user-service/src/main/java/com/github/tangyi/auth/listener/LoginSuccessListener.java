@@ -3,7 +3,6 @@ package com.github.tangyi.auth.listener;
 import com.github.tangyi.api.user.dto.UserDto;
 import com.github.tangyi.auth.security.core.event.CustomAuthenticationSuccessEvent;
 import com.github.tangyi.common.constant.CommonConstant;
-import com.github.tangyi.common.constant.ServiceConstant;
 import com.github.tangyi.common.model.CustomUserDetails;
 import com.github.tangyi.common.model.Log;
 import com.github.tangyi.common.utils.DateUtils;
@@ -30,14 +29,12 @@ import java.util.concurrent.TimeUnit;
 public class LoginSuccessListener implements ApplicationListener<CustomAuthenticationSuccessEvent> {
 
 	private final UserService userService;
-
 	private final LogService logService;
 
 	@Override
 	public void onApplicationEvent(CustomAuthenticationSuccessEvent event) {
 		UserDetails userDetails = event.getUserDetails();
-		if (userDetails instanceof CustomUserDetails) {
-			CustomUserDetails customUserDetails = (CustomUserDetails) userDetails;
+		if (userDetails instanceof CustomUserDetails customUserDetails) {
 			String tenantCode = customUserDetails.getTenantCode();
 			String username = userDetails.getUsername();
 			log.info("Login success, username: {} , tenantCode: {}", username, tenantCode);
@@ -56,7 +53,7 @@ public class LoginSuccessListener implements ApplicationListener<CustomAuthentic
 				logInfo.setIp(request.getRemoteAddr());
 				logInfo.setUserAgent(request.getHeader(HttpHeaders.USER_AGENT));
 			}
-			logInfo.setServiceId(ServiceConstant.USER_SERVICE);
+			logInfo.setServiceId("user-service");
 			UserDto userDto = new UserDto(null);
 			userDto.setId(customUserDetails.getId());
 			userDto.setIdentifier(username);

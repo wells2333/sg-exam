@@ -9,9 +9,8 @@ public enum GenderEnum {
 
 	MEN("男", 0), WOMEN("女", 1);
 
-	private String name;
-
-	private Integer value;
+	private final String name;
+	private final Integer value;
 
 	public static GenderEnum matchByValue(Integer value) {
 		for (GenderEnum item : GenderEnum.values()) {

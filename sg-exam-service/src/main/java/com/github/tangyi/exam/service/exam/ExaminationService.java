@@ -52,23 +52,14 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		implements IExaminationService, ExamCacheName, ExamConstant {
 
 	private final SubjectsService subjectsService;
-
 	private final ExaminationSubjectService examinationSubjectService;
-
 	private final SysProperties sysProperties;
-
 	private final AttachmentManager attachmentManager;
-
 	private final SubjectCategoryService subjectCategoryService;
-
 	private final CourseService courseService;
-
 	private final ExamFavoritesService examFavoritesService;
-
 	private final ExamPermissionService examPermissionService;
-
 	private final IUserService userService;
-
 	private final ExamIdFetcher examIdFetcher;
 
 	@Override

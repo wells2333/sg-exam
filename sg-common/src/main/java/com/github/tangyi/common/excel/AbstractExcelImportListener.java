@@ -15,15 +15,13 @@ import java.util.List;
  */
 public abstract class AbstractExcelImportListener<T> extends AnalysisEventListener<T> {
 
-	protected final Logger logger = LoggerFactory.getLogger(getClass());
-
 	private static final int BATCH_COUNT = EnvUtils.getInt("EXCEL_IMPORT_BATCH_SIZE", 1000);
-
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	private final List<T> dataList = Lists.newArrayListWithExpectedSize(BATCH_COUNT);
 
 	@Override
-	public void invoke(T dataModel, AnalysisContext context) {
-		this.dataList.add(dataModel);
+	public void invoke(T model, AnalysisContext context) {
+		this.dataList.add(model);
 		if (this.dataList.size() >= BATCH_COUNT) {
 			this.saveData(Lists.newArrayList(dataList));
 			this.dataList.clear();

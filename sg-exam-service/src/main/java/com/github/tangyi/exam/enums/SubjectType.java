@@ -31,11 +31,8 @@ public enum SubjectType {
 	}
 
 	private final String name;
-
 	private final Integer value;
-
 	private final Class<? extends ISubjectService> service;
-
 	private final Class<? extends AbstractAnswerHandler> handler;
 
 	SubjectType(String name, Integer value, Class<? extends ISubjectService> service,

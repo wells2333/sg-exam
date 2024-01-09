@@ -22,13 +22,10 @@ import java.io.IOException;
 public class ExamMediaService {
 
     private static final String SPEECH_PLAY_CNT_KEY = "speech_play_cnt:";
-
     private static final int SPEECH_PLAY_CNT_TIMEOUT_SECOND = EnvUtils.getInt("SPEECH_PLAY_CNT_TIMEOUT_SECOND", 600);
 
     private final AttachmentManager attachmentManager;
-
     private final SubjectsService subjectsService;
-
     private final RedisCounterService redisCounterService;
 
     public Attachment uploadSpeech(MultipartFile file) {

@@ -37,8 +37,7 @@ public class CustomGlobalExceptionHandler {
 		log.error("[validationBodyException]", ex);
 		List<String> errors = ex.getBindingResult().getFieldErrors().stream()
 				.map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList());
-		R<List<String>> responseBean = new R<>(errors, ApiMsg.KEY_ERROR, ex.getMessage());
-		return new ResponseEntity<>(responseBean, headers, status);
+		return new ResponseEntity<>(new R<>(errors, ApiMsg.KEY_ERROR, ex.getMessage()), headers, status);
 	}
 
 	@ExceptionHandler(HttpMessageConversionException.class)
@@ -56,14 +55,13 @@ public class CustomGlobalExceptionHandler {
 	@ExceptionHandler(BindException.class)
 	public ResponseEntity<Object> validExceptionHandler(BindException e) {
 		log.error("[validExceptionHandler]", e);
-		Exception ex = parseBindingResult(e.getBindingResult());
-		return new ResponseEntity<>(R.error(ex.getMessage()), HttpStatus.OK);
+		return new ResponseEntity<>(R.error(parseBindingResult(e.getBindingResult()).getMessage()), HttpStatus.OK);
 	}
 
 	@ExceptionHandler({BadSqlGrammarException.class, SQLSyntaxErrorException.class, SQLException.class})
 	public ResponseEntity<Object> handleSQLException(SQLException e) {
 		log.error("[handleSQLException]", e);
-		return new ResponseEntity<>(R.error("数据库操作异常"), HttpStatus.OK);
+		return new ResponseEntity<>(R.error(e.getMessage()), HttpStatus.OK);
 	}
 
 	@ExceptionHandler(IOException.class)
@@ -94,13 +92,10 @@ public class CustomGlobalExceptionHandler {
 
 	private Exception parseBindingResult(BindingResult bindingResult) {
 		Map<String, String> map = new HashMap<>();
-		for (FieldError error : bindingResult.getFieldErrors()) {
-			map.put(error.getField(), error.getDefaultMessage());
+		for (FieldError e : bindingResult.getFieldErrors()) {
+			map.put(e.getField(), e.getDefaultMessage());
 		}
-		if (map.isEmpty()) {
-			return new CommonException(ApiMsg.KEY_PARAM_VALIDATE + "");
-		} else {
-			return new CommonException(JsonMapper.toJsonString(map));
-		}
+		return new CommonException(
+				map.isEmpty() ? String.valueOf(ApiMsg.KEY_PARAM_VALIDATE) : JsonMapper.toJsonString(map));
 	}
 }

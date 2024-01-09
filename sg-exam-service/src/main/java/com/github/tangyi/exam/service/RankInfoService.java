@@ -22,7 +22,6 @@ import java.util.Set;
 public class RankInfoService {
 
 	private final RedisTemplate<String, String> redisTemplate;
-
 	private final IUserService userService;
 
 	private String getRankKey(Long examinationId) {
