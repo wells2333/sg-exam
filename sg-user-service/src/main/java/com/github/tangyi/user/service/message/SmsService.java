@@ -23,7 +23,6 @@ public class SmsService extends CrudService<SysSmsMapper, SysSms> implements ISy
 	private static final Boolean SEND_SMS = Boolean.parseBoolean(EnvUtils.getValue("SEND_SMS", "true"));
 
 	private final SmsProperties smsProperties;
-
 	private final com.aliyun.dysmsapi20170525.Client client;
 
 	public SmsService(SmsProperties smsProperties) throws Exception {

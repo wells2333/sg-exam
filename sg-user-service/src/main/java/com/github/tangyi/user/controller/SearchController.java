@@ -44,11 +44,8 @@ import java.util.stream.Collectors;
 public class SearchController extends BaseController {
 
 	private final ICourseService courseService;
-
 	private final IExaminationService examinationService;
-
 	private final AttachmentManager attachmentManager;
-
 	private final Map<String, AtomicInteger> rankWordMap = Maps.newConcurrentMap();
 
 	@Data

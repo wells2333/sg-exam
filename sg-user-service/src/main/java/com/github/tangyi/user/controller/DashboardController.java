@@ -24,9 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DashboardController extends BaseController {
 
 	private final UserService userService;
-
 	private final TenantService tenantService;
-
 	private final ExamRecordService examRecordService;
 
 	/**

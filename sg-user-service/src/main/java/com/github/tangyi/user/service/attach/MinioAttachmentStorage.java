@@ -46,9 +46,7 @@ import java.util.concurrent.TimeUnit;
 public class MinioAttachmentStorage extends AbstractAttachmentStorage {
 
 	private final MinioConfig minioConfig;
-
 	private final Map<String, String> contentTypeMap;
-
 	private final SysAttachmentChunkService attachmentChunkService;
 
 	private MinioClient minioClient;

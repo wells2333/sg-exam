@@ -23,9 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class CustomUserDetailsAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
 	private final PasswordEncoder passwordEncoder;
-
 	private final CustomUserDetailsService userDetailsService;
-
 	private String userNotFoundEncodedPassword;
 
 	public CustomUserDetailsAuthenticationProvider(PasswordEncoder passwordEncoder,
@@ -42,14 +40,15 @@ public class CustomUserDetailsAuthenticationProvider extends AbstractUserDetails
 			throw new BadCredentialsException(
 					messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "密码为空"));
 		}
-		// 获取密码
-		String presentedPassword = authentication.getCredentials().toString();
+
+		String pass = authentication.getCredentials().toString();
 		// 匹配密码
-		if (!passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
+		if (!passwordEncoder.matches(pass, userDetails.getPassword())) {
 			log.debug("Authentication failed: invalid password");
 			SpringContextHolder.publishEvent(new CustomAuthenticationFailureEvent(authentication, userDetails));
 			throw new BadCredentialsException(
-					messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "用户名或密码错误"));
+					messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials",
+							"用户名或密码错误"));
 		}
 		SpringContextHolder.publishEvent(new CustomAuthenticationSuccessEvent(authentication, userDetails));
 	}
@@ -82,9 +81,11 @@ public class CustomUserDetailsAuthenticationProvider extends AbstractUserDetails
 		} catch (Exception tenantNotFound) {
 			throw new InternalAuthenticationServiceException(tenantNotFound.getMessage(), tenantNotFound);
 		}
+
 		if (loadedUser == null) {
 			throw new InternalAuthenticationServiceException("get user information failed");
 		}
+
 		return loadedUser;
 	}
 }

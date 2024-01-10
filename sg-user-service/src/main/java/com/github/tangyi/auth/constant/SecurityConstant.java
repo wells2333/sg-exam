@@ -13,11 +13,6 @@ public class SecurityConstant {
     public static final String WX_LOGIN_URL = "/wx/login";
 
     /**
-     * 默认系统编号
-     */
-    public static final String SYS_CODE = "EXAM";
-
-    /**
      * 默认租户编号
      */
     public static final String DEFAULT_TENANT_CODE = "gitee";

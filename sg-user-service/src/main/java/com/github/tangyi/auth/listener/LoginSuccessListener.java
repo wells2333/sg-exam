@@ -39,27 +39,27 @@ public class LoginSuccessListener implements ApplicationListener<CustomAuthentic
 			String username = userDetails.getUsername();
 			log.info("Login success, username: {} , tenantCode: {}", username, tenantCode);
 			// 记录日志
-			Log logInfo = new Log();
-			logInfo.setTitle("用户登录");
-			logInfo.setCommonValue(username, tenantCode);
-			logInfo.setTook(String.valueOf(
+			Log info = new Log();
+			info.setTitle("用户登录");
+			info.setCommonValue(username, tenantCode);
+			info.setTook(String.valueOf(
 					TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - customUserDetails.getStartNanoTime())));
-			logInfo.setType(CommonConstant.STATUS_NORMAL);
-			ServletRequestAttributes requestAttributes = currentRequestAttributes();
-			if (requestAttributes != null) {
-				HttpServletRequest request = requestAttributes.getRequest();
-				logInfo.setMethod(request.getMethod());
-				logInfo.setRequestUri(request.getRequestURI());
-				logInfo.setIp(request.getRemoteAddr());
-				logInfo.setUserAgent(request.getHeader(HttpHeaders.USER_AGENT));
+			info.setType(CommonConstant.STATUS_NORMAL);
+			ServletRequestAttributes attr = currentRequestAttributes();
+			if (attr != null) {
+				HttpServletRequest req = attr.getRequest();
+				info.setMethod(req.getMethod());
+				info.setRequestUri(req.getRequestURI());
+				info.setIp(req.getRemoteAddr());
+				info.setUserAgent(req.getHeader(HttpHeaders.USER_AGENT));
 			}
-			logInfo.setServiceId("user-service");
-			UserDto userDto = new UserDto(null);
-			userDto.setId(customUserDetails.getId());
-			userDto.setIdentifier(username);
-			userDto.setLoginTime(DateUtils.asDate(LocalDateTime.now()));
-			userDto.setTenantCode(tenantCode);
-			saveLoginInfo(logInfo, userDto);
+			info.setServiceId("user-service");
+			UserDto dto = new UserDto(null);
+			dto.setId(customUserDetails.getId());
+			dto.setIdentifier(username);
+			dto.setLoginTime(DateUtils.asDate(LocalDateTime.now()));
+			dto.setTenantCode(tenantCode);
+			saveLoginInfo(info, dto);
 		}
 	}
 
@@ -75,11 +75,12 @@ public class LoginSuccessListener implements ApplicationListener<CustomAuthentic
 
 	private static ServletRequestAttributes currentRequestAttributes() {
 		try {
-			RequestAttributes requestAttr = RequestContextHolder.currentRequestAttributes();
-			if (!(requestAttr instanceof ServletRequestAttributes)) {
+			RequestAttributes attr = RequestContextHolder.currentRequestAttributes();
+			if (!(attr instanceof ServletRequestAttributes)) {
 				throw new IllegalStateException("current request is not a servlet request");
 			}
-			return (ServletRequestAttributes) requestAttr;
+
+			return (ServletRequestAttributes) attr;
 		} catch (Exception e) {
 			// do nothing
 		}

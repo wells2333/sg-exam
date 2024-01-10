@@ -27,11 +27,8 @@ import java.util.Map;
 public class TenantService extends CrudService<TenantMapper, Tenant> implements ITenantService {
 
 	private final MenuService menuService;
-
 	private final TenantInitService tenantInitService;
-
 	private final AttachmentManager attachmentManager;
-
 	private final RoleService roleService;
 
 	@Cacheable(value = UserCacheName.TENANT, key = "#tenantCode")

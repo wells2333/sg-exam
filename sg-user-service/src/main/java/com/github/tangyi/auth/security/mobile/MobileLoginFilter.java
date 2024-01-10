@@ -22,7 +22,6 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -60,39 +59,39 @@ public class MobileLoginFilter extends AbstractAuthenticationProcessingFilter {
 	}
 
 	@Override
-	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+	public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
 			throws AuthenticationException {
-		if (postOnly && !request.getMethod().equals(HttpMethod.POST.name())) {
-			throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
+		if (postOnly && !req.getMethod().equals(HttpMethod.POST.name())) {
+			throw new AuthenticationServiceException("Authentication method not supported: " + req.getMethod());
 		}
+
 		// 获取手机登录的参数
-		String mobile = StringUtils.defaultIfEmpty(obtainMobile(request), "").trim();
+		String mobile = StringUtils.defaultIfEmpty(obtainMobile(req), "").trim();
 		// 封装成 token
-		MobileAuthenticationToken mobileAuthenticationToken = new MobileAuthenticationToken(mobile);
+		MobileAuthenticationToken token = new MobileAuthenticationToken(mobile);
 		// 封装其它基本信息
-		setMobileUserDetails(request, mobileAuthenticationToken);
-		setDetails(request, mobileAuthenticationToken);
-		Authentication authResult = null;
+		setMobileUserDetails(req, token);
+		setDetails(req, token);
+		Authentication result = null;
 		try {
 			// 认证
-			authResult = this.getAuthenticationManager().authenticate(mobileAuthenticationToken);
+			result = this.getAuthenticationManager().authenticate(token);
 			log.info("Mobile authentication successfully, mobile: {}", mobile);
 			// 认证成功
-			eventPublisher.publishAuthenticationSuccess(authResult);
-			SecurityContextHolder.getContext().setAuthentication(authResult);
+			eventPublisher.publishAuthenticationSuccess(result);
+			SecurityContextHolder.getContext().setAuthentication(result);
 		} catch (Exception failed) {
 			SecurityContextHolder.clearContext();
 			log.error("Failed to authentication mobile request , mobile: {}", mobile, failed);
 			eventPublisher.publishAuthenticationFailure(new BadCredentialsException(failed.getMessage(), failed),
 					new PreAuthenticatedAuthenticationToken("access-token", "N/A"));
 			try {
-				authenticationEntryPoint.commence(request, response,
-						new UsernameNotFoundException(failed.getMessage(), failed));
+				authenticationEntryPoint.commence(req, res, new UsernameNotFoundException(failed.getMessage(), failed));
 			} catch (Exception e) {
 				log.error("Failed to handle mobile authentication, mobile: {}", mobile, failed);
 			}
 		}
-		return authResult;
+		return result;
 	}
 
 	@Override

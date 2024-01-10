@@ -30,9 +30,7 @@ import java.util.UUID;
 public class SpeechSynthesisService extends CrudService<SpeechSynthesisMapper, SpeechSynthesis> {
 
 	private final AttachmentService attachmentService;
-
 	private final AttachmentManager attachmentManager;
-
 	private final BaiduSpeechSynthesisService baiduSpeechSynthesisService;
 
 	@Transactional

@@ -27,13 +27,9 @@ public class LuceneInitializr {
 	private static final int MAX_WAIT_CNT = 3;
 
 	private final Cache<String, List<Long>> cache;
-
 	private final ICourseService courseService;
-
 	private final IExaminationService examinationService;
-
 	private final IExamCourseMemberService courseMemberService;
-
 	private final IExamPermissionService examinationMemberService;
 
 	interface Initializr {
@@ -55,19 +51,21 @@ public class LuceneInitializr {
 		@Override
 		public void init() {
 			List<Long> ids = getIds();
-			if (CollectionUtils.isNotEmpty(ids)) {
-				ExamCourseMember member = new ExamCourseMember();
-				for (Long id : ids) {
-					Course course = courseService.get(id);
-					if (course != null) {
-						member.setCourseId(course.getId());
-						Integer memberCnt = courseMemberService.findMemberCountByCourseId(member);
-						long joinCnt = memberCnt == null ? 0 : memberCnt;
-						courseService.addIndex(course, joinCnt, joinCnt);
-					}
-				}
-				log.info("Add course to index finished, size: {}", ids.size());
+			if (CollectionUtils.isEmpty(ids)) {
+				return;
 			}
+
+			ExamCourseMember member = new ExamCourseMember();
+			for (Long id : ids) {
+				Course course = courseService.get(id);
+				if (course != null) {
+					member.setCourseId(course.getId());
+					Integer memberCnt = courseMemberService.findMemberCountByCourseId(member);
+					long joinCnt = memberCnt == null ? 0 : memberCnt;
+					courseService.addIndex(course, joinCnt, joinCnt);
+				}
+			}
+			log.info("Add course to index finished, size: {}", ids.size());
 		}
 	}
 
@@ -84,18 +82,20 @@ public class LuceneInitializr {
 		@Override
 		public void init() {
 			List<Long> ids = getIds();
-			if (CollectionUtils.isNotEmpty(ids)) {
-				for (Long id : ids) {
-					Examination examination = examinationService.get(id);
-					if (examination != null) {
-						Integer memberCnt = examinationMemberService.findCount(ExamConstant.PERMISSION_TYPE_EXAM,
-								examination.getId());
-						long joinCnt = memberCnt == null ? 0 : memberCnt;
-						examinationService.addIndex(examination, joinCnt, joinCnt);
-					}
-				}
-				log.info("Add examination to index finished, size: {}", ids.size());
+			if (CollectionUtils.isEmpty(ids)) {
+				return;
 			}
+
+			for (Long id : ids) {
+				Examination examination = examinationService.get(id);
+				if (examination != null) {
+					Integer memberCnt = examinationMemberService.findCount(ExamConstant.PERMISSION_TYPE_EXAM,
+							examination.getId());
+					long joinCnt = memberCnt == null ? 0 : memberCnt;
+					examinationService.addIndex(examination, joinCnt, joinCnt);
+				}
+			}
+			log.info("Add examination to index finished, size: {}", ids.size());
 		}
 	}
 
@@ -135,6 +135,7 @@ public class LuceneInitializr {
 			} catch (InterruptedException e) {
 				// Ignore.
 			}
+
 			ids = cache.getIfPresent(cacheKey);
 		}
 		return ids;

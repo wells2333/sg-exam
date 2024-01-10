@@ -37,9 +37,7 @@ import java.util.stream.Stream;
 public class MenuService extends CrudService<MenuMapper, Menu> implements IMenuService, UserCacheName {
 
 	private final MenuMapper menuMapper;
-
 	private final RoleMenuService roleMenuService;
-
 	private final ExecutorHolder executorHolder;
 
 	public MenuService(MenuMapper menuMapper, RoleMenuService roleMenuService, ExecutorHolder executorHolder) {

@@ -62,27 +62,27 @@ public class WxLoginFilter extends AbstractAuthenticationProcessingFilter {
 		if (postOnly && !request.getMethod().equals(HttpMethod.POST.name())) {
 			throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
 		}
+
 		String code = StringUtils.defaultIfEmpty(obtainCode(request), "").trim();
-		WxAuthenticationToken wxAuthenticationToken = new WxAuthenticationToken(
-				request.getHeader(CommonConstant.TENANT_CODE_HEADER), code);
-		setWxUserDetails(request, wxAuthenticationToken);
-		setDetails(request, wxAuthenticationToken);
+		WxAuthenticationToken token = new WxAuthenticationToken(request.getHeader(CommonConstant.TENANT_CODE_HEADER),
+				code);
+		setWxUserDetails(request, token);
+		setDetails(request, token);
 		Authentication auth = null;
 		try {
-			auth = this.getAuthenticationManager().authenticate(wxAuthenticationToken);
+			auth = this.getAuthenticationManager().authenticate(token);
 			log.info("Wx authentication successfully, code: {}, principal: {}", code, auth.getPrincipal());
 			eventPublisher.publishAuthenticationSuccess(auth);
 			SecurityContextHolder.getContext().setAuthentication(auth);
-		} catch (Exception failed) {
+		} catch (Exception e) {
 			SecurityContextHolder.clearContext();
-			log.error("Failed to authentication wx login request, code: {}", code, failed);
-			eventPublisher.publishAuthenticationFailure(new BadCredentialsException(failed.getMessage(), failed),
+			log.error("Failed to authentication wx login request, code: {}", code, e);
+			eventPublisher.publishAuthenticationFailure(new BadCredentialsException(e.getMessage(), e),
 					new PreAuthenticatedAuthenticationToken("access-token", "N/A"));
 			try {
-				authenticationEntryPoint.commence(request, response,
-						new UsernameNotFoundException(failed.getMessage(), failed));
-			} catch (Exception e) {
-				log.error("wx authenticationEntryPoint handle failed, code: {}", code, failed);
+				authenticationEntryPoint.commence(request, response, new UsernameNotFoundException(e.getMessage(), e));
+			} catch (Exception ex) {
+				log.error("wx authenticationEntryPoint handle failed, code: {}", code, ex);
 			}
 		}
 		return auth;

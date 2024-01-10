@@ -26,13 +26,9 @@ import java.util.Map;
 public class AttachmentManagerImpl implements AttachmentManager {
 
 	private final Map<Integer, AttachmentStorage> storageMap = Maps.newHashMap();
-
 	private final AttachmentService attachmentService;
-
 	private final AttachGroupService groupService;
-
 	private final QiNiuAttachmentStorage qiNiuStorage;
-
 	private final SysAttachmentChunkService attachmentChunkService;
 
 	public AttachmentManagerImpl(AttachmentService attachmentService, AttachGroupService groupService,

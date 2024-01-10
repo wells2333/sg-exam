@@ -26,8 +26,8 @@ public class DefaultImageService implements IDefaultImageService {
 		try {
 			long start = System.nanoTime();
 			for (int i = 1; i <= 10; i++) {
-				try (InputStream stream = ResourceUtil.getStream("images/" + i + DEFAULT_IMAGE_SUFFIX)) {
-					byte[] bytes = FileCopyUtils.copyToByteArray(stream);
+				try (InputStream in = ResourceUtil.getStream("images/" + i + DEFAULT_IMAGE_SUFFIX)) {
+					byte[] bytes = FileCopyUtils.copyToByteArray(in);
 					if (bytes.length > 0) {
 						images.add(bytes);
 					}

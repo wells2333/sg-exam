@@ -24,11 +24,8 @@ import java.util.List;
 public class CustomApplicationListener implements ApplicationListener<ContextRefreshedEvent> {
 
 	private final ExaminationService examinationService;
-
 	private final CourseService courseService;
-
 	private final UserFavService userFavService;
-
 	private final FavStartCountService favStartCountService;
 
 	@Override

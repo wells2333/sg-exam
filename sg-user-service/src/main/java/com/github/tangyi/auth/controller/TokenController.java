@@ -32,7 +32,6 @@ import java.util.Map;
 public class TokenController extends BaseController {
 
 	private final TokenManager tokenManager;
-
 	private final UserTokenService userTokenService;
 
 	@GetMapping("validToken")
@@ -43,42 +42,41 @@ public class TokenController extends BaseController {
 
 	@GetMapping("refreshToken")
 	public R<Map<String, Object>> refreshToken(HttpServletRequest req, HttpServletResponse res) {
-		UserToken userToken = this.parseUserToken(req);
-		if (userToken == null) {
+		UserToken token = this.parseUserToken(req);
+		if (token == null) {
 			throw new IllegalStateException("Invalid token.");
 		}
-		Long userId = userToken.getUserId();
-		if (this.tokenManager.tokenExist(userId)) {
-			this.tokenManager.deleteToken(userId);
-			log.info("Delete token finished, userId: {}", userId);
+		Long uid = token.getUserId();
+		if (this.tokenManager.tokenExist(uid)) {
+			this.tokenManager.deleteToken(uid);
+			log.info("Delete token finished, uid: {}", uid);
 		}
 		Collection<GrantedAuthority> authorities = Lists.newArrayList();
-		if (StringUtils.isNotEmpty(userToken.getRole())) {
-			for (String role : StringUtils.split(userToken.getRole(), CommonConstant.COMMA)) {
+		if (StringUtils.isNotEmpty(token.getRole())) {
+			for (String role : StringUtils.split(token.getRole(), CommonConstant.COMMA)) {
 				authorities.add((GrantedAuthority) () -> role);
 			}
 		}
-		CustomUserDetails details = new CustomUserDetails(userId, userToken.getIdentify(), authorities,
-				userToken.getTenantCode());
-		details.setLoginType(LoginTypeEnum.valueOf(userToken.getLoginType()));
+		CustomUserDetails d = new CustomUserDetails(uid, token.getIdentify(), authorities, token.getTenantCode());
+		d.setLoginType(LoginTypeEnum.valueOf(token.getLoginType()));
 		// TODO phone 需要回填
 		//details.setPhone("");
-		Map<String, Object> map = this.userTokenService.generateAndSaveToken(req, res, details, false);
-		log.info("Refresh token finished, userId: {}", userId);
+		Map<String, Object> map = this.userTokenService.generateAndSaveToken(req, res, d, false);
+		log.info("Refresh token finished, uid: {}", uid);
 		return R.success(map);
 	}
 
 	@GetMapping("logout")
-	public R<Boolean> logout(HttpServletRequest request) {
-		UserToken userToken = this.parseUserToken(request);
-		if (userToken != null && this.tokenManager.tokenExist(userToken.getUserId())) {
-			this.tokenManager.deleteToken(userToken.getUserId());
+	public R<Boolean> logout(HttpServletRequest req) {
+		UserToken token = this.parseUserToken(req);
+		if (token != null && this.tokenManager.tokenExist(token.getUserId())) {
+			this.tokenManager.deleteToken(token.getUserId());
 		}
 		return R.success(Boolean.TRUE);
 	}
 
-	private UserToken parseUserToken(HttpServletRequest request) {
-		String authorization = request.getHeader(SecurityConstant.AUTHORIZATION);
+	private UserToken parseUserToken(HttpServletRequest req) {
+		String authorization = req.getHeader(SecurityConstant.AUTHORIZATION);
 		if (StringUtils.isEmpty(authorization)) {
 			return null;
 		}
@@ -91,13 +89,13 @@ public class TokenController extends BaseController {
 		String role = ObjectUtil.toString(claims.get(TokenManager.ROLE_KEY));
 		String loginType = ObjectUtil.toString(claims.get(TokenManager.LOGIN_TYPE));
 
-		UserToken userToken = new UserToken();
-		userToken.setId(id);
-		userToken.setUserId(Long.parseLong(userId));
-		userToken.setTenantCode(tenantCode);
-		userToken.setIdentify(identify);
-		userToken.setRole(role);
-		userToken.setLoginType(loginType);
-		return userToken;
+		UserToken uToken = new UserToken();
+		uToken.setId(id);
+		uToken.setUserId(Long.parseLong(userId));
+		uToken.setTenantCode(tenantCode);
+		uToken.setIdentify(identify);
+		uToken.setRole(role);
+		uToken.setLoginType(loginType);
+		return uToken;
 	}
 }

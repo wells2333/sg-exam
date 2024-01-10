@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class StudentService extends CrudService<StudentMapper, Student> implements IStudentService {
 
 	private final UserService userService;
-
 	private final UserStudentService userStudentService;
 
 	@Transactional

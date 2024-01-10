@@ -34,34 +34,34 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
 	}
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+	protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
 			throws IOException, ServletException {
-		if (!AnyRequestMatcher.INSTANCE.matcher(request).isMatch()) {
+		if (!AnyRequestMatcher.INSTANCE.matcher(req).isMatch()) {
 			UsernamePasswordAuthenticationToken authentication = null;
 			try {
-				authentication = getAuthentication(request);
+				authentication = getAuthentication(req);
 			} catch (Exception e) {
-				RUtil.out(response, R.success(e.getMessage()));
+				RUtil.out(res, R.success(e.getMessage()));
 			}
 
 			if (authentication != null) {
 				SecurityContextHolder.getContext().setAuthentication(authentication);
-				chain.doFilter(request, response);
+				chain.doFilter(req, res);
 			} else {
-				RUtil.out(response, R.error("authentication is null"));
+				RUtil.out(res, R.error("authentication is null"));
 			}
 		} else {
-			chain.doFilter(request, response);
+			chain.doFilter(req, res);
 		}
 	}
 
 	/**
 	 * 根据 Authorization header，解析出 token 里面的信息
 	 */
-	private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-		String token = request.getHeader(SecurityConstant.AUTHORIZATION);
+	private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest req) {
+		String token = req.getHeader(SecurityConstant.AUTHORIZATION);
 		if (StringUtils.isEmpty(token)) {
-			token = request.getParameter(SecurityConstant.AUTHORIZATION);
+			token = req.getParameter(SecurityConstant.AUTHORIZATION);
 		}
 		if (StringUtils.isNotEmpty(token)) {
 			token = token.substring(SecurityConstant.BEARER.length());

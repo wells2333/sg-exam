@@ -13,21 +13,15 @@ import javax.annotation.PostConstruct;
 @Service
 public class ExecutorHolder implements IExecutorHolder {
 
-	public static final int EXECUTOR_QUEUE_SIZE = EnvUtils.getInt("EXECUTOR_QUEUE_SIZE", 2000);
-
-	public static final int EXECUTOR_CORE_SIZE = EnvUtils.getInt("EXECUTOR_CORE_SIZE",
+	private static final int EXECUTOR_QUEUE_SIZE = EnvUtils.getInt("EXECUTOR_QUEUE_SIZE", 2000);
+	private static final int EXECUTOR_CORE_SIZE = EnvUtils.getInt("EXECUTOR_CORE_SIZE",
 			Runtime.getRuntime().availableProcessors() + 1);
 
 	private ListeningExecutorService commonExecutor;
-
 	private ListeningExecutorService examExecutor;
-
 	private ListeningExecutorService subjectExecutor;
-
 	private ListeningExecutorService submitExecutor;
-
 	private ListeningExecutorService importExecutor;
-
 	private ListeningExecutorService qiNiuUploadExecutor;
 
 	@PostConstruct

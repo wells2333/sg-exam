@@ -57,24 +57,16 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserService extends CrudService<UserMapper, User> implements IUserService, UserCacheName {
 
-	public static final String DEFAULT_AVATAR_URL = EnvUtils.getValue("DEFAULT_AVATAR_URL", "");
-
+	private static final String DEFAULT_AVATAR_URL = EnvUtils.getValue("DEFAULT_AVATAR_URL", "");
 	private static final PasswordEncoder encoder = new BCryptPasswordEncoder();
 
 	private final UserRoleMapper userRoleMapper;
-
 	private final RoleMapper roleMapper;
-
 	private final MenuService menuService;
-
 	private final RedisTemplate redisTemplate;
-
 	private final AttachmentService attachmentService;
-
 	private final AttachmentManager attachmentManager;
-
 	private final SysProperties sysProperties;
-
 	private final UserAuthsService userAuthsService;
 
 	@Override

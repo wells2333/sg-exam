@@ -33,15 +33,11 @@ public class SysMessageService extends CrudService<SysMessageMapper, SysMessage>
 		implements ISysMessageService, UserCacheName {
 
 	private static final Integer RECEIVER_TYPE_ALL_USER = 0;
-
 	private static final Integer RECEIVER_TYPE_PART_USER = 1;
-
 	private static final Integer RECEIVER_TYPE_DEPT = 2;
 
 	private final SysMessageReceiverService receiverService;
-
 	private final SysMessageReadService messageReadService;
-
 	private final UserService userService;
 
 	@Override

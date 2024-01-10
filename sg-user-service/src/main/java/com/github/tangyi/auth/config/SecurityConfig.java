@@ -39,15 +39,10 @@ import java.util.Set;
 public class SecurityConfig {
 
 	private final CustomUserDetailsService userDetailsService;
-
 	private final TokenManager tokenManager;
-
 	private final UserTokenService userTokenService;
-
 	private final SysProperties sysProperties;
-
 	private final ValidateCodeFilter validateCodeFilter;
-
 	private final FilterIgnorePropertiesConfig ignorePropertiesConfig;
 
 	public SecurityConfig(CustomUserDetailsService userDetailsService, TokenManager tokenManager,

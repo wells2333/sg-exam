@@ -71,13 +71,9 @@ import java.util.stream.Collectors;
 public class UserController extends BaseController {
 
 	private final UserService userService;
-
 	private final UserRoleService userRoleService;
-
 	private final DeptService deptService;
-
 	private final UserAuthsService userAuthsService;
-
 	private final ValidateCodeService validateCodeService;
 
 	@GetMapping("/{id}")

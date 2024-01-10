@@ -28,18 +28,14 @@ import java.util.List;
 @Slf4j
 public abstract class AbstractAttachmentStorage implements AttachmentStorage {
 
-    static final String PART_ETG = "etag";
+	private static final int ATTACHMENT_STORAGE_SHARD_SIZE = EnvUtils.getInt("ATTACHMENT_STORAGE_SHARD_SIZE", 256);
 
-    static final String PART_NUMBER = "partNumber";
-
-    private static final int ATTACHMENT_STORAGE_SHARD_SIZE = EnvUtils.getInt("ATTACHMENT_STORAGE_SHARD_SIZE", 256);
+	protected static final String PART_ETG = "etag";
+	protected static final String PART_NUMBER = "partNumber";
 
     protected final AttachmentService attachmentService;
-
     protected final AttachGroupService groupService;
-
     protected final DefaultImageService defaultImageService;
-
     protected final ExecutorHolder executorHolder;
 
     public AbstractAttachmentStorage(AttachmentService attachmentService, AttachGroupService groupService,

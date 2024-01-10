@@ -40,18 +40,14 @@ import java.util.stream.Collectors;
 public class QiNiuAttachmentStorage extends AbstractAttachmentStorage {
 
     private final QiNiuConfig qiNiuConfig;
-
     private final UploadManager uploadManager;
-
     private final BucketManager bucketManager;
-
     private final String token;
-
     private final Client client;
 
     private volatile String urlPrefixValue;
 
-    static class QiNiuAttachException extends CommonException {
+    protected static class QiNiuAttachException extends CommonException {
         public QiNiuAttachException(String msg) {
             super(msg);
         }

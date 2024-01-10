@@ -126,6 +126,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 		if (userVo == null) {
 			throw new UsernameNotFoundException("Login by social not found: " + social);
 		}
+
 		return userVo;
 	}
 

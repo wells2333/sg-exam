@@ -23,7 +23,6 @@ import java.util.List;
 public class RoleService extends CrudService<RoleMapper, Role> implements IRoleService, UserCacheName {
 
 	private final RoleMenuMapper roleMenuMapper;
-
 	private final UserRoleMapper userRoleMapper;
 
 	@Override

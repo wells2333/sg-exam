@@ -45,11 +45,8 @@ import java.util.stream.Collectors;
 public class AttachmentController extends BaseController {
 
     private final AttachmentService attachmentService;
-
     private final AttachGroupService groupService;
-
     private final SysProperties sysProperties;
-
     private final AttachmentManager attachmentManager;
 
     @Operation(summary = "获取附件信息")

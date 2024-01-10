@@ -35,26 +35,18 @@ import java.util.concurrent.ThreadLocalRandom;
 @Service
 public class WxH5Service {
 
-	public static final String WX_API_TICKET_URL = EnvUtils.getValue("WX_API_TICKET_URL",
+	private static final String WX_API_TICKET_URL = EnvUtils.getValue("WX_API_TICKET_URL",
 			"https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=");
-
-	public static final String WX_API_TOKEN_URL = EnvUtils.getValue("WX_API_TOKEN_URL",
+	private static final String WX_API_TOKEN_URL = EnvUtils.getValue("WX_API_TOKEN_URL",
 			"https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=");
-
-	public static final String WX_API_EXPIRE_SECONDS = EnvUtils.getValue("WX_API_EXPIRE_SECONDS", "600");
-
-	private final static byte[] hex = "0123456789ABCDEF".getBytes();
-
-	public static final String WX_H5_SCENE = "wx_h5_scene:";
+	private static final String WX_API_EXPIRE_SECONDS = EnvUtils.getValue("WX_API_EXPIRE_SECONDS", "600");
+	private static final byte[] hex = "0123456789ABCDEF".getBytes();
+	private static final String WX_H5_SCENE = "wx_h5_scene:";
 
 	private final WxH5Properties wxH5Properties;
-
 	private final UserService userService;
-
 	private final CustomUserDetailsService userDetailsService;
-
 	private final UserTokenService userTokenService;
-
 	private final RedisTemplate redisTemplate;
 
 	public WxH5Service(WxH5Properties wxH5Properties, UserService userService,
@@ -139,8 +131,8 @@ public class WxH5Service {
 		String text = message.getContent();
 		// 生成二维码时穿过的特殊参数
 		String sceneStr = message.getEventKey();
-		log.info("消息类型：{}, 消息事件：{}, 发送者账号：{}, 接收者微信：{}, 文本消息：{}, 二维码参数：{}", messageType, messageEvent, fromUser, toUser,
-				text, sceneStr);
+		log.info("消息类型：{}, 消息事件：{}, 发送者账号：{}, 接收者微信：{}, 文本消息：{}, 二维码参数：{}", messageType,
+				messageEvent, fromUser, toUser, text, sceneStr);
 		if (messageType.equals("event")) {
 			// 设置租户 code
 			String tenantCode = SecurityConstant.DEFAULT_TENANT_CODE;
@@ -150,10 +142,12 @@ public class WxH5Service {
 			// 没有该用户
 			if (userVo == null) {
 				JSONObject userInfo = getUserInfo(fromUser);
+				// TODO
 				WxUser wxUser = new WxUser();
 				// 自动注册用户
 				userVo = userDetailsService.registerUser(wxUser, fromUser, tenantCode);
 			}
+
 			// 扫码成功，存入缓存
 			if (userVo != null) {
 				CustomUserDetails details = userDetailsService.toCustomUserDetails(userVo);
@@ -171,6 +165,7 @@ public class WxH5Service {
 		if (StringUtils.isEmpty(sceneStr)) {
 			return R.success(null);
 		}
+
 		Object valueObj = getSceneStr(sceneStr);
 		return valueObj == null ? R.success(null) : valueObj;
 	}

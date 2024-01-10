@@ -24,19 +24,23 @@ public class ValidateCodeService {
 		if (Boolean.FALSE.equals(redisTemplate.hasKey(key))) {
 			throw new ValidateCodeExpiredException(SecurityConstant.EXPIRED_ERROR);
 		}
+
 		Object codeObj = redisTemplate.opsForValue().get(key);
 		if (codeObj == null) {
 			throw new ValidateCodeExpiredException(SecurityConstant.EXPIRED_ERROR);
 		}
+
 		String saveCode = codeObj.toString();
 		if (StrUtil.isBlank(saveCode)) {
 			redisTemplate.delete(key);
 			throw new ValidateCodeExpiredException(SecurityConstant.EXPIRED_ERROR);
 		}
+
 		if (!StrUtil.equals(saveCode, code)) {
 			redisTemplate.delete(key);
 			throw new InvalidValidateCodeException("验证码错误");
 		}
+
 		redisTemplate.delete(key);
 	}
 }
