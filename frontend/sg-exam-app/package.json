@@ -37,7 +37,8 @@
     "vue2-animate": "^2.1.0",
     "vue2-countdown": "^1.0.8",
     "vuex": "^3.0.1",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
     "@types/babel-core": "^6.25.6",
