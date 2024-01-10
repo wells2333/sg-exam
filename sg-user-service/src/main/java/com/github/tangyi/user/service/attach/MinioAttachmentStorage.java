@@ -64,7 +64,7 @@ public class MinioAttachmentStorage extends AbstractAttachmentStorage {
 
 	private void initContentTypes() {
 		try {
-			long start = System.nanoTime();
+			long startNs = System.nanoTime();
 			String str = IOUtils.toString(ResourceUtil.getStream("content_type.json"), StandardCharsets.UTF_8);
 			JSONObject jsonObject = JSON.parseObject(str);
 			if (jsonObject != null) {
@@ -72,27 +72,29 @@ public class MinioAttachmentStorage extends AbstractAttachmentStorage {
 					contentTypeMap.put(key, jsonObject.getString(key));
 				}
 			}
-			long took = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+			long took = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
 			log.info("Init content type finished, size: {}, took: {}ms", contentTypeMap.size(), took);
 		} catch (Exception e) {
-			log.error("Failed to init content types", e);
+			log.error("Failed to init content types.", e);
 		}
 	}
 
 	private void initMinioClient() {
 		if (!minioConfig.isEnabled()) {
-			log.warn("MinIO is disabled");
+			log.warn("MinIO is disabled.");
 			return;
 		}
+
 		if (StringUtils.isEmpty(minioConfig.getAccessKey())) {
-			log.error("MinIO accessKey is empty");
+			log.error("MinIO accessKey is empty.");
 			return;
 		}
 
 		if (StringUtils.isEmpty(minioConfig.getSecretKey())) {
-			log.error("MinIO secretKey is empty");
+			log.error("MinIO secretKey is empty.");
 			return;
 		}
+
 		try {
 			this.minioClient = MinioClient.builder().endpoint(minioConfig.getEndpoint())
 					.credentials(minioConfig.getAccessKey(), minioConfig.getSecretKey()).build();
@@ -100,7 +102,7 @@ public class MinioAttachmentStorage extends AbstractAttachmentStorage {
 				checkOrCreateBucket(minioConfig.getBucket());
 			}
 		} catch (Exception e) {
-			log.error("Failed to init MinIO client", e);
+			log.error("Failed to init MinIO client.", e);
 		}
 	}
 
@@ -118,16 +120,24 @@ public class MinioAttachmentStorage extends AbstractAttachmentStorage {
 		}
 	}
 
-	private boolean objectExists(String key) throws Exception {
-		GetObjectResponse getRes = minioClient.getObject(
-				GetObjectArgs.builder().bucket(minioConfig.getBucket()).object(key).build());
-		return getRes != null && StringUtils.isNotBlank(getRes.object());
+	private String getContentType(String fileName) {
+		String ext = "." + FilenameUtils.getExtension(fileName);
+		String contentType = this.contentTypeMap.get(ext);
+		if (StringUtils.isEmpty(contentType)) {
+			contentType = "application/octet-stream";
+		}
+		return contentType;
 	}
 
-	private void removeObject(String key) throws Exception {
-		log.info("Start to remove object: {}", key);
-		minioClient.removeObject(RemoveObjectArgs.builder().bucket(minioConfig.getBucket()).object(key).build());
-		log.info("Remove object finished, object: {}", key);
+	private void deleteTempChunkFiles(List<String> tempFiles, String hash, String tenantCode) {
+		CompletableFuture.runAsync(() -> {
+			log.info("Start to delete temp chunk files: {}", tempFiles);
+			for (String fileName : tempFiles) {
+				this.doDelete(fileName);
+			}
+			int chunkDeleteRes = attachmentChunkService.deleteByHash(hash, tenantCode);
+			log.info("Delete temp chunk files finished, files: {}, chunkDeleteRes: {}", tempFiles, chunkDeleteRes);
+		});
 	}
 
 	@Override
@@ -167,6 +177,7 @@ public class MinioAttachmentStorage extends AbstractAttachmentStorage {
 					ComposeSource.builder().bucket(minioConfig.getBucket()).object(chunk.getChunkName()).build());
 			chunkNames.add(chunk.getChunkName());
 		});
+
 		log.info("Start to merge chunks, size: {}", chunkSources.size());
 		try {
 			String key = preUpload(prepare);
@@ -257,6 +268,7 @@ public class MinioAttachmentStorage extends AbstractAttachmentStorage {
 				// 直接拼接出访问路径
 				url = minioConfig.getEndpoint() + "/" + minioConfig.getBucket() + "/" + fileName;
 			}
+
 			// 替换访问域名
 			if (StringUtils.isNotEmpty(url) && StringUtils.isNotEmpty(minioConfig.getAccessDomain())) {
 				UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(url).build();
@@ -271,25 +283,5 @@ public class MinioAttachmentStorage extends AbstractAttachmentStorage {
 			log.error("Failed to get download url, fileName: {}", fileName, e);
 		}
 		return url;
-	}
-
-	private String getContentType(String fileName) {
-		String ext = "." + FilenameUtils.getExtension(fileName);
-		String contentType = this.contentTypeMap.get(ext);
-		if (StringUtils.isEmpty(contentType)) {
-			contentType = "application/octet-stream";
-		}
-		return contentType;
-	}
-
-	private void deleteTempChunkFiles(List<String> tempFiles, String hash, String tenantCode) {
-		CompletableFuture.runAsync(() -> {
-			log.info("Start to delete temp chunk files: {}", tempFiles);
-			for (String fileName : tempFiles) {
-				this.doDelete(fileName);
-			}
-			int chunkDeleteRes = attachmentChunkService.deleteByHash(hash, tenantCode);
-			log.info("Delete temp chunk files finished, files: {}, chunkDeleteRes: {}", tempFiles, chunkDeleteRes);
-		});
 	}
 }

@@ -24,6 +24,7 @@ public class AttachmentService extends CrudService<AttachmentMapper, Attachment>
 		if (attachment == null) {
 			throw new AttachNotExistException("attachment does not exist, id: " + id);
 		}
+
 		return attachment;
 	}
 

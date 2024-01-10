@@ -44,13 +44,14 @@ public class CustomApplicationListener implements ApplicationListener<ContextRef
 	}
 
 	private void doInit() {
-		List<Long> examIds = examinationService.findAllIds();
-		if (CollectionUtils.isNotEmpty(examIds)) {
-			for (Long examId : examIds) {
-				ExamFavStartCount count = favStartCountService.findByTarget(examId, UserFavConstant.FAV_TYPE_EXAM);
+		List<Long> ids = examinationService.findAllIds();
+		if (CollectionUtils.isNotEmpty(ids)) {
+			for (Long id : ids) {
+				ExamFavStartCount count = favStartCountService.findByTarget(id, UserFavConstant.FAV_TYPE_EXAM);
 				setStartAndFavCount(count);
 			}
 		}
+
 		List<Long> courseIds = courseService.findAllIds();
 		if (CollectionUtils.isNotEmpty(courseIds)) {
 			for (Long courseId : courseIds) {

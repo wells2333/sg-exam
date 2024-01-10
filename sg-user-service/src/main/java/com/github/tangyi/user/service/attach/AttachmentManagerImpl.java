@@ -58,6 +58,11 @@ public class AttachmentManagerImpl implements AttachmentManager {
 		return storage;
 	}
 
+	private AttachGroup getAttachGroupByAttachmentId(Long id) {
+		Attachment attachment = attachmentService.getNotNullAttachment(id);
+		return groupService.findByGroupCode(attachment.getGroupCode());
+	}
+
 	@Override
 	public Attachment upload(MultipartFileUploadContext context) throws IOException {
 		return getManager(context.getGroup()).upload(context);
@@ -181,10 +186,5 @@ public class AttachmentManagerImpl implements AttachmentManager {
 		AttachmentStorage storage = this.storageMap.get(AttachTypeEnum.DEFAULT.getDefaultStorageType());
 		AttachGroup group = groupService.findByGroupCode(groupCode);
 		return storage.defaultImage(group.getGroupCode());
-	}
-
-	private AttachGroup getAttachGroupByAttachmentId(Long id) {
-		Attachment attachment = attachmentService.getNotNullAttachment(id);
-		return groupService.findByGroupCode(attachment.getGroupCode());
 	}
 }

@@ -77,10 +77,12 @@ public class QiNiuAttachmentStorage extends AbstractAttachmentStorage {
         if (StringUtils.isNotBlank(this.urlPrefixValue)) {
             return this.urlPrefixValue;
         }
+
         List<String> hosts = new ApiQueryRegion(client).request(new ApiQueryRegion.Request(null, token)).getDefaultRegionUpHosts();
         if (CollectionUtils.isEmpty(hosts)) {
             throw new QiNiuAttachException("Failed to query region up hosts, token: " + token);
         }
+
         String host = hosts.get(0);
         if (!host.startsWith("http")) {
             host = "http://" + host;

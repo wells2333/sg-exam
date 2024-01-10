@@ -20,14 +20,22 @@ public class SpringDocConfig {
 
 	@Bean
 	public OpenAPI openAPI() {
-		return new OpenAPI().info(new Info().title(NAME).description(NAME).version("v5.0.0")
-						.license(new License().name("Apache 2.0").url("https://gitee.com/wells2333")))
+		return new OpenAPI().info(new Info()    //
+						.title(NAME)    //
+						.description(NAME)    //
+						.version("0.0.12")    //
+						.license(new License().name("Apache 2.0").url("https://gitee.com/wells2333")))    //
 				.externalDocs(new ExternalDocumentation().description(NAME).url("https://www.yunmianshi.com/"))
 				.addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME).addList(TENANT_CODE))
-				.components(new Components().addSecuritySchemes(SECURITY_SCHEME_NAME,
-						new SecurityScheme().name(SECURITY_SCHEME_NAME).type(SecurityScheme.Type.HTTP).scheme("bearer")
-								.bearerFormat("JWT")).addSecuritySchemes(TENANT_CODE,
-						new SecurityScheme().name(TENANT_CODE).type(SecurityScheme.Type.APIKEY)
+				.components(new Components()    //
+						.addSecuritySchemes(SECURITY_SCHEME_NAME, new SecurityScheme()    //
+								.name(SECURITY_SCHEME_NAME)    //
+								.type(SecurityScheme.Type.HTTP)    //
+								.scheme("bearer")    //
+								.bearerFormat("JWT"))    //
+						.addSecuritySchemes(TENANT_CODE, new SecurityScheme()    //
+								.name(TENANT_CODE)    //
+								.type(SecurityScheme.Type.APIKEY)    //
 								.in(SecurityScheme.In.HEADER)));
 	}
 }

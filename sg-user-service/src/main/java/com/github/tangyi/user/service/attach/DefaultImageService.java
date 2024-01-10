@@ -9,6 +9,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -24,7 +25,7 @@ public class DefaultImageService implements IDefaultImageService {
 
 	public DefaultImageService() {
 		try {
-			long start = System.nanoTime();
+			long startNs = System.nanoTime();
 			for (int i = 1; i <= 10; i++) {
 				try (InputStream in = ResourceUtil.getStream("images/" + i + DEFAULT_IMAGE_SUFFIX)) {
 					byte[] bytes = FileCopyUtils.copyToByteArray(in);
@@ -33,10 +34,10 @@ public class DefaultImageService implements IDefaultImageService {
 					}
 				}
 			}
-			long took = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+			long took = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
 			log.info("Init default image finished, size: {}, took: {}ms", images.size(), took);
-		} catch (Exception e) {
-			log.error("Failed to init default image", e);
+		} catch (IOException e) {
+			log.error("Failed to init default image.", e);
 		}
 	}
 
