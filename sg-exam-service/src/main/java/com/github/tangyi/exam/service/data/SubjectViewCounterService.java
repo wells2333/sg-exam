@@ -16,15 +16,15 @@ public class SubjectViewCounterService {
 
 	private static final String SUBJECT_VIEW_KEY = "subject:view:";
 
-	private final RedisCounterService redisCounterService;
+	private final RedisCounterService counterService;
 
 	public Long viewSubject(Long subjectId) {
-		return redisCounterService.incrCount(SUBJECT_VIEW_KEY, subjectId);
+		return counterService.incrCount(SUBJECT_VIEW_KEY, subjectId);
 	}
 
 	public void getSubjectsView(List<SubjectDto> list) {
 		List<Long> ids = list.stream().map(SubjectDto::getId).collect(Collectors.toList());
-		Map<Long, Long> map = redisCounterService.getCounts(SUBJECT_VIEW_KEY, ids);
+		Map<Long, Long> map = counterService.getCounts(SUBJECT_VIEW_KEY, ids);
 		for (SubjectDto dto : list) {
 			Long cnt = map.get(dto.getId());
 			if (cnt == null) {

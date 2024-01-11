@@ -26,7 +26,7 @@ import java.util.Map;
 public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMapper, SubjectShortAnswer>
 		implements ISubjectService {
 
-	private final SubjectShortAnswerConverter subjectShortAnswerConverter;
+	private final SubjectShortAnswerConverter converter;
 
 	@Override
 	@Cacheable(value = ExamCacheName.SUBJECT_SHORT_ANSWER, key = "#id")
@@ -75,7 +75,7 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
 
 	@Override
 	public SubjectDto getSubject(Long id) {
-		return subjectShortAnswerConverter.convert(this.get(id));
+		return converter.convert(this.get(id));
 	}
 
 	@Override
@@ -102,11 +102,11 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
 	@Override
 	@Transactional
 	public BaseEntity<SubjectShortAnswer> insertSubject(SubjectDto subjectDto) {
-		SubjectShortAnswer subjectShortAnswer = new SubjectShortAnswer();
-		BeanUtils.copyProperties(subjectDto, subjectShortAnswer);
-		subjectShortAnswer.setAnswer(subjectDto.getAnswer().getAnswer());
-		this.insert(subjectShortAnswer);
-		return subjectShortAnswer;
+		SubjectShortAnswer answer = new SubjectShortAnswer();
+		BeanUtils.copyProperties(subjectDto, answer);
+		answer.setAnswer(subjectDto.getAnswer().getAnswer());
+		this.insert(answer);
+		return answer;
 	}
 
 	@Override
@@ -132,18 +132,18 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
 	@Transactional
 	@CacheEvict(value = ExamCacheName.SUBJECT_SHORT_ANSWER, key = "#subjectDto.id")
 	public int deleteSubject(SubjectDto subjectDto) {
-		SubjectShortAnswer subjectShortAnswer = new SubjectShortAnswer();
-		BeanUtils.copyProperties(subjectDto, subjectShortAnswer);
-		return this.delete(subjectShortAnswer);
+		SubjectShortAnswer answer = new SubjectShortAnswer();
+		BeanUtils.copyProperties(subjectDto, answer);
+		return this.delete(answer);
 	}
 
 	@Override
 	@Transactional
 	@CacheEvict(value = ExamCacheName.SUBJECT_SHORT_ANSWER, key = "#subjectDto.id")
 	public int physicalDeleteSubject(SubjectDto subjectDto) {
-		SubjectShortAnswer subjectShortAnswer = new SubjectShortAnswer();
-		BeanUtils.copyProperties(subjectDto, subjectShortAnswer);
-		return this.physicalDelete(subjectShortAnswer);
+		SubjectShortAnswer answer = new SubjectShortAnswer();
+		BeanUtils.copyProperties(subjectDto, answer);
+		return this.physicalDelete(answer);
 	}
 
 	@Override
@@ -162,26 +162,26 @@ public class SubjectShortAnswerService extends CrudService<SubjectShortAnswerMap
 
 	@Override
 	public List<SubjectDto> findSubjectList(SubjectDto subjectDto) {
-		SubjectShortAnswer subjectShortAnswer = new SubjectShortAnswer();
-		BeanUtils.copyProperties(subjectDto, subjectShortAnswer);
-		return subjectShortAnswerConverter.convert(this.findList(subjectShortAnswer), true);
+		SubjectShortAnswer answer = new SubjectShortAnswer();
+		BeanUtils.copyProperties(subjectDto, answer);
+		return converter.convert(this.findList(answer), true);
 	}
 
 	@Override
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public PageInfo<SubjectDto> findSubjectPage(PageInfo pageInfo, SubjectDto subjectDto) {
-		SubjectShortAnswer subjectShortAnswer = new SubjectShortAnswer();
-		BeanUtils.copyProperties(subjectDto, subjectShortAnswer);
+		SubjectShortAnswer answer = new SubjectShortAnswer();
+		BeanUtils.copyProperties(subjectDto, answer);
 		Map<String, Object> condition = Maps.newHashMap();
-		PageInfo subjectShortAnswerPageInfo = this.findPage(condition, 0, 10);
-		PageInfo<SubjectDto> subjectDtoPageInfo = new PageInfo<>();
-		PageUtil.copyProperties(subjectShortAnswerPageInfo, subjectDtoPageInfo);
-		subjectDtoPageInfo.setList(subjectShortAnswerConverter.convert(subjectShortAnswerPageInfo.getList(), true));
-		return subjectDtoPageInfo;
+		PageInfo page = this.findPage(condition, 0, 10);
+		PageInfo<SubjectDto> dtoPage = new PageInfo<>();
+		PageUtil.copyProperties(page, dtoPage);
+		dtoPage.setList(converter.convert(page.getList(), true));
+		return dtoPage;
 	}
 
 	@Override
 	public List<SubjectDto> findSubjectListById(Long[] ids) {
-		return subjectShortAnswerConverter.convert(this.findListById(ids), true);
+		return converter.convert(this.findListById(ids), true);
 	}
 }

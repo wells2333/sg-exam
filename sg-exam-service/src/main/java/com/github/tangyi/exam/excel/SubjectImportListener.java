@@ -1,10 +1,9 @@
-package com.github.tangyi.exam.excel.listener;
+package com.github.tangyi.exam.excel;
 
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.Answer;
 import com.github.tangyi.api.exam.model.SubjectOption;
 import com.github.tangyi.common.excel.AbstractExcelImportListener;
-import com.github.tangyi.exam.excel.model.SubjectExcelModel;
 import com.github.tangyi.exam.service.subject.SubjectImportExportService;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -22,8 +21,8 @@ public class SubjectImportListener extends AbstractExcelImportListener<SubjectEx
 	private final String tenantCode;
 	private final AtomicInteger nextNo;
 
-	public SubjectImportListener(SubjectImportExportService importExportService, Long examinationId,
-			Long categoryId, String creator, String tenantCode, AtomicInteger nextNo) {
+	public SubjectImportListener(SubjectImportExportService importExportService, Long examinationId, Long categoryId,
+			String creator, String tenantCode, AtomicInteger nextNo) {
 		this.importExportService = importExportService;
 		this.examinationId = examinationId;
 		this.categoryId = categoryId;

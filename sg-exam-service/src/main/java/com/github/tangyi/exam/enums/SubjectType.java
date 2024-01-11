@@ -1,9 +1,17 @@
 package com.github.tangyi.exam.enums;
 
 import com.github.tangyi.exam.handler.AbstractAnswerHandler;
-import com.github.tangyi.exam.handler.impl.*;
-import com.github.tangyi.exam.service.subject.*;
+import com.github.tangyi.exam.handler.impl.ChoicesAnswerHandler;
+import com.github.tangyi.exam.handler.impl.JudgementAnswerHandler;
+import com.github.tangyi.exam.handler.impl.MultipleChoicesAnswerHandler;
+import com.github.tangyi.exam.handler.impl.ShortAnswerHandler;
+import com.github.tangyi.exam.service.subject.ISubjectService;
+import com.github.tangyi.exam.service.subject.SubjectChoicesService;
+import com.github.tangyi.exam.service.subject.SubjectJudgementService;
+import com.github.tangyi.exam.service.subject.SubjectShortAnswerService;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Getter;
 
 import java.util.Map;
@@ -11,16 +19,12 @@ import java.util.Map;
 @Getter
 public enum SubjectType {
 
-	CHOICES("单选", 0, SubjectChoicesService.class, ChoicesAnswerHandler.class),
+	CHOICES("单选", 0, SubjectChoicesService.class, ChoicesAnswerHandler.class),    //
+	SHORT_ANSWER("简答", 1, SubjectShortAnswerService.class, ShortAnswerHandler.class),    //
+	JUDGEMENT("判断", 2, SubjectJudgementService.class, JudgementAnswerHandler.class),    //
+	MULTIPLE_CHOICES("多选", 3, SubjectChoicesService.class, MultipleChoicesAnswerHandler.class);    //
 
-	SHORT_ANSWER("简答", 1, SubjectShortAnswerService.class, ShortAnswerHandler.class),
-
-	JUDGEMENT("判断", 2, SubjectJudgementService.class, JudgementAnswerHandler.class),
-
-	MULTIPLE_CHOICES("多选", 3, SubjectChoicesService.class, MultipleChoicesAnswerHandler.class);
-
-	private static final Map<Integer, SubjectType> VALUE_MAP = Maps.newHashMap();
-
+	private static final Int2ObjectOpenHashMap<SubjectType> VALUE_MAP = new Int2ObjectOpenHashMap<>();
 	private static final Map<String, SubjectType> NAME_MAP = Maps.newHashMap();
 
 	static {
@@ -31,11 +35,11 @@ public enum SubjectType {
 	}
 
 	private final String name;
-	private final Integer value;
+	private final int value;
 	private final Class<? extends ISubjectService> service;
 	private final Class<? extends AbstractAnswerHandler> handler;
 
-	SubjectType(String name, Integer value, Class<? extends ISubjectService> service,
+	SubjectType(String name, int value, Class<? extends ISubjectService> service,
 			Class<? extends AbstractAnswerHandler> handler) {
 		this.name = name;
 		this.value = value;
@@ -43,19 +47,15 @@ public enum SubjectType {
 		this.handler = handler;
 	}
 
-	public static SubjectType matchByValue(Integer value) {
+	public static SubjectType matchByValue(int value) {
 		SubjectType type = VALUE_MAP.get(value);
-		if (type == null) {
-			throw new IllegalArgumentException("Invalid value: " + value);
-		}
+		Preconditions.checkNotNull(type);
 		return type;
 	}
 
 	public static SubjectType matchByName(String name) {
 		SubjectType type = NAME_MAP.get(name);
-		if (type == null) {
-			throw new IllegalArgumentException("Invalid name: " + name);
-		}
+		Preconditions.checkNotNull(type);
 		return type;
 	}
 }

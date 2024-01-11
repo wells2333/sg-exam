@@ -37,12 +37,12 @@ public class ChoicesAnswerHandler extends AbstractAnswerHandler {
 	 */
 	@Override
 	public void judgeOptionRight(Answer answer, SubjectDto subject) {
-		String userAnswer = answer.getAnswer();
+		String uAnswer = answer.getAnswer();
 		String answerStr = subject.getAnswer().getAnswer();
-		if (StringUtils.isNotBlank(userAnswer)) {
-			subject.getOptions().forEach(option -> {
-				if (userAnswer.equals(option.getOptionName())) {
-					option.setRight(answerStr.equals(option.getOptionName()) ? TRUE : FALSE);
+		if (StringUtils.isNotBlank(uAnswer)) {
+			subject.getOptions().forEach(o -> {
+				if (uAnswer.equals(o.getOptionName())) {
+					o.setRight(answerStr.equals(o.getOptionName()) ? TRUE : FALSE);
 				}
 			});
 		}

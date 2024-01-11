@@ -51,7 +51,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class SubjectsService extends CrudService<SubjectsMapper, Subjects> implements ISubjectsService {
 
-	private final SubjectServiceFactory subjectServiceFactory;
 	private final ExaminationSubjectService esService;
 	private final SubjectCategoryService subjectCategoryService;
 	private final SubjectChoicesConverter subjectChoicesConverter;
@@ -62,8 +61,8 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 	private final AttachmentManager attachmentManager;
 	private final IExecutorHolder executorHolder;
 
-	public ISubjectService service(Long subjectId) {
-		return this.subjectServiceFactory.service(getSubjectType(subjectId));
+	private ISubjectService getService(Long subjectId) {
+		return SubjectServiceFactory.getService(getSubjectType(subjectId));
 	}
 
 	/**
@@ -75,9 +74,9 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 
 	public SubjectDto getSubject(Long id, boolean isView) {
 		SubjectDto dto = null;
-		Subjects subjects = this.findBySubjectId(id);
-		if (subjects != null) {
-			dto = getSubject(subjects.getSubjectId(), subjects.getType());
+		Subjects sub = this.findBySubjectId(id);
+		if (sub != null) {
+			dto = getSubject(sub.getSubjectId(), sub.getType());
 			if (dto != null && isView) {
 				dto.setViews(subjectViewCounterService.viewSubject(id) + "");
 			}
@@ -89,16 +88,16 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 	 * 批量查询题目信息，无缓存
 	 */
 	public Collection<SubjectDto> getSubjects(List<Long> ids) {
-		List<Subjects> subjects = this.findBySubjectIds(ids.toArray(new Long[0]));
-		return subjectServiceFactory.batchGetSubjects(subjects);
+		List<Subjects> sub = this.findBySubjectIds(ids.toArray(new Long[0]));
+		return SubjectServiceFactory.batchGetSubjects(sub);
 	}
 
-	public Collection<SubjectDto> getSubjectsBySubjects(List<Subjects> subjects) {
-		return subjectServiceFactory.batchGetSubjects(subjects);
+	public Collection<SubjectDto> getSubjectsBySubjects(List<Subjects> sub) {
+		return SubjectServiceFactory.batchGetSubjects(sub);
 	}
 
 	public SubjectDto getSubject(Long subjectId, Integer type) {
-		SubjectDto dto = subjectServiceFactory.service(type).getSubject(subjectId);
+		SubjectDto dto = SubjectServiceFactory.getService(type).getSubject(subjectId);
 		if (StringUtils.isEmpty(dto.getSubjectVideoUrl()) && dto.getSubjectVideoId() != null) {
 			dto.setSubjectVideoUrl(attachmentManager.getPreviewUrlIgnoreException(dto.getSubjectVideoId()));
 		}
@@ -174,9 +173,6 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 
 	/**
 	 * 根据分类 ID 查询全部题目
-	 *
-	 * @param categoryId categoryId
-	 * @return List
 	 */
 	public List<Subjects> findListByCategoryId(Long categoryId) {
 		return this.dao.findByCategoryId(categoryId);
@@ -191,17 +187,17 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 
 	@Transactional
 	public SubjectDto insert(SubjectDto dto) {
-		BaseEntity<?> entity = subjectServiceFactory.service(dto.getType()).insertSubject(dto);
+		BaseEntity<?> entity = SubjectServiceFactory.getService(dto.getType()).insertSubject(dto);
 		Long subjectId = entity.getId();
 		dto.setId(subjectId);
-		Subjects subjects = new Subjects();
-		subjects.setNewRecord(true);
-		subjects.setCommonValue(dto.getCreator(), dto.getTenantCode());
-		subjects.setSubjectId(subjectId);
-		subjects.setCategoryId(dto.getCategoryId());
-		subjects.setType(dto.getType());
-		subjects.setSort(dto.getSort());
-		insert(subjects);
+		Subjects sub = new Subjects();
+		sub.setNewRecord(true);
+		sub.setCommonValue(dto.getCreator(), dto.getTenantCode());
+		sub.setSubjectId(subjectId);
+		sub.setCategoryId(dto.getCategoryId());
+		sub.setType(dto.getType());
+		sub.setSort(dto.getSort());
+		insert(sub);
 		if (dto.getExaminationId() != null) {
 			insertEs(dto, subjectId, dto.getCreator(), dto.getTenantCode());
 		}
@@ -233,7 +229,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 	@Transactional
 	@CacheEvict(cacheNames = ExamCacheName.SUBJECTS, key = "#subjectDto.id")
 	public SubjectDto update(SubjectDto subjectDto) {
-		if ((this.subjectServiceFactory.service(getSubjectType(subjectDto.getId())).updateSubject(subjectDto)) == 0) {
+		if ((SubjectServiceFactory.getService(getSubjectType(subjectDto.getId())).updateSubject(subjectDto)) == 0) {
 			return this.insert(subjectDto);
 		}
 		this.esService.updateSort(subjectDto.getExaminationId(), subjectDto.getId(), subjectDto.getSort());
@@ -242,67 +238,67 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 
 	@Override
 	@Transactional
-	public void resetSortByExaminationId(Long examinationId, Integer maxSort) {
-		List<ExaminationSubject> subjects = this.esService.findListByExaminationIdAndMaxSort(examinationId, maxSort);
-		if (CollectionUtils.isEmpty(subjects)) {
+	public void resetSortByExaminationId(Long eId, Integer maxSort) {
+		List<ExaminationSubject> sub = this.esService.findListByExaminationIdAndMaxSort(eId, maxSort);
+		if (CollectionUtils.isEmpty(sub)) {
 			return;
 		}
 
 		long startNs = System.nanoTime();
-		for (ExaminationSubject es : subjects) {
+		for (ExaminationSubject es : sub) {
 			es.setSort(es.getSort() - 1);
 			this.esService.update(es);
-			this.service(es.getSubjectId()).updateSubjectSort(es.getSubjectId(), es.getSort());
+			this.getService(es.getSubjectId()).updateSubjectSort(es.getSubjectId(), es.getSort());
 		}
 		long took = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
-		log.info("Reset subject sort finished, examinationId: {}, maxSort: {}, update size: {}, took: {}ms",
-				examinationId, maxSort, CollectionUtils.size(subjects), took);
+		log.info("Reset subject sort finished, eId: {}, maxSort: {}, update size: {}, took: {}ms", eId, maxSort,
+				CollectionUtils.size(sub), took);
 	}
 
 	@Override
 	@Transactional
 	public void resetSortByCategoryId(Long categoryId, Integer maxSort) {
-		List<Subjects> subjects = this.findByCategoryIdAndMaxSort(categoryId, maxSort);
-		if (CollectionUtils.isEmpty(subjects)) {
+		List<Subjects> sub = this.findByCategoryIdAndMaxSort(categoryId, maxSort);
+		if (CollectionUtils.isEmpty(sub)) {
 			return;
 		}
 
 		long startNs = System.nanoTime();
-		for (Subjects subject : subjects) {
-			subject.setSort(subject.getSort() - 1);
-			this.update(subject);
-			this.service(subject.getSubjectId()).updateSubjectSort(subject.getSubjectId(), subject.getSort());
+		for (Subjects s : sub) {
+			s.setSort(s.getSort() - 1);
+			this.update(s);
+			this.getService(s.getSubjectId()).updateSubjectSort(s.getSubjectId(), s.getSort());
 		}
 		long took = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
 		log.info("Reset subject sort finished, categoryId: {}, maxSort: {}, update size: {}, took: {}ms", categoryId,
-				maxSort, CollectionUtils.size(subjects), took);
+				maxSort, CollectionUtils.size(sub), took);
 	}
 
 	@Transactional
 	@CacheEvict(cacheNames = ExamCacheName.SUBJECTS, key = "#id")
 	public Subjects physicalDelete(Long id) {
-		SubjectDto subjectDto = new SubjectDto();
-		subjectDto.setId(id);
-		Subjects subjects = this.findBySubjectId(id);
-		ISubjectService subjectService = this.service(subjectDto.getId());
-		if (subjects != null && subjectService.physicalDeleteSubject(subjectDto) > 0) {
-			this.dao.deleteByPrimaryKey(subjects.getId());
+		SubjectDto dto = new SubjectDto();
+		dto.setId(id);
+		Subjects sub = this.findBySubjectId(id);
+		ISubjectService service = this.getService(dto.getId());
+		if (sub != null && service.physicalDeleteSubject(dto) > 0) {
+			this.dao.deleteByPrimaryKey(sub.getId());
 			ExaminationSubject examinationSubject = new ExaminationSubject();
-			examinationSubject.setSubjectId(subjectDto.getId());
+			examinationSubject.setSubjectId(dto.getId());
 			esService.deleteBySubjectId(examinationSubject);
 		}
-		return subjects;
+		return sub;
 	}
 
 	@Transactional
-	public boolean physicalDeleteAndResetSort(Long id, Long examinationId, Long categoryId) {
-		Subjects subjects = this.physicalDelete(id);
-		if (subjects != null) {
-			if (examinationId != null) {
-				this.resetSortByExaminationId(examinationId, subjects.getSort());
+	public boolean physicalDeleteAndResetSort(Long id, Long eId, Long categoryId) {
+		Subjects sub = this.physicalDelete(id);
+		if (sub != null) {
+			if (eId != null) {
+				this.resetSortByExaminationId(eId, sub.getSort());
 			}
 			if (categoryId != null) {
-				this.resetSortByCategoryId(categoryId, subjects.getSort());
+				this.resetSortByCategoryId(categoryId, sub.getSort());
 			}
 		}
 		return true;
@@ -311,40 +307,43 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 	/**
 	 * 查询第一题
 	 */
-	public SubjectDto findFirstSubjectByExaminationId(Long examinationId) {
-		ExaminationSubject es = esService.findMinSortByExaminationId(examinationId);
+	public SubjectDto findFirstSubjectByExaminationId(Long eId) {
+		ExaminationSubject es = esService.findMinSortByExaminationId(eId);
 		SgPreconditions.checkNull(es, "该考试未录入题目");
 		SubjectDto dto = this.getSubject(es.getSubjectId());
 		// 题目数量
-		Integer subjectCount = esService.findSubjectCount(examinationId);
+		Integer subjectCount = esService.findSubjectCount(eId);
 		dto.setTotal(subjectCount);
 		dto.setHasMore(subjectCount != null && dto.getSort() < subjectCount);
 		return dto;
 	}
 
-	public SubjectDto getNextByCurrentIdAndType(Long examinationId, Long previousSubjectId, Integer nextType) {
-		return subjectServiceFactory.service(getSubjectType(previousSubjectId))
-				.getNextByCurrentIdAndType(examinationId, previousSubjectId, nextType);
+	public SubjectDto getNextByCurrentIdAndType(Long eId, Long previousSubjectId, Integer nextType) {
+		return SubjectServiceFactory.getService(getSubjectType(previousSubjectId))
+				.getNextByCurrentIdAndType(eId, previousSubjectId, nextType);
 	}
 
 	public SubjectDto nextSubjectByCategoryId(NextSubjectDto next) {
-		Subjects subjects = this.findBySubjectId(next.getSubjectId());
-		if (subjects == null) {
+		Subjects sub = this.findBySubjectId(next.getSubjectId());
+		if (sub == null) {
 			return null;
 		}
+
 		if (next.isRandom()) {
-			return nextRandomSubjectByCategoryId(next, subjects.getSort());
+			return nextRandomSubjectByCategoryId(next, sub.getSort());
 		}
-		return nextSortedSubjectByCategoryId(next, subjects);
+
+		return nextSortedSubjectByCategoryId(next, sub);
 	}
 
-	public SubjectDto nextSortedSubjectByCategoryId(NextSubjectDto next, Subjects subjects) {
+	public SubjectDto nextSortedSubjectByCategoryId(NextSubjectDto next, Subjects sub) {
 		Integer sort = Math.max(0,
-				AnswerConstant.NEXT.equals(next.getNextType()) ? subjects.getSort() + 1 : subjects.getSort() - 1);
+				AnswerConstant.NEXT.equals(next.getNextType()) ? sub.getSort() + 1 : sub.getSort() - 1);
 		Subjects nextSubjects = this.dao.findByCategoryIdAndSort(next.getCategoryId(), sort);
 		if (nextSubjects != null) {
 			return this.getSubject(nextSubjects.getSubjectId(), nextSubjects.getType());
 		}
+
 		return null;
 	}
 
@@ -360,9 +359,9 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 				retry--;
 			} while (sort == currentSort && realTimeIds.contains(sort) && retry > 0);
 			if (sort != currentSort) {
-				Subjects subjects = this.dao.findByCategoryIdAndSort(categoryId, (int) sort);
-				if (subjects != null) {
-					return this.getSubject(subjects.getSubjectId(), subjects.getType());
+				Subjects sub = this.dao.findByCategoryIdAndSort(categoryId, (int) sort);
+				if (sub != null) {
+					return this.getSubject(sub.getSubjectId(), sub.getType());
 				}
 			}
 		}
@@ -372,54 +371,54 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 	/**
 	 * 根据关系列表查询对应的题目的详细信息
 	 */
-	public List<SubjectDto> findSubjectDtoList(List<Subjects> subjects) {
-		return findSubjectDtoList(subjects, false);
+	public List<SubjectDto> findSubjectDtoList(List<Subjects> sub) {
+		return findSubjectDtoList(sub, false);
 	}
 
 	/**
 	 * 根据关系列表查询对应的题目的详细信息
 	 */
-	public List<SubjectDto> findSubjectDtoList(List<Subjects> subjects, boolean findOptions) {
-		return findSubjectDtoList(subjects, findOptions, true);
+	public List<SubjectDto> findSubjectDtoList(List<Subjects> sub, boolean findOptions) {
+		return findSubjectDtoList(sub, findOptions, true);
 	}
 
 	/**
 	 * 根据关系列表查询对应的题目的详细信息
 	 */
-	public List<SubjectDto> findSubjectDtoList(List<Subjects> subjects, boolean findOptions, boolean findAnswer) {
-		Map<String, Long[]> idMap = ExamUtil.groupByType(subjects);
+	public List<SubjectDto> findSubjectDtoList(List<Subjects> sub, boolean findOptions, boolean findAnswer) {
+		Map<String, Long[]> idMap = ExamUtil.groupByType(sub);
 		List<SubjectDto> dtoList = Lists.newArrayList();
 		if (idMap.containsKey(SubjectType.CHOICES.name())) {
-			List<SubjectChoices> choices = subjectServiceFactory.getSubjectChoicesService()
+			List<SubjectChoices> choices = SubjectServiceFactory.getChoicesService()
 					.findListById(idMap.get(SubjectType.CHOICES.name()));
 			if (CollectionUtils.isNotEmpty(choices)) {
 				if (findOptions) {
 					choices = choices.stream().map(SubjectChoices::getId)
-							.map(subjectServiceFactory.getSubjectChoicesService()::get).collect(Collectors.toList());
+							.map(SubjectServiceFactory.getChoicesService()::get).collect(Collectors.toList());
 				}
 				dtoList.addAll(subjectChoicesConverter.convert(choices, findAnswer));
 			}
 		}
 		if (idMap.containsKey(SubjectType.MULTIPLE_CHOICES.name())) {
-			List<SubjectChoices> choices = subjectServiceFactory.getSubjectChoicesService()
+			List<SubjectChoices> choices = SubjectServiceFactory.getChoicesService()
 					.findListById(idMap.get(SubjectType.MULTIPLE_CHOICES.name()));
 			if (CollectionUtils.isNotEmpty(choices)) {
 				if (findOptions) {
 					choices = choices.stream().map(SubjectChoices::getId)
-							.map(subjectServiceFactory.getSubjectChoicesService()::get).collect(Collectors.toList());
+							.map(SubjectServiceFactory.getChoicesService()::get).collect(Collectors.toList());
 				}
 				dtoList.addAll(subjectChoicesConverter.convert(choices, findAnswer));
 			}
 		}
 		if (idMap.containsKey(SubjectType.SHORT_ANSWER.name())) {
-			List<SubjectShortAnswer> shortAnswers = subjectServiceFactory.getSubjectShortAnswerService()
+			List<SubjectShortAnswer> shortAnswers = SubjectServiceFactory.getShortAnswerService()
 					.findListById(idMap.get(SubjectType.SHORT_ANSWER.name()));
 			if (CollectionUtils.isNotEmpty(shortAnswers)) {
 				dtoList.addAll(subjectShortAnswerConverter.convert(shortAnswers, findAnswer));
 			}
 		}
 		if (idMap.containsKey((SubjectType.JUDGEMENT.name()))) {
-			List<SubjectJudgement> judgements = subjectServiceFactory.getSubjectJudgementService()
+			List<SubjectJudgement> judgements = SubjectServiceFactory.getJudgementService()
 					.findListById(idMap.get(SubjectType.JUDGEMENT.name()));
 			if (CollectionUtils.isNotEmpty(judgements)) {
 				dtoList.addAll(judgementConverter.convert(judgements, findAnswer));
@@ -472,7 +471,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 		return no == null ? 1 : no + 1;
 	}
 
-	private void initCategoryInfo(List<Long> categoryIds, List<SubjectDto> subjects) {
+	private void initCategoryInfo(List<Long> categoryIds, List<SubjectDto> sub) {
 		if (CollectionUtils.isEmpty(categoryIds)) {
 			return;
 		}
@@ -481,7 +480,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 			return;
 		}
 		Map<Long, SubjectCategory> map = categories.stream().collect(Collectors.toMap(SubjectCategory::getId, e -> e));
-		for (SubjectDto subject : subjects) {
+		for (SubjectDto subject : sub) {
 			SubjectCategory category = map.get(subject.getCategoryId());
 			if (category != null) {
 				subject.setCategoryName(category.getCategoryName());
@@ -490,20 +489,22 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 	}
 
 	private int getSubjectType(Long subjectId) {
-		Subjects subjects = this.findBySubjectId(subjectId);
-		SgPreconditions.checkNull(subjects, "subjects is null");
-		return subjects.getType();
+		Subjects sub = this.findBySubjectId(subjectId);
+		SgPreconditions.checkNull(sub, "subjects is null");
+		return sub.getType();
 	}
 
 	private Map<Long, Integer> findSubjectCountByCategories(List<SubjectCategoryDto> categories) {
 		if (CollectionUtils.isEmpty(categories)) {
 			return Collections.emptyMap();
 		}
+
 		List<Long> ids = Lists.newArrayList();
 		for (SubjectCategoryDto category : categories) {
 			ids.add(category.getId());
 			addChildId(category.getChildren(), ids);
 		}
+
 		Map<Long, Integer> map = Maps.newConcurrentMap();
 		ListeningExecutorService executor = executorHolder.getSubjectExecutor();
 		List<ListenableFuture<?>> futures = Lists.newArrayListWithExpectedSize(categories.size());

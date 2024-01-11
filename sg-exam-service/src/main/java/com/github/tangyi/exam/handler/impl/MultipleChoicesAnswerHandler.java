@@ -55,6 +55,7 @@ public class MultipleChoicesAnswerHandler extends AbstractAnswerHandler {
 		if (StringUtils.isBlank(str)) {
 			return false;
 		}
+
 		List<String> strList = Stream.of(str.split(CommonConstant.COMMA)).filter(StringUtils::isNotBlank)
 				.collect(Collectors.toList());
 		List<String> standList = Stream.of(judgeContext.getAnswer().getAnswer().split(CommonConstant.COMMA))
@@ -68,6 +69,7 @@ public class MultipleChoicesAnswerHandler extends AbstractAnswerHandler {
 		if (StringUtils.isBlank(judgeContext.getSubject().getAnswer().getAnswer())) {
 			return;
 		}
+
 		if (judgeRight(judgeContext)) {
 			judgeContext.right();
 		} else {

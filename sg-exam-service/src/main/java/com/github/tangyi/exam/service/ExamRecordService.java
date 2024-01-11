@@ -18,7 +18,7 @@ import com.github.tangyi.common.vo.DeptVo;
 import com.github.tangyi.common.vo.UserVo;
 import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.exam.enums.ExaminationType;
-import com.github.tangyi.exam.excel.model.ExamRecordExcelModel;
+import com.github.tangyi.exam.excel.ExamRecordModel;
 import com.github.tangyi.exam.mapper.ExamRecordMapper;
 import com.github.tangyi.exam.service.exam.ExaminationService;
 import com.github.tangyi.exam.utils.ExamUtil;
@@ -28,7 +28,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -69,6 +68,7 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 		if (CollectionUtils.isEmpty(records)) {
 			return Collections.emptyList();
 		}
+
 		List<ExaminationRecordDto> list = Lists.newArrayListWithExpectedSize(records.size());
 		List<Examination> examinations = examinationService.findListById(
 				records.stream().map(ExaminationRecord::getExaminationId).distinct().toArray(Long[]::new));
@@ -76,26 +76,26 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 				Maps.newHashMap() :
 				examinations.stream().collect(Collectors.toMap(Examination::getId, e -> e));
 		Set<Long> userIds = Sets.newHashSetWithExpectedSize(records.size());
-		records.forEach(record -> {
-			userIds.add(record.getUserId());
-			Examination examination = map.get(record.getExaminationId());
-			if (examination != null) {
+		records.forEach(r -> {
+			userIds.add(r.getUserId());
+			Examination e = map.get(r.getExaminationId());
+			if (e != null) {
 				ExaminationRecordDto dto = new ExaminationRecordDto();
-				BeanUtils.copyProperties(examination, dto);
-				dto.setId(record.getId());
-				dto.setStartTime(record.getStartTime());
-				dto.setEndTime(record.getEndTime());
-				dto.setScore(record.getScore());
-				dto.setUserId(record.getUserId());
-				dto.setExaminationId(record.getExaminationId());
+				BeanUtils.copyProperties(e, dto);
+				dto.setId(r.getId());
+				dto.setStartTime(r.getStartTime());
+				dto.setEndTime(r.getEndTime());
+				dto.setScore(r.getScore());
+				dto.setUserId(r.getUserId());
+				dto.setExaminationId(r.getExaminationId());
 				// 正确题目数
-				dto.setCorrectNumber(record.getCorrectNumber());
-				dto.setInCorrectNumber(record.getInCorrectNumber());
+				dto.setCorrectNumber(r.getCorrectNumber());
+				dto.setInCorrectNumber(r.getInCorrectNumber());
 				// 提交状态
-				dto.setSubmitStatus(record.getSubmitStatus());
+				dto.setSubmitStatus(r.getSubmitStatus());
 				dto.setSubmitStatusName(
-						SubmitStatusEnum.match(record.getSubmitStatus(), SubmitStatusEnum.NOT_SUBMITTED).getName());
-				dto.setTypeLabel(ExaminationType.matchByValue(examination.getType()).getName());
+						SubmitStatusEnum.match(r.getSubmitStatus(), SubmitStatusEnum.NOT_SUBMITTED).getName());
+				dto.setTypeLabel(ExaminationType.matchByValue(e.getType()).getName());
 				list.add(dto);
 			}
 		});
@@ -177,51 +177,49 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 
 	public void exportExamRecord(Long[] ids, HttpServletRequest request, HttpServletResponse response) {
 		try {
-			List<ExaminationRecord> examRecordList;
+			List<ExaminationRecord> list;
 			if (ArrayUtils.isNotEmpty(ids)) {
-				examRecordList = this.findListById(ids);
+				list = this.findListById(ids);
 			} else {
 				// 导出全部
-				ExaminationRecord examRecord = new ExaminationRecord();
-				examRecord.setTenantCode(SysUtil.getTenantCode());
-				examRecordList = this.findList(examRecord);
+				ExaminationRecord record = new ExaminationRecord();
+				record.setTenantCode(SysUtil.getTenantCode());
+				list = this.findList(record);
 			}
+
 			// 查询考试、用户、部门数据
-			if (CollectionUtils.isNotEmpty(examRecordList)) {
-				List<ExaminationRecordDto> examRecordDtoList = new ArrayList<>();
+			if (CollectionUtils.isNotEmpty(list)) {
+				List<ExaminationRecordDto> dtoList = new ArrayList<>();
 				// 查询考试信息
 				List<Examination> examinations = examinationService.findListById(
-						examRecordList.stream().map(ExaminationRecord::getExaminationId).distinct()
-								.toArray(Long[]::new));
+						list.stream().map(ExaminationRecord::getExaminationId).distinct().toArray(Long[]::new));
 				// 用户 ID
 				Set<Long> userIdSet = new HashSet<>();
-				examRecordList.forEach(tempExamRecord -> {
+				list.forEach(temp -> {
 					// 查找考试记录所属的考试信息
-					Examination examRecordExamination = examinations.stream()
-							.filter(tempExamination -> tempExamRecord.getExaminationId()
-									.equals(tempExamination.getId())).findFirst().orElse(null);
-					if (examRecordExamination != null) {
-						ExaminationRecordDto recordDto = new ExaminationRecordDto();
-						recordDto.setId(tempExamRecord.getId());
-						recordDto.setExaminationName(examRecordExamination.getExaminationName());
-						recordDto.setStartTime(tempExamRecord.getStartTime());
-						recordDto.setEndTime(tempExamRecord.getEndTime());
-						recordDto.setDuration(DateUtils.durationNoNeedMillis(tempExamRecord.getStartTime(),
-								tempExamRecord.getEndTime()));
-						recordDto.setScore(tempExamRecord.getScore());
-						recordDto.setUserId(tempExamRecord.getUserId());
-						recordDto.setCorrectNumber(tempExamRecord.getCorrectNumber());
-						recordDto.setInCorrectNumber(tempExamRecord.getInCorrectNumber());
-						recordDto.setSubmitStatusName(
-								SubmitStatusEnum.match(tempExamRecord.getSubmitStatus(), SubmitStatusEnum.NOT_SUBMITTED)
+					Examination e = examinations.stream()    //
+							.filter(t -> temp.getExaminationId().equals(t.getId()))    //
+							.findFirst().orElse(null);    //
+					if (e != null) {
+						ExaminationRecordDto dto = new ExaminationRecordDto();
+						dto.setId(temp.getId());
+						dto.setExaminationName(e.getExaminationName());
+						dto.setStartTime(temp.getStartTime());
+						dto.setEndTime(temp.getEndTime());
+						dto.setDuration(DateUtils.durationNoNeedMillis(temp.getStartTime(), temp.getEndTime()));
+						dto.setScore(temp.getScore());
+						dto.setUserId(temp.getUserId());
+						dto.setCorrectNumber(temp.getCorrectNumber());
+						dto.setInCorrectNumber(temp.getInCorrectNumber());
+						dto.setSubmitStatusName(
+								SubmitStatusEnum.match(temp.getSubmitStatus(), SubmitStatusEnum.NOT_SUBMITTED)
 										.getName());
-						userIdSet.add(tempExamRecord.getUserId());
-						examRecordDtoList.add(recordDto);
+						userIdSet.add(temp.getUserId());
+						dtoList.add(dto);
 					}
 				});
-				this.fillExamUserInfo(examRecordDtoList, userIdSet.toArray(new Long[0]));
-				ExcelToolUtil.writeExcel(request, response, ExamUtil.convertExamRecord(examRecordDtoList),
-						ExamRecordExcelModel.class);
+				this.fillExamUserInfo(dtoList, userIdSet.toArray(new Long[0]));
+				ExcelToolUtil.writeExcel(request, response, ExamUtil.convertExamRecord(dtoList), ExamRecordModel.class);
 			}
 		} catch (Exception e) {
 			log.error("Export examRecord failed", e);
@@ -232,18 +230,18 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 	 * 查询参与考试人数
 	 */
 	public ExaminationDashboardDto findExamDashboardData(String tenantCode) {
-		ExaminationDashboardDto dashboardDto = new ExaminationDashboardDto();
-		Examination examination = new Examination();
-		examination.setCommonValue(SysUtil.getUser(), tenantCode);
+		ExaminationDashboardDto dto = new ExaminationDashboardDto();
+		Examination e = new Examination();
+		e.setCommonValue(SysUtil.getUser(), tenantCode);
 		// 考试数量
-		dashboardDto.setExaminationCount(examinationService.findExaminationCount(examination));
+		dto.setExaminationCount(examinationService.findExaminationCount(e));
 		// 考生数量
-		dashboardDto.setExamUserCount(examinationService.findExamUserCount(examination));
+		dto.setExamUserCount(examinationService.findExamUserCount(e));
 		// 考试记录数量
 		ExaminationRecord examinationRecord = new ExaminationRecord();
-		examinationRecord.setCommonValue(examination.getCreator(), examination.getTenantCode());
-		dashboardDto.setExaminationRecordCount(this.findExaminationRecordCount(examinationRecord));
-		return dashboardDto;
+		examinationRecord.setCommonValue(e.getCreator(), e.getTenantCode());
+		dto.setExaminationRecordCount(this.findExaminationRecordCount(examinationRecord));
+		return dto;
 	}
 
 	/**

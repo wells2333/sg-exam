@@ -26,7 +26,7 @@ public class ExamMediaService {
 
     private final AttachmentManager attachmentManager;
     private final SubjectsService subjectsService;
-    private final RedisCounterService redisCounterService;
+    private final RedisCounterService counterService;
 
     public Attachment uploadSpeech(MultipartFile file) {
         return upload(file, AttachTypeEnum.EXAM_SPEECH);
@@ -58,23 +58,23 @@ public class ExamMediaService {
     }
 
     public SpeechPlayDto playSpeech(Long userId, Long subjectId) {
-        SpeechPlayDto playDto = new SpeechPlayDto();
+        SpeechPlayDto play = new SpeechPlayDto();
         SubjectDto dto = subjectsService.getSubject(subjectId);
         if (dto != null && dto.getSpeechPlayLimit() != null) {
             Long cnt = getSpeechPlayCnt(userId, subjectId);
             if (cnt == null || cnt <= dto.getSpeechPlayLimit()) {
                 String key = SPEECH_PLAY_CNT_KEY + userId;
-                Long res = redisCounterService.incrCount(key, subjectId);
-                redisCounterService.expire(key, subjectId, SPEECH_PLAY_CNT_TIMEOUT_SECOND);
-                playDto.setCnt(res);
-                playDto.setLimit(Boolean.TRUE);
+                Long res = counterService.incrCount(key, subjectId);
+                counterService.expire(key, subjectId, SPEECH_PLAY_CNT_TIMEOUT_SECOND);
+                play.setCnt(res);
+                play.setLimit(Boolean.TRUE);
             }
         }
-        return playDto;
+        return play;
     }
 
     public Long getSpeechPlayCnt(Long userId, Long subjectId) {
         String key = SPEECH_PLAY_CNT_KEY + userId;
-        return redisCounterService.get(key, subjectId);
+        return counterService.get(key, subjectId);
     }
 }

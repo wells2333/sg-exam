@@ -287,6 +287,7 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 			if (exist != null) {
 				throw new CommonException("不能重复加入");
 			}
+
 			return memberService.insert(member) > 0;
 		} else {
 			// 取消报名

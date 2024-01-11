@@ -9,8 +9,8 @@ import com.github.tangyi.api.exam.model.ExaminationSubject;
 import com.github.tangyi.api.exam.model.SubjectOption;
 import com.github.tangyi.api.exam.model.Subjects;
 import com.github.tangyi.exam.enums.SubjectType;
-import com.github.tangyi.exam.excel.model.ExamRecordExcelModel;
-import com.github.tangyi.exam.excel.model.SubjectExcelModel;
+import com.github.tangyi.exam.excel.ExamRecordModel;
+import com.github.tangyi.exam.excel.SubjectExcelModel;
 import com.github.tangyi.exam.handler.AnswerHandleResult;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -64,7 +64,7 @@ public class ExamUtil {
 					optionDto.setOptionName(option.getOptionName());
 					optionDto.setOptionContent(option.getOptionContent());
 					optionDto.setSort(option.getSort());
-                    optionDtoList.add(optionDto);
+					optionDtoList.add(optionDto);
 				}
 			}
 			simple.setOptions(optionDtoList);
@@ -79,12 +79,12 @@ public class ExamUtil {
 		int correctNum = 0;
 		int inCorrectNum = 0;
 		boolean hasHumanJudgeSubject = false;
-		for (AnswerHandleResult tempResult : results) {
-			if (tempResult != null) {
-				score += tempResult.getScore();
-				correctNum += tempResult.getCorrectNum();
-				inCorrectNum += tempResult.getInCorrectNum();
-				if (tempResult.isHasHumanJudgeSubject()) {
+		for (AnswerHandleResult r : results) {
+			if (r != null) {
+				score += r.getScore();
+				correctNum += r.getCorrectNum();
+				inCorrectNum += r.getInCorrectNum();
+				if (r.isHasHumanJudgeSubject()) {
 					hasHumanJudgeSubject = true;
 				}
 			}
@@ -110,11 +110,11 @@ public class ExamUtil {
 		return map;
 	}
 
-	public static List<ExamRecordExcelModel> convertExamRecord(List<ExaminationRecordDto> records) {
-		List<ExamRecordExcelModel> models = new ArrayList<>(records.size());
-		records.forEach(record -> {
-			ExamRecordExcelModel model = new ExamRecordExcelModel();
-			BeanUtils.copyProperties(record, model);
+	public static List<ExamRecordModel> convertExamRecord(List<ExaminationRecordDto> records) {
+		List<ExamRecordModel> models = new ArrayList<>(records.size());
+		records.forEach(r -> {
+			ExamRecordModel model = new ExamRecordModel();
+			BeanUtils.copyProperties(r, model);
 			models.add(model);
 		});
 		return models;
@@ -122,21 +122,21 @@ public class ExamUtil {
 
 	public static List<SubjectExcelModel> convertSubject(List<SubjectDto> dtoList) {
 		List<SubjectExcelModel> models = Lists.newArrayListWithExpectedSize(dtoList.size());
-		dtoList.forEach(subject -> {
+		dtoList.forEach(s -> {
 			SubjectExcelModel model = new SubjectExcelModel();
-			BeanUtils.copyProperties(subject, model);
-			if (CollectionUtils.isNotEmpty(subject.getOptions())) {
-				for (SubjectOption option : subject.getOptions()) {
-					switch (option.getOptionName()) {
-						case "A" -> model.setOptionA(option.getOptionContent());
-						case "B" -> model.setOptionB(option.getOptionContent());
-						case "C" -> model.setOptionC(option.getOptionContent());
-						case "D" -> model.setOptionD(option.getOptionContent());
+			BeanUtils.copyProperties(s, model);
+			if (CollectionUtils.isNotEmpty(s.getOptions())) {
+				for (SubjectOption o : s.getOptions()) {
+					switch (o.getOptionName()) {
+						case "A" -> model.setOptionA(o.getOptionContent());
+						case "B" -> model.setOptionB(o.getOptionContent());
+						case "C" -> model.setOptionC(o.getOptionContent());
+						case "D" -> model.setOptionD(o.getOptionContent());
 						default -> {}
 					}
 				}
 			}
-			model.setAnswer(subject.getAnswer().getAnswer());
+			model.setAnswer(s.getAnswer().getAnswer());
 			models.add(model);
 		});
 		return models;
@@ -149,16 +149,16 @@ public class ExamUtil {
 		Map<String, Long[]> idMap = Maps.newHashMapWithExpectedSize(4);
 		subjects.stream().collect(Collectors.groupingBy(Subjects::getType, Collectors.toList()))
 				.forEach((type, temp) -> {
-					if (SubjectType.CHOICES.getValue().equals(type)) {
+					if (SubjectType.CHOICES.getValue() == type) {
 						idMap.put(SubjectType.CHOICES.name(),
 								temp.stream().map(Subjects::getSubjectId).distinct().toArray(Long[]::new));
-					} else if (SubjectType.JUDGEMENT.getValue().equals(type)) {
+					} else if (SubjectType.JUDGEMENT.getValue() == type) {
 						idMap.put(SubjectType.JUDGEMENT.name(),
 								temp.stream().map(Subjects::getSubjectId).distinct().toArray(Long[]::new));
-					} else if (SubjectType.MULTIPLE_CHOICES.getValue().equals(type)) {
+					} else if (SubjectType.MULTIPLE_CHOICES.getValue() == type) {
 						idMap.put(SubjectType.MULTIPLE_CHOICES.name(),
 								temp.stream().map(Subjects::getSubjectId).distinct().toArray(Long[]::new));
-					} else if (SubjectType.SHORT_ANSWER.getValue().equals(type)) {
+					} else if (SubjectType.SHORT_ANSWER.getValue() == type) {
 						idMap.put(SubjectType.SHORT_ANSWER.name(),
 								temp.stream().map(Subjects::getSubjectId).distinct().toArray(Long[]::new));
 					} else {

@@ -41,6 +41,7 @@ public class CourseFavoritesService extends CrudService<UserFavMapper, ExamUserF
 		if (CollectionUtils.isEmpty(list)) {
 			return;
 		}
+
 		Set<Long> favIds = findUserFavorites();
 		if (CollectionUtils.isNotEmpty(favIds)) {
 			for (Course course : list) {
@@ -56,11 +57,13 @@ public class CourseFavoritesService extends CrudService<UserFavMapper, ExamUserF
 		if (CollectionUtils.isEmpty(list)) {
 			return;
 		}
+
 		List<Long> ids = list.stream().map(Course::getId).collect(Collectors.toList());
 		Map<Long, Long> map = userFavService.findFavCount(ids, FAV_TYPE_COURSE);
 		if (MapUtils.isEmpty(map)) {
 			return;
 		}
+
 		for (Course course : list) {
 			Long count = map.get(course.getId());
 			if (count != null) {

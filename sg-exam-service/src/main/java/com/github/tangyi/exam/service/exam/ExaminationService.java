@@ -147,6 +147,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		if (CollectionUtils.isNotEmpty(list)) {
 			return toDtoPage(page, list, params);
 		}
+
 		return new PageInfo<>();
 	}
 
@@ -199,6 +200,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		if (!EXAM_STATUS_PUBLISHED.equals(dto.getStatus())) {
 			return;
 		}
+
 		Long id = dto.getId();
 		// 用户 ID
 		examPermissionService.addPermissions(id, dto.getMembers(), PERMISSION_TYPE_EXAM, PERMISSION_ID_TYPE_USER,
@@ -241,12 +243,12 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	@CacheEvict(value = {ExamCacheName.EXAMINATION, ExamCacheName.EXAM_ALL_SUBJECT}, allEntries = true)
 	public void deleteExaminationSubject(Long[] ids) {
 		for (Long id : ids) {
-			List<ExaminationSubject> examinationSubjects = examinationSubjectService.findListByExaminationId(id);
-			if (CollectionUtils.isNotEmpty(examinationSubjects)) {
+			List<ExaminationSubject> subjects = examinationSubjectService.findListByExaminationId(id);
+			if (CollectionUtils.isNotEmpty(subjects)) {
 				ExaminationSubject es = new ExaminationSubject();
-				examinationSubjects.forEach(examinationSubject -> {
-					subjectsService.physicalDelete(examinationSubject.getSubjectId());
-					es.setSubjectId(examinationSubject.getSubjectId());
+				subjects.forEach(s -> {
+					subjectsService.physicalDelete(s.getSubjectId());
+					es.setSubjectId(s.getSubjectId());
 					examinationSubjectService.deleteBySubjectId(es);
 				});
 			}
@@ -319,6 +321,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		if (examination == null/* || !ExaminationTypeEnum.QUESTIONNAIRE.getValue().equals(examination.getType())*/) {
 			return new byte[0];
 		}
+
 		String url = sysProperties.getQrCodeUrl() + "?id=" + examination.getId();
 		byte[] bytes = null;
 		try {
@@ -339,6 +342,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		if (examination == null/* || !ExaminationTypeEnum.QUESTIONNAIRE.getValue().equals(examination.getType())*/) {
 			return new byte[0];
 		}
+
 		String url = sysProperties.getQrCodeUrl() + "-v2?id=" + examination.getId();
 		byte[] bytes = null;
 		try {
@@ -465,6 +469,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 			if (itCnt > 500) {
 				throw new CommonException("随机组卷失败，itCnt：" + itCnt);
 			}
+			
 			int index = ThreadLocalRandom.current().nextInt(0, subjects.size());
 			Subjects tmp = subjects.get(index);
 			if (!idSet.contains(tmp.getId())) {
