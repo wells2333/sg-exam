@@ -56,7 +56,6 @@ public interface IAnswerHandler {
 	class HandleContext {
 
 		private final AtomicInteger rightCount = new AtomicInteger();
-
 		private final AtomicDouble totalScore = new AtomicDouble();
 	}
 
@@ -64,13 +63,9 @@ public interface IAnswerHandler {
 	class JudgeContext {
 
 		private final AtomicBoolean judgeDone = new AtomicBoolean();
-
 		private final AtomicDouble score = new AtomicDouble();
-
 		private final HandleContext handleContext;
-
 		private final SubjectDto subject;
-
 		private final Answer answer;
 
 		public JudgeContext(HandleContext handleContext, SubjectDto subject, Answer answer) {

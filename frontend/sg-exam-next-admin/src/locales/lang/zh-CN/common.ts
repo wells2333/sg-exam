@@ -17,6 +17,7 @@ export default {
   confirmDelText: '是否确认删除',
   delSuccessText: '删除成功',
   delFailedText: '删除失败',
+  confirmExportText: '是否确认导出',
 
   inputText: '请输入',
   chooseText: '请选择',
@@ -46,7 +47,8 @@ export default {
       subject: '题目',
       score: '成绩',
       category: '分类',
-      scoreAnalysis: '成绩分析'
+      scoreAnalysis: '成绩分析',
+      export: '导出'
     },
     banner: {
       banner: '运营位'

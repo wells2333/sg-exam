@@ -12,3 +12,13 @@ export const getScoreDetail = (id: string) => {
     }
   );
 };
+
+export const exportScore = (params?: object
+) => {
+  return defHttp.post<ApiRes>(
+    {
+      url: ExamRecordApi.Export,
+      params
+    }
+  );
+};

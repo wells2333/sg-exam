@@ -48,7 +48,8 @@ export const ExamOptionApi = {
 
 export const ExamRecordApi = {
   ScoreList: ExamService + '/v1/examRecord/examRecordList',
-  Base: ExamService + '/v1/examRecord'
+  Base: ExamService + '/v1/examRecord',
+  Export: ExamService + '/v1/examRecord/export',
 }
 
 export const SectionApi = {

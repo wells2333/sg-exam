@@ -35,7 +35,7 @@
             },
             {
               icon: 'ant-design:delete-outlined',
-               tooltip: t('common.delText'),
+              tooltip: t('common.delText'),
               color: 'error',
               auth: 'exam:course:del',
               popConfirm: {

@@ -321,7 +321,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> implements 
 	 * 获取错题列表
 	 */
 	public PageInfo<AnswerDto> answerListInfo(String pageNum, String pageSize, Long recordId, Answer answer) {
-		List<AnswerDto> answerDtos = new ArrayList<>();
+		List<AnswerDto> list = new ArrayList<>();
 		answer.setExamRecordId(recordId);
 		Map<String, Object> condition = Maps.newHashMap();
 		super.tenantParams(condition);
@@ -331,30 +331,28 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> implements 
 		if (answer.getAnswerType() != null) {
 			condition.put("answerType", answer.getAnswerType());
 		}
-		PageInfo<Answer> answerPageInfo = this.findPage(condition, Integer.parseInt(pageNum),
-				Integer.parseInt(pageSize));
-		if (CollectionUtils.isNotEmpty(answerPageInfo.getList())) {
-			answerDtos = answerPageInfo.getList().stream().map(tempAnswer -> {
-				AnswerDto answerDto = new AnswerDto();
-				BeanUtils.copyProperties(tempAnswer, answerDto);
+		PageInfo<Answer> pageInfo = this.findPage(condition, Integer.parseInt(pageNum), Integer.parseInt(pageSize));
+		if (CollectionUtils.isNotEmpty(pageInfo.getList())) {
+			list = pageInfo.getList().stream().map(tempAnswer -> {
+				AnswerDto dto = new AnswerDto();
+				BeanUtils.copyProperties(tempAnswer, dto);
 				SubjectDto subjectDto = subjectsService.getSubject(tempAnswer.getSubjectId());
-				answerDto.setSubject(subjectDto);
+				dto.setSubject(subjectDto);
 				// 判断正误
 				IAnswerHandler handler = AnswerHandlerFactory.getHandler(subjectDto.getType());
 				if (handler.hasOption()) {
 					handler.judgeOptionRight(tempAnswer, subjectDto);
 				} else {
-					IAnswerHandler.JudgeContext judgeContext = new IAnswerHandler.JudgeContext(
-							new IAnswerHandler.HandleContext(), subjectDto, tempAnswer);
-					handler.judgeRight(judgeContext);
+					handler.judgeRight(new IAnswerHandler.JudgeContext(new IAnswerHandler.HandleContext(), subjectDto,
+							tempAnswer));
 				}
-				return answerDto;
+				return dto;
 			}).collect(Collectors.toList());
 		}
-		PageInfo<AnswerDto> answerDtoPageInfo = new PageInfo<>();
-		PageUtil.copyProperties(answerPageInfo, answerDtoPageInfo);
-		answerDtoPageInfo.setList(answerDtos);
-		return answerDtoPageInfo;
+		PageInfo<AnswerDto> page = new PageInfo<>();
+		PageUtil.copyProperties(pageInfo, page);
+		page.setList(list);
+		return page;
 	}
 
 	/**
@@ -441,26 +439,26 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> implements 
 	private void fillScoreDistribution(AnswerAnalysisDto dto, Map<Integer, AtomicInteger> distribution) {
 		AtomicInteger defaultCount = new AtomicInteger(0);
 		// 计算成绩分布数量
-		Map<String, Integer> scoreDistribution = Maps.newLinkedHashMap();
-		scoreDistribution.put("60 以下", distribution.getOrDefault(1, defaultCount).get());
-		scoreDistribution.put("60-70", distribution.getOrDefault(2, defaultCount).get());
-		scoreDistribution.put("70-80", distribution.getOrDefault(3, defaultCount).get());
-		scoreDistribution.put("80-90", distribution.getOrDefault(4, defaultCount).get());
-		scoreDistribution.put("90-100", distribution.getOrDefault(5, defaultCount).get());
-		scoreDistribution.put("100-110", distribution.getOrDefault(6, defaultCount).get());
-		scoreDistribution.put("110-120", distribution.getOrDefault(7, defaultCount).get());
-		scoreDistribution.put("120-130", distribution.getOrDefault(8, defaultCount).get());
-		scoreDistribution.put("130 以上", distribution.getOrDefault(9, defaultCount).get());
-		dto.setScoreDistribution(scoreDistribution);
+		Map<String, Integer> data = Maps.newLinkedHashMap();
+		data.put("60 以下", distribution.getOrDefault(1, defaultCount).get());
+		data.put("60-70", distribution.getOrDefault(2, defaultCount).get());
+		data.put("70-80", distribution.getOrDefault(3, defaultCount).get());
+		data.put("80-90", distribution.getOrDefault(4, defaultCount).get());
+		data.put("90-100", distribution.getOrDefault(5, defaultCount).get());
+		data.put("100-110", distribution.getOrDefault(6, defaultCount).get());
+		data.put("110-120", distribution.getOrDefault(7, defaultCount).get());
+		data.put("120-130", distribution.getOrDefault(8, defaultCount).get());
+		data.put("130 以上", distribution.getOrDefault(9, defaultCount).get());
+		dto.setScoreDistribution(data);
 
 		// 计算成绩分布百分比
-		Map<String, Float> scoreDistributionPercent = Maps.newLinkedHashMap();
-		int total = scoreDistribution.values().stream().mapToInt(Integer::intValue).sum();
-		for (Map.Entry<String, Integer> entry : scoreDistribution.entrySet()) {
+		Map<String, Float> percentMap = Maps.newLinkedHashMap();
+		int total = data.values().stream().mapToInt(Integer::intValue).sum();
+		for (Map.Entry<String, Integer> entry : data.entrySet()) {
 			float percent = (float) entry.getValue() / total;
-			scoreDistributionPercent.put(entry.getKey(), percent);
+			percentMap.put(entry.getKey(), percent);
 		}
-		dto.setScoreDistributionPercent(scoreDistributionPercent);
+		dto.setScoreDistributionPercent(percentMap);
 	}
 
 	private int getScoreLevel(double score) {
