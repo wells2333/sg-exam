@@ -3,11 +3,13 @@
     <el-row>
       <el-col :span="20" :offset="2">
         <el-table
+          border
           :key="tableKey"
           :data="examRecodeList"
           :default-sort="{ prop: 'id', order: 'descending' }"
           @cell-dblclick="handleDetail"
           highlight-current-row
+          height="560"
           style="width: 100%;">
           <el-table-column :label="$t('exam.examinationName')" align="center">
             <template slot-scope="scope">
@@ -26,7 +28,7 @@
           </el-table-column>
           <el-table-column :label="$t('exam.status')" min-width="90" align="center">
             <template slot-scope="scope">
-              <el-tag :type="transformStatusTag(scope.row.submitStatus, 3)">{{ transformSubmitStatus(scope.row.submitStatus)}}</el-tag>
+              <el-tag :type="transformStatusTag(scope.row.submitStatus, 3)" size="mini">{{ transformSubmitStatus(scope.row.submitStatus)}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column :label="$t('exam.score')" prop="score" align="center" width="120px">
@@ -36,15 +38,21 @@
           </el-table-column>
           <el-table-column :label="$t('operation')" align="center">
             <template slot-scope="scope">
-              <el-button type="success" size="mini" @click="handleDetail(scope.row)" :disabled="scope.row.submitStatus !== 3">{{$t('exam.scoreDetail')}}</el-button>
-              <el-button type="success" size="mini" @click="handleScore(scope.row)">{{$t('exam.scoreRank')}}</el-button>
+              <el-button type="text" size="small" @click="handleDetail(scope.row)" :disabled="scope.row.submitStatus !== 3">{{$t('exam.scoreDetail')}}</el-button>
+              <el-button type="text" size="small" @click="handleScore(scope.row)">{{$t('exam.scoreRank')}}</el-button>
             </template>
           </el-table-column>
         </el-table>
-        <el-row style="text-align: center; margin-bottom: 50px;">
-          <el-col :span="24">
-            <el-button v-if="!isLastPage" type="default" @click="scrollList" :loading="listLoading" style="margin-top:20px; margin-bottom: 100px;">{{$t('load.loadMore')}}</el-button>
-          </el-col>
+        <el-row class="list-pagination">
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="listQuery.page"
+              :page-sizes="[20, 50, 100]"
+              :page-size="20"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="total">
+            </el-pagination>
         </el-row>
       </el-col>
     </el-row>
@@ -93,7 +101,7 @@ export default {
       tableKey: 0,
       listQuery: {
         page: 1,
-        pageSize: 10,
+        pageSize: 20,
         courseId: '',
         sort: 'id',
         order: 'descending',
@@ -121,57 +129,13 @@ export default {
     getList () {
       fetchList(this.listQuery).then(response => {
         const { total, isLastPage, list } = response.data.result
-        this.updateList(list)
+        this.examRecodeList = list
         this.total = total
         this.isLastPage = isLastPage
         this.listLoading = false
       }).catch(() => {
         messageWarn(this, this.$t('load.noMoreData'))
         this.listLoading = false
-      })
-    },
-    scrollList () {
-      if (this.isLastPage) {
-        messageWarn(this, this.$t('load.noMoreData'))
-        return
-      }
-      if (this.listLoading) {
-        messageWarn(this, this.$t('load.loading'))
-        return
-      }
-      this.listLoading = true
-      setTimeout(() => {
-        this.listQuery.page++
-        fetchList(this.listQuery).then(response => {
-          const { total, isLastPage, list } = response.data.result
-          this.updateList(list)
-          this.total = total
-          this.isLastPage = isLastPage
-          this.listLoading = false
-        }).catch(() => {
-          messageWarn(this, this.$t('load.loadFailed'))
-          this.listLoading = false
-        })
-      }, 1000)
-    },
-    updateList (list) {
-      if (list === undefined || list.length === 0) {
-        return list
-      }
-      if (this.examRecodeList.length === 0) {
-        this.examRecodeList = list
-        return
-      }
-      list.forEach(item => {
-        let exist = false
-        for (let i = 0; i < this.examRecodeList.length; i++) {
-          if (this.examRecodeList[i].id === item.id) {
-            exist = true
-          }
-        }
-        if (!exist) {
-          this.examRecodeList.push(item)
-        }
       })
     },
     handleDetail (row) {
@@ -182,6 +146,22 @@ export default {
           console.error(error)
         })
       }
+    },
+    handleSizeChange(val) {
+      this.listQuery.pageSize = val
+      if (this.listLoading) {
+        messageWarn(this, this.$t('load.loading'))
+        return
+      }
+      this.getList()
+    },
+    handleCurrentChange(val) {
+      this.listQuery.page = val
+      if (this.listLoading) {
+        messageWarn(this, this.$t('load.loading'))
+        return
+      }
+      this.getList()
     },
     handleScore (row) {
       const { examinationId } = row
@@ -284,5 +264,9 @@ export default {
   .score-gray-box-title {
     text-align: center;
   }
-
+  .list-pagination {
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px 0 50px 0;
+  }
 </style>
