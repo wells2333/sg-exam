@@ -4,7 +4,7 @@ import NutUIResolver from '@nutui/nutui-taro/dist/resolver';
 const path = require('path');
 
 const config = {
-    projectName: 'myApp',
+    projectName: '云职评',
     date: '2023-3-10',
     designWidth(input) {
         if (input?.file?.replace(/\\+/g, '/').indexOf('@nutui') > -1) {
@@ -81,7 +81,7 @@ const config = {
                 resolvers: [NutUIResolver({taro: true})]
             }))
         },
-        publicPath: '/',
+        publicPath: process.env.NODE_ENV === 'production' ? '/h5': '/',
         staticDirectory: 'static',
         esnextModules: ['nutui-taro', 'icons-vue-taro'],
         postcss: {
@@ -99,11 +99,8 @@ const config = {
         },
         devServer: {
             proxy: {
-                '/api/': {
+                '/sg-user-service/': {
                     target: 'https://www.yunmianshi.com',
-                    pathRewrite: {
-                        '^/api/': '/'
-                    },
                     changeOrigin: true
                 }
             }
