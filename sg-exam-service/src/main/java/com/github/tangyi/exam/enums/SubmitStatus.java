@@ -10,7 +10,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum SubmitStatus {
 
-	SUBMITTED("已提交", 0), UN_SUBMITTED("未提交", 1);
+	SUBMITTED("已提交", 0),    //
+	UN_SUBMITTED("未提交", 1);    //
 
 	private final String name;
 	private final Integer value;

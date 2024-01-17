@@ -4,7 +4,6 @@ import com.github.tangyi.api.exam.constants.AnswerConstant;
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.Answer;
 import com.github.tangyi.exam.constants.MarkConstant;
-import com.github.tangyi.exam.enums.SubjectType;
 import com.google.common.util.concurrent.AtomicDouble;
 import lombok.Data;
 
@@ -25,12 +24,7 @@ public interface IAnswerHandler {
 	/**
 	 * 统计成绩
 	 */
-	AnswerHandleResult handle(List<Answer> answers);
-
-	/**
-	 * 获取题目类型
-	 */
-	SubjectType getSubjectType();
+	HandlerFactory.Result handle(List<Answer> answers);
 
 	/**
 	 * 获取题目列表
@@ -53,14 +47,14 @@ public interface IAnswerHandler {
 	void judgeOptionRight(Answer answer, SubjectDto subject);
 
 	@Data
-	class HandleContext {
+	final class HandleContext {
 
 		private final AtomicInteger rightCount = new AtomicInteger();
 		private final AtomicDouble totalScore = new AtomicDouble();
 	}
 
 	@Data
-	class JudgeContext {
+	final class JudgeContext {
 
 		private final AtomicBoolean judgeDone = new AtomicBoolean();
 		private final AtomicDouble score = new AtomicDouble();

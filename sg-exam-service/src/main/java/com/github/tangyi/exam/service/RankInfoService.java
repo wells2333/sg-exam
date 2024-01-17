@@ -43,13 +43,13 @@ public class RankInfoService {
 		List<RankInfoDto> result = Lists.newArrayListWithExpectedSize(tuples.size());
 		for (ZSetOperations.TypedTuple<String> tuple : tuples) {
 			if (tuple != null && tuple.getValue() != null) {
-				Long userId = Long.valueOf(tuple.getValue());
+				Long uid = Long.valueOf(tuple.getValue());
 				RankInfoDto info = new RankInfoDto();
-				info.setUserId(userId);
+				info.setUserId(uid);
 				info.setScore(tuple.getScore());
 				info.setRankNum(rankNum++);
 				result.add(info);
-				UserVo vo = userService.getUserInfo(userId);
+				UserVo vo = userService.getUserInfo(uid);
 				if (vo != null) {
 					info.setName(vo.getName());
 					info.setAvatarUrl(vo.getAvatarUrl());

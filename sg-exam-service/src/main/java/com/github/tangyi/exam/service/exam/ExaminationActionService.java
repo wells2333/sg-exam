@@ -10,11 +10,10 @@ import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.*;
 import com.github.tangyi.common.vo.UserVo;
 import com.github.tangyi.exam.enums.ExaminationType;
-import com.github.tangyi.exam.handler.AnswerHandleResult;
+import com.github.tangyi.exam.handler.HandlerFactory;
 import com.github.tangyi.exam.service.ExamRecordService;
 import com.github.tangyi.exam.service.ExaminationSubjectService;
 import com.github.tangyi.exam.service.RankInfoService;
-import com.github.tangyi.exam.service.answer.AnswerHandleService;
 import com.github.tangyi.exam.service.answer.AnswerService;
 import com.github.tangyi.exam.service.fav.ExamFavoritesService;
 import com.github.tangyi.exam.service.subject.SubjectsService;
@@ -45,23 +44,19 @@ public class ExaminationActionService {
 	private final ExamRecordService examRecordService;
 	private final SubjectsService subjectsService;
 	private final AnswerService answerService;
-	private final AnswerHandleService answerHandleService;
 	private final RankInfoService rankInfoService;
 	private final IExecutorHolder executorHolder;
-
 	private final ExamFavoritesService examFavoritesService;
 
 	public ExaminationActionService(ExaminationService examinationService,
 			ExaminationSubjectService examinationSubjectService, ExamRecordService examRecordService,
-			SubjectsService subjectsService, AnswerService answerService, AnswerHandleService answerHandleService,
-			RankInfoService rankInfoService, IExecutorHolder executorHolder,
-			ExamFavoritesService examFavoritesService) {
+			SubjectsService subjectsService, AnswerService answerService, RankInfoService rankInfoService,
+			IExecutorHolder executorHolder, ExamFavoritesService examFavoritesService) {
 		this.examinationService = examinationService;
 		this.examinationSubjectService = examinationSubjectService;
 		this.examRecordService = examRecordService;
 		this.subjectsService = subjectsService;
 		this.answerService = answerService;
-		this.answerHandleService = answerHandleService;
 		this.rankInfoService = rankInfoService;
 		this.executorHolder = executorHolder;
 		this.examFavoritesService = examFavoritesService;
@@ -150,7 +145,7 @@ public class ExaminationActionService {
 		ExaminationRecord record = this.examRecordService.get(recordId);
 		Long[] subjectIds = answerList.stream().map(Answer::getSubjectId).toArray(Long[]::new);
 		Map<Integer, List<Answer>> distinct = this.distinctAnswer(subjectIds, answerList);
-		AnswerHandleResult result = this.answerHandleService.handleAll(distinct);
+		HandlerFactory.Result result = HandlerFactory.handleAll(distinct);
 		// 记录总分、正确题目数、错误题目数
 		record.setScore(result.getScore());
 		record.setCorrectNumber(result.getCorrectNum());
@@ -246,22 +241,25 @@ public class ExaminationActionService {
 	 * 移动端提交答题
 	 */
 	@Transactional
-	public boolean anonymousUserSubmit(Long examinationId, String identifier, List<SubjectDto> subjectDtos) {
-		long start = System.currentTimeMillis();
-		if (StringUtils.isBlank(identifier) || CollectionUtils.isEmpty(subjectDtos)) {
+	public boolean anonymousUserSubmit(Long examinationId, String identifier, List<SubjectDto> dtos) {
+		long startMs = System.currentTimeMillis();
+		if (StringUtils.isBlank(identifier) || CollectionUtils.isEmpty(dtos)) {
 			return false;
 		}
+
 		Examination examination = examinationService.get(examinationId);
 		if (examination == null) {
 			return false;
 		}
+
 		String tenantCode = SysUtil.getTenantCode();
-		Date currentDate = DateUtils.asDate(LocalDateTime.now());
+		Date now = DateUtils.asDate(LocalDateTime.now());
 		// 判断用户是否存在，不存在则自动创建
 		R<UserVo> r = null;
 		if (!RUtil.isSuccess(r) || r.getResult() == null) {
 			return false;
 		}
+
 		// TODO 自动注册账号
 		UserVo user = r.getResult();
 		// 保存考试记录
@@ -270,22 +268,22 @@ public class ExaminationActionService {
 		record.setUserId(user.getUserId());
 
 		// 初始化 Answer
-		List<Answer> answers = new ArrayList<>(subjectDtos.size());
-		List<Long> subjectIds = Lists.newArrayListWithExpectedSize(subjectDtos.size());
-		subjectDtos.forEach(subjectDto -> {
-			Answer answer = new Answer();
-			answer.setCommonValue(identifier, tenantCode);
-			answer.setAnswer(subjectDto.getAnswer().getAnswer());
-			answer.setExamRecordId(record.getId());
-			answer.setEndTime(currentDate);
-			answer.setSubjectId(subjectDto.getId());
-			answer.setType(subjectDto.getType());
-			answer.setAnswerType(AnswerConstant.WRONG);
-			subjectIds.add(subjectDto.getId());
-			answers.add(answer);
+		List<Answer> answers = new ArrayList<>(dtos.size());
+		List<Long> subjectIds = Lists.newArrayListWithExpectedSize(dtos.size());
+		dtos.forEach(dto -> {
+			Answer a = new Answer();
+			a.setCommonValue(identifier, tenantCode);
+			a.setAnswer(dto.getAnswer().getAnswer());
+			a.setExamRecordId(record.getId());
+			a.setEndTime(now);
+			a.setSubjectId(dto.getId());
+			a.setType(dto.getType());
+			a.setAnswerType(AnswerConstant.WRONG);
+			subjectIds.add(dto.getId());
+			answers.add(a);
 		});
 		Map<Integer, List<Answer>> distinct = distinctAnswer(subjectIds.toArray(new Long[0]), answers);
-		AnswerHandleResult result = answerHandleService.handleAll(distinct);
+		HandlerFactory.Result result = HandlerFactory.handleAll(distinct);
 		// 记录总分、正确题目数、错误题目数
 		record.setScore(result.getScore());
 		record.setCorrectNumber(result.getCorrectNum());
@@ -294,12 +292,12 @@ public class ExaminationActionService {
 		record.setType(examination.getType());
 		record.setExaminationId(examinationId);
 		record.setSubmitStatus(SubmitStatusEnum.CALCULATED.getValue());
-		record.setStartTime(currentDate);
-		record.setEndTime(currentDate);
+		record.setStartTime(now);
+		record.setEndTime(now);
 		examRecordService.insert(record);
 		answers.forEach(answerService::insert);
 		log.info("anonymousUser submit, examinationId:{}, identifier: {}, time consuming: {}ms", examinationId,
-				identifier, System.currentTimeMillis() - start);
+				identifier, System.currentTimeMillis() - startMs);
 		return true;
 	}
 
@@ -321,30 +319,30 @@ public class ExaminationActionService {
 		Examination examination = examinationService.get(record.getExaminationId());
 		SgPreconditions.checkNull(examination, "examination is not exist");
 		ExamRecordDetailsDto result = new ExamRecordDetailsDto();
-		ExaminationRecordDto recordDto = new ExaminationRecordDto();
+		ExaminationRecordDto dto = new ExaminationRecordDto();
 		// 答题卡
 		List<CardDto> cards = Lists.newArrayList();
-		result.setRecord(recordDto);
+		result.setRecord(dto);
 		result.setCards(cards);
-		BeanUtils.copyProperties(examination, recordDto);
-		recordDto.setId(record.getId());
-		recordDto.setTypeLabel(ExaminationType.matchByValue(examination.getType()).getName());
-		recordDto.setStartTime(record.getStartTime());
-		recordDto.setEndTime(record.getEndTime());
-		recordDto.setScore(ObjectUtil.getDouble(record.getScore()));
-		recordDto.setUserId(record.getUserId());
-		recordDto.setExaminationId(record.getExaminationId());
-		recordDto.setDuration(DateUtils.durationNoNeedMillis(record.getStartTime(), record.getEndTime()));
+		BeanUtils.copyProperties(examination, dto);
+		dto.setId(record.getId());
+		dto.setTypeLabel(ExaminationType.matchByValue(examination.getType()).getName());
+		dto.setStartTime(record.getStartTime());
+		dto.setEndTime(record.getEndTime());
+		dto.setScore(ObjectUtil.getDouble(record.getScore()));
+		dto.setUserId(record.getUserId());
+		dto.setExaminationId(record.getExaminationId());
+		dto.setDuration(DateUtils.durationNoNeedMillis(record.getStartTime(), record.getEndTime()));
 		// 正确题目数
-		recordDto.setCorrectNumber(ObjectUtil.getInt(record.getCorrectNumber()));
-		recordDto.setInCorrectNumber(ObjectUtil.getInt(record.getInCorrectNumber()));
+		dto.setCorrectNumber(ObjectUtil.getInt(record.getCorrectNumber()));
+		dto.setInCorrectNumber(ObjectUtil.getInt(record.getInCorrectNumber()));
 		// 提交状态
-		recordDto.setSubmitStatus(record.getSubmitStatus());
+		dto.setSubmitStatus(record.getSubmitStatus());
 		SubmitStatusEnum status = SubmitStatusEnum.match(record.getSubmitStatus(), SubmitStatusEnum.NOT_SUBMITTED);
-		recordDto.setSubmitStatusName(status.getName());
+		dto.setSubmitStatusName(status.getName());
 		// 答题列表
-		recordDto.setAnswers(getDetailAnswers(record, cards));
-		examRecordService.fillExamUserInfo(Collections.singletonList(recordDto), new Long[]{record.getUserId()});
+		dto.setAnswers(getDetailAnswers(record, cards));
+		examRecordService.fillExamUserInfo(Collections.singletonList(dto), new Long[]{record.getUserId()});
 		return result;
 	}
 
@@ -354,11 +352,13 @@ public class ExaminationActionService {
 		if (CollectionUtils.isEmpty(answers)) {
 			return list;
 		}
+
 		Map<Long, Answer> answerMap = answers.stream().collect(Collectors.toMap(Answer::getSubjectId, e -> e));
 		List<ExaminationSubject> esList = examinationService.findListByExaminationId(examRecord.getExaminationId());
 		if (CollectionUtils.isEmpty(esList)) {
 			return list;
 		}
+
 		List<Long> subjectIds = esList.stream().map(ExaminationSubject::getSubjectId).collect(Collectors.toList());
 		Collection<SubjectDto> dtoList = subjectsService.getSubjects(subjectIds);
 		Map<Long, SubjectDto> map = dtoList.stream().collect(Collectors.toMap(SubjectDto::getId, e -> e));

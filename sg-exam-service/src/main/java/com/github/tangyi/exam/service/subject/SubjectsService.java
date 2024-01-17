@@ -212,6 +212,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 		es.setSubjectId(subjectId);
 		es.setExaminationId(dto.getExaminationId());
 		es.setSort(dto.getSort());
+
 		// 序号重复时，尝试递增插入
 		for (int i = 1; i < 10; i++) {
 			try {
@@ -223,6 +224,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 				log.warn("Duplicate subject sort, retry {}", es.getSort());
 			}
 		}
+
 		throw new IllegalArgumentException("题目序号重复，请修改");
 	}
 
@@ -232,6 +234,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 		if ((SubjectServiceFactory.getService(getSubjectType(subjectDto.getId())).updateSubject(subjectDto)) == 0) {
 			return this.insert(subjectDto);
 		}
+
 		this.esService.updateSort(subjectDto.getExaminationId(), subjectDto.getId(), subjectDto.getSort());
 		return subjectDto;
 	}
@@ -475,10 +478,12 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 		if (CollectionUtils.isEmpty(categoryIds)) {
 			return;
 		}
+
 		List<SubjectCategory> categories = subjectCategoryService.findListById(categoryIds.toArray(new Long[0]));
 		if (CollectionUtils.isEmpty(categories)) {
 			return;
 		}
+
 		Map<Long, SubjectCategory> map = categories.stream().collect(Collectors.toMap(SubjectCategory::getId, e -> e));
 		for (SubjectDto subject : sub) {
 			SubjectCategory category = map.get(subject.getCategoryId());

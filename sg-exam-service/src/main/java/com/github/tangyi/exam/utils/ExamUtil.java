@@ -11,7 +11,7 @@ import com.github.tangyi.api.exam.model.Subjects;
 import com.github.tangyi.exam.enums.SubjectType;
 import com.github.tangyi.exam.excel.ExamRecordModel;
 import com.github.tangyi.exam.excel.SubjectExcelModel;
-import com.github.tangyi.exam.handler.AnswerHandleResult;
+import com.github.tangyi.exam.handler.HandlerFactory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -73,13 +73,13 @@ public class ExamUtil {
 		return simples;
 	}
 
-	public static AnswerHandleResult addAll(List<AnswerHandleResult> results) {
-		AnswerHandleResult result = new AnswerHandleResult();
+	public static HandlerFactory.Result addAll(List<HandlerFactory.Result> results) {
+		HandlerFactory.Result result = new HandlerFactory.Result();
 		int score = 0;
 		int correctNum = 0;
 		int inCorrectNum = 0;
 		boolean hasHumanJudgeSubject = false;
-		for (AnswerHandleResult r : results) {
+		for (HandlerFactory.Result r : results) {
 			if (r != null) {
 				score += r.getScore();
 				correctNum += r.getCorrectNum();

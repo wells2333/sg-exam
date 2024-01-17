@@ -21,7 +21,7 @@ import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.*;
 import com.github.tangyi.common.vo.UserVo;
 import com.github.tangyi.constants.ExamCacheName;
-import com.github.tangyi.exam.handler.AnswerHandlerFactory;
+import com.github.tangyi.exam.handler.HandlerFactory;
 import com.github.tangyi.exam.handler.IAnswerHandler;
 import com.github.tangyi.exam.mapper.AnswerMapper;
 import com.github.tangyi.exam.service.ExamRecordService;
@@ -301,7 +301,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> implements 
 		BeanUtils.copyProperties(userAnswer, answerDto);
 		answerDto.setDuration(DateUtils.duration(userAnswer.getStartTime(), userAnswer.getEndTime()));
 		// 判断正误
-		IAnswerHandler handler = AnswerHandlerFactory.getHandler(subjectDto.getType());
+		IAnswerHandler handler = HandlerFactory.getHandler(subjectDto.getType());
 		if (handler.hasOption()) {
 			handler.judgeOptionRight(userAnswer, subjectDto);
 		} else {
@@ -339,7 +339,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> implements 
 				SubjectDto subjectDto = subjectsService.getSubject(tempAnswer.getSubjectId());
 				dto.setSubject(subjectDto);
 				// 判断正误
-				IAnswerHandler handler = AnswerHandlerFactory.getHandler(subjectDto.getType());
+				IAnswerHandler handler = HandlerFactory.getHandler(subjectDto.getType());
 				if (handler.hasOption()) {
 					handler.judgeOptionRight(tempAnswer, subjectDto);
 				} else {

@@ -1,6 +1,5 @@
 package com.github.tangyi.exam.handler.impl;
 
-import com.github.tangyi.exam.enums.SubjectType;
 import com.github.tangyi.exam.handler.AbstractAnswerHandler;
 import com.github.tangyi.exam.service.subject.SubjectsService;
 import lombok.extern.slf4j.Slf4j;
@@ -30,11 +29,6 @@ public class JudgementAnswerHandler extends AbstractAnswerHandler {
 			answer = WRONG_FLAG;
 		}
 		return answer;
-	}
-
-	@Override
-	public SubjectType getSubjectType() {
-		return SubjectType.JUDGEMENT;
 	}
 
 	@Override
