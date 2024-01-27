@@ -7,17 +7,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum SubjectLevel {
 
-	SIMPLE("简单", 0),
+	SIMPLE("简单", 0),    //
+	NORMAL("一般", 1),    //
+	DIFFICULT("略难", 2),    //
+	MORE_DIFFICULT("非常难", 3);    //
 
-	NORMAL("一般", 1),
-
-	DIFFICULT("略难", 2),
-
-	MORE_DIFFICULT("非常难", 3);
-
-	private String name;
-
-	private Integer value;
+	private final String name;
+	private final Integer value;
 
 	public static SubjectLevel matchByValue(Integer value) {
 		for (SubjectLevel item : values()) {

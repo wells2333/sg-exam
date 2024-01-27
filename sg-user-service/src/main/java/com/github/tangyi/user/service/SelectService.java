@@ -22,7 +22,6 @@ import java.util.Map;
 public class SelectService {
 
 	private final IUserService userService;
-
 	private final IDeptService deptService;
 
 	public PageInfo<IdNameDto> userList(Map<String, Object> params, int pageNum, int pageSize) {

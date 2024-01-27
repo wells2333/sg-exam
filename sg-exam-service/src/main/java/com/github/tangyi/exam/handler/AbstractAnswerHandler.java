@@ -5,6 +5,7 @@ import com.github.tangyi.api.exam.model.Answer;
 import com.github.tangyi.api.exam.model.Subjects;
 import com.github.tangyi.exam.constants.MarkConstant;
 import com.github.tangyi.exam.service.subject.SubjectsService;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.AtomicDouble;
 import org.apache.commons.collections4.CollectionUtils;
@@ -34,35 +35,38 @@ public abstract class AbstractAnswerHandler implements IAnswerHandler {
 	}
 
 	@Override
-	public AnswerHandleResult handle(List<Answer> answers) {
+	public HandlerFactory.Result handle(List<Answer> answers) {
 		if (CollectionUtils.isEmpty(answers)) {
 			return null;
 		}
-		HandleContext handleContext = new HandleContext();
-		AtomicInteger rightCount = handleContext.getRightCount();
-		AtomicDouble totalScore = handleContext.getTotalScore();
+
+		HandleContext context = new HandleContext();
+		AtomicInteger rightCount = context.getRightCount();
+		AtomicDouble totalScore = context.getTotalScore();
 		Map<Long, SubjectDto> subjectMap = this.subjectsToMap(this.getSubjects(answers));
-		boolean hasHumanJudgeSubject = false;
+		boolean needHumanJudge = false;
 		for (Answer answer : answers) {
-			SubjectDto subject = subjectMap.get(answer.getSubjectId());
-			if (subject != null) {
-				if (this.isAutoJudge(subject)) {
-					JudgeContext judgeContext = new JudgeContext(handleContext, subject, answer);
-					this.judge(handleContext, judgeContext);
-					double score = judgeContext.getScore().get();
-					if (judgeContext.getJudgeDone().get() && score > 0) {
-						totalScore.addAndGet(score);
-					}
-				} else {
-					hasHumanJudgeSubject = true;
+			SubjectDto dto = subjectMap.get(answer.getSubjectId());
+			if (dto == null) {
+				continue;
+			}
+
+			if (this.isAutoJudge(dto)) {
+				JudgeContext c = new JudgeContext(context, dto, answer);
+				this.judge(context, c);
+				double score = c.getScore().get();
+				if (c.getJudgeDone().get() && score > 0) {
+					totalScore.addAndGet(score);
 				}
+			} else {
+				needHumanJudge = true;
 			}
 		}
-		AnswerHandleResult result = new AnswerHandleResult();
+		HandlerFactory.Result result = new HandlerFactory.Result();
 		result.setScore(totalScore.get());
 		result.setCorrectNum(rightCount.get());
 		result.setInCorrectNum(answers.size() - rightCount.get());
-		result.setHasHumanJudgeSubject(hasHumanJudgeSubject);
+		result.setHasHumanJudgeSubject(needHumanJudge);
 		return result;
 	}
 
@@ -73,19 +77,22 @@ public abstract class AbstractAnswerHandler implements IAnswerHandler {
 		return subjectsService.findSubjectDtoList(subjects);
 	}
 
-	protected boolean eq(JudgeContext judgeContext) {
-		return StringUtils.equals(judgeContext.getAnswer().getAnswer(),
-				judgeContext.getSubject().getAnswer().getAnswer());
+	protected boolean eq(JudgeContext c) {
+		Preconditions.checkNotNull(c.getAnswer());
+		Preconditions.checkNotNull(c.getSubject());
+		Preconditions.checkNotNull(c.getSubject().getAnswer());
+		return StringUtils.equals(c.getAnswer().getAnswer(), c.getSubject().getAnswer().getAnswer());
 	}
 
-	private boolean isAutoJudge(SubjectDto subject) {
-		return subject.getJudgeType() == null || MarkConstant.AUTO_JUDGE.equals(subject.getJudgeType());
+	private boolean isAutoJudge(SubjectDto s) {
+		return s.getJudgeType() == null || MarkConstant.AUTO_JUDGE.equals(s.getJudgeType());
 	}
 
 	private Map<Long, SubjectDto> subjectsToMap(List<SubjectDto> subjects) {
 		if (CollectionUtils.isEmpty(subjects)) {
 			return Collections.emptyMap();
 		}
+
 		Map<Long, SubjectDto> map = Maps.newHashMapWithExpectedSize(subjects.size());
 		for (SubjectDto subject : subjects) {
 			map.put(subject.getId(), subject);

@@ -19,18 +19,22 @@ import java.io.IOException;
 public class TenantTokenFilter implements Filter {
 
 	@Override
-	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		HttpServletRequest request = (HttpServletRequest) servletRequest;
-		HttpServletResponse response = (HttpServletResponse) servletResponse;
-		String tenantCode = request.getHeader(CommonConstant.TENANT_CODE_HEADER);
+		HttpServletRequest req = (HttpServletRequest) request;
+		HttpServletResponse res = (HttpServletResponse) response;
+		String tenantCode = req.getHeader(CommonConstant.TENANT_CODE_HEADER);
 		if (StringUtils.isBlank(tenantCode)) {
-			tenantCode = request.getParameter(CommonConstant.TENANT_CODE);
+			tenantCode = req.getParameter(CommonConstant.TENANT_CODE);
 		}
-		if (StringUtils.isNotEmpty(tenantCode)) {
-			TenantHolder.setTenantCode(tenantCode);
+
+		try {
+			if (StringUtils.isNotEmpty(tenantCode)) {
+				TenantHolder.setTenantCode(tenantCode);
+			}
+			chain.doFilter(req, res);
+		} finally {
+			TenantHolder.clear();
 		}
-		filterChain.doFilter(request, response);
-		TenantHolder.clear();
 	}
 }

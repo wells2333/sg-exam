@@ -78,6 +78,7 @@ public class ExamPermissionService extends CrudService<ExamPermissionMapper, Exa
 		if (CollectionUtils.isEmpty(permissionIds)) {
 			return;
 		}
+
 		List<ExamPermission> permissions = permissionIds.stream().map(id -> {
 			ExamPermission p = new ExamPermission();
 			p.setCommonValue(user, tenantCode);

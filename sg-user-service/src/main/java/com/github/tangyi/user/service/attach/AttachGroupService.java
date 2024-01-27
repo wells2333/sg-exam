@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AttachGroupService extends CrudService<AttachGroupMapper, AttachGroup> implements IAttachGroupService {
 
-	public void validateUrlExpire(AttachGroup group) {
+	private void validateUrlExpire(AttachGroup group) {
 		if (group.getUrlExpire() <= 0) {
 			group.setUrlExpire(AttachmentConstant.DEFAULT_EXPIRE_SECOND);
 		}

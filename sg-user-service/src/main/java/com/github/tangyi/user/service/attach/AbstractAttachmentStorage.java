@@ -28,168 +28,159 @@ import java.util.List;
 @Slf4j
 public abstract class AbstractAttachmentStorage implements AttachmentStorage {
 
-    static final String PART_ETG = "etag";
+	private static final int ATTACHMENT_STORAGE_SHARD_SIZE = EnvUtils.getInt("ATTACHMENT_STORAGE_SHARD_SIZE", 256);
 
-    static final String PART_NUMBER = "partNumber";
+	protected static final String PART_ETG = "etag";
+	protected static final String PART_NUMBER = "partNumber";
 
-    private static final int ATTACHMENT_STORAGE_SHARD_SIZE = EnvUtils.getInt("ATTACHMENT_STORAGE_SHARD_SIZE", 256);
+	protected final AttachmentService attachmentService;
+	protected final AttachGroupService groupService;
+	protected final DefaultImageService defaultImageService;
+	protected final ExecutorHolder executorHolder;
 
-    protected final AttachmentService attachmentService;
+	public AbstractAttachmentStorage(AttachmentService attachmentService, AttachGroupService groupService,
+			DefaultImageService defaultImageService, ExecutorHolder executorHolder) {
+		this.attachmentService = attachmentService;
+		this.groupService = groupService;
+		this.defaultImageService = defaultImageService;
+		this.executorHolder = executorHolder;
+	}
 
-    protected final AttachGroupService groupService;
+	protected String preUpload(Attachment attachment) {
+		SgPreconditions.checkNull(attachment, "attachment is null");
+		SgPreconditions.checkNull(attachment.getGroupCode(), "groupCode must not null");
+		// groupCode 作为目录
+		return getShardName(attachment.getGroupCode(), attachment.getAttachName(), attachment.getHash());
+	}
 
-    protected final DefaultImageService defaultImageService;
+	protected String getShardName(String groupCode, String fileName, String hash) {
+		if (groupCode != null) {
+			String id = fileName;
+			if (StringUtils.isNotBlank(hash)) {
+				id = hash;
+			}
+			int shardId = HashUtil.getShardId(id, ATTACHMENT_STORAGE_SHARD_SIZE);
+			return getName(groupCode, shardId, fileName);
+		}
+		return fileName;
+	}
 
-    protected final ExecutorHolder executorHolder;
+	protected String getName(String groupCode, int shardId, String fileName) {
+		String res = groupCode + "/";
+		if (shardId > 0) {
+			res = res + shardId + "/";
+		}
+		return res + fileName;
+	}
 
-    public AbstractAttachmentStorage(AttachmentService attachmentService, AttachGroupService groupService,
-                                     DefaultImageService defaultImageService,
-                                     ExecutorHolder executorHolder) {
-        this.attachmentService = attachmentService;
-        this.groupService = groupService;
-        this.defaultImageService = defaultImageService;
-        this.executorHolder = executorHolder;
-    }
+	private boolean isNotDefaultGroup(Attachment attachment) {
+		return !Group.DEFAULT.equals(attachment.getGroupCode());
+	}
 
-    protected String preUpload(Attachment attachment) {
-        SgPreconditions.checkNull(attachment, "attachment is null");
-        SgPreconditions.checkNull(attachment.getGroupCode(), "groupCode must not null");
-        // groupCode 作为目录
-        return getShardName(attachment.getGroupCode(), attachment.getAttachName(), attachment.getHash());
-    }
+	public abstract void doDelete(String fileName) throws IOException;
 
-    protected String getShardName(String groupCode, String fileName, String hash) {
-        if (groupCode != null) {
-            String id = fileName;
-            if (StringUtils.isNotBlank(hash)) {
-                id = hash;
-            }
-            int shardId = HashUtil.getShardId(id, ATTACHMENT_STORAGE_SHARD_SIZE);
-            return getName(groupCode, shardId, fileName);
-        }
-        return fileName;
-    }
+	@Override
+	public Attachment prepare(String groupCode, String fileName, String originalFilename, byte[] bytes, String user,
+			String tenantCode, String hash) {
+		SgPreconditions.checkNull(groupCode, "groupCode is null");
+		Attachment attachment = new Attachment();
+		attachment.setCommonValue(user, tenantCode);
+		attachment.setAttachType(FileUtil.getFileNameEx(fileName));
+		if (bytes != null) {
+			attachment.setAttachSize(String.valueOf(bytes.length));
+		}
+		attachment.setAttachName(originalFilename);
+		attachment.setGroupCode(groupCode);
+		attachment.setHash(hash);
+		return attachment;
+	}
 
-    protected String getName(String groupCode, int shardId, String fileName) {
-        String res = groupCode + "/";
-        if (shardId > 0) {
-            res = res + shardId + "/";
-        }
-        return res + fileName;
-    }
+	@Transactional
+	@CacheEvict(value = {UserCacheName.ATTACHMENT, UserCacheName.ATTACHMENT_URL}, key = "#attachment.id")
+	public boolean delete(Attachment attachment) throws IOException {
+		SgPreconditions.checkNull(attachment, "attachment is null");
+		if (attachmentService.delete(attachment) > 0 && attachment.getGroupCode() != null) {
+			AttachGroup group = groupService.findByGroupCode(attachment.getGroupCode());
+			if (group != null) {
+				String fileName = getShardName(group.getGroupCode(), attachment.getAttachName(), attachment.getHash());
+				log.info("Deleting file {} ...", fileName);
+				doDelete(fileName);
+				log.info("File has been deleted, fileName: {}", fileName);
+				return true;
+			}
+		}
+		return false;
+	}
 
-    public abstract void doDelete(String fileName) throws IOException;
+	@Transactional
+	@CacheEvict(value = {UserCacheName.ATTACHMENT, UserCacheName.ATTACHMENT_URL}, allEntries = true)
+	public boolean deleteAll(List<Attachment> attachments) throws IOException {
+		boolean result = false;
+		for (Attachment attachment : attachments) {
+			if (isNotDefaultGroup(attachment)) {
+				result = this.delete(attachment);
+			}
+		}
+		return result;
+	}
 
-    @Override
-    public Attachment prepare(String groupCode, String fileName, String originalFilename, byte[] bytes, String user,
-                              String tenantCode, String hash) {
-        SgPreconditions.checkNull(groupCode, "groupCode is null");
-        Attachment attachment = new Attachment();
-        attachment.setCommonValue(user, tenantCode);
-        attachment.setAttachType(FileUtil.getFileNameEx(fileName));
-        if (bytes != null) {
-            attachment.setAttachSize(String.valueOf(bytes.length));
-        }
-        attachment.setAttachName(originalFilename);
-        attachment.setGroupCode(groupCode);
-        attachment.setHash(hash);
-        return attachment;
-    }
+	public String getDownloadUrl(AttachGroup group, String attachName, String hash) {
+		String fileName = getShardName(group.getGroupCode(), attachName, hash);
+		return getDownloadUrl(fileName, group.getUrlExpire());
+	}
 
-    @Transactional
-    @CacheEvict(value = {UserCacheName.ATTACHMENT, UserCacheName.ATTACHMENT_URL}, key = "#attachment.id")
-    public boolean delete(Attachment attachment) throws IOException {
-        SgPreconditions.checkNull(attachment, "attachment is null");
-        if (attachmentService.delete(attachment) > 0 && attachment.getGroupCode() != null) {
-            AttachGroup group = groupService.findByGroupCode(attachment.getGroupCode());
-            if (group != null) {
-                String fileName = getShardName(group.getGroupCode(), attachment.getAttachName(), attachment.getHash());
-                log.info("Deleting file {} ...", fileName);
-                doDelete(fileName);
-                log.info("File has been deleted, fileName: {}", fileName);
-                return true;
-            }
-        }
-        return false;
-    }
+	@Cacheable(value = UserCacheName.ATTACHMENT_URL, key = "#id", unless = "#result == null")
+	public String getPreviewUrl(Long id) {
+		Attachment attachment = getPreviewAttachment(id);
+		return attachment != null ? attachment.getUrl() : null;
+	}
 
-    @Transactional
-    @CacheEvict(value = {UserCacheName.ATTACHMENT, UserCacheName.ATTACHMENT_URL}, allEntries = true)
-    public boolean deleteAll(List<Attachment> attachments) throws IOException {
-        boolean result = false;
-        for (Attachment attachment : attachments) {
-            if (isNotDefaultGroup(attachment)) {
-                result = this.delete(attachment);
-            }
-        }
-        return result;
-    }
+	public Attachment getPreviewAttachment(Long id) {
+		Attachment attachment = attachmentService.get(id);
+		if (attachment != null && StringUtils.isEmpty(attachment.getUrl())) {
+			AttachGroup group = groupService.findByGroupCode(attachment.getGroupCode());
+			if (group != null) {
+				String fileName = getShardName(group.getGroupCode(), attachment.getAttachName(), attachment.getHash());
+				String url = getDownloadUrl(fileName, group.getUrlExpire());
+				attachment.setUrl(url);
+			}
+		}
+		return attachment;
+	}
 
-    public String getDownloadUrl(AttachGroup group, String attachName, String hash) {
-        String fileName = getShardName(group.getGroupCode(), attachName, hash);
-        return getDownloadUrl(fileName, group.getUrlExpire());
-    }
+	@Override
+	@Transactional
+	public Long defaultImage(String groupCode) {
+		BytesUploadContext context = new BytesUploadContext();
+		context.setGroup(groupService.findByGroupCode(groupCode));
+		// ${nanoTime}.jpeg
+		context.setFileName(System.nanoTime() + DefaultImageService.DEFAULT_IMAGE_SUFFIX);
+		context.setBytes(defaultImageService.randomImage());
+		context.setOriginalFilename(context.getFileName());
+		context.setUser(SysUtil.getUser());
+		context.setTenantCode(SysUtil.getTenantCode());
+		Attachment res = this.upload(context);
+		String url = res.getUrl();
+		Attachment attachment = new Attachment();
+		attachment.setCommonValue();
+		attachment.setUrl(url);
+		attachment.setAttachType(FileUtil.getFileNameEx(url));
+		attachment.setAttachName(FileUtil.getFileNameFromUrl(url));
+		attachment.setGroupCode(groupCode);
+		attachmentService.insert(attachment);
+		log.info("Generate random image successfully, groupCode: {}, url: {}, id: {}", groupCode, attachment.getUrl(),
+				attachment.getId());
+		return attachment.getId();
+	}
 
-    @Cacheable(value = UserCacheName.ATTACHMENT_URL, key = "#id", unless = "#result == null")
-    public String getPreviewUrl(Long id) {
-        Attachment attachment = getPreviewAttachment(id);
-        return attachment != null ? attachment.getUrl() : null;
-    }
+	@Data
+	@ToString
+	@Accessors(chain = true)
+	static class ChunkUploadContext {
 
-    public Attachment getPreviewAttachment(Long id) {
-        Attachment attachment = attachmentService.get(id);
-        if (attachment != null && StringUtils.isEmpty(attachment.getUrl())) {
-            AttachGroup group = groupService.findByGroupCode(attachment.getGroupCode());
-            if (group != null) {
-                String fileName = getShardName(group.getGroupCode(), attachment.getAttachName(), attachment.getHash());
-                String url = getDownloadUrl(fileName, group.getUrlExpire());
-                attachment.setUrl(url);
-            }
-        }
-        return attachment;
-    }
-
-    @Override
-    @Transactional
-    public Long defaultImage(String groupCode) {
-        BytesUploadContext context = new BytesUploadContext();
-        context.setGroup(groupService.findByGroupCode(groupCode));
-        // ${nanoTime}.jpeg
-        context.setFileName(System.nanoTime() + DefaultImageService.DEFAULT_IMAGE_SUFFIX);
-        context.setBytes(defaultImageService.randomImage());
-        context.setOriginalFilename(context.getFileName());
-        context.setUser(SysUtil.getUser());
-        context.setTenantCode(SysUtil.getTenantCode());
-        Attachment uploadRes = this.upload(context);
-        String url = uploadRes.getUrl();
-        Attachment attachment = new Attachment();
-        attachment.setCommonValue();
-        attachment.setUrl(url);
-        attachment.setAttachType(FileUtil.getFileNameEx(url));
-        attachment.setAttachName(FileUtil.getFileNameFromUrl(url));
-        attachment.setGroupCode(groupCode);
-        attachmentService.insert(attachment);
-        log.info("Generate random image successfully, groupCode: {}, url: {}, id: {}", groupCode, attachment.getUrl()
-                , attachment.getId());
-        return attachment.getId();
-    }
-
-    private boolean isNotDefaultGroup(Attachment attachment) {
-        return !Group.DEFAULT.equals(attachment.getGroupCode());
-    }
-
-    @Data
-    @ToString
-    @Accessors(chain = true)
-    static class ChunkUploadContext {
-
-        private File targetFile;
-
-        private String key;
-
-        private String contentType;
-
-        private int uploadChunkSizeMb;
-
-    }
+		private File targetFile;
+		private String key;
+		private String contentType;
+		private int uploadChunkSizeMb;
+	}
 }

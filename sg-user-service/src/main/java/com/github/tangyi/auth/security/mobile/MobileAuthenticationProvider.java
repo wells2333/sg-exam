@@ -24,23 +24,24 @@ public class MobileAuthenticationProvider implements AuthenticationProvider {
 	private CustomUserDetailsService customUserDetailsService;
 
 	@Override
-	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		MobileAuthenticationToken mobileAuthenticationToken = (MobileAuthenticationToken) authentication;
-		String principal = mobileAuthenticationToken.getPrincipal().toString();
-		UserDetails userDetails = customUserDetailsService.loadUserBySocialAndTenantCode(TenantHolder.getTenantCode(),
-				principal, mobileAuthenticationToken.getMobileUser());
-		if (userDetails == null) {
+	public Authentication authenticate(Authentication auth) throws AuthenticationException {
+		MobileAuthenticationToken token = (MobileAuthenticationToken) auth;
+		String p = token.getPrincipal().toString();
+		String tenantCode = TenantHolder.getTenantCode();
+		UserDetails details = customUserDetailsService.loadUserBySocialAndTenantCode(tenantCode, p,
+				token.getMobileUser());
+		if (details == null) {
 			log.error("Failed to authentication : no credentials provided");
-			SpringContextHolder.publishEvent(new CustomAuthenticationFailureEvent(authentication, userDetails));
+			SpringContextHolder.publishEvent(new CustomAuthenticationFailureEvent(auth, details));
 			throw new BadCredentialsException(
 					messages.getMessage("AbstractUserDetailsAuthenticationProvider.noopBindAccount",
 							"Noop Bind Account"));
 		}
-		MobileAuthenticationToken authenticationToken = new MobileAuthenticationToken(userDetails,
-				userDetails.getAuthorities());
-		authenticationToken.setDetails(mobileAuthenticationToken.getDetails());
-		SpringContextHolder.publishEvent((new CustomAuthenticationSuccessEvent(authentication, userDetails)));
-		return authenticationToken;
+
+		MobileAuthenticationToken result = new MobileAuthenticationToken(details, details.getAuthorities());
+		result.setDetails(token.getDetails());
+		SpringContextHolder.publishEvent((new CustomAuthenticationSuccessEvent(auth, details)));
+		return result;
 	}
 
 	@Override

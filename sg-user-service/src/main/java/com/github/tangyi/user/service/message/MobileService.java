@@ -25,11 +25,9 @@ public class MobileService implements IMobileService {
 
 	private static final int VERIFICATION_CODE_SIZE = Integer.parseInt(
 			EnvUtils.getValue("VERIFICATION_CODE_SIZE", "4"));
-
 	private static final String SMS_TEMPLATE = "{\"code\":\"%s\"}";
 
 	private final RedisTemplate redisTemplate;
-
 	private SmsService smsService;
 
 	@SuppressWarnings("unchecked")

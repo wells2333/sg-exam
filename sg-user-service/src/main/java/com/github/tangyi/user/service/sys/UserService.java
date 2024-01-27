@@ -57,25 +57,32 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserService extends CrudService<UserMapper, User> implements IUserService, UserCacheName {
 
-	public static final String DEFAULT_AVATAR_URL = EnvUtils.getValue("DEFAULT_AVATAR_URL", "");
-
+	private static final String DEFAULT_AVATAR_URL = EnvUtils.getValue("DEFAULT_AVATAR_URL", "");
 	private static final PasswordEncoder encoder = new BCryptPasswordEncoder();
 
 	private final UserRoleMapper userRoleMapper;
-
 	private final RoleMapper roleMapper;
-
 	private final MenuService menuService;
-
 	private final RedisTemplate redisTemplate;
-
 	private final AttachmentService attachmentService;
-
 	private final AttachmentManager attachmentManager;
-
 	private final SysProperties sysProperties;
-
 	private final UserAuthsService userAuthsService;
+
+	private void getUserAvatar(UserInfoDto userInfoDto, User user) {
+		if (user.getAvatarId() != null && user.getAvatarId() != 0L) {
+			userInfoDto.setAvatar(attachmentManager.getPreviewUrlIgnoreException(user.getAvatarId()));
+		} else {
+			userInfoDto.setAvatar(DEFAULT_AVATAR_URL);
+		}
+	}
+
+	private List<Menu> getAdminUserPermissions(String tenantCode) {
+		Menu condition = new Menu();
+		condition.setTenantCode(tenantCode);
+		condition.setType(UserServiceConstant.MENU_TYPE_PERMISSION);
+		return menuService.findList(condition);
+	}
 
 	@Override
 	public Long findAllUserCount() {
@@ -479,79 +486,78 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 		List<UserVo> userVos = Lists.newArrayListWithExpectedSize(ids.length);
 		List<User> users = this.findListById(ids);
 		if (CollectionUtils.isNotEmpty(users)) {
-			for (User tempUser : users) {
-				UserVo tempUserVo = new UserVo();
-				BeanUtils.copyProperties(tempUser, tempUserVo);
-				if (tempUser.getAvatarId() != null) {
-					tempUserVo.setAvatarUrl(attachmentManager.getPreviewUrlIgnoreException(tempUser.getAvatarId()));
+			for (User temp : users) {
+				UserVo vo = new UserVo();
+				BeanUtils.copyProperties(temp, vo);
+				if (temp.getAvatarId() != null) {
+					vo.setAvatarUrl(attachmentManager.getPreviewUrlIgnoreException(temp.getAvatarId()));
 				}
-				userVos.add(tempUserVo);
+				userVos.add(vo);
 			}
 		}
 		return userVos;
 	}
 
-	public UserDto getUserDtoByUserAndUserAuths(User tempUser, List<UserAuths> userAuths, List<Dept> deptList,
-			List<UserRole> userRoles, List<Role> finalRoleList) {
-		UserDto userDto = new UserDto(tempUser);
-		if (CollectionUtils.isNotEmpty(userAuths)) {
-			userAuths.stream().filter(tempUserAuths -> tempUserAuths.getUserId().equals(tempUser.getId())).findFirst()
-					.ifPresent(tempUserAuths -> userDto.setIdentifier(tempUserAuths.getIdentifier()));
+	public UserDto getUserDtoByUserAndUserAuths(User temp, List<UserAuths> uAuths, List<Dept> deptList,
+			List<UserRole> uRoles, List<Role> roleList) {
+		UserDto dto = new UserDto(temp);
+		if (CollectionUtils.isNotEmpty(uAuths)) {
+			uAuths.stream().filter(tempUAuth -> tempUAuth.getUserId().equals(temp.getId())).findFirst()
+					.ifPresent(tempUAuth -> dto.setIdentifier(tempUAuth.getIdentifier()));
 		}
 		if (CollectionUtils.isNotEmpty(deptList)) {
-			deptList.stream().filter(tempDept -> tempDept.getId().equals(tempUser.getDeptId())).findFirst()
-					.ifPresent(userDept -> {
-						userDto.setDeptId(userDept.getId());
-						userDto.setDeptName(userDept.getDeptName());
-					});
+			deptList.stream().filter(t -> t.getId().equals(temp.getDeptId())).findFirst().ifPresent(t -> {
+				dto.setDeptId(t.getId());
+				dto.setDeptName(t.getDeptName());
+			});
 		}
-		if (CollectionUtils.isNotEmpty(userRoles)) {
+		if (CollectionUtils.isNotEmpty(uRoles)) {
 			List<String> roleNames = Lists.newArrayList();
 			List<Long> roleIds = Lists.newArrayList();
-			userRoles.stream().filter(tempUserRole -> tempUser.getId().equals(tempUserRole.getUserId())).forEach(
-					tempUserRole -> finalRoleList.stream().filter(role -> role.getId().equals(tempUserRole.getRoleId()))
-							.forEach(role -> {
-								roleNames.add(role.getRoleName());
-								roleIds.add(role.getId());
-							}));
-			userDto.setRoleNames(StringUtils.join(roleNames, CommonConstant.COMMA));
-			userDto.setRole(roleIds);
+			uRoles.stream().filter(r -> temp.getId().equals(r.getUserId()))
+					.forEach(r -> roleList.stream().filter(role -> role.getId().equals(r.getRoleId())).forEach(role -> {
+						roleNames.add(role.getRoleName());
+						roleIds.add(role.getId());
+					}));
+			dto.setRoleNames(StringUtils.join(roleNames, CommonConstant.COMMA));
+			dto.setRole(roleIds);
 		}
-		return userDto;
+		return dto;
 	}
 
 	@Transactional
 	@CacheEvict(value = {USER, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS}, allEntries = true)
-	public boolean importUsers(List<UserInfoDto> userInfoDtos) {
+	public boolean importUsers(List<UserInfoDto> dtoList) {
 		String currentUser = SysUtil.getUser();
 		String tenantCode = SysUtil.getTenantCode();
-		Date currentDate = DateUtils.asDate(LocalDateTime.now());
-		for (UserInfoDto userInfoDto : userInfoDtos) {
+		Date now = DateUtils.asDate(LocalDateTime.now());
+		for (UserInfoDto dto : dtoList) {
 			User user = new User();
-			BeanUtils.copyProperties(userInfoDto, user);
+			BeanUtils.copyProperties(dto, user);
 			user.setOperator(currentUser);
-			user.setUpdateTime(currentDate);
+			user.setUpdateTime(now);
 			if (this.update(user) < 1) {
 				user.setCommonValue(currentUser, tenantCode);
 				user.setStatus(CommonConstant.STATUS_NORMAL);
 				this.insert(user);
 			}
+
 			// 先删除用户授权信息
-			UserAuths userAuths = new UserAuths();
-			userAuths.setIdentifier(userInfoDto.getIdentifier());
+			UserAuths uAuths = new UserAuths();
+			uAuths.setIdentifier(dto.getIdentifier());
 			// 默认密码
-			if (StringUtils.isBlank(userInfoDto.getCredential())) {
-				userInfoDto.setCredential(encodeCredential(CommonConstant.DEFAULT_PASSWORD));
+			if (StringUtils.isBlank(dto.getCredential())) {
+				dto.setCredential(encodeCredential(CommonConstant.DEFAULT_PASSWORD));
 			}
-			userAuths.setCredential(userInfoDto.getCredential());
-			userAuths.setOperator(currentUser);
-			userAuths.setUpdateTime(currentDate);
-			userAuths.setTenantCode(tenantCode);
-			userAuthsService.deleteByIdentifier(userAuths);
-			userAuths.setCommonValue(currentUser, tenantCode);
-			userAuths.setUserId(user.getId());
-			userAuths.setIdentityType(userInfoDto.getIdentityType());
-			userAuthsService.insert(userAuths);
+			uAuths.setCredential(dto.getCredential());
+			uAuths.setOperator(currentUser);
+			uAuths.setUpdateTime(now);
+			uAuths.setTenantCode(tenantCode);
+			userAuthsService.deleteByIdentifier(uAuths);
+			uAuths.setCommonValue(currentUser, tenantCode);
+			uAuths.setUserId(user.getId());
+			uAuths.setIdentityType(dto.getIdentityType());
+			userAuthsService.insert(uAuths);
 		}
 		return true;
 	}
@@ -571,18 +577,21 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	}
 
 	public boolean updateLoginInfo(UserDto userDto) {
-		if (StringUtils.isNotBlank(userDto.getIdentifier())) {
-			UserAuths userAuths = findUserAuthsByIdentifier(userDto.getIdentifier(), userDto.getTenantCode());
-			if (userAuths != null) {
-				User user = new User();
-				user.setId(userAuths.getUserId());
-				user.setLoginTime(userDto.getLoginTime());
-				user.setUpdateTime(userDto.getLoginTime());
-				user.setOperator(userAuths.getIdentifier());
-				return update(user) > 0;
-			}
+		if (StringUtils.isBlank(userDto.getIdentifier())) {
+			return false;
 		}
-		return false;
+
+		UserAuths userAuths = findUserAuthsByIdentifier(userDto.getIdentifier(), userDto.getTenantCode());
+		if (userAuths == null) {
+			return false;
+		}
+
+		User user = new User();
+		user.setId(userAuths.getUserId());
+		user.setLoginTime(userDto.getLoginTime());
+		user.setUpdateTime(userDto.getLoginTime());
+		user.setOperator(userAuths.getIdentifier());
+		return update(user) > 0;
 	}
 
 	@Override
@@ -598,20 +607,5 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 			userVo.setAvatarUrl(attachmentManager.getPreviewUrlIgnoreException(user.getAvatarId()));
 		}
 		return userVo;
-	}
-
-	private void getUserAvatar(UserInfoDto userInfoDto, User user) {
-		if (user.getAvatarId() != null && user.getAvatarId() != 0L) {
-			userInfoDto.setAvatar(attachmentManager.getPreviewUrlIgnoreException(user.getAvatarId()));
-		} else {
-			userInfoDto.setAvatar(DEFAULT_AVATAR_URL);
-		}
-	}
-
-	private List<Menu> getAdminUserPermissions(String tenantCode) {
-		Menu condition = new Menu();
-		condition.setTenantCode(tenantCode);
-		condition.setType(UserServiceConstant.MENU_TYPE_PERMISSION);
-		return menuService.findList(condition);
 	}
 }

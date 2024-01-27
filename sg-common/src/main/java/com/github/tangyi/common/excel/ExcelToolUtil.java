@@ -4,9 +4,7 @@ import com.alibaba.excel.EasyExcelFactory;
 import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.event.AnalysisEventListener;
-import com.alibaba.excel.read.metadata.ReadSheet;
 import com.alibaba.excel.support.ExcelTypeEnum;
-import com.alibaba.excel.write.metadata.WriteSheet;
 import com.github.tangyi.common.excel.annotation.ExcelModel;
 import com.github.tangyi.common.excel.exception.ExcelException;
 import com.github.tangyi.common.utils.DateUtils;
@@ -30,61 +28,59 @@ public class ExcelToolUtil {
 	private ExcelToolUtil() {
 	}
 
-	public static <T> void writeExcel(HttpServletRequest request, HttpServletResponse response, List<T> dataList,
+	public static <T> void writeExcel(HttpServletRequest req, HttpServletResponse res, List<T> dataList,
 			Class<T> clazz) {
 		String fileName = DateUtils.localDateMillisToString(LocalDateTime.now());
-		writeExcel(request, response, dataList, clazz, fileName);
+		writeExcel(req, res, dataList, clazz, fileName);
 	}
 
-	public static <T> void writeExcel(HttpServletRequest request, HttpServletResponse response, List<T> dataList,
-			Class<T> clazz, String fileName) {
+	public static <T> void writeExcel(HttpServletRequest req, HttpServletResponse res, List<T> dataList, Class<T> clazz,
+			String fileName) {
 		ExcelModel excelModel = clazz.getDeclaredAnnotation(ExcelModel.class);
 		String sheetName = DEFAULT_SHEET_NAME;
 		if (excelModel != null) {
 			fileName = excelModel.value() + fileName;
 			sheetName = excelModel.sheets()[0];
 		}
-		writeExcel(request, response, dataList, fileName, sheetName, clazz);
+		writeExcel(req, res, dataList, fileName, sheetName, clazz);
 	}
 
-	public static <T> void writeExcel(HttpServletRequest request, HttpServletResponse response, List<T> dataList,
+	public static <T> void writeExcel(HttpServletRequest req, HttpServletResponse res, List<T> dataList,
 			String fileName, String sheetName, Class<T> clazz) {
-		ExcelWriter excelWriter = null;
+		ExcelWriter writer = null;
 		try {
-			excelWriter = EasyExcelFactory.write(getOutputStream(fileName, request, response, ExcelTypeEnum.XLSX),
-					clazz).build();
-			WriteSheet writeSheet = EasyExcelFactory.writerSheet(sheetName).build();
-			excelWriter.write(dataList, writeSheet);
+			writer = EasyExcelFactory.write(getOutputStream(fileName, req, res, ExcelTypeEnum.XLSX), clazz).build();
+			writer.write(dataList, EasyExcelFactory.writerSheet(sheetName).build());
 		} finally {
-			if (excelWriter != null)
-				excelWriter.finish();
+			if (writer != null) {
+				writer.finish();
+			}
 		}
 	}
 
-	private static OutputStream getOutputStream(String fileName, HttpServletRequest request,
-			HttpServletResponse response, ExcelTypeEnum excelTypeEnum) {
+	private static OutputStream getOutputStream(String fileName, HttpServletRequest req, HttpServletResponse res,
+			ExcelTypeEnum type) {
 		try {
-			response.addHeader(HttpHeaders.CONTENT_DISPOSITION,
-					Servlets.getDownName(request, fileName + excelTypeEnum.getValue()));
-			return response.getOutputStream();
+			res.addHeader(HttpHeaders.CONTENT_DISPOSITION, Servlets.getDownName(req, fileName + type.getValue()));
+			return res.getOutputStream();
 		} catch (IOException e) {
-			throw new ExcelException("get OutputStream error!");
+			throw new ExcelException("get OutputStream error!", e);
 		}
 	}
 
 	public static <T> Boolean readExcel(InputStream inputStream, Class<T> clazz, AnalysisEventListener<T> listener) {
 		Boolean success = Boolean.TRUE;
-		ExcelReader excelReader = null;
+		ExcelReader reader = null;
 		try {
-			excelReader = EasyExcelFactory.read(inputStream, clazz, listener).build();
-			ReadSheet readSheet = EasyExcelFactory.readSheet(0).build();
-			excelReader.read(readSheet);
+			reader = EasyExcelFactory.read(inputStream, clazz, listener).build();
+			reader.read(EasyExcelFactory.readSheet(0).build());
 		} catch (Exception e) {
 			log.error("failed to read excel", e);
 			success = Boolean.FALSE;
 		} finally {
-			if (excelReader != null)
-				excelReader.finish();
+			if (reader != null) {
+				reader.finish();
+			}
 		}
 		return success;
 	}

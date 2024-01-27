@@ -13,11 +13,10 @@ import javax.servlet.http.HttpServletResponse;
 public class UnauthorizedEntryPoint implements AuthenticationEntryPoint {
 
 	@Override
-	public void commence(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException authException) {
+	public void commence(HttpServletRequest req, HttpServletResponse res, AuthenticationException authException) {
 		String msg = authException.getMessage();
 		log.info("未授权统一处理");
 		authException.printStackTrace();
-		RUtil.out(response, R.error(msg));
+		RUtil.out(res, R.error(msg));
 	}
 }

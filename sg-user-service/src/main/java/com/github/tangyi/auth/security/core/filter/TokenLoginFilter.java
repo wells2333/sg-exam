@@ -28,25 +28,25 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
-import java.util.stream.Stream;
 
 @Slf4j
 public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
 
 	private static final String PASSWORD = "password";
-
 	private static final String CREDENTIAL = "credential";
+	public static String[] ACCESS_TOKEN_URLS;
 
-	public static final String ACCESS_TOKEN_URLS = EnvUtils.getValue("ACCESS_TOKEN_LOGIN_URLS", StringUtils.join(
-			Stream.of(SecurityConstant.LOGIN_URL, SecurityConstant.REGISTER, SecurityConstant.MOBILE_LOGIN_URL)
-					.toArray(), CommonConstant.COMMA));
-
-	public static final String[] ACCESS_TOKEN_URLS_ARR = StringUtils.split(ACCESS_TOKEN_URLS, CommonConstant.COMMA);
+	static {
+		String urls = EnvUtils.getValue("ACCESS_TOKEN_LOGIN_URLS");
+		if (StringUtils.isEmpty(urls)) {
+			String[] arr = {SecurityConstant.LOGIN_URL, SecurityConstant.REGISTER, SecurityConstant.MOBILE_LOGIN_URL};
+			urls = StringUtils.join(arr, CommonConstant.COMMA);
+		}
+		ACCESS_TOKEN_URLS = StringUtils.split(urls, CommonConstant.COMMA);
+	}
 
 	private final AuthenticationManager authenticationManager;
-
 	private final UserTokenService userTokenService;
-
 	private final SysProperties sysProperties;
 
 	public TokenLoginFilter(AuthenticationManager authenticationManager, UserTokenService userTokenService,
@@ -59,9 +59,9 @@ public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
 	}
 
 	@Override
-	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse res)
+	public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
 			throws AuthenticationException {
-		Map<String, String[]> map = request.getParameterMap();
+		Map<String, String[]> map = req.getParameterMap();
 		String username = map.get("username")[0];
 		String credential = null;
 		if (map.containsKey(CREDENTIAL)) {
@@ -71,15 +71,15 @@ public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
 		if (map.containsKey(PASSWORD)) {
 			password = map.get(PASSWORD)[0];
 		}
-		String decryptResult = decryptPassword(request, password, credential);
+		String decryptResult = decryptPassword(req, password, credential);
 		return authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(username, decryptResult, Lists.newArrayList()));
 	}
 
-	private String decryptPassword(HttpServletRequest request, String password, String credential) {
-		String uri = request.getRequestURI();
-		if (HttpMethod.POST.matches(request.getMethod()) && StrUtil.containsAnyIgnoreCase(uri, ACCESS_TOKEN_URLS_ARR)
-				&& needDecrypt(request)) {
+	private String decryptPassword(HttpServletRequest req, String password, String credential) {
+		String uri = req.getRequestURI();
+		if (HttpMethod.POST.matches(req.getMethod()) && StrUtil.containsAnyIgnoreCase(uri, ACCESS_TOKEN_URLS)
+				&& needDecrypt(req)) {
 			if (StringUtils.isNotBlank(credential)) {
 				password = doDecrypt(credential);
 			} else if (StringUtils.isNotBlank(password)) {
@@ -92,9 +92,9 @@ public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
 	/**
 	 * 授权类型为密码模式则解密
 	 */
-	private boolean needDecrypt(HttpServletRequest request) {
-		String uri = request.getRequestURI();
-		String grantType = request.getParameter(SecurityConstant.GRANT_TYPE);
+	private boolean needDecrypt(HttpServletRequest req) {
+		String uri = req.getRequestURI();
+		String grantType = req.getParameter(SecurityConstant.GRANT_TYPE);
 		return CommonConstant.GRANT_TYPE_PASSWORD.equals(grantType) || StrUtil.containsAnyIgnoreCase(uri,
 				SecurityConstant.REGISTER);
 	}

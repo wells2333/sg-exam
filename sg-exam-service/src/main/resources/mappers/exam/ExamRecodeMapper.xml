@@ -42,6 +42,13 @@
         </choose>
     </select>
 
+    <select id="findListById" resultMap="examRecordResultMap">
+        SELECT * FROM exam_examination_record a WHERE a.id IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
     <select id="getByUserIdAndExaminationId" resultMap="examRecordResultMap">
         SELECT * FROM exam_examination_record a
         WHERE a.user_id = #{userId} and examination_id = #{examinationId} AND a.is_deleted = 0

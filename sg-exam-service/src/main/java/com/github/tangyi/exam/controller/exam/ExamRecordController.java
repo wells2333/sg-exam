@@ -41,11 +41,8 @@ import java.util.Map;
 public class ExamRecordController extends BaseController {
 
 	private final ExamRecordService examRecordService;
-
 	private final MarkAnswerService markAnswerService;
-
 	private final ExaminationActionService actionService;
-
 	private final ExaminationService examinationService;
 
 	@GetMapping("/{id}")

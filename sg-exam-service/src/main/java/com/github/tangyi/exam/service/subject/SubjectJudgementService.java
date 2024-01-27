@@ -28,7 +28,7 @@ import java.util.List;
 public class SubjectJudgementService extends CrudService<SubjectJudgementMapper, SubjectJudgement>
 		implements ISubjectService {
 
-	private final SubjectJudgementConverter subjectJudgementConverter;
+	private final SubjectJudgementConverter converter;
 
 	@Override
 	@Cacheable(value = ExamCacheName.SUBJECT_JUDGEMENT, key = "#id")
@@ -38,7 +38,7 @@ public class SubjectJudgementService extends CrudService<SubjectJudgementMapper,
 
 	@Override
 	public SubjectDto getSubject(Long id) {
-		return subjectJudgementConverter.convert(this.get(id));
+		return converter.convert(this.get(id));
 	}
 
 	@Override
@@ -74,7 +74,7 @@ public class SubjectJudgementService extends CrudService<SubjectJudgementMapper,
 
 	@Override
 	public List<SubjectDto> findSubjectListById(Long[] ids) {
-		return subjectJudgementConverter.convert(this.findListById(ids), true);
+		return converter.convert(this.findListById(ids), true);
 	}
 
 	@Override

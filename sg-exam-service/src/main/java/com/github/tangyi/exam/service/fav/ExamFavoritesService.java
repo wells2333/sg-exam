@@ -38,6 +38,7 @@ public class ExamFavoritesService extends CrudService<UserFavMapper, ExamUserFav
 		if (CollectionUtils.isEmpty(favorites)) {
 			return;
 		}
+
 		for (ExaminationDto dto : dtoList) {
 			dto.setFavorite(favorites.contains(dto.getId()));
 		}
@@ -60,6 +61,7 @@ public class ExamFavoritesService extends CrudService<UserFavMapper, ExamUserFav
 		if (MapUtils.isEmpty(map)) {
 			return;
 		}
+
 		for (ExaminationDto dto : list) {
 			Long count = map.get(dto.getId());
 			if (count != null) {
@@ -112,6 +114,7 @@ public class ExamFavoritesService extends CrudService<UserFavMapper, ExamUserFav
 		if (MapUtils.isEmpty(map)) {
 			return;
 		}
+
 		for (ExaminationDto dto : list) {
 			dto.setStartCount(map.get(dto.getId()));
 		}

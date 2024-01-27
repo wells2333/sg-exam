@@ -40,18 +40,14 @@ import java.util.stream.Collectors;
 public class QiNiuAttachmentStorage extends AbstractAttachmentStorage {
 
     private final QiNiuConfig qiNiuConfig;
-
     private final UploadManager uploadManager;
-
     private final BucketManager bucketManager;
-
     private final String token;
-
     private final Client client;
 
     private volatile String urlPrefixValue;
 
-    static class QiNiuAttachException extends CommonException {
+    protected static class QiNiuAttachException extends CommonException {
         public QiNiuAttachException(String msg) {
             super(msg);
         }
@@ -81,10 +77,12 @@ public class QiNiuAttachmentStorage extends AbstractAttachmentStorage {
         if (StringUtils.isNotBlank(this.urlPrefixValue)) {
             return this.urlPrefixValue;
         }
+
         List<String> hosts = new ApiQueryRegion(client).request(new ApiQueryRegion.Request(null, token)).getDefaultRegionUpHosts();
         if (CollectionUtils.isEmpty(hosts)) {
             throw new QiNiuAttachException("Failed to query region up hosts, token: " + token);
         }
+
         String host = hosts.get(0);
         if (!host.startsWith("http")) {
             host = "http://" + host;
@@ -134,7 +132,7 @@ public class QiNiuAttachmentStorage extends AbstractAttachmentStorage {
             log.info("Generate upload id finished, fileName: {}, uploadId: {}", fileName, uploadId);
             attachment.setUploadId(uploadId);
         } catch (Exception e) {
-            throw new QiNiuAttachException("Failed to generate upload id, fileName: " + fileName);
+            throw new QiNiuAttachException(e, "Failed to generate upload id, fileName: " + fileName);
         }
         return attachment;
     }

@@ -105,6 +105,7 @@ public class ExaminationSubjectService extends CrudService<ExaminationSubjectMap
 		if (CollectionUtils.isEmpty(subjects)) {
 			return;
 		}
+
 		for (ExaminationSubject subject : subjects) {
 			subject.setSort(subject.getSort() - 1);
 			this.update(subject);

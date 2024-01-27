@@ -29,7 +29,6 @@ import java.util.Map;
 public class RoleController extends BaseController {
 
 	private final RoleService roleService;
-
 	private final RoleMenuService roleMenuService;
 
 	@GetMapping("/{id}")

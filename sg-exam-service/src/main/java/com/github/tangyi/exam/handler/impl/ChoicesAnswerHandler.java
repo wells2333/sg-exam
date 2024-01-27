@@ -2,7 +2,6 @@ package com.github.tangyi.exam.handler.impl;
 
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.Answer;
-import com.github.tangyi.exam.enums.SubjectType;
 import com.github.tangyi.exam.handler.AbstractAnswerHandler;
 import com.github.tangyi.exam.service.subject.SubjectsService;
 import lombok.extern.slf4j.Slf4j;
@@ -18,18 +17,13 @@ public class ChoicesAnswerHandler extends AbstractAnswerHandler {
 	}
 
 	@Override
-	public SubjectType getSubjectType() {
-		return SubjectType.CHOICES;
-	}
-
-	@Override
 	public boolean hasOption() {
 		return true;
 	}
 
 	@Override
-	public boolean judgeRight(JudgeContext judgeContext) {
-		return judgeContext.getSubject().getAnswer().getAnswer().equalsIgnoreCase(judgeContext.getAnswer().getAnswer());
+	public boolean judgeRight(JudgeContext c) {
+		return c.getSubject().getAnswer().getAnswer().equalsIgnoreCase(c.getAnswer().getAnswer());
 	}
 
 	/**
@@ -37,12 +31,12 @@ public class ChoicesAnswerHandler extends AbstractAnswerHandler {
 	 */
 	@Override
 	public void judgeOptionRight(Answer answer, SubjectDto subject) {
-		String userAnswer = answer.getAnswer();
+		String uAnswer = answer.getAnswer();
 		String answerStr = subject.getAnswer().getAnswer();
-		if (StringUtils.isNotBlank(userAnswer)) {
-			subject.getOptions().forEach(option -> {
-				if (userAnswer.equals(option.getOptionName())) {
-					option.setRight(answerStr.equals(option.getOptionName()) ? TRUE : FALSE);
+		if (StringUtils.isNotBlank(uAnswer)) {
+			subject.getOptions().forEach(o -> {
+				if (uAnswer.equals(o.getOptionName())) {
+					o.setRight(answerStr.equals(o.getOptionName()) ? TRUE : FALSE);
 				}
 			});
 		}

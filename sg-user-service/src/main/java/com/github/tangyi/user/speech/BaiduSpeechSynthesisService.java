@@ -15,19 +15,16 @@ import java.util.HashMap;
 @Service
 public class BaiduSpeechSynthesisService {
 
-	public static final String BAIDU_APP_ID = EnvUtils.getValue("BAIDU_APP_ID", "26722003");
-
-	public static final String BAIDU_API_KEY = EnvUtils.getValue("BAIDU_API_KEY", "Of2iwZNelH4mWa6XikrkhUFp");
-
-	public static final String BAIDU_SECRET_KEY = EnvUtils.getValue("BAIDU_SECRET_KEY",
+	private static final String BAIDU_APP_ID = EnvUtils.getValue("BAIDU_APP_ID", "26722003");
+	private static final String BAIDU_API_KEY = EnvUtils.getValue("BAIDU_API_KEY", "Of2iwZNelH4mWa6XikrkhUFp");
+	private static final String BAIDU_SECRET_KEY = EnvUtils.getValue("BAIDU_SECRET_KEY",
 			"XOEszPwGNN4IKLzj9n7PT1YB1l3Vd67c");
 
 	// 普通发音人选择：度小美=0(默认)，度小宇=1，，度逍遥（基础）=3，度丫丫=4
 	// 精品发音人选择：度逍遥（精品）=5003，度小鹿=5118，度博文=106，度小童=110，度小萌=111，度米朵=103，度小娇=5
-	public static final String BAIDU_PER = EnvUtils.getValue("BAIDU_PER", "4");
+	private static final String BAIDU_PER = EnvUtils.getValue("BAIDU_PER", "4");
 
 	private final AipSpeech client;
-
 	private final AttachmentManager attachmentManager;
 
 	public BaiduSpeechSynthesisService(AttachmentManager attachmentManager) {

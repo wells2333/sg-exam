@@ -10,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 public class AesUtil {
 
 	private static final String KEY_ALGORITHM = "AES";
-
 	private static final String DEFAULT_CIPHER_ALGORITHM = "AES/CBC/NOPadding";
 
 	private AesUtil() {

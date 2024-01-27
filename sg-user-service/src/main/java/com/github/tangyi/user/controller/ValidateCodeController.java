@@ -27,7 +27,6 @@ import java.util.Properties;
 public class ValidateCodeController extends BaseController {
 
 	private final Map<String, Producer> producerMap = Maps.newHashMap();
-
 	private final UserService userService;
 
 	@Operation(summary = "生成验证码", description = "生成验证码")

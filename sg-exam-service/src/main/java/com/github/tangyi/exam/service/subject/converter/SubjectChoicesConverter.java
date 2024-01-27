@@ -4,11 +4,11 @@ import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.Answer;
 import com.github.tangyi.api.exam.model.SubjectChoices;
 import com.github.tangyi.exam.enums.SubjectType;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,25 +25,26 @@ public class SubjectChoicesConverter implements ISubjectConverter<SubjectChoices
 		if (subject == null) {
 			return null;
 		}
-		SubjectDto subjectDto = new SubjectDto();
-		BeanUtils.copyProperties(subject, subjectDto);
-		SubjectType subjectTypeEnum = SubjectType.matchByValue(subject.getChoicesType());
-		subjectDto.setType(subjectTypeEnum.getValue());
-		subjectDto.setTypeLabel(subjectTypeEnum.getName());
+
+		SubjectDto dto = new SubjectDto();
+		BeanUtils.copyProperties(subject, dto);
+		SubjectType type = SubjectType.matchByValue(subject.getChoicesType());
+		dto.setType(type.getValue());
+		dto.setTypeLabel(type.getName());
 		if (findAnswer) {
-			Answer answer = new Answer();
-			answer.setAnswer(subject.getAnswer());
-			subjectDto.setAnswer(answer);
+			Answer a = new Answer();
+			a.setAnswer(subject.getAnswer());
+			dto.setAnswer(a);
 		}
-		return subjectDto;
+		return dto;
 	}
 
 	@Override
 	public List<SubjectDto> convert(List<SubjectChoices> subjects, boolean findAnswer) {
-		List<SubjectDto> subjectDtoList = new ArrayList<>();
+		List<SubjectDto> list = Lists.newArrayList();
 		if (CollectionUtils.isNotEmpty(subjects)) {
-			subjectDtoList = subjects.stream().map(subject -> convert(subject, findAnswer)).collect(Collectors.toList());
+			list = subjects.stream().map(s -> convert(s, findAnswer)).collect(Collectors.toList());
 		}
-		return subjectDtoList;
+		return list;
 	}
 }

@@ -42,7 +42,7 @@ public class UserTokenService {
 			CustomUserDetails details, boolean writeRes) {
 		ImmutablePair<UserToken, Integer> pair = this.buildUserToken(req, details);
 		UserToken userToken = pair.getLeft();
-		LoginTypeEnum loginType = details.getLoginType();
+		LoginTypeEnum type = details.getLoginType();
 		if (this.tokenManager.saveToken(userToken, pair.getRight())) {
 			String token = this.tokenManager.createToken(userToken);
 			Map<String, Object> map = Maps.newHashMapWithExpectedSize(3);
@@ -50,14 +50,14 @@ public class UserTokenService {
 			map.put(CommonConstant.TENANT_CODE, details.getTenantCode());
 			map.put("hasPhone", StringUtils.isNotEmpty(details.getPhone()));
 			log.info("Login successfully, id: {}, identify: {}, loginType: {}", details.getId(), details.getUsername(),
-					loginType.getType());
+					type.getType());
 			if (writeRes) {
 				RUtil.out(res, R.success(map));
 			}
 			return map;
 		} else {
 			log.info("Login failed, id: {}, identify: {}, loginType: {}", details.getId(), details.getUsername(),
-					loginType.getType());
+					type.getType());
 			if (writeRes) {
 				RUtil.out(res, R.error("Login failed."));
 			}
@@ -75,22 +75,22 @@ public class UserTokenService {
 				TimeUnit.MINUTES.toSeconds((TokenManager.TOKEN_EXPIRE_MINUTE)));
 		String ip = req.getRemoteAddr();
 		String userAgent = req.getHeader(HttpHeaders.USER_AGENT);
-		UserToken userToken = new UserToken();
-		userToken.setId(UUID.randomUUID().toString().replace("-", ""));
-		userToken.setUserId(details.getId());
-		userToken.setRole(this.parseUserRole(details));
-		userToken.setIdentify(details.getUsername());
-		userToken.setLoginType(details.getLoginType().getType());
-		userToken.setTenantCode(details.getTenantCode());
-		userToken.setIp(ip);
-		userToken.setUserAgent(userAgent);
-		userToken.setIssuedAt(issuedAt);
-		userToken.setExpiresAt(expireAt);
-		userToken.setRemember(remember);
+		UserToken token = new UserToken();
+		token.setId(UUID.randomUUID().toString().replace("-", ""));
+		token.setUserId(details.getId());
+		token.setRole(this.parseUserRole(details));
+		token.setIdentify(details.getUsername());
+		token.setLoginType(details.getLoginType().getType());
+		token.setTenantCode(details.getTenantCode());
+		token.setIp(ip);
+		token.setUserAgent(userAgent);
+		token.setIssuedAt(issuedAt);
+		token.setExpiresAt(expireAt);
+		token.setRemember(remember);
 
 		// 距离过期时间剩余的秒数
 		int expireSeconds = (int) ChronoUnit.SECONDS.between(issuedAt, expireAt);
-		return new ImmutablePair<>(userToken, expireSeconds);
+		return new ImmutablePair<>(token, expireSeconds);
 	}
 
 	private String parseUserRole(CustomUserDetails details) {

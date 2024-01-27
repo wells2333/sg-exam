@@ -30,15 +30,15 @@ public enum LoginTypeEnum {
     /**
      * 类型
      */
-    private String type;
+    private final String type;
 
     /**
      * 描述
      */
-    private String description;
+    private final String description;
 
     /**
      * 接口 uri
      */
-    private String uri;
+    private final String uri;
 }

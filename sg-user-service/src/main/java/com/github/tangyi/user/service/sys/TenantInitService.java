@@ -22,13 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class TenantInitService {
 
 	private final UserService userService;
-
 	private final UserAuthsService userAuthsService;
-
 	private final UserRoleService userRoleService;
-
 	private final RoleService roleService;
-
 	private final MenuService menuService;
 
 	/**

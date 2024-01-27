@@ -1,7 +1,10 @@
 package com.github.tangyi.exam.service.exam;
 
 import com.github.pagehelper.PageInfo;
-import com.github.tangyi.api.exam.dto.*;
+import com.github.tangyi.api.exam.dto.ExaminationDto;
+import com.github.tangyi.api.exam.dto.RandomSubjectDto;
+import com.github.tangyi.api.exam.dto.SimpleSubjectDto;
+import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.*;
 import com.github.tangyi.api.exam.service.IExaminationService;
 import com.github.tangyi.api.user.attach.AttachmentManager;
@@ -52,23 +55,14 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		implements IExaminationService, ExamCacheName, ExamConstant {
 
 	private final SubjectsService subjectsService;
-
 	private final ExaminationSubjectService examinationSubjectService;
-
 	private final SysProperties sysProperties;
-
 	private final AttachmentManager attachmentManager;
-
 	private final SubjectCategoryService subjectCategoryService;
-
 	private final CourseService courseService;
-
 	private final ExamFavoritesService examFavoritesService;
-
 	private final ExamPermissionService examPermissionService;
-
 	private final IUserService userService;
-
 	private final ExamIdFetcher examIdFetcher;
 
 	@Override
@@ -94,35 +88,35 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 
 	@Override
 	public ExaminationDto getDetail(Long id) {
-		Examination examination = super.get(id);
-		Long[] ids = Collections.singletonList(examination.getId()).toArray(Long[]::new);
+		Examination e = super.get(id);
+		Long[] ids = Collections.singletonList(e.getId()).toArray(Long[]::new);
 		List<Course> courses = courseService.findListById(ids);
 		Map<Long, Course> courseMap = toCourseMap(courses);
-		return toDto(examination, courseMap);
+		return toDto(e, courseMap);
 	}
 
 	@Override
 	@Transactional
 	public int insertExamination(ExaminationDto examinationDto) {
-		Examination examination = Examination.of(examinationDto);
+		Examination e = Examination.of(examinationDto);
 		String user = SysUtil.getUser();
 		String tenantCode = SysUtil.getTenantCode();
-		examination.setCommonValue(user, tenantCode);
+		e.setCommonValue(user, tenantCode);
 		Course course = examinationDto.getCourse();
 		if (course != null) {
-			examination.setCourseId(course.getId());
+			e.setCourseId(course.getId());
 		}
-		if (examination.getImageId() == null) {
-			examination.setImageId(attachmentManager.defaultImage(Group.DEFAULT));
+		if (e.getImageId() == null) {
+			e.setImageId(attachmentManager.defaultImage(Group.DEFAULT));
 		}
 		this.addExaminationMembers(examinationDto, user, tenantCode);
-		int update = super.insert(examination);
+		int update = super.insert(e);
 		if (update > 0) {
 			IndexCrudParam param = IndexCrudParam.builder() //
-					.id(examination.getId()) //
+					.id(e.getId()) //
 					.type(DocType.EXAM) //
-					.contents(Lists.newArrayList(examination.getExaminationName(), examination.getRemark())) //
-					.updateTime(examination.getUpdateTime().getTime()) //
+					.contents(Lists.newArrayList(e.getExaminationName(), e.getRemark())) //
+					.updateTime(e.getUpdateTime().getTime()) //
 					.clickCnt(0) //
 					.joinCnt(0) //
 					.build(); //
@@ -156,6 +150,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		if (CollectionUtils.isNotEmpty(list)) {
 			return toDtoPage(page, list, params);
 		}
+
 		return new PageInfo<>();
 	}
 
@@ -175,25 +170,25 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	@Transactional
 	@CacheEvict(value = {ExamCacheName.EXAMINATION, ExamCacheName.EXAM_ALL_SUBJECT}, key = "#examinationDto.id")
 	public int updateExamination(ExaminationDto examinationDto) {
-		Examination examination = Examination.of(examinationDto);
+		Examination e = Examination.of(examinationDto);
 		String user = SysUtil.getUser();
 		String tenantCode = SysUtil.getTenantCode();
-		examination.setCommonValue(user, tenantCode);
+		e.setCommonValue(user, tenantCode);
 		Course course = examinationDto.getCourse();
 		if (course != null) {
-			examination.setCourseId(course.getId());
+			e.setCourseId(course.getId());
 		}
-		this.examPermissionService.deletePermission(PERMISSION_TYPE_EXAM, examination.getId());
+		this.examPermissionService.deletePermission(PERMISSION_TYPE_EXAM, e.getId());
 		this.addExaminationMembers(examinationDto, user, tenantCode);
-		int update = super.update(examination);
+		int update = super.update(e);
 		if (update > 0) {
-			Integer memberCnt = this.examPermissionService.findCount(PERMISSION_TYPE_EXAM, examination.getId());
+			Integer memberCnt = this.examPermissionService.findCount(PERMISSION_TYPE_EXAM, e.getId());
 			long joinCnt = memberCnt == null ? 0 : memberCnt;
 			IndexCrudParam param = IndexCrudParam.builder() //
-					.id(examination.getId()) //
+					.id(e.getId()) //
 					.type(DocType.EXAM) //
-					.contents(Lists.newArrayList(examination.getExaminationName(), examination.getRemark())) //
-					.updateTime(examination.getUpdateTime().getTime()) //
+					.contents(Lists.newArrayList(e.getExaminationName(), e.getRemark())) //
+					.updateTime(e.getUpdateTime().getTime()) //
 					.clickCnt(joinCnt) //
 					.joinCnt(joinCnt) //
 					.build(); //
@@ -208,10 +203,11 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		if (!EXAM_STATUS_PUBLISHED.equals(dto.getStatus())) {
 			return;
 		}
+
 		Long id = dto.getId();
 		// 用户 ID
-		examPermissionService.addPermissions(id, dto.getMembers(), PERMISSION_TYPE_EXAM, PERMISSION_ID_TYPE_USER,
-				user, tenantCode);
+		examPermissionService.addPermissions(id, dto.getMembers(), PERMISSION_TYPE_EXAM, PERMISSION_ID_TYPE_USER, user,
+				tenantCode);
 		// 部门 ID
 		String deptMember = dto.getDeptMember();
 		if (StringUtils.isNotEmpty(deptMember)) {
@@ -250,12 +246,12 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	@CacheEvict(value = {ExamCacheName.EXAMINATION, ExamCacheName.EXAM_ALL_SUBJECT}, allEntries = true)
 	public void deleteExaminationSubject(Long[] ids) {
 		for (Long id : ids) {
-			List<ExaminationSubject> examinationSubjects = examinationSubjectService.findListByExaminationId(id);
-			if (CollectionUtils.isNotEmpty(examinationSubjects)) {
+			List<ExaminationSubject> subjects = examinationSubjectService.findListByExaminationId(id);
+			if (CollectionUtils.isNotEmpty(subjects)) {
 				ExaminationSubject es = new ExaminationSubject();
-				examinationSubjects.forEach(examinationSubject -> {
-					subjectsService.physicalDelete(examinationSubject.getSubjectId());
-					es.setSubjectId(examinationSubject.getSubjectId());
+				subjects.forEach(s -> {
+					subjectsService.physicalDelete(s.getSubjectId());
+					es.setSubjectId(s.getSubjectId());
 					examinationSubjectService.deleteBySubjectId(es);
 				});
 			}
@@ -328,6 +324,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		if (examination == null/* || !ExaminationTypeEnum.QUESTIONNAIRE.getValue().equals(examination.getType())*/) {
 			return new byte[0];
 		}
+
 		String url = sysProperties.getQrCodeUrl() + "?id=" + examination.getId();
 		byte[] bytes = null;
 		try {
@@ -343,17 +340,18 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	 * 根据考试 ID 生成二维码
 	 */
 	public byte[] produceCodeV2(Long examinationId) {
-		Examination examination = this.get(examinationId);
+		Examination e = this.get(examinationId);
 		// 调查问卷
-		if (examination == null/* || !ExaminationTypeEnum.QUESTIONNAIRE.getValue().equals(examination.getType())*/) {
+		if (e == null/* || !ExaminationTypeEnum.QUESTIONNAIRE.getValue().equals(examination.getType())*/) {
 			return new byte[0];
 		}
-		String url = sysProperties.getQrCodeUrl() + "-v2?id=" + examination.getId();
+
+		String url = sysProperties.getQrCodeUrl() + "-v2?id=" + e.getId();
 		byte[] bytes = null;
 		try {
 			bytes = QRCodeUtils.getQRCodeImage(url, 180, 180);
-		} catch (Exception e) {
-			log.error("produceCode failed", e);
+		} catch (Exception ex) {
+			log.error("produceCode failed", ex);
 		}
 		log.info("Share v2 examinationId: {}, url: {}", examinationId, url);
 		return bytes;
@@ -474,6 +472,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 			if (itCnt > 500) {
 				throw new CommonException("随机组卷失败，itCnt：" + itCnt);
 			}
+
 			int index = ThreadLocalRandom.current().nextInt(0, subjects.size());
 			Subjects tmp = subjects.get(index);
 			if (!idSet.contains(tmp.getId())) {

@@ -21,6 +21,7 @@ public class ValidateTenantAspect {
 		if (StringUtils.isBlank(tenantCode)) {
 			throw new TenantNotFoundException("获取租户信息失败");
 		}
+
 		// 获取租户信息
 		Tenant tenant = tenantService.getByTenantCode(tenantCode);
 		if (tenant == null) {

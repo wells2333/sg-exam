@@ -47,23 +47,14 @@ import java.util.concurrent.atomic.AtomicLong;
 public class CourseService extends CrudService<CourseMapper, Course> implements ICourseService, ExamConstant {
 
 	private final IUserService userService;
-
 	private final IAttachmentService attachmentService;
-
 	private final AttachmentManager attachmentManager;
-
 	private final ExamCourseChapterService chapterService;
-
 	private final ExamCourseSectionService sectionService;
-
 	private final ExamCourseKnowledgePointService knowledgePointService;
-
 	private final ExamCourseMemberService memberService;
-
 	private final CourseFavoritesService courseFavoritesService;
-
 	private final CourseIdFetcher courseIdFetcher;
-
 	private final ExamPermissionService examPermissionService;
 
 	@Override
@@ -296,6 +287,7 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 			if (exist != null) {
 				throw new CommonException("不能重复加入");
 			}
+
 			return memberService.insert(member) > 0;
 		} else {
 			// 取消报名

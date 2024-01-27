@@ -24,22 +24,23 @@ public class WxAuthenticationProvider implements AuthenticationProvider {
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		WxAuthenticationToken wxAuthenticationToken = (WxAuthenticationToken) authentication;
-		String principal = wxAuthenticationToken.getPrincipal().toString();
-		UserDetails userDetails = customUserDetailsService.loadUserByWxCodeAndTenantCode(
-				wxAuthenticationToken.getTenantCode(), principal, wxAuthenticationToken.getWxUser());
-		if (userDetails == null) {
+		WxAuthenticationToken token = (WxAuthenticationToken) authentication;
+		String principal = token.getPrincipal().toString();
+		UserDetails details = customUserDetailsService.loadUserByWxCodeAndTenantCode(token.getTenantCode(), principal,
+				token.getWxUser());
+		if (details == null) {
 			log.error("Failed to authentication : no credentials provided, principal: {}", principal);
-			SpringContextHolder.publishEvent(new CustomAuthenticationFailureEvent(authentication, userDetails));
+			SpringContextHolder.publishEvent(new CustomAuthenticationFailureEvent(authentication, details));
 			throw new BadCredentialsException(
 					messages.getMessage("AbstractUserDetailsAuthenticationProvider.noopBindAccount",
 							"Noop Bind Account"));
 		}
-		WxAuthenticationToken authenticationToken = new WxAuthenticationToken(wxAuthenticationToken.getTenantCode(),
-				userDetails, userDetails.getAuthorities());
-		authenticationToken.setDetails(wxAuthenticationToken.getDetails());
-		SpringContextHolder.publishEvent(new CustomAuthenticationSuccessEvent(authentication, userDetails));
-		return authenticationToken;
+
+		WxAuthenticationToken result = new WxAuthenticationToken(token.getTenantCode(), details,
+				details.getAuthorities());
+		result.setDetails(token.getDetails());
+		SpringContextHolder.publishEvent(new CustomAuthenticationSuccessEvent(authentication, details));
+		return result;
 	}
 
 	@Override

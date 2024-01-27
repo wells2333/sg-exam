@@ -23,7 +23,6 @@ import java.util.List;
 public class MarkAnswerService {
 
 	private final ExamRecordService examRecordService;
-
 	private final AnswerService answerService;
 
 	/**
@@ -31,24 +30,23 @@ public class MarkAnswerService {
 	 */
 	@Transactional
 	public Boolean complete(Long recordId) {
-		long start = System.currentTimeMillis();
+		long startMs = System.currentTimeMillis();
 		Answer answer = new Answer();
 		answer.setExamRecordId(recordId);
 		List<Answer> answers = answerService.findList(answer);
 		ExaminationRecord record = examRecordService.get(recordId);
 		SgPreconditions.checkNull(record, "考试记录不存在");
 		if (CollectionUtils.isNotEmpty(answers)) {
-			long correctNumber = answers.stream()
-					.filter(tempAnswer -> tempAnswer.getAnswerType().equals(AnswerConstant.RIGHT)).count();
+			long correctNumber = answers.stream().filter(t -> t.getAnswerType().equals(AnswerConstant.RIGHT)).count();
 			// 总分
-			Double score = answers.stream().mapToDouble(Answer::getScore).sum();
+			double score = answers.stream().mapToDouble(Answer::getScore).sum();
 			record.setScore(score);
 			record.setSubmitStatus(SubmitStatusEnum.CALCULATED.getValue());
 			record.setCorrectNumber((int) correctNumber);
 			record.setInCorrectNumber(answers.size() - record.getCorrectNumber());
 			examRecordService.update(record);
-			log.debug("submit done, username: {}, examinationId: {}, score: {}, time consuming: {}ms",
-					record.getCreator(), record.getExaminationId(), score, System.currentTimeMillis() - start);
+			log.debug("Submit done, username: {}, examinationId: {}, score: {}, time consuming: {}ms",
+					record.getCreator(), record.getExaminationId(), score, System.currentTimeMillis() - startMs);
 		}
 		return Boolean.TRUE;
 	}

@@ -33,9 +33,7 @@ public class EmbeddedMysqlConfig {
 	// 默认不启用内嵌 MySQL，可通过配置环境变量 ENABLE_EMBEDDED_MYSQL=true 启用
 	private static final Boolean ENABLE_EMBEDDED_MYSQL = Boolean.valueOf(
 			EnvUtils.getValue("ENABLE_EMBEDDED_MYSQL", "false"));
-
 	public static volatile boolean INITIALIZED = false;
-
 	private EmbeddedMysql mysql;
 
 	@PostConstruct

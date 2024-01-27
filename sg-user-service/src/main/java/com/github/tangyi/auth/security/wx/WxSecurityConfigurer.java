@@ -33,12 +33,11 @@ public class WxSecurityConfigurer extends SecurityConfigurerAdapter<DefaultSecur
 
 	@Override
 	public void configure(HttpSecurity http) {
-		WxLoginFilter wxLoginFilter = new WxLoginFilter(userTokenService);
-		wxLoginFilter.setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
-		wxLoginFilter.setEventPublisher(defaultAuthenticationEventPublisher);
-		WxAuthenticationProvider wxAuthenticationProvider = new WxAuthenticationProvider();
-		wxAuthenticationProvider.setCustomUserDetailsService(userDetailsService);
-		http.authenticationProvider(wxAuthenticationProvider)
-				.addFilterAfter(wxLoginFilter, UsernamePasswordAuthenticationFilter.class);
+		WxLoginFilter filter = new WxLoginFilter(userTokenService);
+		filter.setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
+		filter.setEventPublisher(defaultAuthenticationEventPublisher);
+		WxAuthenticationProvider provider = new WxAuthenticationProvider();
+		provider.setCustomUserDetailsService(userDetailsService);
+		http.authenticationProvider(provider).addFilterAfter(filter, UsernamePasswordAuthenticationFilter.class);
 	}
 }

@@ -1,6 +1,5 @@
 package com.github.tangyi.exam.handler.impl;
 
-import com.github.tangyi.exam.enums.SubjectType;
 import com.github.tangyi.exam.handler.AbstractAnswerHandler;
 import com.github.tangyi.exam.service.subject.SubjectsService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,11 +11,6 @@ public class ShortAnswerHandler extends AbstractAnswerHandler {
 
 	public ShortAnswerHandler(SubjectsService subjectsService) {
 		super(subjectsService);
-	}
-
-	@Override
-	public SubjectType getSubjectType() {
-		return SubjectType.SHORT_ANSWER;
 	}
 
 	@Override

@@ -9,7 +9,7 @@ import com.github.tangyi.common.log.OperationType;
 import com.github.tangyi.common.log.SgLog;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.SnowFlakeId;
-import com.github.tangyi.exam.excel.model.SubjectExcelModel;
+import com.github.tangyi.exam.excel.SubjectExcelModel;
 import com.github.tangyi.exam.service.answer.AnswerService;
 import com.github.tangyi.exam.service.fav.SubjectFavoritesService;
 import com.github.tangyi.exam.service.subject.SubjectImportExportService;
@@ -42,11 +42,8 @@ import java.util.Map;
 public class SubjectsController extends BaseController {
 
 	private final SubjectsService subjectsService;
-
 	private final AnswerService answerService;
-
 	private final SubjectImportExportService subjectImportExportService;
-
 	private final SubjectFavoritesService subjectFavoritesService;
 
 	@GetMapping("/{id}")

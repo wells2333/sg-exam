@@ -1,4 +1,4 @@
-package com.github.tangyi.exam.excel.model;
+package com.github.tangyi.exam.excel;
 
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.format.DateTimeFormat;
@@ -8,7 +8,6 @@ import com.alibaba.excel.annotation.write.style.ContentRowHeight;
 import com.alibaba.excel.annotation.write.style.HeadRowHeight;
 import com.alibaba.excel.converters.longconverter.LongStringConverter;
 import com.github.tangyi.common.excel.annotation.ExcelModel;
-import com.github.tangyi.exam.excel.converter.SubmitStatusConverter;
 import lombok.Data;
 
 import java.util.Date;
@@ -18,7 +17,7 @@ import java.util.Date;
 @ContentRowHeight(18)
 @HeadRowHeight(20)
 @ColumnWidth(25)
-public class ExamRecordExcelModel {
+public class ExamRecordModel {
 
 	@ExcelProperty(value = "考生ID", converter = LongStringConverter.class)
 	private Long userId;
@@ -44,6 +43,6 @@ public class ExamRecordExcelModel {
 	@ExcelProperty("正确题数")
 	private Integer correctNumber;
 
-	@ExcelProperty(value = "提交状态", converter = SubmitStatusConverter.class)
+	@ExcelProperty(value = "提交状态", converter = Converters.SubmitConverter.class)
 	private Integer submitStatus;
 }

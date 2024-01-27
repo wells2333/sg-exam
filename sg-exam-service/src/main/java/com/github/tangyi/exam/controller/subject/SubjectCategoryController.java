@@ -26,7 +26,6 @@ import java.util.Map;
 public class SubjectCategoryController extends BaseController {
 
 	private final SubjectCategoryService categoryService;
-
 	private final SubjectsService subjectsService;
 
 	@GetMapping(value = "categoryTree")

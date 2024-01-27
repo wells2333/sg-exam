@@ -26,13 +26,9 @@ import java.util.Map;
 public class AttachmentManagerImpl implements AttachmentManager {
 
 	private final Map<Integer, AttachmentStorage> storageMap = Maps.newHashMap();
-
 	private final AttachmentService attachmentService;
-
 	private final AttachGroupService groupService;
-
 	private final QiNiuAttachmentStorage qiNiuStorage;
-
 	private final SysAttachmentChunkService attachmentChunkService;
 
 	public AttachmentManagerImpl(AttachmentService attachmentService, AttachGroupService groupService,
@@ -60,6 +56,11 @@ public class AttachmentManagerImpl implements AttachmentManager {
 			return qiNiuStorage;
 		}
 		return storage;
+	}
+
+	private AttachGroup getAttachGroupByAttachmentId(Long id) {
+		Attachment attachment = attachmentService.getNotNullAttachment(id);
+		return groupService.findByGroupCode(attachment.getGroupCode());
 	}
 
 	@Override
@@ -185,10 +186,5 @@ public class AttachmentManagerImpl implements AttachmentManager {
 		AttachmentStorage storage = this.storageMap.get(AttachTypeEnum.DEFAULT.getDefaultStorageType());
 		AttachGroup group = groupService.findByGroupCode(groupCode);
 		return storage.defaultImage(group.getGroupCode());
-	}
-
-	private AttachGroup getAttachGroupByAttachmentId(Long id) {
-		Attachment attachment = attachmentService.getNotNullAttachment(id);
-		return groupService.findByGroupCode(attachment.getGroupCode());
 	}
 }

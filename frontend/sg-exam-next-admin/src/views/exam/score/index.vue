@@ -7,12 +7,20 @@
             {
               icon: 'ant-design:eye-outlined',
               onClick: handleView.bind(null, record),
-               tooltip: t('common.viewText'),
+              tooltip: t('common.viewText'),
             },
             {
               icon: 'ant-design:align-left-outlined',
               onClick: handleAnalysis.bind(null, record),
-               tooltip: t('common.modules.exam.scoreAnalysis'),
+              tooltip: t('common.modules.exam.scoreAnalysis'),
+            },
+            {
+              icon: 'ant-design:export-outlined',
+              tooltip: t('common.modules.exam.export'),
+              popConfirm: {
+                title: t('common.confirmExportText'),
+                confirm: handleExport.bind(null, record),
+              }
             }
           ]"
         />
@@ -31,6 +39,7 @@ import {useModal} from '/@/components/Modal';
 import ScoreListModal from './ScoreListModal.vue';
 import ScoreAnalysisModal from './ScoreAnalysisModal.vue';
 import {examColumns, searchFormSchema} from './score.data';
+import {exportScore} from "/@/api/exam/score";
 
 export default defineComponent({
   name: 'ScoreManagement',
@@ -40,7 +49,7 @@ export default defineComponent({
     const [registerModal, {openModal}] = useModal();
     const [registerScoreAnalysisModal, {openModal: openScoreAnalysisModal, closeModal: closeScoreAnalysisModal}] = useModal();
     const [registerTable, {reload}] = useTable({
-      title: t('common.modules.exam.score') + t('common.list'),
+      title: t('common.modules.exam.examination') + t('common.list'),
       api: getExaminationList,
       columns: examColumns,
       formConfig: {
@@ -75,6 +84,20 @@ export default defineComponent({
       });
     }
 
+    function handleExport(record: Recordable) {
+      exportScore([record.id]).then(res => {
+        const url = window.URL.createObjectURL(new Blob([res]));
+        let link = document.createElement('a');
+        link.style.display = 'none';
+        link.href = url;
+        link.setAttribute('download', 'aa.xlsx');
+        document.body.appendChild(link);
+        link.click();
+        URL.revokeObjectURL(link.href);
+        document.body.removeChild(link);
+      });
+    }
+
     async function handleSuccess() {
       await reload();
     }
@@ -91,6 +114,7 @@ export default defineComponent({
       registerScoreAnalysisModal,
       handleView,
       handleAnalysis,
+      handleExport,
       handleSuccess,
       handleScoreAnalysisModelSuccess
     };

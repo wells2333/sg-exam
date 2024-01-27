@@ -34,12 +34,12 @@ public class MobileSecurityConfigurer extends SecurityConfigurerAdapter<DefaultS
 
 	@Override
 	public void configure(HttpSecurity http) {
-		MobileLoginFilter mobileLoginFilter = new MobileLoginFilter(userTokenService);
-		mobileLoginFilter.setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
-		mobileLoginFilter.setEventPublisher(defaultAuthenticationEventPublisher);
+		MobileLoginFilter filter = new MobileLoginFilter(userTokenService);
+		filter.setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
+		filter.setEventPublisher(defaultAuthenticationEventPublisher);
 		MobileAuthenticationProvider mobileAuthenticationProvider = new MobileAuthenticationProvider();
 		mobileAuthenticationProvider.setCustomUserDetailsService(userDetailsService);
 		http.authenticationProvider(mobileAuthenticationProvider)
-				.addFilterAfter(mobileLoginFilter, UsernamePasswordAuthenticationFilter.class);
+				.addFilterAfter(filter, UsernamePasswordAuthenticationFilter.class);
 	}
 }

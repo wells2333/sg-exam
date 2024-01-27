@@ -17,28 +17,28 @@ public class UserUtils {
 	private UserUtils() {
 	}
 
-	public static List<UserExcelModel> convertToExcelModel(List<UserInfoDto> userInfoDtos) {
-		List<UserExcelModel> userExcelModels = new ArrayList<>(userInfoDtos.size());
-		userInfoDtos.forEach(userInfoDto -> {
-			UserExcelModel userExcelModel = new UserExcelModel();
-			BeanUtils.copyProperties(userInfoDto, userExcelModel);
-			userExcelModels.add(userExcelModel);
+	public static List<UserExcelModel> convertToExcelModel(List<UserInfoDto> dtoList) {
+		List<UserExcelModel> models = new ArrayList<>(dtoList.size());
+		dtoList.forEach(dto -> {
+			UserExcelModel model = new UserExcelModel();
+			BeanUtils.copyProperties(dto, model);
+			models.add(model);
 		});
-		return userExcelModels;
+		return models;
 	}
 
 	public static List<RoleVo> rolesToVo(List<Role> roles) {
 		return roles.stream().map(role -> {
-			RoleVo roleVo = new RoleVo();
-			roleVo.setRoleCode(role.getRoleCode());
-			roleVo.setRoleName(role.getRoleName());
-			roleVo.setRoleDesc(role.getRoleDesc());
-			return roleVo;
+			RoleVo vo = new RoleVo();
+			vo.setRoleCode(role.getRoleCode());
+			vo.setRoleName(role.getRoleName());
+			vo.setRoleDesc(role.getRoleDesc());
+			return vo;
 		}).collect(Collectors.toList());
 	}
 
-	public static void toUserInfoDto(UserInfoDto userInfoDto, User user, UserAuths userAuths) {
-		BeanUtils.copyProperties(userAuths, userInfoDto);
-		BeanUtils.copyProperties(user, userInfoDto);
+	public static void toUserInfoDto(UserInfoDto dtoList, User user, UserAuths userAuths) {
+		BeanUtils.copyProperties(userAuths, dtoList);
+		BeanUtils.copyProperties(user, dtoList);
 	}
 }

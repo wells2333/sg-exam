@@ -5,9 +5,7 @@ import cn.hutool.core.date.SystemClock;
 public class SnowFlakeId {
 
 	private static final int SNOW_FLAKE_WORK_ID = EnvUtils.getInt("SNOW_FLAKE_WORK_ID", 1);
-
 	private static final int SNOW_FLAKE_DATA_CENTER_ID = EnvUtils.getInt("SNOW_FLAKE_DATA_CENTER_ID", 1);
-
 	private static final Snowflake SNOW_FLAKE = new Snowflake(SNOW_FLAKE_WORK_ID, SNOW_FLAKE_DATA_CENTER_ID);
 
 	public static long newId() {

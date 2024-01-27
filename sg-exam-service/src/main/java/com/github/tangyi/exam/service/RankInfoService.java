@@ -22,7 +22,6 @@ import java.util.Set;
 public class RankInfoService {
 
 	private final RedisTemplate<String, String> redisTemplate;
-
 	private final IUserService userService;
 
 	private String getRankKey(Long examinationId) {
@@ -41,23 +40,23 @@ public class RankInfoService {
 		}
 
 		int rankNum = 1;
-		List<RankInfoDto> rankInfos = Lists.newArrayListWithExpectedSize(tuples.size());
+		List<RankInfoDto> result = Lists.newArrayListWithExpectedSize(tuples.size());
 		for (ZSetOperations.TypedTuple<String> tuple : tuples) {
 			if (tuple != null && tuple.getValue() != null) {
-				Long userId = Long.valueOf(tuple.getValue());
-				RankInfoDto rankInfo = new RankInfoDto();
-				rankInfo.setUserId(userId);
-				rankInfo.setScore(tuple.getScore());
-				rankInfo.setRankNum(rankNum++);
-				rankInfos.add(rankInfo);
-				UserVo userVo = userService.getUserInfo(userId);
-				if (userVo != null) {
-					rankInfo.setName(userVo.getName());
-					rankInfo.setAvatarUrl(userVo.getAvatarUrl());
+				Long uid = Long.valueOf(tuple.getValue());
+				RankInfoDto info = new RankInfoDto();
+				info.setUserId(uid);
+				info.setScore(tuple.getScore());
+				info.setRankNum(rankNum++);
+				result.add(info);
+				UserVo vo = userService.getUserInfo(uid);
+				if (vo != null) {
+					info.setName(vo.getName());
+					info.setAvatarUrl(vo.getAvatarUrl());
 				}
 			}
 		}
-		return rankInfos;
+		return result;
 	}
 
 	/**

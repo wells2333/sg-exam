@@ -2,7 +2,7 @@ import Taro from "@tarojs/taro"
 import domain from "./domain";
 import { isWeb } from '../utils/envUtil'
 
-export const USER_SERVICE = isWeb() ? "/api/sg-user-service": domain.getBaseUrl() + "/sg-user-service";
+export const USER_SERVICE = isWeb() ? "/sg-user-service": domain.getBaseUrl() + "/sg-user-service";
 
 interface result<T = any> {
     code: number

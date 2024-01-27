@@ -33,15 +33,10 @@ import java.util.Map;
 public class AnswerController extends BaseController {
 
 	private final IAnswerService answerService;
-
 	private final SubjectsService subjectsService;
-
 	private final ExaminationActionService actionService;
-
 	private final RankInfoService rankInfoService;
-
 	private final SubjectFavoritesService subjectFavoritesService;
-
 	private final SubjectViewCounterService subjectViewCounterService;
 
 	@GetMapping("/{id}")

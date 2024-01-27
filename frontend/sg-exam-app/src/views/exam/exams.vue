@@ -4,11 +4,11 @@
       <el-form ref="examForm" :inline="true" :model="query" label-width="100px" class="examForm">
         <el-form-item label="" prop="examinationName">
           <el-input v-model="query.examinationName" autocomplete="off" :placeholder="$t('exam.examinationName')"
-          @keyup.enter.native="submitForm('examForm')"/>
+          @keyup.enter.native="submitForm('examForm')" size="small"/>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('examForm')">{{ $t('search') }}</el-button>
-          <el-button @click="resetForm('examForm')">{{ $t('reset') }}</el-button>
+          <el-button type="primary" @click="submitForm('examForm')" size="small">{{ $t('search') }}</el-button>
+          <el-button @click="resetForm('examForm')" size="small">{{ $t('reset') }}</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -225,37 +225,53 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
+ .examForm {
+  margin-bottom: 0;
+  .el-form-item {
+    margin-bottom: 12px;
+  }
+ }
   .exam-empty {
     font-size: 13px;
     color: #999;
     text-align: center;
   }
+  .category-cont {
+    height: 100%;
+    border: 1px solid red;
+  }
   .category-list {
-    margin: 0 auto 30px;
-    padding: 15px 10px;
-    width: 98%;
-    box-shadow: 0 5px 15px 0 rgba(82,94,102,.1);
-    border-radius: 4px;
+    margin-bottom: 12px;
     ul {
       margin: 0;
       overflow: hidden;
     }
     .active {
-      color: #fff;
-      background: #409eff;
+      color: #409eff;
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 2px;
+        background-color: #409eff;
+        z-index: 1;
+        width: 100%;
+        cursor: pointer;
+      }
     }
     li  {
+      margin: 0 10px;
+      height: 40px;
+      box-sizing: border-box;
+      line-height: 40px;
+      display: inline-block;
       list-style: none;
-      display: block;
-      float: left;
-      margin: 10px;
-      padding: 0 15px;
-      height: 24px;
-      line-height: 24px;
-      color: #666;
-      font-size: 13px;
-      border-radius: 5px;
-      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: #303133;
+      position: relative;
+      position: relative;
     }
   }
 

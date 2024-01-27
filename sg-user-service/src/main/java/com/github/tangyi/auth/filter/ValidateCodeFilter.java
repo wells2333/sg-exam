@@ -8,6 +8,7 @@ import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.RUtil;
 import com.github.tangyi.user.service.ValidateCodeService;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -25,44 +26,44 @@ public class ValidateCodeFilter extends OncePerRequestFilter {
 	private final ValidateCodeService validateCodeService;
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-			throws ServletException, IOException {
+	protected void doFilterInternal(HttpServletRequest req, @NotNull HttpServletResponse res,
+			@NotNull FilterChain chain) throws ServletException, IOException {
 		// 忽略验证码
-		if (Status.OPEN.equals(request.getParameter("ignoreCode"))) {
-			filterChain.doFilter(request, response);
+		if (Status.OPEN.equals(req.getParameter("ignoreCode"))) {
+			chain.doFilter(req, res);
 		} else {
-			doCheckCode(request, response, filterChain);
+			doCheckCode(req, res, chain);
 		}
 	}
 
-	public void doCheckCode(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+	public void doCheckCode(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
 			throws IOException, ServletException {
-		String uri = request.getRequestURI();
+		String uri = req.getRequestURI();
 		// 密码登录、手机号登录、注册才校验验证码
-		if (HttpMethod.POST.matches(request.getMethod()) && StrUtil.containsAnyIgnoreCase(uri,
-				SecurityConstant.REGISTER, SecurityConstant.MOBILE_LOGIN_URL)) {
+		if (HttpMethod.POST.matches(req.getMethod()) && StrUtil.containsAnyIgnoreCase(uri, SecurityConstant.REGISTER,
+				SecurityConstant.MOBILE_LOGIN_URL)) {
 			try {
-				checkCode(request);
-				filterChain.doFilter(request, response);
+				checkCode(req);
+				chain.doFilter(req, res);
 			} catch (Exception e) {
-				RUtil.out(response, R.error(e.getMessage()));
+				RUtil.out(res, R.error(e.getMessage()));
 			}
 		} else {
-			filterChain.doFilter(request, response);
+			chain.doFilter(req, res);
 		}
 	}
 
-	private void checkCode(HttpServletRequest request) throws InvalidValidateCodeException {
-		// 验证码
-		String code = request.getParameter("code");
+	private void checkCode(HttpServletRequest req) throws InvalidValidateCodeException {
+		String code = req.getParameter("code");
 		if (StrUtil.isBlank(code)) {
 			throw new InvalidValidateCodeException("请输入验证码");
 		}
+
 		// 获取随机码
-		String randomStr = request.getParameter("randomStr");
+		String randomStr = req.getParameter("randomStr");
 		// 随机数为空，则获取手机号
 		if (StrUtil.isBlank(randomStr)) {
-			randomStr = request.getParameter("mobile");
+			randomStr = req.getParameter("mobile");
 		}
 		validateCodeService.checkCode(code, randomStr);
 	}

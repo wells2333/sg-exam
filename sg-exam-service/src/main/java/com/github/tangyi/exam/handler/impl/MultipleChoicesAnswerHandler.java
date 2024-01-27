@@ -3,7 +3,6 @@ package com.github.tangyi.exam.handler.impl;
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.Answer;
 import com.github.tangyi.common.constant.CommonConstant;
-import com.github.tangyi.exam.enums.SubjectType;
 import com.github.tangyi.exam.handler.AbstractAnswerHandler;
 import com.github.tangyi.exam.service.subject.SubjectsService;
 import com.github.tangyi.exam.utils.ExamUtil;
@@ -23,11 +22,6 @@ public class MultipleChoicesAnswerHandler extends AbstractAnswerHandler {
 
 	public MultipleChoicesAnswerHandler(SubjectsService subjectsService) {
 		super(subjectsService);
-	}
-
-	@Override
-	public SubjectType getSubjectType() {
-		return SubjectType.MULTIPLE_CHOICES;
 	}
 
 	@Override
@@ -55,6 +49,7 @@ public class MultipleChoicesAnswerHandler extends AbstractAnswerHandler {
 		if (StringUtils.isBlank(str)) {
 			return false;
 		}
+
 		List<String> strList = Stream.of(str.split(CommonConstant.COMMA)).filter(StringUtils::isNotBlank)
 				.collect(Collectors.toList());
 		List<String> standList = Stream.of(judgeContext.getAnswer().getAnswer().split(CommonConstant.COMMA))
@@ -68,6 +63,7 @@ public class MultipleChoicesAnswerHandler extends AbstractAnswerHandler {
 		if (StringUtils.isBlank(judgeContext.getSubject().getAnswer().getAnswer())) {
 			return;
 		}
+
 		if (judgeRight(judgeContext)) {
 			judgeContext.right();
 		} else {

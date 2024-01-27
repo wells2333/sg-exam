@@ -40,12 +40,12 @@ public class OncePerRequestTokenFilter extends OncePerRequestFilter {
 	private static final int BEARER_LENGTH = SecurityConstant.BEARER.length();
 
 	private final TokenManager tokenManager;
-
-	private final List<AntPathRequestMatcher> matchers = Lists.newArrayList();
+	private final List<AntPathRequestMatcher> matchers;
 
 	public OncePerRequestTokenFilter(TokenManager tokenManager,
 			FilterIgnorePropertiesConfig filterIgnorePropertiesConfig) {
 		this.tokenManager = tokenManager;
+		this.matchers = Lists.newArrayList();
 		List<String> urls = filterIgnorePropertiesConfig.getUrls();
 		if (CollectionUtils.isNotEmpty(urls)) {
 			for (String url : urls) {
@@ -55,18 +55,18 @@ public class OncePerRequestTokenFilter extends OncePerRequestFilter {
 	}
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+	protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
 			throws ServletException, IOException {
-		if (this.isIgnoreUrl(request)) {
-			filterChain.doFilter(request, response);
+		if (this.isIgnoreUrl(req)) {
+			chain.doFilter(req, res);
 			return;
 		}
 
 		try {
-			this.parseToken(request);
-			filterChain.doFilter(request, response);
+			this.parseToken(req);
+			chain.doFilter(req, res);
 		} catch (CommonException e) {
-			RUtil.out(response, R.error(ApiMsg.KEY_TOKEN, e.getMessage()));
+			RUtil.out(res, R.error(ApiMsg.KEY_TOKEN, e.getMessage()));
 		}
 	}
 
@@ -90,14 +90,17 @@ public class OncePerRequestTokenFilter extends OncePerRequestFilter {
 			String tenantCode = ObjectUtil.toString(claims.get(TokenManager.TENANT_CODE));
 			UserToken userToken = this.tokenManager.getToken(userId);
 			if (userToken == null) {
-				throw new TokenExpireException("token已失效，请重新登录");
+				throw new TokenExpireException("token 已失效，请重新登录");
 			}
+
 			if (!userToken.getUserId().toString().equals(userId)) {
-				throw new TokenExpireException("token校验失败，请重新登录");
+				throw new TokenExpireException("token 校验失败，请重新登录");
 			}
+
 			if (!userToken.getId().equals(id)) {
-				throw new TokenExpireException("token已失效");
+				throw new TokenExpireException("token 已失效");
 			}
+
 			this.updateExpireSecondsIfNecessary(userToken);
 			this.setAuthentication(userToken, userId, identify, tenantCode);
 		}
@@ -117,7 +120,7 @@ public class OncePerRequestTokenFilter extends OncePerRequestFilter {
 		try {
 			return this.tokenManager.getTokenBody(token);
 		} catch (Exception e) {
-			throw new TokenInvalidException("Failed to parse token.");
+			throw new TokenInvalidException(e, "Failed to parse token.");
 		}
 	}
 

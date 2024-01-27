@@ -35,27 +35,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class LuceneIndexManager {
 
 	private static final String LUCENE_INDEX_DIR = EnvUtils.getValue("LUCENE_INDEX_DIR");
-
 	private static final int LUCENE_INDEX_DOC_STATS_DELAY_SECOND = EnvUtils.getInt(
 			"LUCENE_INDEX_DOC_STATS_DELAY_SECOND", 30);
-
 	private static final Set<String> VALID_SORT_FIELDS = Sets.newHashSet(DocField.UPDATE_TIME, DocField.CLICK_CNT,
 			DocField.JOIN_CNT);
 
 	private final String indexDir;
-
 	private final Directory directory;
-
 	private final IndexWriter indexWriter;
-
 	private final Analyzer analyzer;
-
 	private final AtomicInteger docNum;
-
 	private SearcherManager searcherManager;
-
 	private ScheduledExecutorService docStatsExecutor;
-
 	private RunnableScheduledFuture<?> docStatsTask;
 
 	private static final class LuceneIndexManagerInstance {
