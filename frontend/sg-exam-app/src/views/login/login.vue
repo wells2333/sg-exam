@@ -174,7 +174,7 @@ export default {
         callback()
       }
     }
-    // TODO
+
     return {
       useSmsLogin: false,
       activeName: '/login',
@@ -295,8 +295,6 @@ export default {
             // 登录，获取 token
             this.$store.dispatch('LoginByUsername', this.login.form).then(() => {
               this.login.loading = false
-              // 重定向到首页
-              this.$router.push({ path: this.redirect || '/' })
             }).catch(() => {
               this.login.loading = false
               this.refreshLoginCode()
@@ -372,9 +370,6 @@ export default {
           this.sms.isStart = false
         }
       }, 1000)
-    },
-    openMsg () {
-      this.$message.warning('你咋忘不了吃呢？')
     }
   }
 }
