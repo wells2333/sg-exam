@@ -10,11 +10,11 @@
         </div>
       </el-col>
     </el-row>
-    <div class="cool-facts-area padding-80-0">
+    <div class="cool-facts-area padding-30-0">
       <el-row type="flex" justify="center" :gutter="50">
         <el-col :span="4">
           <transition name="fade-transform" mode="out-in">
-            <div class="single-cool-facts-area mb-80" v-show="showFacts">
+            <div class="single-cool-facts-area mb-30" v-show="showFacts">
               <div class="icon">
                 <img src="static/img/core-img/star.png" alt="">
               </div>
@@ -27,7 +27,7 @@
         </el-col>
         <el-col :span="4">
           <transition name="fade-transform" mode="out-in">
-            <div class="single-cool-facts-area mb-80" v-show="showFacts">
+            <div class="single-cool-facts-area mb-30" v-show="showFacts">
               <div class="icon">
                 <img src="static/img/core-img/star.png" alt="">
               </div>
@@ -40,7 +40,7 @@
         </el-col>
         <el-col :span="4">
           <transition name="fade-transform" mode="out-in">
-            <div class="single-cool-facts-area mb-80" v-show="showFacts">
+            <div class="single-cool-facts-area mb-30" v-show="showFacts">
               <div class="icon">
                 <img src="static/img/core-img/star.png" alt="">
               </div>
@@ -53,7 +53,7 @@
         </el-col>
         <el-col :span="4">
           <transition name="fade-transform" mode="out-in">
-            <div class="single-cool-facts-area mb-80" v-show="showFacts">
+            <div class="single-cool-facts-area mb-30" v-show="showFacts">
               <div class="icon">
                 <img src="static/img/core-img/star.png" alt="">
               </div>
@@ -67,7 +67,7 @@
       </el-row>
     </div>
 
-    <div class="popular-courses-area padding-80-0">
+    <div class="popular-courses-area padding-30-0">
       <el-row>
         <el-col :span="24">
           <div class="section-heading">
