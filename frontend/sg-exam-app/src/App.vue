@@ -12,6 +12,7 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   @import "assets/css/style.scss";
+  @import "assets/iconfont.css";
   #app {
     height: 100%;
   }
