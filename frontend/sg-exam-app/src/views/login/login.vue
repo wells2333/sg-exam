@@ -295,6 +295,8 @@ export default {
             // 登录，获取 token
             this.$store.dispatch('LoginByUsername', this.login.form).then(() => {
               this.login.loading = false
+              // 重定向到首页
+              this.$router.push({ path: this.redirect || '/' })
             }).catch(() => {
               this.login.loading = false
               this.refreshLoginCode()

@@ -5,6 +5,8 @@ import { TOKEN, USERINFO, REFRESH_TOKEN, ROLES, PERMISSIONS, TENANTCODE, SYS_CON
 
 import { encryption } from '@/utils/util'
 
+const encryptionKey = '1234567887654321'
+
 const user = {
   state: {
     userInfo: getStore({
@@ -40,20 +42,22 @@ const user = {
       return new Promise((resolve, reject) => {
         const user = encryption({
           data: userInfo,
-          key: '1234567887654321',
+          key: encryptionKey,
           param: ['credential']
         })
         loginByUsername(user.tenantCode, user.identifier, user.credential, user.code, user.randomStr).then(response => {
           const data = response.data
-          const {code, result} = data
+          const {code, result, message} = data
           if (code === 0) {
             setToken(result.token)
             setRefreshToken(result.token)
             commit('SET_TOKEN', result.token)
             commit('SET_REFRESH_TOKEN', result.token)
             commit('SET_TENANT_CODE', result.tenantCode)
+            resolve()
+          } else {
+            reject(message)
           }
-          resolve()
         }).catch(error => {
           reject(error)
         })
@@ -63,7 +67,7 @@ const user = {
       return new Promise((resolve, reject) => {
         const user = encryption({
           data: userInfo,
-          key: '1234567887654321',
+          key: encryptionKey,
           param: ['credential']
         })
         loginBySocial(user.tenantCode, user.phone, user.code).then(response => {
@@ -86,7 +90,7 @@ const user = {
       return new Promise((resolve, reject) => {
         const user = encryption({
           data: userInfo,
-          key: '1234567887654321',
+          key: encryptionKey,
           param: ['credential']
         })
         registerByUsername(user.tenantCode, user.identifier, user.email, user.credential, user.code, user.randomStr).then(response => {
