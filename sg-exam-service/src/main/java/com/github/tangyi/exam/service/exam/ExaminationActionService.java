@@ -372,7 +372,11 @@ public class ExaminationActionService {
 				AnswerDto dto = new AnswerDto();
 				BeanUtils.copyProperties(answer, dto);
 				dto.setSubject(map.get(answer.getSubjectId()));
-				dto.setDuration(DateUtils.duration(answer.getStartTime(), answer.getEndTime()));
+				String duration = DateUtils.duration(answer.getStartTime(), answer.getEndTime());
+				if (StringUtils.isEmpty(duration)) {
+					duration = "1ms";
+				}
+				dto.setDuration(duration);
 				dto.setSpeechPlayCnt(answer.getSpeechPlayCnt());
 				list.add(dto);
 			}

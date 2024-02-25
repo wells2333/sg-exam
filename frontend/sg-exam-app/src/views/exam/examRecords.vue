@@ -62,9 +62,9 @@
           <template slot-scope="scope">
             <div style="display: flex; align-items: center;">
               <div style="width: 26px; height: 26px; margin-right: 10px; cursor: pointer;">
-                <img width="100%" height="100%" src="https://yunmianshi.com/attach-storage/yunmianshi/exam/image/10/champion.png" v-if="scope.row.rankNum === 1">
-                <img width="100%" height="100%" src="https://yunmianshi.com/attach-storage/yunmianshi/exam/image/10/runnerUp.png" v-if="scope.row.rankNum === 2">
-                <img width="100%" height="100%" src="https://yunmianshi.com/attach-storage/yunmianshi/exam/image/10/secondRunnerUp.png" v-if="scope.row.rankNum === 3">
+                <i class="iconfont icon-guanjun rank-num" v-if="scope.row.rankNum === 1" style="color: #f24f09"></i>
+                <i class="iconfont icon-yajun1 rank-num" v-if="scope.row.rankNum === 2" style="color: #eeb173"></i>
+                <i class="iconfont icon-jijun1 rank-num" v-if="scope.row.rankNum === 3" style="color: #707070"></i>
               </div>
               <span>{{ scope.row.rankNum }}</span>
             </div>
@@ -268,5 +268,8 @@ export default {
     display: flex;
     justify-content: flex-end;
     margin: 10px 0 50px 0;
+  }
+  .rank-num {
+    font-size: 22px;
   }
 </style>

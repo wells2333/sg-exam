@@ -179,7 +179,7 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 		try {
 			List<ExaminationRecord> list;
 			if (ArrayUtils.isNotEmpty(ids)) {
-				list = this.findListById(ids);
+				list = this.getByExaminationId(ids[0]);
 			} else {
 				// 导出全部
 				ExaminationRecord record = new ExaminationRecord();
@@ -203,6 +203,7 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 					if (e != null) {
 						ExaminationRecordDto dto = new ExaminationRecordDto();
 						dto.setId(temp.getId());
+						dto.setExaminationId(e.getId());
 						dto.setExaminationName(e.getExaminationName());
 						dto.setStartTime(temp.getStartTime());
 						dto.setEndTime(temp.getEndTime());
@@ -211,6 +212,7 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 						dto.setUserId(temp.getUserId());
 						dto.setCorrectNumber(temp.getCorrectNumber());
 						dto.setInCorrectNumber(temp.getInCorrectNumber());
+						dto.setSubmitStatus(temp.getSubmitStatus());
 						dto.setSubmitStatusName(
 								SubmitStatusEnum.match(temp.getSubmitStatus(), SubmitStatusEnum.NOT_SUBMITTED)
 										.getName());

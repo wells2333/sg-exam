@@ -174,7 +174,7 @@ export default {
         callback()
       }
     }
-    // TODO
+
     return {
       useSmsLogin: false,
       activeName: '/login',
@@ -372,9 +372,6 @@ export default {
           this.sms.isStart = false
         }
       }, 1000)
-    },
-    openMsg () {
-      this.$message.warning('你咋忘不了吃呢？')
     }
   }
 }
