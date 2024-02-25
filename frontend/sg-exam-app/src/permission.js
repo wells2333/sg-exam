@@ -12,6 +12,7 @@ const whiteList = ['/', '/home', '/register', '/login', '/auth-redirect', '/404'
 router.beforeEach((to, from, next) => {
   NProgress.start() // 进度条
   const sysConfig = store.getters.sysConfig
+  document.title = sysConfig.sys_web_name
   if (sysConfig === undefined || Object.keys(sysConfig).length === 0) {
     store.dispatch('GetSysConfig').then(res => {
       if (res) {
