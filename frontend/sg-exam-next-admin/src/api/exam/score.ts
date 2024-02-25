@@ -18,7 +18,11 @@ export const exportScore = (params?: object
   return defHttp.post<ApiRes>(
     {
       url: ExamRecordApi.Export,
-      params
+      params,
+      responseType: 'arraybuffer'
+    },
+    {
+      isTransformResponse: false
     }
   );
 };

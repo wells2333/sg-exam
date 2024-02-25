@@ -91,7 +91,7 @@ public class UserController extends BaseController {
 				userVo.setIdentityType(Integer.valueOf(identityType));
 			}
 			userVo.setIdentifier(SysUtil.getUser());
-			userVo.setTenantCode(SysUtil.getTenantCode());
+			userVo.setTenantCode(SysUtil.getUserDetails().getTenantCode());
 			return R.success(userService.findUserInfo(userVo));
 		} catch (Exception e) {
 			throw new CommonException(e, "获取当前登录用户详细信息");

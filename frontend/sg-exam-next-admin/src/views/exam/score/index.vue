@@ -86,14 +86,14 @@ export default defineComponent({
 
     function handleExport(record: Recordable) {
       exportScore([record.id]).then(res => {
-        const url = window.URL.createObjectURL(new Blob([res]));
+        const url = window.URL.createObjectURL(new Blob([res], { type: 'application/octet-stream' }));
         let link = document.createElement('a');
         link.style.display = 'none';
         link.href = url;
-        link.setAttribute('download', 'aa.xlsx');
+        link.setAttribute('download', '成绩.xlsx');
         document.body.appendChild(link);
         link.click();
-        URL.revokeObjectURL(link.href);
+        window.URL.revokeObjectURL(link.href);
         document.body.removeChild(link);
       });
     }

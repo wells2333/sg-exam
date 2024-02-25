@@ -2,7 +2,6 @@ package com.github.tangyi.exam.excel;
 
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.format.DateTimeFormat;
-import com.alibaba.excel.annotation.format.NumberFormat;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import com.alibaba.excel.annotation.write.style.ContentRowHeight;
 import com.alibaba.excel.annotation.write.style.HeadRowHeight;
@@ -22,19 +21,24 @@ public class ExamRecordModel {
 	@ExcelProperty(value = "考生ID", converter = LongStringConverter.class)
 	private Long userId;
 
+	@ExcelProperty("考生姓名")
+	private String userName;
+
+	@ExcelProperty("部门名称")
+	private String deptName;
+
 	@ExcelProperty(value = "考试ID", converter = LongStringConverter.class)
 	private Long examinationId;
 
 	@ExcelProperty("开始时间")
-	@DateTimeFormat("yyyy年MM月dd日HH时mm分ss秒")
+	@DateTimeFormat("yyyy-MM-dd HH:mm:ss")
 	private Date startTime;
 
 	@ExcelProperty("结束时间")
-	@DateTimeFormat("yyyy年MM月dd日HH时mm分ss秒")
+	@DateTimeFormat("yyyy-MM-dd HH:mm:ss")
 	private Date endTime;
 
 	@ExcelProperty("成绩")
-	@NumberFormat("#.##")
 	private Double score;
 
 	@ExcelProperty("错题数")

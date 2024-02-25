@@ -4,28 +4,22 @@
       <div class="site-info">
         <el-row>
           <el-col :span="6" :offset="2" class="footer-col">
-            <h4>{{$t('common.link')}}</h4>
             <a target="_blank" href="https://gitee.com/wells2333/sg-exam">{{$t('common.gitee')}}</a>
             <a target="_blank" href="https://github.com/wells2333/sg-exam">{{$t('common.github')}}</a>
             <a target="_blank" href="javascript:void(0);"
                onclick="window.open(window.location.origin + '/admin');return false;">{{$t('common.admin')}}</a>
-            <a target="_blank" href="https://gitee.com/wells2333/sg-exam/blob/master/CHANGELOG.md">{{$t('common.changeLog')}}</a>
           </el-col>
           <el-col :span="6" class="footer-col">
-            <h4>{{$t('common.tool')}}</h4>
             <a target="_blank" href="https://element.eleme.cn/#/zh-CN">Element UI</a>
             <a target="_blank" href="https://cn.vuejs.org/">Vue</a>
           </el-col>
           <el-col :span="6" class="footer-col">
-            <h4>{{$t('common.community')}}</h4>
+            <a target="_blank" href="https://gitee.com/wells2333/sg-exam/blob/master/CHANGELOG.md">{{$t('common.changeLog')}}</a>
             <a target="_blank" href="https://gitee.com/wells2333/sg-exam/issues">{{$t('common.feedback')}}</a>
           </el-col>
         </el-row>
       </div>
-
-      <div class="line"></div>
-
-      <el-row :gutter="20" style="margin-top: 50px;">
+      <el-row :gutter="20">
         <el-col :span="12" :offset="8">
           <div class="copyright">
             <h4 class="content-c2" style="text-align: center;">Copyright ©2022</h4>
@@ -81,7 +75,7 @@ export default {
   background-color: #252525;
   width: 100%;
   box-sizing: border-box;
-  height: 400px;
+  padding: 10px 0;
 }
 
 .container {
@@ -151,21 +145,13 @@ export default {
 .footer-col {
   width: 200px;
   float: left;
-  margin-top: 30px;
-
-  h4 {
-    color: #fff;
-    font-size: 30px;
-    font-weight: 400;
-  }
 
   a {
     display: block;
-    margin: 0;
-    line-height: 2.5;
-    font-size: 20px;
-    font-weight: 400;
+    margin: 5px 0;
+    font-size: 14px;
     color: #ffffffa6;
+    font-weight: normal;
   }
 
   .we-chat {

@@ -6,9 +6,9 @@ import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.metadata.data.ReadCellData;
 import com.alibaba.excel.metadata.data.WriteCellData;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
+import com.github.tangyi.api.exam.enums.SubmitStatusEnum;
 import com.github.tangyi.exam.enums.SubjectLevel;
 import com.github.tangyi.exam.enums.SubjectType;
-import com.github.tangyi.exam.enums.SubmitStatus;
 
 public final class Converters {
 
@@ -56,13 +56,13 @@ public final class Converters {
 		@Override
 		public Integer convertToJavaData(ReadCellData<?> cellData, ExcelContentProperty contentProperty,
 				GlobalConfiguration globalConfiguration) {
-			return SubmitStatus.matchByName(cellData.getStringValue()).getValue();
+			return SubmitStatusEnum.matchByName(cellData.getStringValue(), SubmitStatusEnum.UNKNOWN).getValue();
 		}
 
 		@Override
 		public WriteCellData<String> convertToExcelData(Integer value, ExcelContentProperty contentProperty,
 				GlobalConfiguration globalConfiguration) {
-			return new WriteCellData<>(SubmitStatus.matchByValue(value).getName());
+			return new WriteCellData<>(SubmitStatusEnum.match(value, SubmitStatusEnum.UNKNOWN).getName());
 		}
 	}
 
