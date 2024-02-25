@@ -100,7 +100,7 @@ const config = {
         devServer: {
             proxy: {
                 '/sg-user-service/': {
-                    target: 'https://www.yunmianshi.com',
+                    target: 'http://127.0.0.1:9183/',
                     changeOrigin: true
                 }
             }

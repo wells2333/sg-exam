@@ -99,10 +99,10 @@ spring:
       connection-timeout: 30000
       connection-test-query: SELECT 1
   redis:
-    host: 127.0.0.1
-    username:
-    password:
-    port: 6379
+    host: ${SG_REDIS_USER_HOST:127.0.0.1}
+    username: ${SG_REDIS_USER_USERNAME:}
+    password: ${SG_REDIS_USER_PASSWORD:}
+    port: ${SG_REDIS_USER_POST:6379}
 
 ---
 spring:
@@ -127,10 +127,10 @@ spring:
       connection-timeout: 30000
       connection-test-query: SELECT 1
   redis:
-    host: redis
-    username:
-    password:
-    port: 6379
+    host: ${SG_REDIS_USER_HOST:127.0.0.1}
+    username: ${SG_REDIS_USER_USERNAME:}
+    password: ${SG_REDIS_USER_PASSWORD:}
+    port: ${SG_REDIS_USER_POST:6379}
 
 # 生产环境关闭接口文档
 springdoc:
