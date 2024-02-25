@@ -37,7 +37,7 @@
         <el-col :span="12" :offset="6">
           <div class="cop">
             <a class="content-c3" href="https://beian.miit.gov.cn/" target="_blank">
-              <span class="content-c3">{{$t('copyRight')}}</span>
+              <span class="content-c3">{{ sysConfig.sys_web_copyright}}</span>
             </a>
           </div>
         </el-col>
@@ -46,9 +46,15 @@
   </div>
 </template>
 <script>
+import {mapGetters} from 'vuex'
 export default {
   data() {
     return {}
+  },
+  computed: {
+    ...mapGetters([
+      'sysConfig'
+    ])
   },
   methods: {
     openLayer() {

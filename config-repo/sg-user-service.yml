@@ -105,9 +105,10 @@ spring:
     port: ${SG_REDIS_USER_POST:6379}
 
 ---
+server:
+  port: 80
 spring:
   profiles: docker
-  port: 80
   servlet:
     multipart:
       max-file-size: 10MB
