@@ -214,8 +214,8 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss" scoped>
 .filter-items {
-  margin: 0 auto 22px;
-  padding: 15px 10px;
+  margin: 0 auto 12px;
+  padding: 0 12px;
   width: 98%;
   box-shadow: 0 5px 15px 0 rgba(82, 94, 102, .1);
   border-radius: 4px;
@@ -318,7 +318,7 @@ export default {
   background-color: #fff;
   box-shadow: 0 5px 15px 0 rgba(82, 94, 102, .1);
   border-radius: 4px;
-  margin-top: 30px;
+  margin-top: 12px;
 }
 
 .hot-search-item {
@@ -331,9 +331,10 @@ export default {
   display: block;
   white-space: nowrap;
   overflow: hidden;
-  font-size: .16rem;
+  font-size: 12px;
   color: #323232;
   margin-left: 12px;
+  font-weight: normal;
 }
 
 .hot-search-item:nth-child(1) {
