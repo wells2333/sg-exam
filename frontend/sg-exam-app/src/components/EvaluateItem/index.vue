@@ -2,7 +2,8 @@
     <div class="user-evaluate-item" v-if="item">
         <el-row class="user-evaluate-item-bg">
             <el-col :span="2">
-                <img width="40" height="40" class="user-evaluate-item-avatar" :src="item.avatarUrl ? item.avatarUrl:'https://yunmianshi.com/attach-storage/yunmianshi/default/124/user.png'">
+                <img width="40" v-if="item.avatarUrl" height="40" class="user-evaluate-item-avatar" :src="item.avatarUrl">
+                <i class="iconfont icon-user" v-else style="font-size: 40px; color: #5a5a5a;"></i>
             </el-col>
             <el-col :span="22">
                 <div class="user-evaluate-item-top">
