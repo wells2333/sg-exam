@@ -73,7 +73,8 @@
         <el-table-column label="账号" width="200">
           <template slot-scope="scope">
             <div style="display: flex; align-items: center; cursor: pointer;">
-              <img style="margin-right: 10px;width: 30px; height: 30px; border-radius: 50%;" :src="scope.row.avatarUrl ? scope.row.avatarUrl:'https://yunmianshi.com/attach-storage/yunmianshi/default/124/user.png'">
+              <img  v-if="scope.row.avatarUrl" class="account" :src="scope.row.avatarUrl">
+              <i class="iconfont icon-user account account-icon" v-else></i>
               <span >{{ scope.row.name }}</span>
             </div>
           </template>
@@ -271,5 +272,17 @@ export default {
   }
   .rank-num {
     font-size: 22px;
+  }
+  .account {
+    margin-right: 10px;
+    width: 30px;
+    height: 30px;
+     border-radius: 50%;
+  }
+  .account-icon {
+    font-size: 30px;
+    color: #5a5a5a;
+    display: flex;
+    align-items: center;
   }
 </style>
