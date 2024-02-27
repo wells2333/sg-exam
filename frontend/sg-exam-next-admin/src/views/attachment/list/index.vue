@@ -8,7 +8,6 @@
           @change="handleChange"
           :api="uploadApi"
           class="my-5"
-          :accept="['image/*', 'png', 'jpeg', 'doc', 'docx', 'xml', 'mp4']"
         />
       </template>
       <template #action="{ record }">

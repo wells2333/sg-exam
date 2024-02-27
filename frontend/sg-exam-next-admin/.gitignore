@@ -3,7 +3,8 @@ node_modules
 dist
 .npmrc
 .cache
-
+.vscode
+pnpm-lock.yml
 tests/server/static
 tests/server/static/upload
 
