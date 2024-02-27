@@ -74,10 +74,6 @@ public class QiNiuAttachmentStorage extends AbstractAttachmentStorage {
     }
 
     private String getUrlPrefix(String token, Client client) throws QiniuException {
-        if (StringUtils.isNotBlank(this.urlPrefixValue)) {
-            return this.urlPrefixValue;
-        }
-
         List<String> hosts = new ApiQueryRegion(client).request(new ApiQueryRegion.Request(null, token)).getDefaultRegionUpHosts();
         if (CollectionUtils.isEmpty(hosts)) {
             throw new QiNiuAttachException("Failed to query region up hosts, token: " + token);
