@@ -20,22 +20,73 @@ export const columns: BasicColumn[] = [
   {
     title: '内容显示',
     dataIndex: 'url',
-    width: 160,
     align: 'left',
     style: {
       cursor: 'pointer',
     },
     customRender: ({ record }) => {
-      if (record.url == '') {
-        return h('div', { style: { fontSize: '16px', color: 'red' } }, '无法显示');
-      } else {
-        return h(Image, { src: record.url, height: '40px' });
+      if (record.url == '')
+        return h('div', { style: { fontSize: '16px', color: 'red' } }, '地址为空');
+      else {
+        // 定义图片格式的正则表达式
+        var imageExtensions = /(jpeg|jpg|gif|png)$/;
+        if (imageExtensions.test(record.attachType))
+          // return h(Image, { src: record.url, height: '40px' });
+          return h('img', {
+            src: record.url,
+            style: {
+              height: '50px',
+              fontSize: '16px',
+              color: 'red',
+            },
+          });
+        // 定义音频格式的正则表达式
+        var audioExtensions = /(mp3|wav|ogg)$/;
+        if (audioExtensions.test(record.attachType))
+          return h(
+            'audio',
+            {
+              src: record.url,
+              controls: true,
+              style: {
+                width: '200px',
+              },
+            },
+            'Your browser does not support the audio tag.',
+          );
+        // 定义视频格式的正则表达式
+        var audioExtensions = /(mp4|avi|mov|wmv|flv|mkv)$/;
+        if (audioExtensions.test(record.attachType))
+          return h(
+            'video',
+            {
+              src: record.url,
+              controls: true,
+              style: {
+                height: '80px',
+              },
+            },
+            'Your browser does not support the video tag.',
+          );
+        else {
+          return h(
+            'a',
+            {
+              href: record.url,
+              style: {
+                height: '40px',
+              },
+            },
+            '下载附件',
+          );
+        }
       }
     },
   },
 
   {
     title: '附件类型',
+    width: 80,
     dataIndex: 'attachType',
     align: 'left',
   },
