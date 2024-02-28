@@ -4,8 +4,8 @@
       <div>
         <el-row class="m-exam-title" v-show="!loading">
           <el-col :span="24">
-            <h2>{{ exam.examinationName }}</h2>
-            <p v-if="exam.attention !== undefined">{{ exam.attention }}</p>
+            <h2 v-if="exam">{{ exam.examinationName }}</h2>
+            <p v-if="exam && exam.attention !== undefined">{{ exam.attention }}</p>
           </el-col>
         </el-row>
         <el-row>
@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { anonymousUserGetObj, anonymousUserGetSubjectIds } from '@/api/exam/exam'
+import { canStart, anonymousUserGetObj, anonymousUserGetSubjectIds } from '@/api/exam/exam'
 import { anonymousUserSubmit, anonymousUserSaveAndNext } from '@/api/exam/answer'
 import { getCurrentTime, anonymousUserStart } from '@/api/exam/examRecord'
 import { anonymousUserGetSubjectAnswer } from '@/api/exam/subject'
@@ -122,42 +122,38 @@ export default {
       if (this.query.examinationId === undefined) {
         return
       }
-      // 查询考试信息
-      anonymousUserGetObj(this.query.examinationId).then(response => {
-        this.exam = response.data.data
-        // 校验时间
-        getCurrentTime().then(response => {
-          const currentTime = moment(response.data.data)
-          if (currentTime.isAfter(this.exam.endTime)) {
-            messageWarn(this, '考试已结束')
-          } else if (currentTime.isBefore(this.exam.startTime)) {
-            // 考试未开始
-            messageWarn(this, '考试未开始')
-          } else {
-            // 创建考试记录
-            anonymousUserStart({ examinationId: this.query.examinationId, identifier: this.identifier }).then(response => {
-              const { examRecord, subjectDto } = response.data.data
-              this.tempExamRecord = examRecord
-              subjectDto.show = true
-              this.tempSubject = subjectDto
-              this.query.subjectId = subjectDto.id
-              this.query.type = subjectDto.type
-              // 时间
-              const current = currentTime.valueOf()
-              this.currentTime = current
-              this.startTime = current
-              this.subjectStartTime = current
-              this.endTime = moment(this.exam.endTime).valueOf()
-              this.doStart()
-            }).catch(error => {
-              console.error(error)
-            })
-          }
+
+      // 是否能开始考试
+      canStart(this.query.examinationId).then(response => {
+        const {code, result} = response.data
+        if (code !== 0 || result === null || !result) {
+          messageFail(this, this.$t('exam.exams.startFailed'))
+          return
+        }
+
+        // 查询考试信息
+        anonymousUserGetObj(this.query.examinationId).then(response => {
+          this.exam = response.data.data
+          // 创建考试记录
+          anonymousUserStart({ examinationId: this.query.examinationId, identifier: this.identifier }).then(response => {
+            debugger
+            const { examRecord, subjectDto } = response.data.result
+            this.tempExamRecord = examRecord
+            subjectDto.show = true
+            this.tempSubject = subjectDto
+            this.query.subjectId = subjectDto.id
+            this.query.type = subjectDto.type
+            this.doStart()
+          }).catch(error => {
+            debugger
+            console.error(error)
+          })
+        }).catch((error) => {
+          debugger
+          console.error(error)
+          messageFail(this, '系统出了点问题')
+          this.loading = false
         })
-      }).catch((error) => {
-        console.error(error)
-        messageFail(this, '系统出了点问题')
-        this.loading = false
       })
     },
     doStart () {

@@ -5,6 +5,8 @@ import com.github.tangyi.api.exam.dto.*;
 import com.github.tangyi.api.exam.enums.SubmitStatusEnum;
 import com.github.tangyi.api.exam.model.*;
 import com.github.tangyi.api.exam.thread.IExecutorHolder;
+import com.github.tangyi.api.user.enums.IdentityType;
+import com.github.tangyi.api.user.service.IUserService;
 import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.*;
@@ -39,6 +41,7 @@ import java.util.stream.Collectors;
 @Service
 public class ExaminationActionService {
 
+	private final IUserService userService;
 	private final ExaminationService examinationService;
 	private final ExaminationSubjectService examinationSubjectService;
 	private final ExamRecordService examRecordService;
@@ -48,10 +51,11 @@ public class ExaminationActionService {
 	private final IExecutorHolder executorHolder;
 	private final ExamFavoritesService examFavoritesService;
 
-	public ExaminationActionService(ExaminationService examinationService,
+	public ExaminationActionService(IUserService userService, ExaminationService examinationService,
 			ExaminationSubjectService examinationSubjectService, ExamRecordService examRecordService,
 			SubjectsService subjectsService, AnswerService answerService, RankInfoService rankInfoService,
 			IExecutorHolder executorHolder, ExamFavoritesService examFavoritesService) {
+		this.userService = userService;
 		this.examinationService = examinationService;
 		this.examinationSubjectService = examinationSubjectService;
 		this.examRecordService = examRecordService;
@@ -123,13 +127,16 @@ public class ExaminationActionService {
 	@Transactional
 	public StartExamDto anonymousUserStart(Long examinationId, String identifier) {
 		String tenantCode = SysUtil.getTenantCode();
-		// 创建考试记录
-		SgPreconditions.checkNull(examinationId, "参数校验失败，考试 id 为空");
-		SgPreconditions.checkNull(identifier, "参数校验失败，用户 identifier 为空");
+		SgPreconditions.checkNull(tenantCode, "tenantCode must not be null");
+		SgPreconditions.checkNull(examinationId, "examinationId must not be null");
+		SgPreconditions.checkNull(identifier, "identifier must not be null");
 		// 查询用户信息
-		R<UserVo> r = null;
-		SgPreconditions.checkBoolean(!RUtil.isSuccess(r), "获取用户" + identifier + "信息失败！");
-		return this.start(r.getResult().getUserId(), identifier, examinationId, tenantCode);
+		Long userId = null;
+		UserVo userVo = this.userService.findUserByIdentifier(IdentityType.PASSWORD.getValue(), identifier, tenantCode);
+		if (userVo != null) {
+			userId = userVo.getId();
+		}
+		return this.start(userId, identifier, examinationId, tenantCode);
 	}
 
 	/**

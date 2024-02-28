@@ -36,19 +36,19 @@ public class ExaminationController extends BaseController {
 	@GetMapping("canStart")
 	@Operation(summary = "查询是否能开始考试", description = "查询是否能开始考试")
 	public R<Boolean> canStart(@RequestParam Long id) {
-		boolean canStart = false;
 		Examination examination = examinationService.get(id);
-		if (examination != null) {
-			if (examination.getStartTime() != null && examination.getEndTime() != null) {
-				long currentMillis = System.currentTimeMillis();
-				canStart = ((currentMillis > examination.getStartTime().getTime()) && (
-						examination.getEndTime().getTime() > currentMillis));
-			} else {
-				// 没有限制考试时间
-				canStart = true;
-			}
+		if (examination == null) {
+			return R.success(false);
 		}
-		return R.success(canStart);
+
+		if (examination.getStartTime() != null && examination.getEndTime() != null) {
+			long current = System.currentTimeMillis();
+			long startTime = examination.getStartTime().getTime();
+			long endTime = examination.getEndTime().getTime();
+			// 当前时间大于考试开始时间 && 当期时间小于考试结束时间
+			return R.success(current > startTime && endTime > current);
+		}
+		return R.success(true);
 	}
 
 	@GetMapping("/{id}")

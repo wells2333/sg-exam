@@ -167,6 +167,7 @@ export default {
       if (this.saving) {
         return
       }
+
       try {
         this.saving = true
         const answerId = isNotEmpty(this.tempAnswer) ? this.tempAnswer.id : ''

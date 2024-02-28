@@ -161,13 +161,11 @@ export default {
       this.tempExamRecord.userId = this.userInfo.id
       canStart(this.examination.id).then(response => {
         const {code, result} = response.data
-        if (code !== 0 || result === null) {
+        if (code !== 0 || result === null || !result) {
           messageFail(this, this.$t('exam.exams.startFailed'))
           return
         }
-        if (!result) {
-          messageFail(this, this.$t('exam.exams.startFailed'))
-        }
+
         this.$confirm(this.$t('exam.exams.sureStart'), this.$t('tips'), {
           confirmButtonText: this.$t('sure'),
           cancelButtonText: this.$t('cancel'),

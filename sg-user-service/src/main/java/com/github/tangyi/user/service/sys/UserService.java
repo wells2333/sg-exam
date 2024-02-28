@@ -89,6 +89,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 		return this.dao.findAllUserCount();
 	}
 
+	@Override
 	@Transactional
 	public int createUser(UserDto userDto) {
 		String tenantCode = SysUtil.getTenantCode();
@@ -107,6 +108,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 		return update;
 	}
 
+	@Override
 	@Transactional
 	public UserAuths createUserAuths(UserDto userDto, User user) {
 		UserAuths userAuths = new UserAuths();
@@ -126,6 +128,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 		return userAuths;
 	}
 
+	@Override
 	@Transactional
 	public void createUserRole(UserDto userDto, User user) {
 		if (CollectionUtils.isEmpty(user.getRole())) {
@@ -135,6 +138,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 		createUserRole(user.getId(), user.getRole());
 	}
 
+	@Override
 	@Transactional
 	public void createUserRole(Long userId, List<Long> roleIds) {
 		roleIds.forEach(roleId -> {
@@ -150,6 +154,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	/**
 	 * 根据用户唯一标识获取用户详细信息
 	 */
+	@Override
 	public UserVo findUserByIdentifier(Integer identityType, String identifier, String tenantCode) {
 		UserAuths userAuths = findUserAuthsByIdentifier(identityType, identifier, tenantCode);
 		if (userAuths == null) {
@@ -168,20 +173,24 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 		return userVo;
 	}
 
+	@Override
 	public User findUserByPhone(String phone, String tenantCode) {
 		Preconditions.checkNotNull(phone);
 		Preconditions.checkNotNull(tenantCode);
 		return this.dao.findUserByPhone(phone, tenantCode);
 	}
 
+	@Override
 	public UserAuths findUserAuthsByIdentifier(String identifier) {
 		return findUserAuthsByIdentifier(null, identifier, SysUtil.getTenantCode());
 	}
 
+	@Override
 	public UserAuths findUserAuthsByIdentifier(String identifier, String tenantCode) {
 		return findUserAuthsByIdentifier(null, identifier, tenantCode);
 	}
 
+	@Override
 	public UserAuths findUserAuthsByIdentifier(Integer identityType, String identifier, String tenantCode) {
 		UserAuths condition = new UserAuths();
 		condition.setIdentifier(identifier);
@@ -192,6 +201,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 		return userAuthsService.getByIdentifier(condition);
 	}
 
+	@Override
 	public UserAuths findUserAuthsByUserId(Integer identityType, Long userId, String tenantCode) {
 		UserAuths condition = new UserAuths();
 		condition.setUserId(userId);

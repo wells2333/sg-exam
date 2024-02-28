@@ -26,18 +26,21 @@ import java.util.List;
 public class UserAuthsService extends CrudService<UserAuthsMapper, UserAuths>
 		implements IUserAuthsService, UserCacheName {
 
+	@Override
 	@Cacheable(value = USER_AUTHS, key = "#userAuths.tenantCode + ':' + #userAuths.identifier", unless = "#result == null")
 	public UserAuths getByIdentifier(UserAuths userAuths) {
 		SgPreCondition.checkIdentifierAndTenantCode(userAuths.getIdentifier(), userAuths.getTenantCode());
 		return this.dao.getByIdentifier(userAuths);
 	}
 
+	@Override
 	public UserAuths getByUserId(UserAuths userAuths) {
 		SgPreCondition.checkUserIdAndTenantCode(userAuths.getUserId(), userAuths.getTenantCode());
 		Preconditions.checkState(userAuths.getIdentityType() != null, "identityType must not be null");
 		return this.dao.getByUserId(userAuths);
 	}
 
+	@Override
 	public List<UserAuths> getListByUsers(List<User> userList) {
 		if (CollectionUtils.isEmpty(userList)) {
 			return Collections.emptyList();
@@ -45,6 +48,7 @@ public class UserAuthsService extends CrudService<UserAuthsMapper, UserAuths>
 		return this.dao.getListByUserIds(BaseEntity.ids(userList));
 	}
 
+	@Override
 	@Transactional
 	@CacheEvict(value = USER_AUTHS, key = "#userAuths.tenantCode + ':' + #userAuths.identifier")
 	public int deleteByIdentifier(UserAuths userAuths) {
@@ -52,6 +56,7 @@ public class UserAuthsService extends CrudService<UserAuthsMapper, UserAuths>
 		return this.dao.deleteByIdentifier(userAuths);
 	}
 
+	@Override
 	@Transactional
 	@CacheEvict(value = USER_AUTHS, allEntries = true)
 	public int deleteByUserId(UserAuths userAuths) {
@@ -59,6 +64,7 @@ public class UserAuthsService extends CrudService<UserAuthsMapper, UserAuths>
 		return this.dao.deleteByUserId(userAuths);
 	}
 
+	@Override
 	@Transactional
 	@CacheEvict(value = USER_AUTHS, allEntries = true)
 	public int insertBatch(List<UserAuths> userAuths) {

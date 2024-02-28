@@ -109,13 +109,8 @@ export const constantRouterMap = [
   },
   {
     path: '/mobile',
-    name: 'Mobile',
-    component: () => import('@/views/mobile/Index')
-  },
-  {
-    path: '/mobile-v2',
-    name: 'MobileV2',
-    component: () => import('@/views/mobileV2/Index')
+    name: 'mobile',
+    component: () => import('@/views/mobile/index')
   },
   {
     path: '*',
