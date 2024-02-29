@@ -42,6 +42,14 @@ export function anonymousUserStart (obj) {
   })
 }
 
+export function getAllSubjects (examinationId) {
+  return request({
+    url: baseExamRecordUrl + 'allSubjects/' + examinationId,
+    method: 'get',
+    params: {}
+  })
+}
+
 export function getCurrentTime () {
   return request({
     url: baseExamRecordUrl + 'currentTime',

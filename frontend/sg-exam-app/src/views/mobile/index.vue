@@ -89,29 +89,31 @@ export default {
   },
   created () {
     this.query.examinationId = this.$route.query.id
-    this.$prompt('请输入考生账号', '提示', {
-      type: 'info',
-      roundButton: true,
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      inputPlaceholder: '自行注册或联系管理员创建账号',
-      inputValidator: function (value) {
-        if (value.length < 4) {
-          return false
-        }
-        const reg = /^[A-Za-z]+$/
-        return reg.test(value)
-      },
-      inputErrorMessage: '请输入合法英文字符且长度>4！',
-      center: true
-    }).then(({ value }) => {
-      this.identifier = value
-      this.startExam()
-    }).catch(() => {
-      console.log('取消考试')
-      messageWarn(this, '取消考试')
-      window.close()
-    })
+    this.identifier = 'admin'
+    this.startExam()
+    // this.$prompt('请输入考生账号', '提示', {
+    //   type: 'info',
+    //   roundButton: true,
+    //   confirmButtonText: '确定',
+    //   cancelButtonText: '取消',
+    //   inputPlaceholder: '自行注册或联系管理员创建账号',
+    //   inputValidator: function (value) {
+    //     if (value.length < 4) {
+    //       return false
+    //     }
+    //     const reg = /^[A-Za-z]+$/
+    //     return reg.test(value)
+    //   },
+    //   inputErrorMessage: '请输入合法英文字符且长度>4！',
+    //   center: true
+    // }).then(({ value }) => {
+    //   this.identifier = value
+    //   this.startExam()
+    // }).catch(() => {
+    //   console.log('取消考试')
+    //   messageWarn(this, '取消考试')
+    //   window.close()
+    // })
   },
   methods: {
     countDownS_cb: function (x) {},

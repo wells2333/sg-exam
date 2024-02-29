@@ -4,7 +4,7 @@ const baseExaminationUrl = '/sg-user-service/v1/examination/'
 
 export function canStart (id) {
   return request({
-    url: baseExaminationUrl + 'canStart?id=' + id,
+    url: baseExaminationUrl + 'anonymousUser/canStart?id=' + id,
     method: 'get'
   })
 }
@@ -62,36 +62,5 @@ export function anonymousUserGetSubjectIds (id, query) {
     url: baseExaminationUrl + 'anonymousUser/' + id + '/subjectIds',
     method: 'get',
     params: query
-  })
-}
-
-export function addObj (obj) {
-  return request({
-    url: baseExaminationUrl,
-    method: 'post',
-    data: obj
-  })
-}
-
-export function putObj (obj) {
-  return request({
-    url: baseExaminationUrl,
-    method: 'put',
-    data: obj
-  })
-}
-
-export function delObj (id) {
-  return request({
-    url: baseExaminationUrl + id,
-    method: 'delete'
-  })
-}
-
-export function delAllObj (obj) {
-  return request({
-    url: baseExaminationUrl + 'deleteAll',
-    method: 'post',
-    data: obj
   })
 }

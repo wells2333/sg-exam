@@ -1,5 +1,6 @@
 import CryptoJS from 'crypto-js'
 import { ATTACHMENT_URL } from '@/config/attachment'
+import { v4 as uuidv4 } from 'uuid'
 
 /**
  * 加密处理
@@ -310,4 +311,8 @@ export const isCreate = (status) => {
 
 export const trimComma = (str) => {
   return str.replace(new RegExp('^,*|,*$', 'gm'), '')
+}
+
+export const uuid = () => {
+  return uuidv4()
 }

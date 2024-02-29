@@ -29,6 +29,7 @@
 import SgAudio from '@/components/SgAudio'
 import SgVideo from '@/components/SgVideo'
 import {setVideoSrc, pauseVideo, pauseAudio, setAudioSrc} from '@/utils/busi'
+import {uuid} from '@/utils/util'
 
 export default {
   name: 'Choices',
@@ -62,6 +63,9 @@ export default {
     setSubjectInfo(subject) {
       this.subjectInfo = subject
       if (subject.hasOwnProperty('options')) {
+        subject.options.forEach(o => {
+          o.id = uuid()
+        })
         this.options = subject.options
       }
       if (subject.hasOwnProperty('answer')) {

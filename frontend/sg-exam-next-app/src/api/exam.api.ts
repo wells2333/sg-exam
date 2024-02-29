@@ -23,8 +23,8 @@ class examApi {
     }
 
     // 获取题目
-    async allSubjects(recordId: string) {
-        return api.fetchExam<Sg.ExamInfo>("/v1/examRecord/allSubjects/" + recordId, {}, "GET")
+    async allSubjects(examinationId: string) {
+        return api.fetchExam<Sg.ExamInfo>("/v1/examRecord/allSubjects/" + examinationId, {}, "GET")
     }
 
     async getSubjects(params: object) {

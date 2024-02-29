@@ -176,7 +176,14 @@ export default {
               messageWarn(this, this.$t('exam.exams.startFailed'))
               return
             }
-            this.$router.push({ path: `/start/${this.examination.id}` })
+
+            if (this.examination.answerType === 0) {
+              // 展示所有题目
+              this.$router.push({ path: `/start-exam-b/${this.examination.id}` })
+            } else {
+              // 上一题、下一题模式
+              this.$router.push({ path: `/start-exam-a/${this.examination.id}` })
+            }
           }).catch(() => {
             messageWarn(this, this.$t('exam.exams.startFailed'))
           })

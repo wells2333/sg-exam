@@ -33,7 +33,7 @@ public class ExaminationController extends BaseController {
 	private final IExaminationService examinationService;
 	private final IExamPermissionService examPermissionService;
 
-	@GetMapping("canStart")
+	@GetMapping({"canStart", "anonymousUser/canStart"})
 	@Operation(summary = "查询是否能开始考试", description = "查询是否能开始考试")
 	public R<Boolean> canStart(@RequestParam Long id) {
 		Examination examination = examinationService.get(id);
