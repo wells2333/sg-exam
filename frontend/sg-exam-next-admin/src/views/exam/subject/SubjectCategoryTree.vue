@@ -28,6 +28,9 @@ export default defineComponent({
 
     async function fetch() {
       treeData.value = (await getSubjectCategoryTree()) as unknown as TreeItem[];
+      if (treeData.value.length > 0) {
+        handleSelect(treeData.value[0].id)
+      }
     }
 
     function handleSelect(keys) {
