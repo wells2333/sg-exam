@@ -31,6 +31,14 @@
                 confirm: handleDelete.bind(null, record),
               },
             },
+            {
+                icon: 'ant-design:export-outlined',
+                tooltip: t('common.modules.exam.export'),
+                popConfirm: {
+                  title: t('common.confirmExportText'),
+                  confirm: handleExport.bind(null, record),
+                },
+              },
           ]"
         />
       </template>
@@ -50,7 +58,7 @@ import {columns, searchFormSchema} from './examination.data';
 import {useGo} from "/@/hooks/web/usePage";
 import {usePermission} from '/@/hooks/web/usePermission';
 import {useMessage} from "/@/hooks/web/useMessage";
-
+import { exportSubjects } from '/@/api/exam/subject';
 export default defineComponent({
   name: 'ExaminationManagement',
   components: {BasicTable, ExaminationModal, ExaminationDetailDrawer, TableAction},
@@ -112,6 +120,22 @@ export default defineComponent({
     function handleSubjects(record: Recordable) {
       go('/exam/examination_subjects/' + record.id);
     }
+    function handleExport(record: Recordable) {
+        let url = '?examinationId=' + record.id;
+        exportSubjects(url).then((res) => {
+          const url = window.URL.createObjectURL(
+            new Blob([res], { type: 'application/octet-stream' }),
+          );
+          let link = document.createElement('a');
+          link.style.display = 'none';
+          link.href = url;
+          link.setAttribute('download', '题目.xlsx');
+          document.body.appendChild(link);
+          link.click();
+          window.URL.revokeObjectURL(link.href);
+          document.body.removeChild(link);
+        });
+      }
 
     return {
       t,
@@ -123,7 +147,8 @@ export default defineComponent({
       handleEdit,
       handleSubjects,
       handleDelete,
-      handleSuccess
+      handleSuccess,
+      handleExport
     };
   },
 });

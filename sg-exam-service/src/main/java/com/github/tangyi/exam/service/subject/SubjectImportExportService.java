@@ -126,7 +126,7 @@ public class SubjectImportExportService {
 		if (ArrayUtils.isNotEmpty(ids)) {
 			for (Long id : ids) {
 				es.setSubjectId(id);
-				examinationSubjects.addAll(examinationSubjectService.findListBySubjectId(es));
+				examinationSubjects.add(es);
 			}
 		} else if (examinationId != null) {
 			// 根据考试 ID

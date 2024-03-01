@@ -85,3 +85,15 @@ export function uploadEXCEL(
     params,
   );
 }
+export const exportSubjects = (url?: String
+  ) => {
+    return defHttp.post<ApiRes>(
+      {
+        url: SubjectsApi.Export+url,
+        responseType: 'arraybuffer'
+      },
+      {
+        isTransformResponse: false
+      }
+    );
+  };

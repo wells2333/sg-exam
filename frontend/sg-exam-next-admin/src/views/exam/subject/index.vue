@@ -30,6 +30,14 @@
                 confirm: handleDelete.bind(null, record),
               },
             },
+            {
+                icon: 'ant-design:export-outlined',
+                tooltip: t('common.modules.exam.export'),
+                popConfirm: {
+                  title: t('common.confirmExportText'),
+                  confirm: handleExport.bind(null, record),
+                },
+              },
           ]"
         />
       </template>
@@ -54,7 +62,7 @@ import ImportModal from "./ImportModal.vue";
 import CategoryModal from "./category/CategoryModal.vue";
 import {useMessage} from '/@/hooks/web/useMessage';
 import {usePermission} from "/@/hooks/web/usePermission";
-
+import { exportSubjects } from '/@/api/exam/subject';
 export default defineComponent({
   name: 'SubjectManagement',
   components: {
@@ -102,7 +110,7 @@ export default defineComponent({
       showIndexColumn: false,
       canResize: false,
       actionColumn: {
-        width: 80,
+        width: 100,
         title: t('common.operationText'),
         dataIndex: 'action',
         slots: {customRender: 'action'},
@@ -182,6 +190,22 @@ export default defineComponent({
         obj.reloadTree();
       }
     }
+    function handleExport(record: Recordable) {
+        let url = '?ids=' + record.id;
+        exportSubjects(url).then((res) => {
+          const url = window.URL.createObjectURL(
+            new Blob([res], { type: 'application/octet-stream' }),
+          );
+          let link = document.createElement('a');
+          link.style.display = 'none';
+          link.href = url;
+          link.setAttribute('download', '题目.xlsx');
+          document.body.appendChild(link);
+          link.click();
+          window.URL.revokeObjectURL(link.href);
+          document.body.removeChild(link);
+        });
+      }
 
     return {
       t,
@@ -201,7 +225,8 @@ export default defineComponent({
       handleImport,
       handleImportSuccess,
       handleManageCategory,
-      handleCategoryManageSuccess
+      handleCategoryManageSuccess,
+      handleExport
     };
   },
 });

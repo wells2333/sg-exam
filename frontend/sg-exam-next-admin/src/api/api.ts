@@ -62,6 +62,7 @@ export const SubjectsApi = {
   SubjectList: ExamService + '/v1/subjects/subjectList',
   JsonTemplate: ExamService + '/v1/subjects/template/json',
   ExcelTemplate: ExamService + '/v1/subjects/template/excel',
+  Export: ExamService + '/v1/subjects/export',
 }
 
 export const SubjectCategoryApi = {

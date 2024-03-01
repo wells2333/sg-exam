@@ -21,6 +21,14 @@
                 confirm: handleDelete.bind(null, record),
               },
             },
+            {
+                icon: 'ant-design:export-outlined',
+                tooltip: t('common.modules.exam.export'),
+                popConfirm: {
+                  title: t('common.confirmExportText'),
+                  confirm: handleExport.bind(null, record),
+                },
+              },
           ]"
         />
       </template>
@@ -43,7 +51,7 @@ import SelectSubjectModal from "./SelectSubjectModal.vue";
 import RandomSubjectModal from "./RandomSubjectModal.vue";
 import {deleteSubject} from '/@/api/exam/subject';
 import {useMessage} from "/@/hooks/web/useMessage";
-
+import { exportSubjects } from '/@/api/exam/subject';
 export default defineComponent({
   name: 'SubjectManagement',
   components: {BasicTable, TableAction, SubjectModal, SelectSubjectModal, RandomSubjectModal},
@@ -135,7 +143,22 @@ export default defineComponent({
     function handleRandomSubjectSuccess() {
       reload();
     }
-
+    function handleExport(record: Recordable) {
+        let url = '?ids=' + record.id;
+        exportSubjects(url).then((res) => {
+          const url = window.URL.createObjectURL(
+            new Blob([res], { type: 'application/octet-stream' }),
+          );
+          let link = document.createElement('a');
+          link.style.display = 'none';
+          link.href = url;
+          link.setAttribute('download', '题目.xlsx');
+          document.body.appendChild(link);
+          link.click();
+          window.URL.revokeObjectURL(link.href);
+          document.body.removeChild(link);
+        });
+      }
     return {
       t,
       registerTable,
@@ -150,7 +173,8 @@ export default defineComponent({
       handleSelectSubjects,
       handleRandomSelectSubjects,
       handleSelectSubjectSuccess,
-      handleRandomSubjectSuccess
+      handleRandomSubjectSuccess,
+      handleExport
     };
   },
 });
