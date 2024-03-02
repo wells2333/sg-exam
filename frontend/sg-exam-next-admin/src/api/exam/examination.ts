@@ -67,3 +67,8 @@ export const randomAddSubjects = (id?: string, params?: object) => {
 
 export const getScoreAnalysis = (examinationId?: string) =>
   defHttp.get<ApiRes>({url: AnswerApi.Analysis, params: {examinationId}});
+
+export const generateQrCodeMessage = (examinationId?: string) =>
+  defHttp.get<string>({url: ExaminationApi.Base + '/generateQrCodeMessage/' + examinationId, params: {}});
+
+

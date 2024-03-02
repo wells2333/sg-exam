@@ -118,6 +118,14 @@ export function submitAll (obj) {
   })
 }
 
+export function anonymousUserSubmitAll (examinationId, obj) {
+  return request({
+    url: baseAnswerUrl + 'anonymousUser/submitAll?examinationId=' + examinationId,
+    method: 'post',
+    data: obj
+  })
+}
+
 // 查询考试排名
 export function examRankInfo (query) {
   return request({

@@ -13,13 +13,20 @@ import com.github.tangyi.common.log.OperationType;
 import com.github.tangyi.common.log.SgLog;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.constants.ExamConstant;
+import com.github.tangyi.exam.enums.ExaminationType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import javax.imageio.ImageIO;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -35,10 +42,15 @@ public class ExaminationController extends BaseController {
 
 	@GetMapping({"canStart", "anonymousUser/canStart"})
 	@Operation(summary = "查询是否能开始考试", description = "查询是否能开始考试")
-	public R<Boolean> canStart(@RequestParam Long id) {
+	public R<Boolean> canStart(@RequestParam Long id, HttpServletRequest req) {
 		Examination examination = examinationService.get(id);
 		if (examination == null) {
 			return R.success(false);
+		}
+
+		if (req.getRequestURI().contains("anonymousUser") && !ExaminationType.QUESTIONNAIRE.getValue()
+				.equals(examination.getType())) {
+			return R.success(false, "Invalid examinationType");
 		}
 
 		if (examination.getStartTime() != null && examination.getEndTime() != null) {
@@ -154,5 +166,33 @@ public class ExaminationController extends BaseController {
 	@SgLog(value = "随机添加题目", operationType = OperationType.INSERT)
 	public R<Boolean> randomAddSubjects(@PathVariable Long id, @RequestBody RandomSubjectDto params) {
 		return R.success(examinationService.randomAddSubjects(id, params));
+	}
+
+	@Operation(summary = "生成二维码", description = "生成二维码")
+	@GetMapping("generateQrCode/{examinationId}")
+	public void generateQrCode(@PathVariable Long examinationId, HttpServletResponse response) throws Exception {
+		Examination examination = examinationService.get(examinationId);
+		if (examination == null || !ExaminationType.QUESTIONNAIRE.getValue().equals(examination.getType())) {
+			return;
+		}
+
+		response.setHeader("Cache-Control", "no-store, no-com.github.tangyi.common.basic.cache");
+		response.setContentType("image/jpeg");
+		try (ByteArrayInputStream inputStream = new ByteArrayInputStream(examinationService.generateQrCode(examinationId));
+				ServletOutputStream out = response.getOutputStream()) {
+			BufferedImage image = ImageIO.read(inputStream);
+			ImageIO.write(image, "PNG", out);
+		}
+	}
+
+	@Operation(summary = "生成二维码的内容", description = "生成二维码的内容")
+	@GetMapping("generateQrCodeMessage/{examinationId}")
+	public R<String> produceCode(@PathVariable Long examinationId) {
+		Examination examination = examinationService.get(examinationId);
+		if (examination == null || !ExaminationType.QUESTIONNAIRE.getValue().equals(examination.getType())) {
+			return R.success(null);
+		}
+
+		return R.success(examinationService.generateQrCodeMessage(examinationId));
 	}
 }

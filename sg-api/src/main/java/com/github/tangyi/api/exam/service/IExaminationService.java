@@ -40,4 +40,9 @@ public interface IExaminationService extends ICrudService<Examination> {
 	void addIndex(Examination examination, long clickCnt, long joinCnt);
 
 	void updateIndex(Examination examination);
+
+	String generateQrCodeMessage(Long examinationId);
+
+	byte[] generateQrCode(Long examinationId);
+
 }

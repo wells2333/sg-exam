@@ -315,45 +315,29 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		return this.dao.findExamUserCount(examination);
 	}
 
-	/**
-	 * 根据考试 ID 生成二维码
-	 */
-	public byte[] produceCode(Long examinationId) {
-		Examination examination = this.get(examinationId);
-		// 调查问卷
-		if (examination == null/* || !ExaminationTypeEnum.QUESTIONNAIRE.getValue().equals(examination.getType())*/) {
-			return new byte[0];
+	@Override
+	public String generateQrCodeMessage(Long examinationId) {
+		String baseUrl = sysProperties.getQrCodeUrl();
+		if (StringUtils.isEmpty(baseUrl)) {
+			throw new IllegalStateException("The qrCode url is not config.");
 		}
 
-		String url = sysProperties.getQrCodeUrl() + "?id=" + examination.getId();
-		byte[] bytes = null;
-		try {
-			bytes = QRCodeUtils.getQRCodeImage(url, 180, 180);
-		} catch (Exception e) {
-			log.error("produceCode failed", e);
-		}
-		log.info("share examinationId: {}, url: {}", examinationId, url);
-		return bytes;
+		return baseUrl + "?id=" + examinationId;
 	}
 
 	/**
 	 * 根据考试 ID 生成二维码
 	 */
-	public byte[] produceCodeV2(Long examinationId) {
-		Examination e = this.get(examinationId);
-		// 调查问卷
-		if (e == null/* || !ExaminationTypeEnum.QUESTIONNAIRE.getValue().equals(examination.getType())*/) {
-			return new byte[0];
-		}
-
-		String url = sysProperties.getQrCodeUrl() + "-v2?id=" + e.getId();
+	@Override
+	public byte[] generateQrCode(Long examinationId) {
+		String url = this.generateQrCodeMessage(examinationId);
 		byte[] bytes = null;
 		try {
 			bytes = QRCodeUtils.getQRCodeImage(url, 180, 180);
-		} catch (Exception ex) {
-			log.error("produceCode failed", ex);
+		} catch (Exception e) {
+			log.error("Failed to generate qrCode, examinationId: {}", examinationId, e);
 		}
-		log.info("Share v2 examinationId: {}, url: {}", examinationId, url);
+		log.info("Generate qrCode finished, examinationId: {}, url: {}", examinationId, url);
 		return bytes;
 	}
 

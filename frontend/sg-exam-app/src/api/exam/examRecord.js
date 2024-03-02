@@ -50,6 +50,14 @@ export function getAllSubjects (examinationId) {
   })
 }
 
+export function anonymousUserGetAllSubjects (examinationId) {
+  return request({
+    url: baseExamRecordUrl + 'anonymousUser/allSubjects/' + examinationId,
+    method: 'get',
+    params: {}
+  })
+}
+
 export function getCurrentTime () {
   return request({
     url: baseExamRecordUrl + 'currentTime',

@@ -35,6 +35,7 @@ const zh = {
   sendSuccess: '发送成功',
   registerSuccess: '注册成功',
   success: '成功',
+  successAndExit: '成功，即将自动关闭页面',
   failed: '失败',
   operation: '操作',
   return: '返回',

@@ -25,6 +25,7 @@ pagehelper:
 
 sys:
   key: '1234567887654321'
+  qrCodeUrl: 'http://192.168.1.13:8080/#/mobile'
 
 management:
   endpoint:

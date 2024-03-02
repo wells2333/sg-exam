@@ -46,6 +46,10 @@ public class R<T> implements Serializable {
 		return new R<>(data);
 	}
 
+	public static <T> R<T> success(T data, String msg) {
+		return new R<>(data, msg);
+	}
+
 	public static <T> R<T> error(String message) {
 		return error(null, ApiMsg.KEY_ERROR, message);
 	}

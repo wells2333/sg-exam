@@ -1,5 +1,7 @@
 package com.github.tangyi.exam.service.exam;
 
+import cn.hutool.core.lang.Validator;
+import cn.hutool.core.util.NetUtil;
 import com.github.tangyi.api.exam.constants.AnswerConstant;
 import com.github.tangyi.api.exam.dto.*;
 import com.github.tangyi.api.exam.enums.SubmitStatusEnum;
@@ -132,9 +134,22 @@ public class ExaminationActionService {
 		SgPreconditions.checkNull(identifier, "identifier must not be null");
 		// 查询用户信息
 		Long userId = null;
-		UserVo userVo = this.userService.findUserByIdentifier(IdentityType.PASSWORD.getValue(), identifier, tenantCode);
-		if (userVo != null) {
-			userId = userVo.getId();
+		if (Validator.isIpv4(identifier)) {
+			// ipv4 直接转成 long
+			userId = NetUtil.ipv4ToLong(identifier);
+			log.info("Anonymous user start exam, examinationId: {}, ipv4: {}, userId: {}", examinationId, identifier,
+					userId);
+		} else if (Validator.isIpv6(identifier)) {
+			// ipv6 使用 SnowFlakeId
+			userId = SnowFlakeId.newId();
+			log.info("Anonymous user start exam, examinationId: {}, ipv6: {}, userId: {}", examinationId, identifier,
+					userId);
+		} else {
+			UserVo userVo = this.userService.findUserByIdentifier(IdentityType.PASSWORD.getValue(), identifier,
+					tenantCode);
+			if (userVo != null) {
+				userId = userVo.getId();
+			}
 		}
 		return this.start(userId, identifier, examinationId, tenantCode);
 	}

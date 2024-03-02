@@ -2,6 +2,7 @@ package com.github.tangyi.exam.controller.exam;
 
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.dto.*;
+import com.github.tangyi.api.exam.model.Examination;
 import com.github.tangyi.api.exam.model.ExaminationRecord;
 import com.github.tangyi.api.exam.model.ExaminationSubject;
 import com.github.tangyi.common.base.BaseController;
@@ -11,6 +12,7 @@ import com.github.tangyi.common.log.SgLog;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.DateUtils;
 import com.github.tangyi.common.utils.StopWatchUtil;
+import com.github.tangyi.exam.enums.ExaminationType;
 import com.github.tangyi.exam.service.ExamRecordService;
 import com.github.tangyi.exam.service.answer.MarkAnswerService;
 import com.github.tangyi.exam.service.exam.ExaminationActionService;
@@ -19,6 +21,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
@@ -30,6 +33,7 @@ import javax.validation.constraints.NotBlank;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -146,7 +150,12 @@ public class ExamRecordController extends BaseController {
 
 	@PostMapping("anonymousUser/start")
 	@Operation(summary = "匿名用户开始考试")
-	public R<StartExamDto> anonymousUserStart(Long examinationId, String identifier) {
+	public R<StartExamDto> anonymousUserStart(Long examinationId, String identifier, HttpServletRequest req) {
+		// 匿名用户考试，账号默认使用使用 ip 地址
+		if (StringUtils.isEmpty(identifier)) {
+			identifier = req.getRemoteAddr();
+			log.info("Anonymous user start exam, examinationId: {}, ip: {}", examinationId, identifier);
+		}
 		return R.success(actionService.anonymousUserStart(examinationId, identifier));
 	}
 
@@ -156,10 +165,16 @@ public class ExamRecordController extends BaseController {
 		return R.success(examinationService.allSubjects(id));
 	}
 
-	@RequestMapping("anonymousUser/allSubjectList")
+	@RequestMapping("anonymousUser/allSubjects/{id}")
 	@Operation(summary = "获取全部题目列表")
-	public R<List<SubjectDto>> allSubjectList(SubjectDto subjectDto) {
-		return R.success(examinationService.allSubjectList(subjectDto));
+	public R<List<SimpleSubjectDto>> anonymousUserAllSubjects(@PathVariable Long id) {
+		Examination examination = examinationService.get(id);
+		// 只返回调查问卷类型的题目
+		if (examination == null || !ExaminationType.QUESTIONNAIRE.getValue().equals(examination.getType())) {
+			return R.success(Collections.emptyList());
+		}
+
+		return R.success(examinationService.allSubjects(id));
 	}
 
 	@GetMapping("/{examinationId}/subjectIds")
@@ -176,31 +191,6 @@ public class ExamRecordController extends BaseController {
 		List<ExaminationSubject> subjects = examinationService.findListByExaminationId(examinationId);
 		subjects.forEach(BaseEntity::clearCommonValue);
 		return R.success(subjects);
-	}
-
-	@Operation(summary = "生成二维码", description = "生成二维码")
-	@GetMapping("anonymousUser/generateQrCode/{examinationId}")
-	public void produceCode(@PathVariable Long examinationId, HttpServletResponse response) throws Exception {
-		response.setHeader("Cache-Control", "no-store, no-com.github.tangyi.common.basic.cache");
-		response.setContentType("image/jpeg");
-		try (ByteArrayInputStream inputStream = new ByteArrayInputStream(examinationService.produceCode(examinationId));
-				ServletOutputStream out = response.getOutputStream()) {
-			BufferedImage image = ImageIO.read(inputStream);
-			ImageIO.write(image, "PNG", out);
-		}
-	}
-
-	@Operation(summary = "生成二维码 (v2)", description = "生成二维码 (v2)")
-	@GetMapping("anonymousUser/generateQrCode/v2/{examinationId}")
-	public void produceCodeV2(@PathVariable Long examinationId, HttpServletResponse response) throws Exception {
-		response.setHeader("Cache-Control", "no-store, no-com.github.tangyi.common.basic.cache");
-		response.setContentType("image/jpeg");
-		try (ByteArrayInputStream inputStream = new ByteArrayInputStream(
-				examinationService.produceCodeV2(examinationId));
-				ServletOutputStream out = response.getOutputStream()) {
-			BufferedImage image = ImageIO.read(inputStream);
-			ImageIO.write(image, "PNG", out);
-		}
 	}
 
 	@GetMapping("/{id}/details")

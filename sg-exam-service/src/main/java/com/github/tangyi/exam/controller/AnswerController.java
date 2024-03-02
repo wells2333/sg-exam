@@ -3,12 +3,15 @@ package com.github.tangyi.exam.controller;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.dto.*;
 import com.github.tangyi.api.exam.model.Answer;
+import com.github.tangyi.api.exam.model.Examination;
 import com.github.tangyi.api.exam.service.IAnswerService;
+import com.github.tangyi.api.exam.service.IExaminationService;
 import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.log.OperationType;
 import com.github.tangyi.common.log.SgLog;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.SysUtil;
+import com.github.tangyi.exam.enums.ExaminationType;
 import com.github.tangyi.exam.service.RankInfoService;
 import com.github.tangyi.exam.service.data.SubjectViewCounterService;
 import com.github.tangyi.exam.service.exam.ExaminationActionService;
@@ -32,6 +35,7 @@ import java.util.Map;
 @RequestMapping("/v1/answer")
 public class AnswerController extends BaseController {
 
+	private final IExaminationService examinationService;
 	private final IAnswerService answerService;
 	private final SubjectsService subjectsService;
 	private final ExaminationActionService actionService;
@@ -152,6 +156,19 @@ public class AnswerController extends BaseController {
 	@Operation(summary = "批量提交答题")
 	@SgLog(value = "批量提交答题", operationType = OperationType.UPDATE)
 	public R<Boolean> submitAll(@RequestBody List<AnswerDto> answers) {
+		return R.success(actionService.submitAll(answers));
+	}
+
+	@PostMapping("anonymousUser/submitAll")
+	@Operation(summary = "匿名批量提交答题")
+	@SgLog(value = "匿名批量提交答题", operationType = OperationType.UPDATE)
+	public R<Boolean> anonymousUserSubmitAll(@RequestParam Long examinationId, @RequestBody List<AnswerDto> answers) {
+		Examination examination = this.examinationService.get(examinationId);
+		// 只能匿名提交问卷类型
+		if (examination == null || !ExaminationType.QUESTIONNAIRE.getValue().equals(examination.getType())) {
+			return R.success(Boolean.FALSE);
+		}
+
 		return R.success(actionService.submitAll(answers));
 	}
 
