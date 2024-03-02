@@ -110,9 +110,9 @@ export function anonymousUserSubmit (obj) {
   })
 }
 
-export function anonymousUserSubmitAll (obj, examinationId, identifier) {
+export function submitAll (obj) {
   return request({
-    url: baseAnswerUrl + 'anonymousUser/submitAll/' + examinationId + '?identifier=' + identifier,
+    url: baseAnswerUrl + 'submitAll',
     method: 'post',
     data: obj
   })

@@ -4,6 +4,7 @@
       <div class="subject-title">
         {{ subjectInfo.sort }}.&nbsp;
         <span class="subject-title-content" v-html="subjectInfo.subjectName"/>
+        （{{ $t('exam.subject.subjectTypeChoices') }}）
       </div>
       <div class="subject-speech-info" v-if="subjectInfo.speechId && subjectInfo.speechUrl">
         <sg-audio ref="sgAudio" :src="subjectInfo.speechUrl" :autoPlay="subjectInfo.autoPlaySpeech"></sg-audio>

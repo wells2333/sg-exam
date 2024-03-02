@@ -31,14 +31,15 @@
       <el-col :span="3">
         <div class="tool-bar">
           <div class="current-progress">
-            {{ $t('exam.startExam.progress') }}：{{ subject.sort }}/{{ cards.length }}
+            {{ $t('exam.startExam.progress') }}：{{ answeredSubjectCnt }}/{{ cards.length }}
           </div>
           <div class="answer-card">
-            <el-button type="text" icon="el-icon-date" @click="answerCard">
+            <el-button type="text" icon="el-icon-date" @click="showAnswerCard">
               {{ $t('exam.startExam.answerCard') }}
             </el-button>
           </div>
-          <el-button type="success" icon="el-icon-date" @click="handleSubmit">{{ $t('submit') }}
+          <el-button type="success" icon="el-icon-date" @click="handleSubmit"
+                     :loading="loadingSubmit">{{ $t('submit') }}
           </el-button>
         </div>
       </el-col>
@@ -46,9 +47,10 @@
     <el-dialog :title="$t('exam.startExam.answerCard')" :visible.sync="dialogVisible" width="50%"
                top="10vh" center>
       <el-row class="answer-card-content">
-        <el-button :class="value.isAnswer ? 'answer-card-btn' : ''"
-                   v-for="(value, index) in cards" :key="index"
-                   @click="toSubject(value.subjectId, value.sort)" style="padding: 12px;">
+        <el-button
+          :class="value.isAnswer !== undefined && value.isAnswer === true ? 'answer-card-btn' : ''"
+          v-for="(value, index) in cards"
+          :key="index" style="padding: 12px;">
           &nbsp;{{ value.sort }}&nbsp;
         </el-button>
       </el-row>
@@ -58,17 +60,15 @@
 <script>
 import {mapGetters, mapState} from 'vuex'
 import CountDown from 'vue2-countdown'
-import {saveAndNext} from '@/api/exam/answer'
+import {submitAll} from '@/api/exam/answer'
 import {getAllSubjects} from '@/api/exam/examRecord'
 import store from '@/store'
-import moment from 'moment'
 import {isNotEmpty, messageFail, messageSuccess} from '@/utils/util'
 import Tinymce from '@/components/Tinymce'
 import Choices from '@/components/Subjects/Choices'
 import MultipleChoices from '@/components/Subjects/MultipleChoices'
 import ShortAnswer from '@/components/Subjects/ShortAnswer'
 import Judgement from '@/components/Subjects/Judgement'
-import {nextSubjectType} from '@/const/constant'
 
 export default {
   components: {
@@ -83,28 +83,15 @@ export default {
     return {
       loading: true,
       loadingSubmit: false,
-      saving: false,
       startTime: 0,
       endTime: 0,
-      option: '',
-      answer: '',
       dialogVisible: false,
-      tempAnswer: {
-        id: null,
-        userId: null,
-        examinationId: null,
-        courseId: null,
-        subjectId: null,
-        answer: null,
-        type: 0
-      },
       subjects: [],
-      subjectStartTime: undefined
+      answeredSubjectCnt: 0
     }
   },
   computed: {
     ...mapState({
-      userInfo: state => state.user.userInfo,
       examRecord: state => state.exam.examRecord
     }),
     ...mapGetters([
@@ -135,9 +122,19 @@ export default {
   },
   methods: {
     onChoiceFn(sort) {
+      // 标识已答题状态
       if (sort) {
         this.cards[sort - 1].isAnswer = true
       }
+      // 更新答题进度
+      let cnt = 0
+      for (let i = 0; i < this.cards.length; i++) {
+        const c = this.cards[i]
+        if (c.isAnswer !== undefined && c.isAnswer === true) {
+          cnt++
+        }
+      }
+      this.answeredSubjectCnt = cnt
     },
     goBack() {
       this.$router.push({name: 'exams'})
@@ -163,65 +160,8 @@ export default {
         }
       })
     },
-    // 保存当前题目，同时根据序号加载下一题
-    saveCurrentSubjectAndGetNextSubject(nextType, nextSubjectSort, subjectId = undefined) {
-      if (this.saving) {
-        return
-      }
-
-      try {
-        this.saving = true
-        const answerId = isNotEmpty(this.tempAnswer) ? this.tempAnswer.id : ''
-        const answer = this.getAnswer(answerId)
-        const ref = this.getSubjectRef()
-        if (ref) {
-          ref.beforeSave()
-        }
-        this.startLoading(nextType)
-        saveAndNext(answer, nextType, nextSubjectSort, subjectId).then(response => {
-          if (response.data.result !== null) {
-            const subject = response.data.result
-            store.dispatch('SetSubjectInfo', subject).then(() => {
-              this.setSubjectInfo(subject)
-            })
-          }
-          this.subjectStartTime = moment().format('YYYY-MM-DD HH:mm:ss')
-          this.endLoading(nextType)
-        }).catch((error) => {
-          console.log(error)
-          messageFail(this, this.$t('exam.startExam.getSubjectFailed'))
-          this.endLoading(nextType)
-        })
-      } finally {
-        this.saving = false
-      }
-    },
-    answerCard() {
+    showAnswerCard() {
       this.dialogVisible = true
-    },
-    toSubject(subjectId, subjectSortNo) {
-      this.saveCurrentSubjectAndGetNextSubject(nextSubjectType.current, subjectSortNo, subjectId)
-      this.dialogVisible = false
-    },
-    toggleOption(answer) {
-      this.answer = answer
-    },
-    getAnswer(answerId) {
-      const ref = this.getSubjectRef()
-      if (isNotEmpty(ref)) {
-        const answer = ref.getAnswer()
-        this.answer = answer
-        return {
-          id: answerId,
-          userId: this.userInfo.id,
-          examinationId: this.exam.id,
-          examRecordId: this.examRecord.id,
-          subjectId: this.subject.id,
-          answer: answer,
-          startTime: this.subjectStartTime
-        }
-      }
-      return {}
     },
     getSubjectRef(index, item) {
       let ref
@@ -260,37 +200,47 @@ export default {
         cancelButtonText: this.$t('cancel'),
         type: 'warning'
       }).then(() => {
-        this.doSubmitExam(this.tempAnswer, this.exam.id, this.examRecord.id, this.userInfo, true)
+        this.loadingSubmit = true
+        this.beforeSave()
+        this.doSubmitExam(this.examRecord.id)
       }).catch(() => {
       })
     },
-    doSubmitExam(answer, examinationId, examRecordId, userInfo, toExamRecord) {
+    doSubmitExam(examRecordId) {
+      const data = []
+      for (let i = 0; i < this.subjects.length; i++) {
+        const item = this.subjects[i]
+        const ref = this.getSubjectRef(i, item)
+        if (ref) {
+          const answer = ref.getAnswer()
+          data.push({examRecordId, subjectId: item.id, answer})
+        }
+      }
+      if (data.length === 0) {
+        this.loadingSubmit = false
+        return
+      }
+
+      submitAll(data).then(() => {
+        this.loadingSubmit = false
+        messageSuccess(this, this.$t('submit') + this.$t('success'))
+        setTimeout(() => {
+          store.dispatch('ClearExam')
+          this.$router.push({name: 'exam-record'})
+        }, 800)
+      }).catch(() => {
+        messageFail(this, this.$t('submit') + this.$t('failed'))
+        this.loadingSubmit = false
+      })
+    },
+    beforeSave() {
       for (let i = 0; i < this.subjects.length; i++) {
         const ref = this.getSubjectRef(i, this.subjects[i])
         if (ref) {
           ref.beforeSave()
         }
       }
-
-      const answerId = isNotEmpty(answer) ? answer.id : ''
-      saveAndNext(this.getAnswer(answerId), 0).then(() => {
-        store.dispatch('SubmitExam', {
-          examinationId,
-          examRecordId,
-          userId: userInfo.id
-        }).then(() => {
-          messageSuccess(this, this.$t('submit') + this.$t('success'))
-          store.dispatch('ClearExam')
-          if (toExamRecord) {
-            this.$router.push({name: 'exam-record'})
-          }
-        }).catch(() => {
-          messageFail(this, this.$t('submit') + this.$t('failed'))
-        })
-      }).catch(() => {
-        messageFail(this, this.$t('submit') + this.$t('failed'))
-      })
-    },
+    }
   },
   beforeRouteLeave(to, from, next) {
     const {name, query} = to

@@ -10,6 +10,7 @@ import com.github.tangyi.api.user.model.SysAttachmentChunk;
 import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.exceptions.AttachNotExistException;
 import com.github.tangyi.common.exceptions.CommonException;
+import com.github.tangyi.common.oss.exceptions.OssException;
 import com.github.tangyi.common.utils.SysUtil;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;

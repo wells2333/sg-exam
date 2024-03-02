@@ -242,6 +242,7 @@ export default {
   }
   .category-list {
     margin-bottom: 12px;
+    cursor: pointer;
     ul {
       margin: 0;
       overflow: hidden;

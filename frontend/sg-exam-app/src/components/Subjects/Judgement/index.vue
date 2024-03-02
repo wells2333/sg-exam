@@ -4,6 +4,7 @@
       <div class="subject-title">
         {{ subjectInfo.sort }}.&nbsp;
         <span class="subject-title-content" v-html="subjectInfo.subjectName"/>
+        （{{ $t('exam.subject.subjectTypeJudgement') }}）
       </div>
       <div class="subject-speech-info" v-if="subjectInfo.speechId && subjectInfo.speechUrl">
         <sg-audio ref="sgAudio" :src="subjectInfo.speechUrl"></sg-audio>
@@ -28,6 +29,7 @@
 import SgAudio from '@/components/SgAudio'
 import SgVideo from '@/components/SgVideo'
 import {setVideoSrc, pauseVideo, pauseAudio, setAudioSrc} from '@/utils/busi'
+import {uuid} from '@/utils/util'
 
 export default {
   name: 'Judgement',
@@ -43,8 +45,8 @@ export default {
         score: 0
       },
       options: [
-        {id: 1, optionName: this.$t('status.right')},
-        {id: 2, optionName: this.$t('status.wrong')}
+        {id: uuid(), optionName: this.$t('status.right')},
+        {id: uuid(), optionName: this.$t('status.wrong')}
       ],
       userAnswer: ''
     }

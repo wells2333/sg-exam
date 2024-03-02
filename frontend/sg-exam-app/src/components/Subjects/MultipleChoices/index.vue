@@ -4,6 +4,7 @@
       <div class="subject-title">
         {{ subjectInfo.sort }}.&nbsp;
         <div class="subject-title-content" v-html="subjectInfo.subjectName"/>
+        （{{ $t('exam.subject.subjectTypeMultiChoices') }}）
       </div>
       <div class="subject-speech-info" v-if="subjectInfo.speechId && subjectInfo.speechUrl">
         <sg-audio ref="sgAudio" :src="subjectInfo.speechUrl"></sg-audio>
@@ -28,7 +29,7 @@
 <script>
 import SgAudio from '@/components/SgAudio'
 import SgVideo from '@/components/SgVideo'
-import {isNotEmpty} from '@/utils/util'
+import {isNotEmpty, uuid} from '@/utils/util'
 import {setVideoSrc, pauseVideo, pauseAudio, setAudioSrc} from '@/utils/busi'
 
 export default {
@@ -70,6 +71,9 @@ export default {
       this.subjectCount = subjectCount
       this.subjectInfo = subject
       if (subject.hasOwnProperty('options')) {
+        subject.options.forEach(o => {
+          o.id = uuid()
+        })
         this.options = subject.options
       }
       if (subject.hasOwnProperty('answer')) {

@@ -188,6 +188,12 @@ const zh = {
       wrong: '错误',
       loadSubjectFailed: '加载错题失败',
       operator: '评卷人：系统自动评分'
+    },
+    subject: {
+      subjectTypeChoices: '单选题',
+      subjectTypeMultiChoices: '多选题',
+      subjectTypeJudgement: '判断题',
+      subjectTypeShortAnswer: '简答题'
     }
   },
   personal: {
