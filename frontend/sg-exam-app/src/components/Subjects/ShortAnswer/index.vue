@@ -13,7 +13,7 @@
         <sg-video ref="sgVideo"></sg-video>
       </div>
       <div class="subject-tinymce">
-        <el-input type="textarea" rows="10" v-model="userAnswer">
+        <el-input type="textarea" rows="10" v-model="userAnswer" @change="handleInputChange">
         </el-input>
       </div>
     </div>
@@ -74,6 +74,9 @@ export default {
     },
     getSubjectInfo() {
       return this.subjectInfo
+    },
+    handleInputChange() {
+      this.onChoice(this.subjectInfo.sort)
     },
     beforeSave() {
       pauseVideo(this.$refs)

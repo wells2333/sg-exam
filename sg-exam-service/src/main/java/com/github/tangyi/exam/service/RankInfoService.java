@@ -53,6 +53,8 @@ public class RankInfoService {
 				if (vo != null) {
 					info.setName(vo.getName());
 					info.setAvatarUrl(vo.getAvatarUrl());
+				} else {
+					info.setName(String.valueOf(uid));
 				}
 			}
 		}

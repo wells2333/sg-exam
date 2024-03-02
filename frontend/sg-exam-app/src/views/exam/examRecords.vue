@@ -70,7 +70,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="账号" width="200">
+        <el-table-column label="账号" width="260">
           <template slot-scope="scope">
             <div style="display: flex; align-items: center; cursor: pointer;">
               <img  v-if="scope.row.avatarUrl" class="account" :src="scope.row.avatarUrl">

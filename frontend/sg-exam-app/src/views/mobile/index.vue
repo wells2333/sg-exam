@@ -45,6 +45,7 @@ import {canStart} from '@/api/exam/exam'
 import {anonymousUserSubmitAll} from '@/api/exam/answer'
 import {anonymousUserGetAllSubjects, anonymousUserStart} from '@/api/exam/examRecord'
 import {messageFail, messageSuccess, messageWarn} from '@/utils/util'
+import {getSubjectRef, setSubjectInfo, beforeSaveSubject} from '@/utils/busi'
 import Choices from '@/components/Subjects/Choices'
 import MultipleChoices from '@/components/Subjects/MultipleChoices'
 import ShortAnswer from '@/components/Subjects/ShortAnswer'
@@ -102,7 +103,7 @@ export default {
         // 开始考试
         this.loading = true
         anonymousUserStart({
-          examinationId: this.query.examinationId,
+          examinationId: this.query.examinationId
         }).then(startRes => {
           const tmpResult = startRes.data.result
           this.examination = tmpResult.examination
@@ -121,7 +122,7 @@ export default {
             if (this.subjects.length > 0) {
               setTimeout(() => {
                 for (let i = 0; i < this.subjects.length; i++) {
-                  this.setSubjectInfo(i, this.subjects[i])
+                  setSubjectInfo(this.$refs, i, this.subjects[i], this.subjects)
                 }
               }, 100)
             }
@@ -136,37 +137,6 @@ export default {
         })
       })
     },
-    getSubjectRef(index, item) {
-      let ref
-      switch (item.type) {
-        case 0:
-          ref = this.$refs['choices_' + index]
-          break
-        case 1:
-          ref = this.$refs['shortAnswer_' + index]
-          break
-        case 2:
-          ref = this.$refs['judgement_' + index]
-          break
-        case 3:
-          ref = this.$refs['multipleChoices_' + index]
-          break
-        case 5:
-          ref = this.$refs['sVideo_' + index]
-          break
-      }
-      return ref[0]
-    },
-    setSubjectInfo(index, item) {
-      const ref = this.getSubjectRef(index, item)
-      if (ref) {
-        try {
-          ref.setSubjectInfo(item, this.subjects.length, null)
-        } catch (error) {
-          console.error(error)
-        }
-      }
-    },
     onChoiceFn(sort) {
       // 标识已答题状态
       if (sort) {
@@ -180,7 +150,7 @@ export default {
           cnt++
         }
       }
-      this.answeredSubjectCnt = (cnt / this.subjects.length) * 100
+      this.answeredSubjectCnt = parseInt((cnt / this.subjects.length) * 100)
     },
     // 提交考试
     handleSubmitExam() {
@@ -190,24 +160,16 @@ export default {
         type: 'warning',
         center: true
       }).then(() => {
-        this.beforeSave()
+        beforeSaveSubject(this.$refs, this.subjects)
         this.doSubmitExam(this.examRecord.id)
       }).catch(() => {
       })
-    },
-    beforeSave() {
-      for (let i = 0; i < this.subjects.length; i++) {
-        const ref = this.getSubjectRef(i, this.subjects[i])
-        if (ref) {
-          ref.beforeSave()
-        }
-      }
     },
     doSubmitExam(examRecordId) {
       const data = []
       for (let i = 0; i < this.subjects.length; i++) {
         const item = this.subjects[i]
-        const ref = this.getSubjectRef(i, item)
+        const ref = getSubjectRef(this.$refs, i, item)
         if (ref) {
           const answer = ref.getAnswer()
           data.push({examRecordId, subjectId: item.id, answer})

@@ -64,6 +64,7 @@ import {submitAll} from '@/api/exam/answer'
 import {getAllSubjects} from '@/api/exam/examRecord'
 import store from '@/store'
 import {isNotEmpty, messageFail, messageSuccess} from '@/utils/util'
+import {getSubjectRef, setSubjectInfo, beforeSaveSubject} from '@/utils/busi'
 import Tinymce from '@/components/Tinymce'
 import Choices from '@/components/Subjects/Choices'
 import MultipleChoices from '@/components/Subjects/MultipleChoices'
@@ -154,7 +155,7 @@ export default {
         if (this.subjects.length > 0) {
           setTimeout(() => {
             for (let i = 0; i < this.subjects.length; i++) {
-              this.setSubjectInfo(i, this.subjects[i])
+              setSubjectInfo(this.$refs, i, this.subjects[i], this.subjects)
             }
           }, 100)
         }
@@ -163,37 +164,6 @@ export default {
     showAnswerCard() {
       this.dialogVisible = true
     },
-    getSubjectRef(index, item) {
-      let ref
-      switch (item.type) {
-        case 0:
-          ref = this.$refs['choices_' + index]
-          break
-        case 1:
-          ref = this.$refs['shortAnswer_' + index]
-          break
-        case 2:
-          ref = this.$refs['judgement_' + index]
-          break
-        case 3:
-          ref = this.$refs['multipleChoices_' + index]
-          break
-        case 5:
-          ref = this.$refs['sVideo_' + index]
-          break
-      }
-      return ref[0]
-    },
-    setSubjectInfo(index, item) {
-      const ref = this.getSubjectRef(index, item)
-      if (ref) {
-        try {
-          ref.setSubjectInfo(item, this.cards.length, null)
-        } catch (error) {
-          console.error(error)
-        }
-      }
-    },
     handleSubmit() {
       this.$confirm(this.$t('confirmSubmit'), this.$t('tips'), {
         confirmButtonText: this.$t('sure'),
@@ -201,7 +171,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.loadingSubmit = true
-        this.beforeSave()
+        beforeSaveSubject(this.$refs, this.subjects)
         this.doSubmitExam(this.examRecord.id)
       }).catch(() => {
       })
@@ -210,7 +180,7 @@ export default {
       const data = []
       for (let i = 0; i < this.subjects.length; i++) {
         const item = this.subjects[i]
-        const ref = this.getSubjectRef(i, item)
+        const ref = getSubjectRef(this.$refs, i, item)
         if (ref) {
           const answer = ref.getAnswer()
           data.push({examRecordId, subjectId: item.id, answer})
@@ -232,14 +202,6 @@ export default {
         messageFail(this, this.$t('submit') + this.$t('failed'))
         this.loadingSubmit = false
       })
-    },
-    beforeSave() {
-      for (let i = 0; i < this.subjects.length; i++) {
-        const ref = this.getSubjectRef(i, this.subjects[i])
-        if (ref) {
-          ref.beforeSave()
-        }
-      }
     }
   },
   beforeRouteLeave(to, from, next) {
@@ -248,6 +210,7 @@ export default {
       next()
       return
     }
+
     this.$confirm(this.$t('exam.startExam.confirmExit'), this.$t('tips'), {
       confirmButtonText: this.$t('sure'),
       cancelButtonText: this.$t('cancel'),

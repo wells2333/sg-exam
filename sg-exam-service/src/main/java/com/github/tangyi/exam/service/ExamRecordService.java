@@ -157,6 +157,9 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 					if (dept != null) {
 						dto.setDeptName(dept.getDeptName());
 					}
+				} else {
+					dto.setUserName(String.valueOf(dto.getUserId()));
+					dto.setDeptName("-");
 				}
 			});
 		} catch (Exception e) {
