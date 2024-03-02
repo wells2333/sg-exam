@@ -44,6 +44,16 @@ export const deleteSubject = (id: string, examinationId?: any, categoryId?: any)
   );
 };
 
+export const deleteBatchSubject = (params?: object
+  ) => {
+    return defHttp.post<ApiRes>(
+      {
+        url: SubjectsApi.Base+'/deleteAll',
+        params,
+      }
+    );
+  };
+
 export const cateNexSubjectNo = (id?: string) => {
   return defHttp.get<string>(
     {

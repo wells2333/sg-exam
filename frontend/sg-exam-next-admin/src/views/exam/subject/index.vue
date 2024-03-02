@@ -1,17 +1,50 @@
 <template>
   <PageWrapper dense contentClass="flex">
-    <SubjectCategoryTree ref="categoryTreeRef" class="w-1/5 xl:w-1/6" @select="handleSelect"/>
-    <BasicTable @register="registerTable" class="w-3/4 xl:w-4/5" :searchInfo="searchInfo">
+    <SubjectCategoryTree ref="categoryTreeRef" class="w-1/5 xl:w-1/6" @select="handleSelect" />
+    <BasicTable
+      @register="registerTable"
+      class="w-3/4 xl:w-4/5"
+      :searchInfo="searchInfo"
+      :rowSelection="{ type: 'checkbox', selectedRowKeys: checkedKeys, onChange: onSelectChange }"
+    >
       <template #toolbar>
-        <a-button v-if="hasPermission(['exam:subject:category:add'])" type="primary"
-                  @click="handleManageCategory"> 分类管理
+        <a-button
+          v-if="hasPermission(['exam:subject:category:add'])"
+          type="primary"
+          @click="handleManageCategory"
+        >
+          分类管理
         </a-button>
-        <a-button v-if="hasPermission(['exam:subject:bank:add'])" type="primary"
-                  @click="handleCreate"> {{ t('common.addText') }}
+        <a-button
+          v-if="hasPermission(['exam:subject:bank:add'])"
+          type="primary"
+          @click="handleCreate"
+        >
+          {{ t('common.addText') }}
         </a-button>
-        <a-button v-if="hasPermission(['exam:subject:bank:import'])" type="primary"
-                  @click="handleImport"> 批量导入
+        <a-button
+          v-if="hasPermission(['exam:subject:bank:import'])"
+          type="primary"
+          @click="handleImport"
+        >
+          导入
         </a-button>
+        <a-button
+          v-if="hasPermission(['exam:subject:bank:export'])"
+          type="primary"
+          @click="handleExport"
+        >
+          导出
+        </a-button>
+        <PopConfirmButton
+          v-if="hasPermission(['exam:subject:bank:del'])"
+          title="确定删除么？"
+          okText="确认"
+          cancelText="取消"
+          @confirm="handleDeleteBatch"
+          type="danger"
+          >删除
+        </PopConfirmButton>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -31,167 +64,184 @@
               },
             },
             {
-                icon: 'ant-design:export-outlined',
-                tooltip: t('common.modules.exam.export'),
-                popConfirm: {
-                  title: t('common.confirmExportText'),
-                  confirm: handleExport.bind(null, record),
-                },
+              icon: 'ant-design:export-outlined',
+              tooltip: t('common.modules.exam.export'),
+              popConfirm: {
+                title: t('common.confirmExportText'),
+                confirm: handleExport.bind(null, record),
               },
+            },
           ]"
         />
       </template>
     </BasicTable>
     <SubjectModal @register="registerModal" @success="handleSubjectDataSuccess"></SubjectModal>
     <ImportModal @register="registerImportModal" @success="handleImportSuccess"></ImportModal>
-    <CategoryModal @register="registerCategoryModal"
-                   @success="handleCategoryManageSuccess"></CategoryModal>
+    <CategoryModal
+      @register="registerCategoryModal"
+      @success="handleCategoryManageSuccess"
+    ></CategoryModal>
   </PageWrapper>
 </template>
 <script lang="ts">
-import { useI18n } from '/@/hooks/web/useI18n';
-import {defineComponent, reactive, ref, unref} from 'vue';
-import {BasicTable, TableAction, useTable} from '/@/components/Table';
-import {deleteSubject, getSubjectList} from '/@/api/exam/subject';
-import {PageWrapper} from '/@/components/Page';
-import SubjectCategoryTree from './SubjectCategoryTree.vue';
-import {useModal} from '/@/components/Modal';
-import {columns, searchFormSchema} from './subject.data';
-import SubjectModal from "./SubjectModal.vue";
-import ImportModal from "./ImportModal.vue";
-import CategoryModal from "./category/CategoryModal.vue";
-import {useMessage} from '/@/hooks/web/useMessage';
-import {usePermission} from "/@/hooks/web/usePermission";
-import { exportSubjects } from '/@/api/exam/subject';
-export default defineComponent({
-  name: 'SubjectManagement',
-  components: {
-    BasicTable,
-    PageWrapper,
-    SubjectCategoryTree,
-    TableAction,
-    SubjectModal,
-    ImportModal,
-    CategoryModal
-  },
-  setup() {
-    const { t } = useI18n();
-    const {hasPermission} = usePermission();
-    const categoryTreeRef = ref<any>(undefined);
-    const [registerModal, {openModal}] = useModal();
-    const [registerImportModal, {openModal: openImportModal}] = useModal();
-    const [registerCategoryModal, {openModal: openCategoryModal}] = useModal();
-    const {createMessage} = useMessage();
-    const searchInfo = reactive<Recordable>({});
-    const [registerTable, {reload}] = useTable({
-      title: t('common.modules.exam.subject') + t('common.list'),
-      api: (arg) => {
-        const {categoryId} = searchInfo;
+  import { useI18n } from '/@/hooks/web/useI18n';
+  import { defineComponent, reactive, ref, unref } from 'vue';
+  import { BasicTable, TableAction, useTable } from '/@/components/Table';
+  import { deleteSubject, deleteBatchSubject, getSubjectList } from '/@/api/exam/subject';
+  import { PageWrapper } from '/@/components/Page';
+  import SubjectCategoryTree from './SubjectCategoryTree.vue';
+  import { useModal } from '/@/components/Modal';
+  import { columns, searchFormSchema } from './subject.data';
+  import SubjectModal from './SubjectModal.vue';
+  import ImportModal from './ImportModal.vue';
+  import CategoryModal from './category/CategoryModal.vue';
+  import { useMessage } from '/@/hooks/web/useMessage';
+  import { usePermission } from '/@/hooks/web/usePermission';
+  import { exportSubjects } from '/@/api/exam/subject';
+  import { PopConfirmButton } from '/@/components/Button';
+  export default defineComponent({
+    name: 'SubjectManagement',
+    components: {
+      BasicTable,
+      PageWrapper,
+      SubjectCategoryTree,
+      TableAction,
+      SubjectModal,
+      ImportModal,
+      CategoryModal,
+      PopConfirmButton,
+    },
+    setup() {
+      const { t } = useI18n();
+      const { hasPermission } = usePermission();
+      const categoryTreeRef = ref<any>(undefined);
+      const [registerModal, { openModal }] = useModal();
+      const [registerImportModal, { openModal: openImportModal }] = useModal();
+      const [registerCategoryModal, { openModal: openCategoryModal }] = useModal();
+      const { createMessage } = useMessage();
+      const searchInfo = reactive<Recordable>({});
+      const checkedKeys = ref<Array<string | number>>([]);
+      const rowKeys = ref<Array<string | number>>([]);
+      const [registerTable, { reload }] = useTable({
+        title: t('common.modules.exam.subject') + t('common.list'),
+        api: (arg) => {
+          const { categoryId } = searchInfo;
+          if (categoryId === undefined) {
+            return undefined;
+          }
+          const params = { categoryId };
+          Object.assign(params, arg);
+          return getSubjectList(params);
+        },
+        columns,
+        formConfig: {
+          labelWidth: 120,
+          schemas: searchFormSchema,
+        },
+        pagination: true,
+        striped: false,
+        useSearchForm: true,
+        showTableSetting: true,
+        bordered: true,
+        handleSearchInfoFn(info) {
+          return info;
+        },
+        showIndexColumn: false,
+        canResize: false,
+        actionColumn: {
+          width: 100,
+          title: t('common.operationText'),
+          dataIndex: 'action',
+          slots: { customRender: 'action' },
+          fixed: undefined,
+        },
+      });
+
+      function handleCreate() {
+        const { categoryId } = searchInfo;
         if (categoryId === undefined) {
-          return undefined;
+          createMessage.warning('请选择题目分类');
+          return;
         }
-        const params = {categoryId};
-        Object.assign(params, arg);
-        return getSubjectList(params);
-      },
-      columns,
-      formConfig: {
-        labelWidth: 120,
-        schemas: searchFormSchema,
-      },
-      pagination: true,
-      striped: false,
-      useSearchForm: true,
-      showTableSetting: true,
-      bordered: true,
-      handleSearchInfoFn(info) {
-        return info;
-      },
-      showIndexColumn: false,
-      canResize: false,
-      actionColumn: {
-        width: 100,
-        title: t('common.operationText'),
-        dataIndex: 'action',
-        slots: {customRender: 'action'},
-        fixed: undefined,
-      },
-    });
-
-    function handleCreate() {
-      const {categoryId} = searchInfo;
-      if (categoryId === undefined) {
-        createMessage.warning('请选择题目分类');
-        return;
+        openModal(true, {
+          isUpdate: false,
+          categoryId,
+        });
       }
-      openModal(true, {
-        isUpdate: false,
-        categoryId
-      });
-    }
 
-    function handleEdit(record: Recordable) {
-      const {categoryId} = searchInfo;
-      if (categoryId === undefined || categoryId === '') {
-        createMessage.warning('请选择题目分类');
-        return;
+      function handleEdit(record: Recordable) {
+        const { categoryId } = searchInfo;
+        if (categoryId === undefined || categoryId === '') {
+          createMessage.warning('请选择题目分类');
+          return;
+        }
+        openModal(true, {
+          record,
+          isUpdate: true,
+          categoryId,
+          type: record.type,
+        });
       }
-      openModal(true, {
-        record,
-        isUpdate: true,
-        categoryId,
-        type: record.type,
-      });
-    }
 
-    async function handleDelete(record: Recordable) {
-      await deleteSubject(record.id, undefined, record.categoryId);
-      createMessage.success(t('common.operationSuccessText'));
-      await reload();
-    }
-
-    function handleSuccess() {
-      createMessage.success(t('common.operationSuccessText'));
-      reload();
-    }
-
-    function handleSelect(categoryId = '') {
-      searchInfo.categoryId = categoryId;
-      reload();
-    }
-
-    function handleSubjectDataSuccess() {
-      reload();
-    }
-
-    function handleImport() {
-      const {categoryId} = searchInfo;
-      if (categoryId === undefined || categoryId === '') {
-        createMessage.warning('请选择题目分类');
-        return;
+      async function handleDelete(record: Recordable) {
+        await deleteSubject(record.id, undefined, undefined);
+        createMessage.success(t('common.operationSuccessText'));
+        await reload();
       }
-      openImportModal(true, {
-        categoryId
-      });
-    }
-
-    function handleImportSuccess() {
-      reload();
-    }
-
-    function handleManageCategory() {
-      openCategoryModal(true, {});
-    }
-
-    function handleCategoryManageSuccess() {
-      // 刷新分类树
-      const obj = unref(categoryTreeRef);
-      if (obj) {
-        obj.reloadTree();
+      async function handleDeleteBatch() {
+        await deleteBatchSubject(rowKeys.value);
+        createMessage.success(t('common.operationSuccessText'));
+        await reload();
       }
-    }
-    function handleExport(record: Recordable) {
-        let url = '?ids=' + record.id;
+
+      function handleSuccess() {
+        createMessage.success(t('common.operationSuccessText'));
+        reload();
+      }
+
+      function handleSelect(categoryId = '') {
+        searchInfo.categoryId = categoryId;
+        reload();
+      }
+
+      function handleSubjectDataSuccess() {
+        reload();
+      }
+
+      function handleImport() {
+        const { categoryId } = searchInfo;
+        if (categoryId === undefined || categoryId === '') {
+          createMessage.warning('请选择题目分类');
+          return;
+        }
+        openImportModal(true, {
+          categoryId,
+        });
+      }
+
+      function handleImportSuccess() {
+        reload();
+      }
+
+      function handleManageCategory() {
+        openCategoryModal(true, {});
+      }
+
+      function handleCategoryManageSuccess() {
+        // 刷新分类树
+        const obj = unref(categoryTreeRef);
+        if (obj) {
+          obj.reloadTree();
+        }
+      }
+      function handleExport(record: Recordable) {
+        let url;
+        if (record.id != null)
+           url = '?ids=' + record.id;
+        else{
+          let ids = rowKeys.value.join(",");
+          url = '?ids=' + ids;
+        } 
         exportSubjects(url).then((res) => {
           const url = window.URL.createObjectURL(
             new Blob([res], { type: 'application/octet-stream' }),
@@ -207,27 +257,35 @@ export default defineComponent({
         });
       }
 
-    return {
-      t,
-      hasPermission,
-      registerTable,
-      registerModal,
-      registerImportModal,
-      registerCategoryModal,
-      handleCreate,
-      handleEdit,
-      handleDelete,
-      handleSuccess,
-      handleSelect,
-      searchInfo,
-      categoryTreeRef,
-      handleSubjectDataSuccess,
-      handleImport,
-      handleImportSuccess,
-      handleManageCategory,
-      handleCategoryManageSuccess,
-      handleExport
-    };
-  },
-});
+      const onSelectChange = (selectedRowKeys, selectedRows) => {
+        const arrayOfIds = selectedRows.map((obj) => obj.id);
+        rowKeys.value = arrayOfIds;
+        checkedKeys.value = selectedRowKeys;
+      };
+      return {
+        t,
+        hasPermission,
+        registerTable,
+        registerModal,
+        registerImportModal,
+        registerCategoryModal,
+        handleCreate,
+        handleEdit,
+        handleDelete,
+        handleSuccess,
+        handleSelect,
+        searchInfo,
+        categoryTreeRef,
+        handleSubjectDataSuccess,
+        handleImport,
+        handleImportSuccess,
+        handleManageCategory,
+        handleCategoryManageSuccess,
+        handleExport,
+        checkedKeys,
+        onSelectChange,
+        handleDeleteBatch,
+      };
+    },
+  });
 </script>
