@@ -75,8 +75,8 @@
           </div>
         </el-col>
       </el-row>
-      <el-row v-if="courses.length === 3" type="flex" justify="center" :gutter="50">
-        <el-col :span="6" v-for="(course, index) in courses" :key="index">
+      <el-row  type="flex" justify="center" :gutter="50" class="custom-row">
+        <el-col :span="6" v-for="(course, index) in courses" :key="index" >
           <transition name="fade-transform" mode="out-in">
             <div class="single-popular-course" v-show="showCourses" @click="courseDetail(course)">
               <img :src="course.imageUrl" alt="">
@@ -169,11 +169,9 @@ export default {
     getPopularCourses: function () {
       popularCourses(this.query).then(response => {
         const list = response.data.result
-        if (list && list.length >= 3) {
-          this.courses = []
-          for (let i = 0; i < 3; i++) {
-            this.courses.push(list[i])
-          }
+        this.courses = []
+        for (let i = 0; i < list.length; i++) {
+          this.courses.push(list[i])
         }
       }).catch(() => {
         notifyFail(this, this.$t('homePage.loadCoursesFailed'))
@@ -219,3 +217,19 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.custom-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* 水平居中对齐 */
+}
+
+.custom-row.el-row--flex {
+    justify-content: flex-start; /* 水平左对齐 */
+}
+
+.el-col {
+    margin-bottom: 20px; /* 可选的间距 */
+}
+</style>

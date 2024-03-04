@@ -65,10 +65,14 @@ public class SysUtil {
     }
 
     public static String getTenantCode() {
-        String tenantCode = TenantHolder.getTenantCode();
-        if (StringUtils.isBlank(tenantCode)) {
-            throw new IllegalArgumentException("tenant code is blank");
-        }
+        String tenantCode = null;
+        CustomUserDetails userDetails = SysUtil.getUserDetails();
+        if (userDetails == null) {
+            tenantCode = TenantHolder.getTenantCode();
+            if (StringUtils.isBlank(tenantCode))
+                throw new IllegalArgumentException("tenant code is blank");
+        } else
+            tenantCode = userDetails.getTenantCode();
         return tenantCode;
     }
 }

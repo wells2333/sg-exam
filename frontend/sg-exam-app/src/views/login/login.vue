@@ -50,7 +50,7 @@
           <div class="third-login">
             <el-row>
               <el-col :span="24" class="third-link">
-                {{$t('copyRight')}}
+                {{ sysConfig.sys_web_copyright }}
               </el-col>
             </el-row>
           </div>
@@ -132,7 +132,7 @@
           <div class="third-login">
             <el-row>
               <el-col :span="24" class="third-link">
-                {{$t('copyRight')}}
+                {{ sysConfig.sys_web_copyright }}
               </el-col>
             </el-row>
           </div>

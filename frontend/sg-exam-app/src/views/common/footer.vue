@@ -22,7 +22,7 @@
       <el-row :gutter="20">
         <el-col :span="12" :offset="8">
           <div class="copyright">
-            <h4 class="content-c2" style="text-align: center;">Copyright ©2024</h4>
+            <h4 class="content-c2" style="text-align: center;">Copyright ©{{ copyright }}</h4>
             <ul class="privacy">
               <li class="content-c1"><a class="content-c0" @click="openLayer">{{$t('common.legalNotices')}}</a></li>
               <li class="content-c1"><a class="content-c0" @click="openPrivacy">{{$t('common.privacyPolicy')}}</a></li>
@@ -54,7 +54,17 @@ export default {
   computed: {
     ...mapGetters([
       'sysConfig'
-    ])
+    ]),
+    copyright() {
+      let str = this.sysConfig.sys_web_copyright;
+      let pos = str.indexOf("备");
+      let copyright = str.substring(pos + 1).trim();
+      copyright = copyright.substring(0, 4);
+      if (copyright === "" || copyright == null) {
+        copyright = 2022;
+      }
+      return copyright;
+    }
   },
   methods: {
     openLayer() {
