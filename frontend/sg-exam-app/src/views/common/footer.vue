@@ -22,7 +22,7 @@
       <el-row :gutter="20">
         <el-col :span="12" :offset="8">
           <div class="copyright">
-            <h4 class="content-c2" style="text-align: center;">Copyright ©2022</h4>
+            <h4 class="content-c2" style="text-align: center;">Copyright ©2024</h4>
             <ul class="privacy">
               <li class="content-c1"><a class="content-c0" @click="openLayer">{{$t('common.legalNotices')}}</a></li>
               <li class="content-c1"><a class="content-c0" @click="openPrivacy">{{$t('common.privacyPolicy')}}</a></li>

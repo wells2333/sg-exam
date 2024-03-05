@@ -1,5 +1,5 @@
 const en = {
-  copyRight: '陕 ICP 备 20002980 号 -2',
+  copyRight: '粤 ICP 备 2024192218 号',
   home: 'Home',
   examination: 'Examination',
   course: 'Course',

@@ -999,17 +999,17 @@ CREATE TABLE `sys_config` (
 -- Records of sys_config
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_config` VALUES (3, 'sys_web_name', '云职评', 'web 首页网站名称', 'admin', '2023-02-21 22:01:24', 'admin', '2023-02-21 23:00:34', 0, 'gitee');
-INSERT INTO `sys_config` VALUES (4, 'sys_avatar', '云面试', '系统 LOGO', 'admin', '2023-02-21 22:01:53', 'admin', '2023-02-21 22:05:24', 0, 'gitee');
-INSERT INTO `sys_config` VALUES (5, 'sys_admin_main_title', 'SG-EXAM 后台管理系统', 'admin 后台主标题', 'admin', '2023-02-21 22:02:16', 'admin', '2023-02-21 22:04:31', 0, 'gitee');
+INSERT INTO `sys_config` VALUES (3, 'sys_web_name', 'SG-EXAM', 'web 首页网站名称', 'admin', '2023-02-21 22:01:24', 'admin', '2023-02-21 23:00:34', 0, 'gitee');
+INSERT INTO `sys_config` VALUES (4, 'sys_avatar', 'SG-EXAM', '系统 LOGO', 'admin', '2023-02-21 22:01:53', 'admin', '2023-02-21 22:05:24', 0, 'gitee');
+INSERT INTO `sys_config` VALUES (5, 'sys_admin_main_title', 'sg-exam 后台管理系统', 'admin 后台主标题', 'admin', '2023-02-21 22:02:16', 'admin', '2023-02-21 22:04:31', 0, 'gitee');
 INSERT INTO `sys_config` VALUES (6, 'sys_admin_sub_title', '方便好用的考试管理系统！', 'admin 后台副标题', 'admin', '2023-02-21 22:02:29', 'admin', '2023-02-21 22:05:04', 0, 'gitee');
 INSERT INTO `sys_config` VALUES (7, 'sys_wxapp_avatar', 'https://cdn.yunmianshi.com/app/wx/svg/study_v3.svg?e=1677074888&token=8-9rcJPtTrLOJP4fLNWXy_qwiLVc3Exu52iuGlxt:-zqjhckC8BfXnNC51KmilksTx5o=', '小程序首页封面图片', 'admin', '2023-02-21 22:02:47', 'admin', '2023-02-21 22:08:25', 0, 'gitee');
-INSERT INTO `sys_config` VALUES (8, 'sys_wxapp_main_title', 'HI，欢迎使用云面试', '小程序首页主标题', 'admin', '2023-02-21 22:02:57', 'admin', '2023-02-21 22:03:38', 0, 'gitee');
-INSERT INTO `sys_config` VALUES (9, 'sys_wxapp_sub_title', '提供考试、练习、刷题、在线学习等功能', '小程序首页副标题', 'admin', '2023-02-21 22:03:08', 'admin', '2023-02-21 22:04:01', 0, 'gitee');
-INSERT INTO `sys_config` VALUES (10, 'sys_web_main_title', '云职评 AI 面试', 'web 网站首页主标题', 'admin', '2023-02-21 23:02:27', 'admin', '2023-02-21 23:02:27', 0, 'gitee');
-INSERT INTO `sys_config` VALUES (11, 'sys_web_sub_title_one', '采用 AI 技术，新一代面试管理平台', 'web 网站首页副标题', 'admin', '2023-02-21 23:02:51', 'admin', '2023-02-21 23:03:01', 0, 'gitee');
-INSERT INTO `sys_config` VALUES (12, 'sys_web_sub_title_two', '提供私有化、AI 面试、肢体测评、笔试、性格测试等功能', 'web 网站首页副标题', 'admin', '2023-02-21 23:03:19', 'admin', '2023-02-21 23:03:19', 0, 'gitee');
-INSERT INTO `sys_config` VALUES (13, 'sys_web_copyright', '陕 ICP 备 20002980 号 -2', '网站 Copyright', 'admin', '2023-02-22 20:54:38', 'admin', '2023-02-22 20:54:38', 0, 'gitee');
+INSERT INTO `sys_config` VALUES (8, 'sys_wxapp_main_title', 'HI，欢迎使用 sg-exam', '小程序首页主标题', 'admin', '2023-02-21 22:02:57', 'admin', '2023-02-21 22:03:38', 0, 'gitee');
+INSERT INTO `sys_config` VALUES (9, 'sys_wxapp_sub_title', '演示考试、练习、刷题、在线学习等功能', '小程序首页副标题', 'admin', '2023-02-21 22:03:08', 'admin', '2023-02-21 22:04:01', 0, 'gitee');
+INSERT INTO `sys_config` VALUES (10, 'sys_web_main_title', 'sg-exam', 'web 网站首页主标题', 'admin', '2023-02-21 23:02:27', 'admin', '2023-02-21 23:02:27', 0, 'gitee');
+INSERT INTO `sys_config` VALUES (11, 'sys_web_sub_title_one', '开源项目 sg-exam 功能演示网站', 'web 网站首页副标题', 'admin', '2023-02-21 23:02:51', 'admin', '2023-02-21 23:03:01', 0, 'gitee');
+INSERT INTO `sys_config` VALUES (12, 'sys_web_sub_title_two', '演示考试、练习、刷题、在线学习等功能', 'web 网站首页副标题', 'admin', '2023-02-21 23:03:19', 'admin', '2023-02-21 23:03:19', 0, 'gitee');
+INSERT INTO `sys_config` VALUES (13, 'sys_web_copyright', '粤 ICP 备 2024192218 号', '网站 Copyright', 'admin', '2023-02-22 20:54:38', 'admin', '2023-02-22 20:54:38', 0, 'gitee');
 INSERT INTO `sys_config` VALUES (14, 'sys_login_show_tenant_code', 'true', '登录页面是否展示单位标识输入框', 'admin', '2023-05-11 22:47:47', 'admin', '2023-05-11 22:48:35', 0, 'gitee');
 INSERT INTO `sys_config` VALUES (15, 'sys_file_preview_url', 'http://127.0.0.1:8012/onlinePreview?url=', '附件在线预览地址', 'admin', '2023-06-27 22:36:38', 'admin', '2023-06-27 22:36:38', 0, 'gitee');
 COMMIT;

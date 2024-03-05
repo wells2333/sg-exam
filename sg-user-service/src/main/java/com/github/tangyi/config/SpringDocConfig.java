@@ -16,7 +16,7 @@ public class SpringDocConfig {
 
 	private static final String SECURITY_SCHEME_NAME = "BearerAuth";
 	private static final String TENANT_CODE = "Tenant-Code";
-	private static final String NAME = EnvUtils.getValue("DOC_NAME", "云面试");
+	private static final String NAME = EnvUtils.getValue("DOC_NAME", "SG-EXAM");
 
 	@Bean
 	public OpenAPI openAPI() {

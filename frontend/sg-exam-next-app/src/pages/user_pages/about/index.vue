@@ -1,6 +1,6 @@
 <template>
   <view class="about_p">
-    尊敬的用户，欢迎使用云面试
+    尊敬的用户，欢迎使用 sg-exam
   </view>
   <view class="about_p">
     您可以在小程序首页搜索或浏览和参加您需要的考试、练习、问卷、面试
