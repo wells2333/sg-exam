@@ -116,9 +116,8 @@ public class CourseController extends BaseController {
 	@PostMapping("{id}/join")
 	@Operation(summary = "加入课程")
 	@SgLog(value = "加入课程", operationType = OperationType.INSERT)
-	public R<Boolean> joinCourse(@PathVariable Long id,
-			@RequestParam(required = false, defaultValue = Status.OPEN) String type) {
-		return R.success(courseService.joinCourse(id, SysUtil.getUserId(), type));
+	public R<Boolean> joinCourse(@PathVariable Long id) {
+		return R.success(courseService.joinCourse(id, SysUtil.getUserId()));
 	}
 
 	@GetMapping("{id}/attach")

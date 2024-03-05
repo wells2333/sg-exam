@@ -13,8 +13,6 @@ import com.github.tangyi.api.user.model.User;
 import com.github.tangyi.api.user.service.IAttachmentService;
 import com.github.tangyi.api.user.service.IUserService;
 import com.github.tangyi.common.constant.Group;
-import com.github.tangyi.common.constant.Status;
-import com.github.tangyi.common.exceptions.CommonException;
 import com.github.tangyi.common.lucene.DocType;
 import com.github.tangyi.common.lucene.IndexCrudParam;
 import com.github.tangyi.common.service.CrudService;
@@ -277,22 +275,13 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 	}
 
 	@Transactional
-	public Boolean joinCourse(Long courseId, Long userId, String type) {
+	public Boolean joinCourse(Long courseId, Long userId) {
 		ExamCourseMember member = new ExamCourseMember();
 		member.setCourseId(courseId);
 		member.setUserId(userId);
-		// 报名
-		if (Status.OPEN.equals(type)) {
-			ExamCourseMember exist = memberService.findByCourseIdAndUserId(courseId, userId);
-			if (exist != null) {
-				throw new CommonException("不能重复加入");
-			}
-
-			return memberService.insert(member) > 0;
-		} else {
-			// 取消报名
-			return memberService.deleteByCourseIdAndUserId(member) > 0;
-		}
+		// 首次学习
+		ExamCourseMember exist = memberService.findByCourseIdAndUserId(courseId, userId);
+		return exist != null ? Boolean.TRUE : memberService.insert(member) > 0;
 	}
 
 	@Override

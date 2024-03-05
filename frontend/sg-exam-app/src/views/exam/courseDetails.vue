@@ -128,10 +128,7 @@
             </el-col>
             <el-col :span="6">
               <div class="course-sidebar">
-                <el-button type="primary" class="clever-btn mb-12 w-100" @click="handleJoin">
-                  {{ this.detail.isUserJoin === true ? this.$t('exam.course.cancelRegistration') : this.$t('exam.course.registration') }}
-                </el-button>
-                <el-button v-if="this.detail.isUserJoin === true" type="primary" class="clever-btn mb-30 w-100" style="margin-left: 0;" @click="handleStartLearn">
+                <el-button type="primary" class="clever-btn mb-30 w-100" style="margin-left: 0;" @click="handleStartLearn">
                   {{ $t('exam.course.startLearn') }}
                 </el-button>
                 <div class="sidebar-widget">
@@ -251,37 +248,17 @@ export default {
       })
     },
     handleClick(tab, event) {
-
     },
     handleClickSection(section) {
-      if (this.detail.isUserJoin !== true) {
-        messageWarn(this, this.$t('exam.course.pleaseRegistration'))
-        return
-      }
-      this.$router.push({
-        name: 'course-section',
-        query: {sectionId: section.id, courseId: this.courseId}
-      })
     },
     handleClickPoint(section, point) {
-      if (this.detail.isUserJoin !== true) {
-        messageWarn(this, this.$t('exam.course.pleaseRegistration'))
-        return
-      }
-      this.$router.push({
-        name: 'course-section',
-        query: {sectionId: section.id, courseId: this.courseId, pointId: point.id}
-      })
     },
     handleSubmitEvaluate() {
-      if (this.detail.isUserJoin !== true) {
-        messageWarn(this, this.$t('exam.course.pleaseRegistration'))
-        return
-      }
       if (this.hasEvaluate) {
         messageWarn(this, this.$t('exam.course.doNotResubmit'))
         return
       }
+
       if (this.evaluate.evaluateContent === '') {
         this.evaluate.evaluateContent = this.$t('exam.course.defaultEvaluate')
       }
@@ -301,46 +278,26 @@ export default {
         console.error(error)
       })
     },
-    handleJoin() {
-      const type = this.detail.isUserJoin ? '0' : '1'
-      const text = this.detail.isUserJoin ? this.$t('exam.course.cancelRegistration') : this.$t('exam.course.registration')
-      this.$confirm(this.$t('sure') + text + '?', this.$t('tips'), {
-        confirmButtonText: this.$t('sure'),
-        cancelButtonText: this.$t('cancel'),
-        type: 'warning'
-      }).then(() => {
-        joinCourse(this.courseId, type).then(res => {
-          if (res.data.result) {
-            messageSuccess(this, text + this.$t('success'))
-            this.getCourseInfo()
+    handleStartLearn() {
+      joinCourse(this.courseId).then(res => {
+        if (res.data.result) {
+          const chapters = this.detail.chapters
+          if (chapters && chapters.length > 0) {
+            const chapter = chapters[0]
+            const courseId = chapter.chapter.courseId
+            const sections = chapter.sections
+            if (sections && sections.length > 0) {
+              const sectionId = sections[0].section.id
+              this.$router.push({
+                name: 'course-section',
+                query: {sectionId: sectionId, courseId}
+              })
+            }
           }
-        }).catch(error => {
-          console.error(error)
-          messageWarn(this, text + this.$t('failed'))
-        })
+        }
       }).catch(error => {
         console.error(error)
       })
-    },
-    handleStartLearn() {
-      if (this.detail.isUserJoin !== true) {
-        messageWarn(this, this.$t('exam.course.pleaseRegistration'))
-        return
-      }
-
-      const chapters = this.detail.chapters
-      if (chapters && chapters.length > 0) {
-        const chapter = chapters[0]
-        const courseId = chapter.chapter.courseId
-        const sections = chapter.sections
-        if (sections && sections.length > 0) {
-          const sectionId = sections[0].section.id
-          this.$router.push({
-            name: 'course-section',
-            query: {sectionId: sectionId, courseId}
-          })
-        }
-      }
     }
   }
 }

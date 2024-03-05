@@ -63,9 +63,9 @@ export function getCourseDetail (id) {
   })
 }
 
-export function joinCourse (id, type) {
+export function joinCourse (id) {
   return request({
-    url: baseCourseUrl + id + '/join?type=' + type,
+    url: baseCourseUrl + id + '/join',
     method: 'post'
   })
 }

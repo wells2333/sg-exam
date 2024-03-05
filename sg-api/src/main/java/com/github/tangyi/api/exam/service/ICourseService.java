@@ -22,7 +22,7 @@ public interface ICourseService extends ICrudService<Course> {
 
 	CourseDetailDto getDetail(Long id);
 
-	Boolean joinCourse(Long courseId, Long userId, String type);
+	Boolean joinCourse(Long courseId, Long userId);
 
 	CourseDetailDto getCourseAttach(Long courseId);
 
