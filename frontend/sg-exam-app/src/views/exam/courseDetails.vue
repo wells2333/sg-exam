@@ -106,11 +106,13 @@
                 </el-tab-pane>
                 <el-tab-pane name="members">
                   <span slot="label">
-                    <span class="course-content-btn">{{$t('exam.course.registerStudents')}}</span>
+                    <span class="course-content-btn">{{$t('exam.course.examinations')}}</span>
                   </span>
                   <div class="about-members mb-30">
-                    <h4>{{$t('exam.course.registerStudents')}}</h4>
-                    <p>{{$t('exam.course.registerStudents1')}}：{{ detail.memberCount }}</p>
+                    <h4>{{$t('exam.course.examinations')}}</h4>
+                    <p v-if="detail.examinations && detail.examinations.length > 0">
+                      <a v-for="(e, index) in detail.examinations" :key="index" :href="'#/exam-details?examId=' + e.id" target="_self" style="color: #409EFF;">《{{e.examinationName}}》</a>
+                    </p>
                   </div>
                 </el-tab-pane>
                 <el-tab-pane name="learn">

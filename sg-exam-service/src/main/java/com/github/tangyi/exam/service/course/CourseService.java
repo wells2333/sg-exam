@@ -20,6 +20,7 @@ import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.constants.ExamConstant;
 import com.github.tangyi.exam.mapper.CourseMapper;
+import com.github.tangyi.exam.mapper.ExaminationMapper;
 import com.github.tangyi.exam.service.ExamPermissionService;
 import com.github.tangyi.exam.service.fav.CourseFavoritesService;
 import com.google.common.base.Preconditions;
@@ -38,6 +39,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -54,6 +56,7 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 	private final CourseFavoritesService courseFavoritesService;
 	private final CourseIdFetcher courseIdFetcher;
 	private final ExamPermissionService examPermissionService;
+	private final ExaminationMapper examinationMapper;
 
 	@Override
 	public Long findAllCourseCount() {
@@ -239,6 +242,17 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 		dto.setMemberCount(memberService.findMemberCountByCourseId(member) + "");
 		// 是否已报名
 		dto.setIsUserJoin(memberService.findByCourseIdAndUserId(id, SysUtil.getUserId()) != null);
+
+		// 课程关联的考试
+		List<Examination> examinations = examinationMapper.findExaminationByCourseId(id);
+		if (CollectionUtils.isNotEmpty(examinations)) {
+			dto.setExaminations(examinations.stream().map(e -> {
+				CourseDetailDto.CourseExamDto examDto = new CourseDetailDto.CourseExamDto();
+				examDto.setId(e.getId());
+				examDto.setExaminationName(e.getExaminationName());
+				return examDto;
+			}).collect(Collectors.toList()));
+		}
 		return dto;
 	}
 

@@ -112,6 +112,7 @@ const zh = {
       studyExchange: '学习交流',
       courseAttach: '课件',
       registerStudents: '报名学员',
+      examinations: '课程考试',
       registerStudents1: '已报名学员',
       courseFeatures: '课程特色',
       learnHour: '课时',

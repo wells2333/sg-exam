@@ -17,6 +17,8 @@ public interface ExaminationMapper extends CrudMapper<Examination> {
 
 	List<Examination> findUserExaminations(@Param("params") Map<String, Object> params);
 
+	List<Examination> findExaminationByCourseId(@Param("courseId") Long courseId);
+
 	int findExaminationCount(Examination examination);
 
 	int findExamUserCount(Examination examination);

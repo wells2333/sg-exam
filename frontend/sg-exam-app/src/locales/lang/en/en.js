@@ -111,6 +111,7 @@ const en = {
       courseAttach: 'Attachment',
       registerStudents: 'Register students',
       registerStudents1: 'Registered students',
+      examination: 'Examination',
       courseFeatures: 'Course features',
       learnHour: 'Learn hour',
       chapter1: 'Chapter',

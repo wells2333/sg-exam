@@ -42,4 +42,12 @@ public class CourseDetailDto {
 	private String attachName;
 
 	private String attachUrl;
+
+	private List<CourseExamDto> examinations;
+
+	@Data
+	public static final class CourseExamDto {
+		private Long id;
+		private String examinationName;
+	}
 }
