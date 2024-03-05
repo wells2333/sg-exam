@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import {canStart} from '@/api/exam/exam'
+import {anonymousUserCanStart} from '@/api/exam/exam'
 import {anonymousUserSubmitAll} from '@/api/exam/answer'
 import {anonymousUserGetAllSubjects, anonymousUserStart} from '@/api/exam/examRecord'
 import {messageFail, messageSuccess, messageWarn} from '@/utils/util'
@@ -93,7 +93,7 @@ export default {
       }
 
       // 是否能开始考试
-      canStart(this.query.examinationId).then(response => {
+      anonymousUserCanStart(this.query.examinationId).then(response => {
         const {code, result} = response.data
         if (code !== 0 || result === null || !result) {
           messageFail(this, this.$t('exam.exams.startFailed'))

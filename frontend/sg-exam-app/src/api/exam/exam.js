@@ -4,6 +4,13 @@ const baseExaminationUrl = '/sg-user-service/v1/examination/'
 
 export function canStart (id) {
   return request({
+    url: baseExaminationUrl + 'canStart?id=' + id,
+    method: 'get'
+  })
+}
+
+export function anonymousUserCanStart (id) {
+  return request({
     url: baseExaminationUrl + 'anonymousUser/canStart?id=' + id,
     method: 'get'
   })
