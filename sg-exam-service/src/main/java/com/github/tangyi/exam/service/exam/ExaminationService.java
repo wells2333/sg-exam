@@ -262,29 +262,36 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		return this.dao.findExaminationCount(examination);
 	}
 
-	public PageInfo<SubjectDto> findSubjectPageById(SubjectDto subjectDto, Map<String, Object> params, int pageNum,
-			int pageSize) {
-		// 查询考试题目关联表
-		ExaminationSubject es = new ExaminationSubject();
-		es.setTenantCode(SysUtil.getTenantCode());
-		es.setExaminationId(subjectDto.getExaminationId());
-		PageInfo<ExaminationSubject> examinationSubjects = examinationSubjectService.findPage(params, pageNum,
-				pageSize);
-		// 根据题目 ID 查询题目信息
-		List<SubjectDto> subjectDtoList = Lists.newArrayList();
-		if (CollectionUtils.isNotEmpty(examinationSubjects.getList())) {
-			Long[] subjectIds = examinationSubjects.getList().stream().map(ExaminationSubject::getSubjectId)
-					.toArray(Long[]::new);
-			List<Subjects> subjects = subjectsService.findBySubjectIds(subjectIds);
-			subjectDtoList = subjectsService.findSubjectDtoList(subjects);
-		}
-		// 按序号排序
-		if (CollectionUtils.isNotEmpty(subjectDtoList)) {
-			subjectDtoList = subjectDtoList.stream().sorted(Comparator.comparing(SubjectDto::getSort))
-					.collect(Collectors.toList());
-		}
-		return PageUtil.newPageInfo(examinationSubjects, subjectDtoList);
-	}
+    public PageInfo<SubjectDto> findSubjectPageById(SubjectDto subjectDto, Map<String, Object> params, int pageNum,
+                                                    int pageSize) {
+        // 查询考试题目关联表
+        ExaminationSubject es = new ExaminationSubject();
+        es.setTenantCode(SysUtil.getTenantCode());
+        es.setExaminationId(subjectDto.getExaminationId());
+        PageInfo<ExaminationSubject> examinationSubjects = examinationSubjectService.findPage(params, pageNum,
+                pageSize);
+        List<SubjectDto> subjectDtoList = Lists.newArrayList();
+        // 根据题目 ID 查询题目信息
+        if (CollectionUtils.isNotEmpty(examinationSubjects.getList())) {
+            Long[] subjectIds = examinationSubjects.getList().stream().map(ExaminationSubject::getSubjectId)
+                    .toArray(Long[]::new);
+            List<Subjects> subjects = subjectsService.findBySubjectIds(subjectIds);
+            subjectDtoList = subjectsService.findSubjectDtoList(subjects);
+            //是否需要对题目信息进行查询
+            if (params.get("subjectName") != null) {
+                String subjectName = params.get("subjectName").toString();
+                subjectDtoList = subjectDtoList.stream()
+                        .filter(subject -> subject.getSubjectName().contains(subjectName))
+                        .collect(Collectors.toList());
+            }
+        }
+        // 按序号排序
+        if (CollectionUtils.isNotEmpty(subjectDtoList)) {
+            subjectDtoList = subjectDtoList.stream().sorted(Comparator.comparing(SubjectDto::getSort))
+                    .collect(Collectors.toList());
+        }
+        return PageUtil.newPageInfo(examinationSubjects, subjectDtoList);
+    }
 
 	/**
 	 * 获取全部题目

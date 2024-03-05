@@ -116,33 +116,43 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 		return this.dao.findByCategoryIdAndMaxSort(categoryId, sort);
 	}
 
-	public PageInfo<SubjectDto> findPage(Map<String, Object> params, int pageNum, int pageSize, boolean findFav,
-			boolean findView, SubjectDto subjectDto) {
-		if (subjectDto.getCategoryId() != null) {
-			params.put("categoryId", subjectDto.getCategoryId());
-		}
-		PageInfo<Subjects> pageInfo = findPage(params, pageNum, pageSize);
-		List<SubjectDto> dtoList = Lists.newArrayListWithExpectedSize(pageSize);
-		List<Long> categoryIds = Lists.newArrayList();
-		Collection<SubjectDto> list = this.getSubjectsBySubjects(pageInfo.getList());
-		for (SubjectDto dto : list) {
-			dtoList.add(dto);
-			if (dto.getCategoryId() != null) {
-				categoryIds.add(dto.getCategoryId());
-			}
-		}
-		if (CollectionUtils.isNotEmpty(dtoList)) {
-			dtoList = dtoList.stream().sorted(Comparator.comparing(SubjectDto::getSort)).collect(Collectors.toList());
-		}
-		initCategoryInfo(categoryIds, dtoList);
-		if (findFav) {
-			subjectFavoritesService.findUserFavorites(dtoList);
-		}
-		if (findView) {
-			subjectViewCounterService.getSubjectsView(dtoList);
-		}
-		return PageUtil.newPageInfo(pageInfo, dtoList);
-	}
+    public PageInfo<SubjectDto> findPage(Map<String, Object> params, int pageNum, int pageSize, boolean findFav,
+                                         boolean findView, SubjectDto subjectDto) {
+        if (subjectDto.getCategoryId() != null) {
+            params.put("categoryId", subjectDto.getCategoryId());
+        }
+        PageInfo<Subjects> pageInfo = findPage(params, pageNum, pageSize);
+        List<SubjectDto> dtoList = Lists.newArrayListWithExpectedSize(pageSize);
+        List<Long> categoryIds = Lists.newArrayList();
+        Collection<SubjectDto> list = this.getSubjectsBySubjects(pageInfo.getList());
+        for (SubjectDto dto : list) {
+            //这个是根据categoryIdj进行查找的
+            if (params.get("subjectName") == null) {
+                dtoList.add(dto);
+            } else {
+                //根据subjectName进行查找
+                String subjectName = (String) params.get("subjectName");
+                boolean contains = dto.getSubjectName().contains(subjectName);
+                if (contains)
+                    dtoList.add(dto);
+            }
+            if (dto.getCategoryId() != null) {
+                categoryIds.add(dto.getCategoryId());
+            }
+
+        }
+        if (CollectionUtils.isNotEmpty(dtoList)) {
+            dtoList = dtoList.stream().sorted(Comparator.comparing(SubjectDto::getSort)).collect(Collectors.toList());
+        }
+        initCategoryInfo(categoryIds, dtoList);
+        if (findFav) {
+            subjectFavoritesService.findUserFavorites(dtoList);
+        }
+        if (findView) {
+            subjectViewCounterService.getSubjectsView(dtoList);
+        }
+        return PageUtil.newPageInfo(pageInfo, dtoList);
+    }
 
 	public PageInfo<?> findUserFavoritesPage(PageInfo<ExamUserFav> page) {
 		PageInfo<SubjectDto> pageInfo = new PageInfo<>();

@@ -60,7 +60,7 @@ public class AttachmentController extends BaseController {
     public R<PageInfo<Attachment>> list(@RequestParam Map<String, Object> condition,
                                         @RequestParam(value = PAGE, required = false, defaultValue = PAGE_DEFAULT) int pageNum,
                                         @RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize) {
-        return R.success(attachmentService.findPage(condition, pageNum, pageSize));
+        return R.success(attachmentService.attachmentList(condition, pageNum, pageSize));
     }
 
     @PostMapping("prepareUploadChunks")

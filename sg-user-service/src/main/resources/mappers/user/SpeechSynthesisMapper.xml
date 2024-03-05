@@ -24,8 +24,8 @@
             <if test="params.text != null and params.text != ''">
                 AND (text like CONCAT('%',#{params.text},'%'))
             </if>
-            <if test="tenantCode != null and tenantCode != ''">
-                AND tenant_code = #{tenantCode}
+            <if test="params.tenantCode != null and params.tenantCode != ''">
+                AND tenant_code = #{params.tenantCode}
             </if>
         </if>
 

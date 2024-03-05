@@ -1,5 +1,7 @@
 package com.github.tangyi.user.service.attach;
 
+import com.github.pagehelper.PageInfo;
+import com.github.tangyi.api.exam.model.Examination;
 import com.github.tangyi.api.user.model.Attachment;
 import com.github.tangyi.api.user.service.IAttachmentService;
 import com.github.tangyi.common.exceptions.AttachNotExistException;
@@ -8,10 +10,14 @@ import com.github.tangyi.constants.UserCacheName;
 import com.github.tangyi.user.mapper.attach.AttachmentMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @AllArgsConstructor
@@ -59,4 +65,14 @@ public class AttachmentService extends CrudService<AttachmentMapper, Attachment>
 	public int deleteAll(Long[] ids) {
 		return super.deleteAll(ids);
 	}
+	@Override
+	public PageInfo<Attachment> attachmentList(Map<String, Object> params, int pageNum, int pageSize) {
+		PageInfo<Attachment> page = findPage(params, pageNum, pageSize);
+		List<Attachment> list = page.getList();
+		if (CollectionUtils.isNotEmpty(list)) {
+			return new PageInfo<>(list);
+		}
+		return new PageInfo<>();
+	}
+
 }

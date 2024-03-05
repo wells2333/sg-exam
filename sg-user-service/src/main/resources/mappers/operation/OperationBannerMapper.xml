@@ -23,6 +23,9 @@
             <if test="params.tenantCode != null and params.tenantCode != ''">
                 AND tenant_code = #{params.tenantCode}
             </if>
+            <if test="params.operationName != null and params.operationName != ''">
+                AND operation_name LIKE  CONCAT('%', #{params.operationName}, '%')
+            </if>
         </if>
         <choose>
             <when test="params.sortField != null and params.sortField != '' and params.sortOrder != null and params.sortOrder != ''">

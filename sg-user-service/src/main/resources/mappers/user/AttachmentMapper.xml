@@ -24,8 +24,8 @@
             <if test="params.tenantCode != null and params.tenantCode != ''">
                 AND tenant_code = #{params.tenantCode}
             </if>
-            <if test="params.attachmentName != null and params.attachmentName != ''">
-                AND (attachment_name LIKE CONCAT('%',#{params.attachmentName},'%'))
+            <if test="params.attachName != null and params.attachName != ''">
+                AND (attach_name LIKE CONCAT('%',#{params.attachName},'%'))
             </if>
             <if test="params.attachType != null and params.attachType != ''">
                 AND (attach_type LIKE CONCAT('%',#{params.attachType},'%'))
