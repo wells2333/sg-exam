@@ -48,10 +48,10 @@ public class ExaminationController extends BaseController {
 			return R.success(false);
 		}
 
-//		if (req.getRequestURI().contains("anonymousUser") && !ExaminationType.QUESTIONNAIRE.getValue()
-//				.equals(examination.getType())) {
-//			return R.success(false, "Invalid examinationType");
-//		}
+		if (req.getRequestURI().contains("anonymousUser") && !ExaminationType.QUESTIONNAIRE.getValue()
+				.equals(examination.getType())) {
+			return R.success(false, "Invalid examinationType");
+		}
 
 		if (examination.getStartTime() != null && examination.getEndTime() != null) {
 			long current = System.currentTimeMillis();
