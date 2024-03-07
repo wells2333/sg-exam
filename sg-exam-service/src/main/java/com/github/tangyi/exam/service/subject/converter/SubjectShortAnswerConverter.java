@@ -25,25 +25,26 @@ public class SubjectShortAnswerConverter implements ISubjectConverter<SubjectSho
 		if (subject == null) {
 			return null;
 		}
-		SubjectDto subjectDto = new SubjectDto();
-		BeanUtils.copyProperties(subject, subjectDto);
-		subjectDto.setType(SubjectType.SHORT_ANSWER.getValue());
-		subjectDto.setType(SubjectType.SHORT_ANSWER.getValue());
-		subjectDto.setTypeLabel(SubjectType.SHORT_ANSWER.getName());
+
+		SubjectDto dto = new SubjectDto();
+		BeanUtils.copyProperties(subject, dto);
+		dto.setType(SubjectType.SHORT_ANSWER.getValue());
+		dto.setType(SubjectType.SHORT_ANSWER.getValue());
+		dto.setTypeLabel(SubjectType.SHORT_ANSWER.getName());
 		if (findAnswer) {
 			Answer answer = new Answer();
 			answer.setAnswer(subject.getAnswer());
-			subjectDto.setAnswer(answer);
+			dto.setAnswer(answer);
 		}
-		return subjectDto;
+		return dto;
 	}
 
 	@Override
 	public List<SubjectDto> convert(List<SubjectShortAnswer> subjects, boolean findAnswer) {
-		List<SubjectDto> subjectDtoList = new ArrayList<>();
+		List<SubjectDto> list = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(subjects)) {
-			subjectDtoList = subjects.stream().map(subject -> convert(subject, findAnswer)).collect(Collectors.toList());
+			list = subjects.stream().map(subject -> convert(subject, findAnswer)).collect(Collectors.toList());
 		}
-		return subjectDtoList;
+		return list;
 	}
 }

@@ -1,14 +1,8 @@
 package com.github.tangyi.exam.enums;
 
 import com.github.tangyi.exam.handler.AbstractAnswerHandler;
-import com.github.tangyi.exam.handler.impl.ChoicesAnswerHandler;
-import com.github.tangyi.exam.handler.impl.JudgementAnswerHandler;
-import com.github.tangyi.exam.handler.impl.MultipleChoicesAnswerHandler;
-import com.github.tangyi.exam.handler.impl.ShortAnswerHandler;
-import com.github.tangyi.exam.service.subject.ISubjectService;
-import com.github.tangyi.exam.service.subject.SubjectChoicesService;
-import com.github.tangyi.exam.service.subject.SubjectJudgementService;
-import com.github.tangyi.exam.service.subject.SubjectShortAnswerService;
+import com.github.tangyi.exam.handler.impl.*;
+import com.github.tangyi.exam.service.subject.*;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -22,7 +16,8 @@ public enum SubjectType {
 	CHOICES("单选", 0, SubjectChoicesService.class, ChoicesAnswerHandler.class),    //
 	SHORT_ANSWER("简答", 1, SubjectShortAnswerService.class, ShortAnswerHandler.class),    //
 	JUDGEMENT("判断", 2, SubjectJudgementService.class, JudgementAnswerHandler.class),    //
-	MULTIPLE_CHOICES("多选", 3, SubjectChoicesService.class, MultipleChoicesAnswerHandler.class);    //
+	MULTIPLE_CHOICES("多选", 3, SubjectChoicesService.class, MultipleChoicesAnswerHandler.class), //
+	FILL_BLANK("填空", 4, SubjectFillBlankService.class, FillBlankAnswerHandler.class);    //
 
 	private static final Int2ObjectOpenHashMap<SubjectType> VALUE_MAP = new Int2ObjectOpenHashMap<>();
 	private static final Map<String, SubjectType> NAME_MAP = Maps.newHashMap();

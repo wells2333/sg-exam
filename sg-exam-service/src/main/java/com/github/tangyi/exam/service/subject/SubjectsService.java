@@ -22,6 +22,7 @@ import com.github.tangyi.exam.service.ExaminationSubjectService;
 import com.github.tangyi.exam.service.data.SubjectViewCounterService;
 import com.github.tangyi.exam.service.fav.SubjectFavoritesService;
 import com.github.tangyi.exam.service.subject.converter.SubjectChoicesConverter;
+import com.github.tangyi.exam.service.subject.converter.SubjectFillBlankConverter;
 import com.github.tangyi.exam.service.subject.converter.SubjectJudgementConverter;
 import com.github.tangyi.exam.service.subject.converter.SubjectShortAnswerConverter;
 import com.github.tangyi.exam.utils.ExamUtil;
@@ -56,6 +57,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 	private final SubjectChoicesConverter subjectChoicesConverter;
 	private final SubjectShortAnswerConverter subjectShortAnswerConverter;
 	private final SubjectJudgementConverter judgementConverter;
+	private final SubjectFillBlankConverter fillBlankConverter;
 	private final SubjectFavoritesService subjectFavoritesService;
 	private final SubjectViewCounterService subjectViewCounterService;
 	private final AttachmentManager attachmentManager;
@@ -116,43 +118,43 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 		return this.dao.findByCategoryIdAndMaxSort(categoryId, sort);
 	}
 
-    public PageInfo<SubjectDto> findPage(Map<String, Object> params, int pageNum, int pageSize, boolean findFav,
-                                         boolean findView, SubjectDto subjectDto) {
-        if (subjectDto.getCategoryId() != null) {
-            params.put("categoryId", subjectDto.getCategoryId());
-        }
-        PageInfo<Subjects> pageInfo = findPage(params, pageNum, pageSize);
-        List<SubjectDto> dtoList = Lists.newArrayListWithExpectedSize(pageSize);
-        List<Long> categoryIds = Lists.newArrayList();
-        Collection<SubjectDto> list = this.getSubjectsBySubjects(pageInfo.getList());
-        for (SubjectDto dto : list) {
-            //这个是根据categoryIdj进行查找的
-            if (params.get("subjectName") == null) {
-                dtoList.add(dto);
-            } else {
-                //根据subjectName进行查找
-                String subjectName = (String) params.get("subjectName");
-                boolean contains = dto.getSubjectName().contains(subjectName);
-                if (contains)
-                    dtoList.add(dto);
-            }
-            if (dto.getCategoryId() != null) {
-                categoryIds.add(dto.getCategoryId());
-            }
+	public PageInfo<SubjectDto> findPage(Map<String, Object> params, int pageNum, int pageSize, boolean findFav,
+			boolean findView, SubjectDto subjectDto) {
+		if (subjectDto.getCategoryId() != null) {
+			params.put("categoryId", subjectDto.getCategoryId());
+		}
+		PageInfo<Subjects> pageInfo = findPage(params, pageNum, pageSize);
+		List<SubjectDto> dtoList = Lists.newArrayListWithExpectedSize(pageSize);
+		List<Long> categoryIds = Lists.newArrayList();
+		Collection<SubjectDto> list = this.getSubjectsBySubjects(pageInfo.getList());
+		for (SubjectDto dto : list) {
+			//这个是根据 categoryIdj 进行查找的
+			if (params.get("subjectName") == null) {
+				dtoList.add(dto);
+			} else {
+				//根据 subjectName 进行查找
+				String subjectName = (String) params.get("subjectName");
+				boolean contains = dto.getSubjectName().contains(subjectName);
+				if (contains)
+					dtoList.add(dto);
+			}
+			if (dto.getCategoryId() != null) {
+				categoryIds.add(dto.getCategoryId());
+			}
 
-        }
-        if (CollectionUtils.isNotEmpty(dtoList)) {
-            dtoList = dtoList.stream().sorted(Comparator.comparing(SubjectDto::getSort)).collect(Collectors.toList());
-        }
-        initCategoryInfo(categoryIds, dtoList);
-        if (findFav) {
-            subjectFavoritesService.findUserFavorites(dtoList);
-        }
-        if (findView) {
-            subjectViewCounterService.getSubjectsView(dtoList);
-        }
-        return PageUtil.newPageInfo(pageInfo, dtoList);
-    }
+		}
+		if (CollectionUtils.isNotEmpty(dtoList)) {
+			dtoList = dtoList.stream().sorted(Comparator.comparing(SubjectDto::getSort)).collect(Collectors.toList());
+		}
+		initCategoryInfo(categoryIds, dtoList);
+		if (findFav) {
+			subjectFavoritesService.findUserFavorites(dtoList);
+		}
+		if (findView) {
+			subjectViewCounterService.getSubjectsView(dtoList);
+		}
+		return PageUtil.newPageInfo(pageInfo, dtoList);
+	}
 
 	public PageInfo<?> findUserFavoritesPage(PageInfo<ExamUserFav> page) {
 		PageInfo<SubjectDto> pageInfo = new PageInfo<>();
@@ -235,7 +237,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 			}
 		}
 
-		throw new IllegalArgumentException("The subject repeated，please modify.");
+		throw new IllegalArgumentException("The subject repeated, please modify.");
 	}
 
 	@Transactional
@@ -399,46 +401,45 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 	 * 根据关系列表查询对应的题目的详细信息
 	 */
 	public List<SubjectDto> findSubjectDtoList(List<Subjects> sub, boolean findOptions, boolean findAnswer) {
-		Map<String, Long[]> idMap = ExamUtil.groupByType(sub);
-		List<SubjectDto> dtoList = Lists.newArrayList();
-		if (idMap.containsKey(SubjectType.CHOICES.name())) {
-			List<SubjectChoices> choices = SubjectServiceFactory.getChoicesService()
-					.findListById(idMap.get(SubjectType.CHOICES.name()));
-			if (CollectionUtils.isNotEmpty(choices)) {
-				if (findOptions) {
-					choices = choices.stream().map(SubjectChoices::getId)
-							.map(SubjectServiceFactory.getChoicesService()::get).collect(Collectors.toList());
+		Map<Integer, List<Long>> idMap = ExamUtil.groupByType(sub);
+		List<SubjectDto> list = Lists.newArrayList();
+		for (Map.Entry<Integer, List<Long>> entry : idMap.entrySet()) {
+			Long[] ids = entry.getValue().toArray(new Long[0]);
+			List<SubjectDto> c = null;
+			if (SubjectType.CHOICES.getValue() == entry.getKey()
+					|| SubjectType.MULTIPLE_CHOICES.getValue() == entry.getKey()) {
+				List<SubjectChoices> subjects = SubjectServiceFactory.getChoicesService().findListById(ids);
+				if (CollectionUtils.isNotEmpty(subjects)) {
+					if (findOptions) {
+						subjects = subjects.stream().map(SubjectChoices::getId)
+								.map(SubjectServiceFactory.getChoicesService()::get).collect(Collectors.toList());
+					}
+					c = subjectChoicesConverter.convert(subjects, findAnswer);
 				}
-				dtoList.addAll(subjectChoicesConverter.convert(choices, findAnswer));
-			}
-		}
-		if (idMap.containsKey(SubjectType.MULTIPLE_CHOICES.name())) {
-			List<SubjectChoices> choices = SubjectServiceFactory.getChoicesService()
-					.findListById(idMap.get(SubjectType.MULTIPLE_CHOICES.name()));
-			if (CollectionUtils.isNotEmpty(choices)) {
-				if (findOptions) {
-					choices = choices.stream().map(SubjectChoices::getId)
-							.map(SubjectServiceFactory.getChoicesService()::get).collect(Collectors.toList());
+			} else if (SubjectType.SHORT_ANSWER.getValue() == entry.getKey()) {
+				List<SubjectShortAnswer> subjects = SubjectServiceFactory.getShortAnswerService().findListById(ids);
+				if (CollectionUtils.isNotEmpty(subjects)) {
+					c = subjectShortAnswerConverter.convert(subjects, findAnswer);
 				}
-				dtoList.addAll(subjectChoicesConverter.convert(choices, findAnswer));
+			} else if (SubjectType.JUDGEMENT.getValue() == entry.getKey()) {
+				List<SubjectJudgement> subjects = SubjectServiceFactory.getJudgementService().findListById(ids);
+				if (CollectionUtils.isNotEmpty(subjects)) {
+					c = judgementConverter.convert(subjects, findAnswer);
+				}
+			} else if (SubjectType.FILL_BLANK.getValue() == entry.getKey()) {
+				List<SubjectFillBlank> subjects = SubjectServiceFactory.getFillBlankService().findListById(ids);
+				if (CollectionUtils.isNotEmpty(subjects)) {
+					c = fillBlankConverter.convert(subjects, findAnswer);
+				}
+			}
+
+			if (CollectionUtils.isNotEmpty(c)) {
+				list.addAll(c);
 			}
 		}
-		if (idMap.containsKey(SubjectType.SHORT_ANSWER.name())) {
-			List<SubjectShortAnswer> shortAnswers = SubjectServiceFactory.getShortAnswerService()
-					.findListById(idMap.get(SubjectType.SHORT_ANSWER.name()));
-			if (CollectionUtils.isNotEmpty(shortAnswers)) {
-				dtoList.addAll(subjectShortAnswerConverter.convert(shortAnswers, findAnswer));
-			}
-		}
-		if (idMap.containsKey((SubjectType.JUDGEMENT.name()))) {
-			List<SubjectJudgement> judgements = SubjectServiceFactory.getJudgementService()
-					.findListById(idMap.get(SubjectType.JUDGEMENT.name()));
-			if (CollectionUtils.isNotEmpty(judgements)) {
-				dtoList.addAll(judgementConverter.convert(judgements, findAnswer));
-			}
-		}
+
 		// 获取语音和视频的 URL
-		for (SubjectDto dto : dtoList) {
+		for (SubjectDto dto : list) {
 			if (dto.getSpeechId() != null) {
 				dto.setSpeechUrl(attachmentManager.getPreviewUrlIgnoreException(dto.getSpeechId()));
 			}
@@ -446,7 +447,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 				dto.setSubjectVideoUrl(attachmentManager.getPreviewUrlIgnoreException(dto.getSubjectVideoId()));
 			}
 		}
-		return dtoList;
+		return list;
 	}
 
 	@Transactional

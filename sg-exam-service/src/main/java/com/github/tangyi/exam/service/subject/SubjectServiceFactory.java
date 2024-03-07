@@ -48,6 +48,11 @@ public class SubjectServiceFactory {
 		return CONTEXT.getBean(SubjectJudgementService.class);
 	}
 
+	public static SubjectFillBlankService getFillBlankService() {
+		initApplicationContext();
+		return CONTEXT.getBean(SubjectFillBlankService.class);
+	}
+
 	public static ISubjectService getService(int type) {
 		initApplicationContext();
 		ISubjectService service = null;

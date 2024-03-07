@@ -8,7 +8,6 @@ import com.github.tangyi.api.exam.model.Answer;
 import com.github.tangyi.api.exam.model.ExaminationSubject;
 import com.github.tangyi.api.exam.model.SubjectOption;
 import com.github.tangyi.api.exam.model.Subjects;
-import com.github.tangyi.exam.enums.SubjectType;
 import com.github.tangyi.exam.excel.ExamRecordModel;
 import com.github.tangyi.exam.excel.SubjectExcelModel;
 import com.github.tangyi.exam.handler.HandlerFactory;
@@ -142,30 +141,14 @@ public class ExamUtil {
 		return models;
 	}
 
-	/**
-	 * 遍历关系集合，按类型分组题目 ID，返回 map
-	 */
-	public static Map<String, Long[]> groupByType(List<Subjects> subjects) {
-		Map<String, Long[]> idMap = Maps.newHashMapWithExpectedSize(4);
-		subjects.stream().collect(Collectors.groupingBy(Subjects::getType, Collectors.toList()))
-				.forEach((type, temp) -> {
-					if (SubjectType.CHOICES.getValue() == type) {
-						idMap.put(SubjectType.CHOICES.name(),
-								temp.stream().map(Subjects::getSubjectId).distinct().toArray(Long[]::new));
-					} else if (SubjectType.JUDGEMENT.getValue() == type) {
-						idMap.put(SubjectType.JUDGEMENT.name(),
-								temp.stream().map(Subjects::getSubjectId).distinct().toArray(Long[]::new));
-					} else if (SubjectType.MULTIPLE_CHOICES.getValue() == type) {
-						idMap.put(SubjectType.MULTIPLE_CHOICES.name(),
-								temp.stream().map(Subjects::getSubjectId).distinct().toArray(Long[]::new));
-					} else if (SubjectType.SHORT_ANSWER.getValue() == type) {
-						idMap.put(SubjectType.SHORT_ANSWER.name(),
-								temp.stream().map(Subjects::getSubjectId).distinct().toArray(Long[]::new));
-					} else {
-						log.error("Unknown subject type: {}", type);
-					}
-				});
-		return idMap;
+	public static Map<Integer, List<Long>> groupByType(List<Subjects> subjects) {
+		Map<Integer, List<Long>> result = Maps.newHashMapWithExpectedSize(4);
+		for (Subjects sub : subjects) {
+			Integer type = sub.getType();
+			List<Long> ids = result.computeIfAbsent(type, s -> new ArrayList<>());
+			ids.add(sub.getSubjectId());
+		}
+		return result;
 	}
 
 	public static Map<Long, Integer> toMap(List<Subjects> subjects) {
