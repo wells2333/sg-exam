@@ -16,7 +16,7 @@ public class SpringContextHolder implements ApplicationContextAware, DisposableB
 	private static ApplicationContext applicationContext = null;
 
 	public static ApplicationContext getApplicationContext() {
-		SgPreconditions.checkNull(applicationContext, "applicationContext为空");
+		SgPreconditions.checkNull(applicationContext, "The applicationContext is null.");
 		return applicationContext;
 	}
 

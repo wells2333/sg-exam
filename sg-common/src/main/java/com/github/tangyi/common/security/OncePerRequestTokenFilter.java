@@ -90,15 +90,15 @@ public class OncePerRequestTokenFilter extends OncePerRequestFilter {
 			String tenantCode = ObjectUtil.toString(claims.get(TokenManager.TENANT_CODE));
 			UserToken userToken = this.tokenManager.getToken(userId);
 			if (userToken == null) {
-				throw new TokenExpireException("token 已失效，请重新登录");
+				throw new TokenExpireException("Token expired，please retry again.");
 			}
 
 			if (!userToken.getUserId().toString().equals(userId)) {
-				throw new TokenExpireException("token 校验失败，请重新登录");
+				throw new TokenExpireException("Failed to valid token，please retry again.");
 			}
 
 			if (!userToken.getId().equals(id)) {
-				throw new TokenExpireException("token 已失效");
+				throw new TokenExpireException("Token expired.");
 			}
 
 			this.updateExpireSecondsIfNecessary(userToken);
@@ -111,8 +111,8 @@ public class OncePerRequestTokenFilter extends OncePerRequestFilter {
 		if (StringUtils.isEmpty(authorization)) {
 			authorization = request.getParameter(SecurityConstant.AUTHORIZATION);
 		}
-		SgPreconditions.checkBoolean(StringUtils.isEmpty(authorization), "无用户凭证");
-		SgPreconditions.checkBoolean(!authorization.startsWith(SecurityConstant.BEARER), "token非法");
+		SgPreconditions.checkBoolean(StringUtils.isEmpty(authorization), "Invalid authorization.");
+		SgPreconditions.checkBoolean(!authorization.startsWith(SecurityConstant.BEARER), "Invalid token.");
 		return authorization;
 	}
 

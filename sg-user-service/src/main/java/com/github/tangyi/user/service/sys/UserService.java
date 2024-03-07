@@ -327,12 +327,12 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 	@CacheEvict(value = {USER, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
 			USER_MENU_PERMISSION}, key = "#userDto.tenantCode + ':' + #userDto.identifier")
 	public int updatePassword(UserDto userDto) {
-		SgPreconditions.checkBlank(userDto.getNewPassword(), "新密码不能为空");
-		SgPreconditions.checkBlank(userDto.getIdentifier(), "用户名不能为空");
+		SgPreconditions.checkBlank(userDto.getNewPassword(), "The password cannot be null.");
+		SgPreconditions.checkBlank(userDto.getIdentifier(), "The identifier cannot be null.");
 		UserAuths userAuths = findUserAuthsByIdentifier(null, userDto.getIdentifier(), userDto.getTenantCode());
-		SgPreconditions.checkNull(userAuths, "账号不存在");
+		SgPreconditions.checkNull(userAuths, "The identifier does not exists.");
 		if (!encoder.matches(userDto.getOldPassword(), userAuths.getCredential())) {
-			throw new CommonException("新旧密码不匹配");
+			throw new CommonException("The password not math.");
 		} else {
 			userAuths.setCredential(encoder.encode(userDto.getNewPassword()));
 			return userAuthsService.update(userAuths);
@@ -348,7 +348,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 			USER_MENU_PERMISSION}, key = "#userDto.tenantCode + ':' + #userDto.identifier")
 	public String updateAvatar(UserDto userDto) {
 		User user = this.get(userDto.getId());
-		SgPreconditions.checkNull(user, "用户不存在");
+		SgPreconditions.checkNull(user, "The user does not exists.");
 		if (user.getAvatarId() != null) {
 			Attachment attach = attachmentService.get(user.getAvatarId());
 			if (attach != null) {
@@ -412,7 +412,7 @@ public class UserService extends CrudService<UserMapper, User> implements IUserS
 			USER_MENU_PERMISSION}, key = "#userDto.tenantCode + ':' + #userDto.identifier")
 	public boolean resetPassword(UserDto userDto) {
 		UserAuths userAuths = findUserAuthsByIdentifier(null, userDto.getIdentifier(), userDto.getTenantCode());
-		SgPreconditions.checkNull(userAuths, "账号不存在");
+		SgPreconditions.checkNull(userAuths, "The identifier not found.");
 		userAuths.setCredential(encoder.encode(CommonConstant.DEFAULT_PASSWORD));
 		return userAuthsService.update(userAuths) > 0;
 	}

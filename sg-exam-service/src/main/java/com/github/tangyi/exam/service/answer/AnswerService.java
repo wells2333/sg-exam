@@ -217,7 +217,7 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> implements 
 	@Transactional
 	public SubjectDto subjectAnswer(Long subjectId, Long recordId, Integer type, Integer nextSubjectSortNo) {
 		ExaminationRecord record = examRecordService.get(recordId);
-		SgPreconditions.checkNull(record, "考试记录不存在");
+		SgPreconditions.checkNull(record, "The examination record does not exists.");
 		Long examinationId = record.getExaminationId();
 		ExaminationSubject es = esService.findByExaminationIdAndSubjectId(ExamUtil.createEs(examinationId, subjectId));
 		if (es != null) {
@@ -284,7 +284,10 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> implements 
 			} else {
 				es = esService.findByExaminationIdAndSubjectId(es);
 			}
-			SgPreconditions.checkNull(es, "ID 为" + currentSubjectId + "的题目不存在");
+			if (es == null) {
+				throw new IllegalStateException("The subject id " + currentSubjectId + " does not exists.");
+			}
+
 			// 查询题目的详细信息
 			//subjectDto = subjectService.get(examinationSubject.getSubjectId(), examinationSubject.getType());
 		}

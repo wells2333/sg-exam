@@ -39,7 +39,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		long start = System.nanoTime();
 		UserVo userVo = userService.findUserByIdentifier(null, username, TenantHolder.getTenantCode());
-		checkUserExist(userVo);
+		checkUserExist(username, userVo);
 		boolean enabled = CommonConstant.STATUS_NORMAL.equals(userVo.getStatus());
 		return new CustomUserDetails(username, userVo.getCredential(), enabled, getAuthority(userVo),
 				userVo.getTenantCode(), userVo.getUserId(), userVo.getPhone(), start, LoginTypeEnum.PWD);
@@ -50,7 +50,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 			throws UsernameNotFoundException, TenantNotFoundException {
 		long start = System.nanoTime();
 		UserVo userVo = userService.findUserByIdentifier(null, username, tenantCode);
-		checkUserExist(userVo);
+		checkUserExist(username, userVo);
 		boolean enabled = CommonConstant.STATUS_NORMAL.equals(userVo.getStatus());
 		return new CustomUserDetails(username, userVo.getCredential(), enabled, getAuthority(userVo),
 				userVo.getTenantCode(), userVo.getUserId(), userVo.getPhone(), start, LoginTypeEnum.PWD);
@@ -105,9 +105,9 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 				userVo.getUserId(), userVo.getPhone(), start, LoginTypeEnum.WECHAT);
 	}
 
-	private void checkUserExist(UserVo userVo) {
+	private void checkUserExist(String username, UserVo userVo) {
 		if (userVo == null) {
-			throw new UsernameNotFoundException("User does not exist");
+			throw new UsernameNotFoundException("User " + username + " does not exist");
 		}
 	}
 

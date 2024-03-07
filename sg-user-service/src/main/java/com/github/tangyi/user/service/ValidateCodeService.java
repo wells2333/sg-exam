@@ -38,7 +38,7 @@ public class ValidateCodeService {
 
 		if (!StrUtil.equals(saveCode, code)) {
 			redisTemplate.delete(key);
-			throw new InvalidValidateCodeException("验证码错误");
+			throw new InvalidValidateCodeException("Invalid code.");
 		}
 
 		redisTemplate.delete(key);

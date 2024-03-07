@@ -19,13 +19,13 @@ public class ValidateTenantAspect {
 	@Before("execution(* com.github.tangyi.auth.security.core.user.CustomUserDetailsServiceImpl.*AndTenantCode(..)) && args(tenantCode,..)")
 	public void validateTenantCode(String tenantCode) throws TenantNotFoundException {
 		if (StringUtils.isBlank(tenantCode)) {
-			throw new TenantNotFoundException("获取租户信息失败");
+			throw new TenantNotFoundException("Failed to get tenant info.");
 		}
 
 		// 获取租户信息
 		Tenant tenant = tenantService.getByTenantCode(tenantCode);
 		if (tenant == null) {
-			throw new TenantNotFoundException(String.format("租户 %s 不存在", tenantCode));
+			throw new TenantNotFoundException("The tenant " + tenantCode + " not found.");
 		}
 	}
 }

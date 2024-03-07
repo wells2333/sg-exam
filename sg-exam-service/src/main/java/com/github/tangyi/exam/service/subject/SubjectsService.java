@@ -235,7 +235,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 			}
 		}
 
-		throw new IllegalArgumentException("题目序号重复，请修改");
+		throw new IllegalArgumentException("The subject repeated，please modify.");
 	}
 
 	@Transactional
@@ -322,7 +322,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 	 */
 	public SubjectDto findFirstSubjectByExaminationId(Long eId) {
 		ExaminationSubject es = esService.findMinSortByExaminationId(eId);
-		SgPreconditions.checkNull(es, "该考试未录入题目");
+		SgPreconditions.checkNull(es, "Empty subjects.");
 		SubjectDto dto = this.getSubject(es.getSubjectId());
 		// 题目数量
 		Integer subjectCount = esService.findSubjectCount(eId);

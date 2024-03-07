@@ -79,11 +79,6 @@ public class ApiMsg {
 	public static final int KEY_ACCESS = 404;
 
 	/**
-	 * 认证
-	 */
-	public static final int KEY_AUTHENTICATION = 405;
-
-	/**
 	 * 参数校验
 	 */
 	public static final int KEY_PARAM_VALIDATE = 406;

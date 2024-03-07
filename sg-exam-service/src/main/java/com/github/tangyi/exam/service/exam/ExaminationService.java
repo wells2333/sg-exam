@@ -412,13 +412,13 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	public Boolean randomAddSubjects(Long id, RandomSubjectDto params) {
 		// 校验分类是否存在
 		SubjectCategory category = this.subjectCategoryService.get(params.getCategoryId());
-		SgPreconditions.checkNull(category, "题目分类不存在");
+		SgPreconditions.checkNull(category, "The subject category does not exists.");
 		// 根据分类查询题目
 		List<Subjects> subjects = this.subjectsService.findIdAndTypeByCategoryId(category.getId());
-		SgPreconditions.checkCollectionEmpty(subjects, "该分类下的题目数量为空");
+		SgPreconditions.checkCollectionEmpty(subjects, "The category's subject is empty");
 		// 数量校验
 		Integer cnt = params.getSubjectCount();
-		SgPreconditions.checkBoolean(cnt > subjects.size(), "分类下的题目数量不足" + cnt);
+		SgPreconditions.checkBoolean(cnt > subjects.size(), "The category's subject is not enough.");
 		List<SubjectDto> result = this.randomAddSubject(subjects, cnt);
 		if (CollectionUtils.isNotEmpty(result)) {
 			this.batchAddSubjects(id, result);
@@ -461,7 +461,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		while (tmpSubjects.size() < cnt) {
 			itCnt++;
 			if (itCnt > 500) {
-				throw new CommonException("随机组卷失败，itCnt：" + itCnt);
+				throw new CommonException("Failed to compose examination，itCnt：" + itCnt);
 			}
 
 			int index = ThreadLocalRandom.current().nextInt(0, subjects.size());

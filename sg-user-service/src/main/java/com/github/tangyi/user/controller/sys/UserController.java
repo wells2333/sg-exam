@@ -94,7 +94,7 @@ public class UserController extends BaseController {
 			userVo.setTenantCode(SysUtil.getTenantCode());
 			return R.success(userService.findUserInfo(userVo));
 		} catch (Exception e) {
-			throw new CommonException(e, "获取当前登录用户详细信息");
+			throw new CommonException(e, "Failed to get user info.");
 		}
 	}
 
@@ -221,7 +221,7 @@ public class UserController extends BaseController {
 			// TODO users = userService.findList(user);
 			users = Lists.newArrayList();
 		}
-		SgPreconditions.checkCollectionEmpty(users, "无用户数据");
+		SgPreconditions.checkCollectionEmpty(users, "Invalid user info.");
 		// 查询用户授权信息
 		List<UserAuths> userAuths = userAuthsService.getListByUsers(users);
 		// 组装数据，转成 dto

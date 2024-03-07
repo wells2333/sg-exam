@@ -30,7 +30,7 @@ public class StudentService extends CrudService<StudentMapper, Student> implemen
 		Long userId = studentDto.getUserId();
 		if (userId != null) {
 			UserVo userVo = userService.findUserByIdentifier(null, currentUser, tenantCode);
-			SgPreconditions.checkNull(userVo, "get user info failed");
+			SgPreconditions.checkNull(userVo, "Failed to get user info.");
 			userId = userVo.getId();
 		}
 		Student student = new Student();

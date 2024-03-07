@@ -28,7 +28,7 @@ public class AttachmentService extends CrudService<AttachmentMapper, Attachment>
 	public Attachment getNotNullAttachment(Long id) {
 		Attachment attachment = this.get(id);
 		if (attachment == null) {
-			throw new AttachNotExistException("attachment does not exist, id: " + id);
+			throw new AttachNotExistException("Attachment does not exist, id: " + id);
 		}
 
 		return attachment;

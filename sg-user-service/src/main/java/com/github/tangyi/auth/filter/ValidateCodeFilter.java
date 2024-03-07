@@ -56,7 +56,7 @@ public class ValidateCodeFilter extends OncePerRequestFilter {
 	private void checkCode(HttpServletRequest req) throws InvalidValidateCodeException {
 		String code = req.getParameter("code");
 		if (StrUtil.isBlank(code)) {
-			throw new InvalidValidateCodeException("请输入验证码");
+			throw new InvalidValidateCodeException("Please input valid code.");
 		}
 
 		// 获取随机码

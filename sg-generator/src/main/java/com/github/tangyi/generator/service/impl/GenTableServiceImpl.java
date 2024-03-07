@@ -152,7 +152,7 @@ public class GenTableServiceImpl extends CrudService<GenTableMapper, GenTable> i
 				}
 			}
 		} catch (Exception e) {
-			throw new ServiceException("导入失败：" + e.getMessage());
+			throw new ServiceException("Import failed: " + e.getMessage());
 		}
 	}
 

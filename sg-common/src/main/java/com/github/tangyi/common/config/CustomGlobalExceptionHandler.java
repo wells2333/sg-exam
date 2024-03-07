@@ -73,7 +73,7 @@ public class CustomGlobalExceptionHandler {
 	@ExceptionHandler(QiniuException.class)
 	public ResponseEntity<R<String>> handleQiniuException(QiniuException e) {
 		log.error("[handleQiniuException]", e);
-		String msg = "文件操作失败";
+		String msg = "File operation failed.";
 		R<String> responseBean = new R<>(null, ApiMsg.KEY_ERROR, msg);
 		return new ResponseEntity<>(responseBean, HttpStatus.OK);
 	}

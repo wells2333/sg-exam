@@ -35,7 +35,7 @@ public class MarkAnswerService {
 		answer.setExamRecordId(recordId);
 		List<Answer> answers = answerService.findList(answer);
 		ExaminationRecord record = examRecordService.get(recordId);
-		SgPreconditions.checkNull(record, "考试记录不存在");
+		SgPreconditions.checkNull(record, "The examination record does not exists.");
 		if (CollectionUtils.isNotEmpty(answers)) {
 			long correctNumber = answers.stream().filter(t -> t.getAnswerType().equals(AnswerConstant.RIGHT)).count();
 			// 总分

@@ -70,8 +70,8 @@ public class ExaminationActionService {
 
 	@Transactional
 	public StartExamDto start(ExaminationRecord examRecord) {
-		SgPreconditions.checkNull(examRecord.getExaminationId(), "参数校验失败，考试 id 为空");
-		SgPreconditions.checkNull(examRecord.getUserId(), "参数校验失败，用户 id 为空");
+		SgPreconditions.checkNull(examRecord.getExaminationId(), "The examination id cannot be null.");
+		SgPreconditions.checkNull(examRecord.getUserId(), "The user id cannot be null.");
 		return this.start(examRecord.getUserId(), SysUtil.getUser(), examRecord.getExaminationId(),
 				SysUtil.getTenantCode());
 	}

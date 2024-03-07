@@ -105,8 +105,9 @@ public class OkHttpUtil {
 		for (String key : header.keySet())
 			builder.addHeader(key, header.get(key).toString());
 		Response response = okHttpClient.newCall(builder.build()).execute();
-		if (!response.isSuccessful())
-			throw new RuntimeException("请求接口失败！");
+		if (!response.isSuccessful()) {
+			throw new RuntimeException("Failed to call interface.");
+		}
 		return response.body().string();
 	}
 
@@ -117,7 +118,7 @@ public class OkHttpUtil {
 			builder.addHeader(key, header.get(key).toString());
 		Response response = okHttpClient.newCall(builder.build()).execute();
 		if (!response.isSuccessful())
-			throw new RuntimeException("请求接口失败！");
+			throw new RuntimeException("Failed to call interface.");
 		return response.body().string();
 	}
 
@@ -128,7 +129,7 @@ public class OkHttpUtil {
 			builder.addHeader(key, header.get(key).toString());
 		Response response = okHttpClient.newCall(builder.build()).execute();
 		if (!response.isSuccessful())
-			throw new RuntimeException("请求接口失败！");
+			throw new RuntimeException("Failed to call interface.");
 		return response.body().string();
 	}
 
@@ -139,7 +140,7 @@ public class OkHttpUtil {
 			builder.addHeader(key, header.get(key).toString());
 		Response response = okHttpClient.newCall(builder.build()).execute();
 		if (!response.isSuccessful())
-			throw new RuntimeException("请求接口失败！");
+			throw new RuntimeException("Failed to call interface.");
 		return response.body().string();
 	}
 
