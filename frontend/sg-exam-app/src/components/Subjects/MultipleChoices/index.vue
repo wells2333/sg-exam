@@ -6,10 +6,10 @@
         <div class="subject-title-content" v-html="subjectInfo.subjectName"/>
         （{{ $t('exam.subject.subjectTypeMultiChoices') }}）
       </div>
-      <div class="subject-speech-info" v-if="subjectInfo.speechId && subjectInfo.speechUrl">
+      <div class="subject-speech-info" v-if="subjectInfo.speechUrl">
         <sg-audio ref="sgAudio" :src="subjectInfo.speechUrl"></sg-audio>
       </div>
-      <div class="subject-video-info" v-if="subjectInfo.subjectVideoId">
+      <div class="subject-video-info" v-if="subjectInfo.subjectVideoUrl">
         <sg-video ref="sgVideo"></sg-video>
       </div>
       <ul class="subject-options" v-for="option in options" :key="option.id">

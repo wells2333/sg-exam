@@ -8,7 +8,7 @@
            @pause="onPause"
            @timeupdate="onTimeupdate"
            @loadedmetadata="onLoadedmetadata"
-           autoplay="autoplay"
+           :autoplay="autoplay"
            muted="muted"
     ></audio>
     <div class="w-full">

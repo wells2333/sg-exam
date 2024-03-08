@@ -1,5 +1,5 @@
 export const setVideoSrc = (subject, $refs, timeout = 50) => {
-  if (subject.subjectVideoId && subject.subjectVideoUrl) {
+  if (subject.subjectVideoUrl) {
     setTimeout(() => {
       if ($refs.sgVideo !== undefined) {
         $refs.sgVideo.setSrc(subject.subjectVideoUrl)
@@ -15,7 +15,7 @@ export const pauseVideo = ($refs) => {
 }
 
 export const setAudioSrc = (subject, $refs, autoPlay, timeout = 50) => {
-  if (subject.speechId && subject.speechUrl) {
+  if (subject.speechUrl) {
     setTimeout(() => {
       if ($refs.sgAudio !== undefined) {
         $refs.sgAudio.setSrc(subject.speechUrl, autoPlay, subject.id)

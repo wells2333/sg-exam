@@ -81,7 +81,7 @@ gen:
 
 ---
 server:
-  port: 9183
+  port: ${SERVER_PORT:9183}
 spring:
   profiles: dev
   datasource:
@@ -106,7 +106,7 @@ spring:
 
 ---
 server:
-  port: 80
+  port: ${SERVER_PORT:80}
 spring:
   profiles: docker
   servlet:

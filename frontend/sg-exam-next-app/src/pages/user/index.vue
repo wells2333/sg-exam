@@ -1,7 +1,7 @@
 <template>
   <view class="bg-gray" v-if="userInfo !== undefined">
     <view class="avatar-container flex-row" @click="handleUserInfo">
-      <nut-avatar class="avatar" :circle="true" size="large" :image="avatar"/>
+      <img class="avatar" :src="avatar"/>
       <view class="flex-col user-info">
         <text class="userName">{{ userInfo.name }}</text>
         <text class="userDesc">
@@ -178,8 +178,14 @@ export default {
 }
 
 .avatar {
-  margin-left: 20px;
+    width: 100px; 
+    height: 100px;
+    border-radius: 50%; 
+    display: block;
 }
+/* .avatar {
+  margin-left: 20px;
+} */
 
 .userName {
   margin-left: 20px;

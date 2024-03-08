@@ -13,7 +13,6 @@ declare module '@vue/runtime-core' {
     ExamItem: typeof import('./src/components/exam-item/src/ExamItem.vue')['default']
     Judgement: typeof import('./src/components/subject/judgement/Judgement.vue')['default']
     NutActionSheet: typeof import('@nutui/nutui-taro')['ActionSheet']
-    NutAvatar: typeof import('@nutui/nutui-taro')['Avatar']
     NutButton: typeof import('@nutui/nutui-taro')['Button']
     NutCell: typeof import('@nutui/nutui-taro')['Cell']
     NutCellGroup: typeof import('@nutui/nutui-taro')['CellGroup']

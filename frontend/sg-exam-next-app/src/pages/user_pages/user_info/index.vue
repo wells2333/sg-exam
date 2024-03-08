@@ -5,7 +5,7 @@
         <nut-input class="nut-input-text" type="text" v-model="userInfo.id" disabled></nut-input>
       </nut-form-item>
       <nut-form-item label="头像">
-        <nut-avatar class="user-info-avatar" :circle="true" size="small" :image="avatar"/>
+        <img class="avatar" :src="avatar"/>
       </nut-form-item>
       <nut-form-item label="昵称">
         <nut-input class="nut-input-text" type="text" v-model="userInfo.name" placeholder="请输入昵称"></nut-input>
@@ -130,6 +130,12 @@ export default {
 </script>
 
 <style>
+.avatar {
+    width: 100px; 
+    height: 100px;
+    border-radius: 50%; 
+    display: block;
+}
 .user-info .nut-input {
   border-bottom: none;
 }
