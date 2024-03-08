@@ -253,6 +253,15 @@ export function genJudgementSchemas() {
   return schemas;
 }
 
+// 填空题
+export function genFillBlankSchemas() {
+  const schemas: any[] = [];
+  appendCommonSchemas(schemas, judgeTypeSchemas());
+  schemas.push(...generateJudgementAnswer());
+  schemas.push(...genAnswerSchemas());
+  return schemas;
+}
+
 export function appendCommonSchemas(schemas: any[], afterBasicSchemas: any[]) {
   schemas.push(...gentSubjectNameSchemas());
   schemas.push(...genBasicSchemas());

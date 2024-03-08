@@ -80,11 +80,11 @@ public class SubjectJudgementService extends CrudService<SubjectJudgementMapper,
 	@Override
 	@Transactional
 	public BaseEntity<SubjectJudgement> insertSubject(SubjectDto subjectDto) {
-		SubjectJudgement subjectJudgement = new SubjectJudgement();
-		BeanUtils.copyProperties(subjectDto, subjectJudgement);
-		subjectJudgement.setAnswer(subjectDto.getAnswer().getAnswer());
-		this.insert(subjectJudgement);
-		return subjectJudgement;
+		SubjectJudgement s = new SubjectJudgement();
+		BeanUtils.copyProperties(subjectDto, s);
+		s.setAnswer(subjectDto.getAnswer().getAnswer());
+		this.insert(s);
+		return s;
 	}
 
 	@Override

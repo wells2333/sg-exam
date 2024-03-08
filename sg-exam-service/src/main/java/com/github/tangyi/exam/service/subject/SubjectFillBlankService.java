@@ -5,9 +5,16 @@ import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.SubjectFillBlank;
 import com.github.tangyi.common.base.BaseEntity;
 import com.github.tangyi.common.service.CrudService;
+import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.exam.mapper.SubjectFillBlankMapper;
+import com.github.tangyi.exam.service.subject.converter.SubjectFillBlankConverter;
+import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.BeanUtils;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,14 +26,29 @@ import java.util.List;
 public class SubjectFillBlankService extends CrudService<SubjectFillBlankMapper, SubjectFillBlank>
 		implements ISubjectService {
 
+	private final SubjectFillBlankConverter converter;
+
+	@Override
+	@Cacheable(value = ExamCacheName.SUBJECT_FILL_BLANK, key = "#id")
+	public SubjectFillBlank get(Long id) {
+		return super.get(id);
+	}
+
 	@Override
 	public SubjectDto getSubject(Long id) {
-		return null;
+		return converter.convert(this.get(id));
 	}
 
 	@Override
 	public List<SubjectDto> getSubjects(List<Long> ids) {
-		return null;
+		List<SubjectDto> list = Lists.newArrayListWithExpectedSize(ids.size());
+		for (Long id : ids) {
+			SubjectDto dto = getSubject(id);
+			if (dto != null) {
+				list.add(dto);
+			}
+		}
+		return list;
 	}
 
 	@Override
@@ -46,41 +68,74 @@ public class SubjectFillBlankService extends CrudService<SubjectFillBlankMapper,
 
 	@Override
 	public List<SubjectDto> findSubjectListById(Long[] ids) {
-		return null;
+		return converter.convert(this.findListById(ids), true);
 	}
 
 	@Override
+	@Transactional
 	public BaseEntity<?> insertSubject(SubjectDto subjectDto) {
-		return null;
+		SubjectFillBlank s = new SubjectFillBlank();
+		BeanUtils.copyProperties(subjectDto, s);
+		s.setAnswer(subjectDto.getAnswer().getAnswer());
+		this.insert(s);
+		return s;
 	}
 
 	@Override
+	@Transactional
+	@CacheEvict(value = ExamCacheName.SUBJECT_FILL_BLANK, key = "#subjectDto.id")
 	public int updateSubject(SubjectDto subjectDto) {
-		return 0;
+		SubjectFillBlank s = new SubjectFillBlank();
+		BeanUtils.copyProperties(subjectDto, s);
+		s.setAnswer(subjectDto.getAnswer().getAnswer());
+		return this.update(s);
 	}
 
 	@Override
+	@Transactional
+	@CacheEvict(value = ExamCacheName.SUBJECT_FILL_BLANK, key = "#subjectId")
 	public int updateSubjectSort(Long subjectId, Integer sort) {
-		return 0;
+		SubjectFillBlank s = new SubjectFillBlank();
+		s.setId(subjectId);
+		s.setSort(sort);
+		return this.update(s);
 	}
 
 	@Override
+	@Transactional
+	@CacheEvict(value = ExamCacheName.SUBJECT_FILL_BLANK, key = "#subjectDto.id")
 	public int deleteSubject(SubjectDto subjectDto) {
-		return 0;
+		SubjectFillBlank s = new SubjectFillBlank();
+		BeanUtils.copyProperties(subjectDto, s);
+		return this.delete(s);
 	}
 
 	@Override
+	@Transactional
+	@CacheEvict(value = ExamCacheName.SUBJECT_FILL_BLANK, allEntries = true)
 	public int deleteAllSubject(Long[] ids) {
-		return 0;
+		return this.deleteAll(ids);
 	}
 
 	@Override
+	@Transactional
+	@CacheEvict(value = ExamCacheName.SUBJECT_FILL_BLANK, key = "#subjectDto.id")
 	public int physicalDeleteSubject(SubjectDto subjectDto) {
-		return 0;
+		SubjectFillBlank s = new SubjectFillBlank();
+		BeanUtils.copyProperties(subjectDto, s);
+		return this.physicalDelete(s);
 	}
 
 	@Override
+	@Transactional
+	@CacheEvict(value = ExamCacheName.SUBJECT_FILL_BLANK, allEntries = true)
 	public int physicalDeleteAllSubject(Long[] ids) {
-		return 0;
+		return this.dao.physicalDeleteAll(ids);
+	}
+
+	@Transactional
+	@CacheEvict(value = ExamCacheName.SUBJECT_FILL_BLANK, key = "#s.id")
+	public int physicalDelete(SubjectFillBlank s) {
+		return this.dao.physicalDelete(s);
 	}
 }

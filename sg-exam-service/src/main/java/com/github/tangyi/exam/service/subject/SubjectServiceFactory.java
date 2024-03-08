@@ -62,6 +62,8 @@ public class SubjectServiceFactory {
 			service = CONTEXT.getBean(SubjectShortAnswerService.class);
 		} else if (SubjectType.JUDGEMENT.getValue() == type) {
 			service = CONTEXT.getBean(SubjectJudgementService.class);
+		} else if (SubjectType.FILL_BLANK.getValue() == type) {
+			service = CONTEXT.getBean(SubjectFillBlankService.class);
 		}
 
 		if (service == null) {

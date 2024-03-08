@@ -21,6 +21,7 @@ import {computed, defineComponent, ref, unref} from 'vue';
 import SubjectChoices from '/@/components/Subjects/SubjectChoices.vue';
 import SubjectShortAnswer from '/@/components/Subjects/SubjectShortAnswer.vue';
 import SubjectJudgement from '/@/components/Subjects/SubjectJudgement.vue';
+import SubjectFillBlank from '/@/components/Subjects/SubjectFillBlank.vue';
 import {subjectType, subjectTypeList, TabItem} from '/@/components/Subjects/subject.constant';
 import {createSubject, getSubjectInfo, updateSubject} from '/@/api/exam/subject';
 import {getDefaultOptionList} from '/@/api/exam/option';
@@ -39,7 +40,8 @@ export default defineComponent({
     BasicForm,
     SubjectChoices,
     SubjectShortAnswer,
-    SubjectJudgement
+    SubjectJudgement,
+    SubjectFillBlank
   },
   emits: ['success', 'register'],
   setup(_, {emit}) {

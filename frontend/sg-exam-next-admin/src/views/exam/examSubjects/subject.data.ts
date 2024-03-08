@@ -57,8 +57,7 @@ export const subjectType: any = {
   SubjectShortAnswer: 1,
   SubjectJudgement: 2,
   SubjectMultiChoices: 3,
-  SubjectSpeech: 4,
-  SubjectVideo: 5
+  SubjectFillBlank: 4,
 }
 
 export const subjectTypeList: TabItem[] = [
@@ -87,15 +86,9 @@ export const subjectTypeList: TabItem[] = [
     disabled: false,
   },
   {
-    key: subjectType.SubjectSpeech,
-    name: '语音题',
-    component: 'SubjectSpeech',
-    disabled: false,
-  },
-  {
-    key: subjectType.SubjectVideo,
-    name: '视频题',
-    component: 'SubjectVideo',
+    key: subjectType.SubjectFillBlank,
+    name: '填空题',
+    component: 'SubjectFillBlank',
     disabled: false,
   }
 ];

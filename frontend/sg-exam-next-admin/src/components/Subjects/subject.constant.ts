@@ -41,7 +41,8 @@ export const subjectType: any = {
   SubjectChoices: 0,
   SubjectShortAnswer: 1,
   SubjectJudgement: 2,
-  SubjectMultiChoices: 3
+  SubjectMultiChoices: 3,
+  SubjectFillBlank: 4
 }
 
 export const subjectTypeList: TabItem[] = [
@@ -68,6 +69,12 @@ export const subjectTypeList: TabItem[] = [
     name: '多选题',
     component: 'SubjectChoices',
     disabled: false
+  },
+  {
+    key: subjectType.SubjectFillBlank,
+    name: '填空题',
+    component: 'SubjectFillBlank',
+    disabled: false
   }
 ];
 
@@ -75,12 +82,14 @@ export const COLOR = {
   ZERO: '#87d068',
   ONE: '#2db7f5',
   TWO: '#108ee9',
-  THREE: '#f50'
+  THREE: '#f50',
+  FOUR: '#08979c'
 }
 
 export const subjectColor:any = {
   '0': COLOR.ZERO,
   '1': COLOR.ONE,
   '2': COLOR.TWO,
-  '3': COLOR.THREE
+  '3': COLOR.THREE,
+  '4': COLOR.FOUR,
 }
