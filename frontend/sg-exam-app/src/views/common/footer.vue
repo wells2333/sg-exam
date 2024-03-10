@@ -56,14 +56,14 @@ export default {
       'sysConfig'
     ]),
     copyright() {
-      let str = this.sysConfig.sys_web_copyright;
-      let pos = str.indexOf("备");
-      let copyright = str.substring(pos + 1).trim();
-      copyright = copyright.substring(0, 4);
-      if (copyright === "" || copyright == null) {
-        copyright = 2022;
+      let str = this.sysConfig.sys_web_copyright
+      let pos = str.indexOf('备')
+      let copyright = str.substring(pos + 1).trim()
+      copyright = copyright.substring(0, 4)
+      if (copyright === '' || copyright == null) {
+        copyright = 2022
       }
-      return copyright;
+      return copyright
     }
   },
   methods: {

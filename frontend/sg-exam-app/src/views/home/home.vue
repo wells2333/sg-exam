@@ -75,7 +75,7 @@
           </div>
         </el-col>
       </el-row>
-      <el-row  type="flex" justify="center" :gutter="50" class="custom-row">
+      <el-row  type="flex" justify="center" :gutter="20" class="custom-row">
         <el-col :span="6" v-for="(course, index) in courses" :key="index" >
           <transition name="fade-transform" mode="out-in">
             <div class="single-popular-course" v-show="showCourses" @click="courseDetail(course)">

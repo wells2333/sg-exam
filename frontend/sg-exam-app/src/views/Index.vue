@@ -45,9 +45,9 @@
                   </el-submenu>
                   <el-submenu v-if="login" index="/user-info">
                     <template slot="title">
-                      <img :src="userInfo.avatar"
-                           style="width: 30px;height: 30px;border-radius: 50%;margin-right:
-                             6px;"/>
+                      <img v-if="userInfo.avatar && userInfo.avatar !== ''" :src="userInfo.avatar"
+                           style="width: 30px;height: 30px;border-radius: 50%;margin-right:6px;"/>
+                      <i v-else class="iconfont icon-user" style="font-size: 28px; margin-right:6px; color: #5a5a5a;"></i>
                       {{ userInfo.identifier }}
                     </template>
                     <el-menu-item index="account" @click="open('/account')">{{$t('header.personal')}}</el-menu-item>

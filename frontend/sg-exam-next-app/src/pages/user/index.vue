@@ -182,6 +182,7 @@ export default {
     height: 100px;
     border-radius: 50%; 
     display: block;
+    margin-left: 24px;
 }
 /* .avatar {
   margin-left: 20px;
