@@ -6,35 +6,43 @@
           <div class="subject-exam-title">{{ exam.examinationName }}
           </div>
           <div style="padding-top: 6px;">
-            {{$t('exam.startExam.subject')}}: {{ cards.length }}
+            {{ $t('exam.startExam.subject') }}: {{ cards.length }}
           </div>
           <div style="padding-top: 6px;">
-            {{$t('exam.startExam.score')}}: {{ exam.totalScore }}
+            {{ $t('exam.startExam.score') }}: {{ exam.totalScore }}
           </div>
           <choices ref="choices" v-show="subject.type === 0" :onChoice="onChoiceFn"/>
           <short-answer ref="shortAnswer" v-show="subject.type === 1" :onChoice="onChoiceFn"/>
           <judgement ref="judgement" v-show="subject.type === 2" :onChoice="onChoiceFn"/>
           <multiple-choices ref="multipleChoices" v-show="subject.type === 3"
                             :onChoice="onChoiceFn"/>
+          <fill-blank ref="fillBlank" v-show="subject.type === 4"
+                      :onChoice="onChoiceFn"/>
           <div class="subject-buttons">
-            <el-button plain @click="last" :loading="loadingLast">{{$t('exam.startExam.last')}}</el-button>
-            <el-button plain @click="next" :loading="loadingNext">{{$t('exam.startExam.next')}}</el-button>
+            <el-button plain @click="last" :loading="loadingLast">{{ $t('exam.startExam.last') }}
+            </el-button>
+            <el-button plain @click="next" :loading="loadingNext">{{ $t('exam.startExam.next') }}
+            </el-button>
           </div>
         </div>
       </el-col>
       <el-col :span="3">
         <div class="tool-bar">
           <div class="current-progress">
-            {{$t('exam.startExam.progress')}}：{{ subject.sort }}/{{ cards.length }}
+            {{ $t('exam.startExam.progress') }}：{{ subject.sort }}/{{ cards.length }}
           </div>
           <div class="answer-card">
-            <el-button type="text" icon="el-icon-date" @click="answerCard">{{$t('exam.startExam.answerCard')}}</el-button>
+            <el-button type="text" icon="el-icon-date" @click="answerCard">
+              {{ $t('exam.startExam.answerCard') }}
+            </el-button>
           </div>
-          <el-button type="success" icon="el-icon-date" @click="submitExam">{{$t('submit')}}</el-button>
+          <el-button type="success" icon="el-icon-date" @click="submitExam">{{ $t('submit') }}
+          </el-button>
         </div>
       </el-col>
     </el-row>
-    <el-dialog :title="$t('exam.startExam.answerCard')" :visible.sync="dialogVisible" width="50%" top="10vh" center>
+    <el-dialog :title="$t('exam.startExam.answerCard')" :visible.sync="dialogVisible" width="50%"
+               top="10vh" center>
       <el-row class="answer-card-content">
         <el-button :class="value.isAnswer ? 'answer-card-btn' : ''"
                    v-for="(value, index) in cards" :key="index"
@@ -57,6 +65,7 @@ import Choices from '@/components/Subjects/Choices'
 import MultipleChoices from '@/components/Subjects/MultipleChoices'
 import ShortAnswer from '@/components/Subjects/ShortAnswer'
 import Judgement from '@/components/Subjects/Judgement'
+import FillBlank from '@/components/Subjects/FillBlank'
 import {nextSubjectType} from '@/const/constant'
 
 export default {
@@ -66,7 +75,8 @@ export default {
     Choices,
     MultipleChoices,
     ShortAnswer,
-    Judgement
+    Judgement,
+    FillBlank
   },
   data() {
     return {
@@ -288,6 +298,9 @@ export default {
           break
         case 3:
           ref = this.$refs.multipleChoices
+          break
+        case 4:
+          ref = this.$refs.fillBlank
           break
         case 5:
           ref = this.$refs.sVideo

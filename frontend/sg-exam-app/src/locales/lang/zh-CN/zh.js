@@ -195,7 +195,9 @@ const zh = {
       subjectTypeChoices: '单选题',
       subjectTypeMultiChoices: '多选题',
       subjectTypeJudgement: '判断题',
-      subjectTypeShortAnswer: '简答题'
+      subjectTypeShortAnswer: '简答题',
+      subjectTypeFillBlank: '填空题',
+      fillBlankAnswerPlaceholder: '多个填空的答案换行隔开'
     }
   },
   personal: {

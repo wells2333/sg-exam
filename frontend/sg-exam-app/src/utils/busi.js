@@ -45,6 +45,9 @@ export const getSubjectRef = ($refs, index, item) => {
     case 3:
       ref = $refs['multipleChoices_' + index]
       break
+    case 4:
+      ref = $refs['fillBlank_' + index]
+      break
     case 5:
       ref = $refs['sVideo_' + index]
       break

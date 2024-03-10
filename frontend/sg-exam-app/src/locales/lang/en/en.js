@@ -146,6 +146,7 @@ const en = {
       parameters: 'Parameters',
       end: 'The exam has ended',
       notStarted: 'Exam not started',
+      start: 'Start',
       sureStart: 'Are you sure you want to start?',
       startFailed: 'Start failed'
     },
@@ -178,6 +179,14 @@ const en = {
       wrong: 'Wrong',
       loadSubjectFailed: 'Failed to get subjects',
       operator: 'Reviewed: automatically rated by the system'
+    },
+    subject: {
+      subjectTypeChoices: 'SingleChoice',
+      subjectTypeMultiChoices: 'MultiChoice',
+      subjectTypeJudgement: 'Judgement',
+      subjectTypeShortAnswer: 'ShortAnswer',
+      subjectTypeFillBlank: 'FillBlank',
+      fillBlankAnswerPlaceholder: 'Multiple fill in the blank answers are separated by line breaks'
     }
   },
   personal: {

@@ -224,13 +224,16 @@ export function judgeTypeSchemas() {
   ]
 }
 
-export function generateTextAnswer() {
+export function generateTextAnswer(placeholder: string = '') {
   return [{
     label: '参考答案',
     field: 'answer',
     component: 'InputTextArea',
+    componentProps: {
+      placeholder,
+    },
     colProps: {
-      span: 24
+      span: 24,
     }
   }]
 }
@@ -257,7 +260,7 @@ export function genJudgementSchemas() {
 export function genFillBlankSchemas() {
   const schemas: any[] = [];
   appendCommonSchemas(schemas, judgeTypeSchemas());
-  schemas.push(...generateJudgementAnswer());
+  schemas.push(...generateTextAnswer('请输入，多个答案换行隔开'));
   schemas.push(...genAnswerSchemas());
   return schemas;
 }

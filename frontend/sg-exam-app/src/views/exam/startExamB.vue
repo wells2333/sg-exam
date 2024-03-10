@@ -20,6 +20,8 @@
                          :onChoice="onChoiceFn"/>
               <multiple-choices :ref="'multipleChoices_' + index" v-show="item.type === 3"
                                 :onChoice="onChoiceFn"/>
+              <fill-blank :ref="'fillBlank_' + index" v-show="item.type === 4"
+                          :onChoice="onChoiceFn"/>
             </div>
           </div>
           <div class="subject-buttons">
@@ -70,6 +72,7 @@ import Choices from '@/components/Subjects/Choices'
 import MultipleChoices from '@/components/Subjects/MultipleChoices'
 import ShortAnswer from '@/components/Subjects/ShortAnswer'
 import Judgement from '@/components/Subjects/Judgement'
+import FillBlank from '@/components/Subjects/FillBlank'
 
 export default {
   components: {
@@ -78,7 +81,8 @@ export default {
     Choices,
     MultipleChoices,
     ShortAnswer,
-    Judgement
+    Judgement,
+    FillBlank
   },
   data() {
     return {

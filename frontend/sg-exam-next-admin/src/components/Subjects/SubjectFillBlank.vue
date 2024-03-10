@@ -50,7 +50,7 @@ export default defineComponent({
       const subjectData = unref(data?.subjectData);
       const {answer} = subjectData;
       if (answer) {
-        subjectData.answer = Number(answer.answer);
+        subjectData.answer = answer.answer;
       }
       resetSchemas(data);
       resetFields();
