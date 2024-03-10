@@ -4,7 +4,7 @@
             <audio
                     :id="'audio_' + subject.id"
                     :src="subject.speechUrl"
-                    poster="http://cdn.yunmianshi.com/assert/audio_poster.png?e=1685886852&token=8-9rcJPtTrLOJP4fLNWXy_qwiLVc3Exu52iuGlxt:BvfdTE3lilkEsqDLc6zrkMUrzGE="
+                    poster="https://yunmianshi.com.cn/storage/assert/audio_poster.png"
                     name="请播放语音"
                     :controls="true"
                     :autoplay="false"

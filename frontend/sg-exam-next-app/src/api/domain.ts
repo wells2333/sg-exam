@@ -1,6 +1,6 @@
 import Taro from "@tarojs/taro";
 
-const local = 'https://www.yunmianshi.com';
+const local = 'https://yunmianshi.com.cn';
 
 class domain {
     baseUrl: String
@@ -24,11 +24,11 @@ class domain {
                 break;
             case "trial":
                 // 体验版
-                this.baseUrl = 'https://www.yunmianshi.com';
+                this.baseUrl = 'https://yunmianshi.com.cn';
                 break;
             default:
                 // 正式版
-                this.baseUrl = 'https://www.yunmianshi.com';
+                this.baseUrl = 'https://yunmianshi.com.cn';
                 break;
         }
         return this.baseUrl;

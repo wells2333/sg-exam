@@ -7,7 +7,7 @@
       <nut-tabs v-model="current" :background="'#fff'">
         <nut-tab-pane title="账号登录">
           <view class='tab-content'>
-            <nut-input v-model="tenantCode" placeholder="请输入企业 ID"></nut-input>
+            <nut-input v-model="tenantCode" placeholder="请输入企业 ID" height="100"></nut-input>
             <nut-input v-model="username" placeholder="请输入用户名"></nut-input>
             <nut-input type="password" v-model="password" placeholder="请输入密码"></nut-input>
             <view class="login-btn">
@@ -26,7 +26,7 @@
                   发送验证码
                 </nut-button>
                 <nut-button type="primary" size="small" v-else :disabled="true">
-                  {{ countDownNum }}s后重新获取
+                  {{ countDownNum }}s 后重新获取
                 </nut-button>
               </template>
             </nut-input>
@@ -45,7 +45,7 @@
     <view class="index-register">
       <view @click="handleRegister">注册账号</view>
       <view class="index-register-divider ml-22 mr-22">|</view>
-      <view @click="handleForgotPassword">忘记密码?</view>
+      <view @click="handleForgotPassword">忘记密码？</view>
     </view>
     <view class="index-login-divider">
       <nut-divider :style="{ color: 'white', borderColor: 'white', fontWeight: 'bold', padding: '0 16px' }">第三方快捷登录

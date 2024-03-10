@@ -24,8 +24,8 @@
           </view>
         </view>
         <view>
-          <nut-button v-if="joinText !== undefined" type="primary" :loading="joining" @click="handleClickJoin">
-            {{ joinText }}
+          <nut-button type="primary" :loading="joining" @click="handleStartLearn">
+            开始学习
           </nut-button>
         </view>
       </view>
@@ -87,14 +87,14 @@
         </nut-tab-pane>
       </nut-tabs>
     </view>
-    <nut-dialog v-model:visible="isOpenedJoinModal" :content="`确定${joinText}吗？`"
+    <nut-dialog v-model:visible="isOpenedJoinModal" content="确定开始学习吗？"
                 @cancel="handleCloseJoinModal"
                 @ok="handleConfirmJoinModal"></nut-dialog>
   </view>
 </template>
 <script lang="ts">
 import Taro from '@tarojs/taro';
-import {onMounted, ref} from 'vue';
+import {onMounted, ref, unref} from 'vue';
 import examApi from '../../../api/exam.api';
 import {showLoading, hideLoading, successMessage, warnMessage} from '../../../utils/util';
 
@@ -113,9 +113,6 @@ export default {
     const isSubmitted = ref<boolean>(false);
     const submitting = ref<boolean>(false);
     const isOpenedJoinModal = ref<boolean>(false);
-    const isUserJoin = ref<boolean>(false);
-    const joinText = ref<string>(undefined);
-    const joining = ref<boolean>(false);
 
     async function fetch() {
       const res = await examApi.courseDetail(courseId);
@@ -124,8 +121,6 @@ export default {
         courseDetail.value = result;
         courseInfo.value = result.course;
         chapters.value = result.chapters;
-        isUserJoin.value = result.isUserJoin;
-        joinText.value = result.isUserJoin === true ? '取消报名' : '报名';
       }
     }
 
@@ -140,9 +135,6 @@ export default {
     const tagsList = [{title: '课程介绍'}, {title: '课程章节'}, {title: '课程评价'}];
 
     async function handleSubmitEvaluate() {
-      if (!await checkIsHasJoin()) {
-        return;
-      }
       if (!isSubmitted.value) {
         let value = evaluateValue.value;
         if (value === '') {
@@ -185,13 +177,10 @@ export default {
     }
 
     function toCourseSection(params: string) {
-      if (!checkIsHasJoin()) {
-        return;
-      }
       Taro.navigateTo({url: "/pages/exam_pages/course_section/index?courseId=" + courseId + "&" + params})
     }
 
-    function handleClickJoin() {
+    function handleStartLearn() {
       isOpenedJoinModal.value = true;
     }
 
@@ -200,29 +189,9 @@ export default {
     }
 
     async function handleConfirmJoinModal() {
-      try {
-        joining.value = true;
-        const type = isUserJoin.value ? '0' : '1';
-        const res = await examApi.joinCourse(courseId, type);
-        const {code} = res;
-        if (code === 0) {
-          await successMessage(joinText.value + '成功');
-        } else {
-          await warnMessage(joinText.value + '失败');
-        }
-        handleCloseJoinModal();
-        await fetch();
-      } finally {
-        joining.value = false;
-      }
-    }
-
-    async function checkIsHasJoin() {
-      if (!isUserJoin.value) {
-        await warnMessage('请先报名');
-        return false;
-      }
-      return true;
+      handleCloseJoinModal();
+      const section = chapters.value[0].sections[0].section;
+      handleClickSection(section);
     }
 
     async function init() {
@@ -251,14 +220,12 @@ export default {
       evaluateValue,
       evaluateRateValue,
       isOpenedJoinModal,
-      joinText,
       submitting,
-      joining,
       init,
       handleSubmitEvaluate,
       handleClickSection,
       handleClickPoint,
-      handleClickJoin,
+      handleStartLearn,
       handleCloseJoinModal,
       handleConfirmJoinModal
     }
