@@ -35,10 +35,10 @@ export default {
 
 <style lang="scss" scoped>
 .user-evaluate-item {
-  margin-top: 26px;
+  margin-top: 18px;
   .user-evaluate-item-bg {
     border-bottom: 1px solid rgba(233,233,233,.6);
-    padding-bottom: 20px;
+    padding-bottom: 12px;
   }
   .user-evaluate-item-avatar {
     width: 40px;
@@ -50,15 +50,15 @@ export default {
     display: flex;
     flex-direction: row;
     align-items: center;
-    height: 23px;
+    height: 18px;
   }
 }
 .user-evaluate-item-content {
-  margin-top: 8px;
+  margin-top: 4px;
 }
 .user-evaluate-item-time {
   font-size: 12px;
-  margin-top: 10px;
+  margin-top: 2px;
   color: #999;
 }
 </style>
