@@ -18,6 +18,7 @@ const en = {
   confirm: 'Confirm',
   sure: 'Confirm',
   cancel: 'Cancel',
+  tips: 'Tips',
   save: 'Save',
   submit: 'Submit',
   confirmSubmit: 'Confirm submit?',
@@ -34,6 +35,7 @@ const en = {
   sendSuccess: 'Send success',
   registerSuccess: 'Register success',
   success: 'Success',
+  successAndExit: 'Successful, Page is about to close automatically',
   failed: 'Failed',
   operation: 'Operation',
   return: 'Return',
@@ -112,6 +114,7 @@ const en = {
       registerStudents: 'Register students',
       registerStudents1: 'Registered students',
       examination: 'Examination',
+      examinations: 'Examination',
       courseFeatures: 'Course features',
       learnHour: 'Learn hour',
       chapter1: 'Chapter',
@@ -140,6 +143,10 @@ const en = {
       records: 'Records'
     },
     exams: {
+      examRemark: 'Introduction',
+      examAttention: 'Attention',
+      examTime: 'Examination time',
+      unLimitTime: 'No limit',
       all: 'All',
       latestRelease: 'Latest release',
       mostClicks: 'Most clicks',
@@ -148,7 +155,12 @@ const en = {
       notStarted: 'Exam not started',
       start: 'Start',
       sureStart: 'Are you sure you want to start?',
-      startFailed: 'Start failed'
+      evaluation: 'Evaluation',
+      startFailed: 'Start failed',
+      inputEvaluation: 'Please enter your evaluation',
+      submitSuccess: 'Submit successfully',
+      doNotResubmit: 'Do not resubmit',
+      defaultEvaluate: 'User default positive reviews'
     },
     startExam: {
       last: 'Previous',
