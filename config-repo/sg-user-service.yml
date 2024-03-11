@@ -107,6 +107,13 @@ spring:
 ---
 server:
   port: ${SERVER_PORT:80}
+  ssl:
+    enabled: ${SG_SSL_ENABLED:false}  # 默认为false
+    key-store: ${SG_SSL_STORE}  #类路径下的自签证书
+    key-alias: ${SG_SSL_ALIAS} # 证书别名
+    key-store-password: ${SG_SSL_PASSWORD} #证书密码
+    key-store-type: ${SG_SSL_TYPE:JKS} # 证书类型
+
 spring:
   profiles: docker
   servlet:

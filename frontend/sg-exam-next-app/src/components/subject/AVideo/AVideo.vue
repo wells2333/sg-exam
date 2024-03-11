@@ -7,7 +7,7 @@
                     poster="https://yunmianshi.com.cn/storage/assert/audio_poster.png"
                     name="请播放语音"
                     :controls="true"
-                    :autoplay="false"
+                    :autoplay="subject.autoPlaySpeech"
                     :loop="false"
                     :muted="true"
             />
