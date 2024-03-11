@@ -16,24 +16,24 @@
   </view>
   <view class="home-view">
     <view class="home-view-tips">热门功能</view>
-    <nut-grid :column-num="3" square clickable>
+    <nut-grid :column-num="3"  clickable>
       <nut-grid-item text="考试" @click="handleGridClickExam0">
-        <IconFont font-class-name="iconfont" class-prefix="icon" name="kaoshi" size="30px" color="#FF9800"></IconFont>
+        <IconFont font-class-name="iconfont" class-prefix="icon" name="kaoshi" size="26px" color="#FF9800"></IconFont>
       </nut-grid-item>
       <nut-grid-item text="课程" @click="handleGridClickCourse">
-        <IconFont font-class-name="iconfont" class-prefix="icon" name="kecheng" size="30px" color="#5ab6ff"></IconFont>
+        <IconFont font-class-name="iconfont" class-prefix="icon" name="kecheng" size="26px" color="#5ab6ff"></IconFont>
       </nut-grid-item>
       <nut-grid-item text="练习" @click="handleGridClickExam1">
-        <IconFont font-class-name="iconfont" class-prefix="icon" name="jiachang_lianxi" size="30px" color="#ff217c"></IconFont>
+        <IconFont font-class-name="iconfont" class-prefix="icon" name="jiachang_lianxi" size="26px" color="#ff217c"></IconFont>
       </nut-grid-item>
       <nut-grid-item text="问卷" @click="handleGridClickExam2">
-        <IconFont font-class-name="iconfont" class-prefix="icon" name="tiaochawenjuan" size="30px" color="#F44336"></IconFont>
+        <IconFont font-class-name="iconfont" class-prefix="icon" name="tiaochawenjuan" size="26px" color="#F44336"></IconFont>
       </nut-grid-item>
       <nut-grid-item text="面试" @click="handleGridClickExam3">
-        <IconFont font-class-name="iconfont" class-prefix="icon" name="zhenrenmianshi" size="30px" color="#FF9800"></IconFont>
+        <IconFont font-class-name="iconfont" class-prefix="icon" name="zhenrenmianshi" size="26px" color="#FF9800"></IconFont>
       </nut-grid-item>
       <nut-grid-item text="收藏" @click="handleGridClickFav">
-        <IconFont font-class-name="iconfont" class-prefix="icon" name="shoucang" size="30px" color="red"></IconFont>
+        <IconFont font-class-name="iconfont" class-prefix="icon" name="shoucang" size="26px" color="red"></IconFont>
       </nut-grid-item>
     </nut-grid>
     <view class="home-view-tips">热门课程</view>

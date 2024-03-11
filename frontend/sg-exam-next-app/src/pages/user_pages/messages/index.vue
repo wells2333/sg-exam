@@ -9,6 +9,7 @@
         {{item.content}}
       </view>
     </view>
+    <nut-empty v-if="!loading && messages?.length === 0"></nut-empty>
   </view>
 </template>
 
@@ -21,27 +22,33 @@ import Taro from "@tarojs/taro";
 
 export default {
   setup() {
-    const messages = ref<any>(undefined);
+    const messages = ref<any>([]);
+    const loading = ref<boolean>(false);
 
     async function fetch() {
-      const userInfo = api.getUserInfo();
-      const {id} = userInfo;
-      // 站内信
-      const type = 0;
-      const res = await userApi.getMessages(id, type);
-      const {code, result} = res;
-      if (code === 0 && result !== null) {
-        messages.value = result.list;
+      if (loading.value) {
+        return;
+      }
+      loading.value = true;
+      await showLoading();
+      try {
+        const userInfo = api.getUserInfo();
+        const {id} = userInfo;
+        // 站内信
+        const type = 0;
+        const res = await userApi.getMessages(id, type);
+        const {code, result} = res;
+        if (code === 0 && result !== null) {
+          messages.value = result.list;
+        }
+      }finally{
+        loading.value = false;
+        await hideLoading();
       }
     }
 
     async function init() {
-      try {
-        await showLoading();
-        await fetch();
-      } finally {
-        hideLoading();
-      }
+      await fetch();
     }
 
     function handleClickMessage(item) {
@@ -54,6 +61,7 @@ export default {
 
     return {
       init,
+      loading,
       messages,
       handleClickMessage
     }
