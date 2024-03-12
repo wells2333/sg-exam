@@ -131,7 +131,7 @@ web 前台主要功能：提供在线考试、课程学习、练习等功能。
 
 微信交流群：
 
-<img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wechat2.png" width="160"/>
+<img src="https://yunmianshi.com.cn/storage/yunmianshi/static/wx_sg.png" width="160"/>
 
 QQ 交流群：
 
