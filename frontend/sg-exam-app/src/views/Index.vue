@@ -1,6 +1,9 @@
 <template>
   <div>
     <div class="header-area">
+      <div class="banner" v-if="stateInfo.showBanner" @click="gotoAliYun">
+        <i class="iconfont icon-delete banner-delete" @click.stop="closeBanner"></i>
+      </div>
       <div class="clever-main-menu">
         <div class="classy-nav-container breakpoint-off">
           <nav class="classy-navbar justify-content-between" id="cleverNav">
@@ -87,6 +90,7 @@
 </template>
 
 <script>
+import store from '@/store'
 import OMain from './common/main'
 import {mapGetters, mapState} from 'vuex'
 import {messageWarn} from '@/utils/util'
@@ -99,7 +103,8 @@ export default {
   },
   computed: {
     ...mapState({
-      userInfo: state => state.user.userInfo
+      userInfo: state => state.user.userInfo,
+      stateInfo: state => state.stateInfo.stateInfo
     }),
     ...mapGetters([
       'sysConfig'
@@ -126,6 +131,12 @@ export default {
     mounted() {
       this.$i18n.locale = 'zh'
     },
+    closeBanner() {
+      store.dispatch('SetStateInfo', {showBanner: false})
+    },
+    gotoAliYun() {
+      window.open('https://www.aliyun.com/minisite/goods?userCode=gg8hcnqt')
+    },
     handleSetLanguage(lang) {
       this.$i18n.locale = lang
       this.language = lang
@@ -141,6 +152,7 @@ export default {
         window.open(path)
         return
       }
+
       if (path !== this.$route.fullPath) {
         if (this.$route.fullPath === '/start') {
           this.$confirm('是否要结束当前考试？', '提示', {
@@ -222,5 +234,20 @@ export default {
 
 .international {
   padding: 20px;
+}
+.banner{
+  height: 60px;
+  background-image: url(https://img.alicdn.com/imgextra/i3/O1CN01Tbj8qb1w835uueixH_!!6000000006262-2-tps-3840-120.png);
+  background-position: center center;
+  background-size: auto 100%;
+  position: relative;
+  cursor: pointer;
+  .banner-delete {
+    font-size: 20px;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+  }
 }
 </style>

@@ -239,7 +239,7 @@ DROP TABLE IF EXISTS `exam_exam_evaluate`;
 CREATE TABLE `exam_exam_evaluate` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `evaluate_content` varchar(512) NOT NULL DEFAULT '' COMMENT '评价内容',
-  `user_id` bigint(20) NOT NULL COMMENT '用户ID',
+  `user_id` bigint(20) NOT NULL COMMENT '用户 ID',
   `evaluate_level` int(1) unsigned zerofill DEFAULT '0',
   `creator` varchar(128) NOT NULL COMMENT '创建人',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -1010,6 +1010,7 @@ INSERT INTO `sys_config` VALUES (10, 'sys_web_main_title', 'sg-exam', 'web 网�
 INSERT INTO `sys_config` VALUES (11, 'sys_web_sub_title_one', '开源项目 sg-exam 功能演示网站', 'web 网站首页副标题', 'admin', '2023-02-21 23:02:51', 'admin', '2023-02-21 23:03:01', 0, 'gitee');
 INSERT INTO `sys_config` VALUES (12, 'sys_web_sub_title_two', '演示考试、练习、刷题、在线学习等功能', 'web 网站首页副标题', 'admin', '2023-02-21 23:03:19', 'admin', '2023-02-21 23:03:19', 0, 'gitee');
 INSERT INTO `sys_config` VALUES (13, 'sys_web_copyright', '粤 ICP 备 2024192218 号', '网站 Copyright', 'admin', '2023-02-22 20:54:38', 'admin', '2023-02-22 20:54:38', 0, 'gitee');
+INSERT INTO `sys_config` VALUES (16, 'sys_web_show_banner', 'false', '', 'admin', '2023-02-22 20:54:38', 'admin', '2023-02-22 20:54:38', 0, 'gitee');
 INSERT INTO `sys_config` VALUES (14, 'sys_login_show_tenant_code', 'true', '登录页面是否展示单位标识输入框', 'admin', '2023-05-11 22:47:47', 'admin', '2023-05-11 22:48:35', 0, 'gitee');
 INSERT INTO `sys_config` VALUES (15, 'sys_file_preview_url', 'http://127.0.0.1:8012/onlinePreview?url=', '附件在线预览地址', 'admin', '2023-06-27 22:36:38', 'admin', '2023-06-27 22:36:38', 0, 'gitee');
 COMMIT;

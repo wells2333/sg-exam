@@ -28,6 +28,11 @@ public interface ConfigKey {
 	String SYS_WEB_COPYRIGHT = "sys_web_copyright";
 
 	/**
+	 * 是否显示网站广告位
+	 */
+	String SYS_WEB_SHOW_BANNER = "sys_web_show_banner";
+
+	/**
 	 * 系统 LOGO
 	 */
 	String SYS_AVATAR = "sys_avatar";

@@ -10,13 +10,18 @@ NProgress.configure({ showSpinner: false })// NProgress Configuration
 const whiteList = ['/', '/home', '/register', '/login', '/auth-redirect', '/404', '/401', '/lock', '/reset-password']// no redirect whitelist
 
 router.beforeEach((to, from, next) => {
-  NProgress.start() // 进度条
+  NProgress.start()
   const sysConfig = store.getters.sysConfig
   document.title = sysConfig.sys_web_name
   if (sysConfig === undefined || Object.keys(sysConfig).length === 0) {
     store.dispatch('GetSysConfig').then(res => {
       if (res) {
         document.title = res.sys_web_name
+      }
+
+      const stateInfo = store.getters.stateInfo
+      if (res.sys_web_show_banner === 'true' && stateInfo && !stateInfo.hasOwnProperty('showBanner')) {
+        store.dispatch('SetStateInfo', {showBanner: true})
       }
     }).catch(() => {
       Message.error('获取系统配置失败！')
@@ -29,9 +34,9 @@ router.beforeEach((to, from, next) => {
       next({ path: '/' })
     } else {
       const userInfo = store.getters.userInfo
-      if (Object.keys(userInfo).length === 0) { // 判断当前用户是否已拉取完user_info信息
-        store.dispatch('GetUserInfo').then(res => { // 拉取user_info
-          next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
+      if (Object.keys(userInfo).length === 0) { // 判断当前用户是否已拉取完 user_info 信息
+        store.dispatch('GetUserInfo').then(res => { // 拉取 user_info
+          next({ ...to, replace: true }) // hack 方法 确保 addRoutes 已完成
         }).catch((err) => {
           store.dispatch('FedLogOut').then(() => {
             Message.error(err || 'Verification failed, please login again')
