@@ -35,7 +35,7 @@ const exam = {
           commit('SET_EXAM_RECORD', response.data.result.examRecord)
           commit('SET_SUBJECT', response.data.result.subjectDto)
           commit('SET_CARDS', response.data.result.cards)
-          resolve(response)
+          resolve(response.data.result)
         }).catch(error => {
           reject(error)
         })

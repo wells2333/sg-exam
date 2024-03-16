@@ -10,7 +10,7 @@ const stateInfo = {
   actions: {
     SetStateInfo ({ commit, state }, stateInfo) {
       commit('SET_STATE_INFO', stateInfo)
-    },
+    }
   },
   mutations: {
     SET_STATE_INFO: (state, stateInfo) => {

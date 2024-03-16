@@ -1,46 +1,41 @@
 <template>
   <div class="subject-box">
-    <el-row :gutter="30">
-      <el-col :span="16" :offset="3">
-        <div class="subject-box-card">
-          <div class="subject-exam-title">{{ exam.examinationName }}
+    <div class="subject-box-content">
+      <div class="tool-bar">
+        <div class="tool-bar-timer">
+          <span>{{ duration }}</span>
+        </div>
+        <div class="tool-bar-card">
+          <div class="current-progress">
+            {{ $t('exam.startExam.progress') }}：{{ cards.length }} / {{ subject.sort }}
           </div>
-          <div style="padding-top: 6px;">
-            {{ $t('exam.startExam.subject') }}: {{ cards.length }}
-          </div>
-          <div style="padding-top: 6px;">
-            {{ $t('exam.startExam.score') }}: {{ exam.totalScore }}
-          </div>
-          <choices ref="choices" v-show="subject.type === 0" :onChoice="onChoiceFn"/>
-          <short-answer ref="shortAnswer" v-show="subject.type === 1" :onChoice="onChoiceFn"/>
-          <judgement ref="judgement" v-show="subject.type === 2" :onChoice="onChoiceFn"/>
-          <multiple-choices ref="multipleChoices" v-show="subject.type === 3"
-                            :onChoice="onChoiceFn"/>
-          <fill-blank ref="fillBlank" v-show="subject.type === 4"
-                      :onChoice="onChoiceFn"/>
-          <div class="subject-buttons">
+          <el-button class="answer-card" type="text" icon="el-icon-s-grid" size="medium"
+                     style="font-size: 30px; color: #606266;" @click="answerCard"></el-button>
+        </div>
+      </div>
+      <div class="subject-box-card">
+        <choices ref="choices" v-show="subject.type === 0" :onChoice="onChoiceFn"/>
+        <short-answer ref="shortAnswer" v-show="subject.type === 1" :onChoice="onChoiceFn"/>
+        <judgement ref="judgement" v-show="subject.type === 2" :onChoice="onChoiceFn"/>
+        <multiple-choices ref="multipleChoices" v-show="subject.type === 3"
+                          :onChoice="onChoiceFn"/>
+        <fill-blank ref="fillBlank" v-show="subject.type === 4"
+                    :onChoice="onChoiceFn"/>
+        <div class="subject-buttons">
+          <div>
             <el-button plain @click="last" :loading="loadingLast">{{ $t('exam.startExam.last') }}
             </el-button>
+          </div>
+          <div>
             <el-button plain @click="next" :loading="loadingNext">{{ $t('exam.startExam.next') }}
             </el-button>
-          </div>
-        </div>
-      </el-col>
-      <el-col :span="3">
-        <div class="tool-bar">
-          <div class="current-progress">
-            {{ $t('exam.startExam.progress') }}：{{ subject.sort }}/{{ cards.length }}
-          </div>
-          <div class="answer-card">
-            <el-button type="text" icon="el-icon-date" @click="answerCard">
-              {{ $t('exam.startExam.answerCard') }}
+            <el-button type="success" @click="submitExam">{{ $t('submit') }}
             </el-button>
           </div>
-          <el-button type="success" icon="el-icon-date" @click="submitExam">{{ $t('submit') }}
-          </el-button>
         </div>
-      </el-col>
-    </el-row>
+      </div>
+    </div>
+
     <el-dialog :title="$t('exam.startExam.answerCard')" :visible.sync="dialogVisible" width="50%"
                top="10vh" center>
       <el-row class="answer-card-content">
@@ -55,7 +50,6 @@
 </template>
 <script>
 import {mapGetters, mapState} from 'vuex'
-import CountDown from 'vue2-countdown'
 import {saveAndNext} from '@/api/exam/answer'
 import store from '@/store'
 import moment from 'moment'
@@ -70,7 +64,6 @@ import {nextSubjectType} from '@/const/constant'
 
 export default {
   components: {
-    CountDown,
     Tinymce,
     Choices,
     MultipleChoices,
@@ -80,12 +73,16 @@ export default {
   },
   data() {
     return {
+      examinationId: undefined,
+      recordId: undefined,
+      timer: undefined,
       loadingLast: false,
       loadingNext: false,
       loadingSubmit: false,
       saving: false,
       startTime: 0,
       endTime: 0,
+      duration: '',
       option: '',
       answer: '',
       dialogVisible: false,
@@ -107,19 +104,19 @@ export default {
       examRecord: state => state.exam.examRecord
     }),
     ...mapGetters([
-      'exam',
       'cards',
       'subject'
     ])
   },
   created() {
-    if (this.exam === undefined || Object.keys(this.exam).length === 0) {
-      this.$router.push({name: 'exams', query: {redirect: true}})
-      return
-    }
-    const examInfo = this.$route.params.id
-    if (isNotEmpty(examInfo)) {
+    this.examinationId = this.$route.params.id
+    this.recordId = this.$route.query.recordId
+    if (this.examinationId && this.recordId) {
+      this.updateDuration()
+      this.timer = setInterval(this.updateDuration, 1000)
       this.startExam()
+    } else {
+      this.$router.push({name: 'exams', query: {redirect: true}})
     }
   },
   mounted() {
@@ -129,9 +126,26 @@ export default {
     }
   },
   destroyed() {
+    clearInterval(this.timer)
     window.removeEventListener('popstate', this.goBack, false)
   },
   methods: {
+    updateDuration() {
+      const durationMs = new Date().getTime() - new Date(this.examRecord.createTime).getTime()
+      const level1 = durationMs % (24 * 3600 * 1000)
+      const hours = Math.floor(level1 / (3600 * 1000))
+
+      const level2 = level1 % (3600 * 1000)
+      const minutes = Math.floor(level2 / (60 * 1000))
+
+      const level3 = level2 % (60 * 1000)
+      const seconds = Math.round(level3 / 1000)
+
+      let result = hours > 0 ? (hours < 10 ? '0' + hours : hours) : '00' + ':'
+      result = result + (minutes > 0 ? (minutes < 10 ? '0' + minutes : minutes) : '00') + ':'
+      result = result + (seconds > 0 ? (seconds < 10 ? '0' + seconds : seconds) : '00')
+      this.duration = result;
+    },
     onChoiceFn(sort) {
       if (sort) {
         this.cards[sort - 1].isAnswer = true
@@ -218,7 +232,7 @@ export default {
         cancelButtonText: this.$t('cancel'),
         type: 'warning'
       }).then(() => {
-        this.doSubmitExam(this.tempAnswer, this.exam.id, this.examRecord.id, this.userInfo, true)
+        this.doSubmitExam(this.tempAnswer, this.examinationId, this.recordId, this.userInfo, true)
       }).catch(() => {
       })
     },
@@ -257,8 +271,8 @@ export default {
         return {
           id: answerId,
           userId: this.userInfo.id,
-          examinationId: this.exam.id,
-          examRecordId: this.examRecord.id,
+          examinationId: this.examinationId,
+          examRecordId: this.recordId,
           subjectId: this.subject.id,
           answer: answer,
           startTime: this.subjectStartTime
@@ -344,6 +358,16 @@ export default {
   margin-left: 20px;
 }
 
+.subject-box-content {
+  margin: 16px auto;
+  max-width: 1000px;
+  padding-top: 8px;
+  padding-left: 16px;
+  padding-right: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
 .subject-box-card {
   margin-bottom: 30px;
   min-height: 400px;
@@ -355,10 +379,40 @@ export default {
 
 .subject-buttons {
   margin-top: 30px;
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
 }
 
 .tool-bar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.tool-bar-timer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tool-bar-timer span {
+  color: #606266;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.current-progress {
+  color: #303133;
+}
+
+.tool-bar-card {
+  font-size: 1.5em;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.answer-card {
   margin-left: 20px;
 }
 
@@ -386,7 +440,7 @@ export default {
 
 .answer-card-btn {
   color: #fff;
-  background-color: #409eff;
-  border-color: #409eff;
+  background-color: #67C23A;
+  border-color: #67C23A;
 }
 </style>

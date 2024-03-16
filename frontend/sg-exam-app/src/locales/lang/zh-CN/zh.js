@@ -164,7 +164,7 @@ const zh = {
     startExam: {
       last: '上一题',
       next: '下一题',
-      progress: '当前进度',
+      progress: '进度',
       answerCard: '答题卡',
       isFirst: '已经是第一题了',
       isLast: '已经是最后一题了',

@@ -165,7 +165,7 @@ const en = {
     startExam: {
       last: 'Previous',
       next: 'Next',
-      progress: 'progress',
+      progress: 'Progress',
       answerCard: 'Answer Card',
       isFirst: 'It\'s already the first subject',
       isLast: 'It\'s already the last subject',

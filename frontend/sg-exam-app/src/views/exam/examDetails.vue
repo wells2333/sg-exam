@@ -171,18 +171,19 @@ export default {
           cancelButtonText: this.$t('cancel'),
           type: 'warning'
         }).then(() => {
-          store.dispatch('StartExam', this.tempExamRecord).then(() => {
+          store.dispatch('StartExam', this.tempExamRecord).then((result) => {
             if (this.examRecord === undefined || this.subject === undefined) {
               messageWarn(this, this.$t('exam.exams.startFailed'))
               return
             }
 
+            const recordId = result.examRecord.id
             if (this.examination.answerType === 0) {
               // 展示所有题目
-              this.$router.push({ path: `/start-exam-b/${this.examination.id}` })
+              this.$router.push({ path: `/start-exam-b/${this.examination.id}?recordId=${recordId}` })
             } else {
               // 上一题、下一题模式
-              this.$router.push({ path: `/start-exam-a/${this.examination.id}` })
+              this.$router.push({ path: `/start-exam-a/${this.examination.id}?recordId=${recordId}` })
             }
           }).catch(() => {
             messageWarn(this, this.$t('exam.exams.startFailed'))
