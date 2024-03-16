@@ -173,6 +173,14 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
+    field: 'maxExamCnt',
+    label: '最大考试次数',
+    component: 'InputNumber',
+    defaultValue: 0,
+    required: true,
+    colProps: { span: 12 },
+  },
+  {
     label: '考试图片',
     field: 'imageId',
     component: 'Input',

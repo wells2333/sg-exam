@@ -160,9 +160,9 @@ export default {
       this.tempExamRecord.examinationId = this.examination.id
       this.tempExamRecord.userId = this.userInfo.id
       canStart(this.examination.id).then(response => {
-        const {code, result} = response.data
+        const {code, result, message} = response.data
         if (code !== 0 || result === null || !result) {
-          messageFail(this, this.$t('exam.exams.startFailed'))
+          messageFail(this, this.$t('exam.exams.startFailed') + ': ' + message)
           return
         }
 

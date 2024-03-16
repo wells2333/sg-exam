@@ -16,6 +16,7 @@
         <result column="tags" property="tags"/>
         <result column="answer_type" property="answerType"/>
         <result column="access_type" property="accessType"/>
+        <result column="max_exam_cnt" property="maxExamCnt"/>
         <result column="remark" property="remark"/>
         <result column="creator" property="creator"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>

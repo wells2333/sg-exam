@@ -23,3 +23,6 @@ CREATE TABLE `exam_subject_fill_blank` (
    PRIMARY KEY (`id`) USING BTREE,
    KEY `idx_category_id` (`category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='填空题表';
+
+-- 2024年03月16日21:53:20
+ALTER TABLE `exam_examination` ADD COLUMN `max_exam_cnt` int(10) NOT NULL DEFAULT 0 COMMENT '最大考试次数，默认 0 不限制';

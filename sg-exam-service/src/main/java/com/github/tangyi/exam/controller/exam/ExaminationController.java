@@ -6,18 +6,22 @@ import com.github.tangyi.api.exam.dto.MemberDto;
 import com.github.tangyi.api.exam.dto.RandomSubjectDto;
 import com.github.tangyi.api.exam.dto.SubjectDto;
 import com.github.tangyi.api.exam.model.Examination;
+import com.github.tangyi.api.exam.model.ExaminationRecord;
 import com.github.tangyi.api.exam.service.IExamPermissionService;
+import com.github.tangyi.api.exam.service.IExamRecordService;
 import com.github.tangyi.api.exam.service.IExaminationService;
 import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.log.OperationType;
 import com.github.tangyi.common.log.SgLog;
 import com.github.tangyi.common.model.R;
+import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.constants.ExamConstant;
 import com.github.tangyi.exam.enums.ExaminationType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
@@ -39,6 +43,7 @@ public class ExaminationController extends BaseController {
 
 	private final IExaminationService examinationService;
 	private final IExamPermissionService examPermissionService;
+	private final IExamRecordService examRecordService;
 
 	@GetMapping({"canStart", "anonymousUser/canStart"})
 	@Operation(summary = "查询是否能开始考试", description = "查询是否能开始考试")
@@ -53,14 +58,32 @@ public class ExaminationController extends BaseController {
 			return R.success(false, "Invalid examinationType");
 		}
 
+		boolean canStart = true;
+		String msg = "";
 		if (examination.getStartTime() != null && examination.getEndTime() != null) {
 			long current = System.currentTimeMillis();
 			long startTime = examination.getStartTime().getTime();
 			long endTime = examination.getEndTime().getTime();
 			// 当前时间大于考试开始时间 && 当期时间小于考试结束时间
-			return R.success(current > startTime && endTime > current);
+			if (current < startTime || current > endTime) {
+				canStart = false;
+				msg = "Not within the exam time range.";
+			}
 		}
-		return R.success(true);
+
+		// 限制考试次数
+		if (canStart && examination.getMaxExamCnt() != null && examination.getMaxExamCnt() > 0) {
+			// 查询用户的考试记录
+			ExaminationRecord examRecord = new ExaminationRecord();
+			examRecord.setUserId(SysUtil.getUserId());
+			examRecord.setExaminationId(examination.getId());
+			List<ExaminationRecord> records = examRecordService.getByUserIdAndExaminationId(examRecord);
+			if (CollectionUtils.size(records) >= examination.getMaxExamCnt()) {
+				canStart = false;
+				msg = "Already reached the maximum number of exam attempts.";
+			}
+		}
+		return R.success(canStart, msg);
 	}
 
 	@GetMapping("/{id}")
@@ -178,7 +201,8 @@ public class ExaminationController extends BaseController {
 
 		response.setHeader("Cache-Control", "no-store, no-com.github.tangyi.common.basic.cache");
 		response.setContentType("image/jpeg");
-		try (ByteArrayInputStream inputStream = new ByteArrayInputStream(examinationService.generateQrCode(examinationId));
+		try (ByteArrayInputStream inputStream = new ByteArrayInputStream(
+				examinationService.generateQrCode(examinationId));
 				ServletOutputStream out = response.getOutputStream()) {
 			BufferedImage image = ImageIO.read(inputStream);
 			ImageIO.write(image, "PNG", out);

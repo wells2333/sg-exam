@@ -113,6 +113,12 @@ public class Examination extends BaseEntity<Examination> {
 	private Integer accessType;
 
 	/**
+	 * 考试次数，默认 0，表示不限制
+	 */
+	@Column(name = "max_exam_cnt")
+	private Integer maxExamCnt;
+
+	/**
 	 * 考试次数
 	 */
 	@Transient

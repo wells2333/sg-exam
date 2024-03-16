@@ -7,6 +7,7 @@ import com.github.tangyi.api.exam.dto.ExaminationRecordDto;
 import com.github.tangyi.api.exam.enums.SubmitStatusEnum;
 import com.github.tangyi.api.exam.model.Examination;
 import com.github.tangyi.api.exam.model.ExaminationRecord;
+import com.github.tangyi.api.exam.service.IExamRecordService;
 import com.github.tangyi.api.user.service.IDeptService;
 import com.github.tangyi.api.user.service.IUserService;
 import com.github.tangyi.common.excel.ExcelToolUtil;
@@ -43,7 +44,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @AllArgsConstructor
 @Service
-public class ExamRecordService extends CrudService<ExamRecordMapper, ExaminationRecord> {
+public class ExamRecordService extends CrudService<ExamRecordMapper, ExaminationRecord> implements IExamRecordService {
 
 	private final ExaminationService examinationService;
 	private final IUserService userService;
@@ -55,6 +56,7 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 		return super.get(id);
 	}
 
+	@Override
 	public PageInfo<ExaminationRecordDto> examRecordList(Map<String, Object> condition, int pageNum, int pageSize) {
 		PageInfo<ExaminationRecordDto> pageInfo = new PageInfo<>();
 		PageInfo<ExaminationRecord> recordPageInfo = this.findPage(condition, pageNum, pageSize);
@@ -64,45 +66,7 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 		return pageInfo;
 	}
 
-	public List<ExaminationRecordDto> toRecordDto(List<ExaminationRecord> records) {
-		if (CollectionUtils.isEmpty(records)) {
-			return Collections.emptyList();
-		}
-
-		List<ExaminationRecordDto> list = Lists.newArrayListWithExpectedSize(records.size());
-		List<Examination> examinations = examinationService.findListById(
-				records.stream().map(ExaminationRecord::getExaminationId).distinct().toArray(Long[]::new));
-		final Map<Long, Examination> map = CollectionUtils.isEmpty(examinations) ?
-				Maps.newHashMap() :
-				examinations.stream().collect(Collectors.toMap(Examination::getId, e -> e));
-		Set<Long> userIds = Sets.newHashSetWithExpectedSize(records.size());
-		records.forEach(r -> {
-			userIds.add(r.getUserId());
-			Examination e = map.get(r.getExaminationId());
-			if (e != null) {
-				ExaminationRecordDto dto = new ExaminationRecordDto();
-				BeanUtils.copyProperties(e, dto);
-				dto.setId(r.getId());
-				dto.setStartTime(r.getStartTime());
-				dto.setEndTime(r.getEndTime());
-				dto.setScore(r.getScore());
-				dto.setUserId(r.getUserId());
-				dto.setExaminationId(r.getExaminationId());
-				// 正确题目数
-				dto.setCorrectNumber(r.getCorrectNumber());
-				dto.setInCorrectNumber(r.getInCorrectNumber());
-				// 提交状态
-				dto.setSubmitStatus(r.getSubmitStatus());
-				dto.setSubmitStatusName(
-						SubmitStatusEnum.match(r.getSubmitStatus(), SubmitStatusEnum.NOT_SUBMITTED).getName());
-				dto.setTypeLabel(ExaminationType.matchByValue(e.getType()).getName());
-				list.add(dto);
-			}
-		});
-		this.fillExamUserInfo(list, userIds.toArray(new Long[0]));
-		return list;
-	}
-
+	@Override
 	public PageInfo<ExaminationRecordDto> getUserExamRecords(Long userId, Map<String, Object> condition, int pageNum,
 			int pageSize) {
 		this.commonPageParam(condition, pageNum, pageSize);
@@ -122,10 +86,12 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 		return super.insert(examRecord);
 	}
 
+	@Override
 	public List<ExaminationRecord> getByUserIdAndExaminationId(ExaminationRecord examRecord) {
 		return this.dao.getByUserIdAndExaminationId(examRecord);
 	}
 
+	@Override
 	public List<ExaminationRecord> getByExaminationId(Long examinationId) {
 		return this.dao.getByExaminationId(examinationId);
 	}
@@ -137,6 +103,7 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 		return super.deleteAll(ids);
 	}
 
+	@Override
 	public void fillExamUserInfo(List<ExaminationRecordDto> list, Long[] userIds) {
 		try {
 			Map<Long, UserVo> userMap = userService.findUserVoListById(userIds).stream()
@@ -167,6 +134,7 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 		}
 	}
 
+	@Override
 	public int findExaminationRecordCount(ExaminationRecord examinationRecord) {
 		return this.dao.findExaminationRecordCount(examinationRecord);
 	}
@@ -174,10 +142,12 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 	/**
 	 * 根据时间范围查询考试记录数
 	 */
+	@Override
 	public Integer findExaminationRecordCountByDate(Date start, Date end) {
 		return this.dao.findExaminationRecordCountByDate(start, end);
 	}
 
+	@Override
 	public void exportExamRecord(Long[] ids, HttpServletRequest request, HttpServletResponse response) {
 		try {
 			List<ExaminationRecord> list;
@@ -234,6 +204,7 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 	/**
 	 * 查询参与考试人数
 	 */
+	@Override
 	public ExaminationDashboardDto findExamDashboardData(String tenantCode) {
 		ExaminationDashboardDto dto = new ExaminationDashboardDto();
 		Examination e = new Examination();
@@ -252,6 +223,7 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 	/**
 	 * 查询过去 n 天的考试记录数据
 	 */
+	@Override
 	public ExaminationDashboardDto findExamRecordTendency(String tenantCode, int pastDays) {
 		ExaminationDashboardDto dto = new ExaminationDashboardDto();
 		Examination examination = new Examination();
@@ -269,5 +241,44 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 		dto.setExamRecordDate(Lists.newArrayList(tendencyMap.keySet()));
 		dto.setExamRecordData(Lists.newArrayList(tendencyMap.values()));
 		return dto;
+	}
+
+	private List<ExaminationRecordDto> toRecordDto(List<ExaminationRecord> records) {
+		if (CollectionUtils.isEmpty(records)) {
+			return Collections.emptyList();
+		}
+
+		List<ExaminationRecordDto> list = Lists.newArrayListWithExpectedSize(records.size());
+		List<Examination> examinations = examinationService.findListById(
+				records.stream().map(ExaminationRecord::getExaminationId).distinct().toArray(Long[]::new));
+		final Map<Long, Examination> map = CollectionUtils.isEmpty(examinations) ?
+				Maps.newHashMap() :
+				examinations.stream().collect(Collectors.toMap(Examination::getId, e -> e));
+		Set<Long> userIds = Sets.newHashSetWithExpectedSize(records.size());
+		records.forEach(r -> {
+			userIds.add(r.getUserId());
+			Examination e = map.get(r.getExaminationId());
+			if (e != null) {
+				ExaminationRecordDto dto = new ExaminationRecordDto();
+				BeanUtils.copyProperties(e, dto);
+				dto.setId(r.getId());
+				dto.setStartTime(r.getStartTime());
+				dto.setEndTime(r.getEndTime());
+				dto.setScore(r.getScore());
+				dto.setUserId(r.getUserId());
+				dto.setExaminationId(r.getExaminationId());
+				// 正确题目数
+				dto.setCorrectNumber(r.getCorrectNumber());
+				dto.setInCorrectNumber(r.getInCorrectNumber());
+				// 提交状态
+				dto.setSubmitStatus(r.getSubmitStatus());
+				dto.setSubmitStatusName(
+						SubmitStatusEnum.match(r.getSubmitStatus(), SubmitStatusEnum.NOT_SUBMITTED).getName());
+				dto.setTypeLabel(ExaminationType.matchByValue(e.getType()).getName());
+				list.add(dto);
+			}
+		});
+		this.fillExamUserInfo(list, userIds.toArray(new Long[0]));
+		return list;
 	}
 }
