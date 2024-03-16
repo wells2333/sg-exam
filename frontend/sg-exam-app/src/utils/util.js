@@ -316,3 +316,20 @@ export const trimComma = (str) => {
 export const uuid = () => {
   return uuidv4()
 }
+
+export const calculateDuration = (startDate) => {
+  const durationMs = new Date().getTime() - startDate.getTime()
+  const level1 = durationMs % (24 * 3600 * 1000)
+  const hours = Math.floor(level1 / (3600 * 1000))
+
+  const level2 = level1 % (3600 * 1000)
+  const minutes = Math.floor(level2 / (60 * 1000))
+
+  const level3 = level2 % (60 * 1000)
+  const seconds = Math.round(level3 / 1000)
+
+  let result = hours > 0 ? (hours < 10 ? '0' + hours : hours) : '00' + ':'
+  result = result + (minutes > 0 ? (minutes < 10 ? '0' + minutes : minutes) : '00') + ':'
+  result = result + (seconds > 0 ? (seconds < 10 ? '0' + seconds : seconds) : '00')
+  return result
+}

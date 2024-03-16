@@ -23,11 +23,11 @@
                     :onChoice="onChoiceFn"/>
         <div class="subject-buttons">
           <div>
-            <el-button plain @click="last" :loading="loadingLast">{{ $t('exam.startExam.last') }}
+            <el-button plain @click="goLast" :loading="loadingLast">{{ $t('exam.startExam.last') }}
             </el-button>
           </div>
           <div>
-            <el-button plain @click="next" :loading="loadingNext">{{ $t('exam.startExam.next') }}
+            <el-button plain @click="goNext" :loading="loadingNext">{{ $t('exam.startExam.next') }}
             </el-button>
             <el-button type="success" @click="submitExam">{{ $t('submit') }}
             </el-button>
@@ -39,7 +39,7 @@
     <el-dialog :title="$t('exam.startExam.answerCard')" :visible.sync="dialogVisible" width="50%"
                top="10vh" center>
       <el-row class="answer-card-content">
-        <el-button :class="value.isAnswer ? 'answer-card-btn' : ''"
+        <el-button :class="value.answered ? 'answer-card-btn' : ''"
                    v-for="(value, index) in cards" :key="index"
                    @click="toSubject(value.subjectId, value.sort)" style="padding: 12px;">
           &nbsp;{{ value.sort }}&nbsp;
@@ -53,7 +53,7 @@ import {mapGetters, mapState} from 'vuex'
 import {saveAndNext} from '@/api/exam/answer'
 import store from '@/store'
 import moment from 'moment'
-import {isNotEmpty, messageFail, messageSuccess} from '@/utils/util'
+import {isNotEmpty, messageFail, messageSuccess, calculateDuration} from '@/utils/util'
 import Tinymce from '@/components/Tinymce'
 import Choices from '@/components/Subjects/Choices'
 import MultipleChoices from '@/components/Subjects/MultipleChoices'
@@ -83,19 +83,9 @@ export default {
       startTime: 0,
       endTime: 0,
       duration: '',
-      option: '',
+      subjectStartTime: undefined,
       answer: '',
-      dialogVisible: false,
-      tempAnswer: {
-        id: null,
-        userId: null,
-        examinationId: null,
-        courseId: null,
-        subjectId: null,
-        answer: null,
-        type: 0
-      },
-      subjectStartTime: undefined
+      dialogVisible: false
     }
   },
   computed: {
@@ -131,28 +121,12 @@ export default {
   },
   methods: {
     updateDuration() {
-      const durationMs = new Date().getTime() - new Date(this.examRecord.createTime).getTime()
-      const level1 = durationMs % (24 * 3600 * 1000)
-      const hours = Math.floor(level1 / (3600 * 1000))
-
-      const level2 = level1 % (3600 * 1000)
-      const minutes = Math.floor(level2 / (60 * 1000))
-
-      const level3 = level2 % (60 * 1000)
-      const seconds = Math.round(level3 / 1000)
-
-      let result = hours > 0 ? (hours < 10 ? '0' + hours : hours) : '00' + ':'
-      result = result + (minutes > 0 ? (minutes < 10 ? '0' + minutes : minutes) : '00') + ':'
-      result = result + (seconds > 0 ? (seconds < 10 ? '0' + seconds : seconds) : '00')
-      this.duration = result;
+      this.duration = calculateDuration(new Date(this.examRecord.createTime));
     },
     onChoiceFn(sort) {
       if (sort) {
-        this.cards[sort - 1].isAnswer = true
+        this.cards[sort - 1].answered = true
       }
-    },
-    goBack() {
-      this.$router.push({name: 'exams'})
     },
     startExam() {
       messageSuccess(this, this.$t('exam.startExam.startExam'))
@@ -160,42 +134,46 @@ export default {
         this.setSubjectInfo(this.subject)
       }, 100)
     },
-    last() {
+    goBack() {
+      this.$router.push({name: 'exams'})
+    },
+    goLast() {
       for (let i = 0; i < this.cards.length; i++) {
         if (this.cards[i].subjectId === this.subject.id) {
           if (i === 0) {
             messageSuccess(this, this.$t('exam.startExam.isFirst'))
             break
           }
+
           let {sort} = this.cards[i - 1]
-          this.saveCurrentSubjectAndGetNextSubject(nextSubjectType.last, sort)
+          this.saveAndGetNext(nextSubjectType.last, sort)
           break
         }
       }
     },
-    next() {
+    goNext() {
       for (let i = 0; i < this.cards.length; i++) {
         if (this.cards[i].subjectId === this.subject.id) {
           if (i === this.cards.length - 1) {
             messageSuccess(this, this.$t('exam.startExam.isLast'))
             break
           }
+
           let {sort} = this.cards[i + 1]
-          this.saveCurrentSubjectAndGetNextSubject(nextSubjectType.next, sort)
+          this.saveAndGetNext(nextSubjectType.next, sort)
           break
         }
       }
     },
     // 保存当前题目，同时根据序号加载下一题
-    saveCurrentSubjectAndGetNextSubject(nextType, nextSubjectSort, subjectId = undefined) {
+    saveAndGetNext(nextType, nextSubjectSort, subjectId = undefined) {
       if (this.saving) {
         return
       }
 
       try {
         this.saving = true
-        const answerId = isNotEmpty(this.tempAnswer) ? this.tempAnswer.id : ''
-        const answer = this.getAnswer(answerId)
+        const answer = this.getAnswer()
         const ref = this.getSubjectRef()
         if (ref) {
           ref.beforeSave()
@@ -223,7 +201,7 @@ export default {
       this.dialogVisible = true
     },
     toSubject(subjectId, subjectSortNo) {
-      this.saveCurrentSubjectAndGetNextSubject(nextSubjectType.current, subjectSortNo, subjectId)
+      this.saveAndGetNext(nextSubjectType.current, subjectSortNo, subjectId)
       this.dialogVisible = false
     },
     submitExam() {
@@ -232,17 +210,16 @@ export default {
         cancelButtonText: this.$t('cancel'),
         type: 'warning'
       }).then(() => {
-        this.doSubmitExam(this.tempAnswer, this.examinationId, this.recordId, this.userInfo, true)
+        this.doSubmitExam(this.examinationId, this.recordId, this.userInfo, true)
       }).catch(() => {
       })
     },
-    doSubmitExam(answer, examinationId, examRecordId, userInfo, toExamRecord) {
+    doSubmitExam(examinationId, examRecordId, userInfo, toExamRecord) {
       const ref = this.getSubjectRef()
       if (ref) {
         ref.beforeSave()
       }
-      const answerId = isNotEmpty(answer) ? answer.id : ''
-      saveAndNext(this.getAnswer(answerId), 0).then(() => {
+      saveAndNext(this.getAnswer(), 0).then(() => {
         store.dispatch('SubmitExam', {
           examinationId,
           examRecordId,
@@ -263,13 +240,13 @@ export default {
     toggleOption(answer) {
       this.answer = answer
     },
-    getAnswer(answerId) {
+    getAnswer() {
       const ref = this.getSubjectRef()
       if (isNotEmpty(ref)) {
         const answer = ref.getAnswer()
         this.answer = answer
         return {
-          id: answerId,
+          id: '',
           userId: this.userInfo.id,
           examinationId: this.examinationId,
           examRecordId: this.recordId,
@@ -339,6 +316,7 @@ export default {
       next()
       return
     }
+
     this.$confirm(this.$t('exam.startExam.confirmExit'), this.$t('tips'), {
       confirmButtonText: this.$t('sure'),
       cancelButtonText: this.$t('cancel'),
@@ -371,10 +349,6 @@ export default {
 .subject-box-card {
   margin-bottom: 30px;
   min-height: 400px;
-}
-
-.subject-exam-title {
-  font-size: 22px;
 }
 
 .subject-buttons {
