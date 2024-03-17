@@ -6,6 +6,7 @@ import com.github.tangyi.api.exam.constants.AnswerConstant;
 import com.github.tangyi.api.exam.dto.*;
 import com.github.tangyi.api.exam.enums.SubmitStatusEnum;
 import com.github.tangyi.api.exam.model.*;
+import com.github.tangyi.api.exam.service.IExaminationActionService;
 import com.github.tangyi.api.exam.thread.IExecutorHolder;
 import com.github.tangyi.api.user.enums.IdentityType;
 import com.github.tangyi.api.user.service.IUserService;
@@ -37,11 +38,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class ExaminationActionService {
+public class ExaminationActionService implements IExaminationActionService {
 
 	private final IUserService userService;
 	private final ExaminationService examinationService;
@@ -68,6 +70,7 @@ public class ExaminationActionService {
 		this.examFavoritesService = examFavoritesService;
 	}
 
+	@Override
 	@Transactional
 	public StartExamDto start(ExaminationRecord examRecord) {
 		SgPreconditions.checkNull(examRecord.getExaminationId(), "The examination id cannot be null.");
@@ -76,6 +79,7 @@ public class ExaminationActionService {
 				SysUtil.getTenantCode());
 	}
 
+	@Override
 	@Transactional
 	public StartExamDto start(Long userId, String identifier, Long examinationId, String tenantCode) {
 		StartExamDto dto = new StartExamDto();
@@ -89,27 +93,26 @@ public class ExaminationActionService {
 		record.setStartTime(record.getCreateTime());
 		// 默认未提交状态
 		record.setSubmitStatus(SubmitStatusEnum.NOT_SUBMITTED.getValue());
-		// 保存考试记录
 		examRecordService.insert(record);
 		dto.setExamRecord(record);
 
 		// 根据题目 ID，类型获取第一题的详细信息
-		SubjectDto subjectDto = subjectsService.findFirstSubjectByExaminationId(examinationId);
-		dto.setSubjectDto(subjectDto);
-		dto.setTotal(subjectDto.getTotal());
+		SubjectDto sDto = subjectsService.findFirstSubjectByExaminationId(examinationId);
+		dto.setSubjectDto(sDto);
+		dto.setTotal(sDto.getTotal());
 
 		// 创建第一题的答题
 		Answer answer = new Answer();
 		answer.setCommonValue(identifier, tenantCode);
 		answer.setExamRecordId(record.getId());
-		answer.setSubjectId(subjectDto.getId());
+		answer.setSubjectId(sDto.getId());
 		// 默认待批改状态
 		answer.setMarkStatus(AnswerConstant.TO_BE_MARKED);
 		answer.setAnswerType(AnswerConstant.WRONG);
 		answer.setStartTime(answer.getCreateTime());
 		// 保存答题
 		answerService.save(answer);
-		subjectDto.setAnswer(answer);
+		sDto.setAnswer(answer);
 
 		// 答题卡
 		List<ExaminationSubject> ess = examinationSubjectService.findListByExaminationId(examinationId);
@@ -123,9 +126,11 @@ public class ExaminationActionService {
 			dto.setCards(cards);
 		}
 		examFavoritesService.incrStartCount(examinationId);
+		log.info("Start examination id: {}, identifier: {}, userId: {}", examinationId, identifier, userId);
 		return dto;
 	}
 
+	@Override
 	@Transactional
 	public StartExamDto anonymousUserStart(Long examinationId, String identifier) {
 		String tenantCode = SysUtil.getTenantCode();
@@ -145,18 +150,15 @@ public class ExaminationActionService {
 			log.info("Anonymous user start exam, examinationId: {}, ipv6: {}, userId: {}", examinationId, identifier,
 					userId);
 		} else {
-			UserVo userVo = this.userService.findUserByIdentifier(IdentityType.PASSWORD.getValue(), identifier,
-					tenantCode);
-			if (userVo != null) {
-				userId = userVo.getId();
+			UserVo vo = this.userService.findUserByIdentifier(IdentityType.PASSWORD.getValue(), identifier, tenantCode);
+			if (vo != null) {
+				userId = vo.getId();
 			}
 		}
 		return this.start(userId, identifier, examinationId, tenantCode);
 	}
 
-	/**
-	 * 提交答卷，自动统计选择题得分
-	 */
+	@Override
 	@Transactional
 	public Boolean submit(Long recordId, String operator, String tenantCode) {
 		List<Answer> answerList = this.answerService.findListByExamRecordId(recordId);
@@ -165,8 +167,8 @@ public class ExaminationActionService {
 		}
 
 		ExaminationRecord record = this.examRecordService.get(recordId);
-		Long[] subjectIds = answerList.stream().map(Answer::getSubjectId).toArray(Long[]::new);
-		Map<Integer, List<Answer>> distinct = this.distinctAnswer(subjectIds, answerList);
+		Long[] ids = answerList.stream().map(Answer::getSubjectId).toArray(Long[]::new);
+		Map<Integer, List<Answer>> distinct = this.distinctAnswer(ids, answerList);
 		HandlerFactory.Result result = HandlerFactory.handleAll(distinct);
 		// 记录总分、正确题目数、错误题目数
 		record.setScore(result.getScore());
@@ -190,41 +192,41 @@ public class ExaminationActionService {
 		return Boolean.TRUE;
 	}
 
-	/**
-	 * 异步提交
-	 */
+	@Override
 	@Transactional
 	public boolean submitAsync(Answer answer) {
-		long start = System.currentTimeMillis();
+		long startNs = System.nanoTime();
 		String currentUsername = SysUtil.getUser();
 		String tenantCode = SysUtil.getTenantCode();
 		answer.setOperator(currentUsername);
 		answer.setTenantCode(tenantCode);
 
-		ExaminationRecord examRecord = new ExaminationRecord();
-		examRecord.setCommonValue(currentUsername, tenantCode);
-		examRecord.setId(answer.getExamRecordId());
+		ExaminationRecord record = new ExaminationRecord();
+		record.setCommonValue(currentUsername, tenantCode);
+		record.setId(answer.getExamRecordId());
 		// 提交时间
-		examRecord.setEndTime(examRecord.getCreateTime());
-		examRecord.setSubmitStatus(SubmitStatusEnum.SUBMITTED.getValue());
+		record.setEndTime(record.getCreateTime());
+		record.setSubmitStatus(SubmitStatusEnum.SUBMITTED.getValue());
 		// 更新考试状态
-		boolean success = examRecordService.update(examRecord) > 0;
-		submitAsync(examRecord.getId(), currentUsername, tenantCode);
-		log.debug("async submit examination, username: {}, time consuming: {}ms", currentUsername,
-				System.currentTimeMillis() - start);
+		boolean success = examRecordService.update(record) > 0;
+		this.submitAsync(record.getId(), currentUsername, tenantCode);
+		long tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
+		log.debug("Async submit examination, username: {}, time consuming: {}ms", currentUsername, tookMs);
 		return success;
 	}
 
+	@Override
 	@Transactional
 	public Boolean submitAll(List<AnswerDto> answers) {
 		if (CollectionUtils.isEmpty(answers)) {
 			return Boolean.FALSE;
 		}
+
 		String userCode = SysUtil.getUser();
 		String tenantCode = SysUtil.getTenantCode();
 		Long recordId = answers.get(0).getExamRecordId();
-		Long[] subjectIds = answers.stream().map(AnswerDto::getSubjectId).toArray(Long[]::new);
-		List<Answer> dbAnswers = answerService.batchFindByRecordIdAndSubjectId(recordId, subjectIds);
+		Long[] ids = answers.stream().map(AnswerDto::getSubjectId).toArray(Long[]::new);
+		List<Answer> dbAnswers = answerService.batchFindByRecordIdAndSubjectId(recordId, ids);
 		Map<Long, Answer> answerMap = dbAnswers.stream().collect(Collectors.toMap(Answer::getSubjectId, s -> s));
 		// 区分更新和插入
 		List<Answer> inserts = Lists.newArrayList();
@@ -249,19 +251,17 @@ public class ExaminationActionService {
 		}
 		if (CollectionUtils.isNotEmpty(inserts)) {
 			int update = answerService.batchInsert(inserts);
-			log.info("batch insert success, recordId: {}, size: {}", recordId, update);
+			log.info("Batch insert success, recordId: {}, size: {}", recordId, update);
 		}
 		if (CollectionUtils.isNotEmpty(updates)) {
 			int update = answerService.batchUpdate(updates);
-			log.info("batch update success, recordId: {}, size: {}", recordId, update);
+			log.info("Batch update success, recordId: {}, size: {}", recordId, update);
 		}
-		submit(recordId, userCode, tenantCode);
+		this.submit(recordId, userCode, tenantCode);
 		return Boolean.TRUE;
 	}
 
-	/**
-	 * 移动端提交答题
-	 */
+	@Override
 	@Transactional
 	public boolean anonymousUserSubmit(Long examinationId, String identifier, List<SubjectDto> dtos) {
 		long startMs = System.currentTimeMillis();
@@ -323,18 +323,7 @@ public class ExaminationActionService {
 		return true;
 	}
 
-	/**
-	 * 分类题目
-	 */
-	public Map<Integer, List<Answer>> distinctAnswer(Long[] subjectIds, List<Answer> answers) {
-		List<Subjects> subjects = subjectsService.findBySubjectIds(subjectIds);
-		Map<Long, Integer> typeMap = ExamUtil.toMap(subjects);
-		return ExamUtil.distinctAnswer(answers, typeMap);
-	}
-
-	/**
-	 * 成绩详情
-	 */
+	@Override
 	public ExamRecordDetailsDto details(Long id) {
 		ExaminationRecord record = examRecordService.get(id);
 		SgPreconditions.checkNull(record, "record is not exist");
@@ -368,7 +357,7 @@ public class ExaminationActionService {
 		return result;
 	}
 
-	public List<AnswerDto> getDetailAnswers(ExaminationRecord examRecord, List<CardDto> cards) {
+	private List<AnswerDto> getDetailAnswers(ExaminationRecord examRecord, List<CardDto> cards) {
 		List<AnswerDto> list = Lists.newArrayList();
 		List<Answer> answers = answerService.findListByExamRecordId(examRecord.getId());
 		if (CollectionUtils.isEmpty(answers)) {
@@ -381,8 +370,8 @@ public class ExaminationActionService {
 			return list;
 		}
 
-		List<Long> subjectIds = esList.stream().map(ExaminationSubject::getSubjectId).collect(Collectors.toList());
-		Collection<SubjectDto> dtoList = subjectsService.getSubjects(subjectIds);
+		List<Long> ids = esList.stream().map(ExaminationSubject::getSubjectId).collect(Collectors.toList());
+		Collection<SubjectDto> dtoList = subjectsService.getSubjects(ids);
 		Map<Long, SubjectDto> map = dtoList.stream().collect(Collectors.toMap(SubjectDto::getId, e -> e));
 		for (ExaminationSubject es : esList) {
 			CardDto card = new CardDto();
@@ -406,24 +395,27 @@ public class ExaminationActionService {
 		return list;
 	}
 
-	/**
-	 * 异步提交
-	 */
-	public void submitAsync(Long recordId, String userCode, String tenantCode) {
+	private void submitAsync(Long recordId, String userCode, String tenantCode) {
 		StopWatch watch = StopWatchUtil.start();
 		ListenableFuture<Boolean> future = executorHolder.getSubmitExecutor()
 				.submit(() -> submit(recordId, userCode, tenantCode));
 		Futures.addCallback(future, new FutureCallback<>() {
 			@Override
 			public void onSuccess(@Nullable Boolean result) {
-				log.info("submit future finished, recordId: {}, user: {}, took: {}", recordId, userCode,
+				log.info("Submit future finished, recordId: {}, user: {}, took: {}", recordId, userCode,
 						StopWatchUtil.stop(watch));
 			}
 
 			@Override
 			public void onFailure(@Nullable Throwable e) {
-				log.error("submit future failed, recordId: {}, user: {}", recordId, userCode, e);
+				log.error("Submit future failed, recordId: {}, user: {}", recordId, userCode, e);
 			}
 		}, executorHolder.getSubmitExecutor());
+	}
+
+	private Map<Integer, List<Answer>> distinctAnswer(Long[] subjectIds, List<Answer> answers) {
+		List<Subjects> subjects = subjectsService.findBySubjectIds(subjectIds);
+		Map<Long, Integer> typeMap = ExamUtil.toMap(subjects);
+		return ExamUtil.distinctAnswer(answers, typeMap);
 	}
 }
