@@ -66,6 +66,89 @@ public class LuceneIndexManager {
 		return LuceneIndexManagerInstance.instance;
 	}
 
+	public LuceneIndexManager() {
+		try {
+			this.indexDir = getLuceneIndexDir();
+			log.info("Lucene index dir: {}", indexDir);
+			this.directory = FSDirectory.open(new File(indexDir).toPath());
+			// 使用 IK 分词器
+			this.analyzer = new IKAnalyzer();
+			this.docNum = new AtomicInteger(0);
+			this.indexWriter = new IndexWriter(directory, new IndexWriterConfig(this.analyzer));
+			// 清空索引
+			this.indexWriter.deleteAll();
+			this.initSearcherManager();
+			this.initDocStatTask();
+		} catch (Exception e) {
+			log.error("Failed to init LuceneIndexManager.", e);
+			throw new RuntimeException(e);
+		}
+		this.addShutdownHook();
+	}
+
+	// For init
+	public void init() {
+		// Do nothing
+	}
+
+	public void addDocument(IndexDoc indexDoc, DocType type) throws IOException {
+		this.indexWriter.addDocument(toDocument(indexDoc, type));
+		this.indexWriter.commit();
+	}
+
+	public void updateDocument(IndexDoc doc, DocType type) throws IOException {
+		// 先删除再新增
+		this.deleteDocument(doc, type);
+		this.addDocument(doc, type);
+	}
+
+	public void deleteDocument(IndexDoc doc, DocType type) throws IOException {
+		this.indexWriter.deleteDocuments(new Term(DocField.ID, doc.getId()), new Term(DocField.TYPE, type.getType()));
+	}
+
+	public List<IndexDoc> search(@Nullable DocType type, String q, int size) throws IOException, ParseException {
+		return this.search(type, q, size, null, null);
+	}
+
+	public List<IndexDoc> search(@Nullable DocType type, String q, int size, String sortField, String sortOrder)
+			throws IOException, ParseException {
+		List<IndexDoc> indexDocs = Lists.newArrayList();
+		this.searcherManager.maybeRefresh();
+		IndexSearcher indexSearcher = searcherManager.acquire();
+		TopDocs topDocs = this.doSearch(indexSearcher, type, q, size, sortField, sortOrder);
+		ScoreDoc[] arr = topDocs.scoreDocs;
+		for (ScoreDoc scoreDoc : arr) {
+			Document document = indexSearcher.doc(scoreDoc.doc);
+			IndexDoc indexDoc = new IndexDoc();
+			indexDoc.setId(document.get(DocField.ID));
+			indexDoc.setType(document.get(DocField.TYPE));
+			indexDoc.setContent(document.get(DocField.CONTENT));
+			indexDocs.add(indexDoc);
+		}
+		return indexDocs;
+	}
+
+	public void destroy() throws IOException {
+		log.info("Start to destroy lucene index manager.");
+		if (this.docStatsTask != null) {
+			this.docStatsTask.cancel(true);
+		}
+		if (this.docStatsExecutor != null) {
+			this.docStatsExecutor.shutdownNow();
+		}
+		if (this.indexWriter != null) {
+			this.indexWriter.close();
+		}
+		if (this.directory != null) {
+			this.directory.close();
+		}
+		if (StringUtils.isNotEmpty(indexDir)) {
+			FileUtils.deleteQuietly(new File(indexDir));
+			log.info("Delete index dir finished: {}", indexDir);
+		}
+		log.info("Destroy lucene index manager finished.");
+	}
+
 	private String getLuceneIndexDir() {
 		String dir = LUCENE_INDEX_DIR;
 		if (StringUtils.isEmpty(dir)) {
@@ -153,83 +236,5 @@ public class LuceneIndexManager {
 		if (!PageConstant.VALID_SORT_ORDER.contains(sortOrder)) {
 			throw new IllegalArgumentException("Invalid sortOrder: " + sortOrder);
 		}
-	}
-
-	public LuceneIndexManager() {
-		try {
-			this.indexDir = getLuceneIndexDir();
-			log.info("Lucene index dir: {}", indexDir);
-			this.directory = FSDirectory.open(new File(indexDir).toPath());
-			// 使用 IK 分词器
-			this.analyzer = new IKAnalyzer();
-			this.docNum = new AtomicInteger(0);
-			this.indexWriter = new IndexWriter(directory, new IndexWriterConfig(this.analyzer));
-			// 清空索引
-			this.indexWriter.deleteAll();
-			this.initSearcherManager();
-			this.initDocStatTask();
-		} catch (Exception e) {
-			log.error("Failed to init LuceneIndexManager.", e);
-			throw new RuntimeException(e);
-		}
-		this.addShutdownHook();
-	}
-
-	public void addDocument(IndexDoc indexDoc, DocType type) throws IOException {
-		this.indexWriter.addDocument(toDocument(indexDoc, type));
-		this.indexWriter.commit();
-	}
-
-	public void updateDocument(IndexDoc doc, DocType type) throws IOException {
-		// 先删除再新增
-		this.deleteDocument(doc, type);
-		this.addDocument(doc, type);
-	}
-
-	public void deleteDocument(IndexDoc doc, DocType type) throws IOException {
-		this.indexWriter.deleteDocuments(new Term(DocField.ID, doc.getId()), new Term(DocField.TYPE, type.getType()));
-	}
-
-	public List<IndexDoc> search(@Nullable DocType type, String q, int size) throws IOException, ParseException {
-		return this.search(type, q, size, null, null);
-	}
-
-	public List<IndexDoc> search(@Nullable DocType type, String q, int size, String sortField, String sortOrder)
-			throws IOException, ParseException {
-		List<IndexDoc> indexDocs = Lists.newArrayList();
-		this.searcherManager.maybeRefresh();
-		IndexSearcher indexSearcher = searcherManager.acquire();
-		TopDocs topDocs = this.doSearch(indexSearcher, type, q, size, sortField, sortOrder);
-		ScoreDoc[] arr = topDocs.scoreDocs;
-		for (ScoreDoc scoreDoc : arr) {
-			Document document = indexSearcher.doc(scoreDoc.doc);
-			IndexDoc indexDoc = new IndexDoc();
-			indexDoc.setId(document.get(DocField.ID));
-			indexDoc.setType(document.get(DocField.TYPE));
-			indexDoc.setContent(document.get(DocField.CONTENT));
-			indexDocs.add(indexDoc);
-		}
-		return indexDocs;
-	}
-
-	public void destroy() throws IOException {
-		log.info("Start to destroy lucene index manager.");
-		if (this.docStatsTask != null) {
-			this.docStatsTask.cancel(true);
-		}
-		if (this.docStatsExecutor != null) {
-			this.docStatsExecutor.shutdownNow();
-		}
-		if (this.indexWriter != null) {
-			this.indexWriter.close();
-		}
-		if (this.directory != null) {
-			this.directory.close();
-		}
-		if (StringUtils.isNotEmpty(indexDir)) {
-			FileUtils.deleteQuietly(new File(indexDir));
-			log.info("Delete index dir finished: {}", indexDir);
-		}
-		log.info("Destroy lucene index manager finished.");
 	}
 }

@@ -10,6 +10,7 @@ import com.github.tangyi.api.exam.service.IExamPermissionService;
 import com.github.tangyi.api.exam.service.IExaminationService;
 import com.github.tangyi.common.cache.CommonCache;
 import com.github.tangyi.common.config.EmbeddedMysqlConfig;
+import com.github.tangyi.common.lucene.LuceneIndexManager;
 import com.github.tangyi.common.service.IndexCrudService;
 import com.github.tangyi.constants.ExamConstant;
 import com.google.common.collect.Lists;
@@ -122,6 +123,7 @@ public class LuceneInitializr {
 			for (Initializr initializr : initializers) {
 				initializr.init();
 			}
+			LuceneIndexManager.getInstance().init();
 			log.info("LuceneInitializr finished.");
 		}).start();
 		log.info("LuceneInitializr started.");
