@@ -7,13 +7,13 @@ import com.github.tangyi.api.exam.model.Answer;
 import com.github.tangyi.api.exam.model.ExaminationSubject;
 import com.github.tangyi.api.exam.model.SubjectOption;
 import com.github.tangyi.api.exam.thread.IExecutorHolder;
+import com.github.tangyi.common.excel.AbstractExcelImportListener;
 import com.github.tangyi.common.excel.ExcelToolUtil;
 import com.github.tangyi.common.utils.SnowFlakeId;
 import com.github.tangyi.common.utils.StopWatchUtil;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.exam.enums.SubjectLevel;
 import com.github.tangyi.exam.enums.SubjectType;
-import com.github.tangyi.exam.excel.SubjectImportListener;
 import com.github.tangyi.exam.excel.SubjectExcelModel;
 import com.github.tangyi.exam.service.ExaminationSubjectService;
 import com.google.common.collect.Lists;
@@ -27,9 +27,11 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -170,19 +172,19 @@ public class SubjectImportExportService {
 					importSubject(subjects, null, categoryId, user, tenantCode);
 					return Boolean.TRUE;
 				} catch (Exception e) {
-					log.info("importJSONSubject failed, categoryId: {}", categoryId, e);
+					log.info("Failed to import JSONSubject, categoryId: {}", categoryId, e);
 					return Boolean.FALSE;
 				}
 			});
 			Futures.addCallback(future, new FutureCallback<>() {
 				@Override
 				public void onSuccess(@Nullable Boolean result) {
-					log.info("importJSONSubject success, result: {}", result);
+					log.info("ImportJSONSubject finished, result: {}", result);
 				}
 
 				@Override
 				public void onFailure(Throwable e) {
-					log.error("importJSONSubject failed", e);
+					log.error("Failed to import JSONSubject", e);
 				}
 			}, executor);
 		}
@@ -199,8 +201,7 @@ public class SubjectImportExportService {
 		byte[] data = IOUtils.toByteArray(file.getInputStream());
 		ListenableFuture<Boolean> future = executor.submit(() -> {
 			try (InputStream in = new BufferedInputStream(new ByteArrayInputStream(data))) {
-				SubjectImportListener listener = new SubjectImportListener(this, null, categoryId, user, tenantCode,
-						nextNo);
+				Listener listener = new Listener(this, null, categoryId, user, tenantCode, nextNo);
 				ExcelToolUtil.readExcel(in, SubjectExcelModel.class, listener);
 			} catch (Exception e) {
 				log.error("importExcelSubject failed, categoryId: {}", categoryId, e);
@@ -211,12 +212,12 @@ public class SubjectImportExportService {
 		Futures.addCallback(future, new FutureCallback<>() {
 			@Override
 			public void onSuccess(@Nullable Boolean result) {
-				log.info("importExcelSubject success, result: {}", result);
+				log.info("Import excel subject success, result: {}", result);
 			}
 
 			@Override
 			public void onFailure(@Nullable Throwable e) {
-				log.error("importExcelSubject failed", e);
+				log.error("Import excel subject failed.", e);
 			}
 		}, executor);
 		return Boolean.TRUE;
@@ -318,5 +319,80 @@ public class SubjectImportExportService {
 
 	public String remove(String value) {
 		return value.substring(value.indexOf(".") + 1).trim();
+	}
+
+	private static final class Listener extends AbstractExcelImportListener<SubjectExcelModel> {
+
+		private final SubjectImportExportService service;
+		private final Long examinationId;
+		private final Long categoryId;
+		private final String creator;
+		private final String tenantCode;
+		private final AtomicInteger nextNo;
+
+		public Listener(SubjectImportExportService service, Long examinationId, Long categoryId, String creator,
+				String tenantCode, AtomicInteger nextNo) {
+			this.service = service;
+			this.examinationId = examinationId;
+			this.categoryId = categoryId;
+			this.creator = creator;
+			this.tenantCode = tenantCode;
+			this.nextNo = nextNo;
+		}
+
+		@Override
+		public void saveData(List<SubjectExcelModel> models) {
+			logger.info("SaveData size: {}, creator: {}, tenantCode: {}", models.size(), creator, tenantCode);
+			List<SubjectDto> subjects = Lists.newArrayListWithExpectedSize(models.size());
+			for (SubjectExcelModel model : models) {
+				SubjectDto dto = new SubjectDto();
+				dto.setNewRecord(true);
+				dto.setCommonValue(creator, tenantCode);
+				BeanUtils.copyProperties(model, dto);
+				dto.setSort(nextNo.incrementAndGet());
+				List<SubjectOption> options = Lists.newArrayList();
+				if (StringUtils.isNotEmpty(model.getOptionA())) {
+					options.add(newOption("A", model.getOptionA(), 1));
+				}
+				if (StringUtils.isNotEmpty(model.getOptionB())) {
+					options.add(newOption("B", model.getOptionB(), 2));
+				}
+				if (StringUtils.isNotEmpty(model.getOptionC())) {
+					options.add(newOption("C", model.getOptionC(), 3));
+				}
+				if (StringUtils.isNotEmpty(model.getOptionD())) {
+					options.add(newOption("D", model.getOptionD(), 4));
+				}
+				if (StringUtils.isNotEmpty(model.getOptionE())) {
+					options.add(newOption("E", model.getOptionE(), 5));
+				}
+				if (StringUtils.isNotEmpty(model.getOptionF())) {
+					options.add(newOption("F", model.getOptionF(), 6));
+				}
+				if (StringUtils.isNotEmpty(model.getOptionG())) {
+					options.add(newOption("G", model.getOptionG(), 7));
+				}
+				if (StringUtils.isNotEmpty(model.getOptionH())) {
+					options.add(newOption("H", model.getOptionH(), 8));
+				}
+				if (StringUtils.isNotEmpty(model.getOptionI())) {
+					options.add(newOption("I", model.getOptionI(), 9));
+				}
+				dto.setOptions(options);
+				Answer answer = new Answer();
+				answer.setAnswer(model.getAnswer());
+				dto.setAnswer(answer);
+				subjects.add(dto);
+			}
+			service.importSubjectAsync(subjects, examinationId, categoryId, creator, tenantCode);
+		}
+
+		public SubjectOption newOption(String name, String content, int sort) {
+			SubjectOption option = new SubjectOption();
+			option.setOptionName(name);
+			option.setOptionContent(content);
+			option.setSort(sort);
+			return option;
+		}
 	}
 }

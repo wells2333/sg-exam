@@ -32,17 +32,32 @@ public class SubjectExcelModel {
 	@ExcelProperty(value = "难度等级", converter = Converters.LevelConverter.class)
 	private Integer level;
 
-	@ExcelProperty("选项A")
+	@ExcelProperty("选项 A")
 	private String optionA;
 
-	@ExcelProperty("选项B")
+	@ExcelProperty("选项 B")
 	private String optionB;
 
-	@ExcelProperty("选项C")
+	@ExcelProperty("选项 C")
 	private String optionC;
 
-	@ExcelProperty("选项D")
+	@ExcelProperty("选项 D")
 	private String optionD;
+
+	@ExcelProperty("选项 E")
+	private String optionE;
+
+	@ExcelProperty("选项 F")
+	private String optionF;
+
+	@ExcelProperty("选项 G")
+	private String optionG;
+
+	@ExcelProperty("选项 H")
+	private String optionH;
+
+	@ExcelProperty("选项 I")
+	private String optionI;
 
 	@ExcelProperty("答案")
 	private String answer;
