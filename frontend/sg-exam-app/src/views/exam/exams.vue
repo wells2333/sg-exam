@@ -193,7 +193,7 @@ export default {
       this.getExamList()
     },
     updateExamList (list) {
-      if (list === undefined || list.length === 0) {
+      if (list === undefined || list === null || list.length === 0) {
         return list
       }
       list.forEach(item => {
