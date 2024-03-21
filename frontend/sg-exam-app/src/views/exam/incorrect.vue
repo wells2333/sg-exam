@@ -244,7 +244,7 @@ export default {
       }, 500)
     },
     updateList(list) {
-      if (list === undefined || list.length === 0) {
+      if (list === undefined || list === null || list.length === 0) {
         return list
       }
       list.forEach(item => {
