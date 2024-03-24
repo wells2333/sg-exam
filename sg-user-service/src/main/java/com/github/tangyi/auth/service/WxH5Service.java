@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.beust.jcommander.internal.Maps;
 import com.github.tangyi.api.user.enums.IdentityType;
+import com.github.tangyi.api.user.service.IIdentifyService;
 import com.github.tangyi.auth.constant.SecurityConstant;
 import com.github.tangyi.auth.properties.WxH5Properties;
 import com.github.tangyi.auth.security.core.user.CustomUserDetailsService;
@@ -14,7 +15,6 @@ import com.github.tangyi.common.utils.EnvUtils;
 import com.github.tangyi.common.utils.TenantHolder;
 import com.github.tangyi.common.utils.okhttp.OkHttpUtil;
 import com.github.tangyi.common.vo.UserVo;
-import com.github.tangyi.user.service.sys.UserService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import org.apache.commons.collections4.MapUtils;
@@ -44,16 +44,16 @@ public class WxH5Service {
 	private static final String WX_H5_SCENE = "wx_h5_scene:";
 
 	private final WxH5Properties wxH5Properties;
-	private final UserService userService;
+	private final IIdentifyService identifyService;
 	private final CustomUserDetailsService userDetailsService;
 	private final UserTokenService userTokenService;
 	private final RedisTemplate redisTemplate;
 
-	public WxH5Service(WxH5Properties wxH5Properties, UserService userService,
+	public WxH5Service(WxH5Properties wxH5Properties, IIdentifyService identifyService,
 			CustomUserDetailsService userDetailsService, UserTokenService userTokenService,
 			RedisTemplate redisTemplate) {
 		this.wxH5Properties = wxH5Properties;
-		this.userService = userService;
+		this.identifyService = identifyService;
 		this.userDetailsService = userDetailsService;
 		this.userTokenService = userTokenService;
 		this.redisTemplate = redisTemplate;
@@ -138,7 +138,7 @@ public class WxH5Service {
 			String tenantCode = SecurityConstant.DEFAULT_TENANT_CODE;
 			TenantHolder.setTenantCode(tenantCode);
 			// 先根据 openid 从查询出用户信息
-			UserVo userVo = userService.findUserByIdentifier(IdentityType.WE_CHAT.getValue(), fromUser, tenantCode);
+			UserVo userVo = identifyService.findUserByIdentifier(IdentityType.WE_CHAT.getValue(), fromUser, tenantCode);
 			// 没有该用户
 			if (userVo == null) {
 				JSONObject userInfo = getUserInfo(fromUser);

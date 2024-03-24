@@ -106,7 +106,7 @@ public class TenantInitService {
 		String tenantCode = tenant.getTenantCode();
 		menuService.deleteByRoleId(role.getId());
 		String[] menuIds = StringUtils.split(tenant.getMenuIds(), CommonConstant.COMMA);
-		if (menuIds != null && menuIds.length > 0) {
+		if (menuIds != null) {
 			for (String menuId : menuIds) {
 				menuService.saveRoleMenu(role.getId(), Long.valueOf(menuId), identifier, tenantCode);
 			}

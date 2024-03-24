@@ -24,14 +24,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.imageio.ImageIO;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -131,7 +127,6 @@ public class ExamRecordController extends BaseController {
 
 	@PostMapping("start")
 	@Operation(summary = "开始考试")
-	@SgLog(value = "开始考试", operationType = OperationType.INSERT)
 	public R<StartExamDto> start(@RequestBody ExaminationRecord examRecord) {
 		return R.success(actionService.start(examRecord));
 	}

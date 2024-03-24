@@ -1,10 +1,10 @@
 package com.github.tangyi.common.security;
 
-import com.beust.jcommander.internal.Maps;
 import com.github.tangyi.common.constant.SecurityConstant;
 import com.github.tangyi.common.model.UserToken;
 import com.github.tangyi.common.utils.EnvUtils;
 import com.github.tangyi.common.utils.ObjectUtil;
+import com.google.common.collect.Maps;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
@@ -41,7 +41,7 @@ public class TokenManager {
 	}
 
 	public String createToken(UserToken userToken) {
-		Map<String, String> body = Maps.newHashMap();
+		Map<String, String> body = Maps.newHashMapWithExpectedSize(6);
 		body.put(TENANT_CODE, userToken.getTenantCode());
 		body.put(ID, ObjectUtil.toString(userToken.getId()));
 		body.put(USER_ID, ObjectUtil.toString(userToken.getUserId()));
@@ -67,8 +67,6 @@ public class TokenManager {
 		try {
 			this.redisTemplate.opsForValue()
 					.set(tokenKey(userToken.getUserId()), userToken, expireSeconds, TimeUnit.SECONDS);
-			log.info("Execute save token finished, userId: {}, expireSeconds: {}", userToken.getUserId(),
-					expireSeconds);
 			return true;
 		} catch (Exception e) {
 			log.error("Failed to save token", e);

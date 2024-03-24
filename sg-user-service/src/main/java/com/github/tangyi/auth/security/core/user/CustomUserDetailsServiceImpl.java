@@ -4,6 +4,7 @@ import com.github.tangyi.api.other.model.WxSession;
 import com.github.tangyi.api.user.dto.UserDto;
 import com.github.tangyi.api.user.enums.IdentityType;
 import com.github.tangyi.api.user.model.User;
+import com.github.tangyi.api.user.service.IIdentifyService;
 import com.github.tangyi.auth.security.mobile.MobileUser;
 import com.github.tangyi.auth.security.wx.WxUser;
 import com.github.tangyi.auth.service.WxSessionService;
@@ -15,7 +16,6 @@ import com.github.tangyi.common.model.CustomUserDetails;
 import com.github.tangyi.common.utils.DateUtils;
 import com.github.tangyi.common.utils.TenantHolder;
 import com.github.tangyi.common.vo.UserVo;
-import com.github.tangyi.user.service.sys.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,14 +31,13 @@ import java.util.stream.Collectors;
 @Service("userDetailsService")
 public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 
-	private final UserService userService;
-
+	private final IIdentifyService identifyService;
 	private final WxSessionService wxService;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		long start = System.nanoTime();
-		UserVo userVo = userService.findUserByIdentifier(null, username, TenantHolder.getTenantCode());
+		UserVo userVo = identifyService.findUserByIdentifier(null, username, TenantHolder.getTenantCode());
 		checkUserExist(username, userVo);
 		boolean enabled = CommonConstant.STATUS_NORMAL.equals(userVo.getStatus());
 		return new CustomUserDetails(username, userVo.getCredential(), enabled, getAuthority(userVo),
@@ -49,7 +48,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 	public UserDetails loadUserByIdentifierAndTenantCode(String tenantCode, String username)
 			throws UsernameNotFoundException, TenantNotFoundException {
 		long start = System.nanoTime();
-		UserVo userVo = userService.findUserByIdentifier(null, username, tenantCode);
+		UserVo userVo = identifyService.findUserByIdentifier(null, username, tenantCode);
 		checkUserExist(username, userVo);
 		boolean enabled = CommonConstant.STATUS_NORMAL.equals(userVo.getStatus());
 		return new CustomUserDetails(username, userVo.getCredential(), enabled, getAuthority(userVo),
@@ -76,7 +75,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 
 	@Override
 	public CustomUserDetails loadUserByWxOpenIdAndTenantCode(WxUser wxUser, String openId, String tenantCode) {
-		UserVo userVo = userService.findUserByIdentifier(IdentityType.WE_CHAT.getValue(), openId, tenantCode);
+		UserVo userVo = identifyService.findUserByIdentifier(IdentityType.WE_CHAT.getValue(), openId, tenantCode);
 		// 第一次登录
 		if (userVo == null) {
 			userVo = registerUser(wxUser, openId, tenantCode);
@@ -84,6 +83,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 		return toCustomUserDetails(userVo);
 	}
 
+	@Override
 	public UserVo registerUser(WxUser wxUser, String openId, String tenantCode) {
 		UserDto userDto = new UserDto(null);
 		if (wxUser != null) {
@@ -93,8 +93,8 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 		userDto.setCredential(openId);
 		userDto.setIdentityType(IdentityType.WE_CHAT.getValue());
 		userDto.setLoginTime(DateUtils.asDate(LocalDateTime.now()));
-		userService.register(userDto);
-		return userService.findUserByIdentifier(IdentityType.WE_CHAT.getValue(), openId, tenantCode);
+		identifyService.register(userDto);
+		return identifyService.findUserByIdentifier(IdentityType.WE_CHAT.getValue(), openId, tenantCode);
 	}
 
 	@Override
@@ -117,35 +117,36 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 	}
 
 	private UserVo socialLogin(MobileUser mobileUser, String social, String tenantCode) {
-		UserVo userVo = userService.findUserByIdentifier(IdentityType.PHONE_NUMBER.getValue(), social, tenantCode);
+		UserVo vo = identifyService.findUserByIdentifier(IdentityType.PHONE_NUMBER.getValue(), social, tenantCode);
 		// 第一次登录，自动注册手机号账号
-		if (userVo == null) {
+		if (vo == null) {
 			registerSocial(mobileUser, social, tenantCode);
-			userVo = userService.findUserByIdentifier(IdentityType.PHONE_NUMBER.getValue(), social, tenantCode);
+			vo = identifyService.findUserByIdentifier(IdentityType.PHONE_NUMBER.getValue(), social, tenantCode);
 		}
-		if (userVo == null) {
+		if (vo == null) {
 			throw new UsernameNotFoundException("Login by social not found: " + social);
 		}
 
-		return userVo;
+		return vo;
 	}
 
 	private void registerSocial(MobileUser mobileUser, String social, String tenantCode) {
-		User user = userService.findUserByPhone(social, tenantCode);
+		User user = identifyService.findUserByPhone(social, tenantCode);
 		if (user == null) {
-			UserDto userDto = new UserDto(null);
+			UserDto dto = new UserDto(null);
 			if (mobileUser != null) {
-				BeanUtils.copyProperties(mobileUser, userDto);
+				BeanUtils.copyProperties(mobileUser, dto);
 			}
-			userDto.setIdentifier(social);
-			userDto.setCredential(social);
-			userDto.setPhone(social);
-			userDto.setIdentityType(IdentityType.PHONE_NUMBER.getValue());
-			userDto.setLoginTime(DateUtils.asDate(LocalDateTime.now()));
-			userService.register(userDto);
-		} else {
-			userService.registerUserAuths(user, social, IdentityType.PHONE_NUMBER.getValue(), social);
+			dto.setIdentifier(social);
+			dto.setCredential(social);
+			dto.setPhone(social);
+			dto.setIdentityType(IdentityType.PHONE_NUMBER.getValue());
+			dto.setLoginTime(DateUtils.asDate(LocalDateTime.now()));
+			identifyService.register(dto);
+			return;
 		}
+
+		identifyService.registerUserAuths(user, social, IdentityType.PHONE_NUMBER.getValue(), social);
 	}
 }
 

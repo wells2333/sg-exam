@@ -49,8 +49,6 @@ public class UserTokenService {
 			map.put("token", token);
 			map.put(CommonConstant.TENANT_CODE, details.getTenantCode());
 			map.put("hasPhone", StringUtils.isNotEmpty(details.getPhone()));
-			log.info("Login successfully, id: {}, identify: {}, loginType: {}", details.getId(), details.getUsername(),
-					type.getType());
 			if (writeRes) {
 				RUtil.out(res, R.success(map));
 			}

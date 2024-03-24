@@ -116,7 +116,8 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 					deptMap.put(dept.getId(), dept);
 				}
 			}
-			list.forEach(dto -> {
+
+			for (ExaminationRecordDto dto : list) {
 				UserVo user = userMap.get(dto.getUserId());
 				if (user != null) {
 					dto.setUserName(user.getName());
@@ -128,7 +129,7 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 					dto.setUserName(String.valueOf(dto.getUserId()));
 					dto.setDeptName("-");
 				}
-			});
+			}
 		} catch (Exception e) {
 			log.error("Failed to fill exam userInfo.", e);
 		}

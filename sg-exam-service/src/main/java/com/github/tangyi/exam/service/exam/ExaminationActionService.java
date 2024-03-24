@@ -9,7 +9,7 @@ import com.github.tangyi.api.exam.model.*;
 import com.github.tangyi.api.exam.service.IExaminationActionService;
 import com.github.tangyi.api.exam.thread.IExecutorHolder;
 import com.github.tangyi.api.user.enums.IdentityType;
-import com.github.tangyi.api.user.service.IUserService;
+import com.github.tangyi.api.user.service.IIdentifyService;
 import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.*;
@@ -23,10 +23,12 @@ import com.github.tangyi.exam.service.answer.AnswerService;
 import com.github.tangyi.exam.service.fav.ExamFavoritesService;
 import com.github.tangyi.exam.service.subject.SubjectsService;
 import com.github.tangyi.exam.utils.ExamUtil;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,10 +36,15 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -45,7 +52,8 @@ import java.util.stream.Collectors;
 @Service
 public class ExaminationActionService implements IExaminationActionService {
 
-	private final IUserService userService;
+	private final PlatformTransactionManager txManager;
+	private final IIdentifyService identifyService;
 	private final ExaminationService examinationService;
 	private final ExaminationSubjectService examinationSubjectService;
 	private final ExamRecordService examRecordService;
@@ -55,11 +63,13 @@ public class ExaminationActionService implements IExaminationActionService {
 	private final IExecutorHolder executorHolder;
 	private final ExamFavoritesService examFavoritesService;
 
-	public ExaminationActionService(IUserService userService, ExaminationService examinationService,
-			ExaminationSubjectService examinationSubjectService, ExamRecordService examRecordService,
-			SubjectsService subjectsService, AnswerService answerService, RankInfoService rankInfoService,
-			IExecutorHolder executorHolder, ExamFavoritesService examFavoritesService) {
-		this.userService = userService;
+	public ExaminationActionService(PlatformTransactionManager txManager, IIdentifyService identifyService,
+			ExaminationService examinationService, ExaminationSubjectService examinationSubjectService,
+			ExamRecordService examRecordService, SubjectsService subjectsService, AnswerService answerService,
+			RankInfoService rankInfoService, IExecutorHolder executorHolder,
+			ExamFavoritesService examFavoritesService) {
+		this.txManager = txManager;
+		this.identifyService = identifyService;
 		this.examinationService = examinationService;
 		this.examinationSubjectService = examinationSubjectService;
 		this.examRecordService = examRecordService;
@@ -80,54 +90,46 @@ public class ExaminationActionService implements IExaminationActionService {
 	}
 
 	@Override
-	@Transactional
 	public StartExamDto start(Long userId, String identifier, Long examinationId, String tenantCode) {
-		StartExamDto dto = new StartExamDto();
-		Examination examination = examinationService.get(examinationId);
-		dto.setExamination(examination);
+		StartExamDto dto = this.prepareStart(userId, examinationId);
+		SubjectDto sDto = dto.getSubjectDto();
+		Preconditions.checkNotNull(sDto);
+		dto.setTotal(sDto.getTotal());
+
 		ExaminationRecord record = new ExaminationRecord();
 		record.setCommonValue(identifier, tenantCode);
 		record.setUserId(userId);
-		record.setType(examination.getType());
+		record.setType(dto.getExamination().getType());
 		record.setExaminationId(examinationId);
 		record.setStartTime(record.getCreateTime());
 		// 默认未提交状态
 		record.setSubmitStatus(SubmitStatusEnum.NOT_SUBMITTED.getValue());
-		examRecordService.insert(record);
 		dto.setExamRecord(record);
 
-		// 根据题目 ID，类型获取第一题的详细信息
-		SubjectDto sDto = subjectsService.findFirstSubjectByExaminationId(examinationId);
-		dto.setSubjectDto(sDto);
-		dto.setTotal(sDto.getTotal());
-
-		// 创建第一题的答题
-		Answer answer = new Answer();
-		answer.setCommonValue(identifier, tenantCode);
-		answer.setExamRecordId(record.getId());
-		answer.setSubjectId(sDto.getId());
-		// 默认待批改状态
-		answer.setMarkStatus(AnswerConstant.TO_BE_MARKED);
-		answer.setAnswerType(AnswerConstant.WRONG);
-		answer.setStartTime(answer.getCreateTime());
-		// 保存答题
-		answerService.save(answer);
-		sDto.setAnswer(answer);
-
-		// 答题卡
-		List<ExaminationSubject> ess = examinationSubjectService.findListByExaminationId(examinationId);
-		if (CollectionUtils.isNotEmpty(ess)) {
-			List<CardDto> cards = ess.stream().map(es -> {
-				CardDto card = new CardDto();
-				card.setSubjectId(es.getSubjectId());
-				card.setSort(es.getSort());
-				return card;
-			}).collect(Collectors.toList());
-			dto.setCards(cards);
+		// 手动开启事务
+		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		TransactionStatus status = txManager.getTransaction(def);
+		ListeningExecutorService exec = executorHolder.getExamExecutor();
+		try {
+			long startNs = System.nanoTime();
+			examRecordService.insert(record);
+			// 创建第一题的答题
+			answerService.save(this.initAnswer(identifier, tenantCode, sDto, record.getId()));
+			// 提交事务
+			txManager.commit(status);
+			// 异步增加考试次数
+			CompletableFuture.runAsync(() -> examFavoritesService.incrStartCount(examinationId), exec);
+			long tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
+			log.info("Start examination id: {}, identifier: {}, userId: {}, recordId: {}, took: {}ms", examinationId,
+					identifier, userId, record.getId(), tookMs);
+			return dto;
+		} catch (Exception e) {
+			log.error("Failed to commit start exam transaction.", e);
+			// 回滚事务
+			txManager.rollback(status);
 		}
-		examFavoritesService.incrStartCount(examinationId);
-		log.info("Start examination id: {}, identifier: {}, userId: {}", examinationId, identifier, userId);
-		return dto;
+		return null;
 	}
 
 	@Override
@@ -150,7 +152,8 @@ public class ExaminationActionService implements IExaminationActionService {
 			log.info("Anonymous user start exam, examinationId: {}, ipv6: {}, userId: {}", examinationId, identifier,
 					userId);
 		} else {
-			UserVo vo = this.userService.findUserByIdentifier(IdentityType.PASSWORD.getValue(), identifier, tenantCode);
+			UserVo vo = this.identifyService.findUserByIdentifier(IdentityType.PASSWORD.getValue(), identifier,
+					tenantCode);
 			if (vo != null) {
 				userId = vo.getId();
 			}
@@ -417,5 +420,55 @@ public class ExaminationActionService implements IExaminationActionService {
 		List<Subjects> subjects = subjectsService.findBySubjectIds(subjectIds);
 		Map<Long, Integer> typeMap = ExamUtil.toMap(subjects);
 		return ExamUtil.distinctAnswer(answers, typeMap);
+	}
+
+	private StartExamDto prepareStart(Long userId, Long examinationId) {
+		long startNs = System.nanoTime();
+		ListeningExecutorService exec = executorHolder.getExamExecutor();
+		// 答题卡
+		ListenableFuture<List<CardDto>> f1 = exec.submit(() -> {
+			List<ExaminationSubject> ess = examinationSubjectService.findListByExaminationId(examinationId);
+			if (CollectionUtils.isNotEmpty(ess)) {
+				return ess.stream().map(es -> {
+					CardDto c = new CardDto();
+					c.setSubjectId(es.getSubjectId());
+					c.setSort(es.getSort());
+					return c;
+				}).collect(Collectors.toList());
+			}
+			return Collections.emptyList();
+		});
+
+		// 获取第一题信息
+		ListenableFuture<SubjectDto> f2 = exec.submit(
+				() -> subjectsService.findFirstSubjectByExaminationId(examinationId));
+		ListenableFuture<Examination> f3 = exec.submit(() -> examinationService.get(examinationId));
+
+		StartExamDto dto = new StartExamDto();
+		try {
+			dto.setCards(f1.get());
+			dto.setSubjectDto(f2.get());
+			dto.setExamination(f3.get());
+		} catch (Exception e) {
+			log.error("Failed to get start exam futures result, userId: {}, examinationId: {}", userId, examinationId,
+					e);
+		}
+
+		long tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
+		log.info("Prepare start finished, took: {}ms", tookMs);
+		return dto;
+	}
+
+	private Answer initAnswer(String identifier, String tenantCode, SubjectDto sDto, Long recordId) {
+		Answer answer = new Answer();
+		answer.setSubjectId(sDto.getId());
+		answer.setCommonValue(identifier, tenantCode);
+		answer.setExamRecordId(recordId);
+		// 默认待批改状态
+		answer.setMarkStatus(AnswerConstant.TO_BE_MARKED);
+		answer.setAnswerType(AnswerConstant.WRONG);
+		answer.setStartTime(answer.getCreateTime());
+		sDto.setAnswer(answer);
+		return answer;
 	}
 }

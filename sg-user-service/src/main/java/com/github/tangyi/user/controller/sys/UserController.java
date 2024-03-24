@@ -4,12 +4,8 @@ import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.user.dto.UserDto;
 import com.github.tangyi.api.user.dto.UserInfoDto;
 import com.github.tangyi.api.user.enums.IdentityType;
-import com.github.tangyi.api.user.model.Attachment;
-import com.github.tangyi.api.user.model.Dept;
-import com.github.tangyi.api.user.model.Role;
-import com.github.tangyi.api.user.model.User;
-import com.github.tangyi.api.user.model.UserAuths;
-import com.github.tangyi.api.user.model.UserRole;
+import com.github.tangyi.api.user.model.*;
+import com.github.tangyi.api.user.service.IIdentifyService;
 import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.constant.CommonConstant;
@@ -25,11 +21,11 @@ import com.github.tangyi.common.utils.TenantHolder;
 import com.github.tangyi.common.vo.UserVo;
 import com.github.tangyi.user.excel.listener.UserImportListener;
 import com.github.tangyi.user.excel.model.UserExcelModel;
+import com.github.tangyi.user.service.ValidateCodeService;
 import com.github.tangyi.user.service.sys.DeptService;
 import com.github.tangyi.user.service.sys.UserAuthsService;
 import com.github.tangyi.user.service.sys.UserRoleService;
 import com.github.tangyi.user.service.sys.UserService;
-import com.github.tangyi.user.service.ValidateCodeService;
 import com.github.tangyi.user.utils.UserUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -41,16 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -71,6 +58,7 @@ import java.util.stream.Collectors;
 public class UserController extends BaseController {
 
 	private final UserService userService;
+	private final IIdentifyService identifyService;
 	private final UserRoleService userRoleService;
 	private final DeptService deptService;
 	private final UserAuthsService userAuthsService;
@@ -102,7 +90,7 @@ public class UserController extends BaseController {
 	@Operation(summary = "根据用户唯一标识获取用户详细信息", description = "根据用户 name 获取用户详细信息")
 	public R<UserVo> findUserByIdentifier(@PathVariable String identifier,
 			@RequestParam(required = false) Integer identityType, @RequestParam @NotBlank String tenantCode) {
-		return R.success(userService.findUserByIdentifier(identityType, identifier, tenantCode));
+		return R.success(identifyService.findUserByIdentifier(identityType, identifier, tenantCode));
 	}
 
 	@GetMapping("userList")
@@ -110,8 +98,8 @@ public class UserController extends BaseController {
 	public R<PageInfo<UserDto>> list(@RequestParam Map<String, Object> condition,
 			@RequestParam(value = PAGE, required = false, defaultValue = PAGE_DEFAULT) int pageNum,
 			@RequestParam(value = PAGE_SIZE, required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize) {
-		PageInfo<UserDto> userDtoPageInfo = new PageInfo<>();
-		List<UserDto> userDtoList = Lists.newArrayListWithExpectedSize(pageSize);
+		PageInfo<UserDto> result = new PageInfo<>();
+		List<UserDto> dtoList = Lists.newArrayListWithExpectedSize(pageSize);
 		PageInfo<User> page = userService.findPage(condition, pageNum, pageSize);
 		List<User> users = page.getList();
 		if (CollectionUtils.isNotEmpty(users)) {
@@ -119,33 +107,32 @@ public class UserController extends BaseController {
 			List<Dept> deptList = deptService.getListByUsers(users);
 			List<Long> userIds = users.stream().map(User::getId).collect(Collectors.toList());
 			List<UserRole> userRoles = userRoleService.getByUserIds(userIds);
-			List<Role> finalRoleList = userService.getUsersRoles(userIds);
-			Map<Long, String> avatarUrlMap = userService.findUserAvatarUrl(users);
-			for (User tempUser : users) {
-				UserDto dto = userService.getUserDtoByUserAndUserAuths(tempUser, userAuths, deptList, userRoles,
-						finalRoleList);
-				dto.setAvatarUrl(avatarUrlMap.get(dto.getId()));
-				userDtoList.add(dto);
+			List<Role> roles = userService.getUsersRoles(userIds);
+			Map<Long, String> avatarMap = userService.findUserAvatarUrl(users);
+			for (User u : users) {
+				UserDto dto = userService.getUserDtoByUserAndUserAuths(u, userAuths, deptList, userRoles, roles);
+				dto.setAvatarUrl(avatarMap.get(dto.getId()));
+				dtoList.add(dto);
 			}
 		}
-		PageUtil.copyProperties(page, userDtoPageInfo);
-		userDtoPageInfo.setList(userDtoList);
-		return R.success(userDtoPageInfo);
+		PageUtil.copyProperties(page, result);
+		result.setList(dtoList);
+		return R.success(result);
 	}
 
 	@PostMapping
 	@Operation(summary = "创建用户", description = "创建用户")
 	@SgLog(value = "新增用户", operationType = OperationType.INSERT)
 	public R<Boolean> add(@RequestBody @Valid UserDto userDto) {
-		return R.success(userService.createUser(userDto) > 0);
+		return R.success(identifyService.createUser(userDto) > 0);
 	}
 
-	@PutMapping("/{id:[a-zA-Z0-9,]+}")
+	@PutMapping("/{id}")
 	@Operation(summary = "更新用户信息", description = "根据用户 id 更新用户的基本信息、角色信息")
 	@SgLog(value = "修改用户", operationType = OperationType.UPDATE)
 	public R<Boolean> update(@PathVariable Long id, @RequestBody UserDto userDto) {
 		userDto.setTenantCode(TenantHolder.getTenantCode());
-		return R.success(userService.updateUser(id, userDto));
+		return R.success(identifyService.updateUser(id, userDto));
 	}
 
 	@PutMapping("updateInfo")
@@ -163,7 +150,7 @@ public class UserController extends BaseController {
 	public R<Boolean> bindPhoneNumber(@RequestBody UserDto userDto) {
 		Preconditions.checkNotNull(userDto.getId());
 		checkCode(userDto);
-		User user = userService.findUserByPhone(userDto.getPhone(), userDto.getTenantCode());
+		User user = identifyService.findUserByPhone(userDto.getPhone(), userDto.getTenantCode());
 		if (user != null && !user.getId().equals(userDto.getId())) {
 			log.error("Phone has used by user, phone: {}, user: {}", userDto.getPhone(), user.getName());
 			return R.success(Boolean.FALSE);
@@ -176,7 +163,7 @@ public class UserController extends BaseController {
 	@SgLog(value = "更新用户密码", operationType = OperationType.UPDATE)
 	public R<Boolean> updatePassword(@RequestBody UserDto userDto) {
 		userDto.setTenantCode(TenantHolder.getTenantCode());
-		return R.success(userService.updatePassword(userDto) > 0);
+		return R.success(identifyService.updatePassword(userDto) > 0);
 	}
 
 	@PostMapping("uploadAvatar")
@@ -265,7 +252,7 @@ public class UserController extends BaseController {
 		if (userDto.getIdentityType() == null) {
 			userDto.setIdentityType(IdentityType.PASSWORD.getValue());
 		}
-		return R.success(userService.register(userDto));
+		return R.success(identifyService.register(userDto));
 	}
 
 	@Operation(summary = "检查账号是否存在", description = "检查账号是否存在")
@@ -286,13 +273,13 @@ public class UserController extends BaseController {
 	@SgLog(value = "重置密码", operationType = OperationType.UPDATE)
 	public R<Boolean> resetPassword(@RequestBody UserDto userDto) {
 		userDto.setTenantCode(TenantHolder.getTenantCode());
-		return R.success(userService.resetPassword(userDto));
+		return R.success(identifyService.resetPassword(userDto));
 	}
 
 	@PutMapping("anonymousUser/updateLoginInfo")
 	@Operation(summary = "更新用户登录信息", description = "根据用户 id 更新用户的登录信息")
 	public R<Boolean> updateLoginInfo(@RequestBody UserDto userDto) {
-		return R.success(userService.updateLoginInfo(userDto));
+		return R.success(identifyService.updateLoginInfo(userDto));
 	}
 
 	private void checkCode(UserDto userDto) {

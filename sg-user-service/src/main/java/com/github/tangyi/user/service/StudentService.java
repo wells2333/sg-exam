@@ -5,12 +5,12 @@ import com.github.tangyi.api.user.dto.StudentDto;
 import com.github.tangyi.api.user.model.Student;
 import com.github.tangyi.api.user.model.UserStudent;
 import com.github.tangyi.api.user.service.IStudentService;
+import com.github.tangyi.api.user.service.IIdentifyService;
 import com.github.tangyi.common.base.SgPreconditions;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.common.vo.UserVo;
 import com.github.tangyi.user.mapper.StudentMapper;
-import com.github.tangyi.user.service.sys.UserService;
 import com.github.tangyi.user.service.sys.UserStudentService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class StudentService extends CrudService<StudentMapper, Student> implements IStudentService {
 
-	private final UserService userService;
+	private final IIdentifyService identifyService;
 	private final UserStudentService userStudentService;
 
 	@Transactional
@@ -29,7 +29,7 @@ public class StudentService extends CrudService<StudentMapper, Student> implemen
 		String currentUser = SysUtil.getUser(), tenantCode = SysUtil.getTenantCode();
 		Long userId = studentDto.getUserId();
 		if (userId != null) {
-			UserVo userVo = userService.findUserByIdentifier(null, currentUser, tenantCode);
+			UserVo userVo = identifyService.findUserByIdentifier(null, currentUser, tenantCode);
 			SgPreconditions.checkNull(userVo, "Failed to get user info.");
 			userId = userVo.getId();
 		}

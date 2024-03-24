@@ -68,17 +68,14 @@ ignore:
     - /**/wx/getQrCode
     - /**/wx/getOpenId
     - /**/**/currentTime
-    - /**/login
-    - /**/mobile/login
-    - /**/wx/login
+    - /**/**/login
     - /**/token/validToken
     - /**/token/refreshToken
     - /**/h2/**
     - /**/v1/sms/**
     - /**/v1/mobile/sendSms/**
     - /tool/**
-    - /v1/subjects/template/json
-    - /v1/subjects/template/excel
+    - /v1/subjects/template/**
     - /v1/subjects/exportDemoExcel
     - /tool/gen/download/**
     - /v1/config/getDefaultSysConfig
