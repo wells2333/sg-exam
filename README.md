@@ -40,6 +40,9 @@
 |  小程序  |  <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wx.jpg" width="160"/> | 小程序体验 |
 |  公众号  |  <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp.jpeg" height="130"/> | 发布部署文档、源码解析相关的文章 |
 
+H5 调查问卷：
+<img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/h5.png" width="160"/>
+
 ## 系统架构
 
 <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/framework.png"/>

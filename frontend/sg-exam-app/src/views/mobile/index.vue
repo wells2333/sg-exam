@@ -10,16 +10,16 @@
               }}</p>
           </el-col>
         </el-row>
-        <el-row>
+        <el-row v-show="!loading">
           <div>
-            <el-progress :text-inside="true" :stroke-width="16" :percentage="answeredSubjectCnt"
-                         status="success"></el-progress>
+            <el-progress :percentage="answeredSubjectCnt"></el-progress>
           </div>
         </el-row>
       </div>
     </transition>
     <transition name="fade-transform" mode="out-in">
       <div v-show="!loading">
+        <el-divider></el-divider>
         <el-row v-for="(item, index)  in subjects" :key="index">
           <el-col :span="24">
             <choices :ref="'choices_' + index" v-if="item.type === 0" :onChoice="onChoiceFn"/>
@@ -28,14 +28,19 @@
             <judgement :ref="'judgement_' + index" v-if="item.type === 2" :onChoice="onChoiceFn"/>
             <multiple-choices :ref="'multipleChoices_' + index" v-if="item.type === 3"
                               :onChoice="onChoiceFn"/>
+            <fill-blank :ref="'fillBlank_' + index" v-show="item.type === 4"
+                        :onChoice="onChoiceFn"/>
           </el-col>
         </el-row>
       </div>
     </transition>
     <el-row class="m-subject-button">
-      <el-button type="success" size="medium" @click="handleSubmitExam" v-show="!loading">
+      <el-button type="primary" size="medium" @click="handleSubmitExam" v-show="!loading">
         {{ $t('submit') }}
       </el-button>
+    </el-row>
+    <el-row class="m-subject-bottom">
+
     </el-row>
   </div>
 </template>
@@ -50,13 +55,15 @@ import Choices from '@/components/Subjects/Choices'
 import MultipleChoices from '@/components/Subjects/MultipleChoices'
 import ShortAnswer from '@/components/Subjects/ShortAnswer'
 import Judgement from '@/components/Subjects/Judgement'
+import FillBlank from '@/components/Subjects/FillBlank'
 
 export default {
   components: {
     Choices,
     MultipleChoices,
     ShortAnswer,
-    Judgement
+    Judgement,
+    FillBlank
   },
   data() {
     return {
@@ -182,10 +189,7 @@ export default {
 
       anonymousUserSubmitAll(this.examination.id, data).then(() => {
         this.loadingSubmit = false
-        messageSuccess(this, this.$t('submit') + this.$t('successAndExit'))
-        setTimeout(() => {
-          window.close()
-        }, 2000)
+        this.$router.push({path: `/mobile-finished`})
       }).catch(() => {
         messageFail(this, this.$t('submit') + this.$t('failed'))
         this.loadingSubmit = false
@@ -195,12 +199,19 @@ export default {
 }
 </script>
 
-<style lang="scss" rel="stylesheet/scss" scoped>
+<style lang="scss" rel="stylesheet/scss">
+
+@media screen and (max-width: 750px) {
+  .el-message-box {
+    width: 60% !important;
+  }
+}
+
 .m-subject-content {
   margin: 14px;
 
   .m-exam-title {
-    text-align: left;
+    text-align: center;
     margin-bottom: 8px;
   }
 
@@ -216,5 +227,9 @@ export default {
 
 .time-remain-msg {
   color: #5a5a5a;
+}
+
+.m-subject-bottom {
+  height: 50px;
 }
 </style>

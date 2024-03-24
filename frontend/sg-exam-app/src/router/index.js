@@ -118,6 +118,11 @@ export const constantRouterMap = [
     component: () => import('@/views/mobile/index')
   },
   {
+    path: '/mobile-finished',
+    name: 'mobile-finished',
+    component: () => import('@/views/mobile/finished')
+  },
+  {
     path: '*',
     redirect: '/home'
   }
