@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.enums;
 
+import com.github.tangyi.api.exam.model.SubjectMaterial;
 import com.github.tangyi.exam.handler.AbstractAnswerHandler;
 import com.github.tangyi.exam.handler.impl.*;
 import com.github.tangyi.exam.service.subject.*;
@@ -17,7 +18,9 @@ public enum SubjectType {
 	SHORT_ANSWER("简答", 1, SubjectShortAnswerService.class, ShortAnswerHandler.class),    //
 	JUDGEMENT("判断", 2, SubjectJudgementService.class, JudgementAnswerHandler.class),    //
 	MULTIPLE_CHOICES("多选", 3, SubjectChoicesService.class, MultipleChoicesAnswerHandler.class), //
-	FILL_BLANK("填空", 4, SubjectFillBlankService.class, FillBlankAnswerHandler.class);    //
+	FILL_BLANK("填空", 4, SubjectFillBlankService.class, FillBlankAnswerHandler.class),    //
+	MATERRIAL("材料", 5,SubjectMaterialService.class, null);    //
+
 
 	private static final Int2ObjectOpenHashMap<SubjectType> VALUE_MAP = new Int2ObjectOpenHashMap<>();
 	private static final Map<String, SubjectType> NAME_MAP = Maps.newHashMap();

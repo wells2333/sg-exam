@@ -13,10 +13,10 @@ import {BasicForm, FormActionType, useForm} from '/@/components/Form';
 import {defineComponent, ref, unref} from 'vue';
 import {SubjectSubmitData, subjectType} from './subject.constant';
 import {PageWrapper} from '/@/components/Page';
-import {emptySubject, genFillBlankSchemas} from "./subject.gen";
+import {emptySubject, geMaterialSchemas} from "./subject.gen";
 
 export default defineComponent({
-  name: 'SubjectFillBlankPage',
+  name: 'SubjectMaterialPage',
   components: {BasicForm, PageWrapper},
   setup() {
     const categoryId = ref<string>();
@@ -33,7 +33,7 @@ export default defineComponent({
     async function getSubjectValue() {
       const values = await validate();
       const value: SubjectSubmitData = {
-        type: subjectType.SubjectFillBlank,
+        type: subjectType.SubjectMaterial,
         categoryId: unref(categoryId),
         examinationId: unref(examinationId),
         materialId: unref(materialId),
@@ -41,19 +41,12 @@ export default defineComponent({
         answer: {}
       };
       Object.assign(value, values);
-      value.answer = {
-        answer: value.answer
-      };
       return value;
     }
 
     function setSubjectValue(data) {
       setParams(data);
       const subjectData = unref(data?.subjectData);
-      const {answer} = subjectData;
-      if (answer) {
-        subjectData.answer = answer.answer;
-      }
       resetSchemas(data);
       resetFields();
       setTimeout(() => {
@@ -63,7 +56,7 @@ export default defineComponent({
 
     function resetSchemas(data) {
       setParams(data);
-      const schemas = genFillBlankSchemas();
+      const schemas = geMaterialSchemas();
       setProps({schemas});
       setTimeout(() => {
         setFieldsValue(empty(data));

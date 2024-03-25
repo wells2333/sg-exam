@@ -28,9 +28,9 @@ public class SubjectMaterialConverter implements ISubjectConverter<SubjectMateri
 
 		SubjectDto dto = new SubjectDto();
 		BeanUtils.copyProperties(subject, dto);
-		dto.setType(SubjectType.FILL_BLANK.getValue());
-		dto.setType(SubjectType.FILL_BLANK.getValue());
-		dto.setTypeLabel(SubjectType.FILL_BLANK.getName());
+		dto.setType(SubjectType.MATERRIAL.getValue());
+		dto.setType(SubjectType.MATERRIAL.getValue());
+		dto.setTypeLabel(SubjectType.MATERRIAL.getName());
 		if (findAnswer) {
 			Answer answer = new Answer();
 			answer.setAnswer(subject.getAnswer());

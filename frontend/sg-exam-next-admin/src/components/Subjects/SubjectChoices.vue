@@ -40,6 +40,7 @@ export default defineComponent({
   setup() {
     const categoryId = ref<string>();
     const examinationId = ref<string>();
+    const materialId = ref<string>();
     const isMulti = ref<boolean>(false);
     const formElRef = ref<Nullable<FormActionType>>(null);
     const [register, {
@@ -116,6 +117,7 @@ export default defineComponent({
         type,
         categoryId: unref(categoryId),
         examinationId: unref(examinationId),
+        materialId: unref(materialId),
         options: [],
         answer: {}
       };
@@ -171,6 +173,7 @@ export default defineComponent({
       isMulti.value = data?.isMulti;
       categoryId.value = data?.categoryId;
       examinationId.value = data?.examinationId;
+      materialId.value = data?.materialId;
     }
 
     function setValue(data, subjectData) {

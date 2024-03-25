@@ -21,6 +21,7 @@ export default defineComponent({
   setup() {
     const categoryId = ref<string>();
     const examinationId = ref<string>();
+    const materialId = ref<string>();
     const formElRef = ref<Nullable<FormActionType>>(null);
     const [register, {resetFields, validate, clearValidate, setFieldsValue, setProps}] = useForm({
       labelWidth: 100,
@@ -35,6 +36,7 @@ export default defineComponent({
         type: subjectType.SubjectShortAnswer,
         categoryId: unref(categoryId),
         examinationId: unref(examinationId),
+        materialId: unref(materialId),
         options: [],
         answer: {}
       };
@@ -78,6 +80,7 @@ export default defineComponent({
     function setParams(data) {
       categoryId.value = data?.categoryId;
       examinationId.value = data?.examinationId;
+      materialId.value = data?.materialId;
     }
 
     function setValue(data, subjectData) {

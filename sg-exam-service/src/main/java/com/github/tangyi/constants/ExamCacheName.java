@@ -18,6 +18,8 @@ public interface ExamCacheName {
 
 	String SUBJECT_FILL_BLANK = "subject:fill_blank";
 
+	String SUBJECT_MATERIAL = "subject:material";
+
 	String SUBJECT_SPEECH = "subject:speech";
 
 	String SUBJECT_VIDEO = "subject:video";

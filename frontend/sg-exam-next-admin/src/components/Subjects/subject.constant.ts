@@ -33,6 +33,7 @@ export interface SubjectSubmitData {
   type: number | undefined;
   categoryId: string | undefined;
   examinationId: string | undefined;
+  materialId: string | undefined;
   options: OptionItem[];
   answer: object
 }
@@ -42,7 +43,8 @@ export const subjectType: any = {
   SubjectShortAnswer: 1,
   SubjectJudgement: 2,
   SubjectMultiChoices: 3,
-  SubjectFillBlank: 4
+  SubjectFillBlank: 4,
+  SubjectMaterial: 5
 }
 
 export const subjectTypeList: TabItem[] = [
@@ -75,6 +77,12 @@ export const subjectTypeList: TabItem[] = [
     name: '填空题',
     component: 'SubjectFillBlank',
     disabled: false
+  },
+  {
+    key: subjectType.SubjectMaterial,
+    name: '材料题',
+    component: 'SubjectMaterial',
+    disabled: false
   }
 ];
 
@@ -83,7 +91,8 @@ export const COLOR = {
   ONE: '#2db7f5',
   TWO: '#108ee9',
   THREE: '#f50',
-  FOUR: '#08979c'
+  FOUR: '#08979c',
+  FIVE: '#7db7f5',
 }
 
 export const subjectColor:any = {
@@ -92,4 +101,5 @@ export const subjectColor:any = {
   '2': COLOR.TWO,
   '3': COLOR.THREE,
   '4': COLOR.FOUR,
+  '5': COLOR.FIVE,
 }

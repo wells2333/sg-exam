@@ -8,6 +8,7 @@ import com.github.tangyi.common.constant.CommonConstant;
 import com.github.tangyi.common.utils.PageUtil;
 import com.github.tangyi.common.utils.SysUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public abstract class CrudService<D extends CrudMapper<T>, T extends BaseEntity<
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public int insert(T entity) {
 		return dao.insertSelective(entity);
 	}

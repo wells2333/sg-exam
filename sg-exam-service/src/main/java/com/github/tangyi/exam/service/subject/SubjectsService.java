@@ -19,6 +19,7 @@ import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.exam.enums.SubjectType;
 import com.github.tangyi.exam.mapper.SubjectsMapper;
 import com.github.tangyi.exam.service.ExaminationSubjectService;
+import com.github.tangyi.exam.service.MaterialSubjectService;
 import com.github.tangyi.exam.service.data.SubjectViewCounterService;
 import com.github.tangyi.exam.service.fav.SubjectFavoritesService;
 import com.github.tangyi.exam.service.subject.converter.SubjectChoicesConverter;
@@ -40,6 +41,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -51,7 +53,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class SubjectsService extends CrudService<SubjectsMapper, Subjects> implements ISubjectsService {
-
+	private final MaterialSubjectService msService;
 	private final ExaminationSubjectService esService;
 	private final SubjectCategoryService subjectCategoryService;
 	private final SubjectChoicesConverter subjectChoicesConverter;
@@ -213,6 +215,9 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 		if (dto.getExaminationId() != null) {
 			insertEs(dto, subjectId, dto.getCreator(), dto.getTenantCode());
 		}
+		if (dto.getMaterialId() != null){
+			insertMs(dto, subjectId, dto.getCreator(), dto.getTenantCode());
+		}
 		return dto;
 	}
 
@@ -234,6 +239,30 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 			} catch (DuplicateKeyException e) {
 				es.setSort(dto.getSort() + i);
 				log.warn("Duplicate subject sort, retry {}", es.getSort());
+			}
+		}
+
+		throw new IllegalArgumentException("The subject repeated, please modify.");
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void insertMs(SubjectDto dto, Long subjectId, String creator, String tenantCode) {
+		MaterialSubject ms = new MaterialSubject();
+		ms.setNewRecord(true);
+		ms.setCommonValue(creator, tenantCode);
+		ms.setSubjectId(subjectId);
+		ms.setMaterialId(dto.getMaterialId());
+		ms.setSort(dto.getSort());
+
+		// 序号重复时，尝试递增插入
+		for (int i = 1; i < 10; i++) {
+			try {
+				if (msService.insert(ms) > 0) {
+					return;
+				}
+			} catch (DuplicateKeyException e) {
+				ms.setSort(dto.getSort() + i);
+				log.warn("Duplicate subject sort, retry {}", ms.getSort());
 			}
 		}
 

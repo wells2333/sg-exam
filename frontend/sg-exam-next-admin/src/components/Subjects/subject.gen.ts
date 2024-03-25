@@ -264,7 +264,12 @@ export function genFillBlankSchemas() {
   schemas.push(...genAnswerSchemas());
   return schemas;
 }
-
+// 材料题
+export function geMaterialSchemas() {
+  const schemas: any[] = [];
+  appendCommonSchemas(schemas, judgeTypeSchemas());
+  return schemas;
+}
 export function appendCommonSchemas(schemas: any[], afterBasicSchemas: any[]) {
   schemas.push(...gentSubjectNameSchemas());
   schemas.push(...genBasicSchemas());

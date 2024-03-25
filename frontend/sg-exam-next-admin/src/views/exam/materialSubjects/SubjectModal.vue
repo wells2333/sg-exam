@@ -7,14 +7,6 @@
           <template v-for="item in types" :key="item.key">
             <TabPane :tab="item.name" :disabled="item.disabled" forceRender="true">
               <component ref="subRef" :is="item.component"/>
-              <div v-if="item.key == 5">
-              <a-button
-                type="primary"
-                @click="handleClick"
-              >
-                题目管理
-              </a-button>
-            </div>
             </TabPane>
           </template>
         </Tabs>
@@ -30,15 +22,15 @@ import SubjectChoices from '/@/components/Subjects/SubjectChoices.vue';
 import SubjectShortAnswer from '/@/components/Subjects/SubjectShortAnswer.vue';
 import SubjectJudgement from '/@/components/Subjects/SubjectJudgement.vue';
 import SubjectFillBlank from '/@/components/Subjects/SubjectFillBlank.vue';
-import SubjectMaterial from '/@/components/Subjects/SubjectMaterial.vue';
 import {subjectType, subjectTypeList, TabItem} from '/@/components/Subjects/subject.constant';
 import {createSubject, getSubjectInfo, updateSubject} from '/@/api/exam/subject';
 import {getDefaultOptionList} from '/@/api/exam/option';
+import {nexSubjectNo} from "/@/api/exam/examination";
 import {BasicModal, useModalInner} from '/@/components/Modal';
 import {BasicForm} from '/@/components/Form/index';
+import {useRoute} from "vue-router";
 import {useMessage} from "/@/hooks/web/useMessage";
-import {cateNexSubjectNo} from "/@/api/exam/subject";
-import {useGo} from "/@/hooks/web/usePage";
+
 export default defineComponent({
   name: 'SubjectDataModal',
   components: {
@@ -50,8 +42,7 @@ export default defineComponent({
     SubjectChoices,
     SubjectShortAnswer,
     SubjectJudgement,
-    SubjectFillBlank,
-    SubjectMaterial
+    SubjectFillBlank
   },
   emits: ['success', 'register'],
   setup(_, {emit}) {
@@ -60,14 +51,14 @@ export default defineComponent({
     const subRef = ref<any>();
     const isUpdate = ref(true);
     let id: string;
-    const categoryId = ref<string>('');
+    const route = useRoute();
+    const materialId = ref<string>(route.params?.id + '');
     // 题目类型 tab
     const types = ref<Array<TabItem>>([...subjectTypeList]);
     // 默认单选题
     const activeKey = ref<number>(subjectType.SubjectChoices);
     // 是否多选
     const isMulti = ref<boolean>(false);
-    const go = useGo();
     const [registerModal, {setModalProps, closeModal}] = useModalInner(async (data) => {
       setModalProps({
         afterClose: function () {
@@ -80,7 +71,6 @@ export default defineComponent({
       setModalProps({confirmLoading: false});
       isUpdate.value = !!data?.isUpdate;
       id = data.record?.id || null;
-      categoryId.value = data?.categoryId || null;
       // 题目数据
       let subjectData: object = {};
       if (unref(isUpdate)) {
@@ -128,8 +118,8 @@ export default defineComponent({
     async function initDefaultData() {
       const defaultOptions = await getDefaultOptionList();
       let nextSubjectNo: string = '1';
-      if (categoryId) {
-        const no = await cateNexSubjectNo(categoryId.value);
+      if (materialId) {
+        const no = await nexSubjectNo(materialId.value);
         if (no) {
           nextSubjectNo = no;
         }
@@ -149,7 +139,7 @@ export default defineComponent({
         const data = {
           defaultOptions,
           nextSubjectNo,
-          categoryId: unref(categoryId),
+          materialId: unref(materialId),
           isMulti: unref(isMulti),
         };
         subjectRef.resetSchemas(data);
@@ -203,13 +193,10 @@ export default defineComponent({
         defaultOptions,
         nextSubjectNo,
         isMulti: unref(isMulti),
-        categoryId: unref(categoryId),
+        materialId: unref(materialId),
       };
       const subjectRef = getSubjectRef();
       subjectRef.setSubjectValue(data);
-    }
-    function handleClick(){
-      go('/exam/material_subjects/' + id);
     }
 
     return {
@@ -217,14 +204,13 @@ export default defineComponent({
       prefixCls: 'subject',
       subRef,
       types,
-      categoryId,
+      materialId,
       activeKey,
       isMulti,
       onChange,
       registerModal,
       getTitle,
       handleSubmit,
-      handleClick
     };
   },
 });

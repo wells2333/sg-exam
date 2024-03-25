@@ -34,6 +34,11 @@ export const ExaminationApi = {
   ExaminationList: ExamService + '/v1/examination/examinationList',
   SubjectList: ExamService + '/v1/examination/subjectList'
 }
+export const MaterialApi = {
+  Base: ExamService + '/v1/material',
+  ExaminationList: ExamService + '/v1/material/examinationList',
+  SubjectList: ExamService + '/v1/material/subjectList'
+}
 
 export const ExamMediaApi = {
   UploadSpeech: UserService + '/v1/examMedia/uploadSpeech',
