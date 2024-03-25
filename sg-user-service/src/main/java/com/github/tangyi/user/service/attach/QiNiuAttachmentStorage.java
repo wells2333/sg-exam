@@ -42,7 +42,7 @@ public class QiNiuAttachmentStorage extends AbstractAttachmentStorage {
     private final QiNiuConfig qiNiuConfig;
     private final UploadManager uploadManager;
     private final BucketManager bucketManager;
-    private final String token;
+    private  String token;
     private final Client client;
 
     private volatile String urlPrefixValue;
@@ -117,19 +117,28 @@ public class QiNiuAttachmentStorage extends AbstractAttachmentStorage {
     @Override
     public Attachment prepare(String groupCode, String fileName, String originalFilename, byte[] bytes, String user, String tenantCode, String hash) {
         Attachment attachment;
-        try {
-            attachment = super.prepare(groupCode, fileName, originalFilename, bytes, user, tenantCode, hash);
-            String urlPrefix = this.getUrlPrefix(token, client);
-            String key = this.preUpload(attachment);
-            // TODO 先删除已存在的文件，不一定合理
-            this.doDelete(key);
-            String uploadId = this.generateUploadId(urlPrefix, token, client, key);
-            log.info("Generate upload id finished, fileName: {}, uploadId: {}", fileName, uploadId);
-            attachment.setUploadId(uploadId);
-        } catch (Exception e) {
-            throw new QiNiuAttachException(e, "Failed to generate upload id, fileName: " + fileName);
+        int retryCount = 3; // 设置重试次数
+        while (retryCount > 0) {
+            try {
+                attachment = super.prepare(groupCode, fileName, originalFilename, bytes, user, tenantCode, hash);
+                String urlPrefix = this.getUrlPrefix(token, client);
+                String key = this.preUpload(attachment);
+                // TODO 先删除已存在的文件，不一定合理
+                this.doDelete(key);
+                String uploadId = this.generateUploadId(urlPrefix, token, client, key);
+                log.info("Generate upload id finished, fileName: {}, uploadId: {}", fileName, uploadId);
+                attachment.setUploadId(uploadId);
+                return attachment; // 成功则返回
+            } catch (Exception e) {
+                token = getQiNiuToken();
+                if (retryCount == 1) {
+                    throw new QiNiuAttachException(e, "Failed to generate upload id, fileName: " + fileName);
+                } else {
+                    retryCount--; // 减少重试次数
+                }
+            }
         }
-        return attachment;
+        return null; // 执行到这里说明重试次数用完，返回 null 或者其他适当的处理
     }
 
     @Override

@@ -41,7 +41,7 @@ public class ValidateCodeFilter extends OncePerRequestFilter {
 		String uri = req.getRequestURI();
 		// 密码登录、手机号登录、注册才校验验证码
 		if (HttpMethod.POST.matches(req.getMethod()) && StrUtil.containsAnyIgnoreCase(uri, SecurityConstant.REGISTER,
-				SecurityConstant.MOBILE_LOGIN_URL)) {
+				SecurityConstant.MOBILE_LOGIN_URL,SecurityConstant.LOGIN_URL)) {
 			try {
 				checkCode(req);
 				chain.doFilter(req, res);

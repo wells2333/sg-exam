@@ -18,6 +18,7 @@ module.exports = {
     'space-before-function-paren': 0,
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     "quotes": "off",
-    'semi': 0
+    'semi': 0,
+    "no-unused-vars": "off"
   }
 }

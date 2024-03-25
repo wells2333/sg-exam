@@ -97,9 +97,9 @@ public class OncePerRequestTokenFilter extends OncePerRequestFilter {
 				throw new TokenExpireException("Failed to valid token，please retry again.");
 			}
 
-			if (!userToken.getId().equals(id)) {
-				throw new TokenExpireException("Token expired.");
-			}
+//			if (!userToken.getId().equals(id)) {
+//				throw new TokenExpireException("Token expired.");
+//			}
 
 			this.updateExpireSecondsIfNecessary(userToken);
 			this.setAuthentication(userToken, userId, identify, tenantCode);
