@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ import java.util.Map;
 public class SysConfigService extends CrudService<SysConfigMapper, SysConfig>
 		implements ISysConfigService, UserCacheName, ConfigKey {
 
+	private static final String DEFAULT_CACHE_KEY = "'default_sys_config'";
 	private static final List<String> SYS_DEFAULT_KEYS = Lists.newArrayList();
 
 	public SysConfigService(SysProperties sysProperties) {
@@ -54,7 +56,7 @@ public class SysConfigService extends CrudService<SysConfigMapper, SysConfig>
 	}
 
 	@Override
-	@Cacheable(value = UserCacheName.SYS_CONFIG, key = "'default_sys_config'")
+	@Cacheable(value = UserCacheName.SYS_CONFIG, key = DEFAULT_CACHE_KEY)
 	public Map<String, Object> getDefaultSysConfig() {
 		Map<String, Object> map = Maps.newHashMapWithExpectedSize(SYS_DEFAULT_KEYS.size());
 		List<SysConfig> list = this.batchGetByKey(SYS_DEFAULT_KEYS, TenantConstant.DEFAULT_TENANT_CODE);
@@ -68,6 +70,7 @@ public class SysConfigService extends CrudService<SysConfigMapper, SysConfig>
 
 	@Override
 	@Transactional
+	@CacheEvict(value = UserCacheName.SYS_CONFIG, key = DEFAULT_CACHE_KEY)
 	public int insert(SysConfig sysConfig) {
 		sysConfig.setCommonValue();
 		return super.insert(sysConfig);
@@ -75,7 +78,8 @@ public class SysConfigService extends CrudService<SysConfigMapper, SysConfig>
 
 	@Override
 	@Transactional
-	@CacheEvict(value = SYS_CONFIG, key = "#sysConfig.id")
+	@Caching(evict = {@CacheEvict(value = SYS_CONFIG, key = "#sysConfig.id"),
+			@CacheEvict(value = SYS_CONFIG, key = DEFAULT_CACHE_KEY)})
 	public int update(SysConfig sysConfig) {
 		sysConfig.setCommonValue();
 		return super.update(sysConfig);
@@ -83,7 +87,8 @@ public class SysConfigService extends CrudService<SysConfigMapper, SysConfig>
 
 	@Override
 	@Transactional
-	@CacheEvict(value = SYS_CONFIG, key = "#sysConfig.id")
+	@Caching(evict = {@CacheEvict(value = SYS_CONFIG, key = "#sysConfig.id"),
+			@CacheEvict(value = SYS_CONFIG, key = DEFAULT_CACHE_KEY)})
 	public int delete(SysConfig sysConfig) {
 		return super.delete(sysConfig);
 	}
