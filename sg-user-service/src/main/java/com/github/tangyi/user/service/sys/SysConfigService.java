@@ -3,13 +3,13 @@ package com.github.tangyi.user.service.sys;
 import com.github.tangyi.api.user.constant.TenantConstant;
 import com.github.tangyi.api.user.model.SysConfig;
 import com.github.tangyi.api.user.service.ISysConfigService;
+import com.github.tangyi.common.properties.SysProperties;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.constants.UserCacheName;
 import com.github.tangyi.user.constants.ConfigKey;
 import com.github.tangyi.user.mapper.sys.SysConfigMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.annotation.CacheEvict;
@@ -22,14 +22,20 @@ import java.util.Map;
 
 @Slf4j
 @Service
-@AllArgsConstructor
 public class SysConfigService extends CrudService<SysConfigMapper, SysConfig>
 		implements ISysConfigService, UserCacheName, ConfigKey {
 
-	private static final List<String> SYS_DEFAULT_KEYS = Lists.newArrayList(SYS_WEB_NAME, SYS_WEB_MAIN_TITLE,
-			SYS_WEB_SUB_TITLE_ONE, SYS_WEB_SUB_TITLE_TWO, SYS_WEB_COPYRIGHT, SYS_WEB_SHOW_BANNER, SYS_AVATAR,
-			SYS_ADMIN_MAIN_TITLE, SYS_ADMIN_SUB_TITLE, SYS_WXAPP_AVATAR, SYS_WXAPP_MAIN_TITLE, SYS_WXAPP_SUB_TITLE,
-			SYS_LOGIN_SHOW_TENANT_CODE, SYS_FILE_PREVIEW_URL);
+	private static final List<String> SYS_DEFAULT_KEYS = Lists.newArrayList();
+
+	public SysConfigService(SysProperties sysProperties) {
+		List<String> loadConfigs = sysProperties.getLoadConfigs();
+		if (CollectionUtils.isEmpty(loadConfigs)) {
+			return;
+		}
+
+		log.info("Init loadConfig size: {}", loadConfigs.size());
+		SYS_DEFAULT_KEYS.addAll(loadConfigs);
+	}
 
 	@Override
 	@Cacheable(value = SYS_CONFIG, key = "#id")
@@ -48,6 +54,7 @@ public class SysConfigService extends CrudService<SysConfigMapper, SysConfig>
 	}
 
 	@Override
+	@Cacheable(value = UserCacheName.SYS_CONFIG, key = "'default_sys_config'")
 	public Map<String, Object> getDefaultSysConfig() {
 		Map<String, Object> map = Maps.newHashMapWithExpectedSize(SYS_DEFAULT_KEYS.size());
 		List<SysConfig> list = this.batchGetByKey(SYS_DEFAULT_KEYS, TenantConstant.DEFAULT_TENANT_CODE);

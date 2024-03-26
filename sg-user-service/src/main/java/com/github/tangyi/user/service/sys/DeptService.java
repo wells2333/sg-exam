@@ -52,7 +52,7 @@ public class DeptService extends CrudService<DeptMapper, Dept> implements IDeptS
 			return TreeUtil.buildTree(CollUtil.sort(deptTreeList, Comparator.comparingInt(DeptDto::getSort)),
 					CommonConstant.ROOT);
 		}
-		return Lists.newArrayList();
+		return Collections.emptyList();
 	}
 
 	public List<DeptVo> findById(Long[] ids) {

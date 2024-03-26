@@ -31,20 +31,16 @@ public class RoleMenuService extends CrudService<RoleMenuMapper, RoleMenu> imple
 		if (StringUtils.isEmpty(menuIds)) {
 			return -1;
 		}
-		return saveRoleMenus(roleId,
-				Stream.of(menuIds.split(CommonConstant.COMMA)).map(Long::parseLong).collect(Collectors.toList()));
-	}
 
-	@Transactional
-	@CacheEvict(value = {UserCacheName.MENU, UserCacheName.USER_MENU}, allEntries = true)
-	public int saveRoleMenus(Long role, List<Long> menus) {
 		int update = 0;
+		List<Long> menus = Stream.of(menuIds.split(CommonConstant.COMMA)).map(Long::parseLong)
+				.collect(Collectors.toList());
 		if (CollectionUtils.isNotEmpty(menus)) {
-			roleMenuMapper.deleteByRoleId(role);
+			roleMenuMapper.deleteByRoleId(roleId);
 			List<RoleMenu> roleMenus = new ArrayList<>();
 			for (Long menuId : menus) {
 				RoleMenu roleMenu = new RoleMenu();
-				roleMenu.setRoleId(role);
+				roleMenu.setRoleId(roleId);
 				roleMenu.setMenuId(menuId);
 				roleMenus.add(roleMenu);
 			}
