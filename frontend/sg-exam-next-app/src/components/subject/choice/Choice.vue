@@ -178,8 +178,9 @@ export default defineComponent({
 }
 
 .subject-choice-checkbox__option-wrap {
-  // border-radius: 8px;
-  // padding: 10px 10px;
+  margin-top: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 .subject-choice-checkbox__option-cnt {
@@ -191,13 +192,12 @@ export default defineComponent({
 .subject-choice-checkbox__title {
   display: flex;
   align-items: center;
-  font-size: 0.68267rem;
+  font-size: 0.9rem;
   line-height: 1.5;
   text-align: left;
 }
 
 .subject-choice-option-name {
-  margin-left: 6px;
   margin-right: 16px;
   .subject-choice-option-tag {
     border: 1px solid grey;
