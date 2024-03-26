@@ -22,9 +22,11 @@ import com.github.tangyi.common.utils.*;
 import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.constants.ExamConstant;
 import com.github.tangyi.exam.enums.ExaminationType;
+import com.github.tangyi.exam.enums.SubjectType;
 import com.github.tangyi.exam.mapper.ExaminationMapper;
 import com.github.tangyi.exam.service.ExamPermissionService;
 import com.github.tangyi.exam.service.ExaminationSubjectService;
+import com.github.tangyi.exam.service.MaterialSubjectService;
 import com.github.tangyi.exam.service.course.CourseService;
 import com.github.tangyi.exam.service.fav.ExamFavoritesService;
 import com.github.tangyi.exam.service.subject.SubjectCategoryService;
@@ -64,7 +66,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	private final ExamPermissionService examPermissionService;
 	private final IUserService userService;
 	private final ExamIdFetcher examIdFetcher;
-
+	private final MaterialSubjectService msService;
 	@Override
 	public Long findAllExaminationCount() {
 		return this.dao.findAllExaminationCount();
@@ -387,6 +389,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	public Boolean batchAddSubjects(Long id, List<SubjectDto> subjects) {
 		Integer nextNo = nextSubjectNo(id);
 		for (SubjectDto subject : subjects) {
+			Long oldId = subject.getId();
 			subject.setId(null);
 			subject.setCategoryId(null);
 			subject.setCategoryName(null);
@@ -403,7 +406,22 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 			}
 			// 关联考试 ID
 			subject.setExaminationId(id);
+			// 关联材料题下面的题目
 			subjectsService.insert(subject);
+			if (id != null){
+				if (subject.getType().equals(SubjectType.MATERIAL.getValue())){
+					// 找到老题目
+					List<MaterialSubject> list = msService.findListByMaterialId(oldId);
+					for (int i = 0; i < list.size(); i++) {
+						MaterialSubject materialSubject = list.get(i);
+						materialSubject.setExaminationId(subject.getExaminationId());
+						// 和新添加的题目进行绑定
+						materialSubject.setMaterialId(subject.getId());
+						materialSubject.setId(null);
+						msService.insert(materialSubject);
+					}
+				}
+			}
 		}
 		return Boolean.TRUE;
 	}

@@ -16,7 +16,7 @@ public interface MaterialSubjectMapper extends CrudMapper<MaterialSubject> {
 
 	List<MaterialSubject> findListBySubjectId(MaterialSubject MaterialSubject);
 
-	List<MaterialSubject> findListByMaterialId(Long examinationId);
+	List<MaterialSubject> findListByMaterialId(Long materialId);
 
 	List<MaterialSubject> findListByMaterialIdAndMaxSort(@Param("examinationId") Long examinationId,
 			@Param("maxSort") Integer maxSort);

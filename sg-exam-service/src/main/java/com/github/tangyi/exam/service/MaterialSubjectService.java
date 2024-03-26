@@ -40,8 +40,8 @@ public class MaterialSubjectService extends CrudService<MaterialSubjectMapper, M
 		return this.dao.findListBySubjectId(examinationSubject);
 	}
 
-	public List<MaterialSubject> findListByMaterialId(Long examinationId) {
-		return this.dao.findListByMaterialId(examinationId);
+	public List<MaterialSubject> findListByMaterialId(Long materialId) {
+		return this.dao.findListByMaterialId(materialId);
 	}
 
 	public List<MaterialSubject> findListByMaterialIdAndMaxSort(Long examinationId, Integer maxSort) {
