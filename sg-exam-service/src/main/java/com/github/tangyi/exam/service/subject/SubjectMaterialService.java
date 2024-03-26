@@ -1,5 +1,6 @@
 package com.github.tangyi.exam.service.subject;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.dto.RandomSubjectDto;
 import com.github.tangyi.api.exam.dto.SubjectDto;
@@ -27,11 +28,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -206,9 +203,17 @@ public class SubjectMaterialService extends CrudService<SubjectMaterialMapper, S
 	 * 根据材料 ID 批量添加题目
 	 */
 	@Transactional
-	public Boolean batchAddSubjects(Long id, List<SubjectDto> subjects) {
+	public Boolean batchAddSubjects(Long id, HashMap<String, Object> map) {
+		List list = (List) map.get("examinationId");
+		Long examinationId = null;
+		if (list != null)
+			examinationId = Long.valueOf(list.get(0).toString());
+		List<HashMap> maps = (List<HashMap>) map.get("subjects");
+		ObjectMapper objectMapper = new ObjectMapper();
 		Integer nextNo = nextSubjectNo(id);
-		for (SubjectDto subject : subjects) {
+		for (int i = 0; i < maps.size(); i++) {
+			HashMap sub = maps.get(i);
+			SubjectDto subject = objectMapper.convertValue(sub, SubjectDto.class);
 			subject.setId(null);
 			subject.setCategoryId(null);
 			subject.setCategoryName(null);
@@ -225,6 +230,37 @@ public class SubjectMaterialService extends CrudService<SubjectMaterialMapper, S
 			}
 			// 关联考试 ID
 			subject.setMaterialId(id);
+			if (examinationId != null && !"".equals(examinationId))
+				subject.setExaminationId(examinationId);
+			subjectsService.insert(subject);
+		}
+		return Boolean.TRUE;
+	}
+
+	/**
+	 * 根据考试 ID 批量添加题目
+	 */
+	@Transactional
+	public Boolean batchAddSubjects(Long materialId,Long examinationId, List<SubjectDto> subjects) {
+		Integer nextNo = nextSubjectNo(materialId);
+		for (SubjectDto subject : subjects) {
+			subject.setId(null);
+			subject.setCategoryId(null);
+			subject.setCategoryName(null);
+			subject.setNewRecord(true);
+			subject.setCommonValue();
+			// 自定义 ID
+			subject.setId(SnowFlakeId.newId());
+			subject.setSort(nextNo++);
+			if (CollectionUtils.isNotEmpty(subject.getOptions())) {
+				for (SubjectOption option : subject.getOptions()) {
+					option.setId(null);
+					option.setSubjectChoicesId(null);
+				}
+			}
+			// 关联考试 ID
+			subject.setExaminationId(examinationId);
+			subject.setMaterialId(materialId);
 			subjectsService.insert(subject);
 		}
 		return Boolean.TRUE;
@@ -276,8 +312,9 @@ public class SubjectMaterialService extends CrudService<SubjectMaterialMapper, S
 		Integer cnt = params.getSubjectCount();
 		SgPreconditions.checkBoolean(cnt > subjects.size(), "The category's subject is not enough.");
 		List<SubjectDto> result = this.randomAddSubject(subjects, cnt);
+		Long examinationId = params.getExaminationId();
 		if (CollectionUtils.isNotEmpty(result)) {
-			this.batchAddSubjects(id, result);
+			this.batchAddSubjects(id,examinationId, result);
 		}
 		return Boolean.TRUE;
 	}

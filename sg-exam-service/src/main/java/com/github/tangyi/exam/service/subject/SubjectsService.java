@@ -22,10 +22,7 @@ import com.github.tangyi.exam.service.ExaminationSubjectService;
 import com.github.tangyi.exam.service.MaterialSubjectService;
 import com.github.tangyi.exam.service.data.SubjectViewCounterService;
 import com.github.tangyi.exam.service.fav.SubjectFavoritesService;
-import com.github.tangyi.exam.service.subject.converter.SubjectChoicesConverter;
-import com.github.tangyi.exam.service.subject.converter.SubjectFillBlankConverter;
-import com.github.tangyi.exam.service.subject.converter.SubjectJudgementConverter;
-import com.github.tangyi.exam.service.subject.converter.SubjectShortAnswerConverter;
+import com.github.tangyi.exam.service.subject.converter.*;
 import com.github.tangyi.exam.utils.ExamUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -60,6 +57,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 	private final SubjectShortAnswerConverter subjectShortAnswerConverter;
 	private final SubjectJudgementConverter judgementConverter;
 	private final SubjectFillBlankConverter fillBlankConverter;
+	private final SubjectMaterialConverter subjectMaterialConverter;
 	private final SubjectFavoritesService subjectFavoritesService;
 	private final SubjectViewCounterService subjectViewCounterService;
 	private final AttachmentManager attachmentManager;
@@ -212,11 +210,12 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 		sub.setType(dto.getType());
 		sub.setSort(dto.getSort());
 		insert(sub);
-		if (dto.getExaminationId() != null) {
+		if (dto.getExaminationId() != null && dto.getMaterialId() == null) {
 			insertEs(dto, subjectId, dto.getCreator(), dto.getTenantCode());
 		}
 		if (dto.getMaterialId() != null){
 			insertMs(dto, subjectId, dto.getCreator(), dto.getTenantCode());
+			// 查询
 		}
 		return dto;
 	}
@@ -253,7 +252,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 		ms.setSubjectId(subjectId);
 		ms.setMaterialId(dto.getMaterialId());
 		ms.setSort(dto.getSort());
-
+		ms.setExaminationId(dto.getExaminationId());
 		// 序号重复时，尝试递增插入
 		for (int i = 1; i < 10; i++) {
 			try {
@@ -330,6 +329,9 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 			ExaminationSubject examinationSubject = new ExaminationSubject();
 			examinationSubject.setSubjectId(dto.getId());
 			esService.deleteBySubjectId(examinationSubject);
+			MaterialSubject materialSubject = new MaterialSubject();
+			materialSubject.setMaterialId(dto.getId());
+			msService.deleteByMaterialId(materialSubject);
 		}
 		return sub;
 	}
@@ -459,6 +461,11 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 				List<SubjectFillBlank> subjects = SubjectServiceFactory.getFillBlankService().findListById(ids);
 				if (CollectionUtils.isNotEmpty(subjects)) {
 					c = fillBlankConverter.convert(subjects, findAnswer);
+				}
+			}else if (SubjectType.MATERIAL.getValue() == entry.getKey()) {
+				List<SubjectMaterial> subjects = SubjectServiceFactory.getSubjectMaterialService().findListById(ids);
+				if (CollectionUtils.isNotEmpty(subjects)) {
+					c = subjectMaterialConverter.convert(subjects, findAnswer);
 				}
 			}
 

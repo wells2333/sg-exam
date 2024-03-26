@@ -30,6 +30,11 @@ public class MaterialSubjectService extends CrudService<MaterialSubjectMapper, M
 	public int deleteBySubjectId(MaterialSubject examinationSubject) {
 		return this.dao.deleteBySubjectId(examinationSubject);
 	}
+	@Transactional
+	public int deleteByMaterialId(MaterialSubject examinationSubject) {
+		return this.dao.deleteByMaterialId(examinationSubject);
+	}
+
 
 	public List<MaterialSubject> findListBySubjectId(MaterialSubject examinationSubject) {
 		return this.dao.findListBySubjectId(examinationSubject);

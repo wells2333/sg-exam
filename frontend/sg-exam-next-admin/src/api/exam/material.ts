@@ -47,19 +47,23 @@ export const nexSubjectNo = (id?: string) => {
   );
 }
 
-export const batchAddSubjects = (id?: string, subjects?: Recordable[]) => {
+export const batchAddSubjects = (materialId?: string,examinationId?: string, subjects?: Recordable[]) => {
+  var hashMap = {};
+  hashMap["examinationId"] = examinationId;
+  hashMap["subjects"] = subjects;
   return defHttp.post<ApiRes>(
     {
-      url: MaterialApi.Base + '/batchAddSubjects/' + id,
-      data: subjects
+      url: MaterialApi.Base + '/batchAddSubjects/' + materialId,
+      data: hashMap
     }
   );
 }
 
-export const randomAddSubjects = (id?: string, params?: object) => {
+export const randomAddSubjects = (materialId?: string,examinationId?: string, params?: object) => {
+  params['examinationId'] = examinationId;
   return defHttp.post<ApiRes>(
     {
-      url: MaterialApi.Base + '/randomAddSubjects/' + id,
+      url: MaterialApi.Base + '/randomAddSubjects/' + materialId,
       params: params
     }
   );

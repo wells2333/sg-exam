@@ -17,6 +17,13 @@ import javax.persistence.Table;
 public class MaterialSubject extends BaseEntity<MaterialSubject> {
 
 	/**
+	 * 考试 ID
+	 */
+	@JsonSerialize(using = ToStringSerializer.class)
+	@Column(name = "examination_id")
+	private Long examinationId;
+
+	/**
 	 * 材料 ID
 	 */
 	@JsonSerialize(using = ToStringSerializer.class)

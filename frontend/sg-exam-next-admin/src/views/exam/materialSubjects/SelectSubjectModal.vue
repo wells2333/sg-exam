@@ -38,6 +38,7 @@ export default defineComponent({
     const { t } = useI18n();
     const {createMessage} = useMessage();
     const materialId = ref<string>('');
+    const examinationId = ref<string>('');
     const subjectSearchInfo = reactive<Recordable>({});
     const [registerTable, {reload, getSelectRows}] = useTable({
       title: '',
@@ -74,6 +75,7 @@ export default defineComponent({
     const [registerModal, {setModalProps, closeModal}] = useModalInner(async (data) => {
       setModalProps({confirmLoading: false});
       materialId.value = data?.materialId || null;
+      examinationId.value = data?.examinationId || null;
       await reload();
     });
 
@@ -81,9 +83,8 @@ export default defineComponent({
       try {
         // 获取选中的题目
         const rows: Recordable[] = getSelectRows();
-        console.log(rows);
         if (rows && rows.length > 0) {
-          const res = await batchAddSubjects(materialId.value, rows);
+          const res = await batchAddSubjects(materialId.value,examinationId.value,rows);
           if (res) {
             createMessage.success('保存成功');
           }

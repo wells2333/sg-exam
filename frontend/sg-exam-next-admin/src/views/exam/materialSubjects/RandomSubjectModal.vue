@@ -41,6 +41,7 @@ export default defineComponent({
     const {createMessage} = useMessage();
     const cateTreeRef = ref<any>(undefined);
     const materialId = ref<string>('');
+    const examinationId = ref<string>('');
     const subjectCnt = ref<number>(0);
     const currentCnt = ref<number>(0);
     const [registerForm, {resetFields, validate, setFieldsValue}] = useForm({
@@ -53,6 +54,7 @@ export default defineComponent({
       resetFields();
       setModalProps({confirmLoading: false});
       materialId.value = data?.materialId || null;
+      examinationId.value = data?.examinationId || null;
       currentCnt.value = data?.currentCnt || null;
       if (cateTreeRef.value !== undefined) {
         unref(cateTreeRef).resetSelectedKeys();
@@ -68,7 +70,7 @@ export default defineComponent({
           return;
         }
         setModalProps({confirmLoading: true});
-        const res = await randomAddSubjects(materialId.value, values);
+        const res = await randomAddSubjects(materialId.value,examinationId.value[0], values);
         if (res) {
           createMessage.success('保存成功');
         }

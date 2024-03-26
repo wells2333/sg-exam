@@ -53,6 +53,11 @@ public class SubjectServiceFactory {
 		return CONTEXT.getBean(SubjectFillBlankService.class);
 	}
 
+	public static SubjectMaterialService getSubjectMaterialService() {
+		initApplicationContext();
+		return CONTEXT.getBean(SubjectMaterialService.class);
+	}
+
 	public static ISubjectService getService(int type) {
 		initApplicationContext();
 		ISubjectService service = null;
@@ -64,7 +69,7 @@ public class SubjectServiceFactory {
 			service = CONTEXT.getBean(SubjectJudgementService.class);
 		} else if (SubjectType.FILL_BLANK.getValue() == type) {
 			service = CONTEXT.getBean(SubjectFillBlankService.class);
-		}else if (SubjectType.MATERRIAL.getValue() == type) {
+		}else if (SubjectType.MATERIAL.getValue() == type) {
 			service = CONTEXT.getBean(SubjectMaterialService.class);
 		}
 

@@ -87,6 +87,9 @@
     <delete id="deleteBySubjectId">
         DELETE FROM exam_material_subject WHERE subject_id = #{subjectId}
     </delete>
+    <delete id="deleteByMaterialId">
+        DELETE FROM exam_material_subject WHERE material_id = #{materialId}
+    </delete>
 
     <delete id="deleteAll">
         DELETE FROM exam_material_subject WHERE id IN

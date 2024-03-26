@@ -53,7 +53,6 @@ CREATE TABLE `exam_subject_material` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='材料表';
 
 -- 2024年3月26日12:43:26
-
 CREATE TABLE `exam_material_subject`  (
  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
  `material_id` bigint NULL DEFAULT NULL COMMENT '材料 ID',
@@ -70,7 +69,18 @@ CREATE TABLE `exam_material_subject`  (
  INDEX `idx_subject_id`(`subject_id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 175 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '材料题目表' ROW_FORMAT = DYNAMIC;
 
-
 -- 2024年3月26日16:25:50
-INSERT INTO `sys_menu` (`id`, `name`, `permission`, `path`, `parent_id`, `icon`, `sort`, `type`, `creator`, `create_time`, `operator`, `update_time`, `is_deleted`, `component`, `is_ext`, `keepalive`, `remark`, `tenant_code`, `hide_menu`, `redirect`, `current_active_menu`) VALUES (100, '材料题目管理', NULL, '/exam/material_subjects/:id', 28, NULL, '5', '0', 'admin', '2024-03-26 13:23:24', 'admin', '2024-03-26 08:22:53', 0, 'exam/materialSubjects/index', 0, 0, NULL, 'gitee', 1, '', '/exam/subject');
+INSERT INTO `sys_menu` (`id`, `name`, `permission`, `path`, `parent_id`, `icon`, `sort`, `type`, `creator`, `create_time`,
+    `operator`, `update_time`, `is_deleted`, `component`, `is_ext`, `keepalive`, `remark`, `tenant_code`, `hide_menu`, `redirect`, `current_active_menu`)
+VALUES (100, '材料题目管理', NULL, '/exam/material_subjects/:id', 28, NULL, '5', '0', 'admin', '2024-03-26 13:23:24',
+        'admin', '2024-03-26 08:22:53', 0, 'exam/materialSubjects/index', 0, 0, NULL, 'gitee', 1, '', '/exam/subject');
+
+-- 2024年3月27日09:41:14
+ALTER TABLE `exam_material_subject`
+    ADD COLUMN examination_id bigint DEFAULT NULL COMMENT '考试 ID';
+
+-- 2024年3月27日09:59:39
+update `sys_menu`
+    set path = '/exam/material_subjects/:materialId/:examinationId*'
+where id = 100
 

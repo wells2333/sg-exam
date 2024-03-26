@@ -89,7 +89,8 @@
       const [registerRandomSubjectModal, { openModal: openRandomSubjectModal }] = useModal();
       const { createMessage } = useMessage();
       const route = useRoute();
-      const materialId = ref<any>(route.params?.id);
+      const materialId = ref<any>(route.params?.materialId);
+      const examinationId = ref<any>(route.params?.examinationId);
       const checkedKeys = ref<Array<string | number>>([]);
       const rowKeys = ref<Array<string | number>>([]);
       const { hasPermission } = usePermission();
@@ -98,6 +99,7 @@
         api: getMaterialSubjectList,
         searchInfo: {
           materialId,
+          examinationId
         },
         columns,
         formConfig: {
@@ -121,9 +123,11 @@
       });
 
       function handleCreate() {
+      
         openModal(true, {
           isUpdate: false,
           materialId,
+          examinationId
         });
       }
 
@@ -132,12 +136,13 @@
           record,
           isUpdate: true,
           materialId,
+          examinationId,
           type: record.type,
         });
       }
 
       async function handleDelete(record: Recordable) {
-        await deleteSubject(record.id, unref(materialId));
+        await deleteSubject(record.id, unref(materialId),unref(examinationId));
         createMessage.success(t('common.operationSuccessText'));
         await reload();
       }
@@ -159,6 +164,7 @@
       function handleSelectSubjects() {
         openSelectSubjectModal(true, {
           materialId,
+          examinationId
         });
       }
 
@@ -167,6 +173,7 @@
         openRandomSubjectModal(true, {
           isUpdate: false,
           materialId,
+          examinationId,
           currentCnt: paginationRef.total,
         });
       }

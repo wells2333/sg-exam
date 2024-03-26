@@ -11,6 +11,8 @@ import java.util.List;
 public interface MaterialSubjectMapper extends CrudMapper<MaterialSubject> {
 
 	int deleteBySubjectId(MaterialSubject MaterialSubject);
+	
+	int deleteByMaterialId(MaterialSubject MaterialSubject);
 
 	List<MaterialSubject> findListBySubjectId(MaterialSubject MaterialSubject);
 

@@ -12,9 +12,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,8 +42,8 @@ public class MaterialController extends BaseController {
 	@PostMapping("batchAddSubjects/{id}")
 	@Operation(summary = "批量添加题目")
 	@SgLog(value = "批量添加题目", operationType = OperationType.INSERT)
-	public R<Boolean> batchAddSubjects(@PathVariable Long id, @RequestBody List<SubjectDto> subjects) {
-		return R.success(subjectMaterialService.batchAddSubjects(id, subjects));
+	public R<Boolean> batchAddSubjects(@PathVariable Long id, @RequestBody HashMap<String, Object> map) {
+		return R.success(subjectMaterialService.batchAddSubjects(id, map));
 	}
 
 	@PostMapping("randomAddSubjects/{id}")

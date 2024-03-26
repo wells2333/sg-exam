@@ -52,7 +52,8 @@ export default defineComponent({
     const isUpdate = ref(true);
     let id: string;
     const route = useRoute();
-    const materialId = ref<string>(route.params?.id + '');
+    const materialId = ref<any>(route.params?.materialId);
+    const examinationId = ref<any>(route.params?.examinationId);
     // 题目类型 tab
     const types = ref<Array<TabItem>>([...subjectTypeList]);
     // 默认单选题
@@ -162,6 +163,7 @@ export default defineComponent({
       try {
         setModalProps({confirmLoading: true});
         const value = await getSubjectRef().getSubjectValue();
+        value['examinationId'] = examinationId.value[0];
         if (id) {
           await updateSubject(id, value);
         } else {
