@@ -2,7 +2,7 @@
   <view>
     <nut-searchbar v-model="searchValue" @search="handleSearch" placeholder="搜索"/>
     <view class="ml-22 mr-22">
-      <view class="box-show-item mb-bottom-20" v-for="course in itemList">
+      <view class="box-show-item mb-bottom-40" v-for="course in itemList">
         <course-item :item="course" @click="handleClickCourse(course)"></course-item>
       </view>
       <nut-empty v-if="!loading && itemList.length === 0"></nut-empty>
@@ -128,5 +128,4 @@ export default {
 </script>
 
 <style>
-
 </style>

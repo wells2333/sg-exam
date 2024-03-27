@@ -24,7 +24,7 @@
           </view>
         </view>
         <view>
-          <nut-button type="primary" :loading="joining" @click="handleStartLearn">
+          <nut-button type="primary" size="small" :loading="joining" @click="handleStartLearn">
             开始学习
           </nut-button>
         </view>

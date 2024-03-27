@@ -37,7 +37,7 @@
       </nut-grid-item>
     </nut-grid>
     <view class="home-view-tips">热门课程</view>
-    <view class="popular-course-item box-show-item mb-bottom-20" v-for="course in courses">
+    <view class="popular-course-item box-show-item mb-bottom-40" v-for="course in courses">
       <course-item :item="course" @click="handleClickCourse" @fav="handleFav"></course-item>
     </view>
   </view>
