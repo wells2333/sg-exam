@@ -465,8 +465,16 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 				}
 			}else if (SubjectType.MATERIAL.getValue() == entry.getKey()) {
 				List<SubjectMaterial> subjects = SubjectServiceFactory.getSubjectMaterialService().findListById(ids);
+				// 寻找附属题目
 				if (CollectionUtils.isNotEmpty(subjects)) {
 					c = subjectMaterialConverter.convert(subjects, findAnswer);
+					for (SubjectDto subjectDto : c) {
+						List<MaterialSubject> listByMaterial = msService.findListByMaterialId(subjectDto.getId());
+						Long[] subjectIds = listByMaterial.stream().map(MaterialSubject::getSubjectId).toArray(Long[]::new);
+						List<Subjects> childSubjects = findBySubjectIds(subjectIds);
+						List<SubjectDto> subjectDtoList = findSubjectDtoList(childSubjects, true, false);
+						subjectDto.setChildSubjects(subjectDtoList);
+					}
 				}
 			}
 

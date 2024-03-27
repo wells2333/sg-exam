@@ -49,6 +49,9 @@ export const getSubjectRef = ($refs, index, item) => {
       ref = $refs['fillBlank_' + index]
       break
     case 5:
+      ref = $refs['material_' + index]
+      break
+    case 6:
       ref = $refs['sVideo_' + index]
       break
   }

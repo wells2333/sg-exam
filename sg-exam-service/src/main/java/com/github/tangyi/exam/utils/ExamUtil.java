@@ -8,6 +8,7 @@ import com.github.tangyi.api.exam.model.Answer;
 import com.github.tangyi.api.exam.model.ExaminationSubject;
 import com.github.tangyi.api.exam.model.SubjectOption;
 import com.github.tangyi.api.exam.model.Subjects;
+import com.github.tangyi.exam.enums.SubjectType;
 import com.github.tangyi.exam.excel.ExamRecordModel;
 import com.github.tangyi.exam.excel.SubjectExcelModel;
 import com.github.tangyi.exam.handler.HandlerFactory;

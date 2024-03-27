@@ -197,6 +197,7 @@ const zh = {
       subjectTypeJudgement: '判断题',
       subjectTypeShortAnswer: '简答题',
       subjectTypeFillBlank: '填空题',
+      subjectTypeMaterial: '材料题',
       fillBlankAnswerPlaceholder: '多个填空的答案换行隔开'
     }
   },

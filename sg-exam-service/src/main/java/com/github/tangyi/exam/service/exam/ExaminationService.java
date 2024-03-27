@@ -373,6 +373,10 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 				for (SubjectDto dto : dtoList) {
 					if (dto.getId().equals(es.getSubjectId())) {
 						sorted.add(dto);
+						if (dto.getType().equals(SubjectType.MATERIAL.getValue())){
+							List<SubjectDto> childSubjects = dto.getChildSubjects();
+							sorted.addAll(childSubjects);
+						}
 						break;
 					}
 				}

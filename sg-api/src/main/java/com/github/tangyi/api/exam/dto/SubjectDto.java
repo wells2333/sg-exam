@@ -19,6 +19,11 @@ import java.util.List;
 public class SubjectDto extends BaseEntity<SubjectDto> {
 
     /**
+     *  材料题附属题目
+     */
+    private List<SubjectDto> childSubjects;
+
+    /**
      * 材料 ID
      */
     @JsonSerialize(using = ToStringSerializer.class)
