@@ -19,7 +19,7 @@ public enum SubjectType {
 	JUDGEMENT("判断", 2, SubjectJudgementService.class, JudgementAnswerHandler.class),    //
 	MULTIPLE_CHOICES("多选", 3, SubjectChoicesService.class, MultipleChoicesAnswerHandler.class), //
 	FILL_BLANK("填空", 4, SubjectFillBlankService.class, FillBlankAnswerHandler.class),    //
-	MATERIAL("材料", 5,SubjectMaterialService.class, null);    //
+	MATERIAL("材料", 5,SubjectMaterialService.class, MaterialAnswerHandler.class);    //
 	private static final Int2ObjectOpenHashMap<SubjectType> VALUE_MAP = new Int2ObjectOpenHashMap<>();
 	private static final Map<String, SubjectType> NAME_MAP = Maps.newHashMap();
 

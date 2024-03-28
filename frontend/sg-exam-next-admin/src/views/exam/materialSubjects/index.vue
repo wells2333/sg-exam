@@ -4,8 +4,8 @@
     :rowSelection="{ type: 'checkbox', selectedRowKeys: checkedKeys, onChange: onSelectChange }">
       <template #toolbar>
         <a-button type="primary" @click="handleCreate"> {{ t('common.addText') }} </a-button>
-        <!-- <a-button type="primary" @click="handleSelectSubjects"> 从题库选择</a-button>
-        <a-button type="primary" @click="handleRandomSelectSubjects"> 随机组题</a-button> -->
+        <a-button type="primary" @click="handleSelectSubjects"> 从题库选择</a-button>
+        <a-button type="primary" @click="handleRandomSelectSubjects"> 随机组题</a-button>
         <PopConfirmButton
           v-if="hasPermission(['exam:subject:bank:del'])"
           title="确定删除么？"

@@ -22,7 +22,10 @@ public class SubjectDto extends BaseEntity<SubjectDto> {
      *  材料题附属题目
      */
     private List<SubjectDto> childSubjects;
-
+    /**
+     *  材料题附属题数量
+     */
+    private Integer childLength;
     /**
      * 材料 ID
      */

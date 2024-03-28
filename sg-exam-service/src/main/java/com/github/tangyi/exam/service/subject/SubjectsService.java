@@ -471,6 +471,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 					for (SubjectDto subjectDto : c) {
 						List<MaterialSubject> listByMaterial = msService.findListByMaterialId(subjectDto.getId());
 						Long[] subjectIds = listByMaterial.stream().map(MaterialSubject::getSubjectId).toArray(Long[]::new);
+						subjectDto.setChildLength(subjectIds.length);
 						List<Subjects> childSubjects = findBySubjectIds(subjectIds);
 						List<SubjectDto> subjectDtoList = findSubjectDtoList(childSubjects, true, false);
 						subjectDto.setChildSubjects(subjectDtoList);

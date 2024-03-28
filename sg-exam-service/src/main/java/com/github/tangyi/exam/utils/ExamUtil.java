@@ -68,6 +68,7 @@ public class ExamUtil {
 				}
 			}
 			simple.setOptions(optionDtoList);
+			simple.setChildLength(dto.getChildLength());
 			simples.add(simple);
 		}
 		return simples;
@@ -143,7 +144,7 @@ public class ExamUtil {
 	}
 
 	public static Map<Integer, List<Long>> groupByType(List<Subjects> subjects) {
-		Map<Integer, List<Long>> result = Maps.newHashMapWithExpectedSize(4);
+		Map<Integer, List<Long>> result = Maps.newHashMapWithExpectedSize(5);
 		for (Subjects sub : subjects) {
 			Integer type = sub.getType();
 			List<Long> ids = result.computeIfAbsent(type, s -> new ArrayList<>());

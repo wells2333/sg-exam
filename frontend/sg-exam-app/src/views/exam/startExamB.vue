@@ -26,7 +26,7 @@
             <fill-blank :ref="'fillBlank_' + index" v-show="item.type === 4"
                         :onChoice="onChoiceFn"/>
             <material :ref="'material_' + index" v-show="item.type === 5"
-                        :onChoice="onChoiceFn"/>            
+                        :onChoice="onChoiceFn"/>
           </div>
         </div>
         <div class="subject-buttons">
