@@ -93,15 +93,6 @@ export const answerColumns: BasicColumn[] = [
     title: '参考答案',
     width: 80,
     align: 'left',
-    customRender:({ record }) => {
-      let text = '';
-      if (record.subject.answer.answer === '0') {
-        text = '正确';
-      } else if (record.subject.answer.answer === '1') {
-        text = '错误';
-      }
-      return text;
-    }
   },
   {
     dataIndex: 'markStatus',
@@ -109,13 +100,21 @@ export const answerColumns: BasicColumn[] = [
     width: 80,
     align: 'left',
     customRender:({ record }) => {
-      let color = 'green';
-      let text = '已批改';
-      if (record.markStatus === 0) {
-        color = 'red';
-        text = '待批改';
+      const { subject } = record;
+      if (subject.type === 5){
+        let color = 'green';
+        let text = '材料题';
+        return h(Tag, { color:  color}, () => text);
+      } else{
+        let color = 'green';
+        let text = '已批改';
+        if (record.markStatus === 0) {
+          color = 'red';
+          text = '待批改';
+        }
+        return h(Tag, { color:  color}, () => text);
       }
-      return h(Tag, { color:  color}, () => text);
+  
     }
   },
   {
@@ -130,25 +129,37 @@ export const answerColumns: BasicColumn[] = [
     width: 80,
     align: 'left',
     customRender:({ record }) => {
-      let color = 'green';
-      let text = '正确';
-      if (record.answerType === 1) {
-        color = 'red';
-        text = '错误';
+      const { subject } = record;
+      if (subject.type != 5){
+        let color = 'green';
+        let text = '正确';
+        if (record.answerType === 1) {
+          color = 'red';
+          text = '错误';
+        }
+        return h(Tag, { color:  color}, () => text);
       }
-      return h(Tag, { color:  color}, () => text);
+      
     }
   },
-  {
-    title: '开始时间',
-    dataIndex: 'startTime',
-    width: 180,
-  },
+  // {
+  //   title: '开始时间',
+  //   dataIndex: 'startTime',
+  //   width: 180,
+  // },
   {
     dataIndex: 'speechPlayCnt',
     title: '语音播放数',
     width: 100,
     align: 'left',
+    customRender:({ record }) => {
+      const { speechPlayCnt } = record;
+      if (speechPlayCnt == "" || speechPlayCnt == null){
+        let text = '0';
+        return h(Tag,() => text);
+      }
+      
+    }
   },
   {
     dataIndex: 'duration',

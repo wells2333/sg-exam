@@ -121,6 +121,8 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> implements 
 		update(answer);
 		// 重新计算总分
 		Integer totalScore = sumScoreByAnswerType(recordId, AnswerConstant.RIGHT);
+		if (totalScore == null)
+			totalScore = 0;
 		record.setScore(totalScore.doubleValue());
 		// 正确、错误题目数量
 		Integer correctNumber = countByAnswerType(recordId, AnswerConstant.RIGHT);

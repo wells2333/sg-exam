@@ -172,6 +172,7 @@ public class ExaminationActionService implements IExaminationActionService {
 		ExaminationRecord record = this.examRecordService.get(recordId);
 		Long[] ids = answerList.stream().map(Answer::getSubjectId).toArray(Long[]::new);
 		Map<Integer, List<Answer>> distinct = this.distinctAnswer(ids, answerList);
+		distinct.remove(5);// 去掉材料题
 		HandlerFactory.Result result = HandlerFactory.handleAll(distinct);
 		// 记录总分、正确题目数、错误题目数
 		record.setScore(result.getScore());
@@ -385,7 +386,8 @@ public class ExaminationActionService implements IExaminationActionService {
 			if (answer != null) {
 				AnswerDto dto = new AnswerDto();
 				BeanUtils.copyProperties(answer, dto);
-				dto.setSubject(map.get(answer.getSubjectId()));
+				SubjectDto subjectDto = map.get(answer.getSubjectId());
+				dto.setSubject(subjectDto);
 				String duration = DateUtils.duration(answer.getStartTime(), answer.getEndTime());
 				if (StringUtils.isEmpty(duration)) {
 					duration = "1ms";
@@ -393,6 +395,28 @@ public class ExaminationActionService implements IExaminationActionService {
 				dto.setDuration(duration);
 				dto.setSpeechPlayCnt(answer.getSpeechPlayCnt());
 				list.add(dto);
+				if (subjectDto.getChildSubjects() != null){
+					List<SubjectDto> childSubjects = subjectDto.getChildSubjects();
+					for (SubjectDto childSubject : childSubjects) {
+						card = new CardDto();
+						card.setSort(childSubject.getSort());
+						card.setSubjectId(childSubject.getId());
+						cards.add(card);
+						answer = answerMap.get(childSubject.getId());
+						if (answer != null) {
+							dto = new AnswerDto();
+							BeanUtils.copyProperties(answer, dto);
+							dto.setSubject(childSubject);
+							duration = DateUtils.duration(answer.getStartTime(), answer.getEndTime());
+							if (StringUtils.isEmpty(duration)) {
+								duration = "1ms";
+							}
+							dto.setDuration(duration);
+							dto.setSpeechPlayCnt(answer.getSpeechPlayCnt());
+							list.add(dto);
+						}
+					}
+				}
 			}
 		}
 		return list;
