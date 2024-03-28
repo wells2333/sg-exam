@@ -69,6 +69,10 @@ public class ExamCourseKnowledgePoint extends BaseEntity<ExamCourseKnowledgePoin
 	@Column(name = "content_type")
 	private Integer contentType;
 
+	private String speechId;
+	private String speechUrl;
+	private String videoUrl;
+
 	public void setTitle(String title) {
 		this.title = title;
 	}

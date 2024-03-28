@@ -24,7 +24,7 @@ import SgVideo from '@/components/SgVideo'
 import {setVideoSrc, pauseVideo, pauseAudio, setAudioSrc} from '@/utils/busi'
 
 export default {
-  name: 'ShortAnswer',
+  name: 'Material',
   components: {
     Tinymce,
     SgAudio,

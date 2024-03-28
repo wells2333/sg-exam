@@ -76,6 +76,10 @@ public class ExamCourseSection extends BaseEntity<ExamCourseSection> {
 	@Column(name = "content")
 	private String content;
 
+	private String speechId;
+	private String speechUrl;
+	private String videoUrl;
+
 	public void setTitle(String title) {
 		this.title = title;
 	}

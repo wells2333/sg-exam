@@ -84,3 +84,18 @@ update `sys_menu`
     set path = '/exam/material_subjects/:materialId/:examinationId*'
 where id = 100
 
+-- 2024年3月28日20:51:29
+ALTER TABLE `exam_course_section`
+    ADD COLUMN video_url varchar(255) DEFAULT NULL COMMENT '视频 URL';
+ALTER TABLE `exam_course_section`
+    ADD COLUMN speech_id bigint DEFAULT NULL COMMENT '音频 ID';
+ALTER TABLE `exam_course_section`
+    ADD COLUMN speech_url varchar(255) DEFAULT NULL COMMENT '音频 URL';
+
+-- 2024年3月28日22:03:01
+ALTER TABLE `exam_course_knowledge_point`
+    ADD COLUMN video_url varchar(255) DEFAULT NULL COMMENT '视频 URL';
+ALTER TABLE `exam_course_knowledge_point`
+    ADD COLUMN speech_id bigint DEFAULT NULL COMMENT '音频 ID';
+ALTER TABLE `exam_course_knowledge_point`
+    ADD COLUMN speech_url varchar(255) DEFAULT NULL COMMENT '音频 URL';

@@ -119,6 +119,8 @@ export default {
         }).catch(err => {
           console.error(err)
         })
+      }else{
+        this.$refs.audio.play()
       }
     },
     pausePlay() {
@@ -163,6 +165,10 @@ export default {
       this.autoPlay = autoPlay
       this.src = src
       this.subjectId = subjectId
+    },
+    setSrc(src, autoPlay) {
+      this.autoPlay = autoPlay
+      this.src = src
     }
   },
   filters: {

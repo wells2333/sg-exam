@@ -99,14 +99,16 @@ export const formSchema: FormSchema[] = [
     label: '序号',
     component: 'InputNumber',
     required: true,
-    defaultValue: 100
+    defaultValue: 100,
+    colProps: { span: 12 },
   },
   {
     field: 'learnHour',
     label: '学习时长',
     component: 'InputNumber',
     required: true,
-    defaultValue: 1
+    defaultValue: 1,
+    colProps: { span: 12 },
   },
   {
     field: 'contentType',
@@ -142,8 +144,43 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
+    field: 'videoUrl',
+    label: '视频 URL',
+    component: 'Input',
+    colProps: {
+      span: 12,
+    },
+  },
+  {
     field: 'videoName',
     label: '视频名称',
     component: 'Input'
+  },
+  {
+    label: '上传音频',
+    field: 'speechId',
+    component: 'Input',
+    render: ({model, field}) => {
+      return h(SgUpload, {
+        value: model[field],
+        groupCode: 'exam/video',
+        type: 'video',
+        handleDone: (value) => {
+          if (value) {
+            model[field] = unref(value).id;
+            model['videoName'] = unref(value).name;
+          }
+        },
+      });
+    },
+    colProps: {span: 12},
+  },
+  {
+    field: 'speechUrl',
+    label: '音频 URL',
+    component: 'Input',
+    colProps: {
+      span: 12,
+    },
   },
 ];

@@ -41,4 +41,8 @@ public class KnowledgePointDto {
 	@JSONField(format = BaseEntity.DATE_FORMAT)
 	@JsonFormat(pattern = BaseEntity.DATE_FORMAT, timezone = BaseEntity.TIMEZONE)
 	protected Date updateTime;
+
+	private String speechId;
+	private String speechUrl;
+
 }

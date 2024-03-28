@@ -45,15 +45,17 @@
                         {{ point.title }}</p>
                       </div>
                 </div>
-                <div v-if="contentType === 0" class="section-video">
-                  <sg-video v-if="videoUrl !== undefined && videoUrl !== null && videoUrl !== ''" ref="sectionVideo"></sg-video>
+                <div  class="section-video">
+                  <sg-video v-if="videoUrl !== undefined && videoUrl !== null && videoUrl !== ''" ref="sectionVideo">
+                  </sg-video>
+                  <sg-audio v-if="audioUrl !== undefined && audioUrl !== null && audioUrl !== ''" ref="sectionAudio"></sg-audio>
                   <div class="section-video-content">
                     <div v-html="content"></div>
                   </div>
                 </div>
-                <div v-else-if="contentType === 1">
+                <!-- <div v-else-if="contentType === 1">
                   <div v-html="content"></div>
-                </div>
+                </div> -->
               </div>
               <div class="section-button">
                 <el-button type="primary" class="clever-btn mb-30 w-10" @click="goBack">{{$t('return')}}
@@ -70,11 +72,13 @@
 import {getCourseDetail} from '@/api/exam/course'
 import {watchSection} from '@/api/exam/section'
 import SgVideo from '@/components/SgVideo'
+import SgAudio from '@/components/SgAudio'
 import {getKnowledgePointDetail} from '../../api/exam/point'
 
 export default {
   components: {
-    SgVideo
+    SgVideo,
+    SgAudio
   },
   data() {
     return {
@@ -85,6 +89,7 @@ export default {
       section: {},
       point: undefined,
       videoUrl: undefined,
+      audioUrl: undefined,
       detail: {},
       contentType: 0,
       clickSectionId: undefined,
@@ -133,7 +138,8 @@ export default {
       this.loading = true
       watchSection(id).then(res => {
         this.contentType = res.data.result.section.contentType
-        this.videoUrl = res.data.result.videoUrl
+        this.videoUrl = res.data.result.section.videoUrl
+        this.audioUrl = res.data.result.section.speechUrl
         setTimeout(() => {
           const { title, content, operator, updateTime } = res.data.result.section
           this.section = res.data.result.section
@@ -144,6 +150,7 @@ export default {
           this.updateTime = updateTime
           this.loading = false
           this.updateVideoUrl()
+          this.updateAudioUrl()
         }, 200)
       }).catch(error => {
         console.error(error)
@@ -157,9 +164,10 @@ export default {
       this.stopVideo()
       this.loading = true
       getKnowledgePointDetail(id).then(res => {
-        const {title, videoUrl, contentType, content, operator, updateTime} = res.data.result
+        const {title, videoUrl, contentType, content, operator, updateTime,speechUrl} = res.data.result
         this.contentType = contentType
         this.videoUrl = videoUrl
+        this.audioUrl = speechUrl
         setTimeout(() => {
           this.loading = false
           this.title = title
@@ -167,6 +175,7 @@ export default {
           this.operator = operator
           this.updateTime = updateTime
           this.updateVideoUrl()
+          this.updateAudioUrl()
         }, 200)
       }).catch(error => {
         console.error(error)
@@ -180,6 +189,15 @@ export default {
         }
       } else {
         this.videoUrl = undefined
+      }
+    },
+    updateAudioUrl() {
+      if (this.audioUrl !== undefined && this.audioUrl !== null) {
+        if (this.$refs.sectionAudio) {
+          this.$refs.sectionAudio.setSrc(this.audioUrl,0)
+        }
+      } else {
+        this.audioUrl = undefined
       }
     },
     stopVideo() {
