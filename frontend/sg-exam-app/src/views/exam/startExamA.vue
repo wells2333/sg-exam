@@ -21,6 +21,8 @@
                           :onChoice="onChoiceFn"/>
         <fill-blank ref="fillBlank" v-show="subject.type === 4"
                     :onChoice="onChoiceFn"/>
+        <material ref="material" v-show="subject.type === 5"
+        :onChoice="onChoiceFn"/>
         <div class="subject-buttons">
           <div>
             <el-button plain @click="goLast" :loading="loadingLast">{{ $t('exam.startExam.last') }}
@@ -61,7 +63,7 @@ import ShortAnswer from '@/components/Subjects/ShortAnswer'
 import Judgement from '@/components/Subjects/Judgement'
 import FillBlank from '@/components/Subjects/FillBlank'
 import {nextSubjectType} from '@/const/constant'
-
+import Material from '@/components/Subjects/Material'
 export default {
   components: {
     Tinymce,
@@ -69,7 +71,8 @@ export default {
     MultipleChoices,
     ShortAnswer,
     Judgement,
-    FillBlank
+    FillBlank,
+    Material
   },
   data() {
     return {
@@ -294,6 +297,9 @@ export default {
           ref = this.$refs.fillBlank
           break
         case 5:
+          ref = this.$refs.material
+          break
+        default:
           ref = this.$refs.sVideo
           break
       }

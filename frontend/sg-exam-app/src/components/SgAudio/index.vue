@@ -119,7 +119,7 @@ export default {
         }).catch(err => {
           console.error(err)
         })
-      }else{
+      } else {
         this.$refs.audio.play()
       }
     },
@@ -166,7 +166,7 @@ export default {
       this.src = src
       this.subjectId = subjectId
     },
-    setSrc(src, autoPlay) {
+    setSrcWithoutSubjectId(src, autoPlay) {
       this.autoPlay = autoPlay
       this.src = src
     }

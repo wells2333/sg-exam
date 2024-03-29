@@ -1,6 +1,7 @@
 import { setStore, getStore, removeStore } from '@/utils/store'
 import { TENANT_CODE } from '../../config/prod.env'
 import { TOKEN, REFRESH_TOKEN, TENANTCODE } from '@/utils/storeMap'
+import store from '@/store'
 export function getToken () {
   return getStore({ name: TOKEN })
 }
@@ -26,6 +27,10 @@ export function removeRefreshToken () {
 }
 
 export function getTenantCode () {
+  const sysConfig = store.getters.sysConfig
+  if (sysConfig.sys_tenant_code != null) {
+    return sysConfig.sys_tenant_code
+  }
   if (TENANT_CODE !== undefined) {
     return TENANT_CODE
   }

@@ -36,6 +36,7 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
 			throws IOException, ServletException {
+		// 本代码不执行
 		if (!AnyRequestMatcher.INSTANCE.matcher(req).isMatch()) {
 			UsernamePasswordAuthenticationToken authentication = null;
 			try {

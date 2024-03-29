@@ -67,7 +67,7 @@
       </el-row>
     </div>
 
-    <div class="popular-courses-area padding-30-0">
+    <div class="popular-courses-area padding-30-0"  ref="coursesContainer">
       <el-row>
         <el-col :span="24">
           <div class="section-heading">
@@ -87,7 +87,7 @@
                   <span><i class="fa fa-circle" aria-hidden="true"></i></span>
                   <a href="#">{{course.major !== null ? course.major : ''}}</a>
                 </div>
-                <p>{{course.simpleDesc !== null ? course.simpleDesc : '-'}}</p>
+                <p class="clamp">{{course.simpleDesc !== null ? course.simpleDesc : ''}}</p>
               </div>
               <div class="seat-rating-fee d-flex justify-content-between">
                 <div class="seat-rating h-100 d-flex align-items-center">
@@ -173,6 +173,9 @@ export default {
         for (let i = 0; i < list.length; i++) {
           this.courses.push(list[i])
         }
+        let num = list.length / 4;
+        const container = this.$refs.coursesContainer;
+        container.style.height = (num + 1) * 300 + 'px';
       }).catch(() => {
         notifyFail(this, this.$t('homePage.loadCoursesFailed'))
       })
@@ -231,5 +234,13 @@ export default {
 
 .el-col {
     margin-bottom: 20px; /* 可选的间距 */
+}
+.clamp {
+    height: 60px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    -webkit-line-clamp: 3; 
+    text-overflow: ellipsis; /* 超出部分显示省略号 */
 }
 </style>

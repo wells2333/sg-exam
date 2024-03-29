@@ -42,8 +42,14 @@
               <div class="card-item-course-detail" v-if="exam.course !== undefined && exam.course !== null">
                 <a href="#">{{ exam.course.courseName }}</a>
               </div>
-              <div class="card-item-course-detail">
+              <div v-else>
+                无关联课程
+              </div>
+              <div class="card-item-course-detail" v-if="exam.startTime !== undefined && exam.startTime !== null">
                 <a href="#">{{ exam.startTime }}~{{ exam.endTime }}</a>
+              </div>
+              <div v-else>
+                无时间限制
               </div>
             </div>
           </div>

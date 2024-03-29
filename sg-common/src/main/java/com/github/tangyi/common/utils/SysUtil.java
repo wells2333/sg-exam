@@ -66,8 +66,9 @@ public class SysUtil {
 
     public static String getTenantCode() {
         String tenantCode = null;
-        CustomUserDetails userDetails = SysUtil.getUserDetails();
+        CustomUserDetails userDetails = getUserDetails();
         if (userDetails == null) {
+            // 用户没有登录,这时可以调用默认租户
             tenantCode = TenantHolder.getTenantCode();
             if (StringUtils.isBlank(tenantCode))
                 throw new IllegalArgumentException("tenant code is blank");

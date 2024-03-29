@@ -164,7 +164,7 @@ export default {
       this.stopVideo()
       this.loading = true
       getKnowledgePointDetail(id).then(res => {
-        const {title, videoUrl, contentType, content, operator, updateTime,speechUrl} = res.data.result
+        const {title, videoUrl, contentType, content, operator, updateTime, speechUrl} = res.data.result
         this.contentType = contentType
         this.videoUrl = videoUrl
         this.audioUrl = speechUrl
@@ -194,7 +194,7 @@ export default {
     updateAudioUrl() {
       if (this.audioUrl !== undefined && this.audioUrl !== null) {
         if (this.$refs.sectionAudio) {
-          this.$refs.sectionAudio.setSrc(this.audioUrl,0)
+          this.$refs.sectionAudio.setSrcWithoutSubjectId(this.audioUrl, 0)
         }
       } else {
         this.audioUrl = undefined

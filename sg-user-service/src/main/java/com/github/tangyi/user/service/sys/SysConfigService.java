@@ -56,10 +56,13 @@ public class SysConfigService extends CrudService<SysConfigMapper, SysConfig>
 	}
 
 	@Override
-	@Cacheable(value = UserCacheName.SYS_CONFIG, key = DEFAULT_CACHE_KEY)
+//	@Cacheable(value = UserCacheName.SYS_CONFIG, key = DEFAULT_CACHE_KEY)
 	public Map<String, Object> getDefaultSysConfig() {
+		SysConfig sysTenantCode = getByKey("sys_tenant_code", "");
+		String defaultTenantCodeValue = sysTenantCode.getConfigValue();
 		Map<String, Object> map = Maps.newHashMapWithExpectedSize(SYS_DEFAULT_KEYS.size());
-		List<SysConfig> list = this.batchGetByKey(SYS_DEFAULT_KEYS, TenantConstant.DEFAULT_TENANT_CODE);
+		List<SysConfig> list = this.batchGetByKey(SYS_DEFAULT_KEYS, defaultTenantCodeValue);
+		list.add(sysTenantCode);
 		if (CollectionUtils.isNotEmpty(list)) {
 			for (SysConfig config : list) {
 				map.put(config.getConfigKey(), config.getConfigValue());

@@ -68,7 +68,7 @@ export default {
         sort: 'id',
         order: ' asc',
         page: 1,
-        pageSize: 6,
+        pageSize: 8,
         courseName: '',
         status: 0
       },

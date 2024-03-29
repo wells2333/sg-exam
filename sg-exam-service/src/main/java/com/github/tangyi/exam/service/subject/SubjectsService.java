@@ -104,7 +104,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 		if (StringUtils.isEmpty(dto.getSubjectVideoUrl()) && dto.getSubjectVideoId() != null) {
 			dto.setSubjectVideoUrl(attachmentManager.getPreviewUrlIgnoreException(dto.getSubjectVideoId()));
 		}
-		if (dto.getSpeechId() != null) {
+		if (StringUtils.isEmpty(dto.getSpeechUrl()) && dto.getSpeechId() != null) {
 			dto.setSpeechUrl(attachmentManager.getPreviewUrlIgnoreException(dto.getSpeechId()));
 		}
 		return dto;
