@@ -39,8 +39,11 @@ public class ExamCourseKnowledgePointService
 		ExamCourseKnowledgePoint point = this.get(id);
 		if (point != null) {
 			BeanUtils.copyProperties(point, dto);
-			if (point.getVideoId() != null) {
+			if (point.getVideoId() != null && point.getVideoUrl() == null) {
 				dto.setVideoUrl(mediaService.videoUrl(point.getVideoId()));
+			}
+			if (point.getSectionId() != null && point.getSpeechUrl() == null) {
+				dto.setSpeechUrl(mediaService.videoUrl(Long.valueOf(point.getSpeechId())));
 			}
 		}
 		return dto;

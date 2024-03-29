@@ -82,4 +82,6 @@ public class BaseSubject<T> extends BaseEntity<T> {
 	 */
 	@Column(name = "auto_play_speech")
 	private Integer autoPlaySpeech;
+
+	private String speechUrl;
 }

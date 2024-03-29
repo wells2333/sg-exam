@@ -165,8 +165,8 @@ export const formSchema: FormSchema[] = [
     render: ({model, field}) => {
       return h(SgUpload, {
         value: model[field],
-        groupCode: 'exam/video',
         type: 'video',
+        accept: '.mp3',
         handleDone: (value) => {
           if (value) {
             model[field] = unref(value).id;

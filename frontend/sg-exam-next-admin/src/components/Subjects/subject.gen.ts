@@ -401,6 +401,14 @@ export function genSpeechSchemas() {
         span: 12,
       },
     },
+    {
+      field: 'speechUrl',
+      label: '音频 URL',
+      component: 'Input',
+      colProps: {
+        span: 12,
+      },
+    },
   ]
 }
 

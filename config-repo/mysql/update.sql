@@ -104,3 +104,15 @@ ALTER TABLE `exam_course_knowledge_point`
 INSERT INTO `sg-exam-user`.`sys_config` (`id`, `config_key`, `config_value`, `config_desc`, `creator`, `create_time`,
                                          `operator`, `update_time`, `is_deleted`, `tenant_code`)
 VALUES (16, 'sys_tenant_code', 'gitee', '系统默认租户code', '', '2024-03-29 02:38:51', '', '2024-03-29 02:39:08', 0, '');
+
+-- 2024年3月29日14:26:05
+ALTER TABLE `exam_subject_fill_blank`
+    ADD COLUMN speech_url varchar(255) DEFAULT NULL COMMENT '音频 URL';
+ALTER TABLE `exam_subject_judgement`
+    ADD COLUMN speech_url varchar(255) DEFAULT NULL COMMENT '音频 URL';
+ALTER TABLE `exam_subject_material`
+    ADD COLUMN speech_url varchar(255) DEFAULT NULL COMMENT '音频 URL';
+ALTER TABLE `exam_subject_short_answer`
+    ADD COLUMN speech_url varchar(255) DEFAULT NULL COMMENT '音频 URL';
+ALTER TABLE `exam_subject_choices`
+    ADD COLUMN speech_url varchar(255) DEFAULT NULL COMMENT '音频 URL';
