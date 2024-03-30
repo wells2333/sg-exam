@@ -14,7 +14,7 @@ export const useSysConfigStore = defineStore({
   }),
   getters: {
     getSysConfig(): SysConfig {
-      return this || getAuthCache<SysConfig>(SYS_CONFIG_KEY) ||{};
+      return this.sysConfig || getAuthCache<SysConfig>(SYS_CONFIG_KEY) ||{};
     }
   },
   actions: {

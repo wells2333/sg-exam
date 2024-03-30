@@ -148,7 +148,7 @@ import { mapGetters } from 'vuex'
 import { getToken, getTenantCode } from '@/utils/auth'
 import { checkExist } from '@/api/admin/user'
 import { sendSms } from '@/api/admin/mobile'
-
+import store from '@/store';
 export default {
   data () {
     let checkRegisterUsername = (rule, value, callback) => {
@@ -180,7 +180,7 @@ export default {
       activeName: '/login',
       login: {
         form: {
-          tenantCode: '',
+          tenantCode: store.getters.sysConfig.sys_tenant_code,
           identifier: '',
           credential: '',
           code: '',

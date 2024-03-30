@@ -80,7 +80,7 @@
   </Form>
 </template>
 <script lang="ts" setup>
-import {computed, reactive, ref, unref} from 'vue';
+import {computed, reactive, ref, unref,onMounted} from 'vue';
 
 import {Button, Checkbox, Col, Form, Input, Row} from 'ant-design-vue';
 import LoginFormTitle from './LoginFormTitle.vue';
@@ -98,6 +98,8 @@ import {
 } from './useLogin';
 import {useDesign} from '/@/hooks/web/useDesign';
 import {getTicket} from "/@/api/sys/user";
+import { useSysConfigStore } from '/@/store/modules/config';
+import {getSysDefaultConfig} from "/@/api/sys/config";
 //import { onKeyStroke } from '@vueuse/core';
 
   const ACol = Col;
@@ -121,6 +123,14 @@ import {getTicket} from "/@/api/sys/user";
     tenantCode: 'gitee',
     account: '',
     password: '',
+  });
+  const sysConfigStore = useSysConfigStore();
+  const sysConfig = ref<any>();
+  onMounted(async () => {
+      sysConfig.value = await getSysDefaultConfig();
+      sysConfigStore.setSysConfig(sysConfig.value);
+      sysConfig.value = sysConfigStore.getSysConfig;
+      formData.tenantCode =  sysConfig.value.sys_tenant_code
   });
 
   const { validForm } = useFormValid(formRef);

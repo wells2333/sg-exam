@@ -73,8 +73,6 @@ import { useGlobSetting } from '/@/hooks/setting';
 import { useI18n } from '/@/hooks/web/useI18n';
 import { useDesign } from '/@/hooks/web/useDesign';
 import { useLocaleStore } from '/@/store/modules/locale';
-import {getSysDefaultConfig} from "/@/api/sys/config";
-import {useSysConfigStore} from "/@/store/modules/config";
 
 export default defineComponent({
   name: 'Login',
@@ -88,18 +86,12 @@ export default defineComponent({
   },
   setup () {
     const sysConfig = ref<any>();
-    const sysConfigStore = useSysConfigStore();
     const globSetting = useGlobSetting();
     const { prefixCls } = useDesign('login');
     const { t } = useI18n();
     const localeStore = useLocaleStore();
     const showLocale = localeStore.getShowPicker;
     const title = computed(() => globSetting?.title ?? '');
-
-    onMounted(async () => {
-      sysConfig.value = await getSysDefaultConfig();
-      sysConfigStore.setSysConfig(sysConfig.value);
-    });
     return {
       prefixCls,
       t,
