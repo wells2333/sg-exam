@@ -23,4 +23,9 @@ public interface ExaminationMapper extends CrudMapper<Examination> {
 
 	int findExamUserCount(Examination examination);
 
+	/**
+	 * 根据id查询考试记录数量
+	 */
+	int findExaminationRecordCountByExaminationId(String examinationId);
+
 }

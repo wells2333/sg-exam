@@ -25,6 +25,7 @@ import com.github.tangyi.exam.enums.ExaminationType;
 import com.github.tangyi.exam.enums.SubjectType;
 import com.github.tangyi.exam.mapper.ExaminationMapper;
 import com.github.tangyi.exam.service.ExamPermissionService;
+import com.github.tangyi.exam.service.ExamRecordService;
 import com.github.tangyi.exam.service.ExaminationSubjectService;
 import com.github.tangyi.exam.service.MaterialSubjectService;
 import com.github.tangyi.exam.service.course.CourseService;
@@ -155,6 +156,12 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 
 		return new PageInfo<>();
 	}
+
+	@Override
+	public int findExaminationRecordCountByExaminationId(String examinationId) {
+		return this.dao.findExaminationRecordCountByExaminationId(examinationId);
+	}
+
 
 	public PageInfo<?> findUserFavoritesPage(PageInfo<ExamUserFav> page) {
 		List<Long> examIds = page.getList().stream().map(ExamUserFav::getTargetId).toList();
@@ -507,6 +514,23 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	private PageInfo<ExaminationDto> toDtoPage(PageInfo<Examination> page, List<Examination> list,
 			Map<String, Object> params) {
 		List<ExaminationDto> dtoList = toDtoList(list);
+		for (ExaminationDto examinationDto : dtoList) {
+			int count = findExaminationRecordCountByExaminationId(String.valueOf(examinationDto.getId()));
+			examinationDto.setJoinNum(count);
+		}
+		if (params.get("sort") != null && "join".equals(params.get("sort"))) {
+			this.dao.findAllExaminationCount();
+			// 使用自定义的比较器按照考试数量对列表进行排序
+			Collections.sort(dtoList, new Comparator<ExaminationDto>() {
+				@Override
+				public int compare(ExaminationDto exam1, ExaminationDto exam2) {
+					int count1 = exam1.getJoinNum();
+					int count2 = exam2.getJoinNum();
+					// 按照考试数量进行降序排序
+					return Integer.compare(count2, count1);
+				}
+			});
+		}
 		if (Status.OPEN.equals(params.get("favorite"))) {
 			examFavoritesService.findExamStartCounts(dtoList);
 			examFavoritesService.findUserFavorites(dtoList);

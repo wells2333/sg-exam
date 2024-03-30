@@ -20,6 +20,8 @@ public interface IExaminationService extends ICrudService<Examination> {
 
 	PageInfo<ExaminationDto> userExaminationList(Map<String, Object> params, int pageNum, int pageSize);
 
+	int findExaminationRecordCountByExaminationId(String examinationId);
+
 	PageInfo<SubjectDto> findSubjectPageById(SubjectDto subjectDto, Map<String, Object> params, int pageNum,
 			int pageSize);
 

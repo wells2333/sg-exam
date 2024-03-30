@@ -29,6 +29,11 @@ public class ExaminationDto extends Examination {
 	 */
 	private boolean favorite;
 
+	/**
+	 * 参加考试人数
+	 */
+	private Integer joinNum;
+
 	public static ExaminationDto of(Examination examination) {
 		ExaminationDto dto = new ExaminationDto();
 		BeanUtils.copyProperties(examination, dto);

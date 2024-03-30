@@ -53,6 +53,13 @@
               </div>
             </div>
           </div>
+          <div class="seat-rating-fee d-flex justify-content-between">
+              <div class="seat-rating h-100 d-flex align-items-center">
+                <div class="seat" :title="$t('exam.course.courses.registerStudentsCnt')">
+                  <i class="el-icon-user-solid" aria-hidden="true"></i> {{exam.joinNum}}
+                </div>
+              </div>
+          </div>
         </div>
       </transition>
       <i v-if="examList !== undefined && examList.length > 0" v-for="count in (examList.length)" :key="count"></i>
@@ -182,9 +189,9 @@ export default {
     changeTag (tag) {
       this.activeTag = tag
       if (tag === '2') {
-        this.query.sort = 'create_date'
-      } else if (tag === '3') {
-        this.query.sort = 'create_date'
+        this.query.sort = 'create_time'
+      } else if (tag === '4') {
+        this.query.sort = 'join'
       } else {
         this.query.sort = 'id'
       }

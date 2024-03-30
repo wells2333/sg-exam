@@ -100,7 +100,21 @@
             WHERE exam_type = 1 AND member_type = 2 AND member_id = #{params.deptId}))
         </if>
         )
-        ORDER BY sort DESC
+        <if test="params.sort != null">
+            <choose>
+                <when test="params.sort == 'id'">
+                    ORDER BY id DESC
+                </when>
+                <when test="params.sort == 'create_time'">
+                    ORDER BY create_time DESC
+                </when>
+                <!-- 其他情况 -->
+                <otherwise>
+                    <!-- 默认排序 -->
+                    ORDER BY id DESC
+                </otherwise>
+            </choose>
+        </if>
     </select>
 
     <select id="findExaminationByCourseId" resultMap="examinationResultMap">
@@ -114,6 +128,10 @@
 
     <select id="findExamUserCount" resultType="java.lang.Integer">
         SELECT COUNT(1) FROM (SELECT user_id FROM exam_examination_record WHERE tenant_code = #{tenantCode} GROUP BY user_id) a
+    </select>
+
+    <select id="findExaminationRecordCountByExaminationId" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM exam_examination_record a WHERE a.is_deleted = 0 and examination_id = #{examinationId}
     </select>
 
     <delete id="delete">
