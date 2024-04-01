@@ -87,7 +87,7 @@
                   <span><i class="fa fa-circle" aria-hidden="true"></i></span>
                   <a href="#">{{course.major !== null ? course.major : ''}}</a>
                 </div>
-                <p class="clamp">{{course.simpleDesc !== null ? course.simpleDesc : ''}}</p>
+                <p class="clamp">{{course.simpleDesc !== null ? course.simpleDesc : '暂无简介'}}</p>
               </div>
               <div class="seat-rating-fee d-flex justify-content-between">
                 <div class="seat-rating h-100 d-flex align-items-center">
@@ -236,7 +236,7 @@ export default {
     margin-bottom: 20px; /* 可选的间距 */
 }
 .clamp {
-    height: 60px;
+    height: 70px;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden;

@@ -162,7 +162,6 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		return this.dao.findExaminationRecordCountByExaminationId(examinationId);
 	}
 
-
 	public PageInfo<?> findUserFavoritesPage(PageInfo<ExamUserFav> page) {
 		List<Long> examIds = page.getList().stream().map(ExamUserFav::getTargetId).toList();
 		List<Examination> examinations = findListById(examIds.toArray(Long[]::new));

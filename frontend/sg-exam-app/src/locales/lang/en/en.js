@@ -160,7 +160,9 @@ const en = {
       inputEvaluation: 'Please enter your evaluation',
       submitSuccess: 'Submit successfully',
       doNotResubmit: 'Do not resubmit',
-      defaultEvaluate: 'User default positive reviews'
+      defaultEvaluate: 'User default positive reviews',
+      unrelatedCourse: 'unrelated course',
+      withoutTimeLimit: 'without time limit'
     },
     startExam: {
       last: 'Previous',

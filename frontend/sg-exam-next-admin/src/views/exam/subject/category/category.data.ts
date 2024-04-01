@@ -7,7 +7,6 @@ export const columns: BasicColumn[] = [
   {
     title: '分类名称',
     dataIndex: 'categoryName',
-    width: 160,
     align: 'left',
   },
   {
@@ -24,7 +23,6 @@ export const columns: BasicColumn[] = [
   {
     title: '类型',
     dataIndex: 'type',
-    align: 'left',
     customRender: ({ record }) => {
       const type = record.type;
       let color = 'green';
@@ -43,7 +41,6 @@ export const columns: BasicColumn[] = [
     dataIndex: 'sort',
     title: '排序',
     width: 160,
-    align: 'left',
   },
   {
     title: '分类描述',

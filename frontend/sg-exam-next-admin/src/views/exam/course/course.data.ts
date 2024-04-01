@@ -89,6 +89,16 @@ export const columns: BasicColumn[] = [
     title: '老师',
     dataIndex: 'teacher',
     width: 100,
+    customRender: ({record}) => {
+      const teacher = record.teacher;
+      let color = 'green';
+      let text = teacher;
+      if (teacher == null) {
+        color = 'red';
+        text = '暂无老师';
+      }
+      return h(Tag, {color: color}, () => text);
+    },
   },
   {
     title: '更新时间',

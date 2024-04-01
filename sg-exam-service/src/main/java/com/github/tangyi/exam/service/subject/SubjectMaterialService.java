@@ -95,13 +95,15 @@ public class SubjectMaterialService extends CrudService<SubjectMaterialMapper, S
 		List<SubjectDto> list = Lists.newArrayListWithExpectedSize(ids.size());
 		for (Long id : ids) {
 			SubjectDto dto = getSubject(id);
-			// 找到材料题附属题目
-			List<MaterialSubject> listByMaterial = materialSubjectService.findListByMaterialId(id);
-			Long[] subjectIds = listByMaterial.stream().map(MaterialSubject::getSubjectId).toArray(Long[]::new);
-			List<Subjects> childSubjects = subjectsService.findBySubjectIds(subjectIds);
-			List<SubjectDto> subjectDtoList = subjectsService.findSubjectDtoList(childSubjects, true, true);
-			dto.setChildSubjects(subjectDtoList);
 			if (dto != null) {
+				// 找到材料题附属题目
+				List<MaterialSubject> listByMaterial = materialSubjectService.findListByMaterialId(id);
+				Long[] subjectIds = listByMaterial.stream().map(MaterialSubject::getSubjectId).toArray(Long[]::new);
+				if (subjectIds.length > 0){
+					List<Subjects> childSubjects = subjectsService.findBySubjectIds(subjectIds);
+					List<SubjectDto> subjectDtoList = subjectsService.findSubjectDtoList(childSubjects, true, true);
+					dto.setChildSubjects(subjectDtoList);
+				}
 				list.add(dto);
 			}
 		}

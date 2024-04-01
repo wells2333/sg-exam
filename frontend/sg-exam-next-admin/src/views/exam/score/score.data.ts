@@ -42,6 +42,14 @@ export const examColumns: BasicColumn[] = [
     title: '开始时间',
     dataIndex: 'startTime',
     width: 180,
+    customRender: ({record}) => {
+      const startTime = record.startTime;
+      let text = startTime;
+      if (startTime == null || startTime == "") {
+        text = '无限制';
+      }
+      return h(Tag,() => text);
+    },
   },
   {
     title: '更新时间',

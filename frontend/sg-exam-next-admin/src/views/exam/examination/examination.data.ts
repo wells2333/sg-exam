@@ -49,6 +49,16 @@ export const columns: BasicColumn[] = [
     title: '课程',
     dataIndex: 'course.courseName',
     width: 100,
+    customRender: ({record}) => {
+      const courseName = record.courseName;
+      let color = 'green';
+      let text = courseName;
+      if (courseName == null) {
+        color = 'red';
+        text = '暂无课程';
+      }
+      return h(Tag, {color: color}, () => text);
+    },
   },
   {
     title: '状态',
@@ -66,11 +76,29 @@ export const columns: BasicColumn[] = [
     title: '标签',
     dataIndex: 'tags',
     width: 100,
+    customRender: ({record}) => {
+      const tags = record.tags;
+      let color = 'green';
+      let text = tags;
+      if (tags == null || tags == "") {
+        color = 'red';
+        text = '暂无标签';
+      }
+      return h(Tag, {color: color}, () => text);
+    },
   },
   {
     title: '开始时间',
     dataIndex: 'startTime',
     width: 180,
+    customRender: ({record}) => {
+      const startTime = record.startTime;
+      let text = startTime;
+      if (startTime == null || startTime == "") {
+        text = '无限制';
+      }
+      return h(Tag,() => text);
+    },
   },
   {
     title: '更新时间',

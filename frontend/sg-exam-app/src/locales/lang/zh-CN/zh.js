@@ -159,7 +159,9 @@ const zh = {
       inputEvaluation: '请输入评价内容',
       submitSuccess: '提交成功',
       doNotResubmit: '请勿重复提交',
-      defaultEvaluate: '用户默认好评'
+      defaultEvaluate: '用户默认好评',
+      unrelatedCourse: '无关联课程',
+      withoutTimeLimit: '无时间限制'
     },
     startExam: {
       last: '上一题',
