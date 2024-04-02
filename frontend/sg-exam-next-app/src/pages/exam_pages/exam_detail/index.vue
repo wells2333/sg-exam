@@ -24,7 +24,7 @@
           </view>
         </view>
         <view :span="6" class="exam-start-button">
-          <nut-button type="primary" @click="handleClickStart">开始</nut-button>
+          <nut-button type="primary" size="small" @click="handleClickStart">开始答题</nut-button>
         </view>
       </view>
     </view>

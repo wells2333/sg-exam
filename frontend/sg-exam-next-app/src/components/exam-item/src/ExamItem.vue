@@ -1,30 +1,23 @@
 <template>
-  <view>
+  <view class="exam-item-container">
     <view @click="handleStart">
-      <image class="card-item-img" :src="item.imageUrl"></image>
-    </view>
-    <view class="card-item-bottom" @click="handleStart">
-      <h4 class="card-title">{{ item.examinationName }}</h4>
-      <nut-tag :class="index === 0 ? 'card-item-bottom-first-tag card-item-bottom-tag' : 'card-item-bottom-tag'"
-              type="success" size="small" v-for="(tag, index) in tags">
-        {{ tag }}
-      </nut-tag>
-    </view>
-    <view class="card-item-bottom-fixed">
-      <view class="card-item-favorites">
-        <view class="card-item-favorites-item">
-          <IconFont name='edit' color='#AAAAAA'></IconFont>
-          <text class="card-item-favorites-text">{{ startCount }}</text>
-        </view>
-        <view class="card-item-favorites-item" @click="handleFavoriteExam">
-          <IconFont v-if="favorite" name='star-fill-n' color="#FFC82C"></IconFont>
-          <IconFont v-else name='star-n' color="#AAAAAA"></IconFont>
-          <text class="card-item-favorites-text">{{ favoriteCount }}</text>
-        </view>
-      </view>
-      <view>
-        <a href="#" @click="handleStart">查看</a>
-      </view>
+      <nut-row type="flex" wrap="nowrap">
+        <nut-col :span="8">
+          <image class="exam-item-img" :src="item.imageUrl"></image>
+        </nut-col>
+        <nut-col :span="16" class="exam-item-info">
+          <h4 class="card-title">{{ item.examinationName }}</h4>
+          <view class="card-simple-desc">
+            <p v-if="item.tags !== null" >{{item.tags}}</p>
+          </view>
+          <view class="course-item-info-member">
+            <text class="card-simple-desc">{{ startCount }} 人已参加</text>
+          </view>
+          <view class="course-detail-btn">
+            <nut-button type="primary" size="small" @click="handleStart">了解详情</nut-button>
+          </view>
+        </nut-col>
+      </nut-row>
     </view>
   </view>
 </template>
@@ -103,5 +96,23 @@ export default defineComponent({
 </script>
 
 <style>
+.exam-item-container {
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
 
+.exam-item-img {
+  width: 100%;
+  height: 160px;
+  border-radius: 8px;
+  margin: 20px;
+}
+
+.exam-item-info {
+  margin-left: 30px;
+  margin-top: 10px;
+}
 </style>

@@ -5,6 +5,7 @@
         <view class="exam-item box-show-item flex-col" v-for="item in items">
           <exam-item :item="item" @fav="handleFav(item)" @start="handleStartExam"></exam-item>
         </view>
+        <nut-empty v-if="loadMoreStatus !== 'loading' && items.length === 0"></nut-empty>
       </nut-tab-pane>
       <nut-tab-pane title="题目">
         <view class="exam-item box-show-item flex-col subject-content bg-white" v-for="(item, index) in items">
@@ -44,11 +45,13 @@
             <wxparse class="answer-text-value" :html="item.analysis" key={Math.random()}></wxparse>
           </view>
         </view>
+        <nut-empty v-if="loadMoreStatus !== 'loading' && items.length === 0"></nut-empty>
       </nut-tab-pane>
       <nut-tab-pane title="课程">
         <view class="exam-item box-show-item flex-col" v-for="item in items">
           <course-item :item="item" @fav="handleFav(item)" @click="handleClickCourse"></course-item>
         </view>
+        <nut-empty v-if="loadMoreStatus !== 'loading' && items.length === 0"></nut-empty>
       </nut-tab-pane>
     </nut-tabs>
   </view>

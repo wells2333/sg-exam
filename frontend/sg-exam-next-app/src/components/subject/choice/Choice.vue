@@ -190,6 +190,7 @@ export default defineComponent({
 }
 
 .subject-choice-checkbox__title {
+  margin-left: 10px;
   display: flex;
   align-items: center;
   font-size: 0.9rem;
