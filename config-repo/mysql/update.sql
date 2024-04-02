@@ -24,10 +24,10 @@ CREATE TABLE `exam_subject_fill_blank` (
    KEY `idx_category_id` (`category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='填空题表';
 
--- 2024年03月16日21:53:20
+-- 2024 年 03 月 16 日 21:53:20
 ALTER TABLE `exam_examination` ADD COLUMN `max_exam_cnt` int(10) NOT NULL DEFAULT 0 COMMENT '最大考试次数，默认 0 不限制';
 
--- 2024年3月25日21:34:17
+-- 2024 年 3 月 25 日 21:34:17
 CREATE TABLE `exam_subject_material` (
  `id` bigint(20) NOT NULL COMMENT '主键',
  `category_id` bigint(20) DEFAULT '0',
@@ -52,7 +52,7 @@ CREATE TABLE `exam_subject_material` (
  KEY `idx_category_id` (`category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='材料表';
 
--- 2024年3月26日12:43:26
+-- 2024 年 3 月 26 日 12:43:26
 CREATE TABLE `exam_material_subject`  (
  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
  `material_id` bigint NULL DEFAULT NULL COMMENT '材料 ID',
@@ -69,22 +69,22 @@ CREATE TABLE `exam_material_subject`  (
  INDEX `idx_subject_id`(`subject_id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 175 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '材料题目表' ROW_FORMAT = DYNAMIC;
 
--- 2024年3月26日16:25:50
+-- 2024 年 3 月 26 日 16:25:50
 INSERT INTO `sys_menu` (`id`, `name`, `permission`, `path`, `parent_id`, `icon`, `sort`, `type`, `creator`, `create_time`,
     `operator`, `update_time`, `is_deleted`, `component`, `is_ext`, `keepalive`, `remark`, `tenant_code`, `hide_menu`, `redirect`, `current_active_menu`)
 VALUES (100, '材料题目管理', NULL, '/exam/material_subjects/:id', 28, NULL, '5', '0', 'admin', '2024-03-26 13:23:24',
         'admin', '2024-03-26 08:22:53', 0, 'exam/materialSubjects/index', 0, 0, NULL, 'gitee', 1, '', '/exam/subject');
 
--- 2024年3月27日09:41:14
+-- 2024 年 3 月 27 日 09:41:14
 ALTER TABLE `exam_material_subject`
     ADD COLUMN examination_id bigint DEFAULT NULL COMMENT '考试 ID';
 
--- 2024年3月27日09:59:39
+-- 2024 年 3 月 27 日 09:59:39
 update `sys_menu`
     set path = '/exam/material_subjects/:materialId/:examinationId*'
 where id = 100
 
--- 2024年3月28日20:51:29
+-- 2024 年 3 月 28 日 20:51:29
 ALTER TABLE `exam_course_section`
     ADD COLUMN video_url varchar(255) DEFAULT NULL COMMENT '视频 URL';
 ALTER TABLE `exam_course_section`
@@ -92,7 +92,7 @@ ALTER TABLE `exam_course_section`
 ALTER TABLE `exam_course_section`
     ADD COLUMN speech_url varchar(255) DEFAULT NULL COMMENT '音频 URL';
 
--- 2024年3月28日22:03:01
+-- 2024 年 3 月 28 日 22:03:01
 ALTER TABLE `exam_course_knowledge_point`
     ADD COLUMN video_url varchar(255) DEFAULT NULL COMMENT '视频 URL';
 ALTER TABLE `exam_course_knowledge_point`
@@ -100,12 +100,12 @@ ALTER TABLE `exam_course_knowledge_point`
 ALTER TABLE `exam_course_knowledge_point`
     ADD COLUMN speech_url varchar(255) DEFAULT NULL COMMENT '音频 URL';
 
--- 2024年3月29日10:34:54
-INSERT INTO `sys_config` (`id`, `config_key`, `config_value`, `config_desc`, `creator`, `create_time`,
+-- 2024 年 3 月 29 日 10:34:54
+INSERT INTO `sys_config` (`config_key`, `config_value`, `config_desc`, `creator`, `create_time`,
                                          `operator`, `update_time`, `is_deleted`, `tenant_code`)
-VALUES (16, 'sys_tenant_code', 'gitee', '系统默认租户code', '', '2024-03-29 02:38:51', '', '2024-03-29 02:39:08', 0, '');
+VALUES ('sys_tenant_code', 'gitee', '系统默认租户 code', '', '2024-03-29 02:38:51', '', '2024-03-29 02:39:08', 0, '');
 
--- 2024年3月29日14:26:05
+-- 2024 年 3 月 29 日 14:26:05
 ALTER TABLE `exam_subject_fill_blank`
     ADD COLUMN speech_url varchar(255) DEFAULT NULL COMMENT '音频 URL';
 ALTER TABLE `exam_subject_judgement`
