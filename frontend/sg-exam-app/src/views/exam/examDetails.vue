@@ -172,7 +172,7 @@ export default {
           type: 'warning'
         }).then(() => {
           store.dispatch('StartExam', this.tempExamRecord).then((result) => {
-            if (this.examRecord === undefined || this.subject === undefined) {
+            if (this.examRecord === undefined) {
               messageWarn(this, this.$t('exam.exams.startFailed'))
               return
             }

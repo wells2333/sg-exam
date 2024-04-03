@@ -164,7 +164,7 @@ public class ExamRecordController extends BaseController {
 	@Operation(summary = "获取全部题目列表")
 	public R<List<SimpleSubjectDto>> anonymousUserAllSubjects(@PathVariable Long id) {
 		Examination examination = examinationService.get(id);
-		// 只返回调查问卷类型的题目
+		// 只返回非调查问卷类型的题目
 		if (examination == null || !ExaminationType.QUESTIONNAIRE.getValue().equals(examination.getType())) {
 			return R.success(Collections.emptyList());
 		}

@@ -10,5 +10,10 @@ public class CardDto {
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long subjectId;
 
+	/**
+	 * 是否回答
+	 */
+	private Boolean answered;
+
 	private Integer sort;
 }
