@@ -10,7 +10,12 @@ export const submitStatus = {
   2: 'magenta',
   3: 'green'
 }
-
+export const submitStatusText = {
+  0: '待批改',
+  1: '待批改',
+  2: '已批改',
+  3: '统计完成'
+}
 export const examColumns: BasicColumn[] = [
   {
     title: '考试名称',
@@ -95,11 +100,11 @@ export const columns: BasicColumn[] = [
   },
   {
     title: "状态",
-    dataIndex: 'submitStatusName',
+    dataIndex: 'status',
     width: 80,
     customRender: ({ record }) => {
       const color = submitStatus[record.submitStatus];
-      return h(Tag, { color: color }, () => record.submitStatusName);
+      return h(Tag, { color: color }, () => submitStatusText[record.submitStatus]);
     },
   },
   {

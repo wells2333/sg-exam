@@ -21,6 +21,7 @@ import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.*;
 import com.github.tangyi.common.vo.UserVo;
 import com.github.tangyi.constants.ExamCacheName;
+import com.github.tangyi.exam.constants.MarkConstant;
 import com.github.tangyi.exam.handler.HandlerFactory;
 import com.github.tangyi.exam.handler.IAnswerHandler;
 import com.github.tangyi.exam.mapper.AnswerMapper;
@@ -133,6 +134,9 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> implements 
 			log.info("Update answer success, examRecordId: {}, oldScore: {}, newScore: {}", oldAnswer.getExamRecordId(),
 					oldScore, record.getScore());
 		}
+		// 判断是否全部批改
+		if (isOK(recordId))
+			markOk(recordId); // 批改
 		return 1;
 	}
 
@@ -393,6 +397,26 @@ public class AnswerService extends CrudService<AnswerMapper, Answer> implements 
 			}
 		}
 		return dto;
+	}
+
+	@Override
+	public Boolean isOK(Long recordId) {
+		Map<String, Object> condition = Maps.newHashMap();
+		super.tenantParams(condition);
+		if (recordId != null) {
+			condition.put("examRecordId", recordId);
+		}
+		PageInfo<Answer> pageInfo = this.findPage(condition, 1,10);
+		List<Answer> list = pageInfo.getList();
+		Boolean isOk = true;
+		for (Answer answer : list) {
+			if (answer.getMarkStatus() == 0){
+				isOk = false;
+				break;
+			}
+
+		}
+		return isOk;
 	}
 
 	private Map<Long, User> findUserList(List<ExaminationRecord> sorted) {

@@ -22,4 +22,6 @@ public interface IAnswerService extends ICrudService<Answer> {
     AnswerDto answerInfo(Long recordId, Long currentSubjectId, Integer nextType);
 
 	AnswerAnalysisDto analysis(Long examinationId);
+
+    Boolean isOK(Long recordId);
 }

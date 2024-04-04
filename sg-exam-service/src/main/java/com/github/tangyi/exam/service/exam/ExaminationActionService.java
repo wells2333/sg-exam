@@ -16,9 +16,11 @@ import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.*;
 import com.github.tangyi.common.vo.UserVo;
 import com.github.tangyi.exam.enums.ExaminationType;
+import com.github.tangyi.exam.enums.SubjectType;
 import com.github.tangyi.exam.handler.HandlerFactory;
 import com.github.tangyi.exam.service.ExamRecordService;
 import com.github.tangyi.exam.service.ExaminationSubjectService;
+import com.github.tangyi.exam.service.MaterialSubjectService;
 import com.github.tangyi.exam.service.RankInfoService;
 import com.github.tangyi.exam.service.answer.AnswerService;
 import com.github.tangyi.exam.service.fav.ExamFavoritesService;
@@ -31,11 +33,13 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.ehcache.spi.service.MaintainableService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -53,6 +57,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@AllArgsConstructor
 public class ExaminationActionService implements IExaminationActionService {
 
 	private final PlatformTransactionManager txManager;
@@ -65,24 +70,7 @@ public class ExaminationActionService implements IExaminationActionService {
 	private final RankInfoService rankInfoService;
 	private final IExecutorHolder executorHolder;
 	private final ExamFavoritesService examFavoritesService;
-
-	public ExaminationActionService(PlatformTransactionManager txManager, IIdentifyService identifyService,
-			ExaminationService examinationService, ExaminationSubjectService examinationSubjectService,
-			ExamRecordService examRecordService, SubjectsService subjectsService, AnswerService answerService,
-			RankInfoService rankInfoService, IExecutorHolder executorHolder,
-			ExamFavoritesService examFavoritesService) {
-		this.txManager = txManager;
-		this.identifyService = identifyService;
-		this.examinationService = examinationService;
-		this.examinationSubjectService = examinationSubjectService;
-		this.examRecordService = examRecordService;
-		this.subjectsService = subjectsService;
-		this.answerService = answerService;
-		this.rankInfoService = rankInfoService;
-		this.executorHolder = executorHolder;
-		this.examFavoritesService = examFavoritesService;
-	}
-
+	private final MaterialSubjectService materialSubjectService;
 	@Override
 	@Transactional
 	public StartExamDto start(ExaminationRecord examRecord) {
@@ -217,7 +205,7 @@ public class ExaminationActionService implements IExaminationActionService {
 		ExaminationRecord record = this.examRecordService.get(recordId);
 		Long[] ids = answerList.stream().map(Answer::getSubjectId).toArray(Long[]::new);
 		Map<Integer, List<Answer>> distinct = this.distinctAnswer(ids, answerList);
-		distinct.remove(5);// 去掉材料题
+		distinct.remove(SubjectType.MATERIAL.getValue());// 去掉材料题
 		HandlerFactory.Result result = HandlerFactory.handleAll(distinct);
 		// 记录总分、正确题目数、错误题目数
 		record.setScore(result.getScore());
@@ -275,6 +263,7 @@ public class ExaminationActionService implements IExaminationActionService {
 		String tenantCode = SysUtil.getTenantCode();
 		Long recordId = answers.get(0).getExamRecordId();
 		Long[] ids = answers.stream().map(AnswerDto::getSubjectId).toArray(Long[]::new);
+		// 初次答题，只有一个题
 		List<Answer> dbAnswers = answerService.batchFindByRecordIdAndSubjectId(recordId, ids);
 		Map<Long, Answer> answerMap = dbAnswers.stream().collect(Collectors.toMap(Answer::getSubjectId, s -> s));
 		// 区分更新和插入
@@ -286,15 +275,26 @@ public class ExaminationActionService implements IExaminationActionService {
 			BeanUtils.copyProperties(answer, newAnswer);
 			newAnswer.setEndTime(endTime);
 			Answer dbAnswer = answerMap.get(answer.getSubjectId());
+			List<MaterialSubject> materialSubject = materialSubjectService.findListByMaterialId(answer.getSubjectId());
 			if (dbAnswer != null) {
 				newAnswer.setCommonValue(userCode, tenantCode);
 				newAnswer.setAnswer(answer.getAnswer());
+				// 是材料题，就做标记
+				if (CollectionUtils.isNotEmpty(materialSubject)){
+					newAnswer.setAnswerType(AnswerConstant.NotCount);
+					newAnswer.setMarkStatus(1); // 标记为批改
+				}
 				updates.add(newAnswer);
 			} else {
 				newAnswer.setNewRecord(true);
 				newAnswer.setCommonValue(userCode, tenantCode);
 				newAnswer.setMarkStatus(AnswerConstant.TO_BE_MARKED);
 				newAnswer.setAnswerType(AnswerConstant.WRONG);
+				// 是材料题，就做标记
+				if (CollectionUtils.isNotEmpty(materialSubject)){
+					newAnswer.setAnswerType(AnswerConstant.NotCount);
+					newAnswer.setMarkStatus(1); // 标记为批改
+				}
 				inserts.add(newAnswer);
 			}
 		}

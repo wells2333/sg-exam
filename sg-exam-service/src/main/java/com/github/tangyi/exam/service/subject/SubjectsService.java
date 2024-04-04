@@ -474,7 +474,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 						subjectDto.setChildLength(subjectIds.length);
 						if (subjectIds.length > 0){
 							List<Subjects> childSubjects = findBySubjectIds(subjectIds);
-							List<SubjectDto> subjectDtoList = findSubjectDtoList(childSubjects, true, false);
+							List<SubjectDto> subjectDtoList = findSubjectDtoList(childSubjects, findOptions, findAnswer);
 							subjectDto.setChildSubjects(subjectDtoList);
 						}
 

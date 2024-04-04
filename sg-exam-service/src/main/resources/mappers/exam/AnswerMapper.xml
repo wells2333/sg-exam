@@ -108,6 +108,9 @@
                 <if test="item.answer != null">
                     answer = #{item.answer,jdbcType=VARCHAR},
                 </if>
+                <if test="item.type != null">
+                    type = #{item.type},
+                </if>
                 <if test="item.score != null">
                     score = #{item.score},
                 </if>

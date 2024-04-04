@@ -8,7 +8,7 @@
       :data="score"
       :schema="scoreDetailSchema"
     />
-    <div style="background-color: white">
+    <div style="background-color: white" v-if="score.submitStatus < 3">
       <a-button type="primary" @click="handleMarkOk" class="mr-2" :loading="markOkLoading" style="margin-left: 10px;">批改完成</a-button>
     </div>
     <BasicTable @register="registerTable">

@@ -1,7 +1,10 @@
 package com.github.tangyi.api.exam.constants;
 
 public class AnswerConstant {
-
+    /**
+     * 不计算对错
+     */
+    public static final Integer NotCount = -1;
     /**
      * 正确
      */

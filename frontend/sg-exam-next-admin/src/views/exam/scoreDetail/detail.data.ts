@@ -6,7 +6,18 @@ import { subjectColor, COLOR } from '/@/components/Subjects/subject.constant';
 import { h } from 'vue';
 
 const commonTagRender = (color: string) => (curVal) => h(Tag, { color }, () => curVal);
-
+export const submitStatus = {
+  0: 'gold',
+  1: 'blue',
+  2: 'magenta',
+  3: 'green'
+}
+export const submitStatusText = {
+  0: '待批改',
+  1: '待批改',
+  2: '已批改',
+  3: '统计完成'
+}
 export const scoreDetailSchema: DescItem[] = [
   {
     field: 'examinationName',
@@ -50,9 +61,12 @@ export const scoreDetailSchema: DescItem[] = [
     label: '错误题目数',
   },
   {
-    field: 'submitStatusName',
+    field: 'submitStatus',
     label: '状态',
-    render: commonTagRender(COLOR.ZERO),
+    render: value =>{
+      const color = submitStatus[value];
+      return h(Tag, { color: color }, () => submitStatusText[value]);
+    },
   },
 ];
 
