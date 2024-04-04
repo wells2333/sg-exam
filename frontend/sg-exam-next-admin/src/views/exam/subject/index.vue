@@ -61,15 +61,7 @@
                 title: t('common.confirmDelText'),
                 confirm: handleDelete.bind(null, record),
               },
-            },
-            {
-              icon: 'ant-design:export-outlined',
-              tooltip: t('common.modules.exam.export'),
-              popConfirm: {
-                title: t('common.confirmExportText'),
-                confirm: handleExport.bind(null, record),
-              },
-            },
+            }
           ]"
         />
       </template>

@@ -6,6 +6,7 @@
         <a-button type="primary" @click="handleCreate"> {{ t('common.addText') }} </a-button>
         <a-button type="primary" @click="handleSelectSubjects"> 从题库选择</a-button>
         <a-button type="primary" @click="handleRandomSelectSubjects"> 随机组题</a-button>
+        <a-button type="primary" @click="handleExport"> 导出</a-button>
         <PopConfirmButton
           v-if="hasPermission(['exam:subject:bank:del'])"
           title="确定删除么？"
@@ -31,14 +32,6 @@
               popConfirm: {
                 title: t('common.confirmDelText'),
                 confirm: handleDelete.bind(null, record),
-              },
-            },
-            {
-              icon: 'ant-design:export-outlined',
-              tooltip: t('common.modules.exam.export'),
-              popConfirm: {
-                title: t('common.confirmExportText'),
-                confirm: handleExport.bind(null, record),
               },
             },
           ]"
