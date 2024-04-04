@@ -1,7 +1,7 @@
 <template>
   <div>
     <BasicTable @register="registerTable"
-    :rowSelection="{ type: 'checkbox', selectedRowKeys: checkedKeys, onChange: onSelectChange }">
+    :rowSelection="{ type: 'checkbox'}">
       <template #toolbar>
         <a-button type="primary" @click="handleCreate"> {{ t('common.addText') }} </a-button>
         <a-button type="primary" @click="handleSelectSubjects"> 从题库选择</a-button>
@@ -12,7 +12,7 @@
           okText="确认"
           cancelText="取消"
           @confirm="handleDeleteBatch"
-          type="danger"
+          color="error"
           >删除
         </PopConfirmButton>
       </template>
@@ -90,10 +90,8 @@
       const { createMessage } = useMessage();
       const route = useRoute();
       const examinationId = ref<any>(route.params?.id);
-      const checkedKeys = ref<Array<string | number>>([]);
-      const rowKeys = ref<Array<string | number>>([]);
       const { hasPermission } = usePermission();
-      const [registerTable, { reload, getPaginationRef }] = useTable({
+      const [registerTable, { reload, getPaginationRef, getSelectRows}] = useTable({
         title: t('common.modules.exam.subject') + t('common.list'),
         api: getExaminationSubjectList,
         searchInfo: {
@@ -111,6 +109,7 @@
         bordered: true,
         showIndexColumn: false,
         canResize: false,
+        clickToRowSelect: false,
         actionColumn: {
           width: 180,
           title: t('common.operationText'),
@@ -141,8 +140,14 @@
         createMessage.success(t('common.operationSuccessText'));
         await reload();
       }
+
       async function handleDeleteBatch() {
-        await deleteBatchSubject(rowKeys.value);
+        const ids = getSelectedRowIds();
+        if (!ids || ids.length === 0) {
+          return;
+        }
+
+        await deleteBatchSubject(ids);
         createMessage.success(t('common.operationSuccessText'));
         await reload();
       }
@@ -178,8 +183,14 @@
       function handleRandomSubjectSuccess() {
         reload();
       }
-      function handleExport(record: Recordable) {
-        let url = '?ids=' + record.id;
+
+      function handleExport() {
+        const ids = getSelectedRowIds();
+        if (!ids || ids.length === 0) {
+          return;
+        }
+
+        let url = '?ids=' + ids.join(',');
         exportSubjects(url).then((res) => {
           const url = window.URL.createObjectURL(
             new Blob([res], { type: 'application/octet-stream' }),
@@ -194,11 +205,20 @@
           document.body.removeChild(link);
         });
       }
-      const onSelectChange = (selectedRowKeys, selectedRows) => {
-        const arrayOfIds = selectedRows.map((obj) => obj.id);
-        rowKeys.value = arrayOfIds;
-        checkedKeys.value = selectedRowKeys;
-      };
+
+      function getSelectedRowIds() {
+        const rows = getSelectRows();
+        if (!rows || rows.length === 0) {
+          return undefined;
+        }
+
+        const ids = [];
+        rows.forEach(e => {
+          ids.push(e.id);
+        });
+        return ids;
+      }
+
       return {
         t,
         registerTable,
@@ -215,8 +235,6 @@
         handleSelectSubjectSuccess,
         handleRandomSubjectSuccess,
         handleExport,
-        checkedKeys,
-        onSelectChange,
         handleDeleteBatch,
         hasPermission
       };

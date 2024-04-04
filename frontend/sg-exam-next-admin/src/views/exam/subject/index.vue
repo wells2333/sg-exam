@@ -5,7 +5,7 @@
       @register="registerTable"
       class="w-3/4 xl:w-4/5"
       :searchInfo="searchInfo"
-      :rowSelection="{ type: 'checkbox', selectedRowKeys: checkedKeys, onChange: onSelectChange }"
+      :rowSelection="{ type: 'checkbox' }"
     >
       <template #toolbar>
         <a-button
@@ -42,7 +42,7 @@
           okText="确认"
           cancelText="取消"
           @confirm="handleDeleteBatch"
-          type="danger"
+          color="error"
           >删除
         </PopConfirmButton>
       </template>
@@ -56,7 +56,6 @@
             },
             {
               icon: 'ant-design:delete-outlined',
-              color: 'error',
               auth: 'exam:subject:bank:del',
               popConfirm: {
                 title: t('common.confirmDelText'),
@@ -120,9 +119,7 @@
       const [registerCategoryModal, { openModal: openCategoryModal }] = useModal();
       const { createMessage } = useMessage();
       const searchInfo = reactive<Recordable>({});
-      const checkedKeys = ref<Array<string | number>>([]);
-      const rowKeys = ref<Array<string | number>>([]);
-      const [registerTable, { reload }] = useTable({
+      const [registerTable, { reload, getSelectRows }] = useTable({
         title: t('common.modules.exam.subject') + t('common.list'),
         api: (arg) => {
           const { categoryId } = searchInfo;
@@ -148,6 +145,7 @@
         },
         showIndexColumn: false,
         canResize: false,
+        clickToRowSelect: false,
         actionColumn: {
           width: 100,
           title: t('common.operationText'),
@@ -175,6 +173,7 @@
           createMessage.warning('请选择题目分类');
           return;
         }
+
         openModal(true, {
           record,
           isUpdate: true,
@@ -188,8 +187,14 @@
         createMessage.success(t('common.operationSuccessText'));
         await reload();
       }
+
       async function handleDeleteBatch() {
-        await deleteBatchSubject(rowKeys.value);
+        const ids = getSelectedRowIds();
+        if (!ids || ids.length === 0) {
+          return;
+        }
+
+        await deleteBatchSubject(ids);
         createMessage.success(t('common.operationSuccessText'));
         await reload();
       }
@@ -234,13 +239,18 @@
           obj.reloadTree();
         }
       }
+
       function handleExport(record: Recordable) {
         let url;
-        if (record.id != null)
-           url = '?ids=' + record.id;
-        else{
-          let ids = rowKeys.value.join(",");
-          url = '?ids=' + ids;
+        if (record.id != null) {
+          url = '?ids=' + record.id;
+        } else {
+          const ids = getSelectedRowIds();
+          if (!ids || ids.length === 0) {
+            return;
+          }
+
+          url = '?ids=' + ids.join(",");
         } 
         exportSubjects(url).then((res) => {
           const url = window.URL.createObjectURL(
@@ -257,11 +267,19 @@
         });
       }
 
-      const onSelectChange = (selectedRowKeys, selectedRows) => {
-        const arrayOfIds = selectedRows.map((obj) => obj.id);
-        rowKeys.value = arrayOfIds;
-        checkedKeys.value = selectedRowKeys;
-      };
+      function getSelectedRowIds() {
+        const rows = getSelectRows();
+        if (!rows || rows.length === 0) {
+          return undefined;
+        }
+
+        const ids = [];
+        rows.forEach(e => {
+          ids.push(e.id);
+        });
+        return ids;
+      }
+
       return {
         t,
         hasPermission,
@@ -282,8 +300,6 @@
         handleManageCategory,
         handleCategoryManageSuccess,
         handleExport,
-        checkedKeys,
-        onSelectChange,
         handleDeleteBatch,
       };
     },
