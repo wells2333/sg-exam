@@ -1,11 +1,8 @@
 <template>
   <view class="course-section">
     <view class="at-article">
-      <view v-if="courseDetail !== undefined">
-        <view class="at-article__h2">{{ courseDetail.course.courseName }}</view>
-      </view>
       <view v-if="pointDetail !== undefined">
-        <view class="at-article__h3">{{ pointDetail.title }}</view>
+        <view class="at-article__h1">{{ pointDetail.title }}</view>
         <view class='at-article__info'>
           更新时间：{{ pointDetail.updateTime }}&nbsp;&nbsp;&nbsp;&nbsp;学习时长：{{ pointDetail.learnHour }}小时
         </view>
@@ -21,7 +18,7 @@
         </view>
       </view>
       <view v-if="sectionDetail !== undefined">
-        <view class="at-article__h3">{{ sectionDetail.section.title }}</view>
+        <view class="at-article__h2">{{ sectionDetail.section.title }}</view>
         <view class='at-article__info'>
           更新时间：{{ sectionDetail.section.updateTime }}&nbsp;&nbsp;&nbsp;&nbsp;学习时长：{{
             sectionDetail.section.learnHour
@@ -134,8 +131,8 @@ export default {
 
 <style>
 .course-section {
-  margin-left: 16px;
-  margin-right: 16px;
+  margin-left: 22px;
+  margin-right: 22px;
 }
 
 .at-article {
@@ -146,13 +143,13 @@ export default {
 
 .at-article__h2 {
   margin-top: 0.64rem;
-  font-size: 30px;
+  font-size: 36px;
   line-height: 1.28rem;
 }
 
 .at-article__h3 {
   margin-top: 20px;
-  font-size: 28px;
+  font-size: 32px;
   line-height: 1.024rem;
 }
 
@@ -163,7 +160,7 @@ export default {
 .at-article__info {
   margin-top: 20px;
   color: #CCC;
-  font-size: 26px;
+  font-size: 30px;
   line-height: 0.896rem;
 }
 

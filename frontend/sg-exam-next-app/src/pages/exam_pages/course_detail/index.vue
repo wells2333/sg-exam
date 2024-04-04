@@ -33,7 +33,7 @@
     <view>
       <nut-tabs v-model="currentTag">
         <nut-tab-pane title="课程介绍">
-          <view class="course-pane">
+          <view class="course-pane course-desc">
             <wxparse :html="courseInfo.courseDescription" key={Math.random()}></wxparse>
           </view>
         </nut-tab-pane>
@@ -269,7 +269,7 @@ export default {
 
 .course-pane {
   margin-left: 8px;
-  margin-top: 20px;
+  margin-top: 22px;
 }
 
 .course-section {
@@ -283,11 +283,17 @@ export default {
 }
 
 .course-chapter {
-  font-size: 30px;
+  font-size: 36px;
+  margin-top: 26px;
 }
 
 .course-chapter:hover, .course-section:hover, .course-point:hover {
   color: #6190E8;
+}
+
+.course-section {
+  font-size: 32px;
+  margin-top: 6px;
 }
 
 .course-evaluate-time {
@@ -311,7 +317,7 @@ export default {
 }
 
 .course-evaluates {
-  margin-top: 26px;
+  margin-top: 36px;
   border-bottom: 1px solid rgb(238 238 238);
 }
 
@@ -336,6 +342,7 @@ export default {
 }
 
 .course-detail-name {
+  font-size: 36px;
   display: flex;
   align-items: center;
 }
@@ -361,4 +368,10 @@ export default {
   display: flex;
   justify-content: space-between;
 }
+
+.course-desc {
+  font-size: 36px;
+  margin-top: 20px;
+}
+
 </style>
