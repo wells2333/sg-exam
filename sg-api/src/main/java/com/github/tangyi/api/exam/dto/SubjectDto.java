@@ -157,4 +157,9 @@ public class SubjectDto extends BaseEntity<SubjectDto> {
     private Integer speechPlayLimit;
 
     private Integer autoPlaySpeech;
+
+    /**
+     * 考试题目对应的分类题目 ID
+     */
+    private Long parentId;
 }

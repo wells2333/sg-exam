@@ -400,6 +400,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		Integer nextNo = nextSubjectNo(id);
 		for (SubjectDto subject : subjects) {
 			Long oldId = subject.getId();
+			subject.setParentId(oldId);
 			subject.setId(null);
 			subject.setCategoryId(null);
 			subject.setCategoryName(null);
@@ -416,8 +417,8 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 			}
 			// 关联考试 ID
 			subject.setExaminationId(id);
-			// 关联材料题下面的题目
 			subjectsService.insert(subject);
+			// 关联材料题下面的题目
 			if (id != null){
 				if (subject.getType().equals(SubjectType.MATERIAL.getValue())){
 					// 找到老题目

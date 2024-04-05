@@ -210,6 +210,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 		sub.setCategoryId(dto.getCategoryId());
 		sub.setType(dto.getType());
 		sub.setSort(dto.getSort());
+		sub.setParentId(dto.getParentId());
 		insert(sub);
 		if (dto.getExaminationId() != null && dto.getMaterialId() == null) {
 			insertEs(dto, subjectId, dto.getCreator(), dto.getTenantCode());

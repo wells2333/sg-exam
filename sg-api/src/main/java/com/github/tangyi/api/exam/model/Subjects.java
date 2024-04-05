@@ -30,4 +30,9 @@ public class Subjects extends BaseEntity<Subjects> {
 
 	@Column(name = "sort")
 	private Integer sort;
+
+	/**
+	 * 考试题目对应的分类题目 ID
+	 */
+	private Long parentId;
 }

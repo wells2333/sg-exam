@@ -116,3 +116,7 @@ ALTER TABLE `exam_subject_short_answer`
     ADD COLUMN speech_url varchar(255) DEFAULT NULL COMMENT '音频 URL';
 ALTER TABLE `exam_subject_choices`
     ADD COLUMN speech_url varchar(255) DEFAULT NULL COMMENT '音频 URL';
+
+-- 2024 年 4 月 5 日 14:00:49
+ALTER TABLE `exam_subjects`
+    ADD COLUMN parent_id bigint DEFAULT NULL COMMENT '考试题目对应的分类题目 ID';
