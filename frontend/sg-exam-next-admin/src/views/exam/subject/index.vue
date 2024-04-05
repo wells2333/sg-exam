@@ -53,14 +53,6 @@
               icon: 'clarity:note-edit-line',
               onClick: handleEdit.bind(null, record),
               auth: 'exam:subject:bank:edit',
-            },
-            {
-              icon: 'ant-design:delete-outlined',
-              auth: 'exam:subject:bank:del',
-              popConfirm: {
-                title: t('common.confirmDelText'),
-                confirm: handleDelete.bind(null, record),
-              },
             }
           ]"
         />
@@ -111,7 +103,7 @@
       const [registerCategoryModal, { openModal: openCategoryModal }] = useModal();
       const { createMessage } = useMessage();
       const searchInfo = reactive<Recordable>({});
-      const [registerTable, { reload, getSelectRows }] = useTable({
+      const [registerTable, { reload, getSelectRows, clearSelectedRowKeys }] = useTable({
         title: t('common.modules.exam.subject') + t('common.list'),
         api: (arg) => {
           const { categoryId } = searchInfo;
@@ -188,6 +180,7 @@
 
         await deleteBatchSubject(ids);
         createMessage.success(t('common.operationSuccessText'));
+        clearSelectedRowKeys();
         await reload();
       }
 
@@ -256,6 +249,7 @@
           link.click();
           window.URL.revokeObjectURL(link.href);
           document.body.removeChild(link);
+          clearSelectedRowKeys();
         });
       }
 

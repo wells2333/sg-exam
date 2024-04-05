@@ -39,7 +39,7 @@ export default defineComponent({
     const {createMessage} = useMessage();
     const examinationId = ref<string>('');
     const subjectSearchInfo = reactive<Recordable>({});
-    const [registerTable, {reload, getSelectRows}] = useTable({
+    const [registerTable, {reload, getSelectRows, clearSelectedRowKeys}] = useTable({
       title: '',
       api: (arg) => {
         const {categoryId} = subjectSearchInfo;
@@ -97,6 +97,7 @@ export default defineComponent({
         console.error(error);
         createMessage.error('保存失败');
       } finally {
+        clearSelectedRowKeys();
         setModalProps({confirmLoading: false});
       }
     }

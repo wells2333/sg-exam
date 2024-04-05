@@ -24,16 +24,7 @@
               icon: 'clarity:note-edit-line',
               auth: 'exam:subject:bank:edit',
               onClick: handleEdit.bind(null, record),
-            },
-            {
-              icon: 'ant-design:delete-outlined',
-              color: 'error',
-              auth: 'exam:subject:bank:del',
-              popConfirm: {
-                title: t('common.confirmDelText'),
-                confirm: handleDelete.bind(null, record),
-              },
-            },
+            }
           ]"
         />
       </template>
@@ -84,7 +75,7 @@
       const route = useRoute();
       const examinationId = ref<any>(route.params?.id);
       const { hasPermission } = usePermission();
-      const [registerTable, { reload, getPaginationRef, getSelectRows}] = useTable({
+      const [registerTable, { reload, getPaginationRef, getSelectRows, clearSelectedRowKeys}] = useTable({
         title: t('common.modules.exam.subject') + t('common.list'),
         api: getExaminationSubjectList,
         searchInfo: {
@@ -142,6 +133,7 @@
 
         await deleteBatchSubject(ids);
         createMessage.success(t('common.operationSuccessText'));
+        clearSelectedRowKeys()
         await reload();
       }
 
@@ -196,6 +188,7 @@
           link.click();
           window.URL.revokeObjectURL(link.href);
           document.body.removeChild(link);
+          clearSelectedRowKeys()
         });
       }
 
