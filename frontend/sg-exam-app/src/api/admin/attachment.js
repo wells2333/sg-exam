@@ -1,17 +1,18 @@
 import request from '@/router/axios'
+import {VUE_APP_API_CONTEXT_PATH} from '@/utils/env'
 
-const baseAttachmentUrl = '/sg-user-service/v1/attachment/'
+const baseUrl = VUE_APP_API_CONTEXT_PATH + '/v1/attachment/'
 
 export function attachmentList () {
   return request({
-    url: baseAttachmentUrl + 'attachmentList',
+    url: baseUrl + 'attachmentList',
     method: 'get'
   })
 }
 
 export function fetchList (query) {
   return request({
-    url: baseAttachmentUrl + 'attachmentList',
+    url: baseUrl + 'attachmentList',
     method: 'get',
     params: query
   })
@@ -19,21 +20,21 @@ export function fetchList (query) {
 
 export function getObj (id) {
   return request({
-    url: baseAttachmentUrl + id,
+    url: baseUrl + id,
     method: 'get'
   })
 }
 
 export function preview (id) {
   return request({
-    url: baseAttachmentUrl + id + '/preview',
+    url: baseUrl + id + '/preview',
     method: 'get'
   })
 }
 
 export function addObj (obj) {
   return request({
-    url: baseAttachmentUrl,
+    url: baseUrl,
     method: 'post',
     data: obj
   })
@@ -41,7 +42,7 @@ export function addObj (obj) {
 
 export function putObj (obj) {
   return request({
-    url: baseAttachmentUrl,
+    url: baseUrl,
     method: 'put',
     data: obj
   })
@@ -49,14 +50,14 @@ export function putObj (obj) {
 
 export function delAttachment (id) {
   return request({
-    url: baseAttachmentUrl + id,
+    url: baseUrl + id,
     method: 'delete'
   })
 }
 
 export function delAllObj (obj) {
   return request({
-    url: baseAttachmentUrl + 'deleteAll',
+    url: baseUrl + 'deleteAll',
     method: 'post',
     data: obj
   })

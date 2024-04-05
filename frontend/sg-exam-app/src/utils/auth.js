@@ -1,7 +1,8 @@
 import { setStore, getStore, removeStore } from '@/utils/store'
-import { TENANT_CODE } from '../../config/prod.env'
 import { TOKEN, REFRESH_TOKEN, TENANTCODE } from '@/utils/storeMap'
 import store from '@/store'
+import {VUE_APP_TENANT_CODE} from '@/utils/env'
+
 export function getToken () {
   return getStore({ name: TOKEN })
 }
@@ -31,8 +32,8 @@ export function getTenantCode () {
   if (sysConfig.sys_tenant_code != null) {
     return sysConfig.sys_tenant_code
   }
-  if (TENANT_CODE !== undefined) {
-    return TENANT_CODE
+  if (VUE_APP_TENANT_CODE !== undefined) {
+    return VUE_APP_TENANT_CODE
   }
   return getStore({ name: TENANTCODE })
 }

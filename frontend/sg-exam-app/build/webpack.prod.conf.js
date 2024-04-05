@@ -1,5 +1,10 @@
 'use strict'
+
 const path = require('path')
+const dotenv = require('dotenv')
+dotenv.config({path: resolve('.env')})
+dotenv.config({path: resolve('.env.prod')})
+
 const utils = require('./utils')
 const webpack = require('webpack')
 const config = require('../config')
@@ -10,10 +15,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
-
-const env = process.env.NODE_ENV === 'testing'
-  ? require('../config/test.env')
-  : require('../config/prod.env')
 
 function resolve(dir) {
   return path.join(__dirname, '..', dir)
@@ -34,9 +35,8 @@ const webpackConfig = merge(baseWebpackConfig, {
     chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
   },
   plugins: [
-    // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
-      'process.env': env
+      'process.env': require('../config/env')
     }),
     new UglifyJsPlugin({
       uglifyOptions: {
@@ -67,9 +67,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     // you can customize output by editing /index.html
     // see https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
-      filename: process.env.NODE_ENV === 'testing'
-        ? 'index.html'
-        : config.build.index,
+      filename: config.build.index,
       template: 'index.html',
       inject: true,
       favicon: resolve('favicon.ico'),

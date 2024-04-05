@@ -22,7 +22,7 @@
     </div>
     <div class="exam-card-list">
       <transition name="fade-transform" mode="out-in" v-for="exam in examList" :key="exam.id">
-        <div class="card-item" v-show="exam.show">
+        <div class="card-item single-popular-course" v-show="exam.show">
           <div>
             <a href="javascript: void(-1);" class="card-item-snapshoot"
                :style="'background-image: url(' + exam.imageUrl + ');'"
@@ -42,13 +42,13 @@
               <div class="card-item-course-detail" v-if="exam.course !== undefined && exam.course !== null">
                 <a href="#">{{ exam.course.courseName }}</a>
               </div>
-              <div v-else>
+              <div class="card-item-course-detail" v-else>
                 {{$t('exam.exams.unrelatedCourse')}}
               </div>
               <div class="card-item-course-detail" v-if="exam.startTime !== undefined && exam.startTime !== null">
                 <a href="#">{{ exam.startTime }}~{{ exam.endTime }}</a>
               </div>
-              <div v-else>
+              <div class="card-item-course-detail" v-else>
                 {{$t('exam.exams.withoutTimeLimit')}}
               </div>
             </div>
@@ -317,7 +317,8 @@ export default {
         border-radius: 6px 6px 0 0;
       }
       .card-item-detail {
-        padding: 10px 20px;
+        padding: 12px 12px;
+        height: 110px;
         .card-item-name {
           display: -webkit-box;
           overflow: hidden;

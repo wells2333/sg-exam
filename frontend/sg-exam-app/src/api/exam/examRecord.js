@@ -1,10 +1,11 @@
 import request from '@/router/axios'
+import {VUE_APP_API_CONTEXT_PATH} from '@/utils/env'
 
-const baseExamRecordUrl = '/sg-user-service/v1/examRecord/'
+const baseUrl = VUE_APP_API_CONTEXT_PATH + '/v1/examRecord/'
 
 export function fetchList (query) {
   return request({
-    url: baseExamRecordUrl + 'examRecordList',
+    url: baseUrl + 'examRecordList',
     method: 'get',
     params: query
   })
@@ -12,7 +13,7 @@ export function fetchList (query) {
 
 export function getObj (id, query) {
   return request({
-    url: baseExamRecordUrl + id,
+    url: baseUrl + id,
     method: 'get',
     params: query
   })
@@ -20,7 +21,7 @@ export function getObj (id, query) {
 
 export function addObj (obj) {
   return request({
-    url: baseExamRecordUrl,
+    url: baseUrl,
     method: 'post',
     data: obj
   })
@@ -28,7 +29,7 @@ export function addObj (obj) {
 
 export function start (obj) {
   return request({
-    url: baseExamRecordUrl + 'start',
+    url: baseUrl + 'start',
     method: 'post',
     data: obj
   })
@@ -36,7 +37,7 @@ export function start (obj) {
 
 export function anonymousUserStart (obj) {
   return request({
-    url: baseExamRecordUrl + 'anonymousUser/start',
+    url: baseUrl + 'anonymousUser/start',
     method: 'post',
     params: obj
   })
@@ -44,7 +45,7 @@ export function anonymousUserStart (obj) {
 
 export function getAllSubjects (examinationId) {
   return request({
-    url: baseExamRecordUrl + 'allSubjects/' + examinationId,
+    url: baseUrl + 'allSubjects/' + examinationId,
     method: 'get',
     params: {}
   })
@@ -52,7 +53,7 @@ export function getAllSubjects (examinationId) {
 
 export function anonymousUserGetAllSubjects (examinationId) {
   return request({
-    url: baseExamRecordUrl + 'anonymousUser/allSubjects/' + examinationId,
+    url: baseUrl + 'anonymousUser/allSubjects/' + examinationId,
     method: 'get',
     params: {}
   })
@@ -60,7 +61,7 @@ export function anonymousUserGetAllSubjects (examinationId) {
 
 export function getCurrentTime () {
   return request({
-    url: baseExamRecordUrl + 'currentTime',
+    url: baseUrl + 'currentTime',
     method: 'get'
   })
 }
@@ -68,7 +69,7 @@ export function getCurrentTime () {
 // 查询成绩详情
 export function examRecordDetails (id) {
   return request({
-    url: baseExamRecordUrl + id + '/details',
+    url: baseUrl + id + '/details',
     method: 'get'
   })
 }

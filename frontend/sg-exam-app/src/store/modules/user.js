@@ -2,10 +2,10 @@ import {loginByUsername, loginBySocial, registerByUsername, logout, getUserInfo}
 import { setToken, removeToken, setRefreshToken, removeRefreshToken } from '@/utils/auth'
 import { setStore, getStore } from '@/utils/store'
 import { TOKEN, USERINFO, REFRESH_TOKEN, ROLES, PERMISSIONS, TENANTCODE, SYS_CONFIG } from '@/utils/storeMap'
-
+import {VUE_APP_ENCRYPTION_KEY} from '@/utils/env'
 import { encryption } from '@/utils/util'
 
-const encryptionKey = '1234567887654321'
+const encryptionKey = VUE_APP_ENCRYPTION_KEY
 
 const user = {
   state: {

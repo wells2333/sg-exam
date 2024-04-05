@@ -1,10 +1,11 @@
 import request from '@/router/axios'
+import {VUE_APP_API_CONTEXT_PATH} from '@/utils/env'
 
-const baseAnswerUrl = '/sg-user-service/v1/answer/'
+const baseUrl = VUE_APP_API_CONTEXT_PATH + '/v1/answer/'
 
 export function fetchAnswerList (query) {
   return request({
-    url: baseAnswerUrl + 'answerList',
+    url: baseUrl + 'answerList',
     method: 'get',
     params: query
   })
@@ -12,14 +13,14 @@ export function fetchAnswerList (query) {
 
 export function getAnswer (id) {
   return request({
-    url: baseAnswerUrl + id,
+    url: baseUrl + id,
     method: 'get'
   })
 }
 
 export function getAnswerInfo (id, query) {
   return request({
-    url: baseAnswerUrl + id + '/info',
+    url: baseUrl + id + '/info',
     method: 'get',
     params: query
   })
@@ -27,7 +28,7 @@ export function getAnswerInfo (id, query) {
 
 export function getAnswerListInfo (id, query) {
   return request({
-    url: baseAnswerUrl + 'record/' + id + '/answerListInfo',
+    url: baseUrl + 'record/' + id + '/answerListInfo',
     method: 'get',
     params: query
   })
@@ -35,7 +36,7 @@ export function getAnswerListInfo (id, query) {
 
 export function addAnswer (obj) {
   return request({
-    url: baseAnswerUrl,
+    url: baseUrl,
     method: 'post',
     data: obj
   })
@@ -43,7 +44,7 @@ export function addAnswer (obj) {
 
 export function putAnswer (obj) {
   return request({
-    url: baseAnswerUrl,
+    url: baseUrl,
     method: 'put',
     data: obj
   })
@@ -51,21 +52,21 @@ export function putAnswer (obj) {
 
 export function delAnswer (id) {
   return request({
-    url: baseAnswerUrl + id,
+    url: baseUrl + id,
     method: 'delete'
   })
 }
 
 export function save (obj) {
   return request({
-    url: baseAnswerUrl + 'save',
+    url: baseUrl + 'save',
     method: 'post',
     data: obj
   })
 }
 
 export function saveAndNext (obj, type, nextSubjectSortNo, subjectId) {
-  let url = baseAnswerUrl + 'saveAndNext?type=' + type
+  let url = baseUrl + 'saveAndNext?type=' + type
   if (nextSubjectSortNo !== undefined) {
     url += '&nextSubjectSortNo=' + nextSubjectSortNo
   }
@@ -80,7 +81,7 @@ export function saveAndNext (obj, type, nextSubjectSortNo, subjectId) {
 }
 
 export function anonymousUserSaveAndNext (obj, nextType, nextSubjectId, nextSubjectType) {
-  let url = baseAnswerUrl + 'anonymousUser/saveAndNext?nextType=' + nextType
+  let url = baseUrl + 'anonymousUser/saveAndNext?nextType=' + nextType
   if (nextSubjectId !== undefined) {
     url += '&nextSubjectId=' + nextSubjectId
   }
@@ -96,7 +97,7 @@ export function anonymousUserSaveAndNext (obj, nextType, nextSubjectId, nextSubj
 
 export function submit (obj) {
   return request({
-    url: baseAnswerUrl + 'submit',
+    url: baseUrl + 'submit',
     method: 'post',
     data: obj
   })
@@ -104,7 +105,7 @@ export function submit (obj) {
 
 export function anonymousUserSubmit (obj) {
   return request({
-    url: baseAnswerUrl + 'anonymousUser/submit',
+    url: baseUrl + 'anonymousUser/submit',
     method: 'post',
     data: obj
   })
@@ -112,7 +113,7 @@ export function anonymousUserSubmit (obj) {
 
 export function submitAll (obj) {
   return request({
-    url: baseAnswerUrl + 'submitAll',
+    url: baseUrl + 'submitAll',
     method: 'post',
     data: obj
   })
@@ -120,7 +121,7 @@ export function submitAll (obj) {
 
 export function anonymousUserSubmitAll (examinationId, obj) {
   return request({
-    url: baseAnswerUrl + 'anonymousUser/submitAll?examinationId=' + examinationId,
+    url: baseUrl + 'anonymousUser/submitAll?examinationId=' + examinationId,
     method: 'post',
     data: obj
   })
@@ -129,7 +130,7 @@ export function anonymousUserSubmitAll (examinationId, obj) {
 // 查询考试排名
 export function examRankInfo (query) {
   return request({
-    url: baseAnswerUrl + 'rankInfo',
+    url: baseUrl + 'rankInfo',
     method: 'get',
     params: query
   })

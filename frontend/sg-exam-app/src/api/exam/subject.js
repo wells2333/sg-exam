@@ -1,17 +1,18 @@
 import request from '@/router/axios'
+import {VUE_APP_API_CONTEXT_PATH} from '@/utils/env'
 
-const baseSubjectUrl = '/sg-user-service/v1/subject/'
+const baseUrl = VUE_APP_API_CONTEXT_PATH + '/v1/subject/'
 
 export function subjectList () {
   return request({
-    url: baseSubjectUrl + 'subjectList',
+    url: baseUrl + 'subjectList',
     method: 'get'
   })
 }
 
 export function fetchSubjectList (query) {
   return request({
-    url: baseSubjectUrl + 'subjectList',
+    url: baseUrl + 'subjectList',
     method: 'get',
     params: query
   })
@@ -19,7 +20,7 @@ export function fetchSubjectList (query) {
 
 export function getObj (id, query) {
   return request({
-    url: baseSubjectUrl + id,
+    url: baseUrl + id,
     method: 'get',
     params: query
   })
@@ -27,7 +28,7 @@ export function getObj (id, query) {
 
 export function addSubject (obj) {
   return request({
-    url: baseSubjectUrl,
+    url: baseUrl,
     method: 'post',
     data: obj
   })
@@ -35,7 +36,7 @@ export function addSubject (obj) {
 
 export function putSubject (obj) {
   return request({
-    url: baseSubjectUrl,
+    url: baseUrl,
     method: 'put',
     data: obj
   })
@@ -43,14 +44,14 @@ export function putSubject (obj) {
 
 export function delSubject (id) {
   return request({
-    url: baseSubjectUrl + id,
+    url: baseUrl + id,
     method: 'delete'
   })
 }
 
 export function delAllSubject (obj) {
   return request({
-    url: baseSubjectUrl + 'deleteAll',
+    url: baseUrl + 'deleteAll',
     method: 'post',
     data: obj
   })
@@ -58,7 +59,7 @@ export function delAllSubject (obj) {
 
 export function getSubjectAnswer (obj) {
   return request({
-    url: baseSubjectUrl + 'subjectAnswer',
+    url: baseUrl + 'subjectAnswer',
     method: 'get',
     params: obj
   })
@@ -66,7 +67,7 @@ export function getSubjectAnswer (obj) {
 
 export function anonymousUserGetSubjectAnswer (obj) {
   return request({
-    url: baseSubjectUrl + 'anonymousUser/subjectAnswer',
+    url: baseUrl + 'anonymousUser/subjectAnswer',
     method: 'get',
     params: obj
   })

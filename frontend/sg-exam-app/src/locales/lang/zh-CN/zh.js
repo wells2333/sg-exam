@@ -161,7 +161,10 @@ const zh = {
       doNotResubmit: '请勿重复提交',
       defaultEvaluate: '用户默认好评',
       unrelatedCourse: '无关联课程',
-      withoutTimeLimit: '无时间限制'
+      withoutTimeLimit: '无时间限制',
+      rank: '排名',
+      account: '账号',
+      score: '分数'
     },
     startExam: {
       last: '上一题',

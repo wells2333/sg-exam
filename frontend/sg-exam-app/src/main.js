@@ -9,7 +9,6 @@ import 'element-ui/lib/theme-chalk/index.css'
 import './icons'
 import * as filters from './filters'
 import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
-
 import i18n from './locales/vueIN'
 
 Vue.config.productionTip = false

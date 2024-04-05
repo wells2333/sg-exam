@@ -1,10 +1,11 @@
 import request from '@/router/axios'
+import {VUE_APP_API_CONTEXT_PATH} from '@/utils/env'
 
-const baseCourseUrl = '/sg-user-service/v1/exam/evaluate/'
+const baseUrl = VUE_APP_API_CONTEXT_PATH + '/v1/exam/evaluate/'
 
 export function getExamEvaluateList (query) {
   return request({
-    url: baseCourseUrl + 'list',
+    url: baseUrl + 'list',
     method: 'get',
     params: query
   })
@@ -12,7 +13,7 @@ export function getExamEvaluateList (query) {
 
 export function addObj (obj) {
   return request({
-    url: baseCourseUrl,
+    url: baseUrl,
     method: 'post',
     data: obj
   })

@@ -1,10 +1,11 @@
 import request from '@/router/axios'
+import {VUE_APP_API_CONTEXT_PATH} from '@/utils/env'
 
-const baseTenantUrl = '/sg-user-service/v1/mobile/'
+const baseUrl = VUE_APP_API_CONTEXT_PATH
 
 export function sendSms (mobile) {
   return request({
-    url: baseTenantUrl + 'sendSms/' + mobile,
+    url: baseUrl + '/v1/mobile/sendSms/' + mobile,
     method: 'get'
   })
 }

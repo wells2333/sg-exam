@@ -1,10 +1,11 @@
 import request from '@/router/axios'
+import {VUE_APP_API_CONTEXT_PATH} from '@/utils/env'
 
-const baseUserUrl = '/sg-user-service/v1/user/'
+const baseUrl = VUE_APP_API_CONTEXT_PATH + '/v1/user/'
 
 export function fetchList (query) {
   return request({
-    url: baseUserUrl + 'userList',
+    url: baseUrl + 'userList',
     method: 'get',
     params: query
   })
@@ -12,7 +13,7 @@ export function fetchList (query) {
 
 export function addObj (obj) {
   return request({
-    url: baseUserUrl,
+    url: baseUrl,
     method: 'post',
     data: obj
   })
@@ -20,21 +21,21 @@ export function addObj (obj) {
 
 export function getObj (id) {
   return request({
-    url: baseUserUrl + id,
+    url: baseUrl + id,
     method: 'get'
   })
 }
 
 export function delObj (id) {
   return request({
-    url: baseUserUrl + id,
+    url: baseUrl + id,
     method: 'delete'
   })
 }
 
 export function putObj (obj) {
   return request({
-    url: baseUserUrl,
+    url: baseUrl,
     method: 'put',
     data: obj
   })
@@ -42,7 +43,7 @@ export function putObj (obj) {
 
 export function updateObjInfo (obj) {
   return request({
-    url: baseUserUrl + 'updateInfo',
+    url: baseUrl + 'updateInfo',
     method: 'put',
     data: obj
   })
@@ -50,7 +51,7 @@ export function updateObjInfo (obj) {
 
 export function updatePassword (obj) {
   return request({
-    url: baseUserUrl + 'anonymousUser/updatePassword',
+    url: baseUrl + 'anonymousUser/updatePassword',
     method: 'put',
     data: obj
   })
@@ -58,7 +59,7 @@ export function updatePassword (obj) {
 
 export function updateAvatar (obj) {
   return request({
-    url: baseUserUrl + 'updateAvatar',
+    url: baseUrl + 'updateAvatar',
     method: 'post',
     data: obj
   })
@@ -66,7 +67,7 @@ export function updateAvatar (obj) {
 
 export function delAllObj (obj) {
   return request({
-    url: baseUserUrl + 'deleteAll',
+    url: baseUrl + 'deleteAll',
     method: 'post',
     data: obj
   })
@@ -74,7 +75,7 @@ export function delAllObj (obj) {
 
 export function checkExist (username, tenantCode) {
   return request({
-    url: baseUserUrl + 'anonymousUser/checkExist/' + username,
+    url: baseUrl + 'anonymousUser/checkExist/' + username,
     method: 'get',
     params: { tenantCode, identityType: 1 }
   })

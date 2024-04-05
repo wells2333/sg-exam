@@ -1,17 +1,18 @@
 import request from '@/router/axios'
+import {VUE_APP_API_CONTEXT_PATH} from '@/utils/env'
 
-const baseCourseUrl = '/sg-user-service/v1/section/'
+const baseUrl = VUE_APP_API_CONTEXT_PATH + '/v1/section/'
 
 export function getSection (id) {
   return request({
-    url: baseCourseUrl + id,
+    url: baseUrl + id,
     method: 'get'
   })
 }
 
 export function watchSection (id) {
   return request({
-    url: baseCourseUrl + 'watchSection/' + id,
+    url: baseUrl + 'watchSection/' + id,
     method: 'get'
   })
 }

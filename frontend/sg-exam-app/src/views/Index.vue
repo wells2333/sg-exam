@@ -129,7 +129,7 @@ export default {
   },
   methods: {
     mounted() {
-      this.$i18n.locale = 'zh'
+      this.$i18n.locale = process.env.I18N_LOCAL || 'zh'
     },
     closeBanner() {
       store.dispatch('SetStateInfo', {showBanner: false})

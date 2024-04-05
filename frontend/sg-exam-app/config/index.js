@@ -1,26 +1,26 @@
 'use strict'
-// Template version: 1.3.1
-// see http://vuejs-templates.github.io/webpack for documentation.
 
 const path = require('path')
-const dotenv = require('dotenv')
-dotenv.config()
 
-// 代理
-const proxyConfig = require('./proxyConfig');
+// 如果是 80 端口，默认是 https
+const schema = process.env.VUE_APP_API_PORT === '80' ? "https://" : "http://"
+const target = schema + process.env.VUE_APP_API_HOST + ":" + process.env.VUE_APP_API_PORT
+console.log('Proxy target: ' + target)
 
 module.exports = {
   dev: {
-
-    // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: proxyConfig.proxyList,
+    proxyTable: {
+      '/sg-user-service': {
+        target: target,
+        changeOrigin: true
+      }
+    },
 
     // Various Dev Server settings
-    host: 'localhost', // can be overwritten by process.env.HOST
-    port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
-    autoOpenBrowser: false,
+    host: process.env.VUE_APP_WEB_HOST || 'localhost',
+    port: Number(process.env.VUE_APP_WEB_HOST) || 8080,
     errorOverlay: true,
     notifyOnErrors: true,
     poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-

@@ -1,10 +1,11 @@
 import request from '@/router/axios'
+import {VUE_APP_API_CONTEXT_PATH} from '@/utils/env'
 
-const baseCourseUrl = '/sg-user-service/v1/course/'
+const baseUrl = VUE_APP_API_CONTEXT_PATH + '/v1/course/'
 
 export function courseList (query) {
   return request({
-    url: baseCourseUrl + 'userCourseList',
+    url: baseUrl + 'userCourseList',
     method: 'get',
     params: query
   })
@@ -12,7 +13,7 @@ export function courseList (query) {
 
 export function popularCourses (query) {
   return request({
-    url: baseCourseUrl + 'popularCourses',
+    url: baseUrl + 'popularCourses',
     method: 'get',
     params: query
   })
@@ -20,14 +21,14 @@ export function popularCourses (query) {
 
 export function getObj (id) {
   return request({
-    url: baseCourseUrl + id,
+    url: baseUrl + id,
     method: 'get'
   })
 }
 
 export function addObj (obj) {
   return request({
-    url: baseCourseUrl,
+    url: baseUrl,
     method: 'post',
     data: obj
   })
@@ -35,7 +36,7 @@ export function addObj (obj) {
 
 export function putObj (obj) {
   return request({
-    url: baseCourseUrl,
+    url: baseUrl,
     method: 'put',
     data: obj
   })
@@ -43,14 +44,14 @@ export function putObj (obj) {
 
 export function delObj (id) {
   return request({
-    url: baseCourseUrl + id,
+    url: baseUrl + id,
     method: 'delete'
   })
 }
 
 export function delAllObj (obj) {
   return request({
-    url: baseCourseUrl + 'deleteAll',
+    url: baseUrl + 'deleteAll',
     method: 'post',
     data: obj
   })
@@ -58,21 +59,21 @@ export function delAllObj (obj) {
 
 export function getCourseDetail (id) {
   return request({
-    url: baseCourseUrl + 'detail/' + id,
+    url: baseUrl + 'detail/' + id,
     method: 'get'
   })
 }
 
 export function joinCourse (id) {
   return request({
-    url: baseCourseUrl + id + '/join',
+    url: baseUrl + id + '/join',
     method: 'post'
   })
 }
 
 export function getCourseAttach (id) {
   return request({
-    url: baseCourseUrl + id + '/attach',
+    url: baseUrl + id + '/attach',
     method: 'get'
   })
 }

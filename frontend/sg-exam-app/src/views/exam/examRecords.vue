@@ -58,7 +58,7 @@
     </el-row>
     <el-dialog :title="$t('exam.scoreRank')" :visible.sync="dialogTableVisible" width="35%">
       <el-table :data="gridData">
-        <el-table-column label="排名" width="120">
+        <el-table-column :label="$t('exam.exams.rank')" width="120">
           <template slot-scope="scope">
             <div style="display: flex; align-items: center;">
               <div style="width: 26px; height: 26px; margin-right: 10px; cursor: pointer;">
@@ -70,7 +70,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="账号" width="260">
+        <el-table-column :label="$t('exam.exams.account')" width="260">
           <template slot-scope="scope">
             <div style="display: flex; align-items: center; cursor: pointer;">
               <img  v-if="scope.row.avatarUrl" class="account" :src="scope.row.avatarUrl">
@@ -79,7 +79,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column property="score" label="分数"></el-table-column>
+        <el-table-column property="score" :label="$t('exam.exams.score')"></el-table-column>
       </el-table>
     </el-dialog>
   </div>

@@ -161,8 +161,11 @@ const en = {
       submitSuccess: 'Submit successfully',
       doNotResubmit: 'Do not resubmit',
       defaultEvaluate: 'User default positive reviews',
-      unrelatedCourse: 'unrelated course',
-      withoutTimeLimit: 'without time limit'
+      unrelatedCourse: 'Unrelated course',
+      withoutTimeLimit: 'Without time limit',
+      rank: 'Rank',
+      account: 'Account',
+      score: 'Score'
     },
     startExam: {
       last: 'Previous',

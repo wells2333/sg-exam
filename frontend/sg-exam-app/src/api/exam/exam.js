@@ -1,24 +1,25 @@
 import request from '@/router/axios'
+import {VUE_APP_API_CONTEXT_PATH} from '@/utils/env'
 
-const baseExaminationUrl = '/sg-user-service/v1/examination/'
+const baseUrl = VUE_APP_API_CONTEXT_PATH + '/v1/examination/'
 
 export function canStart (id) {
   return request({
-    url: baseExaminationUrl + 'canStart?id=' + id,
+    url: baseUrl + 'canStart?id=' + id,
     method: 'get'
   })
 }
 
 export function anonymousUserCanStart (id) {
   return request({
-    url: baseExaminationUrl + 'anonymousUser/canStart?id=' + id,
+    url: baseUrl + 'anonymousUser/canStart?id=' + id,
     method: 'get'
   })
 }
 
 export function fetchList (query) {
   return request({
-    url: baseExaminationUrl + 'userExaminationList',
+    url: baseUrl + 'userExaminationList',
     method: 'get',
     params: query
   })
@@ -26,7 +27,7 @@ export function fetchList (query) {
 
 export function fetchAllSubjectList (query) {
   return request({
-    url: baseExaminationUrl + 'anonymousUser/allSubjectList',
+    url: baseUrl + 'anonymousUser/allSubjectList',
     method: 'get',
     params: query
   })
@@ -34,7 +35,7 @@ export function fetchAllSubjectList (query) {
 
 export function getObj (id, query) {
   return request({
-    url: baseExaminationUrl + id,
+    url: baseUrl + id,
     method: 'get',
     params: query
   })
@@ -42,7 +43,7 @@ export function getObj (id, query) {
 
 export function getObjDetail (id, query) {
   return request({
-    url: baseExaminationUrl + id + '/detail',
+    url: baseUrl + id + '/detail',
     method: 'get',
     params: query
   })
@@ -50,7 +51,7 @@ export function getObjDetail (id, query) {
 
 export function anonymousUserGetObj (id, query) {
   return request({
-    url: baseExaminationUrl + 'anonymousUser/' + id,
+    url: baseUrl + 'anonymousUser/' + id,
     method: 'get',
     params: query
   })
@@ -58,7 +59,7 @@ export function anonymousUserGetObj (id, query) {
 
 export function getSubjectIds (id, query) {
   return request({
-    url: baseExaminationUrl + id + '/subjectIds',
+    url: baseUrl + id + '/subjectIds',
     method: 'get',
     params: query
   })
@@ -66,7 +67,7 @@ export function getSubjectIds (id, query) {
 
 export function anonymousUserGetSubjectIds (id, query) {
   return request({
-    url: baseExaminationUrl + 'anonymousUser/' + id + '/subjectIds',
+    url: baseUrl + 'anonymousUser/' + id + '/subjectIds',
     method: 'get',
     params: query
   })
