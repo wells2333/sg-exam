@@ -15,7 +15,7 @@ const props = defineProps({
   },
   height: {
     type: String as PropType<string>,
-    default: '380px',
+    default: '300px',
   },
   value: {type: Object},
 });
@@ -27,14 +27,15 @@ const option = {
   },
   legend: {
     bottom: '1%',
-    left: 'center',
+    left: 'top',
   },
   series: [
     {
       color: ['#5ab1ef', '#b6a2de', '#67e0e3', '#2ec7c9'],
       name: '成绩占比',
       type: 'pie',
-      radius: ['30%', '70%'],
+      top: '-40%',
+      radius: ['20%', '60%'],
       avoidLabelOverlap: false,
       itemStyle: {
         borderRadius: 10,
@@ -43,7 +44,7 @@ const option = {
       },
       label: {
         show: false,
-        position: 'center',
+        position: 'bottom',
       },
       emphasis: {
         label: {

@@ -32,13 +32,13 @@
             </BasicTable>
           </div>
           <div class="w-full">
-            <div class="md:flex enter-y" style="margin-top: 30px;">
+            <div class="md:flex enter-y" style="margin-top: 30px;" v-if="analysisResult.userCnt">
               <Distribution :value="analysisResult" />
             </div>
-            <div class="md:flex enter-y" style="margin-top: 30px;">
-              <DistributionPercent class="md:w-1/3 !md:mx-4 !md:my-0 !my-4 w-full" :value="analysisResult"/>
-              <VisitRadar class="md:w-1/3 w-full"/>
-              <SalesProductPie class="md:w-1/3 w-full"/>
+            <div class="md:flex enter-y" style="margin-top: 30px;" v-if="analysisResult.userCnt">
+              <DistributionPercent class="md:w-1/3 !md:mx-4 !md:my-0 !my-4 w-full" :value="analysisResult" />
+              <!-- <VisitRadar class="md:w-1/3 w-full"/>
+              <SalesProductPie class="md:w-1/3 w-full"/> -->
             </div>
           </div>
         </div>
