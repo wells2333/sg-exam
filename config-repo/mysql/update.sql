@@ -82,7 +82,7 @@ ALTER TABLE `exam_material_subject`
 -- 2024 年 3 月 27 日 09:59:39
 update `sys_menu`
     set path = '/exam/material_subjects/:materialId/:examinationId*'
-where id = 100
+where id = 100;
 
 -- 2024 年 3 月 28 日 20:51:29
 ALTER TABLE `exam_course_section`
