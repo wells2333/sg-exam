@@ -22,7 +22,7 @@
 import Tinymce from '@/components/Tinymce'
 import SgAudio from '@/components/SgAudio'
 import SgVideo from '@/components/SgVideo'
-import {setVideoSrc, pauseVideo, pauseAudio, setAudioSrc, replaceFirtP} from '@/utils/busi'
+import {setVideoSrc, pauseVideo, pauseAudio, setAudioSrc, replaceFirstP} from '@/utils/busi'
 
 export default {
   name: 'ShortAnswer',
@@ -69,7 +69,7 @@ export default {
       setAudioSrc(subject, this.$refs, subject.autoPlaySpeech)
     },
     processSubjectInfo(subject) {
-      subject.subjectName = replaceFirtP(subject.subjectName, this.$t('exam.subject.subjectTypeShortAnswer'), subject.sort)
+      subject.subjectName = replaceFirstP(subject.subjectName, this.$t('exam.subject.subjectTypeShortAnswer'), subject.sort)
       if (subject.hasOwnProperty('answer')) {
         this.setAnswer(subject.answer.answer)
       }

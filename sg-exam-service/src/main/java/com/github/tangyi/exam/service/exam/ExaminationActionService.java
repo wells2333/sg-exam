@@ -39,7 +39,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.ehcache.spi.service.MaintainableService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -51,7 +50,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -71,6 +69,7 @@ public class ExaminationActionService implements IExaminationActionService {
 	private final IExecutorHolder executorHolder;
 	private final ExamFavoritesService examFavoritesService;
 	private final MaterialSubjectService materialSubjectService;
+
 	@Override
 	@Transactional
 	public StartExamDto start(ExaminationRecord examRecord) {
@@ -83,44 +82,21 @@ public class ExaminationActionService implements IExaminationActionService {
 		condition.put("tenantCode", SysUtil.getTenantCode());
 		PageInfo<ExaminationRecord> page = examRecordService.findPage(condition, 1, 10);
 		List<ExaminationRecord> list = page.getList();
-		if (CollectionUtils.isNotEmpty(list)){
-			ExaminationRecord examinationRecord = list.get(0);
-			Integer status = examinationRecord.getSubmitStatus();
-			if (status == 0){
+		if (CollectionUtils.isNotEmpty(list)) {
+			ExaminationRecord record = list.get(0);
+			Integer status = record.getSubmitStatus();
+			if (status == 0) {
 				// 未提交，则继续考试
-				StartExamDto startExamDto = new StartExamDto();
-				startExamDto.setExamRecord(examinationRecord);
-				// 答题卡
-				List<CardDto> cardDtos = getcardDtos(examRecord.getExaminationId());
-				startExamDto.setCards(cardDtos);
-				return startExamDto;
+				StartExamDto dto = new StartExamDto();
+				dto.setExamRecord(record);
+				dto.setSubjectDto(subjectsService.findFirstSubjectByExaminationId(examRecord.getExaminationId()));
+				dto.setCards(getCards(examRecord.getExaminationId()));
+				return dto;
 			}
 		}
-		// 没有答题记录,或者最近一次答题是提交状态
+		// 没有答题记录，或者最近一次答题是提交状态
 		return this.start(examRecord.getUserId(), SysUtil.getUser(), examRecord.getExaminationId(),
 				SysUtil.getTenantCode());
-	}
-
-	private List<CardDto> getcardDtos(Long examinationId){
-		ListeningExecutorService exec = executorHolder.getExamExecutor();
-		ListenableFuture<List<CardDto>> f1 = exec.submit(() -> {
-			List<ExaminationSubject> ess = examinationSubjectService.findListByExaminationId(examinationId);
-			if (CollectionUtils.isNotEmpty(ess)) {
-				return ess.stream().map(es -> {
-					CardDto c = new CardDto();
-					c.setSubjectId(es.getSubjectId());
-					c.setSort(es.getSort());
-					return c;
-				}).collect(Collectors.toList());
-			}
-			return Collections.emptyList();
-		});
-		try {
-			List<CardDto> cardDtos = f1.get();
-			return  cardDtos;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	@Override
@@ -280,7 +256,7 @@ public class ExaminationActionService implements IExaminationActionService {
 				newAnswer.setCommonValue(userCode, tenantCode);
 				newAnswer.setAnswer(answer.getAnswer());
 				// 是材料题，就做标记
-				if (CollectionUtils.isNotEmpty(materialSubject)){
+				if (CollectionUtils.isNotEmpty(materialSubject)) {
 					newAnswer.setAnswerType(AnswerConstant.NotCount);
 					newAnswer.setMarkStatus(1); // 标记为批改
 				}
@@ -291,7 +267,7 @@ public class ExaminationActionService implements IExaminationActionService {
 				newAnswer.setMarkStatus(AnswerConstant.TO_BE_MARKED);
 				newAnswer.setAnswerType(AnswerConstant.WRONG);
 				// 是材料题，就做标记
-				if (CollectionUtils.isNotEmpty(materialSubject)){
+				if (CollectionUtils.isNotEmpty(materialSubject)) {
 					newAnswer.setAnswerType(AnswerConstant.NotCount);
 					newAnswer.setMarkStatus(1); // 标记为批改
 				}
@@ -441,7 +417,7 @@ public class ExaminationActionService implements IExaminationActionService {
 				dto.setDuration(duration);
 				dto.setSpeechPlayCnt(answer.getSpeechPlayCnt());
 				list.add(dto);
-				if (subjectDto.getChildSubjects() != null){
+				if (subjectDto.getChildSubjects() != null) {
 					List<SubjectDto> childSubjects = subjectDto.getChildSubjects();
 					for (SubjectDto childSubject : childSubjects) {
 						card = new CardDto();
@@ -480,6 +456,7 @@ public class ExaminationActionService implements IExaminationActionService {
 				log.info("Submit future finished, recordId: {}, user: {}, took: {}", recordId, userCode,
 						StopWatchUtil.stop(watch));
 			}
+
 			@Override
 			public void onFailure(@Nullable Throwable e) {
 				log.error("Submit future failed, recordId: {}, user: {}", recordId, userCode, e);
@@ -503,8 +480,7 @@ public class ExaminationActionService implements IExaminationActionService {
 
 		StartExamDto dto = new StartExamDto();
 		try {
-			// 答题卡
-			dto.setCards(getcardDtos(examinationId));
+			dto.setCards(getCards(examinationId));
 			dto.setSubjectDto(f2.get());
 			dto.setExamination(f3.get());
 		} catch (Exception e) {
@@ -528,5 +504,26 @@ public class ExaminationActionService implements IExaminationActionService {
 		answer.setStartTime(answer.getCreateTime());
 		sDto.setAnswer(answer);
 		return answer;
+	}
+
+	private List<CardDto> getCards(Long examinationId) {
+		ListeningExecutorService exec = executorHolder.getExamExecutor();
+		ListenableFuture<List<CardDto>> f1 = exec.submit(() -> {
+			List<ExaminationSubject> ess = examinationSubjectService.findListByExaminationId(examinationId);
+			if (CollectionUtils.isNotEmpty(ess)) {
+				return ess.stream().map(es -> {
+					CardDto c = new CardDto();
+					c.setSubjectId(es.getSubjectId());
+					c.setSort(es.getSort());
+					return c;
+				}).collect(Collectors.toList());
+			}
+			return Collections.emptyList();
+		});
+		try {
+			return f1.get();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

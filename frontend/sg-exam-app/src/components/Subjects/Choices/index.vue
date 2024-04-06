@@ -27,7 +27,7 @@
 <script>
 import SgAudio from '@/components/SgAudio'
 import SgVideo from '@/components/SgVideo'
-import {setVideoSrc, pauseVideo, pauseAudio, setAudioSrc, replaceFirtP} from '@/utils/busi'
+import {setVideoSrc, pauseVideo, pauseAudio, setAudioSrc, replaceFirstP} from '@/utils/busi'
 import {uuid} from '@/utils/util'
 
 export default {
@@ -66,7 +66,7 @@ export default {
       setAudioSrc(subject, this.$refs, subject.autoPlaySpeech)
     },
     processSubjectInfo(subject) {
-      subject.subjectName = replaceFirtP(subject.subjectName, this.$t('exam.subject.subjectTypeChoices'), subject.sort)
+      subject.subjectName = replaceFirstP(subject.subjectName, this.$t('exam.subject.subjectTypeChoices'), subject.sort)
       if (subject.hasOwnProperty('options')) {
         subject.options.forEach(o => {
           o.id = uuid()

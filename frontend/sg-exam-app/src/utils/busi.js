@@ -78,6 +78,9 @@ export const beforeSaveSubject = ($refs, subjects) => {
   }
 }
 
-export const replaceFirtP = (str, type, sort) => {
-  return str.replace('<p>', `<p><span style="color: #999; margin-right: 2px;">[${type}]&nbsp;</span>${sort}.`)
+export const replaceFirstP = (str, type, sort) => {
+  if (str.indexOf('<p') !== -1) {
+    return str.replace('<p>', `<p><span style="color: #999; margin-right: 2px;">[${type}]&nbsp;</span>${sort}.`)
+  }
+  return `<span style="color: #999; margin-right: 2px;">[${type}]&nbsp;</span>${sort}.` + str
 }
