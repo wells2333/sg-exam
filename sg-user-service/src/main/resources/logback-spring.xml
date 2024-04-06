@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true">
     <springProperty scop="context" name="spring.application.name" source="spring.application.name"/>
-    <property name="log.path" value="logs/${spring.application.name}"/>
+    <property name="log.path" value="logs"/>
     <property name="app.name" value="${spring.application.name}"/>
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">

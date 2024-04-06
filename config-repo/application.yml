@@ -91,6 +91,7 @@ logging:
 ---
 spring.profiles: docker
 logging.level.root: INFO
+logging.level.com.github.tangyi: INFO
 
 management.server.port: 4004
 management.endpoint.health.show-details: "ALWAYS"
