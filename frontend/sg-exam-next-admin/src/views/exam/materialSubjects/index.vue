@@ -1,7 +1,7 @@
 <template>
   <div>
     <BasicTable @register="registerTable"
-    :rowSelection="{ type: 'checkbox', selectedRowKeys: checkedKeys, onChange: onSelectChange }">
+    :rowSelection="{ type: 'checkbox'}">
       <template #toolbar>
         <a-button type="primary" @click="handleCreate"> {{ t('common.addText') }} </a-button>
         <a-button type="primary" @click="handleSelectSubjects"> 从题库选择</a-button>
@@ -91,10 +91,8 @@
       const route = useRoute();
       const materialId = ref<any>(route.params?.materialId);
       const examinationId = ref<any>(route.params?.examinationId);
-      const checkedKeys = ref<Array<string | number>>([]);
-      const rowKeys = ref<Array<string | number>>([]);
       const { hasPermission } = usePermission();
-      const [registerTable, { reload, getPaginationRef }] = useTable({
+      const [registerTable, { reload, getPaginationRef,getSelectRows, clearSelectedRowKeys }] = useTable({
         title: t('common.modules.exam.subject') + t('common.list'),
         api: getMaterialSubjectList,
         searchInfo: {
@@ -113,6 +111,7 @@
         bordered: true,
         showIndexColumn: false,
         canResize: false,
+        clickToRowSelect: false,
         actionColumn: {
           width: 180,
           title: t('common.operationText'),
@@ -147,8 +146,13 @@
         await reload();
       }
       async function handleDeleteBatch() {
-        await deleteBatchSubject(rowKeys.value);
+        const ids = getSelectedRowIds();
+        if (!ids || ids.length === 0) {
+          return;
+        }
+        await deleteBatchSubject(ids);
         createMessage.success(t('common.operationSuccessText'));
+        clearSelectedRowKeys()
         await reload();
       }
 
@@ -186,6 +190,10 @@
         reload();
       }
       function handleExport(record: Recordable) {
+        const ids = getSelectedRowIds();
+        if (!ids || ids.length === 0) {
+          return;
+        }
         let url = '?ids=' + record.id;
         exportSubjects(url).then((res) => {
           const url = window.URL.createObjectURL(
@@ -199,13 +207,22 @@
           link.click();
           window.URL.revokeObjectURL(link.href);
           document.body.removeChild(link);
+          clearSelectedRowKeys()
         });
       }
-      const onSelectChange = (selectedRowKeys, selectedRows) => {
-        const arrayOfIds = selectedRows.map((obj) => obj.id);
-        rowKeys.value = arrayOfIds;
-        checkedKeys.value = selectedRowKeys;
-      };
+      function getSelectedRowIds() {
+        const rows = getSelectRows();
+        if (!rows || rows.length === 0) {
+          return undefined;
+        }
+        console.log("test")
+        console.log(rows)
+        const ids = [];
+        rows.forEach(e => {
+          ids.push(e.id);
+        });
+        return ids;
+      }
       return {
         t,
         registerTable,
@@ -222,10 +239,10 @@
         handleSelectSubjectSuccess,
         handleRandomSubjectSuccess,
         handleExport,
-        checkedKeys,
-        onSelectChange,
         handleDeleteBatch,
-        hasPermission
+        hasPermission,
+        getSelectRows,
+        clearSelectedRowKeys
       };
     },
   });
