@@ -7,7 +7,7 @@
         </div>
         <div class="tool-bar-card">
           <div class="current-progress">
-            {{ $t('exam.startExam.progress') }}：{{ cards.length }} / {{ answeredSubjectCnt }}
+            {{ $t('exam.startExam.progress') }}：{{ answeredSubjectCnt }} / {{ cards.length }}
           </div>
           <el-button class="answer-card" type="text" icon="el-icon-s-grid" size="medium"
                      style="font-size: 30px; color: #606266;" @click="showAnswerCard"></el-button>

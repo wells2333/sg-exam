@@ -54,6 +54,7 @@
   import 'tinymce/plugins/wordcount';
   import 'tinymce/plugins/image';
   import 'tinymce/plugins/imagetools';
+  import 'tinymce/plugins/table';
 
   import {
     defineComponent,

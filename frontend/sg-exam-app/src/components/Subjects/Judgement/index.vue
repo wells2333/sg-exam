@@ -2,9 +2,7 @@
   <div>
     <div class="subject-content">
       <div class="subject-title">
-        {{ subjectInfo.sort }}.&nbsp;
         <span class="subject-title-content" v-html="subjectInfo.subjectName"/>
-        （{{ $t('exam.subject.subjectTypeJudgement') }}）
       </div>
       <div class="subject-speech-info" v-if="subjectInfo.speechUrl">
         <sg-audio ref="sgAudio" :src="subjectInfo.speechUrl"></sg-audio>
@@ -28,7 +26,7 @@
 <script>
 import SgAudio from '@/components/SgAudio'
 import SgVideo from '@/components/SgVideo'
-import {setVideoSrc, pauseVideo, pauseAudio, setAudioSrc} from '@/utils/busi'
+import {setVideoSrc, pauseVideo, pauseAudio, setAudioSrc, replaceFirtP} from '@/utils/busi'
 import {uuid} from '@/utils/util'
 
 export default {
@@ -66,11 +64,15 @@ export default {
     },
     setSubjectInfo(subject) {
       this.subjectInfo = subject
+      this.processSubjectInfo(this.subjectInfo)
+      setVideoSrc(subject, this.$refs)
+      setAudioSrc(subject, this.$refs, subject.autoPlaySpeech)
+    },
+    processSubjectInfo(subject) {
+      subject.subjectName = replaceFirtP(subject.subjectName, this.$t('exam.subject.subjectTypeJudgement'), subject.sort)
       if (subject.hasOwnProperty('answer')) {
         this.setAnswer(subject.answer.answer)
       }
-      setVideoSrc(subject, this.$refs)
-      setAudioSrc(subject, this.$refs, subject.autoPlaySpeech)
     },
     getSubjectInfo() {
       this.subjectInfo.options = this.options

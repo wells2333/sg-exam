@@ -1,9 +1,11 @@
+import {unref} from 'vue';
 import {BasicColumn} from '/@/components/Table';
 import { DescItem } from '/@/components/Description';
 import { Tag } from 'ant-design-vue';
 
 import { subjectColor, COLOR } from '/@/components/Subjects/subject.constant';
 import { h } from 'vue';
+import {HtmlText} from "/@/components/HtmlText";
 
 const commonTagRender = (color: string) => (curVal) => h(Tag, { color }, () => curVal);
 export const submitStatus = {
@@ -79,8 +81,13 @@ export const answerColumns: BasicColumn[] = [
   },
   {
     title: '题目名称',
-    dataIndex: 'subject.subjectName',
+    dataIndex: 'subject',
     align: 'left',
+    customRender: ({ record }) => {
+      return h(HtmlText, {
+        text: unref(record).subject.subjectName
+      });
+    }
   },
   {
     dataIndex: 'subject.typeLabel',
