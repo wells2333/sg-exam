@@ -76,6 +76,7 @@ public class Examination extends BaseEntity<Examination> {
 	@Column(name = "image_id")
 	private Long imageId;
 
+	private String imageUrl;
 	/**
 	 * 课程
 	 */

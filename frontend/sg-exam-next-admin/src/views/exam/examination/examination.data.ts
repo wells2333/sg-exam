@@ -227,6 +227,14 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
+    field: 'imageUrl',
+    label: '图片 URL',
+    component: 'Input',
+    colProps: {
+      span: 12,
+    },
+  },
+  {
     field: 'examTime',
     label: '考试时间',
     component: 'RangePicker',

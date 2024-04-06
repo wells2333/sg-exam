@@ -52,10 +52,10 @@ public class Course extends BaseEntity<Course> {
 	@Column(name = "image_id")
 	private Long imageId;
 
+
 	/**
 	 * image URL
 	 */
-	@Transient
 	private String imageUrl;
 
 	/**

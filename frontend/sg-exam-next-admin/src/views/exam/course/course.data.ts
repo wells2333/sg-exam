@@ -200,6 +200,14 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
+    field: 'imageUrl',
+    label: '图片 URL',
+    component: 'Input',
+    colProps: {
+      span: 12,
+    },
+  },
+  {
     label: '课件',
     field: 'attachId',
     component: 'Input',

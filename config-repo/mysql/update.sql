@@ -120,3 +120,9 @@ ALTER TABLE `exam_subject_choices`
 -- 2024 年 4 月 5 日 14:00:49
 ALTER TABLE `exam_subjects`
     ADD COLUMN parent_id bigint DEFAULT NULL COMMENT '考试题目对应的分类题目 ID';
+
+-- 2024 年 4 月 6 日 12:46:16
+ALTER TABLE `exam_examination`
+    ADD COLUMN image_url varchar(255) DEFAULT NULL COMMENT '图片 URL';
+ALTER TABLE `exam_course`
+    ADD COLUMN image_url varchar(255) DEFAULT NULL COMMENT '图片 URL';

@@ -21,11 +21,11 @@ import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.*;
 import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.constants.ExamConstant;
+import com.github.tangyi.exam.constants.ExamConstantProperty;
 import com.github.tangyi.exam.enums.ExaminationType;
 import com.github.tangyi.exam.enums.SubjectType;
 import com.github.tangyi.exam.mapper.ExaminationMapper;
 import com.github.tangyi.exam.service.ExamPermissionService;
-import com.github.tangyi.exam.service.ExamRecordService;
 import com.github.tangyi.exam.service.ExaminationSubjectService;
 import com.github.tangyi.exam.service.MaterialSubjectService;
 import com.github.tangyi.exam.service.course.CourseService;
@@ -42,6 +42,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -68,6 +69,8 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	private final IUserService userService;
 	private final ExamIdFetcher examIdFetcher;
 	private final MaterialSubjectService msService;
+
+	private ExamConstantProperty examConstantProperty;
 	@Override
 	public Long findAllExaminationCount() {
 		return this.dao.findAllExaminationCount();
@@ -109,8 +112,9 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		if (course != null) {
 			e.setCourseId(course.getId());
 		}
-		if (e.getImageId() == null) {
-			e.setImageId(attachmentManager.defaultImage(Group.DEFAULT));
+		if (e.getImageId() == null && e.getImageUrl() == null) {
+//			e.setImageId(attachmentManager.defaultImage(Group.DEFAULT));
+			e.setImageUrl(examConstantProperty.getExaminationImageUrl());
 		}
 		this.addExaminationMembers(examinationDto, user, tenantCode);
 		int update = super.insert(e);
