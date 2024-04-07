@@ -13,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import tk.mybatis.spring.annotation.MapperScan;
 
+import javax.annotation.PostConstruct;
 import java.util.TimeZone;
 
 @EnableAsync
@@ -34,5 +35,10 @@ public class UserServiceApplication implements WebMvcConfigurer {
 	@Bean
 	MeterRegistryCustomizer<MeterRegistry> configurer(@Value("${spring.application.name}") String applicationName) {
 		return (registry) -> registry.config().commonTags("application", applicationName);
+	}
+
+	@PostConstruct
+	void started() {
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 	}
 }
