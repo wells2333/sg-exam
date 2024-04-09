@@ -9,7 +9,9 @@ spring:
       # 整个请求的最大大小
       max-request-size: 800MB
   jackson:
-    time-zone: UTC
+    default-property-inclusion: NON_NULL
+    time-zone: ${user.timezone:GMT+8}
+    date-format: yyyy-MM-dd HH:mm:ss
 
 mybatis:
   type-aliases-package: com.github.tangyi.api

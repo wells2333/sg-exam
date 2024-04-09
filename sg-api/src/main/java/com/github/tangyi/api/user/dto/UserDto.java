@@ -1,13 +1,11 @@
 package com.github.tangyi.api.user.dto;
 
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.github.tangyi.api.user.model.User;
-import com.github.tangyi.common.base.BaseEntity;
 import com.github.tangyi.common.enums.GenderEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -133,8 +131,6 @@ public class UserDto implements Serializable {
 	 * 出生日期
 	 */
 	@Schema(description = "出生日期")
-	@JSONField(format = BaseEntity.DATE_FORMAT)
-	@JsonFormat(pattern = BaseEntity.DATE_FORMAT, timezone = BaseEntity.TIMEZONE)
 	private Date born;
 
 	/**
@@ -155,12 +151,8 @@ public class UserDto implements Serializable {
 	@Schema(description = "角色列表", hidden = true)
 	private String roleNames;
 
-	@JSONField(format = BaseEntity.DATE_FORMAT)
-	@JsonFormat(pattern = BaseEntity.DATE_FORMAT, timezone = BaseEntity.TIMEZONE)
 	protected Date createTime;
 
-	@JSONField(format = BaseEntity.DATE_FORMAT)
-	@JsonFormat(pattern = BaseEntity.DATE_FORMAT, timezone = BaseEntity.TIMEZONE)
 	protected Date updateTime;
 
 	/**
@@ -208,16 +200,12 @@ public class UserDto implements Serializable {
 	 * 最近登录时间
 	 */
 	@Schema(description = "最近登录时间", hidden = true)
-	@JSONField(format = BaseEntity.DATE_FORMAT)
-	@JsonFormat(pattern = BaseEntity.DATE_FORMAT, timezone = BaseEntity.TIMEZONE)
 	private Date loginTime;
 
 	/**
 	 * 用户归档时间
 	 */
 	@Schema(description = "用户归档时间", hidden = true)
-	@JSONField(format = BaseEntity.DATE_FORMAT)
-	@JsonFormat(pattern = BaseEntity.DATE_FORMAT, timezone = BaseEntity.TIMEZONE)
 	private Date lockTime;
 
 	/**

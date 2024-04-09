@@ -70,8 +70,6 @@ public class UserInfoDto implements Serializable {
 	/**
 	 * 生日
 	 */
-	@JSONField(format = BaseEntity.DATE_FORMAT)
-	@JsonFormat(pattern = BaseEntity.DATE_FORMAT, timezone = BaseEntity.TIMEZONE)
 	private Date born;
 
 	/**
@@ -143,15 +141,11 @@ public class UserInfoDto implements Serializable {
 	/**
 	 * 最近登录时间
 	 */
-	@JSONField(format = BaseEntity.DATE_FORMAT)
-	@JsonFormat(pattern = BaseEntity.DATE_FORMAT, timezone = BaseEntity.TIMEZONE)
 	private Date loginTime;
 
 	/**
 	 * 用户归档时间
 	 */
-	@JSONField(format = BaseEntity.DATE_FORMAT)
-	@JsonFormat(pattern = BaseEntity.DATE_FORMAT, timezone = BaseEntity.TIMEZONE)
 	private Date lockTime;
 
 	/**

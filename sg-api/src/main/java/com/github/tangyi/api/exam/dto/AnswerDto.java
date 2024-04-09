@@ -1,11 +1,8 @@
 package com.github.tangyi.api.exam.dto;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.github.tangyi.common.base.BaseEntity;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -84,15 +81,11 @@ public class AnswerDto implements Serializable {
 	/**
 	 * 开始时间
 	 */
-	@JSONField(format = BaseEntity.DATE_FORMAT)
-	@JsonFormat(pattern = BaseEntity.DATE_FORMAT, timezone = BaseEntity.TIMEZONE)
 	private Date startTime;
 
 	/**
 	 * 结束时间
 	 */
-	@JSONField(format = BaseEntity.DATE_FORMAT)
-	@JsonFormat(pattern = BaseEntity.DATE_FORMAT, timezone = BaseEntity.TIMEZONE)
 	private Date endTime;
 
 	/**

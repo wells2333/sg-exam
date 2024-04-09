@@ -1,7 +1,5 @@
 package com.github.tangyi.api.user.model;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.tangyi.common.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -118,16 +116,12 @@ public class User extends BaseEntity<User> {
 	 * 最近登录时间
 	 */
 	@Column(name = "login_time")
-	@JSONField(format = DATE_FORMAT)
-	@JsonFormat(pattern = BaseEntity.DATE_FORMAT, timezone = TIMEZONE)
 	private Date loginTime;
 
 	/**
 	 * 用户归档时间
 	 */
 	@Column(name = "lock_time")
-	@JSONField(format = DATE_FORMAT)
-	@JsonFormat(pattern = BaseEntity.DATE_FORMAT, timezone = TIMEZONE)
 	private Date lockTime;
 
 	/**

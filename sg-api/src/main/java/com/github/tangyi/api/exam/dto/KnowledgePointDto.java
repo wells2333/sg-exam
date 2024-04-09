@@ -1,10 +1,7 @@
 package com.github.tangyi.api.exam.dto;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.github.tangyi.common.base.BaseEntity;
 import lombok.Data;
 
 import java.util.Date;
@@ -38,8 +35,6 @@ public class KnowledgePointDto {
 
 	private String operator;
 
-	@JSONField(format = BaseEntity.DATE_FORMAT)
-	@JsonFormat(pattern = BaseEntity.DATE_FORMAT, timezone = BaseEntity.TIMEZONE)
 	protected Date updateTime;
 
 	private String speechId;

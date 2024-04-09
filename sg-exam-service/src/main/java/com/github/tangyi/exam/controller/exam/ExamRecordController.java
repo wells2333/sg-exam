@@ -28,8 +28,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -192,5 +196,21 @@ public class ExamRecordController extends BaseController {
 	@Operation(summary = "成绩详情", description = "根据考试记录 id 获取成绩详情")
 	public R<ExamRecordDetailsDto> details(@PathVariable Long id) {
 		return R.success(actionService.details(id));
+	}
+
+	@GetMapping("calculateDuration")
+	@Operation(summary = "计算时间间隔", description = "根据开始时间计算时间间隔")
+	public R<String> calculateDuration(@RequestParam String startTime) {
+		Date date;
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			date = sdf.parse(startTime);
+		} catch (ParseException e) {
+			log.error("Failed to parse start time {}", startTime);
+			return R.success("");
+		}
+
+		Duration duration = DateUtils.calculateDuration(date, new Date());
+		return R.success(DateUtils.formatDurationV2(duration, false));
 	}
 }

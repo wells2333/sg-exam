@@ -52,9 +52,9 @@
 import {mapGetters, mapState} from 'vuex'
 import CountDown from 'vue2-countdown'
 import {submitAll} from '@/api/exam/answer'
-import {getAllSubjects} from '@/api/exam/examRecord'
+import {getAllSubjects, calculateDuration} from '@/api/exam/examRecord'
 import store from '@/store'
-import {messageFail, messageSuccess, calculateDuration} from '@/utils/util'
+import {messageFail, messageSuccess} from '@/utils/util'
 import {getSubjectRef, setSubjectInfo, beforeSaveSubject} from '@/utils/busi'
 import Tinymce from '@/components/Tinymce'
 import Choices from '@/components/Subjects/Choices'
@@ -123,7 +123,14 @@ export default {
   },
   methods: {
     updateDuration() {
-      this.duration = calculateDuration(new Date(this.examRecord.createTime));
+      calculateDuration(this.examRecord.createTime).then(res => {
+        if (res.data.code === 0) {
+          this.duration = res.data.result
+        }
+      }).catch(err => {
+        console.error(err)
+      })
+
     },
     onChoiceFn(sort) {
       // 标识已答题状态

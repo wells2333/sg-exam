@@ -1,7 +1,5 @@
 package com.github.tangyi.api.exam.model;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.github.tangyi.common.base.BaseEntity;
@@ -36,16 +34,12 @@ public class ExaminationRecord extends BaseEntity<ExaminationRecord> {
 	 * 开始时间
 	 */
 	@Column(name = "start_time")
-	@JSONField(format = DATE_FORMAT)
-	@JsonFormat(pattern = BaseEntity.DATE_FORMAT, timezone = BaseEntity.TIMEZONE)
 	private Date startTime;
 
 	/**
 	 * 结束时间
 	 */
 	@Column(name = "end_time")
-	@JSONField(format = DATE_FORMAT)
-	@JsonFormat(pattern = BaseEntity.DATE_FORMAT, timezone = BaseEntity.TIMEZONE)
 	private Date endTime;
 
 	/**

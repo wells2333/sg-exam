@@ -181,7 +181,7 @@ public class ExamRecordService extends CrudService<ExamRecordMapper, Examination
 						dto.setExaminationName(e.getExaminationName());
 						dto.setStartTime(temp.getStartTime());
 						dto.setEndTime(temp.getEndTime());
-						dto.setDuration(DateUtils.durationNoNeedMillis(temp.getStartTime(), temp.getEndTime()));
+						dto.setDuration(DateUtils.formatDurationV2(DateUtils.calculateDuration(temp.getStartTime(), temp.getEndTime()), false));
 						dto.setScore(temp.getScore());
 						dto.setUserId(temp.getUserId());
 						dto.setCorrectNumber(temp.getCorrectNumber());

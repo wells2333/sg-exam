@@ -1,7 +1,5 @@
 package com.github.tangyi.api.exam.dto;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -52,22 +50,16 @@ public class ExaminationRecordDto extends BaseEntity<ExaminationRecordDto> {
 	/**
 	 * 当前时间
 	 */
-	@JSONField(format = DATE_FORMAT)
-	@JsonFormat(pattern = BaseEntity.DATE_FORMAT, timezone = BaseEntity.TIMEZONE)
 	private Date currentTime;
 
 	/**
 	 * 考试开始时间
 	 */
-	@JSONField(format = DATE_FORMAT)
-	@JsonFormat(pattern = BaseEntity.DATE_FORMAT, timezone = BaseEntity.TIMEZONE)
 	private Date startTime;
 
 	/**
 	 * 考试结束时间
 	 */
-	@JSONField(format = DATE_FORMAT)
-	@JsonFormat(pattern = BaseEntity.DATE_FORMAT, timezone = BaseEntity.TIMEZONE)
 	private Date endTime;
 
 	/**

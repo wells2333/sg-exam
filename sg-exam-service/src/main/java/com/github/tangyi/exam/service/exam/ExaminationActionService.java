@@ -198,7 +198,7 @@ public class ExaminationActionService implements IExaminationActionService {
 		// 保存成绩
 		record.setCommonValue(operator, tenantCode);
 		record.setId(recordId);
-		record.setEndTime(record.getCreateTime());
+		record.setEndTime(new Date());
 		this.examRecordService.update(record);
 		// 更新排名数据
 		this.rankInfoService.updateRank(record);
@@ -218,7 +218,7 @@ public class ExaminationActionService implements IExaminationActionService {
 		record.setCommonValue(currentUsername, tenantCode);
 		record.setId(answer.getExamRecordId());
 		// 提交时间
-		record.setEndTime(record.getCreateTime());
+		record.setEndTime(new Date());
 		record.setSubmitStatus(SubmitStatusEnum.SUBMITTED.getValue());
 		// 更新考试状态
 		boolean success = examRecordService.update(record) > 0;
@@ -368,7 +368,7 @@ public class ExaminationActionService implements IExaminationActionService {
 		dto.setScore(ObjectUtil.getDouble(record.getScore()));
 		dto.setUserId(record.getUserId());
 		dto.setExaminationId(record.getExaminationId());
-		dto.setDuration(DateUtils.durationNoNeedMillis(record.getStartTime(), record.getEndTime()));
+		dto.setDuration(DateUtils.formatDurationV2(DateUtils.calculateDuration(record.getStartTime(), record.getEndTime()), false));
 		// 正确题目数
 		dto.setCorrectNumber(ObjectUtil.getInt(record.getCorrectNumber()));
 		dto.setInCorrectNumber(ObjectUtil.getInt(record.getInCorrectNumber()));

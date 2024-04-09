@@ -73,3 +73,13 @@ export function examRecordDetails (id) {
     method: 'get'
   })
 }
+
+export function calculateDuration (startTime) {
+  return request({
+    url: baseUrl + 'calculateDuration',
+    method: 'get',
+    params: {
+      startTime
+    }
+  })
+}

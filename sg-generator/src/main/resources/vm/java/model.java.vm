@@ -40,10 +40,6 @@ public class ${ClassName} extends ${Entity}<${ClassName}> {
 #else
 #set($comment=$column.columnComment)
 #end
-#if($column.javaType == 'Date')
-    @JSONField(format = DATE_FORMAT)
-    @JsonFormat(pattern = DATE_FORMAT, timezone = TIMEZONE)
-#end
 #if($column.javaType == 'Long')
     @JsonSerialize(using = ToStringSerializer.class)
 #end

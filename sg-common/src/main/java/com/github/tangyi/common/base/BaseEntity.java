@@ -1,7 +1,5 @@
 package com.github.tangyi.common.base;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.github.tangyi.common.utils.SysUtil;
@@ -23,8 +21,6 @@ public class BaseEntity<T> implements Serializable {
 
 	@Serial
 	private static final long serialVersionUID = 1L;
-	public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-	public static final String TIMEZONE = "GMT+8";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "JDBC")
@@ -34,15 +30,11 @@ public class BaseEntity<T> implements Serializable {
 	protected String creator;
 
 	@Column(name = "create_time")
-	@JSONField(format = DATE_FORMAT)
-	@JsonFormat(pattern = DATE_FORMAT, timezone = TIMEZONE)
 	protected Date createTime;
 
 	protected String operator;
 
 	@Column(name = "update_time")
-	@JSONField(format = DATE_FORMAT)
-	@JsonFormat(pattern = DATE_FORMAT, timezone = TIMEZONE)
 	protected Date updateTime;
 
 	/**

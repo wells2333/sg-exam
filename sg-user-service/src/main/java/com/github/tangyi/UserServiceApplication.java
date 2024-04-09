@@ -23,7 +23,6 @@ import java.util.TimeZone;
 public class UserServiceApplication implements WebMvcConfigurer {
 
 	public static void main(String[] args) {
-		TimeZone.setDefault(TimeZone.getTimeZone("GMT+8"));
 		SpringApplication.run(UserServiceApplication.class, args);
 	}
 
@@ -35,10 +34,5 @@ public class UserServiceApplication implements WebMvcConfigurer {
 	@Bean
 	MeterRegistryCustomizer<MeterRegistry> configurer(@Value("${spring.application.name}") String applicationName) {
 		return (registry) -> registry.config().commonTags("application", applicationName);
-	}
-
-	@PostConstruct
-	void started() {
-		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 	}
 }

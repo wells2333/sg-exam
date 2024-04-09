@@ -168,7 +168,7 @@ public class DateUtils {
 		if (duration == null || duration.isZero() || duration.isNegative()) {
 			return "";
 		}
-		StringBuilder formattedDuration = new StringBuilder();
+		StringBuilder f = new StringBuilder();
 		long hours = duration.toHours();
 		long minutes = duration.toMinutes();
 		long seconds = duration.getSeconds();
@@ -185,18 +185,67 @@ public class DateUtils {
 			msMsg = "毫秒";
 		}
 		if (hours != 0) {
-			formattedDuration.append(hours).append(hMsg);
+			f.append(hours).append(hMsg);
 		}
 		if (minutes != 0) {
-			formattedDuration.append(minutes - TimeUnit.HOURS.toMinutes(hours)).append(mMsg);
+			f.append(minutes - TimeUnit.HOURS.toMinutes(hours)).append(mMsg);
 		}
 		if (seconds != 0) {
-			formattedDuration.append(seconds - TimeUnit.MINUTES.toSeconds(minutes)).append(sMsg);
+			f.append(seconds - TimeUnit.MINUTES.toSeconds(minutes)).append(sMsg);
 		}
 		if (needMillis && millis != 0) {
-			formattedDuration.append(millis - TimeUnit.SECONDS.toMillis(seconds)).append(msMsg);
+			f.append(millis - TimeUnit.SECONDS.toMillis(seconds)).append(msMsg);
 		}
-		return formattedDuration.toString();
+		return f.toString();
+	}
+
+	public static String formatDurationV2(Duration duration, boolean needMillis) {
+		if (duration == null || duration.isZero() || duration.isNegative()) {
+			return "";
+		}
+
+		StringBuilder f = new StringBuilder();
+		long hours = duration.toHours();
+		long minutes = duration.toMinutes();
+		long seconds = duration.getSeconds();
+		long millis = duration.toMillis();
+		if (hours != 0) {
+			if (hours < 10) {
+				f.append("0").append(hours).append(":");
+			} else {
+				f.append(hours).append(":");
+			}
+		} else {
+			f.append("00:");
+		}
+		if (minutes != 0) {
+			long m = minutes - TimeUnit.HOURS.toMinutes(hours);
+			if (m < 10) {
+				f.append("0").append(m).append(":");
+			} else {
+				f.append(m).append(":");
+			}
+		} else {
+			f.append("00:");
+		}
+		if (seconds != 0) {
+			long s = seconds - TimeUnit.MINUTES.toSeconds(minutes);
+			if (s < 10) {
+				f.append("0").append(s);
+			} else {
+				f.append(s);
+			}
+		} else {
+			f.append("00");
+		}
+		if (needMillis) {
+			if (millis != 0) {
+				f.append(":").append(millis - TimeUnit.SECONDS.toMillis(seconds));
+			} else {
+				f.append(":00");
+			}
+		}
+		return f.toString();
 	}
 
 	/**
