@@ -1,15 +1,16 @@
-export const editorHeight = 180;
+export const editorHeight = 260;
 
 export const speechTypes = ['.mp3'];
 
 export const videoTypes = ['.mp4'];
 
 export const tinymcePlugins = [
-  'image imagetools advlist anchor autolink autosave code codesample  directionality  fullscreen hr insertdatetime link lists media nonbreaking pagebreak paste preview save searchreplace tabfocus  template  textpattern visualblocks visualchars table',
+  'image imagetools advlist anchor autolink autosave code codesample  directionality  fullscreen hr insertdatetime link lists media nonbreaking noneditable pagebreak paste preview save searchreplace spellchecker tabfocus  template  textpattern visualblocks visualchars wordcount table',
 ];
 
 export const tinymceToolbar = [
-  'fontsizeselect bold italic underline strikethrough blockquote subscript superscript link  preview insertdatetime forecolor backcolor fullscreen image',
+  'fontsizeselect lineheight searchreplace bold italic underline strikethrough alignleft aligncenter alignright outdent indent  blockquote undo redo removeformat subscript superscript code codesample',
+  'hr bullist numlist link  preview anchor pagebreak insertdatetime media  forecolor backcolor fullscreen image',
   'table'
 ];
 

@@ -27,7 +27,7 @@ export default defineComponent({
 
 <style lang="less">
 .html-text {
-  height: 25px;
+  height: 22px;
   text-overflow: ellipsis;
   overflow: hidden;
 }

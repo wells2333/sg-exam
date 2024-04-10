@@ -156,7 +156,7 @@
         const { height, options, toolbar, plugins } = props;
         const publicPath = import.meta.env.VITE_PUBLIC_PATH || '/';
         return {
-          image_dimensions: false,
+          image_dimensions: true,
           selector: `#${unref(tinymceId)}`,
           height,
           toolbar,
