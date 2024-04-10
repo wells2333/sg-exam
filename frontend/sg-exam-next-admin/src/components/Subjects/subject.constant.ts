@@ -5,13 +5,13 @@ export const speechTypes = ['.mp3'];
 export const videoTypes = ['.mp4'];
 
 export const tinymcePlugins = [
-  'image imagetools advlist anchor autolink autosave code codesample  directionality  fullscreen hr insertdatetime link lists media nonbreaking noneditable pagebreak paste preview save searchreplace spellchecker tabfocus  template  textpattern visualblocks visualchars wordcount table',
+  'kityformula-editor image imagetools advlist anchor autolink autosave code codesample  directionality  fullscreen hr insertdatetime link lists media nonbreaking noneditable pagebreak paste preview save searchreplace spellchecker tabfocus  template  textpattern visualblocks visualchars wordcount table',
 ];
 
 export const tinymceToolbar = [
   'fontsizeselect lineheight searchreplace bold italic underline strikethrough alignleft aligncenter alignright outdent indent  blockquote undo redo removeformat subscript superscript code codesample',
   'hr bullist numlist link  preview anchor pagebreak insertdatetime media  forecolor backcolor fullscreen image',
-  'table'
+  'table kityformula-editor'
 ];
 
 export const optionPrefix = 'options.';
