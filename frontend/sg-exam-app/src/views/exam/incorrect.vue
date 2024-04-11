@@ -67,9 +67,8 @@
           <div class="subject-content" v-show="item.show">
             <div class="subject-content-option">
               <div class="subject-title">
-                <span class="subject-title-number">{{ item.subject.sort }} .</span>
                 <span
-                  v-html="item.subject.subjectName"></span>
+                  v-html="customReplaceFirstP(item.subject.subjectName, item.subject.type, item.subject.sort)"></span>
               </div>
               <div v-if="item.subject.subjectVideoUrl">
                 <sg-video ref="sgVideo" :src="item.subject.subjectVideoUrl"></sg-video>
@@ -151,6 +150,7 @@ import {examRecordDetails} from '@/api/exam/examRecord'
 import {notifyFail, messageWarn} from '@/utils/util'
 import {answerType} from '@/const/constant'
 import SgVideo from '@/components/SgVideo'
+import {replaceFirstP} from '@/utils/busi'
 
 export default {
   name: 'Incorrect',
@@ -198,6 +198,30 @@ export default {
     }
   },
   methods: {
+    customReplaceFirstP(str, type, sort) {
+      let typeStr = '';
+      switch(type) {
+        case 0:
+          typeStr = this.$t('exam.subject.subjectTypeChoices')
+          break;
+        case 1:
+          typeStr = this.$t('exam.subject.subjectTypeShortAnswer')
+          break;
+        case 2:
+          typeStr = this.$t('exam.subject.subjectTypeJudgement')
+          break;
+        case 3:
+          typeStr = this.$t('exam.subject.subjectTypeMultiChoices')
+          break;
+        case 4:
+          typeStr = this.$t('exam.subject.subjectTypeFillBlank')
+          break;
+        case 5:
+          typeStr = this.$t('exam.subject.subjectTypeMaterial')
+          break;
+      }
+      return replaceFirstP(str, typeStr, sort)
+    },
     getRecordDetail() {
       this.loading = true
       this.examRecordLoading = true
@@ -321,13 +345,9 @@ export default {
 
 .subject-title {
   color: #333333;
-  font-size: 16px;
-  line-height: 22px;
   margin-bottom: 10px;
-  padding-left: 20px;
   position: relative;
   display: inline-flex;
-
   .subject-title-number {
     position: absolute;
     left: -25px;
@@ -354,7 +374,6 @@ export default {
   margin-bottom: 21px;
   padding: 12px 0 12px 22px;
   position: relative;
-  min-height: 240px;
   color: #666666;
   text-align: left;
 }

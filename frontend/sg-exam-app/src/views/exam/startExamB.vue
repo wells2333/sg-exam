@@ -130,7 +130,6 @@ export default {
       }).catch(err => {
         console.error(err)
       })
-
     },
     onChoiceFn(sort) {
       // 标识已答题状态
