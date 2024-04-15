@@ -1,6 +1,26 @@
 version: '2.1'
 
 services:
+  # 内嵌 MySQL 服务，如果使用外部 MySQL，可以这这里的 mysql-service 删掉
+  mysql-service:
+    restart: always
+    image: mysql:5.7.27
+    container_name: mysql-service
+    volumes:
+      # 数据存储目录
+      - ./config-repo/mysql/data:/var/lib/mysql
+      # MySQL 配置文件
+      - ./config-repo/mysql/conf/my.cnf:/etc/my.cnf
+      # SQL 初始化脚本
+      - ./config-repo/mysql:/docker-entrypoint-initdb.d
+    environment:
+      - "MYSQL_ROOT_PASSWORD=${MYSQL_SERVICE_ROOT_PASSWORD}"
+      - "MYSQL_DATABASE=${MYSQL_SERVICE_DATABASE}"
+      - "TZ=${MYSQL_SERVICE_TZ}"
+    ports:
+      # 宿主机：容器
+      - 3306:3306
+
   sg-next-app:
     build: frontend
     image: ${SG_EXAM_REGISTRY}/sg-next-app:${SG_EXAM_VERSION}
