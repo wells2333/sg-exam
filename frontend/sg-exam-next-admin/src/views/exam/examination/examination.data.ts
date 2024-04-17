@@ -48,14 +48,15 @@ export const columns: BasicColumn[] = [
   {
     title: '课程',
     dataIndex: 'course.courseName',
-    width: 100,
     customRender: ({record}) => {
-      const courseName = record.courseName;
+      const course = record.course;
       let color = 'green';
-      let text = courseName;
-      if (courseName == null) {
+      let text = "";
+      if (course == null) {
         color = 'red';
         text = '暂无课程';
+      }else {
+        text = course.courseName
       }
       return h(Tag, {color: color}, () => text);
     },
@@ -214,7 +215,7 @@ export const formSchema: FormSchema[] = [
     component: 'Input',
     render: ({ model, field }) => {
       return h(SgUpload, {
-        value: model[field],
+        value: model['imageUrl'],
         api: uploadImage,
         accept: '.jpg,.jpeg,.png',
         handleDone: (value) => {

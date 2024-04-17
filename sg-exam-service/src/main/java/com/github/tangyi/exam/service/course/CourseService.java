@@ -173,9 +173,12 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 	@Transactional
 	@CacheEvict(value = ExamCacheName.COURSE, key = "#course.id")
 	public int delete(Course course) {
-		Attachment attachment = new Attachment();
-		attachment.setId(course.getImageId());
-		attachmentService.delete(attachment);
+		Long imageId = course.getImageId();
+		if (imageId != null){
+			Attachment attachment = new Attachment();
+			attachment.setId(imageId);
+			attachmentService.delete(attachment);
+		}
 		int update = super.delete(course);
 		if (update > 0) {
 			super.deleteIndex(course.getId(), DocType.COURSE);

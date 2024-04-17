@@ -317,14 +317,7 @@ export default defineComponent({
       async (val: string, prevVal: string) => {
         resetFile();
         if (val) {
-          const res = await getAttachment(val);
-          if (res) {
-            const {id, attachName, url} = res;
-            if (id) {
-              file.value = {id, name: attachName, url};
-            }
-            showProgress.value = false;
-          }
+          file.value = {url:val};
         }
       },
     );
