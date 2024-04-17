@@ -3,95 +3,74 @@ version: '2.1'
 services:
   # 内嵌 MySQL 服务，如果使用外部 MySQL，可以这这里的 mysql-service 删掉
   mysql-service:
-    restart: always
     image: mysql:5.7.27
     container_name: mysql-service
+    restart: always
+    networks:
+      - my-network
     volumes:
       # 数据存储目录
-      - ./config-repo/mysql/data:/var/lib/mysql
+      - ./data/mysql-data:/var/lib/mysql
       # MySQL 配置文件
       - ./config-repo/mysql/conf/my.cnf:/etc/my.cnf
       # SQL 初始化脚本
       - ./config-repo/mysql:/docker-entrypoint-initdb.d
+    env_file: sg-exam.env
     environment:
-      - "MYSQL_ROOT_PASSWORD=${MYSQL_SERVICE_ROOT_PASSWORD}"
-      - "MYSQL_DATABASE=${MYSQL_SERVICE_DATABASE}"
-      - "TZ=${MYSQL_SERVICE_TZ}"
+      - "MYSQL_ROOT_PASSWORD=123456"
+      - "MYSQL_DATABASE=sg-exam-user"
+      - "TZ=Asia/Shanghai"
     ports:
       # 宿主机：容器
-      - 3306:3306
+      - "3306:3306"
 
-  sg-next-app:
-    build: frontend
-    image: ${SG_EXAM_REGISTRY}/sg-next-app:${SG_EXAM_VERSION}
-    networks:
-      - my-network
-    ports:
-      - "81:80"
-      - "443:443"
-    volumes:
-      - ./config-repo/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./config-repo/nginx/cert:/etc/nginx/cert
-
-  sg-user-service:
-    build: sg-user-service
-    image: ${SG_EXAM_REGISTRY}/sg-user-service:${SG_EXAM_VERSION}
-    mem_limit: 8g
-    networks:
-      - my-network
-    env_file: config-repo/env/sg-user-service.env
-    ports:
-      - "9183:80"
-      - "4004:4004"
-    volumes:
-      - ./config-repo/:/config-repo/
-      - ./logs/:/logs/
-
-  redis:
+  # 内嵌 Redis 服务，如果使用外部 Redis，可以这这里的 redis-service 删掉
+  redis-service:
     image: redis:latest
-    container_name: redis
+    container_name: redis-service
     restart: always
+    networks:
+      - my-network
     command: redis-server /usr/local/etc/redis/redis.conf
     ports:
       - "6379:6379"
     volumes:
       - ./data/redis-data:/data
       - ./config-repo/redis/redis.conf:/usr/local/etc/redis/redis.conf
+
+  # 内嵌 MinIO 服务，如果使用外部 Redis，可以这这里的 minio-service 删掉
+  minio-service:
+    image: minio/minio
+    container_name: minio-service
+    restart: always
     networks:
       - my-network
-
-  grafana:
-    image: grafana/grafana
-    container_name: grafana
-    restart: always
+    command: server /data --address "0.0.0.0:9000" --console-address "0.0.0.0:9090"
     ports:
-      - "3000:3000"
-    volumes:
-      - ./data/grafana:/var/lib/grafana
-    networks:
-      - my-network
-
-  prometheus:
-    image: prom/prometheus
-    container_name: prometheus
-    hostname: prometheus
-    restart: always
-    volumes:
-      - ./config-repo/prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
+      - "9000:9000"
       - "9090:9090"
-    networks:
-      - my-network
+    environment:
+      - "MINIO_ACCESS_KEY=admin"
+      - "MINIO_SECRET_KEY=admin123456"
+    volumes:
+      - ./data/minio/data:/data
+      - ./data/minio/config:/root/.minio
 
-  kkFileView:
-    image: keking/kkfileview:4.1.0
-    container_name: kkFileView
-    hostname: kkFileView
+  sg-exam:
+    image: sg-exam:latest
     restart: always
-    ports:
-      - "8012:8012"
     networks:
       - my-network
+    env_file: sg-exam.env
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - ./logs/:/apps/data/web/working/logs/
+    depends_on:
+      - mysql-service
+      - redis-service
+      - minio-service
 
 networks:
   my-network:

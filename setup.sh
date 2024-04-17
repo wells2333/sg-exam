@@ -98,6 +98,15 @@ function start_service() {
   logs
 }
 
+function start_service_v2() {
+  echo "Starting nginx service ..."
+  cd /usr/sbin
+  ./nginx
+  echo "Nginx service started."
+  cd /apps/data/web/working
+  java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -Duser.timezone=$TZ -Dfile.encoding=UTF-8 -jar app.jar
+}
+
 function stop_service() {
   echo "Stopping services ..."
   docker-compose stop -t 60
@@ -184,6 +193,7 @@ function print_usage() {
       -build               Build backend services and docker image
       -push                Push docker image to registry
       -start               Start services
+      -start_v2            Start v2 services
       -stop                Stop services
       -restart             Pull docker image and restart services
       -logs                Tails the services logs
@@ -219,6 +229,9 @@ function main() {
     ;;
   -start | --start | start)
     start_service
+    ;;
+  -start_v2 | --start_v2 | start_v2)
+    start_service_v2
     ;;
   -stop | --stop | stop)
     stop_service

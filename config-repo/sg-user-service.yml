@@ -1,5 +1,5 @@
 server:
-  port: 80
+  port: 8080
   servlet:
     context-path: /sg-user-service
 spring.application.name: sg-user-service
@@ -99,7 +99,7 @@ exam:
     ExaminationImageUrl: ${EXAM_EXAMINATION_IMAGE_URL:https://images4.alphacoders.com/132/thumb-440-1323467.webp}
 ---
 server:
-  port: ${SERVER_PORT:9183}
+  port: ${SERVER_PORT:8080}
 spring:
   profiles: dev
   datasource:
@@ -124,7 +124,7 @@ spring:
 
 ---
 server:
-  port: ${SERVER_PORT:80}
+  port: ${SERVER_PORT:8080}
   ssl:
     enabled: ${SG_SSL_ENABLED:false}  # 默认为 false
     key-store: ${SG_SSL_STORE}  #类路径下的自签证书
