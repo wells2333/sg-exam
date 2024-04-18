@@ -72,18 +72,21 @@ function build_frontend() {
 }
 
 function build_service() {
-  echo "Building $SG_EXAM_USER_SERVICE ..."
+  local version="$1"
+  echo "Building $SG_EXAM_USER_SERVICE $version ..."
   chmod 764 gradlew
   ./gradlew build -x test
   echo "$SG_EXAM_USER_SERVICE has been built successfully."
   echo "Building docker image ..."
-  docker-compose build
+  docker build -t registry.cn-hangzhou.aliyuncs.com/sg-exam-next/sg-exam:"$version" -t registry.cn-hangzhou.aliyuncs.com/sg-exam-next/sg-exam:latest .
   echo "Docker image has been built successfully."
 }
 
 function push_service() {
+  local version="$1"
   echo "Pushing docker image ..."
-  docker-compose push
+  docker push registry.cn-hangzhou.aliyuncs.com/sg-exam-next/sg-exam:"$version"
+  docker push registry.cn-hangzhou.aliyuncs.com/sg-exam-next/sg-exam:latest
   echo "Docker image has been pushed successfully."
 }
 
@@ -98,8 +101,9 @@ function start_service() {
   logs
 }
 
-function start_service_v2() {
+function start_service_inner() {
   echo "Starting nginx service ..."
+  mkdir -p /apps/data/web/working/logs/nginx
   cd /usr/sbin
   ./nginx
   echo "Nginx service started."
@@ -193,7 +197,6 @@ function print_usage() {
       -build               Build backend services and docker image
       -push                Push docker image to registry
       -start               Start services
-      -start_v2            Start v2 services
       -stop                Stop services
       -restart             Pull docker image and restart services
       -logs                Tails the services logs
@@ -218,20 +221,17 @@ function main() {
   -build_f | --build_f | build_f)
     build_frontend
     ;;
-  -build_admin | --build_admin | build_admin)
-    build_admin
-    ;;
   -build | --build | build)
-    build_service
+    build_service "$version"
     ;;
   -push | --push | push)
-    push_service
+    push_service "$version"
     ;;
   -start | --start | start)
     start_service
     ;;
-  -start_v2 | --start_v2 | start_v2)
-    start_service_v2
+  -start_inner | --start_inner | start_inner)
+    start_service_inner
     ;;
   -stop | --stop | stop)
     stop_service

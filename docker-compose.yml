@@ -15,7 +15,6 @@ services:
       - ./config-repo/mysql/conf/my.cnf:/etc/my.cnf
       # SQL 初始化脚本
       - ./config-repo/mysql:/docker-entrypoint-initdb.d
-    env_file: sg-exam.env
     environment:
       - "MYSQL_ROOT_PASSWORD=123456"
       - "MYSQL_DATABASE=sg-exam-user"
@@ -57,11 +56,11 @@ services:
       - ./data/minio/config:/root/.minio
 
   sg-exam:
-    image: sg-exam:latest
+    image: ${SG_EXAM_REGISTRY}/sg-exam:latest
     restart: always
     networks:
       - my-network
-    env_file: sg-exam.env
+    env_file: .env
     ports:
       - "80:80"
       - "8080:8080"

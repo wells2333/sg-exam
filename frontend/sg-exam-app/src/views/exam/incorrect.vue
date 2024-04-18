@@ -200,7 +200,7 @@ export default {
   methods: {
     customReplaceFirstP(str, type, sort) {
       let typeStr = '';
-      switch(type) {
+      switch (type) {
         case 0:
           typeStr = this.$t('exam.subject.subjectTypeChoices')
           break;

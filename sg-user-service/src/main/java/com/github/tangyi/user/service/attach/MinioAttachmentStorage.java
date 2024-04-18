@@ -45,6 +45,8 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class MinioAttachmentStorage extends AbstractAttachmentStorage {
 
+	private static final String BUCKET_POLICY = "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"s3:GetObject\"],\"Effect\":\"Allow\",\"Principal\":{\"AWS\":[\"*\"]},\"Resource\":[\"arn:aws:s3:::bucketName/*\"],\"Sid\":\"\"}]}";
+
 	private final MinioConfig minioConfig;
 	private final Map<String, String> contentTypeMap;
 	private final SysAttachmentChunkService attachmentChunkService;
@@ -112,9 +114,13 @@ public class MinioAttachmentStorage extends AbstractAttachmentStorage {
 				log.info("Start to make bucket: {}", bucket);
 				minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
 				log.info("Make bucket finish, bucket: {}", bucket);
+				// 自动设置访问策略
+				String config = BUCKET_POLICY.replace("bucketName", bucket);
+				minioClient.setBucketPolicy(SetBucketPolicyArgs.builder().bucket(bucket).config(config).build());
+				log.info("Set bucket policy finish, bucket: {}, config: {}", bucket, config);
 			}
 		} catch (ConnectException e) {
-			log.warn("Failed to connect to MinIO.");
+			log.warn("Failed to connect to MinIO: {}", e.getMessage());
 		} catch (Exception e) {
 			log.error("Failed to check or create bucket: {}", bucket, e);
 		}

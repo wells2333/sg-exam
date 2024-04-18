@@ -32,4 +32,4 @@ ADD config-repo/sg-user-service.yml config-repo/sg-user-service.yml
 ENV TZ=Asia/Shanghai
 
 EXPOSE 80
-CMD ["sh", "setup.sh", "start_v2"]
+CMD ["sh", "setup.sh", "start_inner"]
