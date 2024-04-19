@@ -180,7 +180,17 @@ export default {
             const recordId = result.examRecord.id
             if (this.examination.answerType === 0) {
               // 展示所有题目
-              this.$router.push({ path: `/start-exam-b/${this.examination.id}?recordId=${recordId}` })
+              const resolvedRoute = this.$router.resolve({
+                path: `/start-exam-b/${this.examination.id}`,
+                query: { recordId: recordId }
+              });
+              // 使用 window.open() 在新标签页中打开链接
+              const newTab = window.open(resolvedRoute.href, "_blank");
+               // 关闭当前标签页（这部分的可靠性取决于浏览器的设置）
+               if (newTab){
+                window.opener = null;
+                window.open("about:blank", "_top").close()
+               }
             } else {
               // 上一题、下一题模式
               this.$router.push({ path: `/start-exam-a/${this.examination.id}?recordId=${recordId}` })
