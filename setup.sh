@@ -135,7 +135,7 @@ function setup() {
   wget "$repo_raw"/.env
   wget "$repo_raw"/docker-compose.yml
   wget -P config-repo "$repo_raw"/config-repo/application.yml
-  wget -P config-repo  "$repo_raw"/config-repo/sg-user-service.yml
+  wget -P config-repo "$repo_raw"/config-repo/sg-user-service.yml
   wget -P config-repo/mysql "$repo_raw"/config-repo/mysql/init.sql
   wget -P config-repo/mysql "$repo_raw"/config-repo/mysql/update.sql
   wget -P config-repo/mysql/conf "$repo_raw"/config-repo/mysql/conf/my.cnf

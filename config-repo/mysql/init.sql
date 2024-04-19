@@ -294,7 +294,7 @@ CREATE TABLE `exam_examination` (
 -- Records of exam_examination
 -- ----------------------------
 BEGIN;
-INSERT INTO `exam_examination` VALUES (1, '语文考试', 0, '语文考试', '2022-11-13 14:22:02', '2023-11-20 14:22:02', 25, 1, 3, 1, '语文考试 https://www.zgshici.com/etagid224722b0/', 'admin', '2022-11-13 14:22:55', 'admin', '2023-11-08 21:20:08', 0, 'gitee', 0000000001, '语文', 0, 0);
+INSERT INTO `exam_examination` VALUES (1, '语文考试', 0, '语文考试', '2023-11-13 14:22:02', '2025-11-20 14:22:02', 25, 1, 3, 1, '语文考试 https://www.zgshici.com/etagid224722b0/', 'admin', '2022-11-13 14:22:55', 'admin', '2023-11-08 21:20:08', 0, 'gitee', 0000000001, '语文', 0, 0);
 COMMIT;
 
 -- ----------------------------
