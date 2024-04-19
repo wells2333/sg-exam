@@ -6,6 +6,7 @@ SG_EXAM_APP="sg-exam-app"
 SG_EXAM_NEXT_ADMIN="sg-exam-next-admin"
 SG_EXAM_NEXT_APP="sg-exam-next-app"
 SG_EXAM_USER_SERVICE="sg-user-service"
+SG_EXAM_IMAGE_NAME="registry.cn-hangzhou.aliyuncs.com/sg-exam-next/sg-exam"
 
 function update_version() {
   local version="$1"
@@ -78,15 +79,15 @@ function build_service() {
   ./gradlew build -x test
   echo "$SG_EXAM_USER_SERVICE has been built successfully."
   echo "Building docker image ..."
-  docker build -t registry.cn-hangzhou.aliyuncs.com/sg-exam-next/sg-exam:"$version" -t registry.cn-hangzhou.aliyuncs.com/sg-exam-next/sg-exam:latest .
+  docker build -t "$SG_EXAM_IMAGE_NAME":"$version" -t "$SG_EXAM_IMAGE_NAME":latest .
   echo "Docker image has been built successfully."
 }
 
 function push_service() {
   local version="$1"
   echo "Pushing docker image ..."
-  docker push registry.cn-hangzhou.aliyuncs.com/sg-exam-next/sg-exam:"$version"
-  docker push registry.cn-hangzhou.aliyuncs.com/sg-exam-next/sg-exam:latest
+  docker push "$SG_EXAM_IMAGE_NAME":"$version"
+  docker push "$SG_EXAM_IMAGE_NAME":latest
   echo "Docker image has been pushed successfully."
 }
 
@@ -98,7 +99,6 @@ function start_service() {
   docker-compose up --remove-orphans --no-build -d
   echo "Services has been started successfully."
   docker ps
-  logs
 }
 
 function start_service_inner() {
@@ -117,14 +117,6 @@ function stop_service() {
   echo "Services has been stopped successfully."
 }
 
-function logs() {
-  docker logs "$(docker ps |grep $SG_EXAM_USER_SERVICE|awk '{print $1}')" -f --tail=100
-}
-
-function install_jdk() {
-  echo ""
-}
-
 function install_docker() {
     yum install -y yum-utils device-mapper-persistent-data lvm2
     yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
@@ -137,53 +129,18 @@ function install_docker() {
 
 function setup() {
   echo "Start to setup, current directory: $(pwd)"
-  if [ -d "sg-exam" ]; then
-    echo "Directory sg-exam is exists."
-    return
-  fi
-  mkdir -p sg-exam
-  echo "Create directory sg-exam."
-  cd sg-exam
-  wget https://gitee.com/wells2333/sg-exam/raw/master/setup.sh
-  wget https://gitee.com/wells2333/sg-exam/raw/master/.env
-  wget https://gitee.com/wells2333/sg-exam/raw/master/docker-compose.yml
-  # 删除所有 build 的配置
-  sed -e "/build:/d" docker-compose.yml > docker-compose.yml
+  local branch=master
+  local repo_raw=https://raw.githubusercontent.com/wells2333/sg-exam/"$branch"
 
-  echo "Create directory config-repo."
-  mkdir -p config-repo
-  cd config-repo
-  wget https://gitee.com/wells2333/sg-exam/raw/master/config-repo/application.yml
-  wget https://gitee.com/wells2333/sg-exam/raw/master/config-repo/prometheus.yml
-  wget https://gitee.com/wells2333/sg-exam/raw/master/config-repo/sg-user-service.yml
+  wget "$repo_raw"/.env
+  wget "$repo_raw"/docker-compose.yml
+  wget -P config-repo "$repo_raw"/config-repo/application.yml
+  wget -P config-repo  "$repo_raw"/config-repo/sg-user-service.yml
+  wget -P config-repo/mysql "$repo_raw"/config-repo/mysql/init.sql
+  wget -P config-repo/mysql "$repo_raw"/config-repo/mysql/update.sql
+  wget -P config-repo/nginx "$repo_raw"/config-repo/nginx/nginx.conf
+  wget -P config-repo/redis "$repo_raw"/config-repo/redis/redis.conf
 
-  echo "Create directory env."
-  mkdir -p env
-
-  echo "Create directory mysql."
-  mkdir -p mysql
-
-  echo "Create directory nginx."
-  mkdir -p nginx
-
-  echo "Create directory redis."
-  mkdir -p redis
-
-  cd env
-  wget https://gitee.com/wells2333/sg-exam/raw/master/config-repo/env/sg-user-service.env
-  cd ..
-  cd mysql
-  wget https://gitee.com/wells2333/sg-exam/blob/master/config-repo/mysql/init.sql
-  wget https://gitee.com/wells2333/sg-exam/blob/master/config-repo/mysql/update.sql
-  cd ..
-  cd nginx
-  wget https://gitee.com/wells2333/sg-exam/raw/master/config-repo/nginx/nginx.conf
-  wget https://gitee.com/wells2333/sg-exam/raw/master/config-repo/nginx/nginx_ssl.conf
-  cd ..
-
-  cd redis
-  wget https://gitee.com/wells2333/sg-exam/raw/master/config-repo/redis/redis.conf
-  cd ..
   echo "Setup finished."
 }
 
@@ -199,9 +156,8 @@ function print_usage() {
       -start               Start services
       -stop                Stop services
       -restart             Pull docker image and restart services
-      -logs                Tails the services logs
       -version             Update project version to a specify version
-      -setup               Setup config directory from git"
+      -setup               Setup docker deploy directory"
   exit 1
 }
 
@@ -239,9 +195,6 @@ function main() {
   -restart | --restart | restart)
     stop_service
     start_service
-    ;;
-  -logs | --logs | logs)
-    logs
     ;;
   -version | --version | version)
     update_version "$version"
