@@ -138,9 +138,16 @@ function setup() {
   wget -P config-repo  "$repo_raw"/config-repo/sg-user-service.yml
   wget -P config-repo/mysql "$repo_raw"/config-repo/mysql/init.sql
   wget -P config-repo/mysql "$repo_raw"/config-repo/mysql/update.sql
+  wget -P config-repo/mysql/conf "$repo_raw"/config-repo/mysql/conf/my.cnf
   wget -P config-repo/nginx "$repo_raw"/config-repo/nginx/nginx.conf
   wget -P config-repo/redis "$repo_raw"/config-repo/redis/redis.conf
 
+  echo "Setup directories ..."
+  mkdir -p logs/nginx
+  mkdir -p data/redis-data
+  mkdir -p data/mysql-data
+  mkdir -p data/minio/data
+  mkdir -p data/minio/config
   echo "Setup finished."
 }
 
