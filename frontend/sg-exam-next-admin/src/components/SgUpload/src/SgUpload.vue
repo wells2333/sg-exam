@@ -57,6 +57,10 @@ export default defineComponent({
       type: String,
       default: undefined,
     },
+    imageId: {
+      type: String,
+      default: undefined,
+    },
     type: {
       type: String,
       default: 'img'
@@ -154,10 +158,17 @@ export default defineComponent({
     }
 
     async function handleDelete() {
-      if (file && file.value.url) {
-        await deleteAttachment(file.value.id);
+      if (file && file.value.id) {
+        try {
+          await deleteAttachment(file.value.id);
+        }catch {}
         file.value = undefined;
+        if (props.handleDone !== undefined) {
+          props.handleDone?.("null");
+        }
         message.success('删除成功');
+        emit('done', file);
+     
       }
     }
 
@@ -317,7 +328,7 @@ export default defineComponent({
       async (val: string, prevVal: string) => {
         resetFile();
         if (val) {
-          file.value = {url:val};
+          file.value = {url:val,id:props.imageId};
         }
       },
     );

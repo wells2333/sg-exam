@@ -217,7 +217,7 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 		for (Course course : courses) {
 			// 图片
 			String imageUrl = null;
-			if (course.getImageId() != null && course.getImageId() != 0L) {
+			if (course.getImageId() != null && course.getImageId() != 0L && course.getImageUrl() == null) {
 				imageUrl = attachmentManager.getPreviewUrlIgnoreException(course.getImageId());
 				course.setImageUrl(imageUrl);
 			}

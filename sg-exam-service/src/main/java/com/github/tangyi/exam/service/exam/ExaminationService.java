@@ -569,7 +569,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	}
 
 	private void initExaminationImage(ExaminationDto examinationDto) {
-		if (examinationDto.getImageId() != null && examinationDto.getImageId() != 0L) {
+		if (examinationDto.getImageId() != null && examinationDto.getImageId() != 0L && examinationDto.getImageUrl() == null) {
 			examinationDto.setImageUrl(attachmentManager.getPreviewUrlIgnoreException(examinationDto.getImageId()));
 		}
 	}

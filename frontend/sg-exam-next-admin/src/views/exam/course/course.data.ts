@@ -186,8 +186,8 @@ export const formSchema: FormSchema[] = [
     component: 'Input',
     render: ({model, field}) => {
       return h(SgUpload, {
-        value: model[field],
-        url: model['imageUrl'],
+        value: model['imageUrl'],
+        imageId: model['imageId'],
         api: uploadImage,
         accept: '.jpg,.jpeg,.png',
         handleDone: (value) => {
