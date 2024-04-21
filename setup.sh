@@ -99,6 +99,7 @@ function start_service() {
   docker-compose up --remove-orphans --no-build -d
   echo "Services has been started successfully."
   docker ps
+  tail -f logs/sg-user-service.log
 }
 
 function start_service_inner() {
