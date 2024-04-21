@@ -22,6 +22,7 @@ RUN yum install -y java-17-openjdk
 COPY frontend/sg-exam-app/dist /usr/share/nginx/html
 COPY frontend/sg-exam-next-admin/dist /usr/share/nginx/html/admin
 COPY config-repo/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY config-repo/nginx/nginx_ssl.conf /etc/nginx/nginx_ssl.conf
 
 WORKDIR /apps/data/web/working
 ADD sg-user-service/build/libs/*.jar app.jar
