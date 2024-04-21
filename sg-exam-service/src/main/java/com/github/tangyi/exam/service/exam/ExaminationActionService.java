@@ -91,6 +91,7 @@ public class ExaminationActionService implements IExaminationActionService {
 				dto.setExamRecord(record);
 				dto.setSubjectDto(subjectsService.findFirstSubjectByExaminationId(examRecord.getExaminationId()));
 				dto.setCards(getCards(examRecord.getExaminationId()));
+				dto.setExamination(examinationService.get(examRecord.getExaminationId()));
 				return dto;
 			}
 		}
