@@ -39,6 +39,10 @@
   overflow: hidden;
 }
 
+.subject-title image {
+  pointer-events: none;
+}
+
 .subject-title-content {
   display: inline-block;
 }

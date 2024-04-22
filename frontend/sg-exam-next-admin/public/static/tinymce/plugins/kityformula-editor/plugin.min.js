@@ -1,6 +1,6 @@
 tinymce.PluginManager.add('kityformula-editor', function(editor, url) {
 
-    var baseURL = '/static/tinymce/plugins/kityformula-editor/kityFormula.html';
+    var baseURL = '/admin/static/tinymce/plugins/kityformula-editor/kityFormula.html';
 
     editor.on('dblclick',function(){
         var sel=editor.selection.getContent();

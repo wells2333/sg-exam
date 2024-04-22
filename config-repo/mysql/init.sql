@@ -525,7 +525,7 @@ DROP TABLE IF EXISTS `exam_subject_choices`;
 CREATE TABLE `exam_subject_choices` (
   `id` bigint(20) NOT NULL COMMENT '主键',
   `category_id` bigint(20) DEFAULT '0',
-  `subject_name` varchar(5000) NOT NULL COMMENT '题目名称',
+  `subject_name` varchar(10000) NOT NULL COMMENT '题目名称',
   `choices_type` tinyint(1) NOT NULL COMMENT '题目类型',
   `answer` varchar(5000) NOT NULL COMMENT '参考答案',
   `score` int(11) NOT NULL COMMENT '题目分值',
@@ -588,7 +588,7 @@ DROP TABLE IF EXISTS `exam_subject_judgement`;
 CREATE TABLE `exam_subject_judgement` (
   `id` bigint(20) NOT NULL COMMENT '主键',
   `category_id` bigint(20) DEFAULT NULL COMMENT '分类 ID',
-  `subject_name` varchar(5000) NOT NULL DEFAULT '' COMMENT '题目名称',
+  `subject_name` varchar(10000) NOT NULL DEFAULT '' COMMENT '题目名称',
   `answer` varchar(5000) NOT NULL DEFAULT '' COMMENT '参考答案',
   `score` int(11) NOT NULL DEFAULT '0' COMMENT '分值',
   `analysis` varchar(5000) DEFAULT NULL COMMENT '解析',
@@ -667,7 +667,7 @@ DROP TABLE IF EXISTS `exam_subject_short_answer`;
 CREATE TABLE `exam_subject_short_answer` (
   `id` bigint(20) NOT NULL COMMENT '主键',
   `category_id` bigint(20) DEFAULT NULL COMMENT '分类 ID',
-  `subject_name` varchar(5000) NOT NULL COMMENT '题目名称',
+  `subject_name` varchar(10000) NOT NULL COMMENT '题目名称',
   `answer` varchar(5000) NOT NULL COMMENT '参考答案',
   `score` int(11) NOT NULL COMMENT '分值',
   `analysis` varchar(5000) DEFAULT NULL COMMENT '解析',

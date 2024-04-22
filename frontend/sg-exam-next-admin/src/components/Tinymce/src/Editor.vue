@@ -182,7 +182,7 @@
             editor.on('init', (e) => initSetup(e));
           },
           external_plugins: {
-            'kityformula-editor': '/static/tinymce/plugins/kityformula-editor/plugin.min.js'
+            'kityformula-editor': publicPath + 'static/tinymce/plugins/kityformula-editor/plugin.min.js'
           }
         };
       });

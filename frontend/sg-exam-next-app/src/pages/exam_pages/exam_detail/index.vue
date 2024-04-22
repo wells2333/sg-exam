@@ -18,7 +18,7 @@
             </text>
           </view>
           <view class="exam-detail-item-info">
-            <text class="exam-desc-item" v-if="examInfo.course !== null">
+            <text class="exam-desc-item" v-if="examInfo.course !== null && examInfo.course !== undefined">
               课程：{{ examInfo.course.courseName }}
             </text>
           </view>

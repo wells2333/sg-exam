@@ -13,7 +13,7 @@
               <view class="subject-choice-option-name">
                 <view class="subject-choice-option-tag">{{ option.value }}</view>
               </view>
-              <view v-html="option.label" class="choice-option-label"></view>
+              <wxparse class="choice-option-label" :html="option.label" key={Math.random()}></wxparse>
             </view>
           </view>
         </view>
@@ -175,6 +175,9 @@ export default defineComponent({
   position: relative;
   background-color: #FFF;
   padding-bottom: 8px;
+  image {
+    pointer-events: none;
+  }
 }
 
 .subject-choice-checkbox__option-wrap {

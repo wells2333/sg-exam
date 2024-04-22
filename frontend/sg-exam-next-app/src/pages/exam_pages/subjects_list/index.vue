@@ -59,7 +59,7 @@ import Taro from "@tarojs/taro";
 import {onMounted, ref} from 'vue';
 import examApi from '../../../api/exam.api';
 import api from '../../../api/api';
-import {warnMessage, successMessage, showNoMoreData, showLoading, hideLoading} from '../../../utils/util';
+import {warnMessage, showNoMoreData, showLoading, hideLoading} from '../../../utils/util';
 
 export default {
   components: {
