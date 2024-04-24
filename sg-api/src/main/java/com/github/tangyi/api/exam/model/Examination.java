@@ -112,7 +112,13 @@ public class Examination extends BaseEntity<Examination> {
 	private String tags;
 
 	/**
-	 * 答题模式，0：展示全部题目，1：上一题、下一题模式
+	 * 出题模式，0：顺序出题，1：随机出题
+	 */
+	@Column(name = "show_subject_type")
+	private Integer showSubjectType;
+
+	/**
+	 * 答题模式，0：单页模式，1：顺序模式
 	 */
 	@Column(name = "answer_type")
 	private Integer answerType;

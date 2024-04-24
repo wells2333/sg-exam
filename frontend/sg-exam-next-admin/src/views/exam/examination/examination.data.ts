@@ -155,12 +155,13 @@ export const formSchema: FormSchema[] = [
   {
     field: 'answerType',
     label: '答题模式',
+    helpMessage: ['单页模式：一个页面展示所有题目给考生', '顺序模式：考生按照顺序逐题进行回答'],
     component: 'RadioButtonGroup',
     defaultValue: 0,
     componentProps: {
       options: [
-        { label: '展示全部题目', value: 0 },
-        { label: '顺序答题', value: 1 },
+        { label: '单页模式', value: 0 },
+        { label: '顺序模式', value: 1 }
       ],
     },
     required: true,
@@ -198,7 +199,8 @@ export const formSchema: FormSchema[] = [
   },
   {
     field: 'maxExamCnt',
-    label: '最大考试次数',
+    label: '考试次数',
+    helpMessage: ['限制每个考生参与这个考试的次数'],
     component: 'InputNumber',
     defaultValue: 0,
     required: true,
@@ -268,7 +270,7 @@ export const formSchema: FormSchema[] = [
     defaultValue: 0,
     componentProps: {
       options: [
-        { label: '全部用户', value: 0 },
+        { label: '无限制', value: 0 },
         { label: '指定用户', value: 1 },
         { label: '指定部门', value: 2 },
       ],

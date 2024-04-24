@@ -126,3 +126,7 @@ ALTER TABLE `exam_examination`
     ADD COLUMN image_url varchar(255) DEFAULT NULL COMMENT '图片 URL';
 ALTER TABLE `exam_course`
     ADD COLUMN image_url varchar(255) DEFAULT NULL COMMENT '图片 URL';
+
+-- 2024 年 04 月 24 日 23:23:12
+ALTER TABLE `exam_examination`
+    ADD COLUMN `show_subject_type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '出题模式，0：顺序出题，1：随机出题';
