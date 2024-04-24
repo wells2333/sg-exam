@@ -20,7 +20,7 @@ export const examColor = {
 
 export const columns: BasicColumn[] = [
   {
-    title: '考试名称',
+    title: '名称',
     dataIndex: 'examinationName',
     width: 160,
     align: 'left',
@@ -50,15 +50,11 @@ export const columns: BasicColumn[] = [
     dataIndex: 'course.courseName',
     customRender: ({record}) => {
       const course = record.course;
-      let color = 'green';
-      let text = "";
       if (course == null) {
-        color = 'red';
-        text = '暂无课程';
-      }else {
-        text = course.courseName
+        return  '无课程';
+      } else {
+        return course.courseName
       }
-      return h(Tag, {color: color}, () => text);
     },
   },
   {
@@ -69,7 +65,7 @@ export const columns: BasicColumn[] = [
       const status = record.status;
       const enable = ~~status === 1;
       const color = enable ? 'green' : 'red';
-      const text = enable ? '已发布' : '草稿';
+      const text = enable ? '发布' : '草稿';
       return h(Tag, { color: color }, () => text);
     },
   },
@@ -82,8 +78,8 @@ export const columns: BasicColumn[] = [
       let color = 'green';
       let text = tags;
       if (tags == null || tags == "") {
-        color = 'red';
-        text = '暂无标签';
+        text = '无标签';
+        return text;
       }
       return h(Tag, {color: color}, () => text);
     },
@@ -94,11 +90,10 @@ export const columns: BasicColumn[] = [
     width: 180,
     customRender: ({record}) => {
       const startTime = record.startTime;
-      let text = startTime;
       if (startTime == null || startTime == "") {
-        text = '无限制';
+        return '无限制';
       }
-      return h(Tag,() => text);
+      return startTime;
     },
   },
   {
@@ -116,7 +111,7 @@ export const columns: BasicColumn[] = [
 export const searchFormSchema: FormSchema[] = [
   {
     field: 'examinationName',
-    label: '考试名称',
+    label: '名称',
     component: 'Input',
     colProps: { span: 8 },
   },
@@ -126,7 +121,7 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Select',
     componentProps: {
       options: [
-        { label: '已发布', value: 1 },
+        { label: '发布', value: 1 },
         { label: '草稿', value: 0 },
       ],
     },
@@ -137,7 +132,7 @@ export const searchFormSchema: FormSchema[] = [
 export const formSchema: FormSchema[] = [
   {
     field: 'examinationName',
-    label: '考试名称',
+    label: '名称',
     component: 'Input',
     required: true,
   },
@@ -179,7 +174,7 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       options: [
         { label: '草稿', value: 0 },
-        { label: '已发布', value: 1 },
+        { label: '发布', value: 1 },
       ],
     },
     required: true,
@@ -210,13 +205,12 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    label: '考试图片',
+    label: '图片',
     field: 'imageId',
     component: 'Input',
     render: ({ model, field }) => {
       return h(SgUpload, {
         value: model['imageUrl'],
-        imageId: model['imageId'],
         api: uploadImage,
         accept: '.jpg,.jpeg,.png',
         handleDone: (value) => {
@@ -317,11 +311,11 @@ export const formSchema: FormSchema[] = [
 export const examinationDetailFormSchema: DescItem[] = [
   {
     field: 'examinationName',
-    label: '考试名称',
+    label: '名称',
   },
   {
     field: 'typeLabel',
-    label: '考试类型',
+    label: '类型',
   },
   {
     field: 'course.courseName',
