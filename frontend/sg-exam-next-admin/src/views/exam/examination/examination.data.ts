@@ -168,6 +168,20 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
+    field: 'showSubjectType',
+    label: '出题模式',
+    component: 'RadioButtonGroup',
+    defaultValue: 0,
+    componentProps: {
+      options: [
+        { label: '顺序出题', value: 0 },
+        { label: '随机出题', value: 1 }
+      ],
+    },
+    required: true,
+    colProps: { span: 12 },
+  },
+  {
     field: 'status',
     label: '状态',
     component: 'RadioButtonGroup',
@@ -187,6 +201,9 @@ export const formSchema: FormSchema[] = [
     component: 'InputNumber',
     defaultValue: 100,
     required: true,
+    componentProps: {
+      min: 0
+    },
     colProps: { span: 12 },
   },
   {
@@ -195,15 +212,21 @@ export const formSchema: FormSchema[] = [
     component: 'InputNumber',
     defaultValue: 100,
     required: true,
+    componentProps: {
+      min: 0
+    },
     colProps: { span: 12 },
   },
   {
     field: 'maxExamCnt',
     label: '考试次数',
-    helpMessage: ['限制每个考生参与这个考试的次数'],
+    helpMessage: ['限制每个考生参与这个考试的次数，0 为不限制'],
     component: 'InputNumber',
     defaultValue: 0,
     required: true,
+    componentProps: {
+      min: 0
+    },
     colProps: { span: 12 },
   },
   {

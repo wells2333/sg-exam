@@ -114,10 +114,10 @@ export default {
         }
         const {answerType} = examination;
         if (answerType === 0) {
-          // 展示所有题目
+          // 单页模式
           Taro.navigateTo({url: "/pages/exam_pages/all_subject/index?recordId=" + examRecord.id + "&examinationId=" + examRecord.examinationId + "&total=" + total})
         } else if (answerType === 1) {
-          // 上一题、下一题模式
+          // 顺序模式
           Taro.navigateTo({url: "/pages/exam_pages/next_subject/index?recordId=" + examRecord.id + "&examinationId=" + examRecord.examinationId + "&total=" + total})
         }
       } finally {

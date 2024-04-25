@@ -29,4 +29,6 @@ public interface ExamConstant {
 	Integer PERMISSION_ID_TYPE_USER = 1;
 
 	Integer PERMISSION_ID_TYPE_DEPT = 2;
+
+	Integer SHOW_SUBJECT_TYPE_RANDOM = 1;
 }

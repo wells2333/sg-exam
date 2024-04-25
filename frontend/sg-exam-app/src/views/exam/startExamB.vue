@@ -26,11 +26,13 @@
             <fill-blank :ref="'fillBlank_' + index" v-show="item.type === 4"
                         :onChoice="onChoiceFn"/>
             <material :ref="'material_' + index" v-show="item.type === 5"
-                        :onChoice="onChoiceFn"/>
+                      :onChoice="onChoiceFn"/>
           </div>
         </div>
-        <div class="subject-buttons">
-          <el-button type="success" @click="handleSubmit" :loading="loadingSubmit">{{ $t('submit') }}
+        <div class="subject-buttons" v-show="!loading">
+          <el-button type="success" @click="handleSubmit" :loading="loadingSubmit">{{
+              $t('submit')
+            }}
           </el-button>
         </div>
       </div>
@@ -218,82 +220,81 @@ export default {
     antiCheat() {
       // 模拟按下 F11 键
       this.requestFullscreen()
-       // 定义一个对象来保存所有的事件监听器
+      // 定义一个对象来保存所有的事件监听器
       // 定义函数来添加事件监听器并保存到 eventListeners 对象中
       function addEventListenerAndSave(eventType, listener) {
-          document.addEventListener(eventType, listener);
-          // 将监听器保存到 eventListeners 对象中，以便后续移除
-          if (!eventListeners[eventType]) {
-            eventListeners[eventType] = [];
-          }
-          eventListeners[eventType].push(listener);
+        document.addEventListener(eventType, listener);
+        // 将监听器保存到 eventListeners 对象中，以便后续移除
+        if (!eventListeners[eventType]) {
+          eventListeners[eventType] = [];
+        }
+        eventListeners[eventType].push(listener);
       }
+
       // 添加所有事件监听器
-      addEventListenerAndSave("keydown", function(event) {
-          if (event.key === "F12") {
-              event.preventDefault();
-              alert("抱歉，禁止使用 F12 开发者工具。");
-          } else if (event.key === "F11" || event.key === "Escape") {
-              event.preventDefault();
-              // window.location = "/"
-              alert("抱歉，禁止小屏");
-          }
-      });
-
-      addEventListenerAndSave("copy", function(event) {
+      addEventListenerAndSave("keydown", function (event) {
+        if (event.key === "F12") {
           event.preventDefault();
-          alert("抱歉，禁止复制内容。");
-      });
-
-      addEventListenerAndSave("cut", function(event) {
+          console.warn("抱歉，禁止使用 F12 开发者工具。");
+        } else if (event.key === "F11" || event.key === "Escape") {
           event.preventDefault();
-          alert("抱歉，禁止剪切内容。");
+          console.warn("抱歉，禁止小屏");
+        }
       });
 
-      addEventListenerAndSave("paste", function(event) {
-          event.preventDefault();
-          alert("抱歉，禁止粘贴内容。");
+      addEventListenerAndSave("copy", function (event) {
+        event.preventDefault();
+        console.warn("抱歉，禁止复制内容。");
       });
 
-      addEventListenerAndSave("click", function(event) {
-          console.log("鼠标点击位置：", event.pageX, event.pageY);
+      addEventListenerAndSave("cut", function (event) {
+        event.preventDefault();
+        console.warn("抱歉，禁止剪切内容。");
       });
 
-      addEventListenerAndSave("keydown", function(event) {
-          console.log("按下键盘按键：", event.key);
+      addEventListenerAndSave("paste", function (event) {
+        event.preventDefault();
+        console.warn("抱歉，禁止粘贴内容。");
       });
 
-      addEventListenerAndSave("contextmenu", function(event) {
-          event.preventDefault();
-          alert("抱歉，禁止右键菜单。");
+      addEventListenerAndSave("click", function (event) {
+        console.log("鼠标点击位置：", event.pageX, event.pageY);
       });
 
-      window.addEventListener("beforeunload", function(event) {
-          event.preventDefault();
-          alert("抱歉，禁止刷新页面。");
+      addEventListenerAndSave("keydown", function (event) {
+        console.log("按下键盘按键：", event.key);
+      });
+
+      addEventListenerAndSave("contextmenu", function (event) {
+        event.preventDefault();
+        console.warn("抱歉，禁止右键菜单。");
+      });
+
+      window.addEventListener("beforeunload", function (event) {
+        event.preventDefault();
+        console.warn("抱歉，禁止刷新页面。");
       });
     },
     removeAllEventListeners() { // 定义函数来移除所有事件监听器
-      for (var eventType in eventListeners) {
-          eventListeners[eventType].forEach(function(listener) {
-              document.removeEventListener(eventType, listener);
-          });
+      for (let eventType in eventListeners) {
+        eventListeners[eventType].forEach(function (listener) {
+          document.removeEventListener(eventType, listener);
+        });
       }
       // 清空 eventListeners 对象
       eventListeners = {};
       this.exitFullscreen();
     },
-     // 自动启动全屏
+    // 自动启动全屏
     requestFullscreen() {
-      var el = document.documentElement;
-      var rfs = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullscreen;      
-      if(typeof rfs != "undefined" && rfs) {
-          rfs.call(el);
-      };
-      return;
+      let el = document.documentElement;
+      let rfs = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+      if (typeof rfs !== "undefined" && rfs) {
+        rfs.call(el);
+      }
     },
-     // 退出全屏
-     exitFullscreen() {
+    // 退出全屏
+    exitFullscreen() {
       if (document.exitFullscreen) {
         document.exitFullscreen();
       } else if (document.webkitCancelFullScreen) {
@@ -312,6 +313,7 @@ export default {
       next()
       return
     }
+
     this.$confirm(this.$t('exam.startExam.confirmExit'), this.$t('tips'), {
       confirmButtonText: this.$t('sure'),
       cancelButtonText: this.$t('cancel'),

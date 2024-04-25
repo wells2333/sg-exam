@@ -27,7 +27,6 @@ import com.github.tangyi.api.user.attach.AttachmentManager;
 import com.github.tangyi.api.user.model.User;
 import com.github.tangyi.api.user.service.IUserService;
 import com.github.tangyi.common.base.SgPreconditions;
-import com.github.tangyi.common.constant.Group;
 import com.github.tangyi.common.constant.Status;
 import com.github.tangyi.common.exceptions.CommonException;
 import com.github.tangyi.common.lucene.DocType;
@@ -58,7 +57,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -87,6 +85,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	private final MaterialSubjectService msService;
 
 	private ExamConstantProperty examConstantProperty;
+
 	@Override
 	public Long findAllExaminationCount() {
 		return this.dao.findAllExaminationCount();
@@ -129,7 +128,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 			e.setCourseId(course.getId());
 		}
 		if (e.getImageId() == null && e.getImageUrl() == null) {
-//			e.setImageId(attachmentManager.defaultImage(Group.DEFAULT));
+			//			e.setImageId(attachmentManager.defaultImage(Group.DEFAULT));
 			e.setImageUrl(examConstantProperty.getExaminationImageUrl());
 		}
 		this.addExaminationMembers(examinationDto, user, tenantCode);
@@ -290,36 +289,35 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		return this.dao.findExaminationCount(examination);
 	}
 
-    public PageInfo<SubjectDto> findSubjectPageById(SubjectDto subjectDto, Map<String, Object> params, int pageNum,
-                                                    int pageSize) {
-        // 查询考试题目关联表
-        ExaminationSubject es = new ExaminationSubject();
-        es.setTenantCode(SysUtil.getTenantCode());
-        es.setExaminationId(subjectDto.getExaminationId());
-        PageInfo<ExaminationSubject> examinationSubjects = examinationSubjectService.findPage(params, pageNum,
-                pageSize);
-        List<SubjectDto> subjectDtoList = Lists.newArrayList();
-        // 根据题目 ID 查询题目信息
-        if (CollectionUtils.isNotEmpty(examinationSubjects.getList())) {
-            Long[] subjectIds = examinationSubjects.getList().stream().map(ExaminationSubject::getSubjectId)
-                    .toArray(Long[]::new);
-            List<Subjects> subjects = subjectsService.findBySubjectIds(subjectIds);
-            subjectDtoList = subjectsService.findSubjectDtoList(subjects);
-            //是否需要对题目信息进行查询
-            if (params.get("subjectName") != null) {
-                String subjectName = params.get("subjectName").toString();
-                subjectDtoList = subjectDtoList.stream()
-                        .filter(subject -> subject.getSubjectName().contains(subjectName))
-                        .collect(Collectors.toList());
-            }
-        }
-        // 按序号排序
-        if (CollectionUtils.isNotEmpty(subjectDtoList)) {
-            subjectDtoList = subjectDtoList.stream().sorted(Comparator.comparing(SubjectDto::getSort))
-                    .collect(Collectors.toList());
-        }
-        return PageUtil.newPageInfo(examinationSubjects, subjectDtoList);
-    }
+	public PageInfo<SubjectDto> findSubjectPageById(SubjectDto subjectDto, Map<String, Object> params, int pageNum,
+			int pageSize) {
+		// 查询考试题目关联表
+		ExaminationSubject es = new ExaminationSubject();
+		es.setTenantCode(SysUtil.getTenantCode());
+		es.setExaminationId(subjectDto.getExaminationId());
+		PageInfo<ExaminationSubject> examinationSubjects = examinationSubjectService.findPage(params, pageNum,
+				pageSize);
+		List<SubjectDto> subjectDtoList = Lists.newArrayList();
+		// 根据题目 ID 查询题目信息
+		if (CollectionUtils.isNotEmpty(examinationSubjects.getList())) {
+			Long[] subjectIds = examinationSubjects.getList().stream().map(ExaminationSubject::getSubjectId)
+					.toArray(Long[]::new);
+			List<Subjects> subjects = subjectsService.findBySubjectIds(subjectIds);
+			subjectDtoList = subjectsService.findSubjectDtoList(subjects);
+			//是否需要对题目信息进行查询
+			if (params.get("subjectName") != null) {
+				String subjectName = params.get("subjectName").toString();
+				subjectDtoList = subjectDtoList.stream()
+						.filter(subject -> subject.getSubjectName().contains(subjectName)).collect(Collectors.toList());
+			}
+		}
+		// 按序号排序
+		if (CollectionUtils.isNotEmpty(subjectDtoList)) {
+			subjectDtoList = subjectDtoList.stream().sorted(Comparator.comparing(SubjectDto::getSort))
+					.collect(Collectors.toList());
+		}
+		return PageUtil.newPageInfo(examinationSubjects, subjectDtoList);
+	}
 
 	/**
 	 * 获取全部题目
@@ -387,8 +385,13 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	/**
 	 * 根据考试 ID 查询全部题目，不返回题目的答案
 	 */
-//	@Cacheable(value = ExamCacheName.EXAM_ALL_SUBJECT, key = "#examinationId")
 	public List<SimpleSubjectDto> allSubjects(Long examinationId) {
+		Examination e = this.get(examinationId);
+		if (e == null) {
+			return Collections.emptyList();
+		}
+
+		List<SimpleSubjectDto> res = Collections.emptyList();
 		List<ExaminationSubject> ess = examinationSubjectService.findListByExaminationId(examinationId);
 		if (CollectionUtils.isNotEmpty(ess)) {
 			Long[] subjectIds = ess.stream().map(ExaminationSubject::getSubjectId).toArray(Long[]::new);
@@ -399,7 +402,7 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 				for (SubjectDto dto : dtoList) {
 					if (dto.getId().equals(es.getSubjectId())) {
 						sorted.add(dto);
-						if (dto.getType().equals(SubjectType.MATERIAL.getValue())){
+						if (dto.getType().equals(SubjectType.MATERIAL.getValue())) {
 							List<SubjectDto> childSubjects = dto.getChildSubjects();
 							sorted.addAll(childSubjects);
 						}
@@ -407,9 +410,18 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 					}
 				}
 			}
-			return ExamUtil.simpleSubject(sorted);
+			res = ExamUtil.simpleSubject(sorted);
 		}
-		return Lists.newArrayList();
+
+		// 随机出题，打乱顺序
+		if (!res.isEmpty() && SHOW_SUBJECT_TYPE_RANDOM.equals(e.getShowSubjectType())) {
+			Collections.shuffle(res);
+			// 重新设置序号
+			for (int i = 0; i < res.size(); i++) {
+				res.get(i).setSort(i + 1);
+			}
+		}
+		return res;
 	}
 
 	/**
@@ -439,8 +451,8 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 			subject.setExaminationId(id);
 			subjectsService.insert(subject);
 			// 关联材料题下面的题目
-			if (id != null){
-				if (subject.getType().equals(SubjectType.MATERIAL.getValue())){
+			if (id != null) {
+				if (subject.getType().equals(SubjectType.MATERIAL.getValue())) {
 					// 找到老题目
 					List<MaterialSubject> list = msService.findListByMaterialId(oldId);
 					for (int i = 0; i < list.size(); i++) {
@@ -585,7 +597,8 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 	}
 
 	private void initExaminationImage(ExaminationDto examinationDto) {
-		if (examinationDto.getImageId() != null && examinationDto.getImageId() != 0L && examinationDto.getImageUrl() == null) {
+		if (examinationDto.getImageId() != null && examinationDto.getImageId() != 0L
+				&& examinationDto.getImageUrl() == null) {
 			examinationDto.setImageUrl(attachmentManager.getPreviewUrlIgnoreException(examinationDto.getImageId()));
 		}
 	}

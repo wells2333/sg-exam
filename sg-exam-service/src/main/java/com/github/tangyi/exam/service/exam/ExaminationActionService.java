@@ -87,7 +87,6 @@ public class ExaminationActionService implements IExaminationActionService {
 	private final MaterialSubjectService materialSubjectService;
 
 	@Override
-	@Transactional
 	public StartExamDto start(ExaminationRecord examRecord) {
 		SgPreconditions.checkNull(examRecord.getExaminationId(), "The examination id cannot be null.");
 		SgPreconditions.checkNull(examRecord.getUserId(), "The user id cannot be null.");

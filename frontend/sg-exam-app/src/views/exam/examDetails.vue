@@ -20,26 +20,27 @@
             <el-col :span="18" style="padding-right: 40px;">
               <div class="clever-description">
                 <div class="about-course mb-30">
-                  <h4>{{$t('exam.exams.examTime')}}</h4>
+                  <h4>{{ $t('exam.exams.examTime') }}</h4>
                   <div style="margin-bottom: 16px;">
                     <p v-if="examination.startTime">
-                      {{examination.startTime}} ~ {{examination.endTime}}
+                      {{ examination.startTime }} ~ {{ examination.endTime }}
                     </p>
-                    <p v-else>{{$t('exam.exams.unLimitTime')}}</p>
+                    <p v-else>{{ $t('exam.exams.unLimitTime') }}</p>
                   </div>
-                  <h4>{{$t('exam.exams.examRemark')}}</h4>
+                  <h4>{{ $t('exam.exams.examRemark') }}</h4>
                   <div style="margin-bottom: 16px;">
                     <p v-html="examination.remark"></p>
                   </div>
-                  <h4>{{$t('exam.exams.examAttention')}}</h4>
+                  <h4>{{ $t('exam.exams.examAttention') }}</h4>
                   <div style="margin-bottom: 16px;">
                     <p v-html="examination.attention"></p>
                   </div>
-                  <h4>{{$t('exam.exams.evaluation')}}</h4>
+                  <h4>{{ $t('exam.exams.evaluation') }}</h4>
                   <div>
                     <el-form :model="evaluate">
                       <el-form-item label="">
-                        <el-input type="textarea" :rows="3" :placeholder="$t('exam.exams.inputEvaluation')"
+                        <el-input type="textarea" :rows="3"
+                                  :placeholder="$t('exam.exams.inputEvaluation')"
                                   v-model="evaluate.evaluateContent"></el-input>
                       </el-form-item>
                       <el-form-item label="">
@@ -47,7 +48,7 @@
                       </el-form-item>
                       <el-form-item>
                         <el-button type="primary" class="clever-btn"
-                                   @click="handleSubmitEvaluate">{{$t('submit')}}
+                                   @click="handleSubmitEvaluate">{{ $t('submit') }}
                         </el-button>
                       </el-form-item>
                     </el-form>
@@ -55,14 +56,19 @@
                   <div>
                     <div class="user-evaluate-item" v-for="e in evaluates" :key="e.id">
                       <el-row class="user-evaluate-item-bg">
-                        <el-col :span="2" >
-                          <img v-if="e.avatarUrl" width="40" height="40" class="user-evaluate-item-avatar" :src="e.avatarUrl">
-                          <i class="iconfont icon-user" style="font-size: 42px; color: #5a5a5a;" v-else></i>
+                        <el-col :span="2">
+                          <img v-if="e.avatarUrl" width="40" height="40"
+                               class="user-evaluate-item-avatar" :src="e.avatarUrl">
+                          <i class="iconfont icon-user" style="font-size: 42px; color: #5a5a5a;"
+                             v-else></i>
                         </el-col>
                         <el-col :span="22">
                           <div class="user-evaluate-item-top">
-                            <span style="color: #333; margin-right: 15px;">{{ e.operatorName }}</span>
-                            <el-rate v-model="e.evaluateLevel" :disabled="true" style="height: 100%; line-height: initial;"></el-rate>
+                            <span style="color: #333; margin-right: 15px;">{{
+                                e.operatorName
+                              }}</span>
+                            <el-rate v-model="e.evaluateLevel" :disabled="true"
+                                     style="height: 100%; line-height: initial;"></el-rate>
                           </div>
                           <div class="user-evaluate-item-content" style="color:#666;">
                             {{ e.evaluateContent }}
@@ -92,8 +98,8 @@
 </template>
 
 <script>
-import { messageFail, messageWarn, messageSuccess } from '@/utils/util'
-import { getObjDetail, canStart } from '@/api/exam/exam'
+import {messageFail, messageWarn, messageSuccess} from '@/utils/util'
+import {getObjDetail, canStart} from '@/api/exam/exam'
 import {addObj, getExamEvaluateList} from '@/api/exam/examEvaluate'
 import store from '@/store'
 import {mapGetters, mapState} from 'vuex'
@@ -178,22 +184,22 @@ export default {
             }
 
             const recordId = result.examRecord.id
+            // 单页模式
             if (this.examination.answerType === 0) {
-              // 展示所有题目
               const resolvedRoute = this.$router.resolve({
                 path: `/start-exam-b/${this.examination.id}`,
-                query: { recordId: recordId }
+                query: {recordId: recordId}
               });
               // 使用 window.open() 在新标签页中打开链接
               const newTab = window.open(resolvedRoute.href, "_blank");
-               // 关闭当前标签页（这部分的可靠性取决于浏览器的设置）
-               if (newTab){
+              // 关闭当前标签页（这部分的可靠性取决于浏览器的设置）
+              if (newTab) {
                 window.opener = null;
                 window.open("about:blank", "_top").close()
-               }
+              }
             } else {
-              // 上一题、下一题模式
-              this.$router.push({ path: `/start-exam-a/${this.examination.id}?recordId=${recordId}` })
+              // 顺序模式
+              this.$router.push({path: `/start-exam-a/${this.examination.id}?recordId=${recordId}`})
             }
           }).catch(() => {
             messageWarn(this, this.$t('exam.exams.startFailed'))
@@ -236,16 +242,19 @@ export default {
 <style lang="scss" rel="stylesheet/scss" scoped>
 .user-evaluate-item {
   margin-top: 26px;
+
   .user-evaluate-item-bg {
-    border-bottom: 1px solid rgba(233,233,233,.6);
+    border-bottom: 1px solid rgba(233, 233, 233, .6);
     padding-bottom: 20px;
   }
+
   .user-evaluate-item-avatar {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     cursor: pointer;
   }
+
   .user-evaluate-item-top {
     font-size: 13px;
     display: flex;
@@ -254,9 +263,11 @@ export default {
     height: 23px;
   }
 }
+
 .user-evaluate-item-content {
   margin-top: 8px;
 }
+
 .user-evaluate-item-time {
   font-size: 12px;
   margin-top: 10px;
