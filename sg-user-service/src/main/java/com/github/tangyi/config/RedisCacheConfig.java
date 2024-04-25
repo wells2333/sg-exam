@@ -17,23 +17,28 @@
 package com.github.tangyi.config;
 
 import com.github.tangyi.common.utils.EnvUtils;
+import io.lettuce.core.ClientOptions;
+import io.lettuce.core.SocketOptions;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
-import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.*;
 
+import javax.annotation.PreDestroy;
 import java.time.Duration;
 
 @Configuration
+@EnableCaching
 public class RedisCacheConfig {
 
 	// 超时时间：24 小时
@@ -51,16 +56,10 @@ public class RedisCacheConfig {
 	@Value("${spring.redis.port:6379}")
 	private int port;
 
-	@Bean
-	@Primary
-	public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
-		RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-				.entryTtl(Duration.ofHours(DEFAULT_REDIS_CACHE_EXPIRE))
-				.serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(keySerializer()))
-				.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(valueSerializer()));
-		return RedisCacheManager.builder(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory))
-				.cacheDefaults(redisCacheConfiguration).build();
-	}
+	@Value("${spring.redis.timeout:60}")
+	private int timeOutSecond;
+
+	private LettuceConnectionFactory redisConnectionFactory;
 
 	@Bean
 	public LettuceConnectionFactory redisConnectionFactory() {
@@ -71,25 +70,44 @@ public class RedisCacheConfig {
 		if (StringUtils.isNotEmpty(redisPassword)) {
 			configuration.setPassword(redisPassword);
 		}
-		return new LettuceConnectionFactory(configuration);
+		SocketOptions socketOptions = SocketOptions.builder()
+				.connectTimeout(Duration.ofSeconds(timeOutSecond))
+				.build();
+		ClientOptions clientOptions = ClientOptions.builder()
+				.socketOptions(socketOptions)
+				.build();
+
+		LettuceClientConfiguration lettuceClientConfiguration = LettuceClientConfiguration.builder()
+				.clientOptions(clientOptions)
+				.build();
+		redisConnectionFactory = new LettuceConnectionFactory(configuration, lettuceClientConfiguration);
+		return redisConnectionFactory;
 	}
 
 	@Bean
-	public RedisTemplate<String, Long> longRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
+	public CacheManager cacheManager(LettuceConnectionFactory lettuceConnectionFactory) {
+		RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
+				.entryTtl(Duration.ofHours(DEFAULT_REDIS_CACHE_EXPIRE))
+				.serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+				.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+		return RedisCacheManager.builder(lettuceConnectionFactory)
+				.cacheDefaults(redisCacheConfiguration)
+				.build();
+	}
+
+	@Bean
+	public RedisTemplate<String, Long> longRedisTemplate(LettuceConnectionFactory lettuceConnectionFactory) {
 		RedisTemplate<String, Long> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setValueSerializer(new GenericToStringSerializer<>(Long.class));
-		redisTemplate.setExposeConnection(true);
-		redisTemplate.setConnectionFactory(redisConnectionFactory);
-		redisTemplate.afterPropertiesSet();
+		redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+		redisTemplate.setConnectionFactory(lettuceConnectionFactory);
 		return redisTemplate;
 	}
 
-	private RedisSerializer<String> keySerializer() {
-		return new StringRedisSerializer();
-	}
-
-	private RedisSerializer<Object> valueSerializer() {
-		return new GenericJackson2JsonRedisSerializer();
+	@PreDestroy
+	public void cleanup() {
+		if(redisConnectionFactory != null) {
+			redisConnectionFactory.destroy();
+		}
 	}
 }

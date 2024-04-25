@@ -34,7 +34,7 @@ const option = {
       color: ['#5ab1ef', '#b6a2de', '#67e0e3', '#2ec7c9'],
       name: '成绩占比',
       type: 'pie',
-      top: '-40%',
+      top: '-10%',
       radius: ['20%', '60%'],
       avoidLabelOverlap: false,
       itemStyle: {
