@@ -11,6 +11,7 @@ export default {
   queryText: 'Search',
   addText: 'Add',
   editText: 'Edit',
+  importPdfText: 'Import Pdf',
   operationText: 'Operation',
   operationSuccessText: 'Operation success',
   operationFailedText: 'Operation failed',

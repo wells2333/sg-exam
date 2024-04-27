@@ -20,7 +20,9 @@ import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.dto.CourseDetailDto;
 import com.github.tangyi.api.exam.model.Course;
 import com.github.tangyi.common.service.ICrudService;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -45,4 +47,6 @@ public interface ICourseService extends ICrudService<Course> {
 	void addIndex(Course course, long clickCnt, long joinCnt);
 
 	void updateIndex(Course course);
+
+	boolean importChapter(Long courseId, MultipartFile file) throws IOException;
 }

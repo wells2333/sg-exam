@@ -28,7 +28,6 @@ import com.github.tangyi.api.user.model.Attachment;
 import com.github.tangyi.api.user.model.User;
 import com.github.tangyi.api.user.service.IAttachmentService;
 import com.github.tangyi.api.user.service.IUserService;
-import com.github.tangyi.common.constant.Group;
 import com.github.tangyi.common.lucene.DocType;
 import com.github.tangyi.common.lucene.IndexCrudParam;
 import com.github.tangyi.common.service.CrudService;
@@ -40,6 +39,7 @@ import com.github.tangyi.exam.mapper.CourseMapper;
 import com.github.tangyi.exam.mapper.ExaminationMapper;
 import com.github.tangyi.exam.service.ExamPermissionService;
 import com.github.tangyi.exam.service.fav.CourseFavoritesService;
+import com.github.tangyi.exam.utils.PdfUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
@@ -47,15 +47,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -64,6 +71,10 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CourseService extends CrudService<CourseMapper, Course> implements ICourseService, ExamConstant {
 
+	private static final String IMPORT_DIV_PREFIX = "<div style='font-size: 14px;line-height: 28px;white-space: pre-line;'>";
+	private static final String IMPORT_DIV_SUFFIX = "</div>";
+
+	private final PlatformTransactionManager txManager;
 	private final IUserService userService;
 	private final IAttachmentService attachmentService;
 	private final AttachmentManager attachmentManager;
@@ -161,7 +172,7 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 	public int insert(Course course) {
 		// 没有上传图片，使用默认图片
 		if (course.getImageId() == null && course.getImageUrl() == null) {
-//			course.setImageId(attachmentManager.defaultImage(Group.DEFAULT));
+			//			course.setImageId(attachmentManager.defaultImage(Group.DEFAULT));
 			course.setImageUrl(examConstantProperty.getCourseImageUrl());
 		}
 		int update = super.insert(course);
@@ -190,7 +201,7 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 	@CacheEvict(value = ExamCacheName.COURSE, key = "#course.id")
 	public int delete(Course course) {
 		Long imageId = course.getImageId();
-		if (imageId != null){
+		if (imageId != null) {
 			Attachment attachment = new Attachment();
 			attachment.setId(imageId);
 			attachmentService.delete(attachment);
@@ -292,6 +303,66 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 			}
 		}
 		return chapterDtos;
+	}
+
+	@Override
+	@Transactional
+	@CacheEvict(value = ExamCacheName.COURSE, key = "#courseId")
+	public boolean importChapter(Long courseId, MultipartFile file) throws IOException {
+		List<PdfUtil.Part> parts;
+		try (InputStream in = file.getInputStream()) {
+			parts = PdfUtil.extractPdfTextToSection(in);
+		}
+		if (CollectionUtils.isEmpty(parts)) {
+			return false;
+		}
+
+		List<ExamCourseChapter> chapters = this.chapterService.findChaptersByCourseId(courseId);
+		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		TransactionStatus status = txManager.getTransaction(def);
+		try {
+			// 清空现有的章节内容
+			if (CollectionUtils.isNotEmpty(chapters)) {
+				for (ExamCourseChapter chapter : chapters) {
+					this.chapterService.delete(chapter);
+				}
+			}
+
+			// 插入章节
+			AtomicInteger cnt = new AtomicInteger(0);
+			for (PdfUtil.Part p : parts) {
+				if (StringUtils.isEmpty(p.getContent())) {
+					continue;
+				}
+
+				int sort = cnt.incrementAndGet();
+				ExamCourseChapter chapter = new ExamCourseChapter();
+				chapter.setCommonValue();
+				chapter.setCourseId(courseId);
+				chapter.setSort((long) sort);
+				// 章标题固定为：第 xxx 章
+				chapter.setTitle("第 " + chapter.getSort() + " 章");
+				this.chapterService.insert(chapter);
+
+				ExamCourseSection section = new ExamCourseSection();
+				section.setCommonValue();
+				section.setChapterId(chapter.getId());
+				section.setSort(1L);
+				section.setTitle(p.getTitle());
+				String content = IMPORT_DIV_PREFIX + p.getContent() + IMPORT_DIV_SUFFIX;
+				section.setContent(content);
+				// 默认导入为图文类型
+				section.setContentType(ExamConstant.SECTION_TYPE_IMG_AND_ARTICLE);
+				this.sectionService.insert(section);
+			}
+			txManager.commit(status);
+		} catch (Exception e) {
+			log.error("Failed to commit import chapter transaction.", e);
+			txManager.rollback(status);
+			throw e;
+		}
+		return true;
 	}
 
 	private List<CourseSectionDto> findSections(ExamCourseChapter chapter, AtomicLong learnHour) {

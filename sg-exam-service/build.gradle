@@ -15,6 +15,7 @@ dependencies {
     implementation 'com.alibaba:fastjson:1.2.70'
     implementation 'tk.mybatis:mapper-spring-boot-starter:4.2.1'
     implementation 'it.unimi.dsi:fastutil:8.5.6'
+    implementation 'org.dromara.x-easypdf:x-easypdf:3.0.0'
 }
 
 test {

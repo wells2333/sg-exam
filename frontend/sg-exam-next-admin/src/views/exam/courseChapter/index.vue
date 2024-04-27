@@ -5,6 +5,9 @@
         <a-button v-if="hasPermission(['exam:course:edit'])" type="primary" @click="handleCreate">
           {{ t('common.addText') }}
         </a-button>
+        <a-button v-if="hasPermission(['exam:course:edit'])" type="primary" @click="handleImportPdf">
+          {{ t('common.importPdfText') }}
+        </a-button>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -35,6 +38,7 @@
         />
       </template>
     </BasicTable>
+    <ImportCourseModal width="50%" @register="registerImportCourseModal" @success="handleImportCourseSuccess"/>
     <ChapterModal width="90%" @register="registerModal" @success="handleSuccess"/>
     <SectionModal width="90%" @register="registerSectionModal"
                   @success="handleSuccess"></SectionModal>
@@ -51,6 +55,7 @@ import {deleteChapter, getChapterList} from '/@/api/exam/chapter';
 import {Description} from '/@/components/Description/index';
 import {BasicTable, TableAction, useTable} from '/@/components/Table';
 import {columns, searchFormSchema} from './chapter/chapter.data';
+import ImportCourseModal from './ImportCourseModal.vue';
 import ChapterModal from './chapter/ChapterModal.vue';
 import SectionModal from './section/SectionModal.vue';
 import {useModal} from '/@/components/Modal';
@@ -65,6 +70,7 @@ export default defineComponent({
     BasicTable,
     TableAction,
     [Divider.name]: Divider,
+    ImportCourseModal,
     ChapterModal,
     SectionModal
   },
@@ -74,6 +80,7 @@ export default defineComponent({
     const { createMessage } = useMessage();
     const [registerModal, {openModal}] = useModal();
     const [registerSectionModal, {openModal: openSectionModal}] = useModal();
+    const [registerImportCourseModal, {openModal: openImportCourseModal}] = useModal();
     const route = useRoute();
     const courseId = ref(route.params?.id);
     const [registerTable, {reload}] = useTable({
@@ -117,6 +124,17 @@ export default defineComponent({
       });
     }
 
+    function handleImportPdf() {
+      openImportCourseModal(true, {
+        courseId
+      });
+    }
+
+    function handleImportCourseSuccess() {
+      createMessage.success(t('common.operationSuccessText'));
+      reload();
+    }
+
     function handleEdit(record: Recordable) {
       openModal(true, {
         record,
@@ -146,14 +164,17 @@ export default defineComponent({
       t,
       hasPermission,
       registerModal,
+      registerImportCourseModal,
       registerSectionModal,
       registerTable,
       handleView,
       handleCreate,
+      handleImportPdf,
       handleEdit,
       handleDelete,
       handleSuccess,
-      handleSectionManage
+      handleSectionManage,
+      handleImportCourseSuccess
     };
   },
 });

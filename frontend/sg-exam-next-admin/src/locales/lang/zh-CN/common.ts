@@ -11,6 +11,7 @@ export default {
   queryText: '查询',
   addText: '新增',
   editText: '编辑',
+  importPdfText: '导入 PDF',
   operationText: '操作',
   operationSuccessText: '操作成功',
   operationFailedText: '操作失败',

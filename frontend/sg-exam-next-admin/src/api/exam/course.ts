@@ -1,6 +1,7 @@
 import {defHttp} from '/@/utils/http/axios';
 import {ApiRes} from "/@/api/constant";
 import {CourseApi} from "/@/api/api";
+import {UploadFileParams} from "/#/axios";
 
 export const getCourseList = (params?: object) =>
   defHttp.get<ApiRes>({url: CourseApi.CourseList, params});
@@ -38,3 +39,16 @@ export const deleteCourse = (id: string) => {
     }
   );
 };
+
+export function importChapter(
+  params: UploadFileParams,
+  onUploadProgress: (progressEvent: ProgressEvent) => void,
+) {
+  return defHttp.uploadFile(
+    {
+      url: CourseApi.Base + '/importChapter',
+      onUploadProgress,
+    },
+    params,
+  );
+}

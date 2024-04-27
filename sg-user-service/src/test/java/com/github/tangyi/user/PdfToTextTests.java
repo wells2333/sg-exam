@@ -16,17 +16,14 @@
 
 package com.github.tangyi.user;
 
+import com.alibaba.fastjson.JSON;
+import com.github.tangyi.exam.utils.PdfUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
+import java.io.FileInputStream;
+import java.util.List;
 
-/**
- * 提取 PDF 文本内容
- */
 public class PdfToTextTests {
 
 	@Test
@@ -36,13 +33,7 @@ public class PdfToTextTests {
 			return;
 		}
 
-		File file = new File(pdfPath);
-		Assertions.assertNotNull(file);
-
-		PDDocument document = PDDocument.load(file);
-		PDFTextStripper pdfStripper = new PDFTextStripper();
-		String text = pdfStripper.getText(document);
-		System.out.println("文本内容：" + text);
-		document.close();
+		List<PdfUtil.Part> parts = PdfUtil.extractPdfTextToSection(new FileInputStream(pdfPath));
+		System.out.println(JSON.toJSONString(parts));
 	}
 }

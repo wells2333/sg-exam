@@ -39,7 +39,6 @@ import type {UploadRequestOption} from 'ant-design-vue/es/vc-upload/interface';
 import {useDesign} from '/@/hooks/web/useDesign';
 import {
   deleteAttachment,
-  getAttachment,
   mergeChunks,
   prepareUploadChunks,
   uploadChunk
@@ -168,7 +167,6 @@ export default defineComponent({
         }
         message.success('删除成功');
         emit('done', file);
-     
       }
     }
 

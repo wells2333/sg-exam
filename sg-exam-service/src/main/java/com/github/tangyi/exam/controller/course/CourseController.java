@@ -23,19 +23,21 @@ import com.github.tangyi.api.exam.model.Course;
 import com.github.tangyi.api.exam.service.ICourseService;
 import com.github.tangyi.api.exam.service.IExamPermissionService;
 import com.github.tangyi.common.base.BaseController;
-import com.github.tangyi.common.constant.Status;
 import com.github.tangyi.common.log.OperationType;
 import com.github.tangyi.common.log.SgLog;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.constants.ExamConstant;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -140,5 +142,14 @@ public class CourseController extends BaseController {
 	@Operation(summary = "获取课程课件")
 	public R<CourseDetailDto> getCourseAttach(@PathVariable Long id) {
 		return R.success(courseService.getCourseAttach(id));
+	}
+
+	@PostMapping("importChapter")
+	@Operation(summary = "导入 PDF 章节", description = "导入 PDF 章节")
+	@SgLog(value = "导入 PDF 章节", operationType = OperationType.INSERT)
+	public R<Boolean> importChapter(Long courseId,
+			@Parameter(description = "章节内容，文件格式为 PDF", required = true) MultipartFile file)
+			throws IOException {
+		return R.success(courseService.importChapter(courseId, file));
 	}
 }
