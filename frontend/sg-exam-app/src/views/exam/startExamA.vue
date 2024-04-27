@@ -53,9 +53,10 @@
 <script>
 import {mapGetters, mapState} from 'vuex'
 import {saveAndNext} from '@/api/exam/answer'
+import {calculateDuration} from '@/api/exam/examRecord'
 import store from '@/store'
 import moment from 'moment'
-import {isNotEmpty, messageFail, messageSuccess, calculateDuration} from '@/utils/util'
+import {isNotEmpty, messageFail, messageSuccess} from '@/utils/util'
 import Tinymce from '@/components/Tinymce'
 import Choices from '@/components/Subjects/Choices'
 import MultipleChoices from '@/components/Subjects/MultipleChoices'
@@ -124,7 +125,13 @@ export default {
   },
   methods: {
     updateDuration() {
-      this.duration = calculateDuration(new Date(this.examRecord.createTime));
+      calculateDuration(this.examRecord.createTime).then(res => {
+        if (res.data.code === 0) {
+          this.duration = res.data.result
+        }
+      }).catch(err => {
+        console.error(err)
+      })
     },
     onChoiceFn(sort) {
       if (sort) {

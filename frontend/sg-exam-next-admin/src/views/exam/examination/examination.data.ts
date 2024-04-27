@@ -256,12 +256,24 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
-    field: 'examTime',
+    field: 'startTime',
     label: '考试时间',
-    component: 'RangePicker',
+    helpMessage: ['考试开始时间'],
+    component: 'DatePicker',
     componentProps: {
       'show-time': true,
       valueFormat: 'YYYY-MM-DD HH:mm:ss',
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'examDurationMinute',
+    label: '考试时长',
+    helpMessage: ['单位：分钟'],
+    component: 'InputNumber',
+    defaultValue: 0,
+    componentProps: {
+      min: 0
     },
     colProps: { span: 12 },
   },

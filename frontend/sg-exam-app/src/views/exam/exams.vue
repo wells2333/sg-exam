@@ -46,17 +46,17 @@
                 {{$t('exam.exams.unrelatedCourse')}}
               </div>
               <div class="card-item-course-detail" v-if="exam.startTime !== undefined && exam.startTime !== null">
-                <a href="#">{{ exam.startTime }}~{{ exam.endTime }}</a>
+                {{ $t('exam.exams.startTime') + exam.startTime }}
               </div>
               <div class="card-item-course-detail" v-else>
-                {{$t('exam.exams.withoutTimeLimit')}}
+                {{ $t('exam.exams.withoutTimeLimit') }}
               </div>
             </div>
           </div>
           <div class="seat-rating-fee d-flex justify-content-between">
               <div class="seat-rating h-100 d-flex align-items-center">
                 <div class="seat" :title="$t('exam.course.courses.registerStudentsCnt')">
-                  <i class="el-icon-user-solid" aria-hidden="true"></i> {{exam.joinNum}}
+                  <i class="el-icon-user-solid" aria-hidden="true"></i> {{ exam.joinNum }}
                 </div>
               </div>
           </div>

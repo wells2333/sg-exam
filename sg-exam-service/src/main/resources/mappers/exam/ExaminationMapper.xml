@@ -7,7 +7,7 @@
         <result column="type" property="type"/>
         <result column="attention" property="attention"/>
         <result column="start_time" property="startTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
-        <result column="end_time" property="endTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="exam_duration_minute" property="examDurationMinute"/>
         <result column="total_score" property="totalScore"/>
         <result column="status" property="status"/>
         <result column="image_id" property="imageId"/>

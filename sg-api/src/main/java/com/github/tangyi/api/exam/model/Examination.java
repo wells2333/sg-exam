@@ -62,10 +62,10 @@ public class Examination extends BaseEntity<Examination> {
 	private Date startTime;
 
 	/**
-	 * 考试结束时间
+	 * 考试时长，单位：分钟
 	 */
-	@Column(name = "end_time")
-	private Date endTime;
+	@Column(name = "exam_duration_minute")
+	private Integer examDurationMinute;
 
 	/**
 	 * 总分

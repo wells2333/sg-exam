@@ -11,7 +11,7 @@
               <span>
                 <i class="fa fa-circle" aria-hidden="true"></i>
               </span>
-              <a>{{ examination.totalScore }}分</a>
+              <a>{{ $t('exam.exams.score') + ' ' + examination.totalScore}}</a>
             </div>
           </div>
         </div>
@@ -22,10 +22,22 @@
                 <div class="about-course mb-30">
                   <h4>{{ $t('exam.exams.examTime') }}</h4>
                   <div style="margin-bottom: 16px;">
-                    <p v-if="examination.startTime">
-                      {{ examination.startTime }} ~ {{ examination.endTime }}
+                    <p>
+                      {{ $t('exam.exams.startTime') }}
+                      <span v-if="examination.startTime">
+                        {{ examination.startTime}}
+                      </span>
+                      <span v-else>{{ $t('exam.exams.unLimitTime') }}</span>
                     </p>
-                    <p v-else>{{ $t('exam.exams.unLimitTime') }}</p>
+                    <p>
+                      {{ $t('exam.exams.examDuration') }}
+                      <span v-if="examination.examDurationMinute">
+                        {{ examination.examDurationMinute }}
+                      </span>
+                      <span v-else>
+                        {{ $t('exam.exams.unLimitTime') }}
+                      </span>
+                    </p>
                   </div>
                   <h4>{{ $t('exam.exams.examRemark') }}</h4>
                   <div style="margin-bottom: 16px;">

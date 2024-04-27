@@ -76,12 +76,11 @@ public class ExaminationController extends BaseController {
 
 		boolean canStart = true;
 		String msg = "";
-		if (examination.getStartTime() != null && examination.getEndTime() != null) {
+		if (examination.getStartTime() != null) {
 			long current = System.currentTimeMillis();
 			long startTime = examination.getStartTime().getTime();
-			long endTime = examination.getEndTime().getTime();
-			// 当前时间大于考试开始时间 && 当期时间小于考试结束时间
-			if (current < startTime || current > endTime) {
+			// 当前时间大于考试开始时间
+			if (current < startTime) {
 				canStart = false;
 				msg = "Not within the exam time range.";
 			}

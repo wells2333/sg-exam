@@ -145,6 +145,8 @@ const zh = {
       examRemark: '考试介绍',
       examAttention: '注意事项',
       examTime: '考试时间',
+      startTime: '开始时间：',
+      examDuration: '考试时长：',
       unLimitTime: '无限制',
       all: '全部',
       latestRelease: '最新发布',

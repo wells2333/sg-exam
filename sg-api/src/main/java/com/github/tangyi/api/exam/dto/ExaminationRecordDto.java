@@ -137,11 +137,6 @@ public class ExaminationRecordDto extends BaseEntity<ExaminationRecordDto> {
 	private String deptName;
 
 	/**
-	 * 考试时间
-	 */
-	private String examTime;
-
-	/**
 	 * 错误题目数量
 	 */
 	private Integer inCorrectNumber;

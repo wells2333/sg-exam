@@ -130,3 +130,6 @@ ALTER TABLE `exam_course`
 -- 2024 年 04 月 24 日 23:23:12
 ALTER TABLE `exam_examination`
     ADD COLUMN `show_subject_type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '出题模式，0：顺序出题，1：随机出题';
+
+ALTER TABLE `exam_examination`
+    ADD COLUMN `exam_duration_minute` int(10) NOT NULL DEFAULT 0 COMMENT '考试时长，单位：分钟';

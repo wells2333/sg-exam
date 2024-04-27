@@ -145,7 +145,9 @@ const en = {
     exams: {
       examRemark: 'Introduction',
       examAttention: 'Attention',
+      startTime: 'Start time: ',
       examTime: 'Examination time',
+      examDuration: 'Examination duration: ',
       unLimitTime: 'No limit',
       all: 'All',
       latestRelease: 'Latest release',

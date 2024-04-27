@@ -66,13 +66,6 @@ export default defineComponent({
           data.record.members = [];
           data.record.deptMember = '';
         }
-        data.record.examTime = [];
-        if (data.record.startTime) {
-          data.record.examTime.push(data.record.startTime);
-        }
-        if (data.record.endTime) {
-          data.record.examTime.push(data.record.endTime);
-        }
         setFieldsValue({
           ...data.record,
         });
@@ -86,11 +79,6 @@ export default defineComponent({
       try {
         const values = await validate();
         setModalProps({confirmLoading: true});
-        if (values.examTime) {
-          values.startTime = values.examTime[0];
-          values.endTime = values.examTime[1];
-          values.examTime = undefined;
-        }
         let course = {
           id: ''
         };
