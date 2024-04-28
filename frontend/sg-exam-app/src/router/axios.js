@@ -12,7 +12,7 @@ const whiteList = ['/auth/authentication/removeToken']// 白名单
 // 超时时间
 const instance = axios.create({
   // baseURL: baseURL,
-  timeout: 30000,
+  timeout: 60000,
   withCredentials: true
 })
 
