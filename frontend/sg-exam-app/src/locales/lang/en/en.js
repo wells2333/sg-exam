@@ -180,7 +180,9 @@ const en = {
       confirmExit: 'confirm exit?',
       startExam: 'Start exam',
       subject: 'Subject count',
-      score: 'Total score'
+      score: 'Total score',
+      answered: 'Answered',
+      notAnswered: 'Yet to Answered'
     },
     incorrect: {
       userName: 'UserName',

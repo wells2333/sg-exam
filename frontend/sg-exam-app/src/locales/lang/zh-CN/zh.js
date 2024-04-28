@@ -179,7 +179,9 @@ const zh = {
       confirmExit: '确认退出吗？',
       startExam: '考试开始',
       subject: '题目数',
-      score: '总分'
+      score: '总分',
+      answered: '已答',
+      notAnswered: '未答'
     },
     incorrect: {
       userName: '考生姓名',
