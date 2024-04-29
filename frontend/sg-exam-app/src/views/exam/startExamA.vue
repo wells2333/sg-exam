@@ -34,7 +34,7 @@
         <div class="subject-right-answer">
           <el-button
             :class="value.answered ? 'answered' : 'not-answered'"
-            v-for="(value, index) in cards"
+            v-for="(value, index) in currentCards"
             :key="index"
             @click="toSubject(value.subjectId, value.sort)"
             size="small"
@@ -44,10 +44,10 @@
         </div>
         <div class="subject-right-status">
           <div class="status-item">
-            <span class="answered-label"></span>{{ $t("exam.startExam.answered") }}
+            <span class="answered-label"></span>{{ $t("exam.startExam.answered") }}({{ answeredCnt }})
           </div>
           <div class="status-item">
-            <span class="unanswered-label"></span>{{ $t("exam.startExam.notAnswered") }}
+            <span class="unanswered-label"></span>{{ $t("exam.startExam.notAnswered") }}({{ currentCards.length - answeredCnt }})
           </div>
         </div>
         <div class="subject-right-footer" @click="submitExam">
@@ -99,7 +99,8 @@ export default {
       subjectStartTime: undefined,
       answer: "",
       dialogVisible: false,
-      answeredCnt: 0
+      answeredCnt: 0,
+      currentCards: []
     };
   },
   computed: {
@@ -113,6 +114,13 @@ export default {
     this.examinationId = this.$route.params.id;
     this.recordId = this.$route.query.recordId;
     if (this.examinationId && this.recordId) {
+      const tmpCards = []
+      if (this.cards && this.cards.length > 0) {
+        this.cards.forEach(c => {
+          tmpCards.push(c)
+        })
+        this.currentCards = tmpCards
+      }
       this.startExam();
       this.updateAnsweredCnt();
     } else {
@@ -135,7 +143,7 @@ export default {
     },
     updateAnsweredCnt() {
       let answered = 0;
-      this.cards.forEach(c => {
+      this.currentCards.forEach(c => {
         if (c.answered && c.answered === true) {
           answered++;
         }
@@ -144,15 +152,16 @@ export default {
     },
     onChoiceFn(sort) {
       if (sort) {
-        this.cards[sort - 1].answered = true;
+        this.currentCards[sort - 1].answered = true;
       }
       let answered = 0;
-      this.cards.forEach(c => {
+      this.currentCards.forEach(c => {
         if (c.answered && c.answered === true) {
           answered++;
         }
       });
       this.answeredCnt = answered;
+      this.$forceUpdate()
     },
     startExam() {
       messageSuccess(this, this.$t("exam.startExam.startExam"));
@@ -164,28 +173,28 @@ export default {
       this.$router.push({ name: "exams" });
     },
     goLast() {
-      for (let i = 0; i < this.cards.length; i++) {
-        if (this.cards[i].subjectId === this.subject.id) {
+      for (let i = 0; i < this.currentCards.length; i++) {
+        if (this.currentCards[i].subjectId === this.subject.id) {
           if (i === 0) {
             messageWarn(this, this.$t("exam.startExam.isFirst"));
             break;
           }
 
-          let { sort } = this.cards[i - 1];
+          let { sort } = this.currentCards[i - 1];
           this.saveAndGetNext(nextSubjectType.last, sort);
           break;
         }
       }
     },
     goNext() {
-      for (let i = 0; i < this.cards.length; i++) {
-        if (this.cards[i].subjectId === this.subject.id) {
-          if (i === this.cards.length - 1) {
+      for (let i = 0; i < this.currentCards.length; i++) {
+        if (this.currentCards[i].subjectId === this.subject.id) {
+          if (i === this.currentCards.length - 1) {
             messageWarn(this, this.$t("exam.startExam.isLast"));
             break;
           }
 
-          let { sort } = this.cards[i + 1];
+          let { sort } = this.currentCards[i + 1];
           this.saveAndGetNext(nextSubjectType.next, sort);
           break;
         }
@@ -215,8 +224,7 @@ export default {
             }
             this.subjectStartTime = moment().format("YYYY-MM-DD HH:mm:ss");
             this.endLoading(nextType);
-          })
-          .catch(error => {
+          }).catch(error => {
             console.log(error);
             messageFail(this, this.$t("exam.startExam.getSubjectFailed"));
             this.endLoading(nextType);
@@ -237,19 +245,16 @@ export default {
         confirmButtonText: this.$t("sure"),
         cancelButtonText: this.$t("cancel"),
         type: "warning"
-      })
-        .then(() => {
+      }).then(() => {
           this.doSubmitExam(this.examinationId, this.recordId, this.userInfo, true);
-        })
-        .catch(() => {});
+        }).catch(() => {});
     },
     doSubmitExam(examinationId, examRecordId, userInfo, toExamRecord) {
       const ref = this.getSubjectRef();
       if (ref) {
         ref.beforeSave();
       }
-      saveAndNext(this.getAnswer(), 0)
-        .then(() => {
+      saveAndNext(this.getAnswer(), 0).then(() => {
           store
             .dispatch("SubmitExam", {
               examinationId,
@@ -262,12 +267,10 @@ export default {
               if (toExamRecord) {
                 this.$router.push({ name: "exam-record" });
               }
-            })
-            .catch(() => {
+            }).catch(() => {
               messageFail(this, this.$t("submit") + this.$t("failed"));
             });
-        })
-        .catch(() => {
+        }).catch(() => {
           messageFail(this, this.$t("submit") + this.$t("failed"));
         });
     },
@@ -340,7 +343,7 @@ export default {
       const ref = this.getSubjectRef();
       if (isNotEmpty(ref)) {
         try {
-          ref.setSubjectInfo(sub, this.cards.length, null);
+          ref.setSubjectInfo(sub, this.currentCards.length, null);
         } catch (error) {
           console.error(error);
         }
@@ -358,11 +361,9 @@ export default {
       confirmButtonText: this.$t("sure"),
       cancelButtonText: this.$t("cancel"),
       type: "warning"
-    })
-      .then(() => {
+    }).then(() => {
         next();
-      })
-      .catch(() => {
+      }).catch(() => {
         next(false);
       });
   }
@@ -370,153 +371,5 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
-.subject-box {
-  margin-top: 30px;
-  margin-left: 20px;
-}
-
-.subject-box-content {
-  background-color: #fff;
-  box-shadow: 0 0 4px -2px rgba(0, 0, 0, 0.5);
-  border-radius: 4px;
-  max-width: 1200px;
-  width: 100%;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: row;
-  .subject-left {
-    flex: 1 1 35%;
-    padding: 30px 50px;
-    background-color: #fff;
-    position: relative;
-    .subject-buttons {
-      padding: 30px 0;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      border-top: 1px solid rgba(216,216,216,.5);
-    }
-  }
-  .subject-right {
-    flex: 1;
-    padding: 30px;
-    background-color: #f3f5f8;
-    .subject-right-answer {
-      height: calc(100% - 120px);
-      overflow: auto;
-    }
-    .answered {
-      color: #fff;
-      background-color: #67c23a;
-      border-color: #67c23a;
-    }
-    .not-answered {
-      background-color: #e7eaef;
-      border: 1px solid #e7eaef;
-    }
-    .subject-right-status {
-      position: sticky;
-      bottom: 0;
-      border-top: 1px solid rgba(216, 216, 216, 0.5);
-      padding-top: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      .status-item {
-        margin: 0 20px 20px 0;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-      }
-      .answered-label {
-        background-color: #67c23a;
-        border: 1px solid #67c23a;
-        width: 15px;
-        height: 15px;
-        border-radius: 4px;
-        margin-right: 10px;
-        display: inline-block;
-      }
-      .unanswered-label {
-        background-color: #e7eaef;
-        border: 1px solid #c9cbd2;
-        width: 15px;
-        height: 15px;
-        border-radius: 4px;
-        margin-right: 10px;
-        display: inline-block;
-      }
-    }
-    .subject-right-footer {
-      background-color: #3762f0;
-      color: #fff;
-      padding: 8px 16px;
-      border-radius: 4px;
-      font-size: 16px;
-      text-align: center;
-    }
-  }
-}
-
-.subject-box-card {
-  position: relative;
-  height: 600px;
-  overflow: auto;
-  margin-bottom: 30px;
-}
-
-.tool-bar {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.tool-bar-timer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.tool-bar-timer span {
-  color: #606266;
-  font-size: 1.5em;
-  font-weight: bold;
-}
-
-.current-progress {
-  color: #303133;
-}
-
-.tool-bar-card {
-  font-size: 1.5em;
-  font-weight: bold;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.answer-card {
-  margin-left: 20px;
-}
-
-.answer-card-title {
-  font-size: 13px;
-  color: #3a3e51;
-  line-height: 17px;
-  padding: 10px 0;
-}
-
-.answer-card-split {
-  width: 100%;
-  border-bottom: 1px solid #e6e6e6;
-}
-
-.answer-card-content {
-  padding-bottom: 10px;
-  font-size: 0;
-  margin-right: -15px;
-
-  > button {
-    margin-top: 10px;
-  }
-}
+@import "../../assets/css/start_exam.scss";
 </style>

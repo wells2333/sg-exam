@@ -39,6 +39,7 @@ const en = {
   failed: 'Failed',
   operation: 'Operation',
   return: 'Return',
+  timeLeft: 'Time left',
   load: {
     loadMore: 'Load more',
     loadFailed: 'Load Failed!',

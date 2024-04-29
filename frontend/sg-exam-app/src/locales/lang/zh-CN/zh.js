@@ -39,6 +39,7 @@ const zh = {
   failed: '失败',
   operation: '操作',
   return: '返回',
+  timeLeft: '剩余时间',
   load: {
     loadMore: '加载更多',
     loadFailed: '加载数据失败！',

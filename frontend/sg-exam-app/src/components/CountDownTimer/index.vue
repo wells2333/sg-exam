@@ -1,5 +1,5 @@
 <template>
-  <div class="countdown-timer">{{ timeLeft }}</div>
+  <div class="countdown-timer" :title="$t('timeLeft')"><i class="el-icon-timer"></i>&nbsp; {{ timeLeft }}</div>
 </template>
 
 <script>
@@ -51,7 +51,7 @@ export default {
 
 <style scoped>
 .countdown-timer {
-  font-size: 16px;
+  font-size: 22px;
   color: #1a1f2f;
   font-weight: 700;
 }

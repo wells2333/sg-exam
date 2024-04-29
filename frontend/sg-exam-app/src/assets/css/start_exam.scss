@@ -1,0 +1,150 @@
+.subject-box {
+  margin-top: 30px;
+  margin-left: 20px;
+}
+
+.subject-box-content {
+  background-color: #fff;
+  box-shadow: 0 0 4px -2px rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  .subject-left {
+    flex: 1 1 35%;
+    padding: 15px 30px;
+    background-color: #fff;
+    position: relative;
+    .subject-buttons {
+      padding: 30px 0;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      border-top: 1px solid rgba(216,216,216,.5);
+    }
+  }
+  .subject-right {
+    flex: 1;
+    padding: 30px;
+    background-color: #f3f5f8;
+    .subject-right-answer {
+      height: calc(100% - 120px);
+      overflow: auto;
+    }
+    .answered {
+      color: #fff;
+      background-color: #67c23a;
+      border-color: #67c23a;
+    }
+    .not-answered {
+      background-color: #e7eaef;
+      border: 1px solid #e7eaef;
+    }
+    .subject-right-status {
+      position: sticky;
+      bottom: 0;
+      border-top: 1px solid rgba(216, 216, 216, 0.5);
+      padding-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      .status-item {
+        margin: 0 20px 20px 0;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+      .answered-label {
+        background-color: #67c23a;
+        border: 1px solid #67c23a;
+        width: 15px;
+        height: 15px;
+        border-radius: 4px;
+        margin-right: 10px;
+        display: inline-block;
+      }
+      .unanswered-label {
+        background-color: #e7eaef;
+        border: 1px solid #c9cbd2;
+        width: 15px;
+        height: 15px;
+        border-radius: 4px;
+        margin-right: 10px;
+        display: inline-block;
+      }
+    }
+    .subject-right-footer {
+      background-color: #3762f0;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-size: 16px;
+      text-align: center;
+      cursor: pointer;
+    }
+  }
+}
+
+.subject-box-card {
+  position: relative;
+  height: 400px;
+  overflow: auto;
+  margin-bottom: 30px;
+}
+
+.tool-bar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.tool-bar-timer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tool-bar-timer span {
+  color: #606266;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.current-progress {
+  color: #303133;
+}
+
+.tool-bar-card {
+  font-size: 1.5em;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.answer-card {
+  margin-left: 20px;
+}
+
+.answer-card-title {
+  font-size: 13px;
+  color: #3a3e51;
+  line-height: 17px;
+  padding: 10px 0;
+}
+
+.answer-card-split {
+  width: 100%;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.answer-card-content {
+  padding-bottom: 10px;
+  font-size: 0;
+  margin-right: -15px;
+
+  > button {
+    margin-top: 10px;
+  }
+}
