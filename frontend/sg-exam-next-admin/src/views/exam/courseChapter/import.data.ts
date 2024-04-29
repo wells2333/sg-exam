@@ -12,16 +12,16 @@ export const formSchema: FormSchema[] = [
     show: false
   },
   {
-    label: '上传 PDF',
-    field: 'pdfFile',
+    label: '上传文件',
+    field: 'file',
     component: 'Input',
-    helpMessage: ['只能上传 PDF 文件'],
+    helpMessage: ['只能上传 PDF、zip 文件'],
     render: ({model, field}) => {
       return h(SgUpload, {
         value: model[field],
         api: importChapter,
-        type: 'pdf',
-        accept: '.pdf',
+        type: 'pdf,zip',
+        accept: '.pdf,.zip',
         showFileList: false,
         handleFormData: (formData) => {
           const {data} = formData;

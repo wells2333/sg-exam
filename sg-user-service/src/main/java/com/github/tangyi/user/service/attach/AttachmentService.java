@@ -81,6 +81,7 @@ public class AttachmentService extends CrudService<AttachmentMapper, Attachment>
 	public int deleteAll(Long[] ids) {
 		return super.deleteAll(ids);
 	}
+
 	@Override
 	public PageInfo<Attachment> attachmentList(Map<String, Object> params, int pageNum, int pageSize) {
 		PageInfo<Attachment> page = findPage(params, pageNum, pageSize);
@@ -90,5 +91,4 @@ public class AttachmentService extends CrudService<AttachmentMapper, Attachment>
 		}
 		return new PageInfo<>();
 	}
-
 }

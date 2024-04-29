@@ -32,5 +32,7 @@ public interface ExamConstant {
 
 	Integer SHOW_SUBJECT_TYPE_RANDOM = 1;
 
+	Integer SECTION_TYPE_VIDEO = 0;
+
 	Integer SECTION_TYPE_IMG_AND_ARTICLE = 1;
 }

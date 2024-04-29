@@ -1,12 +1,15 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" title="导入" @ok="handleSubmit"
+  <BasicModal v-bind="$attrs" @register="registerModal" title="批量导入" @ok="handleSubmit"
               width="50%">
+    <div>支持两种导入方式：</div>
+    <div>1. 单个PDF 文件：后台将 PDF 内容提取出来，自动生成课程章节</div>
+    <div style="margin-bottom: 20px;">2. 将多个课程视频（MP4）打包成一个 zip 文件：后台为每个视频生成一个章节，章节标题为文件名</div>
     <BasicForm @register="registerForm"/>
   </BasicModal>
 </template>
 <script lang="ts">
-import { useI18n } from '/@/hooks/web/useI18n';
-import {defineComponent, reactive, ref} from 'vue';
+import {useI18n} from '/@/hooks/web/useI18n';
+import {defineComponent} from 'vue';
 import {BasicModal, useModalInner} from '/@/components/Modal';
 import {useMessage} from "/@/hooks/web/useMessage";
 import {BasicForm, useForm} from "/@/components/Form";
@@ -29,7 +32,7 @@ export default defineComponent({
     });
     const [registerModal, {setModalProps, closeModal}] = useModalInner(async (data) => {
       resetFields();
-      setFieldsValue({courseId: data?.courseId || null, pdfFile: null});
+      setFieldsValue({courseId: data?.courseId || null, file: null});
       setModalProps({confirmLoading: false});
     });
 

@@ -145,11 +145,10 @@ public class CourseController extends BaseController {
 	}
 
 	@PostMapping("importChapter")
-	@Operation(summary = "导入 PDF 章节", description = "导入 PDF 章节")
-	@SgLog(value = "导入 PDF 章节", operationType = OperationType.INSERT)
+	@Operation(summary = "导入章节", description = "导入章节")
+	@SgLog(value = "导入章节", operationType = OperationType.INSERT)
 	public R<Boolean> importChapter(Long courseId,
-			@Parameter(description = "章节内容，文件格式为 PDF", required = true) MultipartFile file)
-			throws IOException {
+			@Parameter(description = "导入章节", required = true) MultipartFile file) throws IOException {
 		return R.success(courseService.importChapter(courseId, file));
 	}
 }

@@ -6,7 +6,7 @@
           {{ t('common.addText') }}
         </a-button>
         <a-button v-if="hasPermission(['exam:course:edit'])" type="primary" @click="handleImportPdf">
-          {{ t('common.importPdfText') }}
+          {{ t('common.batchImportText') }}
         </a-button>
       </template>
       <template #action="{ record }">

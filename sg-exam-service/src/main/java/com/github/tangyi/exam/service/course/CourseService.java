@@ -39,7 +39,6 @@ import com.github.tangyi.exam.mapper.CourseMapper;
 import com.github.tangyi.exam.mapper.ExaminationMapper;
 import com.github.tangyi.exam.service.ExamPermissionService;
 import com.github.tangyi.exam.service.fav.CourseFavoritesService;
-import com.github.tangyi.exam.utils.PdfUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
@@ -58,7 +57,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -86,6 +84,7 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 	private final CourseIdFetcher courseIdFetcher;
 	private final ExamPermissionService examPermissionService;
 	private final ExaminationMapper examinationMapper;
+	private final CourseImportService courseImportService;
 	private ExamConstantProperty examConstantProperty;
 
 	@Override
@@ -309,10 +308,7 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 	@Transactional
 	@CacheEvict(value = ExamCacheName.COURSE, key = "#courseId")
 	public boolean importChapter(Long courseId, MultipartFile file) throws IOException {
-		List<PdfUtil.Part> parts;
-		try (InputStream in = file.getInputStream()) {
-			parts = PdfUtil.extractPdfTextToSection(in);
-		}
+		List<CourseImportService.Part> parts = this.courseImportService.extractChapter(file);
 		if (CollectionUtils.isEmpty(parts)) {
 			return false;
 		}
@@ -331,7 +327,7 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 
 			// 插入章节
 			AtomicInteger cnt = new AtomicInteger(0);
-			for (PdfUtil.Part p : parts) {
+			for (CourseImportService.Part p : parts) {
 				if (StringUtils.isEmpty(p.getContent())) {
 					continue;
 				}
@@ -350,10 +346,15 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 				section.setChapterId(chapter.getId());
 				section.setSort(1L);
 				section.setTitle(p.getTitle());
-				String content = IMPORT_DIV_PREFIX + p.getContent() + IMPORT_DIV_SUFFIX;
-				section.setContent(content);
-				// 默认导入为图文类型
-				section.setContentType(ExamConstant.SECTION_TYPE_IMG_AND_ARTICLE);
+				if (CourseImportService.PartType.VIDEO.equals(p.getType())) {
+					// 视频则设置章节的视频 URL
+					section.setVideoUrl(p.getContent());
+					section.setContentType(ExamConstant.SECTION_TYPE_VIDEO);
+				} else {
+					String content = IMPORT_DIV_PREFIX + p.getContent() + IMPORT_DIV_SUFFIX;
+					section.setContent(content);
+					section.setContentType(ExamConstant.SECTION_TYPE_IMG_AND_ARTICLE);
+				}
 				this.sectionService.insert(section);
 			}
 			txManager.commit(status);
@@ -363,23 +364,6 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 			throw e;
 		}
 		return true;
-	}
-
-	private List<CourseSectionDto> findSections(ExamCourseChapter chapter, AtomicLong learnHour) {
-		List<CourseSectionDto> dtoList = Lists.newArrayList();
-		List<ExamCourseSection> sections = sectionService.findSectionsByChapterId(chapter.getId());
-		if (CollectionUtils.isNotEmpty(sections)) {
-			for (ExamCourseSection section : sections) {
-				if (section.getLearnHour() != null) {
-					learnHour.addAndGet(section.getLearnHour());
-				}
-				CourseSectionDto dto = new CourseSectionDto();
-				dto.setSection(section);
-				dto.setPoints(knowledgePointService.getPoints(section.getId()));
-				dtoList.add(dto);
-			}
-		}
-		return dtoList;
 	}
 
 	@Transactional
@@ -434,5 +418,22 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 				.clickCnt(clickCnt) //
 				.joinCnt(joinCnt) //
 				.build(); //
+	}
+
+	private List<CourseSectionDto> findSections(ExamCourseChapter chapter, AtomicLong learnHour) {
+		List<CourseSectionDto> dtoList = Lists.newArrayList();
+		List<ExamCourseSection> sections = sectionService.findSectionsByChapterId(chapter.getId());
+		if (CollectionUtils.isNotEmpty(sections)) {
+			for (ExamCourseSection section : sections) {
+				if (section.getLearnHour() != null) {
+					learnHour.addAndGet(section.getLearnHour());
+				}
+				CourseSectionDto dto = new CourseSectionDto();
+				dto.setSection(section);
+				dto.setPoints(knowledgePointService.getPoints(section.getId()));
+				dtoList.add(dto);
+			}
+		}
+		return dtoList;
 	}
 }
