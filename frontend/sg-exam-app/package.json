@@ -28,6 +28,7 @@
     "vue-count-to": "^1.0.13",
     "vue-fixed-header": "^3.2.14",
     "vue-i18n": "^8.28.2",
+    "vue-pdf": "^4.3.0",
     "vue-router": "^3.0.1",
     "vue-spinkit": "^1.4.1",
     "vue-video-player": "^5.0.2",

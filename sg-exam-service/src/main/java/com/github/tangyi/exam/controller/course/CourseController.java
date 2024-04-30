@@ -18,6 +18,7 @@ package com.github.tangyi.exam.controller.course;
 
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.exam.dto.CourseDetailDto;
+import com.github.tangyi.api.exam.dto.CourseImportDto;
 import com.github.tangyi.api.exam.dto.MemberDto;
 import com.github.tangyi.api.exam.model.Course;
 import com.github.tangyi.api.exam.service.ICourseService;
@@ -28,11 +29,13 @@ import com.github.tangyi.common.log.SgLog;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.SysUtil;
 import com.github.tangyi.constants.ExamConstant;
+import com.github.tangyi.exam.service.course.CourseImportService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,6 +52,7 @@ import java.util.Map;
 public class CourseController extends BaseController {
 
 	private final ICourseService courseService;
+	private final CourseImportService courseImportService;
 	private final IExamPermissionService examPermissionService;
 
 	@GetMapping("/{id}")
@@ -149,6 +153,11 @@ public class CourseController extends BaseController {
 	@SgLog(value = "导入章节", operationType = OperationType.INSERT)
 	public R<Boolean> importChapter(Long courseId,
 			@Parameter(description = "导入章节", required = true) MultipartFile file) throws IOException {
-		return R.success(courseService.importChapter(courseId, file));
+		List<CourseImportDto> dtoList = this.courseImportService.extractChapter(file);
+		if (CollectionUtils.isEmpty(dtoList)) {
+			return R.success(false);
+		}
+
+		return R.success(this.courseImportService.importChapter(courseId, dtoList));
 	}
 }

@@ -60,6 +60,8 @@ public class RedisCacheConfig {
 	@Value("${spring.redis.timeout:60}")
 	private int timeOutSecond;
 
+	private LettuceConnectionFactory factory;
+
 	@Bean
 	public LettuceConnectionFactory redisConnectionFactory() {
 		RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(redisHost, port);
@@ -74,7 +76,10 @@ public class RedisCacheConfig {
 
 		LettuceClientConfiguration lettuceClientConfiguration = LettuceClientConfiguration.builder()
 				.clientOptions(clientOptions).build();
-		return new LettuceConnectionFactory(configuration, lettuceClientConfiguration);
+		LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory(configuration,
+				lettuceClientConfiguration);
+		this.factory = connectionFactory;
+		return connectionFactory;
 	}
 
 	@Bean
@@ -97,9 +102,9 @@ public class RedisCacheConfig {
 	}
 
 	@PreDestroy
-	public void cleanup(LettuceConnectionFactory factory) {
-		if (factory != null) {
-			factory.destroy();
+	public void cleanup() {
+		if (this.factory != null) {
+			this.factory.destroy();
 		}
 	}
 }

@@ -50,6 +50,10 @@ export const columns: BasicColumn[] = [
         color = 'blue';
         text = '图文';
       }
+      if (contentType !== null && contentType === 2) {
+        color = 'magenta';
+        text = 'PDF';
+      }
       return h(Tag, {color: color}, () => text);
     },
   },

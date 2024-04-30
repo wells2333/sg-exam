@@ -5,7 +5,7 @@
         <a-button v-if="hasPermission(['exam:course:edit'])" type="primary" @click="handleCreate">
           {{ t('common.addText') }}
         </a-button>
-        <a-button v-if="hasPermission(['exam:course:edit'])" type="primary" @click="handleImportPdf">
+        <a-button v-if="hasPermission(['exam:course:edit'])" type="primary" @click="handleImport">
           {{ t('common.batchImportText') }}
         </a-button>
       </template>
@@ -38,7 +38,7 @@
         />
       </template>
     </BasicTable>
-    <ImportCourseModal width="50%" @register="registerImportCourseModal" @success="handleImportCourseSuccess"/>
+    <ImportChapterModal width="50%" @register="registerImportChapterModal" @success="handleImportChapterSuccess"/>
     <ChapterModal width="90%" @register="registerModal" @success="handleSuccess"/>
     <SectionModal width="90%" @register="registerSectionModal"
                   @success="handleSuccess"></SectionModal>
@@ -55,7 +55,7 @@ import {deleteChapter, getChapterList} from '/@/api/exam/chapter';
 import {Description} from '/@/components/Description/index';
 import {BasicTable, TableAction, useTable} from '/@/components/Table';
 import {columns, searchFormSchema} from './chapter/chapter.data';
-import ImportCourseModal from './ImportCourseModal.vue';
+import ImportChapterModal from './ImportChapterModal.vue';
 import ChapterModal from './chapter/ChapterModal.vue';
 import SectionModal from './section/SectionModal.vue';
 import {useModal} from '/@/components/Modal';
@@ -70,7 +70,7 @@ export default defineComponent({
     BasicTable,
     TableAction,
     [Divider.name]: Divider,
-    ImportCourseModal,
+    ImportChapterModal,
     ChapterModal,
     SectionModal
   },
@@ -80,7 +80,7 @@ export default defineComponent({
     const { createMessage } = useMessage();
     const [registerModal, {openModal}] = useModal();
     const [registerSectionModal, {openModal: openSectionModal}] = useModal();
-    const [registerImportCourseModal, {openModal: openImportCourseModal}] = useModal();
+    const [registerImportChapterModal, {openModal: openImportChapterModal}] = useModal();
     const route = useRoute();
     const courseId = ref(route.params?.id);
     const [registerTable, {reload}] = useTable({
@@ -124,13 +124,13 @@ export default defineComponent({
       });
     }
 
-    function handleImportPdf() {
-      openImportCourseModal(true, {
+    function handleImport() {
+      openImportChapterModal(true, {
         courseId
       });
     }
 
-    function handleImportCourseSuccess() {
+    function handleImportChapterSuccess() {
       createMessage.success(t('common.operationSuccessText'));
       reload();
     }
@@ -164,17 +164,17 @@ export default defineComponent({
       t,
       hasPermission,
       registerModal,
-      registerImportCourseModal,
+      registerImportChapterModal,
       registerSectionModal,
       registerTable,
       handleView,
       handleCreate,
-      handleImportPdf,
+      handleImport,
       handleEdit,
       handleDelete,
       handleSuccess,
       handleSectionManage,
-      handleImportCourseSuccess
+      handleImportChapterSuccess
     };
   },
 });

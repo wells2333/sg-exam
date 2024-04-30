@@ -1,12 +1,12 @@
 import {FormSchema} from "/@/components/Form";
 import {h, unref} from "vue";
 import {SgUpload} from "/@/components/SgUpload";
-import {importChapter} from "/@/api/exam/course";
+import {importSection} from "/@/api/exam/chapter";
 
 export const formSchema: FormSchema[] = [
   {
-    field: 'courseId',
-    label: '课程 ID',
+    field: 'chapterId',
+    label: '章 ID',
     component: 'Input',
     required: true,
     show: false
@@ -19,13 +19,13 @@ export const formSchema: FormSchema[] = [
     render: ({model, field}) => {
       return h(SgUpload, {
         value: model[field],
-        api: importChapter,
+        api: importSection,
         type: 'zip',
         accept: '.zip',
         showFileList: false,
         handleFormData: (formData) => {
           const {data} = formData;
-          Object.assign(data, {courseId: model['courseId']});
+          Object.assign(data, {chapterId: model['chapterId']});
         },
         handleDone: (value) => {
           if (value) {

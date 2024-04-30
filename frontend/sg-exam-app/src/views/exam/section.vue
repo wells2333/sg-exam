@@ -45,7 +45,10 @@
                         {{ point.title }}</p>
                       </div>
                 </div>
-                <div  class="section-video">
+                <div v-if="pdfUrl !== undefined">
+                  <pdf ref="pdf" :src="pdfUrl" v-for="i in pdfNumPages" :key="i" :page="i"></pdf>
+                </div>
+                <div class="section-video" v-else>
                   <sg-video v-if="videoUrl !== undefined && videoUrl !== null && videoUrl !== ''" ref="sectionVideo">
                   </sg-video>
                   <sg-audio v-if="audioUrl !== undefined && audioUrl !== null && audioUrl !== ''" ref="sectionAudio"></sg-audio>
@@ -53,9 +56,6 @@
                     <div v-html="content"></div>
                   </div>
                 </div>
-                <!-- <div v-else-if="contentType === 1">
-                  <div v-html="content"></div>
-                </div> -->
               </div>
               <div class="section-button">
                 <el-button type="primary" class="clever-btn mb-30 w-10" @click="goBack">{{$t('return')}}
@@ -74,11 +74,13 @@ import {watchSection} from '@/api/exam/section'
 import SgVideo from '@/components/SgVideo'
 import SgAudio from '@/components/SgAudio'
 import {getKnowledgePointDetail} from '../../api/exam/point'
+import pdf from 'vue-pdf'
 
 export default {
   components: {
     SgVideo,
-    SgAudio
+    SgAudio,
+    pdf
   },
   data() {
     return {
@@ -90,6 +92,8 @@ export default {
       point: undefined,
       videoUrl: undefined,
       audioUrl: undefined,
+      pdfUrl: undefined,
+      pdfNumPages: 1,
       detail: {},
       contentType: 0,
       clickSectionId: undefined,
@@ -140,6 +144,12 @@ export default {
         this.contentType = res.data.result.section.contentType
         this.videoUrl = res.data.result.section.videoUrl
         this.audioUrl = res.data.result.section.speechUrl
+        // PDF 类型
+        if (this.contentType === 2) {
+          this.getPdfNumPages(res.data.result.section.content)
+        } else {
+          this.pdfUrl = undefined
+        }
         setTimeout(() => {
           const { title, content, operator, updateTime } = res.data.result.section
           this.section = res.data.result.section
@@ -205,7 +215,7 @@ export default {
         this.$refs.sectionVideo.pause()
       }
     },
-    handleSection(sec, isInit = false) {
+    handleSection(sec) {
       const tmp = JSON.parse(JSON.stringify(sec))
       if (tmp.points) {
         const res = tmp.points
@@ -261,6 +271,16 @@ export default {
     toggleIcon(opt, index) {
       this.detail.chapters[index].sectionHeight = this.detail.chapters[index].sectionHeight ? 0 : opt.secHeight
       this.detail = Object.assign({}, this.detail)
+    },
+    getPdfNumPages(url) {
+      let loadingTask = pdf.createLoadingTask(url)
+      loadingTask.promise.then(pdf => {
+        this.pdfUrl = loadingTask
+        this.pdfNumPages = pdf.numPages
+        this.$forceUpdate()
+      }).catch((err) => {
+        console.error(err)
+      })
     }
   }
 }

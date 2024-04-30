@@ -17,19 +17,26 @@
 package com.github.tangyi.exam.controller.course;
 
 import com.github.pagehelper.PageInfo;
+import com.github.tangyi.api.exam.dto.CourseImportDto;
 import com.github.tangyi.api.exam.model.ExamCourseChapter;
 import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.log.OperationType;
 import com.github.tangyi.common.log.SgLog;
 import com.github.tangyi.common.model.R;
+import com.github.tangyi.exam.service.course.CourseImportService;
 import com.github.tangyi.exam.service.course.ExamCourseChapterService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,6 +50,7 @@ import java.util.Map;
 public class ExamCourseChapterController extends BaseController {
 
 	private final ExamCourseChapterService examCourseChapterService;
+	private final CourseImportService courseImportService;
 
 	@GetMapping("/list")
 	@Operation(summary = "查询课程章列表")
@@ -81,5 +89,18 @@ public class ExamCourseChapterController extends BaseController {
 		ExamCourseChapter examCourseChapter = examCourseChapterService.get(id);
 		examCourseChapter.setCommonValue();
 		return R.success(examCourseChapterService.delete(examCourseChapter) > 0);
+	}
+
+	@PostMapping("importSection")
+	@Operation(summary = "导入节", description = "导入节")
+	@SgLog(value = "导入节", operationType = OperationType.INSERT)
+	public R<Boolean> importSection(Long chapterId,
+			@Parameter(description = "导入节", required = true) MultipartFile file) throws IOException {
+		List<CourseImportDto> dtoList = this.courseImportService.extractChapter(file);
+		if (CollectionUtils.isEmpty(dtoList)) {
+			return R.success(false);
+		}
+
+		return R.success(courseImportService.importSection(chapterId, dtoList));
 	}
 }

@@ -17,6 +17,10 @@
 package com.github.tangyi.exam.service.course;
 
 import cn.hutool.core.util.ZipUtil;
+import com.github.tangyi.api.exam.dto.CourseImportDto;
+import com.github.tangyi.api.exam.model.ExamCourseChapter;
+import com.github.tangyi.api.exam.model.ExamCourseSection;
+import com.github.tangyi.api.exam.service.IExamCourseChapterService;
 import com.github.tangyi.api.user.attach.AttachmentManager;
 import com.github.tangyi.api.user.attach.BytesUploadContext;
 import com.github.tangyi.api.user.enums.AttachTypeEnum;
@@ -24,111 +28,132 @@ import com.github.tangyi.api.user.model.AttachGroup;
 import com.github.tangyi.api.user.model.Attachment;
 import com.github.tangyi.api.user.service.IAttachGroupService;
 import com.github.tangyi.common.utils.SysUtil;
+import com.github.tangyi.constants.ExamCacheName;
+import com.github.tangyi.constants.ExamConstant;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.dromara.pdf.pdfbox.core.base.Document;
-import org.dromara.pdf.pdfbox.core.ext.extractor.DocumentExtractor;
-import org.dromara.pdf.pdfbox.handler.DocumentHandler;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.IntStream;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Service
 @AllArgsConstructor
 public class CourseImportService {
 
+	private final PlatformTransactionManager txManager;
 	private final AttachmentManager attachmentManager;
 	private final IAttachGroupService attachGroupService;
+	private final IExamCourseChapterService chapterService;
+	private final ExamCourseSectionService sectionService;
 
-	public Map<Integer, List<String>> extractPdfText(InputStream in) {
-		Document document = DocumentHandler.getInstance().load(in);
-		DocumentExtractor extractor = new DocumentExtractor(document);
-		return extractor.extractText(IntStream.range(0, document.getTotalPageNumber()).toArray());
-	}
-
-	/**
-	 * 简单的处理 PDF 解析的文本，解析成章节的数据结构
-	 */
-	public List<Part> extractPdfTextToSection(InputStream in) {
-		Map<Integer, List<String>> page2text = this.extractPdfText(in);
-		if (MapUtils.isEmpty(page2text)) {
-			return Collections.emptyList();
-		}
-
-		List<Part> sections = Lists.newArrayList();
-		StringBuilder builder = new StringBuilder();
-		String title = "";
-		for (Map.Entry<Integer, List<String>> e : page2text.entrySet()) {
-			String[] strArray = e.getValue().get(0).split("\n");
-			if (strArray.length == 1) {
-				title = strArray[0];
-				sections.add(new Part(PartType.PDF, title, ""));
-				continue;
-			}
-
-			// 这一页的第一行
-			String first = strArray[0];
-			// 统计后面三行的长度
-			int length = strArray[1].length();
-			if (strArray.length >= 3) {
-				length += strArray[2].length();
-			}
-			if (strArray.length >= 4) {
-				length += strArray[3].length();
-			}
-			// 比较平均长度，较小的认为是标题
-			if (first.length() < (length / 3)) {
-				String str = builder.toString();
-				if (!str.isEmpty()) {
-					sections.add(new Part(PartType.PDF, title, str));
-					builder.setLength(0);
-				}
-				title = first;
-			}
-
-			for (String s : strArray) {
-				if (StringUtils.isNotEmpty(s) && !s.equals(title) && !s.contains("第") && !s.contains("页")) {
-					builder.append(s).append("\n");
-				}
-			}
-		}
-
-		if (!builder.isEmpty()) {
-			sections.add(new Part(PartType.PDF, title, builder.toString()));
-		}
-		return sections;
-	}
-
-	public List<Part> extractChapter(MultipartFile file) throws IOException {
+	public List<CourseImportDto> extractChapter(MultipartFile file) throws IOException {
 		String filename = file.getOriginalFilename();
 		Preconditions.checkNotNull(filename);
-		if (filename.endsWith(".pdf")) {
-			try (InputStream in = file.getInputStream()) {
-				return extractPdfTextToSection(in);
-			}
-		} else if (filename.endsWith(".zip")) {
-			return this.extractZip(file, filename);
+		if (!filename.endsWith(".zip")) {
+			throw new IllegalStateException("Unsupported file type: " + filename);
 		}
 
-		throw new IllegalStateException("Unsupported file type: " + filename);
+		return this.extractZip(file, filename);
 	}
 
-	private List<Part> extractZip(MultipartFile file, String filename) throws IOException {
-		List<Part> parts = Lists.newArrayList();
+	@CacheEvict(value = ExamCacheName.COURSE, key = "#courseId")
+	public boolean importChapter(Long courseId, List<CourseImportDto> dtoList) {
+		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		TransactionStatus status = txManager.getTransaction(def);
+		try {
+			// 插入章节
+			AtomicInteger cnt = new AtomicInteger(0);
+			for (CourseImportDto dto : dtoList) {
+				if (StringUtils.isEmpty(dto.getContent())) {
+					continue;
+				}
+
+				int sort = cnt.incrementAndGet();
+				ExamCourseChapter chapter = new ExamCourseChapter();
+				chapter.setCommonValue();
+				chapter.setCourseId(courseId);
+				chapter.setSort((long) sort);
+				// 章标题固定为：第 xxx 章
+				chapter.setTitle("第 " + chapter.getSort() + " 章");
+				this.chapterService.insert(chapter);
+
+				ExamCourseSection section = new ExamCourseSection();
+				section.setCommonValue();
+				section.setChapterId(chapter.getId());
+				section.setSort(1L);
+				section.setTitle(dto.getTitle());
+				this.insertSection(section, dto);
+			}
+			txManager.commit(status);
+		} catch (Exception e) {
+			log.error("Failed to commit import chapter transaction.", e);
+			txManager.rollback(status);
+			throw e;
+		}
+		return true;
+	}
+
+	@CacheEvict(value = ExamCacheName.CHAPTER, key = "#chapterId")
+	public boolean importSection(Long chapterId, List<CourseImportDto> dtoList) {
+		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		TransactionStatus status = txManager.getTransaction(def);
+		try {
+			// 插入节
+			AtomicInteger cnt = new AtomicInteger(0);
+			for (CourseImportDto dto : dtoList) {
+				if (StringUtils.isEmpty(dto.getContent())) {
+					continue;
+				}
+
+				ExamCourseSection section = new ExamCourseSection();
+				section.setCommonValue();
+				section.setChapterId(chapterId);
+				section.setSort((long) cnt.incrementAndGet());
+				section.setTitle(dto.getTitle());
+				this.insertSection(section, dto);
+			}
+			txManager.commit(status);
+		} catch (Exception e) {
+			log.error("Failed to commit import section transaction.", e);
+			txManager.rollback(status);
+			throw e;
+		}
+		return true;
+	}
+
+	private void insertSection(ExamCourseSection section, CourseImportDto dto) {
+		if (CourseImportDto.PartType.VIDEO.equals(dto.getType())) {
+			// 类型为视频
+			section.setContentType(ExamConstant.SECTION_TYPE_VIDEO);
+			// 章节的内容为视频 URL
+			section.setVideoUrl(dto.getContent());
+		} else {
+			// 默认类型为 PDF
+			section.setContentType(ExamConstant.SECTION_TYPE_PDF);
+			// 章节的内容为 PDF URL
+			section.setContent(dto.getContent());
+		}
+		this.sectionService.insert(section);
+	}
+
+	private List<CourseImportDto> extractZip(MultipartFile file, String filename) throws IOException {
 		String tmpdir = System.getProperty("java.io.tmpdir") + File.separator + System.nanoTime();
 		File tmpdirFile = new File(tmpdir);
 		try {
@@ -140,39 +165,46 @@ public class CourseImportService {
 			}
 			Preconditions.checkState(zipFile.exists(), "The zip file does not exist.");
 			ZipUtil.unzip(zipFile, tmpdirFile);
-			this.handleVideoFiles(tmpdirFile, parts);
+			return this.handleUnzipFiles(tmpdirFile);
 		} finally {
 			FileUtils.deleteDirectory(tmpdirFile);
 		}
-		return parts;
 	}
 
-	private void handleVideoFiles(File tmpdirFile, List<Part> parts) throws IOException {
+	private List<CourseImportDto> handleUnzipFiles(File tmpdirFile) {
+		List<CourseImportDto> dtoList = Lists.newArrayList();
 		AttachGroup group = attachGroupService.findByGroupCode(
 				AttachGroup.of(AttachTypeEnum.EXAM_VIDEO).getGroupCode());
 		File[] files = tmpdirFile.listFiles();
 		Preconditions.checkNotNull(files);
-		// 遍历所有 mp4 文件
-		for (File file : files) {
-			Attachment a = this.doHandleVideoFile(file, group);
+		// 遍历所有文件
+		for (File f : files) {
+			String fileName = f.getName();
+			Integer partType = null;
+			if (fileName.endsWith(".mp4")) {
+				partType = CourseImportDto.PartType.VIDEO;
+			} else if (fileName.endsWith(".pdf")) {
+				partType = CourseImportDto.PartType.PDF;
+			}
+
+			if (partType == null) {
+				continue;
+			}
+
+			Attachment a = this.doHandleUnzipFile(f, group);
 			if (a != null) {
 				// 生成章节内容
 				String title = FilenameUtils.getBaseName(a.getAttachName());
-				String content = a.getUrl();
-				Part part = new Part(PartType.VIDEO, title, content);
-				parts.add(part);
+				dtoList.add(new CourseImportDto(partType, title, a.getUrl()));
 			}
 		}
+		return dtoList;
 	}
 
-	private Attachment doHandleVideoFile(File f, AttachGroup group) {
-		String fileName = f.getName();
-		if (!fileName.endsWith(".mp4")) {
-			return null;
-		}
-
+	private Attachment doHandleUnzipFile(File f, AttachGroup group) {
 		Attachment a;
 		try {
+			String fileName = f.getName();
 			BytesUploadContext c = new BytesUploadContext();
 			c.setGroup(group);
 			c.setFileName(fileName);
@@ -186,24 +218,5 @@ public class CourseImportService {
 			throw new RuntimeException(e);
 		}
 		return a;
-	}
-
-	@Data
-	public static final class Part {
-
-		private Integer type;
-		private String title;
-		private String content;
-
-		public Part(Integer type, String title, String content) {
-			this.type = type;
-			this.title = title;
-			this.content = content;
-		}
-	}
-
-	public static final class PartType {
-		public static final Integer PDF = 1;
-		public static final Integer VIDEO = 0;
 	}
 }

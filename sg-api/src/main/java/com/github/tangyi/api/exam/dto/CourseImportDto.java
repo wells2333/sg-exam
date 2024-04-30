@@ -14,27 +14,25 @@
  * limitations under the License.
  */
 
-package com.github.tangyi.constants;
+package com.github.tangyi.api.exam.dto;
 
-public interface ExamConstant {
+import lombok.Data;
 
-	Integer ACCESS_TYPE_ALL = 0;
+@Data
+public class CourseImportDto {
 
-	Integer EXAM_STATUS_PUBLISHED = 1;
+	private Integer type;
+	private String title;
+	private String content;
 
-	Integer PERMISSION_TYPE_COURSE = 0;
+	public CourseImportDto(Integer type, String title, String content) {
+		this.type = type;
+		this.title = title;
+		this.content = content;
+	}
 
-	Integer PERMISSION_TYPE_EXAM = 1;
-
-	Integer PERMISSION_ID_TYPE_USER = 1;
-
-	Integer PERMISSION_ID_TYPE_DEPT = 2;
-
-	Integer SHOW_SUBJECT_TYPE_RANDOM = 1;
-
-	Integer SECTION_TYPE_VIDEO = 0;
-
-	Integer SECTION_TYPE_IMG_AND_ARTICLE = 1;
-
-	Integer SECTION_TYPE_PDF = 2;
+	public static final class PartType {
+		public static final Integer PDF = 1;
+		public static final Integer VIDEO = 0;
+	}
 }

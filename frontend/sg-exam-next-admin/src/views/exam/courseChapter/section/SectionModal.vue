@@ -5,6 +5,9 @@
         <a-button v-if="hasPermission(['exam:course:edit'])" type="primary" @click="handleCreate">
           {{ t('common.addText') }}
         </a-button>
+        <a-button v-if="hasPermission(['exam:course:edit'])" type="primary" @click="handleImport">
+          {{ t('common.batchImportText') }}
+        </a-button>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -37,6 +40,7 @@
     </BasicTable>
     <SectionDataModal width="85%" @register="registerSectionDataModal" @success="handleSectionDataSuccess"></SectionDataModal>
     <PointModal width="80%" @register="registerPointModal" @success="handlePointSuccess"></PointModal>
+    <ImportSectionModal width="50%" @register="registerImportSectionModal" @success="handleImportSectionSuccess"/>
   </BasicModal>
 </template>
 <script lang="ts">
@@ -49,18 +53,22 @@ import {getSectionList, deleteSection} from "/@/api/exam/section";
 import {BasicTable, TableAction, useTable} from '/@/components/Table';
 import {usePermission} from '/@/hooks/web/usePermission';
 import SectionDataModal from './SectionDataModal.vue';
+import ImportSectionModal from './ImportSectionModal.vue';
 import PointModal from '../point/PointModal.vue';
 import {useMessage} from "/@/hooks/web/useMessage";
+import ImportChapterModal from "/@/views/exam/courseChapter/ImportChapterModal.vue";
 
 export default defineComponent({
   name: 'SectionModal',
   components: {
+    ImportChapterModal,
     BasicModal,
     BasicForm,
     BasicTable,
     TableAction,
     SectionDataModal,
-    PointModal
+    PointModal,
+    ImportSectionModal
   },
   emits: ['success', 'register'],
   setup(_) {
@@ -68,7 +76,6 @@ export default defineComponent({
     const {hasPermission} = usePermission();
     const { createMessage } = useMessage();
     const chapterId = ref<object>();
-    // 列表
     const [registerTable, {reload}] = useTable({
       title: '节列表',
       api: (arg) => {
@@ -106,8 +113,12 @@ export default defineComponent({
 
     // 章节弹框
     const [registerSectionDataModal, { openModal: openSectionDataModal }] = useModal();
+
     // 知识点弹框
     const [registerPointModal, { openModal: openPointModal }] = useModal();
+
+    // 导入弹框
+    const [registerImportSectionModal, {openModal: openImportSectionModal}] = useModal();
 
     async function handleSubmit() {
       closeModal();
@@ -118,6 +129,12 @@ export default defineComponent({
         record,
         chapterId,
         isUpdate: false,
+      });
+    }
+
+    function handleImport() {
+      openImportSectionModal(true, {
+        chapterId
       });
     }
 
@@ -151,6 +168,11 @@ export default defineComponent({
 
     }
 
+    function handleImportSectionSuccess() {
+      createMessage.success(t('common.operationSuccessText'));
+      reload();
+    }
+
     return {
       t,
       hasPermission,
@@ -158,13 +180,16 @@ export default defineComponent({
       registerTable,
       registerSectionDataModal,
       registerPointModal,
+      registerImportSectionModal,
       handleSubmit,
       handleCreate,
+      handleImport,
       handleEdit,
       handleDelete,
       handleSectionDataSuccess,
       handlePointManage,
-      handlePointSuccess
+      handlePointSuccess,
+      handleImportSectionSuccess
     };
   },
 });

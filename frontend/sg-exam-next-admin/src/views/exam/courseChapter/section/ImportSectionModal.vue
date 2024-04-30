@@ -1,9 +1,9 @@
 <template>
   <BasicModal v-bind="$attrs" @register="registerModal" title="批量导入" @ok="handleSubmit"
               width="50%">
-    <div>支持两种导入方式：</div>
-    <div>1. 单个PDF 文件：后台将 PDF 内容提取出来，自动生成课程章节</div>
-    <div style="margin-bottom: 20px;">2. 将多个课程视频（MP4）打包成一个 zip 文件：后台为每个视频生成一个章节，章节标题为文件名</div>
+    <div>支持通过 zip 文件导入：</div>
+    <div>1. zip 文件内容为 PDF 文件：后台根据 PDF 标题自动生成课程章节</div>
+    <div style="margin-bottom: 20px;">2. zip 文件内容为 MP4 文件：后台根据 MP4 文件名自动生成课程章节</div>
     <BasicForm @register="registerForm"/>
   </BasicModal>
 </template>
@@ -16,7 +16,7 @@ import {BasicForm, useForm} from "/@/components/Form";
 import {formSchema} from "./import.data";
 
 export default defineComponent({
-  name: 'ImportCourseModal',
+  name: 'ImportSectionModal',
   components: {
     BasicForm,
     BasicModal,
@@ -32,7 +32,7 @@ export default defineComponent({
     });
     const [registerModal, {setModalProps, closeModal}] = useModalInner(async (data) => {
       resetFields();
-      setFieldsValue({courseId: data?.courseId || null, file: null});
+      setFieldsValue({chapterId: data?.chapterId || null, file: null});
       setModalProps({confirmLoading: false});
     });
 

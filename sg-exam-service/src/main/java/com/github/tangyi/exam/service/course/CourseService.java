@@ -49,18 +49,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -69,10 +62,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CourseService extends CrudService<CourseMapper, Course> implements ICourseService, ExamConstant {
 
-	private static final String IMPORT_DIV_PREFIX = "<div style='font-size: 14px;line-height: 28px;white-space: pre-line;'>";
-	private static final String IMPORT_DIV_SUFFIX = "</div>";
-
-	private final PlatformTransactionManager txManager;
 	private final IUserService userService;
 	private final IAttachmentService attachmentService;
 	private final AttachmentManager attachmentManager;
@@ -302,68 +291,6 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 			}
 		}
 		return chapterDtos;
-	}
-
-	@Override
-	@Transactional
-	@CacheEvict(value = ExamCacheName.COURSE, key = "#courseId")
-	public boolean importChapter(Long courseId, MultipartFile file) throws IOException {
-		List<CourseImportService.Part> parts = this.courseImportService.extractChapter(file);
-		if (CollectionUtils.isEmpty(parts)) {
-			return false;
-		}
-
-		List<ExamCourseChapter> chapters = this.chapterService.findChaptersByCourseId(courseId);
-		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus status = txManager.getTransaction(def);
-		try {
-			// 清空现有的章节内容
-			if (CollectionUtils.isNotEmpty(chapters)) {
-				for (ExamCourseChapter chapter : chapters) {
-					this.chapterService.delete(chapter);
-				}
-			}
-
-			// 插入章节
-			AtomicInteger cnt = new AtomicInteger(0);
-			for (CourseImportService.Part p : parts) {
-				if (StringUtils.isEmpty(p.getContent())) {
-					continue;
-				}
-
-				int sort = cnt.incrementAndGet();
-				ExamCourseChapter chapter = new ExamCourseChapter();
-				chapter.setCommonValue();
-				chapter.setCourseId(courseId);
-				chapter.setSort((long) sort);
-				// 章标题固定为：第 xxx 章
-				chapter.setTitle("第 " + chapter.getSort() + " 章");
-				this.chapterService.insert(chapter);
-
-				ExamCourseSection section = new ExamCourseSection();
-				section.setCommonValue();
-				section.setChapterId(chapter.getId());
-				section.setSort(1L);
-				section.setTitle(p.getTitle());
-				if (CourseImportService.PartType.VIDEO.equals(p.getType())) {
-					// 视频则设置章节的视频 URL
-					section.setVideoUrl(p.getContent());
-					section.setContentType(ExamConstant.SECTION_TYPE_VIDEO);
-				} else {
-					String content = IMPORT_DIV_PREFIX + p.getContent() + IMPORT_DIV_SUFFIX;
-					section.setContent(content);
-					section.setContentType(ExamConstant.SECTION_TYPE_IMG_AND_ARTICLE);
-				}
-				this.sectionService.insert(section);
-			}
-			txManager.commit(status);
-		} catch (Exception e) {
-			log.error("Failed to commit import chapter transaction.", e);
-			txManager.rollback(status);
-			throw e;
-		}
-		return true;
 	}
 
 	@Transactional
