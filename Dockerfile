@@ -1,36 +1,36 @@
-FROM centos:8
-MAINTAINER tangyi(1633736729@qq.com)
+# Use Alibaba Cloud Linux
+FROM alibaba-cloud-linux-3-registry.cn-hangzhou.cr.aliyuncs.com/alinux3/alinux3:latest
 
-# setup repo
-RUN cd /etc/yum.repos.d/
-RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
-RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+LABEL description="A online examination application with Nginx and Java 17, using Alibaba Cloud Linux as the base OS." \
+      version="0.0.14" \
+      maintainer="tangyi(1633736729@qq.com)" \
+      repository_url="https://gitee.com/wells2333/sg-exam" \
+      license="Apache-2.0"
 
-# clean yum cache
-RUN yum clean all
-RUN yum makecache
+# Update and install packages, then clean up
+RUN yum update -y && \
+    yum install -y yum-utils nginx java-17-openjdk && \
+    yum clean all
 
-# install nginx
-RUN rpm -Uvh http://nginx.org/packages/centos/8/x86_64/RPMS/nginx-1.20.0-1.el8.ngx.x86_64.rpm
-RUN yum install -y nginx
-RUN nginx -v
+# Install stable nginx、jdk17
+RUN yum install -y nginx java-17-openjdk
 
-# install jdk17
-RUN yum install -y java-17-openjdk
-
-# copy files
-COPY frontend/sg-exam-app/dist /usr/share/nginx/html
-COPY frontend/sg-exam-next-admin/dist /usr/share/nginx/html/admin
-COPY config-repo/nginx/nginx.conf /etc/nginx/nginx.conf
-COPY config-repo/nginx/nginx_ssl.conf /etc/nginx/nginx_ssl.conf
-
-WORKDIR /apps/data/web/working
-ADD sg-user-service/build/libs/*.jar app.jar
-ADD setup.sh setup.sh
-ADD config-repo/application.yml config-repo/application.yml
-ADD config-repo/sg-user-service.yml config-repo/sg-user-service.yml
-
+# Set environment variables and timezone
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 ENV TZ=Asia/Shanghai
 
+# Copy necessary files and directories
+WORKDIR /apps/data/web/working
+COPY frontend/sg-exam-app/dist /usr/share/nginx/html
+COPY frontend/sg-exam-next-admin/dist /usr/share/nginx/html/admin
+COPY config-repo/nginx /etc/nginx/
+COPY sg-user-service/build/libs/*.jar app.jar
+COPY config-repo config-repo
+COPY setup.sh setup.sh
+
+# Expose port and define runtime user
 EXPOSE 80
+USER nginx
+
+# Define startup command
 CMD ["sh", "setup.sh", "start_inner"]
