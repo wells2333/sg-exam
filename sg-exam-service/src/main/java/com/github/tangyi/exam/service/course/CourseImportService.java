@@ -16,7 +16,10 @@
 
 package com.github.tangyi.exam.service.course;
 
+import cn.hutool.core.exceptions.UtilException;
+import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.ZipUtil;
+import cn.hutool.crypto.SecureUtil;
 import com.github.tangyi.api.exam.dto.CourseImportDto;
 import com.github.tangyi.api.exam.model.ExamCourseChapter;
 import com.github.tangyi.api.exam.model.ExamCourseSection;
@@ -164,7 +167,17 @@ public class CourseImportService {
 				FileCopyUtils.copy(in, out);
 			}
 			Preconditions.checkState(zipFile.exists(), "The zip file does not exist.");
-			ZipUtil.unzip(zipFile, tmpdirFile);
+			try {
+				log.info("Try to unzip use charset utf-8, filename: {}", filename);
+				ZipUtil.unzip(zipFile, tmpdirFile, CharsetUtil.CHARSET_UTF_8);
+			} catch (Exception e) {
+				log.info("Unzip use charset utf-8 failed, try to unzip use gbk again , msg: {}", e.getMessage());
+				if (e instanceof UtilException && StringUtils.contains(e.getMessage(), "invalid CEN header")) {
+					ZipUtil.unzip(zipFile, tmpdirFile, CharsetUtil.CHARSET_GBK);
+				} else {
+					throw e;
+				}
+			}
 			return this.handleUnzipFiles(tmpdirFile);
 		} finally {
 			FileUtils.deleteDirectory(tmpdirFile);
@@ -194,7 +207,7 @@ public class CourseImportService {
 			Attachment a = this.doHandleUnzipFile(f, group);
 			if (a != null) {
 				// 生成章节内容
-				String title = FilenameUtils.getBaseName(a.getAttachName());
+				String title = FilenameUtils.getBaseName(f.getName());
 				dtoList.add(new CourseImportDto(partType, title, a.getUrl()));
 			}
 		}
@@ -204,12 +217,15 @@ public class CourseImportService {
 	private Attachment doHandleUnzipFile(File f, AttachGroup group) {
 		Attachment a;
 		try {
-			String fileName = f.getName();
+			String filename = f.getName();
+			String extension = FilenameUtils.getExtension(filename);
+			// 重新生成文件名
+			String renewName = String.format("%s_%s.%s", SecureUtil.md5(filename), System.nanoTime(), extension);
 			BytesUploadContext c = new BytesUploadContext();
 			c.setGroup(group);
-			c.setFileName(fileName);
+			c.setFileName(renewName);
 			c.setBytes(FileUtils.readFileToByteArray(f));
-			c.setOriginalFilename(fileName);
+			c.setOriginalFilename(renewName);
 			c.setUser(SysUtil.getUser());
 			c.setTenantCode(SysUtil.getTenantCode());
 			// 上传文件
