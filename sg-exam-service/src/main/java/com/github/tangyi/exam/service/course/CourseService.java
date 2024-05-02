@@ -160,7 +160,6 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 	public int insert(Course course) {
 		// 没有上传图片，使用默认图片
 		if (course.getImageId() == null && course.getImageUrl() == null) {
-			//			course.setImageId(attachmentManager.defaultImage(Group.DEFAULT));
 			course.setImageUrl(examConstantProperty.getCourseImageUrl());
 		}
 		int update = super.insert(course);
@@ -230,11 +229,12 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 	public void initCourseInfo(List<Course> courses) {
 		ExamCourseMember member = new ExamCourseMember();
 		for (Course course : courses) {
-			// 图片
-			String imageUrl = null;
 			if (course.getImageId() != null && course.getImageId() != 0L && course.getImageUrl() == null) {
-				imageUrl = attachmentManager.getPreviewUrlIgnoreException(course.getImageId());
-				course.setImageUrl(imageUrl);
+				course.setImageUrl(attachmentManager.getPreviewUrlIgnoreException(course.getImageId()));
+			}
+			// 没有图片，使用默认图片
+			if (StringUtils.isEmpty(course.getImageUrl())) {
+				course.setImageUrl(examConstantProperty.getCourseImageUrl());
 			}
 			// 报名人数
 			member.setCourseId(course.getId());

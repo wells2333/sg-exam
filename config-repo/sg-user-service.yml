@@ -97,6 +97,7 @@ exam:
   image:
     CourseImageUrl: ${EXAM_COURSE_IMAGE_URL:https://images3.alphacoders.com/133/thumb-440-1337500.webp}
     ExaminationImageUrl: ${EXAM_EXAMINATION_IMAGE_URL:https://images4.alphacoders.com/132/thumb-440-1323467.webp}
+
 ---
 server:
   port: ${SERVER_PORT:8080}
