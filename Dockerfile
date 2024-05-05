@@ -28,9 +28,8 @@ COPY sg-user-service/build/libs/*.jar app.jar
 COPY config-repo config-repo
 COPY setup.sh setup.sh
 
-# Expose port and define runtime user
+# Expose port
 EXPOSE 80
-USER nginx
 
 # Define startup command
 CMD ["sh", "setup.sh", "start_inner"]

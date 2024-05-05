@@ -5,9 +5,9 @@ spring:
   servlet:
     multipart:
       # 单个文件的最大大小
-      max-file-size: 800MB
+      max-file-size: 1024MB
       # 整个请求的最大大小
-      max-request-size: 800MB
+      max-request-size: 1024MB
   jackson:
     default-property-inclusion: NON_NULL
     time-zone: ${user.timezone:GMT+8}
