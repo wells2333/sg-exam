@@ -51,6 +51,11 @@ public class ExamCourseSectionService extends CrudService<ExamCourseSectionMappe
 		return super.get(id);
 	}
 
+	@Override
+	public Integer findMaxSortByChapterId(Long chapterId) {
+		return this.dao.findMaxSortByChapterId(chapterId);
+	}
+
 	public CourseSectionDto watchSection(Long id) {
 		CourseSectionDto dto = new CourseSectionDto();
 		ExamCourseSection section = this.get(id);
@@ -68,10 +73,10 @@ public class ExamCourseSectionService extends CrudService<ExamCourseSectionMappe
 	@Transactional
 	public int insert(ExamCourseSection examCourseSection) {
 		examCourseSection.setCommonValue();
-		if (examCourseSection.getSpeechId() != null && examCourseSection.getSpeechUrl() == null){
+		if (examCourseSection.getSpeechId() != null && examCourseSection.getSpeechUrl() == null) {
 			examCourseSection.setSpeechUrl(mediaService.videoUrl(Long.valueOf(examCourseSection.getSpeechId())));
 		}
-		if (examCourseSection.getVideoId() != null && examCourseSection.getVideoUrl() == null){
+		if (examCourseSection.getVideoId() != null && examCourseSection.getVideoUrl() == null) {
 			examCourseSection.setVideoUrl(mediaService.videoUrl(examCourseSection.getVideoId()));
 		}
 		return super.insert(examCourseSection);
@@ -82,10 +87,10 @@ public class ExamCourseSectionService extends CrudService<ExamCourseSectionMappe
 	@CacheEvict(value = ExamCacheName.SECTION, key = "#examCourseSection.id")
 	public int update(ExamCourseSection examCourseSection) {
 		examCourseSection.setCommonValue();
-		if (examCourseSection.getSpeechId() != null && examCourseSection.getSpeechUrl() == null){
+		if (examCourseSection.getSpeechId() != null && examCourseSection.getSpeechUrl() == null) {
 			examCourseSection.setSpeechUrl(mediaService.videoUrl(Long.valueOf(examCourseSection.getSpeechId())));
 		}
-		if (examCourseSection.getVideoId() != null && examCourseSection.getVideoUrl() == null){
+		if (examCourseSection.getVideoId() != null && examCourseSection.getVideoUrl() == null) {
 			examCourseSection.setVideoUrl(mediaService.videoUrl(examCourseSection.getVideoId()));
 		}
 		return super.update(examCourseSection);

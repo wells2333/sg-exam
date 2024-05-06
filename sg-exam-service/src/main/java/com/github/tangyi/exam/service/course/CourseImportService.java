@@ -51,7 +51,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
 @Service
@@ -76,22 +76,22 @@ public class CourseImportService {
 
 	@CacheEvict(value = ExamCacheName.COURSE, key = "#courseId")
 	public boolean importChapter(Long courseId, List<CourseImportDto> dtoList) {
+		Integer maxSort = this.chapterService.findMaxSortByCourseId(courseId);
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus status = txManager.getTransaction(def);
 		try {
 			// 插入章节
-			AtomicInteger cnt = new AtomicInteger(0);
+			AtomicLong sort = new AtomicLong(maxSort == null ? 0 : maxSort);
 			for (CourseImportDto dto : dtoList) {
 				if (StringUtils.isEmpty(dto.getContent())) {
 					continue;
 				}
 
-				int sort = cnt.incrementAndGet();
 				ExamCourseChapter chapter = new ExamCourseChapter();
 				chapter.setCommonValue();
 				chapter.setCourseId(courseId);
-				chapter.setSort((long) sort);
+				chapter.setSort(sort.incrementAndGet());
 				// 章标题固定为：第 xxx 章
 				chapter.setTitle("第 " + chapter.getSort() + " 章");
 				this.chapterService.insert(chapter);
@@ -114,12 +114,13 @@ public class CourseImportService {
 
 	@CacheEvict(value = ExamCacheName.CHAPTER, key = "#chapterId")
 	public boolean importSection(Long chapterId, List<CourseImportDto> dtoList) {
+		Integer maxSort = this.sectionService.findMaxSortByChapterId(chapterId);
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus status = txManager.getTransaction(def);
 		try {
 			// 插入节
-			AtomicInteger cnt = new AtomicInteger(0);
+			AtomicLong sort = new AtomicLong(maxSort == null ? 0 : maxSort);
 			for (CourseImportDto dto : dtoList) {
 				if (StringUtils.isEmpty(dto.getContent())) {
 					continue;
@@ -128,7 +129,7 @@ public class CourseImportService {
 				ExamCourseSection section = new ExamCourseSection();
 				section.setCommonValue();
 				section.setChapterId(chapterId);
-				section.setSort((long) cnt.incrementAndGet());
+				section.setSort(sort.incrementAndGet());
 				section.setTitle(dto.getTitle());
 				this.insertSection(section, dto);
 			}

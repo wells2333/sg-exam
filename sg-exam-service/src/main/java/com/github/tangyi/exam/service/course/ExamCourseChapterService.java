@@ -46,6 +46,11 @@ public class ExamCourseChapterService extends CrudService<ExamCourseChapterMappe
 	}
 
 	@Override
+	public Integer findMaxSortByCourseId(Long courseId) {
+		return this.dao.findMaxSortByCourseId(courseId);
+	}
+
+	@Override
 	@Transactional
 	public int insert(ExamCourseChapter examCourseChapter) {
 		examCourseChapter.setCommonValue();

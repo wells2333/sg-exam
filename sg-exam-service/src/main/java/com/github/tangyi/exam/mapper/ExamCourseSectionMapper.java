@@ -26,4 +26,6 @@ import java.util.List;
 public interface ExamCourseSectionMapper extends CrudMapper<ExamCourseSection> {
 
 	List<ExamCourseSection> findSectionsByChapterId(Long id);
+
+	Integer findMaxSortByChapterId(Long id);
 }

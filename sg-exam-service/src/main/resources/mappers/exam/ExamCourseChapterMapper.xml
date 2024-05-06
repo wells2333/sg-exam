@@ -53,6 +53,10 @@
         SELECT * FROM exam_course_chapter a WHERE a.course_id = #{courseId} AND a.is_deleted = 0
     </select>
 
+    <select id="findMaxSortByCourseId" resultType="java.lang.Integer">
+        SELECT MAX(a.sort) FROM exam_course_chapter a WHERE a.course_id = #{courseId} AND a.is_deleted = 0
+    </select>
+
     <delete id="delete">
         UPDATE exam_course_chapter SET is_deleted = 1 WHERE id = #{id}
     </delete>
