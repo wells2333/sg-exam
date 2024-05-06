@@ -16,6 +16,7 @@
 
 package com.github.tangyi.user.service.attach;
 
+import cn.hutool.crypto.SecureUtil;
 import com.github.tangyi.api.user.attach.AttachmentStorage;
 import com.github.tangyi.api.user.attach.BytesUploadContext;
 import com.github.tangyi.api.user.model.AttachGroup;
@@ -32,6 +33,7 @@ import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -70,15 +72,16 @@ public abstract class AbstractAttachmentStorage implements AttachmentStorage {
 	}
 
 	protected String getShardName(String groupCode, String fileName, String hash) {
+		// 基于 md5 重新命名文件名
+		String md5 = SecureUtil.md5(System.nanoTime() + fileName + hash);
+		String newFilename = md5 + "." + FilenameUtils.getExtension(fileName);
 		if (groupCode != null) {
-			String id = fileName;
-			if (StringUtils.isNotBlank(hash)) {
-				id = hash;
-			}
+			String id = StringUtils.isNotBlank(hash) ? hash : newFilename;
 			int shardId = HashUtil.getShardId(id, ATTACHMENT_STORAGE_SHARD_SIZE);
-			return getName(groupCode, shardId, fileName);
+			newFilename = getName(groupCode, shardId, newFilename);
 		}
-		return fileName;
+		log.info("Get shard name finished, fileName: {}, newFilename: {}", fileName, newFilename);
+		return newFilename;
 	}
 
 	protected String getName(String groupCode, int shardId, String fileName) {
