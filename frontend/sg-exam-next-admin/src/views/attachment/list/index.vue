@@ -44,16 +44,15 @@
 </template>
 <script lang="ts">
 import { useI18n } from '/@/hooks/web/useI18n';
-import { defineComponent, unref } from 'vue';
+import { defineComponent } from 'vue';
 import { BasicUpload } from '/@/components/Upload';
 import { BasicTable, useTable, TableAction } from '/@/components/Table';
-import { getAttachmentList, uploadApi, getDownloadUrl, download, deleteAttachment } from '/@/api/attachment/attach';
+import { getAttachmentList, uploadApi, getDownloadUrl, deleteAttachment } from '/@/api/attachment/attach';
 import { useModal } from '/@/components/Modal';
 import AttachmentModal from './AttachmentModal.vue';
 import AttachmentInfoModal from './AttachmentInfoModal.vue';
 import { columns, searchFormSchema } from './attach.data';
 import {useMessage} from "/@/hooks/web/useMessage";
-import {getSysDefaultConfig} from "/@/api/sys/config";
 
 export default defineComponent({
   name: 'AttachmentManagement',
@@ -99,12 +98,12 @@ export default defineComponent({
       });
     }
     async function handlePreview(record: Recordable) {
-      const result = await download(record.id);
+      const result = await getDownloadUrl(record.id);
       window.open(result);
     }
 
     async function handleDownload(record: Recordable) {
-      const result = await download(record.id);
+      const result = await getDownloadUrl(record.id);
       window.open(result);
     }
 

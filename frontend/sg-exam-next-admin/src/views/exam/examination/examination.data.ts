@@ -236,11 +236,13 @@ export const formSchema: FormSchema[] = [
     render: ({ model, field }) => {
       return h(SgUpload, {
         value: model['imageUrl'],
+        imageId: model[field],
         api: uploadImage,
         accept: '.jpg,.jpeg,.png',
         handleDone: (value) => {
           if (value) {
             model[field] = unref(value).id;
+            model['imageUrl'] = unref(value).url;
           }
         },
       });
