@@ -16,6 +16,7 @@
 
 package com.github.tangyi.exam.service.data;
 
+import com.alibaba.fastjson.util.TypeUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.AllArgsConstructor;
@@ -34,46 +35,45 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class RedisCounterService {
 
-    private final RedisTemplate<String, Long> longRedisTemplate;
+	private final RedisTemplate<String, Long> longRedisTemplate;
 
-    public Long get(String key, Long id) {
-        return longRedisTemplate.opsForValue().get(key + id);
-    }
+	public Long get(String key, Long id) {
+		return longRedisTemplate.opsForValue().get(key + id);
+	}
 
-    public void expire(String key, Long id, int timeoutSecond) {
-        longRedisTemplate.opsForValue().getOperations().expire(key + id, timeoutSecond, TimeUnit.SECONDS);
-    }
+	public void expire(String key, Long id, int timeoutSecond) {
+		longRedisTemplate.opsForValue().getOperations().expire(key + id, timeoutSecond, TimeUnit.SECONDS);
+	}
 
-    public void setCount(String key, Long id, Long value) {
-        longRedisTemplate.opsForValue().set(key + id, value);
-    }
+	public void setCount(String key, Long id, Long value) {
+		longRedisTemplate.opsForValue().set(key + id, value);
+	}
 
-    public Long incrCount(String key, Long id) {
-        return longRedisTemplate.opsForValue().increment(key + id);
-    }
+	public Long incrCount(String key, Long id) {
+		return longRedisTemplate.opsForValue().increment(key + id);
+	}
 
-    public void decrCount(String key, Long id) {
-        longRedisTemplate.opsForValue().decrement(key + id);
-    }
+	public void decrCount(String key, Long id) {
+		longRedisTemplate.opsForValue().decrement(key + id);
+	}
 
-    public Map<Long, Long> getCounts(String key, List<Long> ids) {
-        Map<Long, Long> countMap = Maps.newHashMapWithExpectedSize(ids.size());
-		for (List<Long> tmp : Lists.partition(ids, 50)) {
-			List<String> keys = tmp.stream().map(id -> key + id).collect(Collectors.toList());
+	public Map<Long, Long> getCounts(String key, List<Long> ids) {
+		Map<Long, Long> countMap = Maps.newHashMapWithExpectedSize(ids.size());
+		for (List<Long> tempIds : Lists.partition(ids, 50)) {
+			List<String> keys = tempIds.stream().map(id -> key + id).collect(Collectors.toList());
 			List<Long> values = longRedisTemplate.opsForValue().multiGet(keys);
-			if (CollectionUtils.isNotEmpty(values)) {
-				for (int i = 0; i < values.size(); i++) {
-					Long value = values.get(i);
-					Long id = ids.get(i);
-					if (value != null && value > 0) {
-						countMap.put(id, value);
-					} else {
-						countMap.put(id, 0L);
-					}
+			if (CollectionUtils.isEmpty(values)) {
+				continue;
+			}
+
+			for (int i = 0; i < values.size(); i++) {
+				Long value = TypeUtils.castToLong(values.get(i));
+				if (value != null) {
+					countMap.put(ids.get(i), value);
 				}
 			}
 		}
-        log.info("get redis counts success, size: {}", countMap.size());
-        return countMap;
-    }
+		log.info("get redis counts success, size: {}", countMap.size());
+		return countMap;
+	}
 }
