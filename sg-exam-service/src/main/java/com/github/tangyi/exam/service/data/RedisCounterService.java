@@ -46,7 +46,10 @@ public class RedisCounterService {
 	}
 
 	public void setCount(String key, Long id, Long value) {
-		longRedisTemplate.opsForValue().set(key + id, value);
+		longRedisTemplate.delete(key);
+		if (value > 0) {
+			longRedisTemplate.opsForValue().increment(key + id, value);
+		}
 	}
 
 	public Long incrCount(String key, Long id) {
