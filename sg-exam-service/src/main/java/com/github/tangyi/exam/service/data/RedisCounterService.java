@@ -58,18 +58,21 @@ public class RedisCounterService {
 
     public Map<Long, Long> getCounts(String key, List<Long> ids) {
         Map<Long, Long> countMap = Maps.newHashMapWithExpectedSize(ids.size());
-        for (List<Long> tempIds : Lists.partition(ids, 50)) {
-            List<String> keys = tempIds.stream().map(id -> key + id).collect(Collectors.toList());
-            List<Long> values = longRedisTemplate.opsForValue().multiGet(keys);
-            if (CollectionUtils.isNotEmpty(values)) {
-                for (int i = 0; i < values.size(); i++) {
-                    Long value = values.get(i);
-                    if (value != null) {
-                        countMap.put(ids.get(i), values.get(i));
-                    }
-                }
-            }
-        }
+		for (List<Long> tmp : Lists.partition(ids, 50)) {
+			List<String> keys = tmp.stream().map(id -> key + id).collect(Collectors.toList());
+			List<Long> values = longRedisTemplate.opsForValue().multiGet(keys);
+			if (CollectionUtils.isNotEmpty(values)) {
+				for (int i = 0; i < values.size(); i++) {
+					Long value = values.get(i);
+					Long id = ids.get(i);
+					if (value != null && value > 0) {
+						countMap.put(id, value);
+					} else {
+						countMap.put(id, 0L);
+					}
+				}
+			}
+		}
         log.info("get redis counts success, size: {}", countMap.size());
         return countMap;
     }
