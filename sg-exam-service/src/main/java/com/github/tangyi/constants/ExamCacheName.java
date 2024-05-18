@@ -70,11 +70,11 @@ public interface ExamCacheName {
 
 	String USER_FAVORITES = "user:favorites";
 
-	String USER_FAVORITES_EXAMINATION = "user:favorites:examination";
+	String USER_FAVORITES_EXAMINATION = "user:favorites:examination:";
 
-	String USER_FAVORITES_COURSE = "user:favorites:course";
+	String USER_FAVORITES_COURSE = "user:favorites:course:";
 
-	String USER_FAVORITES_SUBJECT = "user:favorites:subject";
+	String USER_FAVORITES_SUBJECT = "user:favorites:subject:";
 
 	String USER_FAVORITES_EXAMINATION_COUNT = "user:favorites:examination:count:";
 

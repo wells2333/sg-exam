@@ -1,7 +1,7 @@
 <template>
   <div class="my-content-container">
     <el-row>
-      <el-col :span="20" :offset="2">
+      <el-col :span="22" :offset="1">
         <el-table
           border
           :key="tableKey"
@@ -11,9 +11,9 @@
           highlight-current-row
           height="560"
           style="width: 100%;">
-          <el-table-column :label="$t('exam.examinationName')" align="center">
+          <el-table-column :label="$t('exam.examinationName')" align="center" width="300">
             <template slot-scope="scope">
-              <span :title="scope.row.examinationName">{{ scope.row.examinationName }}</span>
+              <span :title="scope.row.examinationName">{{ scope.row.examinationName | simpleStrFilter }}</span>
             </template>
           </el-table-column>
           <el-table-column :label="$t('exam.examinationType')" min-width="90" align="center">
@@ -43,7 +43,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-row class="list-pagination">
+        <el-row class="list-pagination" v-show="examRecodeList && examRecodeList.length > 0">
             <el-pagination
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
@@ -91,6 +91,7 @@ import { examRankInfo } from '@/api/exam/answer'
 
 import store from '@/store'
 import { messageWarn } from '@/utils/util'
+import {simpleStrFilter} from "@/filters";
 
 export default {
   data () {
@@ -200,6 +201,13 @@ export default {
       }
       return typeMap[status]
     }
+  },
+  beforeRouteLeave(to, from, next) {
+    const { name, query } = to;
+    if (name === "start-exam-a" || name === "start-exam-b") {
+      this.$router.push({path: 'exams', query})
+    }
+    next()
   }
 }
 </script>

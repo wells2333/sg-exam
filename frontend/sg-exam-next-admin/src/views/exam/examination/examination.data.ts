@@ -48,12 +48,20 @@ export const columns: BasicColumn[] = [
   {
     title: '课程',
     dataIndex: 'course.courseName',
+    width: 160,
     customRender: ({record}) => {
       const course = record.course;
       if (course == null) {
-        return  '无课程';
-      } else {
-        return course.courseName
+        return '无课程';
+      }
+
+      const {courseName} = course;
+      if (courseName) {
+        if (courseName.length > 8) {
+          return courseName.substring(0, 8) + '...';
+        } else {
+          return courseName;
+        }
       }
     },
   },
@@ -65,7 +73,7 @@ export const columns: BasicColumn[] = [
       const status = record.status;
       const enable = ~~status === 1;
       const color = enable ? 'green' : 'red';
-      const text = enable ? '发布' : '草稿';
+      const text = enable ? '已发布' : '未发布';
       return h(Tag, { color: color }, () => text);
     },
   },
@@ -121,8 +129,8 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Select',
     componentProps: {
       options: [
-        { label: '发布', value: 1 },
-        { label: '草稿', value: 0 },
+        { label: '已发布', value: 1 },
+        { label: '未发布', value: 0 },
       ],
     },
     colProps: { span: 8 },
@@ -176,20 +184,6 @@ export const formSchema: FormSchema[] = [
       options: [
         { label: '顺序出题', value: 0 },
         { label: '随机出题', value: 1 }
-      ],
-    },
-    required: true,
-    colProps: { span: 12 },
-  },
-  {
-    field: 'status',
-    label: '状态',
-    component: 'RadioButtonGroup',
-    defaultValue: 0,
-    componentProps: {
-      options: [
-        { label: '草稿', value: 0 },
-        { label: '发布', value: 1 },
       ],
     },
     required: true,

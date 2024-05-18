@@ -39,7 +39,7 @@ import com.github.tangyi.exam.service.ExaminationSubjectService;
 import com.github.tangyi.exam.service.MaterialSubjectService;
 import com.github.tangyi.exam.service.RankInfoService;
 import com.github.tangyi.exam.service.answer.AnswerService;
-import com.github.tangyi.exam.service.fav.ExamFavoritesService;
+import com.github.tangyi.exam.service.fav.ExamFavService;
 import com.github.tangyi.exam.service.subject.SubjectsService;
 import com.github.tangyi.exam.utils.ExamUtil;
 import com.google.common.base.Preconditions;
@@ -58,10 +58,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -83,7 +81,7 @@ public class ExaminationActionService implements IExaminationActionService {
 	private final AnswerService answerService;
 	private final RankInfoService rankInfoService;
 	private final IExecutorHolder executorHolder;
-	private final ExamFavoritesService examFavoritesService;
+	private final ExamFavService examFavService;
 	private final MaterialSubjectService materialSubjectService;
 
 	@Override
@@ -131,10 +129,7 @@ public class ExaminationActionService implements IExaminationActionService {
 		// 默认未提交状态
 		record.setSubmitStatus(SubmitStatusEnum.NOT_SUBMITTED.getValue());
 		dto.setExamRecord(record);
-		// 手动开启事务
-		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus status = txManager.getTransaction(def);
+		TransactionStatus status = TxUtil.startTransaction(txManager);
 		ListeningExecutorService exec = executorHolder.getExamExecutor();
 		try {
 			long startNs = System.nanoTime();
@@ -144,7 +139,7 @@ public class ExaminationActionService implements IExaminationActionService {
 			// 提交事务
 			txManager.commit(status);
 			// 异步增加考试次数
-			CompletableFuture.runAsync(() -> examFavoritesService.incrStartCount(examinationId), exec);
+			CompletableFuture.runAsync(() -> examFavService.incrStartCount(examinationId), exec);
 			long tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
 			log.info("Start examination id: {}, identifier: {}, userId: {}, recordId: {}, took: {}ms", examinationId,
 					identifier, userId, record.getId(), tookMs);
@@ -384,7 +379,9 @@ public class ExaminationActionService implements IExaminationActionService {
 		dto.setScore(ObjectUtil.getDouble(record.getScore()));
 		dto.setUserId(record.getUserId());
 		dto.setExaminationId(record.getExaminationId());
-		dto.setDuration(DateUtils.formatDurationV2(DateUtils.calculateDuration(record.getStartTime(), record.getEndTime()), false));
+		dto.setDuration(
+				DateUtils.formatDurationV2(DateUtils.calculateDuration(record.getStartTime(), record.getEndTime()),
+						false));
 		// 正确题目数
 		dto.setCorrectNumber(ObjectUtil.getInt(record.getCorrectNumber()));
 		dto.setInCorrectNumber(ObjectUtil.getInt(record.getInCorrectNumber()));

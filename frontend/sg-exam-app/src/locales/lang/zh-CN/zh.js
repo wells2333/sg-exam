@@ -70,11 +70,9 @@ const zh = {
     admin: '管理后台',
     changeLog: '更新日志',
     feedback: '反馈建议',
-    legalNotices: '法律声明',
-    legalNoticesContent: '此仅为个人练习开源模仿项目，仅供学习参考，承担不起任何法律问题',
-    privacyPolicy: '隐私条款',
-    privacyPolicyContent: '本网站将不会严格遵守有关法律法规和本隐私政策所载明的内容收集、使用您的信息',
-    developerCenter: '开发者中心'
+    contactUs: '联系我们',
+    contactUsContent: '请联系 1633736729@qq.com',
+    privacyPolicy: '隐私条款'
   },
   header: {
     sourceCode: '源码地址',
@@ -96,6 +94,11 @@ const zh = {
     loadFailed: '加载首页数据失败！',
     loadCoursesFailed: '加载热门课程数据失败！'
   },
+  fav: {
+    myFavorite: '我的收藏',
+    favorite: '收藏',
+    cancelFavorite: '取消收藏'
+  },
   exam: {
     examinationName: '考试名称',
     examinationType: '考试类型',
@@ -104,7 +107,10 @@ const zh = {
     score: '成绩',
     scoreDetail: '成绩详情',
     scoreRank: '排行榜',
+    examIntroduction: '考试介绍',
+    examEvaluation: '考试评价',
     course: {
+      searchPlaceholder: '搜索您感兴趣的课程',
       courseName: '课程名称',
       courseIntroduction: '课程介绍',
       chapter: '课程章节',
@@ -138,6 +144,10 @@ const zh = {
         registerStudentsCnt: '已报名学员人数',
         level: '难度等级'
       }
+    },
+    courses: {
+      all: '全部',
+      latestRelease: '最新发布'
     },
     records: {
       records: '考试记录'

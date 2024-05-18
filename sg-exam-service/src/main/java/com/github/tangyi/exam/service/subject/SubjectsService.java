@@ -31,14 +31,13 @@ import com.github.tangyi.common.base.TreeEntity;
 import com.github.tangyi.common.service.CrudService;
 import com.github.tangyi.common.utils.ExecutorUtils;
 import com.github.tangyi.common.utils.PageUtil;
-import com.github.tangyi.common.utils.SnowFlakeId;
 import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.exam.enums.SubjectType;
 import com.github.tangyi.exam.mapper.SubjectsMapper;
 import com.github.tangyi.exam.service.ExaminationSubjectService;
 import com.github.tangyi.exam.service.MaterialSubjectService;
 import com.github.tangyi.exam.service.data.SubjectViewCounterService;
-import com.github.tangyi.exam.service.fav.SubjectFavoritesService;
+import com.github.tangyi.exam.service.fav.SubjectFavService;
 import com.github.tangyi.exam.service.subject.converter.*;
 import com.github.tangyi.exam.utils.ExamUtil;
 import com.google.common.collect.Lists;
@@ -75,7 +74,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 	private final SubjectJudgementConverter judgementConverter;
 	private final SubjectFillBlankConverter fillBlankConverter;
 	private final SubjectMaterialConverter subjectMaterialConverter;
-	private final SubjectFavoritesService subjectFavoritesService;
+	private final SubjectFavService subjectFavService;
 	private final SubjectViewCounterService subjectViewCounterService;
 	private final AttachmentManager attachmentManager;
 	private final IExecutorHolder executorHolder;
@@ -165,7 +164,7 @@ public class SubjectsService extends CrudService<SubjectsMapper, Subjects> imple
 		}
 		initCategoryInfo(categoryIds, dtoList);
 		if (findFav) {
-			subjectFavoritesService.findUserFavorites(dtoList);
+			subjectFavService.fillUserFavorites(dtoList);
 		}
 		if (findView) {
 			subjectViewCounterService.getSubjectsView(dtoList);

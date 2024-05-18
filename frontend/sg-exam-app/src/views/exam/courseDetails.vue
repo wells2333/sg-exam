@@ -1,18 +1,10 @@
 <template>
   <div>
-    <transition name="el-fade-in">
-      <div v-show="!loading">
+    <div v-loading="loading">
         <div class="single-course-intro d-flex align-items-center justify-content-center"
              :style="'background-image: url(' + course.imageUrl + ');'">
           <div class="single-course-intro-content text-center">
-            <div class="rate">
-              <el-rate
-                v-model="course.level"
-                disabled
-                text-color="#ff9900">
-              </el-rate>
-            </div>
-            <h3>{{ course.courseName }}</h3>
+            <h3>{{ course.courseName | simpleStrFilter }}</h3>
             <div class="meta d-flex align-items-center justify-content-center"
                  v-if="course.college">
               <a href="#">{{ course.teacher }}</a>
@@ -22,6 +14,10 @@
             <div class="price">{{ course.chargeType === 1 ? $t('exam.course.charge') : $t('exam.course.free') }}
               <h6 v-if="course.chargePrice > 0">{{ course.chargePrice }}</h6>
             </div>
+            <div class="favorite-btn" v-show="favoriteBtnText !== undefined" @click="handleFavorite" >
+              <i :class="detail.favorite ? 'favorite-icon el-icon-star-on' : 'cancel-favorite-icon el-icon-star-off'"></i>
+              <span>{{ favoriteBtnText }}</span>
+            </div>
           </div>
         </div>
         <div class="single-course-content padding-50">
@@ -30,7 +26,7 @@
               <el-tabs v-model="activeName">
                 <el-tab-pane name="desc">
                   <span slot="label">
-                    <span class="course-content-btn">{{$t('exam.course.courseIntroduction')}}</span>
+                    <span class="exam-content-btn">{{$t('exam.course.courseIntroduction')}}</span>
                   </span>
                   <div class="clever-description">
                     <div class="about-course mb-30">
@@ -41,7 +37,7 @@
                 </el-tab-pane>
                 <el-tab-pane name="chapter">
                   <span slot="label">
-                    <span class="course-content-btn">{{$t('exam.course.chapter')}}</span>
+                    <span class="exam-content-btn">{{$t('exam.course.chapter')}}</span>
                   </span>
                   <div class="about-curriculum mb-30">
                     <h4>{{$t('exam.course.chapter')}}</h4>
@@ -77,7 +73,7 @@
                 </el-tab-pane>
                 <el-tab-pane name="evaluate">
                   <span slot="label">
-                    <span class="course-content-btn">{{$t('exam.course.courseEvaluation')}}</span>
+                    <span class="exam-content-btn">{{$t('exam.course.courseEvaluation')}}</span>
                   </span>
                   <div class="about-review mb-30">
                     <h4>{{$t('exam.course.courseEvaluation')}}</h4>
@@ -101,23 +97,34 @@
                       <div v-for="item in evaluates" :key="item.id">
                         <evaluate-item :item="item"></evaluate-item>
                       </div>
+                      <el-row class="list-pagination" style="margin-top: 16px;" v-show="evaluates && evaluates.length > 0">
+                        <el-pagination
+                          @size-change="handleEvaluateSizeChange"
+                          @current-change="handleEvaluateCurrentChange"
+                          :current-page="evaluateQuery.page"
+                          :page-sizes="[10, 20, 50]"
+                          :page-size="10"
+                          layout="total, sizes, prev, pager, next, jumper"
+                          :total="evaluateTotal">
+                        </el-pagination>
+                      </el-row>
                     </div>
                   </div>
                 </el-tab-pane>
                 <el-tab-pane name="members">
                   <span slot="label">
-                    <span class="course-content-btn">{{$t('exam.course.examinations')}}</span>
+                    <span class="exam-content-btn">{{$t('exam.course.examinations')}}</span>
                   </span>
                   <div class="about-members mb-30">
                     <h4>{{$t('exam.course.examinations')}}</h4>
                     <p v-if="detail.examinations && detail.examinations.length > 0">
-                      <a v-for="(e, index) in detail.examinations" :key="index" :href="'#/exam-details?examId=' + e.id" target="_self" style="color: #409EFF;">《{{e.examinationName}}》</a>
+                      <a v-for="(e, index) in detail.examinations" :key="index" :href="'#/exam-details?examId=' + e.id" target="_self">《{{e.examinationName}}》</a>
                     </p>
                   </div>
                 </el-tab-pane>
                 <el-tab-pane name="learn">
                   <span slot="label">
-                    <span class="course-content-btn">{{$t('exam.course.studyExchange')}}</span>
+                    <span class="exam-content-btn">{{$t('exam.course.studyExchange')}}</span>
                   </span>
                   <div class="about-review mb-30">
                     <h4>{{$t('exam.course.studyExchange')}}</h4>
@@ -154,29 +161,16 @@
                     </li>
                   </ul>
                 </div>
-                <div class="sidebar-widget">
-                  <h4>{{$t('exam.course.youMayAlsoLike')}}</h4>
-                  <div class="single--courses d-flex align-items-center" v-for="course in likes"
-                       :key="course.id">
-                    <div class="thumb">
-                      <img src="static/img/bg-img/yml.jpg" alt="">
-                    </div>
-                    <div class="content">
-                      <h5>{{ course.courseName }}</h5>
-                      <h6>{{ course.price }}</h6>
-                    </div>
-                  </div>
-                </div>
               </div>
             </el-col>
           </el-row>
         </div>
       </div>
-    </transition>
   </div>
 </template>
 <script>
-import {getCourseDetail, joinCourse, getCourseAttach} from '@/api/exam/course'
+import { mapState } from 'vuex'
+import {getCourseDetail, joinCourse, getCourseAttach, favoriteCourse} from '@/api/exam/course'
 import {addObj, getEvaluateList} from '@/api/exam/courseEvaluate'
 import {messageSuccess, messageWarn} from '@/utils/util'
 import EvaluateItem from '@/components/EvaluateItem'
@@ -197,22 +191,30 @@ export default {
         evaluateContent: '',
         evaluateLevel: 5
       },
-      likes: [{
-        id: 1,
-        courseName: this.$t('exam.course.demoCourseName'),
-        price: '$20'
-      }],
       evaluates: [],
       hasEvaluate: false,
       courseAttachName: '',
-      courseAttachUrl: ''
+      courseAttachUrl: '',
+      favoriteBtnText: undefined,
+      favoriteBtnLoading: false,
+      evaluateTotal: 0,
+      evaluateQuery: {
+        page: 1,
+        courseId: undefined
+      }
     }
   },
   created() {
     this.courseId = this.$route.query.courseId
+    this.evaluateQuery.courseId = this.$route.query.courseId
     this.getCourseInfo()
     this.getEvaluateList()
     this.getAttach()
+  },
+  computed: {
+    ...mapState({
+      userInfo: state => state.user.userInfo
+    })
   },
   methods: {
     getCourseInfo() {
@@ -220,19 +222,19 @@ export default {
       getCourseDetail(this.courseId).then(res => {
         this.detail = res.data.result
         this.course = res.data.result.course
-        setTimeout(() => {
-          this.loading = false
-        }, 500)
+        this.updateFavoriteBtnText()
+        this.loading = false
       }).catch(error => {
         console.error(error)
         this.loading = false
       })
     },
     getEvaluateList() {
-      getEvaluateList({courseId: this.courseId}).then(res => {
+      getEvaluateList({...this.evaluateQuery}).then(res => {
         const {code} = res.data
         if (code === 0) {
           this.evaluates = res.data.result.list
+          this.evaluateTotal = res.data.result.total
         }
       }).catch(error => {
         console.error(error)
@@ -300,75 +302,45 @@ export default {
       }).catch(error => {
         console.error(error)
       })
+    },
+    handleFavorite() {
+      const userId = this.userInfo.id
+      let type = this.detail && this.detail.favorite ? 0 : 1;
+      const tips = type === 1 ? this.$t('fav.favorite') : this.$t('fav.cancelFavorite')
+      this.favoriteBtnLoading = true
+      favoriteCourse(this.courseId, userId, type).then(res => {
+        if (res.data.result) {
+          this.detail.favorite = !this.detail.favorite
+        } else {
+          messageWarn(this, tips + this.$t('failed'))
+        }
+      }).catch(error => {
+        console.error(error)
+        messageWarn(this, tips + this.$t('failed'))
+      }).finally(() => {
+        this.updateFavoriteBtnText()
+        this.favoriteBtnLoading = false
+      })
+    },
+    updateFavoriteBtnText() {
+      if (this.detail && this.detail.favorite) {
+        this.favoriteBtnText = this.$t('fav.cancelFavorite')
+      } else {
+        this.favoriteBtnText = this.$t('fav.favorite')
+      }
+    },
+    handleEvaluateSizeChange(val) {
+      this.evaluateQuery.pageSize = val
+      this.getEvaluateList()
+    },
+    handleEvaluateCurrentChange(val) {
+      this.evaluateQuery.page = val
+      this.getEvaluateList()
     }
   }
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
-.course-content-btn {
-  display: inline-block;
-  height: 40px;
-  background-color: transparent;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-size: 14px;
-  border-radius: 6px;
-  padding: 0 25px;
-  line-height: 40px;
-  -webkit-transition-duration: 800ms;
-  transition-duration: 800ms;
-  text-align: center;
-  margin-right: 10px;
-  margin-bottom: 10px;
-  white-space: nowrap;
-  cursor: pointer;
-  background: #FFF;
-  border: 1px solid #DCDFE6;
-}
-.clever-btn {
-  display: inline-block;
-  min-width: 160px;
-  height: 40px;
-  background-color: #3762f0;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-size: 14px;
-  color: #ffffff;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  padding: 0 30px;
-  line-height: 40px;
-  text-align: center;
-  -webkit-transition-duration: 300ms;
-  transition-duration: 300ms;
-}
-.my-content-container {
-  margin-top: 0;
-}
-.section-title {
-  margin-left: 16px;
-  font-size: 14px;
-  cursor: pointer;
-}
-.section-title:hover, .section-learn-hour:hover {
-  color: #409EFF;
-}
-.section-learn-hour {
-  float: right;
-  color: rgba(0, 0, 0, .3);
-}
 
-.point-container {
-  margin-left: 32px;
-}
-.point-title {
-  font-size: 14px;
-  cursor: pointer;
-}
-.point-title:hover {
-  color: #409EFF;
-}
 </style>

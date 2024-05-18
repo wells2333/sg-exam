@@ -252,7 +252,7 @@ export const commonFilter = (str, length) => {
     return ''
   }
   if (str.length > length) {
-    return str.substring(0, length)
+    return str.substring(0, length) + '...'
   }
   return str
 }

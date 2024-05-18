@@ -38,7 +38,7 @@ import com.github.tangyi.exam.constants.ExamConstantProperty;
 import com.github.tangyi.exam.mapper.CourseMapper;
 import com.github.tangyi.exam.mapper.ExaminationMapper;
 import com.github.tangyi.exam.service.ExamPermissionService;
-import com.github.tangyi.exam.service.fav.CourseFavoritesService;
+import com.github.tangyi.exam.service.fav.CourseFavService;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
@@ -69,11 +69,10 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 	private final ExamCourseSectionService sectionService;
 	private final ExamCourseKnowledgePointService knowledgePointService;
 	private final ExamCourseMemberService memberService;
-	private final CourseFavoritesService courseFavoritesService;
+	private final CourseFavService courseFavService;
 	private final CourseIdFetcher courseIdFetcher;
 	private final ExamPermissionService examPermissionService;
 	private final ExaminationMapper examinationMapper;
-	private final CourseImportService courseImportService;
 	private ExamConstantProperty examConstantProperty;
 
 	@Override
@@ -126,8 +125,8 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 		PageInfo<Course> page = this.findPage(params, 1, 10);
 		List<Course> courses = page.getList();
 		if (Boolean.parseBoolean(findFav)) {
-			courseFavoritesService.findAndFillUserFavorites(courses);
-			courseFavoritesService.findAndFillFavCount(courses);
+			courseFavService.fillUserFavorites(courses);
+			courseFavService.findFavCount(courses);
 		}
 		return courses;
 	}
@@ -150,7 +149,7 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 		for (Course course : courses) {
 			course.setFavorite(true);
 		}
-		courseFavoritesService.findAndFillFavCount(courses);
+		courseFavService.findFavCount(courses);
 		pageInfo.setList(courses);
 		return pageInfo;
 	}
@@ -206,7 +205,7 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 	public int deleteAll(Long[] ids) {
 		int update = 0;
 		for (Long id : ids) {
-			Course course = this.get(id);
+			Course course = super.get(id);
 			update += this.delete(course);
 		}
 		return update;
@@ -226,25 +225,10 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 		super.updateIndex(this.buildIndexCrudParam(course, joinCnt, joinCnt));
 	}
 
-	public void initCourseInfo(List<Course> courses) {
-		ExamCourseMember member = new ExamCourseMember();
-		for (Course course : courses) {
-			if (course.getImageId() != null && course.getImageId() != 0L && course.getImageUrl() == null) {
-				course.setImageUrl(attachmentManager.getPreviewUrlIgnoreException(course.getImageId()));
-			}
-			// 没有图片，使用默认图片
-			if (StringUtils.isEmpty(course.getImageUrl())) {
-				course.setImageUrl(examConstantProperty.getCourseImageUrl());
-			}
-			// 报名人数
-			member.setCourseId(course.getId());
-			course.setMemberCount(memberService.findMemberCountByCourseId(member));
-		}
-	}
-
 	/**
 	 * 查询课程的详细信息
 	 */
+	@Override
 	public CourseDetailDto getDetail(Long id) {
 		CourseDetailDto dto = new CourseDetailDto();
 		// 课时
@@ -260,10 +244,14 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 		// 学员数量
 		ExamCourseMember member = new ExamCourseMember();
 		member.setCourseId(id);
-		member.setUserId(SysUtil.getUserId());
+
+		Long userId = SysUtil.getUserId();
+		member.setUserId(userId);
 		dto.setMemberCount(memberService.findMemberCountByCourseId(member) + "");
 		// 是否已报名
-		dto.setIsUserJoin(memberService.findByCourseIdAndUserId(id, SysUtil.getUserId()) != null);
+		dto.setIsUserJoin(memberService.findByCourseIdAndUserId(id, userId) != null);
+		// 是否已收藏
+		dto.setFavorite(courseFavService.isUserFavorites(userId, id));
 
 		// 课程关联的考试
 		List<Examination> examinations = examinationMapper.findExaminationByCourseId(id);
@@ -276,21 +264,6 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 			}).collect(Collectors.toList()));
 		}
 		return dto;
-	}
-
-	public List<CourseChapterDto> findChapters(Long id, AtomicLong learnHour) {
-		List<CourseChapterDto> chapterDtos = Lists.newArrayList();
-		List<ExamCourseChapter> chapters = chapterService.findChaptersByCourseId(id);
-		if (CollectionUtils.isNotEmpty(chapters)) {
-			for (ExamCourseChapter chapter : chapters) {
-				CourseChapterDto chapterDto = new CourseChapterDto();
-				List<CourseSectionDto> sections = findSections(chapter, learnHour);
-				chapterDto.setChapter(chapter);
-				chapterDto.setSections(sections);
-				chapterDtos.add(chapterDto);
-			}
-		}
-		return chapterDtos;
 	}
 
 	@Transactional
@@ -336,6 +309,22 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 		}
 	}
 
+	private void initCourseInfo(List<Course> courses) {
+		ExamCourseMember member = new ExamCourseMember();
+		for (Course course : courses) {
+			if (course.getImageId() != null && course.getImageId() != 0L && course.getImageUrl() == null) {
+				course.setImageUrl(attachmentManager.getPreviewUrlIgnoreException(course.getImageId()));
+			}
+			// 没有图片，使用默认图片
+			if (StringUtils.isEmpty(course.getImageUrl())) {
+				course.setImageUrl(examConstantProperty.getCourseImageUrl());
+			}
+			// 报名人数
+			member.setCourseId(course.getId());
+			course.setMemberCount(memberService.findMemberCountByCourseId(member));
+		}
+	}
+
 	private IndexCrudParam buildIndexCrudParam(Course course, long clickCnt, long joinCnt) {
 		return IndexCrudParam.builder() //
 				.id(course.getId()) //
@@ -345,6 +334,21 @@ public class CourseService extends CrudService<CourseMapper, Course> implements 
 				.clickCnt(clickCnt) //
 				.joinCnt(joinCnt) //
 				.build(); //
+	}
+
+	private List<CourseChapterDto> findChapters(Long id, AtomicLong learnHour) {
+		List<CourseChapterDto> result = Lists.newArrayList();
+		List<ExamCourseChapter> chapters = chapterService.findChaptersByCourseId(id);
+		if (CollectionUtils.isNotEmpty(chapters)) {
+			for (ExamCourseChapter chapter : chapters) {
+				CourseChapterDto chapterDto = new CourseChapterDto();
+				List<CourseSectionDto> sections = findSections(chapter, learnHour);
+				chapterDto.setChapter(chapter);
+				chapterDto.setSections(sections);
+				result.add(chapterDto);
+			}
+		}
+		return result;
 	}
 
 	private List<CourseSectionDto> findSections(ExamCourseChapter chapter, AtomicLong learnHour) {

@@ -5,7 +5,7 @@
         <div class="tool-bar">
           <CountDownTimer :minute="10" @finished="countdownEnd"/>
         </div>
-        <div class="subject-box-card">
+        <div class="subject-box-card" v-show="subject">
           <choices ref="choices" v-show="subject.type === 0" :onChoice="onChoiceFn" />
           <short-answer ref="shortAnswer" v-show="subject.type === 1" :onChoice="onChoiceFn" />
           <judgement ref="judgement" v-show="subject.type === 2" :onChoice="onChoiceFn" />
@@ -50,9 +50,9 @@
             <span class="unanswered-label"></span>{{ $t("exam.startExam.notAnswered") }}({{ currentCards.length - answeredCnt }})
           </div>
         </div>
-        <div class="subject-right-footer" @click="submitExam">
+        <el-button class="subject-right-footer" @click="submitExam" :loading="loadingSubmit">
           {{ $t("submit") }}
-        </div>
+        </el-button>
       </div>
     </div>
   </div>
@@ -111,8 +111,13 @@ export default {
     ...mapGetters(["cards", "subject"])
   },
   created() {
-    this.examinationId = this.$route.params.id;
-    this.recordId = this.$route.query.recordId;
+    if (this.subject === undefined || Object.keys(this.subject).length === 0) {
+      this.$router.push({ name: "exams", query: { redirect: true } })
+      return
+    }
+
+    this.examinationId = this.$route.params.id
+    this.recordId = this.$route.query.recordId
     if (this.examinationId && this.recordId) {
       const tmpCards = []
       if (this.cards && this.cards.length > 0) {
@@ -124,18 +129,18 @@ export default {
       this.startExam();
       this.updateAnsweredCnt();
     } else {
-      this.$router.push({ name: "exams", query: { redirect: true } });
+      this.$router.push({ name: "exams", query: { redirect: true } })
     }
   },
   mounted() {
     if (window.history && window.history.pushState) {
       window.history.pushState(null, null, document.URL);
-      window.addEventListener("popstate", this.goBack, false);
+      window.addEventListener("popstate", this.goBack, false)
     }
   },
   destroyed() {
     clearInterval(this.timer);
-    window.removeEventListener("popstate", this.goBack, false);
+    window.removeEventListener("popstate", this.goBack, false)
   },
   methods: {
     countdownEnd() {
@@ -246,36 +251,38 @@ export default {
         cancelButtonText: this.$t("cancel"),
         type: "warning"
       }).then(() => {
-          this.doSubmitExam(this.examinationId, this.recordId, this.userInfo, true);
-        }).catch(() => {});
+        this.doSubmitExam(this.examinationId, this.recordId, this.userInfo, true);
+      }).catch(() => {});
     },
     doSubmitExam(examinationId, examRecordId, userInfo, toExamRecord) {
       const ref = this.getSubjectRef();
       if (ref) {
         ref.beforeSave();
       }
+
+      this.loadingSubmit = true
       saveAndNext(this.getAnswer(), 0).then(() => {
-          store
-            .dispatch("SubmitExam", {
-              examinationId,
-              examRecordId,
-              userId: userInfo.id
-            })
-            .then(() => {
-              messageSuccess(this, this.$t("submit") + this.$t("success"));
-              store.dispatch("ClearExam");
-              if (toExamRecord) {
-                this.$router.push({ name: "exam-record" });
-              }
-            }).catch(() => {
-              messageFail(this, this.$t("submit") + this.$t("failed"));
-            });
-        }).catch(() => {
-          messageFail(this, this.$t("submit") + this.$t("failed"));
-        });
-    },
-    toggleOption(answer) {
-      this.answer = answer;
+        store
+          .dispatch("SubmitExam", {
+            examinationId,
+            examRecordId,
+            userId: userInfo.id
+          })
+          .then(() => {
+            messageSuccess(this, this.$t("submit") + this.$t("success"));
+            store.dispatch("ClearExam");
+            if (toExamRecord) {
+              this.$router.push({ name: "exam-record" });
+            }
+          }).catch(() => {
+            messageFail(this, this.$t("submit") + this.$t("failed"));
+          }).finally(() => {
+            this.loadingSubmit = false
+          });
+      }).catch(() => {
+        this.loadingSubmit = false
+        messageFail(this, this.$t("submit") + this.$t("failed"));
+      });
     },
     getAnswer() {
       const ref = this.getSubjectRef();
@@ -362,14 +369,13 @@ export default {
       cancelButtonText: this.$t("cancel"),
       type: "warning"
     }).then(() => {
-        next();
-      }).catch(() => {
-        next(false);
-      });
+      next();
+    }).catch(() => {
+      next(false);
+    });
   }
 };
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
-@import "../../assets/css/start_exam.scss";
 </style>

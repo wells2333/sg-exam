@@ -62,11 +62,12 @@ export default defineComponent({
     async function handleSubmit() {
       try {
         const values = await validate();
-        const {subjectCount} = values;
-        if (subjectCount > subjectCnt.value) {
+        const {type, target} = values;
+        if (type === 0 && target > subjectCnt.value) {
           createMessage.error('题目数量超过' + subjectCnt.value);
           return;
         }
+
         setModalProps({confirmLoading: true});
         const res = await randomAddSubjects(examinationId.value, values);
         if (res) {

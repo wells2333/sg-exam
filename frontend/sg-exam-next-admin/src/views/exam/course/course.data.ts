@@ -79,8 +79,8 @@ export const columns: BasicColumn[] = [
       let color = 'green';
       let text = '已发布';
       if (courseStatus !== null && courseStatus === 0) {
-        color = 'blue';
-        text = '草稿';
+        color = 'red';
+        text = '未发布';
       }
       return h(Tag, {color: color}, () => text);
     },
@@ -127,20 +127,6 @@ export const formSchema: FormSchema[] = [
     label: '课程名称',
     component: 'Input',
     required: true,
-  },
-  {
-    field: 'courseStatus',
-    label: '状态',
-    component: 'RadioButtonGroup',
-    defaultValue: 0,
-    componentProps: {
-      options: [
-        { label: '草稿', value: 0 },
-        { label: '已发布', value: 1 },
-      ],
-    },
-    required: true,
-    colProps: { span: 12 },
   },
   {
     field: 'chargeType',

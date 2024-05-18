@@ -18,6 +18,7 @@
         <li :class="activeTag === '2' ? 'active' : ''" @click="changeTag('2')">{{$t('exam.exams.latestRelease')}}</li>
         <li :class="activeTag === '3' ? 'active' : ''" @click="changeTag('3')">{{$t('exam.exams.mostClicks')}}</li>
         <li :class="activeTag === '4' ? 'active' : ''" @click="changeTag('4')">{{$t('exam.exams.parameters')}}</li>
+        <li :class="activeTag === '5' ? 'active' : ''" @click="changeTag('5')">{{$t('fav.myFavorite')}}</li>
       </ul>
     </div>
     <div class="exam-card-list">
@@ -33,14 +34,14 @@
             <div>
               <a href="javascript:void(-1);" @click="handleClickExam(exam)"></a>
               <h3>
-                <div class="card-item-name">
-                  {{ exam.examinationName  | simpleStrFilter }}
+                <div class="card-item-name" :title="exam.examinationName">
+                  {{ exam.examinationName | simpleStrFilter }}
                 </div>
               </h3>
             </div>
             <div class="card-item-course">
               <div class="card-item-course-detail" v-if="exam.course !== undefined && exam.course !== null">
-                <a href="#">{{ exam.course.courseName }}</a>
+                <a href="#" :title="exam.course.courseName">{{ exam.course.courseName | simpleStrFilter }}</a>
               </div>
               <div class="card-item-course-detail" v-else>
                 {{$t('exam.exams.unrelatedCourse')}}
@@ -74,8 +75,17 @@
 <script>
 import {mapGetters, mapState} from 'vuex'
 import { fetchList } from '@/api/exam/exam'
-import { isNotEmpty, messageWarn, getAttachmentPreviewUrl, formatDate } from '@/utils/util'
+import { getUserFavorites } from '@/api/exam/favorites'
+import {
+  isNotEmpty,
+  messageWarn,
+  getAttachmentPreviewUrl,
+  formatDate,
+  notifyFail
+} from '@/utils/util'
 import PanThumb from '@/components/PanThumb'
+
+const EXAM_ACTIVE_TAG_MY_FAVORITE = '5'
 
 export default {
   components: { PanThumb },
@@ -100,14 +110,13 @@ export default {
       examList: [],
       isLastPage: false,
       query: {
-        sort: 'id',
+        sortField: 'id',
         order: ' asc',
         page: 1,
         pageSize: 8,
         examinationName: '',
         status: 1
       },
-      // 默认全部
       activeTag: '1'
     }
   },
@@ -136,13 +145,7 @@ export default {
     getExamList (reset = false) {
       this.loading = true
       fetchList(this.query).then(response => {
-        const { total, isLastPage, list } = response.data.result
-        this.total = total
-        this.isLastPage = isLastPage
-        if (reset) {
-          this.examList = []
-        }
-        this.updateExamList(list)
+        this.handleExamListResponse(response, reset)
         this.loading = false
       }).catch(() => {
         messageWarn(this, this.$t('load.loadFailed'))
@@ -175,9 +178,6 @@ export default {
     handleClickExam (exam) {
       this.$router.push({name: 'exam-details', query: {examId: exam.id}})
     },
-    getAvatar (avatar) {
-      return getAttachmentPreviewUrl(this.sysConfig, avatar)
-    },
     submitForm () {
       this.query.page = 1
       this.getExamList(true)
@@ -188,27 +188,45 @@ export default {
     },
     changeTag (tag) {
       this.activeTag = tag
+      // 我的收藏
+      if (tag === EXAM_ACTIVE_TAG_MY_FAVORITE) {
+        const params = {...this.query}
+        // 查询收藏的考试
+        params.targetType = '0'
+        this.loading = true
+        getUserFavorites(params).then(response => {
+          this.handleExamListResponse(response, true)
+          this.loading = false
+        }).catch((err) => {
+          console.error(err)
+          notifyFail(this, this.$t('load.loadFailed'))
+          this.loading = false
+        })
+        return
+      }
       if (tag === '2') {
-        this.query.sort = 'create_time'
+        this.query.sortField = 'create_time'
       } else if (tag === '4') {
-        this.query.sort = 'join'
+        this.query.sortField = 'join'
       } else {
-        this.query.sort = 'id'
+        this.query.sortField = 'id'
       }
       this.getExamList(true)
     },
-    handleSizeChange (val) {
-      this.query.limit = val
-      this.getExamList()
-    },
-    handleCurrentChange (val) {
-      this.query.page = val
-      this.getExamList()
+    handleExamListResponse (response, reset) {
+      const { total, isLastPage, list } = response.data.result
+      this.total = total
+      this.isLastPage = isLastPage
+      if (reset) {
+        this.examList = []
+      }
+      this.updateExamList(list)
     },
     updateExamList (list) {
       if (list === undefined || list === null || list.length === 0) {
         return list
       }
+
       list.forEach(item => {
         item.show = false
       })
@@ -228,9 +246,7 @@ export default {
         })
       }
       for (let i = 0; i < list.length; i++) {
-        setTimeout(() => {
-          list[i].show = true
-        }, 50 + (100 * i))
+        list[i].show = true
       }
     }
   }
@@ -252,41 +268,6 @@ export default {
   .category-cont {
     height: 100%;
     border: 1px solid red;
-  }
-  .category-list {
-    margin-bottom: 12px;
-    cursor: pointer;
-    ul {
-      margin: 0;
-      overflow: hidden;
-    }
-    .active {
-      color: #409eff;
-      &::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        height: 2px;
-        background-color: #409eff;
-        z-index: 1;
-        width: 100%;
-        cursor: pointer;
-      }
-    }
-    li  {
-      margin: 0 10px;
-      height: 40px;
-      box-sizing: border-box;
-      line-height: 40px;
-      display: inline-block;
-      list-style: none;
-      font-size: 14px;
-      font-weight: 500;
-      color: #303133;
-      position: relative;
-      position: relative;
-    }
   }
 
   .exam-card-list {
@@ -318,8 +299,9 @@ export default {
       }
       .card-item-detail {
         padding: 12px 12px;
-        height: 110px;
+        height: 130px;
         .card-item-name {
+          color: #545c63;
           display: -webkit-box;
           overflow: hidden;
           margin-bottom: 5px;
@@ -331,18 +313,14 @@ export default {
           font-style: normal;
           letter-spacing: 0;
           .card-item-course-detail {
-            color: rgba(0,0,0,.54);
-            fill: rgba(0,0,0,.54);
+            color: #9199a1;
+            font-size: 14px;
+            margin-bottom: 8px;
             a {
-              color: rgba(0, 0, 0, 0.4);
+              color: #9199a1;
               display: inline-block;
-              font-size: 12px;
-              color: #5a5a5a;
               font-weight: 400;
               margin-right: 10px;
-              &:hover {
-                color: #000;
-              }
             }
           }
         }

@@ -16,8 +16,8 @@
 
 package com.github.tangyi.common.vo;
 
-import com.github.tangyi.common.model.Log;
 import com.github.tangyi.common.base.BaseEntity;
+import com.github.tangyi.common.model.Log;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

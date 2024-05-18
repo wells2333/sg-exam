@@ -27,7 +27,7 @@ import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.utils.SnowFlakeId;
 import com.github.tangyi.exam.excel.SubjectExcelModel;
 import com.github.tangyi.exam.service.answer.AnswerService;
-import com.github.tangyi.exam.service.fav.SubjectFavoritesService;
+import com.github.tangyi.exam.service.fav.SubjectFavService;
 import com.github.tangyi.exam.service.subject.SubjectImportExportService;
 import com.github.tangyi.exam.service.subject.SubjectsService;
 import com.github.tangyi.exam.utils.ExamUtil;
@@ -60,7 +60,7 @@ public class SubjectsController extends BaseController {
 	private final SubjectsService subjectsService;
 	private final AnswerService answerService;
 	private final SubjectImportExportService subjectImportExportService;
-	private final SubjectFavoritesService subjectFavoritesService;
+	private final SubjectFavService subjectFavService;
 
 	@GetMapping("/{id}")
 	@Operation(summary = "获取题目信息", description = "根据题目 ID 获取题目详细信息")
@@ -69,7 +69,7 @@ public class SubjectsController extends BaseController {
 			@RequestParam(value = "isView", required = false, defaultValue = "false") boolean isView) {
 		SubjectDto dto = subjectsService.getSubject(id, isView);
 		if (dto != null && findFav) {
-			subjectFavoritesService.findUserFavorites(Collections.singletonList(dto));
+			subjectFavService.fillUserFavorites(Collections.singletonList(dto));
 		}
 		return R.success(dto);
 	}
@@ -161,8 +161,9 @@ public class SubjectsController extends BaseController {
 
 	@PostMapping("export")
 	@Operation(summary = "导出题目", description = "根据分类 id 导出题目")
-	public void exportSubject(@RequestParam(required = false) Long[] ids, @RequestParam(required = false) Long examinationId,
-			@RequestParam(required = false) Long categoryId, HttpServletRequest request, HttpServletResponse response) {
+	public void exportSubject(@RequestParam(required = false) Long[] ids,
+			@RequestParam(required = false) Long examinationId, @RequestParam(required = false) Long categoryId,
+			HttpServletRequest request, HttpServletResponse response) {
 		List<SubjectDto> subjects = subjectImportExportService.export(ids, examinationId, categoryId);
 		ExcelToolUtil.writeExcel(request, response, ExamUtil.convertSubject(subjects), SubjectExcelModel.class);
 	}

@@ -42,9 +42,9 @@
             <span class="unanswered-label"></span>{{ $t("exam.startExam.notAnswered") }}({{ currentCards.length - answeredCnt }})
           </div>
         </div>
-        <div class="subject-right-footer" @click="handleSubmit">
+        <el-button class="subject-right-footer" @click="handleSubmit" :loading="loadingSubmit">
           {{ $t("submit") }}
-        </div>
+        </el-button>
       </div>
     </div>
   </div>
@@ -132,11 +132,9 @@ export default {
   },
   methods: {
     countdownEnd() {
-      console.log('倒计时结束🔚')
+      console.log('倒计时结束')
     },
     onChoiceFn(sort) {
-      debugger
-      // 标识已答题状态
       if (sort) {
         this.currentCards[sort - 1].answered = true
       }
@@ -205,13 +203,19 @@ export default {
         return
       }
 
+      this.loadingSubmit = true
       submitAll(data).then(() => {
-        this.loadingSubmit = false
+        store.dispatch('ClearExam')
         messageSuccess(this, this.$t('submit') + this.$t('success'))
-        setTimeout(() => {
-          store.dispatch('ClearExam')
-          this.$router.push({name: 'exam-record'})
-        }, 800)
+        this.loadingSubmit = false
+        this.removeAllEventListeners();
+        window.removeEventListener('popstate', this.goBack, false)
+        const resolvedRoute = this.$router.resolve({path: 'exam-record'});
+        const newTab = window.open(resolvedRoute.href, "_blank");
+        if (newTab) {
+          window.opener = null;
+          window.open("about:blank", "_top").close()
+        }
       }).catch(() => {
         messageFail(this, this.$t('submit') + this.$t('failed'))
         this.loadingSubmit = false
@@ -270,12 +274,13 @@ export default {
         console.warn("抱歉，禁止右键菜单。");
       });
 
-      window.addEventListener("beforeunload", function (event) {
-        event.preventDefault();
-        console.warn("抱歉，禁止刷新页面。");
-      });
+      // window.addEventListener("beforeunload", function (event) {
+      //   event.preventDefault();
+      //   console.warn("抱歉，禁止刷新页面。");
+      // });
     },
-    removeAllEventListeners() { // 定义函数来移除所有事件监听器
+    removeAllEventListeners() {
+      // 定义函数来移除所有事件监听器
       for (let eventType in eventListeners) {
         eventListeners[eventType].forEach(function (listener) {
           document.removeEventListener(eventType, listener);
@@ -314,6 +319,7 @@ export default {
       return
     }
 
+    debugger
     this.$confirm(this.$t('exam.startExam.confirmExit'), this.$t('tips'), {
       confirmButtonText: this.$t('sure'),
       cancelButtonText: this.$t('cancel'),
@@ -328,5 +334,4 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
-@import "../../assets/css/start_exam.scss";
 </style>

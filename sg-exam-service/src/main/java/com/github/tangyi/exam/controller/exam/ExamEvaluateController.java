@@ -17,7 +17,6 @@
 package com.github.tangyi.exam.controller.exam;
 
 import com.github.pagehelper.PageInfo;
-import com.github.tangyi.api.exam.model.ExamCourseEvaluate;
 import com.github.tangyi.api.exam.model.ExamEvaluate;
 import com.github.tangyi.api.exam.model.Examination;
 import com.github.tangyi.api.exam.service.IExaminationService;

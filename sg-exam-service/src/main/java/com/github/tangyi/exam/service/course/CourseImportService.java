@@ -31,6 +31,7 @@ import com.github.tangyi.api.user.model.AttachGroup;
 import com.github.tangyi.api.user.model.Attachment;
 import com.github.tangyi.api.user.service.IAttachGroupService;
 import com.github.tangyi.common.utils.SysUtil;
+import com.github.tangyi.common.utils.TxUtil;
 import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.constants.ExamConstant;
 import com.google.common.base.Preconditions;
@@ -77,9 +78,7 @@ public class CourseImportService {
 	@CacheEvict(value = ExamCacheName.COURSE, key = "#courseId")
 	public boolean importChapter(Long courseId, List<CourseImportDto> dtoList) {
 		Integer maxSort = this.chapterService.findMaxSortByCourseId(courseId);
-		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus status = txManager.getTransaction(def);
+		TransactionStatus status = TxUtil.startTransaction(txManager);
 		try {
 			// 插入章节
 			AtomicLong sort = new AtomicLong(maxSort == null ? 0 : maxSort);

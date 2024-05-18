@@ -47,6 +47,12 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class CustomGlobalExceptionHandler {
 
+	public static final String INTERNAL_SERVER_ERROR = "Internal Server Error";
+
+	public static void throwInternalServerError() {
+		throw new CommonException(INTERNAL_SERVER_ERROR);
+	}
+
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<Object> validationBodyException(MethodArgumentNotValidException ex, HttpHeaders headers,
 			HttpStatus status) {
@@ -83,27 +89,26 @@ public class CustomGlobalExceptionHandler {
 	@ExceptionHandler(IOException.class)
 	public ResponseEntity<R<String>> handleIOException(Exception e) {
 		log.error("[handleIOException]", e);
-		return new ResponseEntity<>(R.error(e.getMessage()), HttpStatus.OK);
+		return new ResponseEntity<>(R.error(INTERNAL_SERVER_ERROR), HttpStatus.OK);
 	}
 
 	@ExceptionHandler(QiniuException.class)
 	public ResponseEntity<R<String>> handleQiniuException(QiniuException e) {
-		log.error("[handleQiniuException]", e);
-		String msg = "File operation failed.";
-		R<String> responseBean = new R<>(null, ApiMsg.KEY_ERROR, msg);
+		log.error("[handleQiNiuException]", e);
+		R<String> responseBean = new R<>(null, ApiMsg.KEY_ERROR, INTERNAL_SERVER_ERROR);
 		return new ResponseEntity<>(responseBean, HttpStatus.OK);
 	}
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<R<String>> handleException(Exception e) {
 		log.error("[handleException]", e);
-		return new ResponseEntity<>(R.error(e.getMessage()), HttpStatus.OK);
+		return new ResponseEntity<>(R.error(INTERNAL_SERVER_ERROR), HttpStatus.OK);
 	}
 
 	@ExceptionHandler(Throwable.class)
 	public ResponseEntity<R<String>> handleThrowable(Exception e) {
 		log.error("[handleThrowable]", e);
-		return new ResponseEntity<>(R.error(e.getMessage()), HttpStatus.OK);
+		return new ResponseEntity<>(R.error(INTERNAL_SERVER_ERROR), HttpStatus.OK);
 	}
 
 	private Exception parseBindingResult(BindingResult bindingResult) {

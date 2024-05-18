@@ -70,11 +70,9 @@ const en = {
     admin: 'Admin',
     changeLog: 'Changelog',
     feedback: 'Feedback',
-    legalNotices: 'Legal Notice',
-    legalNoticesContent: 'This is only for personal practice open-source imitation project, for learning reference only, and cannot bear any legal issues',
-    privacyPolicy: 'Privacy Policy',
-    privacyPolicyContent: 'This website will not strictly comply with relevant laws and regulations and the content stated in this privacy policy to collect and use your information',
-    developerCenter: 'Developer Center'
+    contactUs: 'Contact Us',
+    contactUsContent: 'Please contact 1633736729@qq.com',
+    privacyPolicy: 'Privacy Policy'
   },
   header: {
     sourceCode: 'Source Code',
@@ -96,6 +94,11 @@ const en = {
     loadFailed: 'Load failed!',
     loadCoursesFailed: 'Load popular courses failed!'
   },
+  fav: {
+    myFavorite: 'My favorite',
+    favorite: 'Favorite',
+    cancelFavorite: 'Cancel favorite'
+  },
   exam: {
     examinationName: 'Examination name',
     examinationType: 'Type',
@@ -104,7 +107,10 @@ const en = {
     score: 'Score',
     scoreDetail: 'Detail',
     scoreRank: 'Rank',
+    examIntroduction: 'Examination introduction',
+    examEvaluation: 'Examination evaluation',
     course: {
+      searchPlaceholder: 'Search for the courses that interest you',
       courseName: 'Course Name',
       courseIntroduction: 'Course Introduction',
       chapter: 'Chapter',
@@ -139,6 +145,10 @@ const en = {
         registerStudentsCnt: 'Register students Count',
         level: 'Difficulty level'
       }
+    },
+    courses: {
+      all: 'All',
+      latestRelease: 'Latest release'
     },
     records: {
       records: 'Records'

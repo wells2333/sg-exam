@@ -4,49 +4,56 @@
       <el-row v-show="!examRecordLoading">
         <el-row>
           <el-col :span="20" :offset="2">
-            <el-divider>{{$t('exam.scoreDetail')}}</el-divider>
+            <el-divider>{{ $t('exam.scoreDetail') }}</el-divider>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="20" :offset="2">
             <el-row>
               <el-col :span="8">
-                <label class="el-form-item__label">{{$t('exam.examinationName')}}：{{
-                    examRecordDetail.examinationName
-                  }}</label>
+                <label class="el-form-item__label">{{ $t('exam.examinationName') }}：<span
+                  :title="examRecordDetail.examinationName">{{
+                    examRecordDetail.examinationName | simpleStrFilter
+                  }}</span>
+                </label>
               </el-col>
               <el-col :span="8">
-                <label class="el-form-item__label">{{$t('exam.incorrect.userName')}}：{{
+                <label class="el-form-item__label">{{ $t('exam.incorrect.userName') }}：{{
                     examRecordDetail.userName
                   }}</label>
               </el-col>
               <el-col :span="8">
-                <label class="el-form-item__label">{{$t('exam.incorrect.score')}}：{{ examRecordDetail.score }}</label>
+                <label class="el-form-item__label">{{ $t('exam.incorrect.score') }}：{{
+                    examRecordDetail.score
+                  }}</label>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="8">
-                <label class="el-form-item__label">{{$t('exam.incorrect.startTime')}}：
+                <label class="el-form-item__label">{{ $t('exam.incorrect.startTime') }}：
                   {{ examRecordDetail.startTime | fmtDate('yyyy-MM-dd hh:mm') }}</label>
               </el-col>
               <el-col :span="8">
-                <label class="el-form-item__label">{{$t('exam.incorrect.endTime')}}：
+                <label class="el-form-item__label">{{ $t('exam.incorrect.endTime') }}：
                   {{ examRecordDetail.endTime | fmtDate('yyyy-MM-dd hh:mm') }}</label>
               </el-col>
               <el-col :span="8">
-                <label class="el-form-item__label">{{$t('exam.incorrect.duration')}}：{{ examRecordDetail.duration }}</label>
+                <label class="el-form-item__label">{{ $t('exam.incorrect.duration') }}：{{
+                    examRecordDetail.duration
+                  }}</label>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="8">
-                <label class="el-form-item__label">{{$t('exam.incorrect.operator')}}</label>
+                <label class="el-form-item__label">{{ $t('exam.incorrect.operator') }}</label>
               </el-col>
               <el-col :span="8">
-                <label class="el-form-item__label">{{$t('exam.incorrect.correctNumber')}}：</label>
+                <label class="el-form-item__label">{{ $t('exam.incorrect.correctNumber') }}：</label>
                 <el-tag type="success" effect="dark">{{ examRecordDetail.correctNumber }}</el-tag>
               </el-col>
               <el-col :span="8">
-                <label class="el-form-item__label">{{$t('exam.incorrect.inCorrectNumber')}}：</label>
+                <label
+                  class="el-form-item__label">{{ $t('exam.incorrect.inCorrectNumber') }}：</label>
                 <el-tag type="danger" effect="dark">{{
                     examRecordDetail.inCorrectNumber
                   }}
@@ -58,7 +65,7 @@
       </el-row>
       <el-row v-show="!examRecordLoading">
         <el-col :span="20" :offset="2">
-          <el-divider>{{$t('exam.incorrect.subjectList')}}</el-divider>
+          <el-divider>{{ $t('exam.incorrect.subjectList') }}</el-divider>
         </el-col>
       </el-row>
       <el-row v-for="(item) in list"
@@ -80,10 +87,10 @@
                   <li class="subject-option" :class="getClass(option.right)">
                     <label>
                       <span class="subject-option-prefix">{{
-                        option.optionName
-                      }}&nbsp;</span>
+                          option.optionName
+                        }}&nbsp;</span>
                       <span v-html="option.optionContent"
-                                           class="subject-option-prefix"></span></label>
+                            class="subject-option-prefix"></span></label>
                   </li>
                 </ul>
               </div>
@@ -92,13 +99,15 @@
             <div v-if="item.subject.type === 1">
               <p>
                 {{ $t('exam.incorrect.userAnswer') }}：<span
-                :class="getShortAnswerClass(item.answer, item.subject.answer.answer)">{{ item.answer }}</span>
+                :class="getShortAnswerClass(item.answer, item.subject.answer.answer)">{{
+                  item.answer
+                }}</span>
               </p>
             </div>
             <!-- 判断 -->
             <div v-if="item.subject.type === 2">
               <p>
-                {{$t('exam.incorrect.userAnswer')}}：
+                {{ $t('exam.incorrect.userAnswer') }}：
                 <span :class="getJudgeClass(item.answer, item.subject.answer.answer)">
                   {{ processJudgementUserAnswer(item.answer) }}
                 </span>
@@ -107,20 +116,24 @@
             <!-- 语音 -->
             <div v-if="item.subject.type === 4">
               <p>
-                {{$t('exam.incorrect.userAnswer')}}：<span
-                :class="getShortAnswerClass(item.answer, item.subject.answer.answer)">{{ item.answer }}</span>
+                {{ $t('exam.incorrect.userAnswer') }}：<span
+                :class="getShortAnswerClass(item.answer, item.subject.answer.answer)">{{
+                  item.answer
+                }}</span>
               </p>
             </div>
             <!-- 视频 -->
             <div v-if="item.subject.type === 5">
               <p>
-                {{$t('exam.incorrect.userAnswer')}}：<span
-                :class="getShortAnswerClass(item.answer, item.subject.answer.answer)">{{ item.answer }}</span>
+                {{ $t('exam.incorrect.userAnswer') }}：<span
+                :class="getShortAnswerClass(item.answer, item.subject.answer.answer)">{{
+                  item.answer
+                }}</span>
               </p>
             </div>
             <p class="subject-content-answer"
                v-if="item.subject.answer !== undefined">
-              {{$t('exam.incorrect.answer')}}：
+              {{ $t('exam.incorrect.answer') }}：
               <span v-if="item.subject.type === 2">
                 {{ getJudgementStdAnswerText(item.subject.answer.answer) }}
               </span>
@@ -128,7 +141,7 @@
             </p>
             <p class="subject-content-analysis"
                v-if="item.subject.analysis !== ''">
-              {{$t('exam.incorrect.analysis')}}：<span v-html="item.subject.analysis"></span>
+              {{ $t('exam.incorrect.analysis') }}：<span v-html="item.subject.analysis"></span>
             </p>
           </div>
         </el-col>
@@ -136,7 +149,7 @@
       <el-row style="text-align: center; margin-bottom: 50px;">
         <el-col :span="24">
           <el-button v-if="!isLastPage" type="default" @click="scrollList" :loading="loading"
-                     style="margin-bottom: 100px;">{{$t('load.loadMore')}}
+                     style="margin-bottom: 100px;">{{ $t('load.loadMore') }}
           </el-button>
         </el-col>
       </el-row>
@@ -348,6 +361,7 @@ export default {
   margin-bottom: 10px;
   position: relative;
   display: inline-flex;
+
   .subject-title-number {
     position: absolute;
     left: -25px;

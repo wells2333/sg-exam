@@ -1,32 +1,36 @@
 <template>
   <div>
-    <div class="clever-category bg-img" style="background-image: url(static/img/bg-img/bg2.jpg);">
-      <h3>{{$t('exam.course.courses.popularCourses')}}</h3>
-    </div>
     <div class="content-container">
       <div class="search-form">
         <el-form ref="examForm" :inline="true" :model="query" label-width="100px" class="examForm">
           <el-form-item label="" prop="courseName">
-            <el-input v-model="query.courseName" autocomplete="off" :placeholder="$t('exam.course.courseName')" />
+            <el-input v-model="query.courseName" autocomplete="off" :placeholder="$t('exam.course.searchPlaceholder')" size="small"/>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="submitForm('examForm')">{{ $t('search') }}</el-button>
-            <el-button @click="resetForm('examForm')">{{ $t('reset') }}</el-button>
+            <el-button type="primary" @click="submitForm('examForm')" size="small">{{ $t('search') }}</el-button>
+            <el-button @click="resetForm('examForm')" size="small">{{ $t('reset') }}</el-button>
           </el-form-item>
         </el-form>
+      </div>
+      <div class="category-list">
+        <ul>
+          <li :class="query.activeTag === '1' ? 'active' : ''" @click="changeTag('1')">{{$t('exam.courses.all')}}</li>
+          <li :class="query.activeTag === '2' ? 'active' : ''" @click="changeTag('2')">{{$t('exam.courses.latestRelease')}}</li>
+          <li :class="query.activeTag === '3' ? 'active' : ''" @click="changeTag('3')">{{$t('fav.myFavorite')}}</li>
+        </ul>
       </div>
       <div class="course-card-list">
         <transition name="fade-transform" mode="out-in" v-for="course in courseList" :key="course.id">
           <div class="single-popular-course" v-show="course.show" @click="handleStartCourse(course)">
             <img :src="course.imageUrl" :alt="course.courseName">
             <div class="course-content">
-              <h4>{{ course.courseName }}</h4>
+              <h3 :title="course.courseName">{{ course.courseName | simpleStrFilter }}</h3>
               <div class="meta d-flex align-items-center" v-if="course.college">
                 <a href="#">{{ course.college }} & {{ course.major }}</a>
                 <span><i class="fa fa-circle" aria-hidden="true"></i></span>
                 <a href="#">{{ course.teacher }}</a>
               </div>
-              <p>{{ course.simpleDesc | simpleStrFilter(20) }}</p>
+              <p>{{ course.simpleDesc }}</p>
             </div>
             <div class="seat-rating-fee d-flex justify-content-between">
               <div class="seat-rating h-100 d-flex align-items-center">
@@ -55,8 +59,12 @@
 </template>
 <script>
 import { courseList } from '@/api/exam/course'
+import { getUserFavorites } from '@/api/exam/favorites'
 import { messageWarn, notifyFail } from '@/utils/util'
-import {simpleStrFilter} from '@/filters/index'
+
+const COURSE_ACTIVE_TAG_ALL = '1'
+const COURSE_ACTIVE_TAG_LATEST_RELEASE = '2'
+const COURSE_ACTIVE_TAG_MY_FAVORITE = '3'
 
 export default {
   data () {
@@ -65,12 +73,13 @@ export default {
       loading: true,
       isLastPage: false,
       query: {
-        sort: 'id',
+        sortField: 'sort',
         order: ' asc',
         page: 1,
         pageSize: 8,
         courseName: '',
-        status: 0
+        status: 0,
+        activeTag: COURSE_ACTIVE_TAG_ALL
       },
       courseList: []
     }
@@ -79,10 +88,28 @@ export default {
     this.getCourseList()
   },
   methods: {
-    simpleStrFilter: simpleStrFilter,
     submitForm () {
       this.query.page = 1
       this.getCourseList(true)
+    },
+    changeTag (tag) {
+      this.query.activeTag = tag
+      if (this.query.activeTag === COURSE_ACTIVE_TAG_LATEST_RELEASE) {
+        this.query.sortField = 'update_time'
+      } else if (this.query.activeTag === COURSE_ACTIVE_TAG_MY_FAVORITE) {
+        const params = {...this.query}
+        // 查询收藏的课程
+        params.targetType = '2'
+        this.loading = true
+        getUserFavorites(params).then(res => {
+          this.handleCourseListResponse(true, res.data.result)
+        }).catch(() => {
+          notifyFail(this, this.$t('load.loadFailed'))
+          this.loading = false
+        })
+        return
+      }
+      this.resetForm()
     },
     resetForm () {
       this.query.courseName = ''
@@ -90,19 +117,22 @@ export default {
     },
     getCourseList (reset = false) {
       this.loading = true
-      courseList(this.query).then(response => {
-        if (reset) {
-          this.courseList = []
-        }
-        const { total, isLastPage, list } = response.data.result
-        this.updateCourseList(list)
-        this.total = total
-        this.isLastPage = isLastPage
-        this.loading = false
+      courseList(this.query).then(res => {
+        this.handleCourseListResponse(reset, res.data.result)
       }).catch(() => {
         notifyFail(this, this.$t('load.loadFailed'))
         this.loading = false
       })
+    },
+    handleCourseListResponse (reset, result) {
+      if (reset) {
+        this.courseList = []
+      }
+      const { total, isLastPage, list } = result
+      this.updateCourseList(list)
+      this.total = total
+      this.isLastPage = isLastPage
+      this.loading = false
     },
     handleStartCourse (course) {
       this.$router.push({name: 'course-details', query: {courseId: course.id}})

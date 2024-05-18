@@ -25,8 +25,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotBlank;
 
 /**
  * 课程学员 exam_course_member

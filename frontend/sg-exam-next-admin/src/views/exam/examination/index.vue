@@ -1,10 +1,19 @@
 <template>
   <div>
-    <BasicTable @register="registerTable">
+    <BasicTable @register="registerTable" :rowSelection="{ type: 'checkbox' }">
       <template #toolbar>
         <a-button v-if="hasPermission(['exam:exam:add'])" type="primary" @click="handleCreate">
           {{ t('common.addText') }}
         </a-button>
+        <PopConfirmButton
+          v-if="hasPermission(['exam:exam:del'])"
+          title="确定删除么？"
+          okText="确认"
+          cancelText="取消"
+          @confirm="handleDelete"
+          color="error"
+        >删除
+        </PopConfirmButton>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -16,23 +25,22 @@
               auth: 'exam:exam:subject:add'
             },
             {
+              icon: 'ant-design:upload-outlined',
+              tooltip: '修改发布状态',
+              auth: 'exam:exam:edit',
+              popConfirm: {
+                title: '确定修改发布状态吗？',
+                confirm: handlePublic.bind(null, record),
+              },
+            },
+            {
               icon: 'clarity:note-edit-line',
               tooltip: t('common.editText'),
               onClick: handleEdit.bind(null, record),
               auth: 'exam:exam:edit'
             },
             {
-              icon: 'ant-design:delete-outlined',
-              tooltip: t('common.delText'),
-              color: 'error',
-              auth: 'exam:exam:del',
-              popConfirm: {
-                title: t('common.confirmDelText'),
-                confirm: handleDelete.bind(null, record),
-              },
-            },
-            {
-                icon: 'ant-design:export-outlined',
+                icon: 'ant-design:arrow-down-outlined',
                 tooltip: t('common.modules.exam.export'),
                 auth: 'exam:exam:edit',
                 popConfirm: {
@@ -59,9 +67,14 @@
 </template>
 <script lang="ts">
 import {useI18n} from '/@/hooks/web/useI18n';
-import {defineComponent} from 'vue';
+import {defineComponent, unref} from 'vue';
 import {BasicTable, TableAction, useTable} from '/@/components/Table';
-import {deleteExamination, getExaminationList, generateQrCodeMessage} from '/@/api/exam/examination';
+import {
+  getExaminationList,
+  generateQrCodeMessage,
+  deleteBatchExamination,
+  updateExamination
+} from '/@/api/exam/examination';
 import {useModal} from '/@/components/Modal';
 import ExaminationModal from './ExaminationModal.vue';
 import QrCodeModal from './QrCodeModal.vue';
@@ -71,10 +84,13 @@ import {useGo} from "/@/hooks/web/usePage";
 import {usePermission} from '/@/hooks/web/usePermission';
 import {useMessage} from "/@/hooks/web/useMessage";
 import {exportSubjects} from '/@/api/exam/subject';
+import {PopConfirmButton} from "/@/components/Button";
 
 export default defineComponent({
   name: 'ExaminationManagement',
-  components: {BasicTable, ExaminationModal, QrCodeModal, ExaminationDetailDrawer, TableAction},
+  components: {
+    PopConfirmButton,
+    BasicTable, ExaminationModal, QrCodeModal, ExaminationDetailDrawer, TableAction},
   setup() {
     const {t} = useI18n();
     const {hasPermission} = usePermission();
@@ -83,7 +99,7 @@ export default defineComponent({
     const [registerQrCodeModal, {openModal: openQrCodeModal}] = useModal();
     const [registerExamImageModal] = useModal();
     const go = useGo();
-    const [registerTable, {reload}] = useTable({
+    const [registerTable, {reload, getSelectRows, clearSelectedRowKeys}] = useTable({
       title: t('common.modules.exam.examination') + t('common.list'),
       api: getExaminationList,
       columns,
@@ -99,7 +115,7 @@ export default defineComponent({
       showIndexColumn: false,
       canResize: false,
       actionColumn: {
-        width: 200,
+        width: 250,
         title: t('common.operationText'),
         dataIndex: 'action',
         slots: {customRender: 'action'},
@@ -120,19 +136,42 @@ export default defineComponent({
       });
     }
 
-    async function handleDelete(record: Recordable) {
-      await deleteExamination(record.id);
+    async function handleDelete() {
+      const ids = getSelectedRowIds();
+      if (!ids || ids.length === 0) {
+        return;
+      }
+
+      await deleteBatchExamination(ids);
       createMessage.success(t('common.operationSuccessText'));
+      clearSelectedRowKeys();
       await reload();
     }
 
-    function handleSuccess() {
-      createMessage.success(t('common.operationSuccessText'));
+    function handleSuccess(isUpdate) {
+      let msg = t('common.operationSuccessText');
+      if (isUpdate && !unref(isUpdate)) {
+        msg = '新增成功，状态未未发布，需要发布后才生效';
+      }
+      createMessage.success(msg);
       reload();
     }
 
     function handleSubjects(record: Recordable) {
       go('/exam/examination_subjects/' + record.id);
+    }
+
+    async function handlePublic(record: Recordable) {
+      const data = {...record}
+      if (data.status === 0) {
+        data.status = 1;
+      } else {
+        data.status = 0;
+      }
+
+      await updateExamination(data.id, data);
+      createMessage.success(t('common.operationSuccessText'));
+      await reload();
     }
 
     function handleExport(record: Recordable) {
@@ -164,6 +203,19 @@ export default defineComponent({
       }
     }
 
+    function getSelectedRowIds() {
+      const rows = getSelectRows();
+      if (!rows || rows.length === 0) {
+        return undefined;
+      }
+
+      const ids = [];
+      rows.forEach(e => {
+        ids.push(e.id);
+      });
+      return ids;
+    }
+
     return {
       t,
       hasPermission,
@@ -174,6 +226,7 @@ export default defineComponent({
       handleCreate,
       handleEdit,
       handleSubjects,
+      handlePublic,
       handleDelete,
       handleSuccess,
       handleExport,

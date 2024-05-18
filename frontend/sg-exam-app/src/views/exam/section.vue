@@ -2,9 +2,9 @@
   <div>
     <div class="section-content">
       <el-row>
-        <el-col :span="6">
+        <el-col :span="isCollapse ? 0 : 4">
           <transition name="el-fade-in">
-            <div class="section-title mb-30 sidebar-widget">
+            <div class="section-title mb-18 sidebar-widget" :class="isCollapse ? 'collapse': ''">
               <div v-for="(chapter, index) in detail.chapters" class="chapters-item" :key="chapter.chapter.id" @click="toggleIcon(chapter, index)">
                 <div class="chapter-container">
                   <div class="chapter-title-box">
@@ -25,12 +25,13 @@
             </div>
           </transition>
         </el-col>
-        <el-col :span="18" style="padding-left: 20px; padding-right: 20px;">
+        <el-col :span="isCollapse ? 24 : 20" style="padding-left: 20px; padding-right: 20px;">
           <transition name="el-fade-in">
             <div v-show="!loading">
               <div>
                 <div class="section-detail-title">
-                  <h3>{{ title }}</h3>
+                  <i class="iconfont icon-collapse collapse-btn" @click.stop="handleCollapse"></i>
+                  <h3 class="article-title">{{ title }}</h3>
                   <div class="title-tips">
                     <i class="el-icon-user"></i> {{updateTime}}
                     &nbsp;&nbsp;&nbsp;&nbsp;
@@ -103,7 +104,8 @@ export default {
       title: undefined,
       content: undefined,
       operator: '',
-      updateTime: ''
+      updateTime: '',
+      isCollapse: false
     }
   },
   created() {
@@ -281,105 +283,14 @@ export default {
       }).catch((err) => {
         console.error(err)
       })
+    },
+    handleCollapse() {
+      this.isCollapse = !this.isCollapse;
     }
   }
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
-.section-content .sg-video-component .video-js {
-  height: 400px !important;
-}
 
-.section-content {
-  width: 100%;
-  padding-top: 16px;
-}
-
-.section-detail-title {
-  margin-top: 16px;
-  margin-bottom: 16px;
-}
-
-.chapter-container {
-  cursor: pointer;
-  padding: 10px 0;
-  border-bottom: 1px solid #eee;
-  .chapter-title-box {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    .chapter-title{
-      font-weight: bold;
-      font-size: 18px;
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-  }
-}
-.section-container {
-  transition: height .3s ease;
-  .section-title {
-    height: 30px;
-    line-height: 30px;
-  }
-}
-.section-title {
-  margin-left: 10px;
-  cursor: pointer;
-}
-
-.section-button {
-  margin-top: 50px;
-  text-align: center;
-}
-
-.sg-video-component {
-  width: 100%;
-}
-
-.section-video {
-
-}
-
-.section-title:hover, .point-title:hover {
-  color: #409EFF;
-}
-
-.section-title-selected, .point-title-selected {
-  color: #409EFF;
-}
-
-.section-video-content {
-  padding-top: 20px;
-}
-
-.points-box {
-  display: flex;
-  flex-direction: row;
-  align-content: center;
-  .points-item {
-    padding: 0 15px;
-    margin-right: 14px;
-    background: #F6F7FB;
-    border-radius: 3px;
-    font-size: 12px;
-    color: #4c4c4c;
-    height: 40px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    margin-bottom: 10px;
-  }
-}
-
-.title-tips {
-  font-size: 12px;
-  color: grey;
-  margin-top: 10px;
-}
 </style>

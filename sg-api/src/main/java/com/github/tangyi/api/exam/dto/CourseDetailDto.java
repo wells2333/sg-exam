@@ -55,6 +55,11 @@ public class CourseDetailDto {
 	 */
 	private Boolean isUserJoin;
 
+	/**
+	 * 是否已经收藏
+	 */
+	private Boolean favorite;
+
 	private String attachName;
 
 	private String attachUrl;

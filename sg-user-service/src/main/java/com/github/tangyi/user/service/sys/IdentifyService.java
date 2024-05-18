@@ -31,6 +31,7 @@ import com.github.tangyi.common.exceptions.CommonException;
 import com.github.tangyi.common.properties.SysProperties;
 import com.github.tangyi.common.utils.AesUtil;
 import com.github.tangyi.common.utils.SysUtil;
+import com.github.tangyi.common.utils.TxUtil;
 import com.github.tangyi.common.vo.UserVo;
 import com.github.tangyi.constants.UserCacheName;
 import com.github.tangyi.user.mapper.sys.RoleMapper;
@@ -45,7 +46,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -55,6 +59,7 @@ import java.util.List;
 @AllArgsConstructor
 public class IdentifyService implements IIdentifyService, UserCacheName {
 
+	private final PlatformTransactionManager txManager;
 	private final IUserRoleService userRoleService;
 	private final IUserAuthsService userAuthsService;
 	private final IUserService userService;
@@ -191,7 +196,6 @@ public class IdentifyService implements IIdentifyService, UserCacheName {
 	}
 
 	@Override
-	@Transactional
 	public boolean defaultRole(User user, String tenantCode, String identifier) {
 		if (StringUtils.isEmpty(tenantCode)) {
 			tenantCode = TenantConstant.DEFAULT_TENANT_CODE;
@@ -208,7 +212,6 @@ public class IdentifyService implements IIdentifyService, UserCacheName {
 	}
 
 	@Override
-	@Transactional
 	@CacheEvict(value = {USER, USER_DTO, USER_ROLE, USER_PERMISSION, USER_AUTHS, USER_MENU,
 			USER_MENU_PERMISSION}, key = "#userDto.tenantCode + ':' + #userDto.identifier")
 	public boolean register(UserDto userDto) {
@@ -219,26 +222,37 @@ public class IdentifyService implements IIdentifyService, UserCacheName {
 		// 初始化用户名，系统编号，租户编号
 		user.setCommonValue(userDto.getIdentifier(), SysUtil.getTenantCode());
 		user.setStatus(CommonConstant.DEL_FLAG_NORMAL);
-		// 初始化头像
-		if (StringUtils.isNotBlank(userDto.getAvatarUrl())) {
-			Attachment attachment = new Attachment();
-			attachment.setCommonValue(userDto.getIdentifier(), SysUtil.getTenantCode());
-			attachment.setUrl(userDto.getAvatarUrl());
-			attachment.setGroupCode(AttachTypeEnum.AVATAR.getValue());
-			if (attachmentService.insert(attachment) > 0) {
-				user.setAvatarId(attachment.getId());
+		TransactionStatus status = TxUtil.startTransaction(txManager);
+		try {
+			// 初始化头像
+			if (StringUtils.isNotBlank(userDto.getAvatarUrl())) {
+				Attachment attachment = new Attachment();
+				attachment.setCommonValue(userDto.getIdentifier(), SysUtil.getTenantCode());
+				attachment.setUrl(userDto.getAvatarUrl());
+				attachment.setGroupCode(AttachTypeEnum.AVATAR.getValue());
+				if (attachmentService.insert(attachment) > 0) {
+					user.setAvatarId(attachment.getId());
+				}
 			}
-		}
-		if (this.userMapper.insert(user) > 0) {
-			registerUserAuths(user, userDto.getIdentifier(), userDto.getIdentityType(), password);
-			// 分配默认角色
-			return this.defaultRole(user, userDto.getTenantCode(), userDto.getIdentifier());
+			if (this.userMapper.insert(user) > 0) {
+				this.registerUserAuths(user, userDto.getIdentifier(), userDto.getIdentityType(), password);
+				// 分配默认角色
+				boolean res = this.defaultRole(user, userDto.getTenantCode(), userDto.getIdentifier());
+				txManager.commit(status);
+				return res;
+			}
+		} catch (DuplicateKeyException e) {
+			txManager.rollback(status);
+			log.error("Failed to register due to: {}", e.getMessage(), e);
+			throw new CommonException("Username duplicate: " + userDto.getIdentifier());
+		} catch (Exception e) {
+			txManager.rollback(status);
+			throw e;
 		}
 		return false;
 	}
 
 	@Override
-	@Transactional
 	public void registerUserAuths(User user, String identifier, Integer identityType, String password) {
 		UserAuths userAuths = new UserAuths();
 		userAuths.setCommonValue(identifier, user.getTenantCode());

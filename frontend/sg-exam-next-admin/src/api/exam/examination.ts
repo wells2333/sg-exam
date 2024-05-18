@@ -31,10 +31,11 @@ export const updateExamination = (id: string, params?: object
   );
 };
 
-export const deleteExamination = (id: string) => {
-  return defHttp.delete<ApiRes>(
+export const deleteBatchExamination = (obj) => {
+  return defHttp.post<ApiRes>(
     {
-      url: ExaminationApi.Base + '/' + id,
+      url: ExaminationApi.Base + '/deleteAll',
+      data: obj
     }
   );
 };

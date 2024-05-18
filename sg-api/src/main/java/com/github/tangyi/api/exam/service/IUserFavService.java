@@ -19,5 +19,21 @@ package com.github.tangyi.api.exam.service;
 import com.github.tangyi.api.exam.model.ExamUserFav;
 import com.github.tangyi.common.service.ICrudService;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 public interface IUserFavService extends ICrudService<ExamUserFav> {
+
+	boolean favorite(Long userId, Long targetId, int targetType, Integer favType);
+
+	boolean isUserFavorites(Long userId, Long targetId, int targetType);
+
+	Set<Long> findUserFavoritesIds(Long userId, int targetType);
+
+	Map<Long, ExamUserFav> findUserFavorites(Long userId, int targetType);
+
+	Set<Long> findUserFavoritesFromCache(Long userId, int targetType);
+
+	Map<Long, Long> findFavCount(List<Long> ids, int targetType);
 }

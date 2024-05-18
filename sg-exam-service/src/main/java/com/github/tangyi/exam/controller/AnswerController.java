@@ -31,7 +31,7 @@ import com.github.tangyi.exam.enums.ExaminationType;
 import com.github.tangyi.exam.service.RankInfoService;
 import com.github.tangyi.exam.service.data.SubjectViewCounterService;
 import com.github.tangyi.exam.service.exam.ExaminationActionService;
-import com.github.tangyi.exam.service.fav.SubjectFavoritesService;
+import com.github.tangyi.exam.service.fav.SubjectFavService;
 import com.github.tangyi.exam.service.subject.SubjectsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -56,7 +56,7 @@ public class AnswerController extends BaseController {
 	private final SubjectsService subjectsService;
 	private final ExaminationActionService actionService;
 	private final RankInfoService rankInfoService;
-	private final SubjectFavoritesService subjectFavoritesService;
+	private final SubjectFavService subjectFavService;
 	private final SubjectViewCounterService subjectViewCounterService;
 
 	@GetMapping("/{id}")
@@ -152,7 +152,7 @@ public class AnswerController extends BaseController {
 		SubjectDto dto = subjectsService.nextSubjectByCategoryId(next);
 		if (dto != null) {
 			if (next.isFindFav()) {
-				subjectFavoritesService.findUserFavorites(Collections.singletonList(dto));
+				subjectFavService.fillUserFavorites(Collections.singletonList(dto));
 			}
 			if (next.isView()) {
 				dto.setViews(subjectViewCounterService.viewSubject(dto.getId()).toString());

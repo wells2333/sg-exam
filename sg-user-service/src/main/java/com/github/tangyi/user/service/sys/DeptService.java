@@ -17,7 +17,6 @@
 package com.github.tangyi.user.service.sys;
 
 import cn.hutool.core.collection.CollUtil;
-import com.beust.jcommander.internal.Lists;
 import com.github.tangyi.api.user.dto.DeptDto;
 import com.github.tangyi.api.user.model.Dept;
 import com.github.tangyi.api.user.model.User;

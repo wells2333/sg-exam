@@ -75,7 +75,7 @@ public class Examination extends BaseEntity<Examination> {
 	private Integer totalScore;
 
 	/**
-	 * 考试状态
+	 * 考试状态，1：发布，0：未发布
 	 */
 	private Integer status;
 

@@ -91,7 +91,7 @@ export default defineComponent({
           await createCourse(values);
         }
         closeModal();
-        emit('success');
+        emit('success', isUpdate);
       } finally {
         setModalProps({ confirmLoading: false });
       }

@@ -16,12 +16,9 @@
 
 package com.github.tangyi.api.user.dto;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.github.tangyi.common.base.BaseEntity;
 import lombok.Data;
 
 import java.io.Serializable;
