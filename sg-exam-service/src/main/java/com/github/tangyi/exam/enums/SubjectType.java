@@ -16,6 +16,7 @@
 
 package com.github.tangyi.exam.enums;
 
+import com.github.tangyi.api.exam.model.SubjectMaterial;
 import com.github.tangyi.exam.handler.AbstractAnswerHandler;
 import com.github.tangyi.exam.handler.impl.*;
 import com.github.tangyi.exam.service.subject.*;

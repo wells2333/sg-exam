@@ -18,11 +18,11 @@ package com.github.tangyi.user.controller.sys;
 
 import com.github.tangyi.api.user.dto.DeptDto;
 import com.github.tangyi.api.user.model.Dept;
-import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.common.log.OperationType;
 import com.github.tangyi.common.log.SgLog;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.common.vo.DeptVo;
+import com.github.tangyi.common.base.BaseController;
 import com.github.tangyi.user.service.sys.DeptService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

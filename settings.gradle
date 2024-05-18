@@ -1,4 +1,4 @@
-rootProject.name = 'sg-exam-next'
+rootProject.name = 'sg-exam'
 include 'sg-api'
 include 'sg-common'
 include 'sg-job'

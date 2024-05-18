@@ -16,6 +16,7 @@
 
 package com.github.tangyi.user.service.sys;
 
+import com.github.tangyi.api.user.constant.TenantConstant;
 import com.github.tangyi.api.user.model.SysConfig;
 import com.github.tangyi.api.user.service.ISysConfigService;
 import com.github.tangyi.common.properties.SysProperties;

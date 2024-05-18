@@ -17,8 +17,8 @@
 package com.github.tangyi.user.service;
 
 import com.github.pagehelper.PageInfo;
-import com.github.tangyi.api.common.IdNameDto;
 import com.github.tangyi.api.user.dto.DeptDto;
+import com.github.tangyi.api.common.IdNameDto;
 import com.github.tangyi.api.user.model.User;
 import com.github.tangyi.api.user.service.IDeptService;
 import com.github.tangyi.api.user.service.IUserService;

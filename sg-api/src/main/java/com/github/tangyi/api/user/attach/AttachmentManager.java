@@ -22,6 +22,7 @@ import com.github.tangyi.common.exceptions.CommonException;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public interface AttachmentManager {
 

@@ -37,7 +37,12 @@ public class ExamFavService extends AbstractFavService implements IFavService, U
 	}
 
 	public void findUserFavorites(List<ExaminationDto> dtoList) {
-		Set<Long> favorites = findUserFavorites();
+		Set<Long> favorites = null;
+		try {
+			favorites = findUserFavorites();
+		} catch (Exception e) {
+			log.error("Failed to find user favorites.", e);
+		}
 		if (CollectionUtils.isEmpty(favorites)) {
 			return;
 		}

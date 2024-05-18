@@ -21,8 +21,9 @@ ENV TZ=Asia/Shanghai
 
 # Copy necessary files and directories
 WORKDIR /apps/data/web/working
-COPY frontend/sg-exam-app/dist /usr/share/nginx/html
-COPY frontend/sg-exam-next-admin/dist /usr/share/nginx/html/admin
+COPY frontend/sg-exam-web/dist /usr/share/nginx/html
+COPY frontend/sg-exam-admin/dist /usr/share/nginx/html/admin
+COPY frontend/sg-exam-mobile/dist /usr/share/nginx/html/mobile
 COPY config-repo/nginx /etc/nginx/
 COPY sg-user-service/build/libs/*.jar app.jar
 COPY config-repo config-repo

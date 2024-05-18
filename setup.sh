@@ -2,9 +2,9 @@
 set -e
 
 BASENAME=$(basename "$0")
-SG_EXAM_APP="sg-exam-app"
-SG_EXAM_NEXT_ADMIN="sg-exam-next-admin"
-SG_EXAM_NEXT_APP="sg-exam-next-app"
+SG_EXAM_WEB="sg-exam-web"
+SG_EXAM_ADMIN="sg-exam-admin"
+SG_EXAM_MOBILE="sg-exam-mobile"
 SG_EXAM_USER_SERVICE="sg-user-service"
 SG_EXAM_IMAGE_NAME="registry.cn-hangzhou.aliyuncs.com/sg-exam-next/sg-exam"
 
@@ -22,9 +22,9 @@ function update_version() {
   cd ../sg-job && update_build "$version"
   cd ../sg-user-service && update_build "$version"
   cd ../frontend
-  cd sg-exam-app && update_package_json "$version"
-  cd ../sg-exam-next-admin && update_package_json "$version"
-  cd ../sg-exam-next-app && update_package_json "$version"
+  cd sg-exam-web && update_package_json "$version"
+  cd ../sg-exam-admin && update_package_json "$version"
+  cd ../sg-exam-mobile && update_package_json "$version"
   cd ../..
   echo "Project version has been updated to $version successfully."
 }
@@ -40,36 +40,36 @@ function update_package_json() {
 }
 
 function build_web() {
-  echo "Building $SG_EXAM_APP ..."
+  echo "Building $SG_EXAM_WEB ..."
   # shellcheck disable=SC2164
-  cd frontend/sg-exam-app
+  cd frontend/sg-exam-web
   yarn build
   cd ../..
-  echo "$SG_EXAM_APP has been built successfully."
+  echo "$SG_EXAM_WEB has been built successfully."
 }
 
 function build_admin() {
-  echo "Building $SG_EXAM_NEXT_ADMIN ..."
+  echo "Building $SG_EXAM_ADMIN ..."
   # shellcheck disable=SC2164
-  cd frontend/sg-exam-next-admin
+  cd frontend/sg-exam-admin
   yarn build
   cd ../..
-  echo "$SG_EXAM_NEXT_ADMIN has been built successfully."
+  echo "$SG_EXAM_ADMIN has been built successfully."
 }
 
-function build_app() {
-  echo "Building $SG_EXAM_NEXT_APP ..."
+function build_mobile() {
+  echo "Building $SG_EXAM_MOBILE ..."
   # shellcheck disable=SC2164
-  cd frontend/sg-exam-next-app
-  export NODE_OPTIONS=--openssl-legacy-provider && yarn build:weapp
+  cd frontend/sg-exam-mobile
+  export NODE_OPTIONS=--openssl-legacy-provider && yarn build:h5
   cd ../..
-  echo "$SG_EXAM_NEXT_APP has been built successfully."
+  echo "$SG_EXAM_MOBILE has been built successfully."
 }
 
 function build_frontend() {
   build_web
   build_admin
-  build_app
+  build_mobile
 }
 
 function build_service() {

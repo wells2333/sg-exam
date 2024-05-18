@@ -20,8 +20,12 @@ import com.github.tangyi.api.user.model.AttachGroup;
 import com.github.tangyi.api.user.model.Attachment;
 import com.github.tangyi.api.user.model.SysAttachmentChunk;
 import com.github.tangyi.common.exceptions.CommonException;
+import com.github.tangyi.common.oss.exceptions.OssException;
 
 import java.io.IOException;
+import java.rmi.ServerException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public interface AttachmentStorage {

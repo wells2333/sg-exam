@@ -17,6 +17,7 @@
 package com.github.tangyi.user.service.attach;
 
 import com.github.pagehelper.PageInfo;
+import com.github.tangyi.api.exam.model.Examination;
 import com.github.tangyi.api.user.model.Attachment;
 import com.github.tangyi.api.user.service.IAttachmentService;
 import com.github.tangyi.common.exceptions.AttachNotExistException;

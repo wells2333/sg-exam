@@ -17,6 +17,7 @@
 package com.github.tangyi.api.exam.dto;
 
 import com.github.tangyi.api.exam.model.ExamCourseChapter;
+import com.github.tangyi.api.exam.model.ExamCourseSection;
 import lombok.Data;
 
 import java.util.List;

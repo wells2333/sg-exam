@@ -1,6 +1,6 @@
 <h1 align="center">Welcome to sg-exam 👋</h1>
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-0.0.14-blue.svg?cacheSeconds=2592000" />
+  <img alt="Version" src="https://img.shields.io/badge/version-0.0.15-blue.svg?cacheSeconds=2592000" />
   <a href="https://www.yuque.com/tangyi-5ldnl/rzv4xd/nl8d6g6mobdgylk7?singleDoc#" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
@@ -26,22 +26,21 @@
 | 前台 | [访问前台](https://yunmianshi.com.cn/) | 账号：preview，密码：123456 |
 | 后台 | [访问后台](https://yunmianshi.com.cn/admin) | 默认租户账号：preview，密码：123456 |
 
-### 小程序 & 公众号 & H5
+### 公众号 & H5
 
 | 平台 | 二维码 | 说明 |
-|-------|-------|-------|
-| 小程序 | <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wx.jpg" width="130"/> | 小程序体验 |
+|-------|-------|------|
 | 公众号 | <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp.jpeg" height="130"/> | 发布部署文档、源码解析相关的文章 |
-| H5 | <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/h5.png" width="130"/> | H5 调查问卷 |
+| H5 | <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/h5.png" width="130"/> | H5 |
 
 ## 功能概述
 
 <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/business.png" width="600"/>
 
-本项目综合 Web 前端、后台管理系统与小程序客户端，旨在打造流畅的在线学习与考试环境。
+本项目综合 Web 前端、后台管理系统与 H5 客户端，旨在打造流畅的在线学习与考试环境。
 
 - **Web 前端亮点**：聚焦在线教育核心，用户可享受无缝的在线考试体验，深入参与课程学习与个性化练习，全面提升学习互动性。
-- **小程序客户端**：精简而不简单，同样专注于考试参与功能，确保用户随时随地，灵活安排学习与测评。
+- **H5 客户端**：精简而不简单，同样专注于考试参与功能，确保用户随时随地，灵活安排学习与测评。
 - **后台管理系统**：集成了强大的教育运营管理工具，包括：
     - **系统配置**：全面管理单位、用户、部门、角色、菜单及操作日志，支持代码自动生成，加速迭代效率。
     - **考务精细化管理**：从课程创建至成绩评估，覆盖课程、考试、题库及成绩全链条管理，确保教学活动有序高效。
