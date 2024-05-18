@@ -136,59 +136,67 @@ img {
 
 .el-button--primary {
   color: $white-color;
-  background-color: $bg-default;
-  border-color: $bg-default;
+  background-color: $bg-default !important;
+  border-color: $bg-default !important;
 }
 
 .el-button--text {
-  color: $bg-default;
+  color: $bg-default !important;
 }
 
 .el-button--text:focus, .el-button--text:hover {
-  color: $bg-default;
+  color: $bg-default !important;
 }
 
 .el-button:focus, .el-button:hover {
-  color: $bg-default;
+  color: $bg-default !important;
 }
 
 .el-button--primary:focus, .el-button--primary:hover {
   color: $white-color;
-  background-color: $bg-default-hover;
-  border-color: $bg-default-hover;
+  background-color: $bg-default-hover !important;
+  border-color: $bg-default-hover !important;
 }
 
 .el-input.is-active .el-input__inner, .el-input__inner:focus {
-  border-color: $bg-default;
+  border-color: $bg-default !important;
 }
 
 .el-date-table td.current:not(.disabled) span {
-  background-color: $bg-default;
+  background-color: $bg-default !important;
 }
 
 .el-date-table td.available:hover {
-  color: $bg-default;
+  color: $bg-default !important;
 }
 
 .el-date-table td.today span {
-  color: $bg-default;
+  color: $bg-default !important;
 }
 
 .el-radio__input.is-checked .el-radio__inner {
-  border-color: $bg-default;
-  background: $bg-default;
+  border-color: $bg-default !important;
+  background: $bg-default !important;
 }
 
 .el-radio__input.is-checked + .el-radio__label {
-  color: $bg-default;
+  color: $bg-default !important;
 }
 
 .el-tabs__item.is-active {
-  color: $bg-default;
+  color: $bg-default !important;
 }
 
 .el-tabs__item:hover {
-  color: $bg-default;
+  color: $bg-default !important;
+}
+
+.el-pagination.is-background .el-pager li:not(.disabled).active {
+  background-color: $bg-default !important;
+}
+
+.el-pagination.is-background .el-pager li:not(.disabled):hover {
+  color: $bg-default-hover !important;
 }
 
 .header-area {
@@ -467,24 +475,6 @@ img {
 
 .btn:not(:disabled):not(.disabled) {
   cursor: pointer;
-}
-
-.clever-btn {
-  @include trans-duration(300ms);
-  display: inline-block;
-  min-width: 160px;
-  height: 40px;
-  background-color: $bg-default;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-size: 14px;
-  color: $white-color;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  padding: 0 30px;
-  line-height: 40px;
-  text-align: center;
 }
 
 .single-cool-facts-area {
@@ -1430,6 +1420,7 @@ img {
 }
 
 .clever-btn {
+  @include trans-duration(300ms);
   display: inline-block;
   min-width: 160px;
   height: 40px;
@@ -1442,6 +1433,7 @@ img {
   border: 1px solid transparent;
   border-radius: 6px;
   padding: 0 30px;
+  margin-bottom: 30px !important;
   line-height: 40px;
   text-align: center;
   -webkit-transition-duration: 300ms;
@@ -1622,7 +1614,7 @@ img {
 }
 
 .privacy-policy-box {
-  width: 800px;
+  width: 800px !important;
   height: 100%;
   overflow: auto;
 

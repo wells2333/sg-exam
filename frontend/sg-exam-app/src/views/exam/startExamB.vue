@@ -319,7 +319,6 @@ export default {
       return
     }
 
-    debugger
     this.$confirm(this.$t('exam.startExam.confirmExit'), this.$t('tips'), {
       confirmButtonText: this.$t('sure'),
       cancelButtonText: this.$t('cancel'),

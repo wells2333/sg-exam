@@ -26,8 +26,7 @@
           </transition>
         </el-col>
         <el-col :span="isCollapse ? 24 : 20" style="padding-left: 20px; padding-right: 20px;">
-          <transition name="el-fade-in">
-            <div v-show="!loading">
+          <div v-loading="loading">
               <div>
                 <div class="section-detail-title">
                   <i class="iconfont icon-collapse collapse-btn" @click.stop="handleCollapse"></i>
@@ -46,24 +45,30 @@
                         {{ point.title }}</p>
                       </div>
                 </div>
-                <div v-if="pdfUrl !== undefined">
-                  <pdf ref="pdf" :src="pdfUrl" v-for="i in pdfNumPages" :key="i" :page="i"></pdf>
+                <div v-if="contentType === 2" class="pdf-container">
+                  <div class="pdf-container-pagination mb-30">
+                    <el-pagination
+                      background
+                      @current-change="handlePdfCurrentChange"
+                      :current-page="pdf.page"
+                      layout="prev, pager, next"
+                      :page-size="1"
+                      :pager-count="5"
+                      :total="pdf.numPages"
+                      :hide-on-single-page="true">
+                    </el-pagination>
+                  </div>
+                  <pdf ref="pdf" :src="pdfUrl" :page="pdf.page" @page-loaded="handlePdfPageLoaded($event)"></pdf>
                 </div>
                 <div class="section-video" v-else>
-                  <sg-video v-if="videoUrl !== undefined && videoUrl !== null && videoUrl !== ''" ref="sectionVideo">
-                  </sg-video>
+                  <sg-video v-if="videoUrl !== undefined && videoUrl !== null && videoUrl !== ''" ref="sectionVideo"></sg-video>
                   <sg-audio v-if="audioUrl !== undefined && audioUrl !== null && audioUrl !== ''" ref="sectionAudio"></sg-audio>
                   <div class="section-video-content">
                     <div v-html="content"></div>
                   </div>
                 </div>
               </div>
-              <div class="section-button">
-                <el-button type="primary" class="clever-btn mb-30 w-10" @click="goBack">{{$t('return')}}
-                </el-button>
-              </div>
             </div>
-          </transition>
         </el-col>
       </el-row>
     </div>
@@ -94,7 +99,6 @@ export default {
       videoUrl: undefined,
       audioUrl: undefined,
       pdfUrl: undefined,
-      pdfNumPages: 1,
       detail: {},
       contentType: 0,
       clickSectionId: undefined,
@@ -105,7 +109,11 @@ export default {
       content: undefined,
       operator: '',
       updateTime: '',
-      isCollapse: false
+      isCollapse: false,
+      pdf: {
+        page: 1,
+        numPages: 1
+      }
     }
   },
   created() {
@@ -275,22 +283,38 @@ export default {
       this.detail = Object.assign({}, this.detail)
     },
     getPdfNumPages(url) {
+      this.loading = true
       let loadingTask = pdf.createLoadingTask(url)
       loadingTask.promise.then(pdf => {
         this.pdfUrl = loadingTask
-        this.pdfNumPages = pdf.numPages
+        this.pdf.numPages = pdf.numPages
+        this.loading = false
         this.$forceUpdate()
       }).catch((err) => {
+        this.loading = false
         console.error(err)
       })
     },
     handleCollapse() {
       this.isCollapse = !this.isCollapse;
+    },
+    handlePdfCurrentChange(val) {
+      this.loading = true
+      this.pdf.page = val
+    },
+    handlePdfPageLoaded(event) {
+      this.loading = false
     }
   }
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
+.pdf-container {
 
+}
+
+.pdf-container-pagination {
+  text-align: center;
+}
 </style>

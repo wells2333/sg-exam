@@ -24,11 +24,8 @@
     <div class="exam-card-list">
       <transition name="fade-transform" mode="out-in" v-for="exam in examList" :key="exam.id">
         <div class="card-item single-popular-course" v-show="exam.show">
-          <div>
-            <a href="javascript: void(-1);" class="card-item-snapshoot"
-               :style="'background-image: url(' + exam.imageUrl + ');'"
-               @click="handleClickExam(exam)">
-            </a>
+          <div @click="handleClickExam(exam)">
+            <img class="card-item-snapshoot" :src="exam.imageUrl" />
           </div>
           <div class="card-item-detail">
             <div>
