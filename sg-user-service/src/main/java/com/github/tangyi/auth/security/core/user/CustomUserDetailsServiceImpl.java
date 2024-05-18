@@ -31,6 +31,7 @@ import com.github.tangyi.common.exceptions.TenantNotFoundException;
 import com.github.tangyi.common.model.CustomUserDetails;
 import com.github.tangyi.common.utils.DateUtils;
 import com.github.tangyi.common.utils.TenantHolder;
+import com.github.tangyi.common.utils.TxUtil;
 import com.github.tangyi.common.vo.UserVo;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -38,6 +39,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -47,6 +50,7 @@ import java.util.stream.Collectors;
 @Service("userDetailsService")
 public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 
+	private final PlatformTransactionManager txManager;
 	private final IIdentifyService identifyService;
 	private final WxSessionService wxService;
 
@@ -162,7 +166,14 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 			return;
 		}
 
-		identifyService.registerUserAuths(user, social, IdentityType.PHONE_NUMBER.getValue(), social);
+		TransactionStatus status = TxUtil.startTransaction(txManager);
+		try {
+			identifyService.registerUserAuths(user, social, IdentityType.PHONE_NUMBER.getValue(), social);
+			txManager.commit(status);
+		} catch (Exception e) {
+			txManager.rollback(status);
+			throw e;
+		}
 	}
 }
 

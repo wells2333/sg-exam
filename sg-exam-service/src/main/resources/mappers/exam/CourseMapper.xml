@@ -63,7 +63,14 @@
             WHERE exam_type = 0 AND member_type = 2 AND member_id = #{params.deptId}))
         </if>
         )
-        ORDER BY sort DESC
+        <choose>
+            <when test="params.sortField != null">
+                ORDER BY #{params.sortField} DESC
+            </when>
+            <when test="params.sortField == null">
+                ORDER BY sort DESC
+            </when>
+        </choose>
     </select>
 
     <select id="findAllCourseCount" resultType="java.lang.Long">

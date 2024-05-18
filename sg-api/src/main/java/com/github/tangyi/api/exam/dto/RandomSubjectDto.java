@@ -25,5 +25,10 @@ public class RandomSubjectDto {
 
 	private Long examinationId;
 
-	private Integer subjectCount;
+	/**
+	 * 随机组题方式：0：按题目数量，1：按考试总分
+	 */
+	private Integer type;
+
+	private Integer target;
 }

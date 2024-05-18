@@ -19,8 +19,6 @@ package com.github.tangyi.user.controller.message;
 import com.github.pagehelper.PageInfo;
 import com.github.tangyi.api.user.model.SysMessageRead;
 import com.github.tangyi.common.base.BaseController;
-import com.github.tangyi.common.log.OperationType;
-import com.github.tangyi.common.log.SgLog;
 import com.github.tangyi.common.model.R;
 import com.github.tangyi.user.service.message.SysMessageReadService;
 import io.swagger.v3.oas.annotations.Operation;

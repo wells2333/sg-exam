@@ -35,7 +35,7 @@ public class SpringDocConfig {
 	private static final String NAME = EnvUtils.getValue("DOC_NAME", "SG-EXAM");
 
 	@Bean
-	public OpenAPI openAPI() {
+	public OpenAPI openApi() {
 		return new OpenAPI().info(new Info()    //
 						.title(NAME)    //
 						.description(NAME)    //

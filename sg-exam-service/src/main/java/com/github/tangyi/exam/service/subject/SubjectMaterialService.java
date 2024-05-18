@@ -44,6 +44,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -65,13 +66,12 @@ public class SubjectMaterialService extends CrudService<SubjectMaterialMapper, S
 	private final SubjectCategoryService subjectCategoryService;
 
 	public PageInfo<SubjectDto> findSubjectPageById(SubjectDto subjectDto, Map<String, Object> params, int pageNum,
-													int pageSize) {
+			int pageSize) {
 		// 查询材料题目关联表
 		MaterialSubject ms = new MaterialSubject();
 		ms.setTenantCode(SysUtil.getTenantCode());
 		ms.setMaterialId(subjectDto.getMaterialId());
-		PageInfo<MaterialSubject> materialSubjects = materialSubjectService.findPage(params, pageNum,
-				pageSize);
+		PageInfo<MaterialSubject> materialSubjects = materialSubjectService.findPage(params, pageNum, pageSize);
 		List<SubjectDto> subjectDtoList = Lists.newArrayList();
 		// 根据题目 ID 查询题目信息
 		if (CollectionUtils.isNotEmpty(materialSubjects.getList())) {
@@ -83,8 +83,7 @@ public class SubjectMaterialService extends CrudService<SubjectMaterialMapper, S
 			if (params.get("subjectName") != null) {
 				String subjectName = params.get("subjectName").toString();
 				subjectDtoList = subjectDtoList.stream()
-						.filter(subject -> subject.getSubjectName().contains(subjectName))
-						.collect(Collectors.toList());
+						.filter(subject -> subject.getSubjectName().contains(subjectName)).collect(Collectors.toList());
 			}
 		}
 		// 按序号排序
@@ -115,7 +114,7 @@ public class SubjectMaterialService extends CrudService<SubjectMaterialMapper, S
 				// 找到材料题附属题目
 				List<MaterialSubject> listByMaterial = materialSubjectService.findListByMaterialId(id);
 				Long[] subjectIds = listByMaterial.stream().map(MaterialSubject::getSubjectId).toArray(Long[]::new);
-				if (subjectIds.length > 0){
+				if (subjectIds.length > 0) {
 					List<Subjects> childSubjects = subjectsService.findBySubjectIds(subjectIds);
 					List<SubjectDto> subjectDtoList = subjectsService.findSubjectDtoList(childSubjects, true, true);
 					dto.setChildSubjects(subjectDtoList);
@@ -265,7 +264,7 @@ public class SubjectMaterialService extends CrudService<SubjectMaterialMapper, S
 	 * 根据考试 ID 批量添加题目
 	 */
 	@Transactional
-	public Boolean batchAddSubjects(Long materialId,Long examinationId, List<SubjectDto> subjects) {
+	public Boolean batchAddSubjects(Long materialId, Long examinationId, List<SubjectDto> subjects) {
 		Integer nextNo = nextSubjectNo(materialId);
 		for (SubjectDto subject : subjects) {
 			subject.setId(null);
@@ -333,15 +332,13 @@ public class SubjectMaterialService extends CrudService<SubjectMaterialMapper, S
 		List<Subjects> subjects = this.subjectsService.findIdAndTypeByCategoryId(category.getId());
 		SgPreconditions.checkCollectionEmpty(subjects, "The category's subject is empty");
 		// 数量校验
-		Integer cnt = params.getSubjectCount();
+		Integer cnt = params.getTarget();
 		SgPreconditions.checkBoolean(cnt > subjects.size(), "The category's subject is not enough.");
 		List<SubjectDto> result = this.randomAddSubject(subjects, cnt);
 		Long examinationId = params.getExaminationId();
 		if (CollectionUtils.isNotEmpty(result)) {
-			this.batchAddSubjects(id,examinationId, result);
+			this.batchAddSubjects(id, examinationId, result);
 		}
 		return Boolean.TRUE;
 	}
-
-
 }

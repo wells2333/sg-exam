@@ -44,7 +44,7 @@ import com.github.tangyi.exam.service.ExamPermissionService;
 import com.github.tangyi.exam.service.ExaminationSubjectService;
 import com.github.tangyi.exam.service.MaterialSubjectService;
 import com.github.tangyi.exam.service.course.CourseService;
-import com.github.tangyi.exam.service.fav.ExamFavoritesService;
+import com.github.tangyi.exam.service.fav.ExamFavService;
 import com.github.tangyi.exam.service.subject.SubjectCategoryService;
 import com.github.tangyi.exam.service.subject.SubjectsService;
 import com.github.tangyi.exam.utils.ExamUtil;
@@ -56,7 +56,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -64,6 +63,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -72,13 +72,15 @@ import java.util.stream.Collectors;
 public class ExaminationService extends CrudService<ExaminationMapper, Examination>
 		implements IExaminationService, ExamCacheName, ExamConstant {
 
+	private static final int RANDOM_ADD_SUBJECT_MAX_CNT = EnvUtils.getInt("RANDOM_ADD_SUBJECT_MAX_CNT", 500);
+
 	private final SubjectsService subjectsService;
 	private final ExaminationSubjectService examinationSubjectService;
 	private final SysProperties sysProperties;
 	private final AttachmentManager attachmentManager;
 	private final SubjectCategoryService subjectCategoryService;
 	private final CourseService courseService;
-	private final ExamFavoritesService examFavoritesService;
+	private final ExamFavService examFavService;
 	private final ExamPermissionService examPermissionService;
 	private final IUserService userService;
 	private final ExamIdFetcher examIdFetcher;
@@ -113,7 +115,9 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		Long[] ids = Collections.singletonList(e.getId()).toArray(Long[]::new);
 		List<Course> courses = courseService.findListById(ids);
 		Map<Long, Course> courseMap = toCourseMap(courses);
-		return toDto(e, courseMap);
+		ExaminationDto dto = toDto(e, courseMap);
+		dto.setFavorite(examFavService.isUserFavorites(SysUtil.getUserId(), id));
+		return dto;
 	}
 
 	@Override
@@ -188,8 +192,8 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		for (ExaminationDto dto : dtoList) {
 			dto.setFavorite(true);
 		}
-		examFavoritesService.findExamStartCounts(dtoList);
-		examFavoritesService.findFavCount(dtoList);
+		examFavService.findStartCounts(dtoList);
+		examFavService.findFavCount(dtoList);
 		return PageUtil.newPageInfo(page, dtoList);
 	}
 
@@ -471,16 +475,26 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 
 	@Transactional
 	public Boolean randomAddSubjects(Long id, RandomSubjectDto params) {
+		Preconditions.checkNotNull(params.getType());
+		Preconditions.checkNotNull(params.getTarget());
 		// 校验分类是否存在
 		SubjectCategory category = this.subjectCategoryService.get(params.getCategoryId());
 		SgPreconditions.checkNull(category, "The subject category does not exists.");
 		// 根据分类查询题目
 		List<Subjects> subjects = this.subjectsService.findIdAndTypeByCategoryId(category.getId());
 		SgPreconditions.checkCollectionEmpty(subjects, "The category's subject is empty");
-		// 数量校验
-		Integer cnt = params.getSubjectCount();
-		SgPreconditions.checkBoolean(cnt > subjects.size(), "The category's subject is not enough.");
-		List<SubjectDto> result = this.randomAddSubject(subjects, cnt);
+		List<SubjectDto> result = null;
+		// 按题目数量组题
+		if (params.getType().equals(0)) {
+			Integer cnt = params.getTarget();
+			SgPreconditions.checkBoolean(cnt > subjects.size(), "The category's subject is not enough.");
+			result = this.randomAddSubjectBySubjectCnt(subjects, cnt);
+		} else if (params.getType().equals(1)) {
+			// 按试卷总分组题
+			Integer totalScore = params.getTarget();
+			result = this.randomAddSubjectByTotalScore(subjects, totalScore);
+		}
+
 		if (CollectionUtils.isNotEmpty(result)) {
 			this.batchAddSubjects(id, result);
 		}
@@ -509,19 +523,15 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 		}
 	}
 
-	/**
-	 * 随机选取题目
-	 */
-	private List<SubjectDto> randomAddSubject(List<Subjects> subjects, int cnt) {
-		StopWatch start = StopWatchUtil.start();
-		// 已经选取的题目 ID，用于去重
+	private List<SubjectDto> randomAddSubjectBySubjectCnt(List<Subjects> subjects, int cnt) {
+		long startNs = System.nanoTime();
 		Set<Long> idSet = Sets.newHashSetWithExpectedSize(cnt);
-		// 已经选取的题目
 		List<Subjects> tmpSubjects = Lists.newArrayListWithExpectedSize(cnt);
 		int itCnt = 0;
 		while (tmpSubjects.size() < cnt) {
 			itCnt++;
-			if (itCnt > 500) {
+			// 循环次数超过阈值，抛出异常，组题失败
+			if (itCnt > RANDOM_ADD_SUBJECT_MAX_CNT) {
 				throw new CommonException("Failed to compose examination，itCnt：" + itCnt);
 			}
 
@@ -539,7 +549,49 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 			SubjectDto temp = subjectsService.getSubject(sub.getSubjectId(), sub.getType());
 			result.add(temp);
 		}
-		log.info("randomAddSubject success, itCnt: {}, took: {}", itCnt, StopWatchUtil.stop(start));
+		long took = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
+		log.info("Random add subject by cnt finished, itCnt: {}, result size: {}, took: {}ms", itCnt, result.size(),
+				took);
+		return result;
+	}
+
+	private List<SubjectDto> randomAddSubjectByTotalScore(List<Subjects> subjects, int totalScore) {
+		long startNs = System.nanoTime();
+		Set<Long> idSet = Sets.newHashSet();
+		List<SubjectDto> result = Lists.newArrayList();
+		int tmpScore = 0;
+		int itCnt = 0;
+		while (tmpScore != totalScore) {
+			// 组题分数超过了目标分数，重新再来一次
+			if (tmpScore > totalScore) {
+				idSet.clear();
+				result.clear();
+				tmpScore = 0;
+				continue;
+			}
+
+			// 循环次数超过阈值，抛出异常，组题失败
+			itCnt++;
+			if (itCnt > RANDOM_ADD_SUBJECT_MAX_CNT) {
+				throw new CommonException("Failed to compose examination，itCnt：" + itCnt);
+			}
+
+			int index = ThreadLocalRandom.current().nextInt(0, subjects.size());
+			Subjects tmp = subjects.get(index);
+			if (!idSet.contains(tmp.getId())) {
+				SubjectDto dto = subjectsService.getSubject(tmp.getSubjectId(), tmp.getType());
+				if (dto != null) {
+					idSet.add(tmp.getId());
+					result.add(dto);
+					tmpScore += dto.getScore();
+					log.info("select subject: {}, current score: {}, target score: {}", tmp.getId(), tmpScore,
+							totalScore);
+				}
+			}
+		}
+		long took = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
+		log.info("Random add subject by total score finished, itCnt: {}, result size: {}, took: {}ms", itCnt,
+				result.size(), took);
 		return result;
 	}
 
@@ -564,9 +616,9 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 			});
 		}
 		if (Status.OPEN.equals(params.get("favorite"))) {
-			examFavoritesService.findExamStartCounts(dtoList);
-			examFavoritesService.findUserFavorites(dtoList);
-			examFavoritesService.findFavCount(dtoList);
+			examFavService.findStartCounts(dtoList);
+			examFavService.findUserFavorites(dtoList);
+			examFavService.findFavCount(dtoList);
 		}
 		return PageUtil.newPageInfo(page, dtoList);
 	}

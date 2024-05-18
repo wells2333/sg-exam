@@ -17,7 +17,6 @@
 package com.github.tangyi.api.user.model;
 
 import com.github.tangyi.common.base.BaseEntity;
-import com.github.tangyi.common.utils.SysUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.builder.ToStringBuilder;

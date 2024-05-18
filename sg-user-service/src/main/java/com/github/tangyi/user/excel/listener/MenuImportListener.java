@@ -43,8 +43,9 @@ public class MenuImportListener extends AbstractExcelImportListener<MenuExcelMod
 			menuList.add(menu);
 		});
 		menuList.forEach(menu -> {
-			if (menuService.update(menu) < 1)
+			if (menuService.update(menu) < 1) {
 				menuService.insert(menu);
+			}
 		});
 	}
 }

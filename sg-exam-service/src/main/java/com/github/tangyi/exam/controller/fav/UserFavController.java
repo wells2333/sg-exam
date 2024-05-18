@@ -25,9 +25,9 @@ import com.github.tangyi.common.model.R;
 import com.github.tangyi.exam.constants.UserFavConstant;
 import com.github.tangyi.exam.service.course.CourseService;
 import com.github.tangyi.exam.service.exam.ExaminationService;
-import com.github.tangyi.exam.service.fav.CourseFavoritesService;
-import com.github.tangyi.exam.service.fav.ExamFavoritesService;
-import com.github.tangyi.exam.service.fav.SubjectFavoritesService;
+import com.github.tangyi.exam.service.fav.CourseFavService;
+import com.github.tangyi.exam.service.fav.ExamFavService;
+import com.github.tangyi.exam.service.fav.SubjectFavService;
 import com.github.tangyi.exam.service.fav.UserFavService;
 import com.github.tangyi.exam.service.subject.SubjectsService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,9 +48,9 @@ import java.util.Map;
 public class UserFavController extends BaseController {
 
 	private final UserFavService userFavService;
-	private final ExamFavoritesService examFavoritesService;
-	private final SubjectFavoritesService subjectFavoritesService;
-	private final CourseFavoritesService courseFavoritesService;
+	private final ExamFavService examFavService;
+	private final SubjectFavService subjectFavService;
+	private final CourseFavService courseFavService;
 	private final ExaminationService examinationService;
 	private final CourseService courseService;
 	private final SubjectsService subjectsService;
@@ -97,19 +97,19 @@ public class UserFavController extends BaseController {
 	@PostMapping("favExam/{examinationId}")
 	@Operation(summary = "收藏/取消收藏考试")
 	public R<Boolean> favExam(@PathVariable Long examinationId, @RequestParam Long userId, @RequestParam Integer type) {
-		return R.success(examFavoritesService.favorite(userId, examinationId, type));
+		return R.success(examFavService.favorite(userId, examinationId, type));
 	}
 
 	@PostMapping("favSubject/{subjectId}")
 	@Operation(summary = "收藏/取消收藏题目")
 	public R<Boolean> favSubject(@PathVariable Long subjectId, @RequestParam Long userId, @RequestParam Integer type) {
-		return R.success(subjectFavoritesService.favorite(userId, subjectId, type));
+		return R.success(subjectFavService.favorite(userId, subjectId, type));
 	}
 
 	@PostMapping("favCourse/{courseId}")
 	@Operation(summary = "收藏/取消收藏课程")
 	public R<Boolean> favCourse(@PathVariable Long courseId, @RequestParam Long userId, @RequestParam Integer type) {
-		return R.success(courseFavoritesService.favorite(userId, courseId, type));
+		return R.success(courseFavService.favorite(userId, courseId, type));
 	}
 
 	@GetMapping("user/favorites")

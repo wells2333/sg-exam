@@ -17,39 +17,31 @@
 package com.github.tangyi.exam.service.fav;
 
 import com.github.pagehelper.PageInfo;
-import com.github.tangyi.api.exam.model.ExamFavStartCount;
 import com.github.tangyi.api.exam.model.ExamUserFav;
 import com.github.tangyi.api.exam.service.IUserFavService;
-import com.github.tangyi.api.user.constant.TenantConstant;
+import com.github.tangyi.common.config.CustomGlobalExceptionHandler;
 import com.github.tangyi.common.constant.Status;
 import com.github.tangyi.common.service.CrudService;
+import com.github.tangyi.common.utils.TxUtil;
 import com.github.tangyi.constants.ExamCacheName;
 import com.github.tangyi.exam.constants.UserFavConstant;
-import com.github.tangyi.exam.mapper.ExamFavStartCountMapper;
 import com.github.tangyi.exam.mapper.UserFavMapper;
 import com.github.tangyi.exam.service.data.RedisCounterService;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.redis.core.Cursor;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -60,7 +52,7 @@ public class UserFavService extends CrudService<UserFavMapper, ExamUserFav>
 	private final RedisTemplate<String, Long> longRedisTemplate;
 	private final RedisCounterService redisCounterService;
 	private final UserFavMapper userFavoritesMapper;
-	private final ExamFavStartCountMapper favStartCountMapper;
+	private final PlatformTransactionManager txManager;
 
 	@Override
 	@Cacheable(value = ExamCacheName.USER_FAVORITES, key = "#id")
@@ -69,7 +61,7 @@ public class UserFavService extends CrudService<UserFavMapper, ExamUserFav>
 	}
 
 	public PageInfo<ExamUserFav> findUserFavoritesPage(Map<String, Object> params, int pageNum, int pageSize,
-													   String targetType) {
+			String targetType) {
 		params.put("targetType", targetType);
 		return super.findPage(params, pageNum, pageSize);
 	}
@@ -101,47 +93,91 @@ public class UserFavService extends CrudService<UserFavMapper, ExamUserFav>
 		return super.deleteAll(ids);
 	}
 
-	@Transactional
+	/**
+	 * 收藏、取消收藏
+	 * @param userId 用户 ID
+	 * @param targetId 目标 ID，和业务相关，如考试、课程等
+	 * @param targetType 目标类型，和业务相关，如考试、课程等
+	 * @param favType 操作类型：1：收藏，其它：取消收藏
+	 * @return true: 操作成功，false: 操作失败
+	 */
+	@Override
 	public boolean favorite(Long userId, Long targetId, int targetType, Integer favType) {
-		String favCountKey = getFavCountKey(targetType);
-		Set<String> set = findUserFavoritesFromCache(userId, targetType);
 		ExamUserFav fav = new ExamUserFav();
 		fav.setTargetId(targetId);
 		fav.setTargetType(targetType);
 		fav.setUserId(userId);
-		if (Status.ONE == favType) {
-			set.add(targetId.toString());
-			redisCounterService.incrCount(favCountKey, targetId);
-			fav.setCommonValue();
-			userFavoritesMapper.insert(fav);
-		} else {
-			set.remove(targetId.toString());
-			userFavoritesMapper.deleteByUserIdAndTarget(fav);
-			redisCounterService.decrCount(favCountKey, targetId);
+		boolean isFav = Status.ONE.equals(favType);
+
+		// 更新 DB
+		boolean isDbDuplicate = false;
+		TransactionStatus status = TxUtil.startTransaction(txManager);
+		try {
+			if (isFav) {
+				fav.setCommonValue();
+				userFavoritesMapper.insert(fav);
+			} else {
+				userFavoritesMapper.deleteByUserIdAndTarget(fav);
+			}
+			txManager.commit(status);
+		} catch (DuplicateKeyException e) {
+			txManager.rollback(status);
+			log.warn("Execute favorite, userId: {}, targetId: {}, targetType: {}, favType: {}, msg: {}", userId,
+					targetId, targetType, favType, e.getMessage());
+			isDbDuplicate = true;
+		} catch (Exception e) {
+			txManager.rollback(status);
+			log.error("Failed to execute favorite, userId: {}, targetId: {}, targetType: {}, favType: {}", userId,
+					targetId, targetType, favType, e);
+			CustomGlobalExceptionHandler.throwInternalServerError();
 		}
-		String newValue = CollectionUtils.isNotEmpty(set) ? StringUtils.join(set, ",") : "";
-		String userFavKey = getUserFavKey(targetType);
-		longRedisTemplate.opsForHash().put(userFavKey, userId, newValue);
-		log.info("favorite success, targetId: {}, targetType: {}", targetId, targetType);
+
+		// 更新 Redis
+		this.updateUserFavorites(fav, isFav, !isDbDuplicate);
+		log.info("Execute favorite success, userId: {}, targetId: {}, targetType: {}", userId, targetId, targetType);
 		return true;
 	}
 
+	@Override
+	public boolean isUserFavorites(Long userId, Long targetId, int targetType) {
+		String favKey = getUserFavKey(userId, targetType);
+		Double score = longRedisTemplate.opsForZSet().score(favKey, targetId);
+		// Redis 没有数据，查询 DB
+		if (score == null) {
+			ExamUserFav fav = new ExamUserFav();
+			fav.setTargetId(targetId);
+			fav.setTargetType(targetType);
+			fav.setUserId(userId);
+			fav = userFavoritesMapper.getByUserIdAndTarget(fav);
+			if (fav == null) {
+				return false;
+			}
+
+			// DB 数据写入 Redis
+			long millis = Objects.requireNonNull(fav.getCreateTime()).getTime();
+			return Boolean.TRUE.equals(longRedisTemplate.opsForZSet().add(favKey, targetId, millis));
+		}
+		return score > 0;
+	}
+
+	@Override
 	public Set<Long> findUserFavoritesIds(Long userId, int targetType) {
 		if (userId == null) {
 			return Collections.emptySet();
 		}
-		Map<Long, ExamUserFav> favorites = findUserFavorites(userId, targetType);
-		return favorites.keySet();
+
+		return findUserFavorites(userId, targetType).keySet();
 	}
 
+	@Override
 	public Map<Long, ExamUserFav> findUserFavorites(Long userId, int targetType) {
 		if (userId == null) {
-			return Maps.newHashMap();
+			return Collections.emptyMap();
 		}
+
 		Map<Long, ExamUserFav> favorites = Maps.newHashMap();
-		Set<String> set = findUserFavoritesFromCache(userId, targetType);
-		for (String eId : set) {
-			Long targetId = Long.valueOf(eId);
+		Set<Long> set = findUserFavoritesFromCache(userId, targetType);
+		for (Long targetId : set) {
 			ExamUserFav fav = new ExamUserFav();
 			fav.setUserId(userId);
 			fav.setTargetId(targetId);
@@ -150,60 +186,17 @@ public class UserFavService extends CrudService<UserFavMapper, ExamUserFav>
 		return favorites;
 	}
 
-	public Set<String> findUserFavoritesFromCache(Long userId, int targetType) {
-		String favKey = getUserFavKey(targetType);
-		Object value = longRedisTemplate.opsForHash().get(favKey, userId);
-		if (value != null) {
-			return Stream.of(value.toString().split(",")).filter(StringUtils::isNotBlank).collect(Collectors.toSet());
-		}
-		return Sets.newHashSet();
+	@Override
+	public Set<Long> findUserFavoritesFromCache(Long userId, int targetType) {
+		String favKey = getUserFavKey(userId, targetType);
+		Set<Long> values = longRedisTemplate.opsForSet().members(favKey);
+		return CollectionUtils.isNotEmpty(values) ? values : Collections.emptySet();
 	}
 
+	@Override
 	public Map<Long, Long> findFavCount(List<Long> ids, int targetType) {
 		String facCountKey = getFavCountKey(targetType);
 		return redisCounterService.getCounts(facCountKey, ids);
-	}
-
-	public Map<String, Set<String>> getFavRelation(int targetType) {
-		String key = getUserFavKey(targetType);
-		Map<String, Set<String>> user2FavIdMap = Maps.newHashMap();
-		ScanOptions options = ScanOptions.scanOptions().match("*").count(2048).build();
-		try (Cursor<Map.Entry<Object, Object>> cursor = longRedisTemplate.opsForHash().scan(key, options)) {
-			while (cursor.hasNext()) {
-				Map.Entry<Object, Object> entry = cursor.next();
-				String userId = entry.getKey().toString();
-				Stream.of(entry.getValue().toString().split(",")).filter(StringUtils::isNotBlank)
-						.forEach(eId -> user2FavIdMap.computeIfAbsent(userId, s -> Sets.newHashSet()).add(eId));
-			}
-		}
-		log.info("get redis fav relation success, size: {}", user2FavIdMap.size());
-		return user2FavIdMap;
-	}
-
-	@Transactional
-	public void updateFavRelation(int targetType) {
-		List<ExamUserFav> favorites = Lists.newArrayList();
-		Map<String, Set<String>> user2FavIdMap = getFavRelation(targetType);
-		if (MapUtils.isNotEmpty(user2FavIdMap)) {
-			for (Map.Entry<String, Set<String>> entry : user2FavIdMap.entrySet()) {
-				Long userId = Long.valueOf(entry.getKey());
-				for (String eId : entry.getValue()) {
-					ExamUserFav fav = new ExamUserFav();
-					fav.setUserId(userId);
-					fav.setTargetId(Long.valueOf(eId));
-					fav.setTargetType(targetType);
-					favorites.add(fav);
-				}
-			}
-			for (ExamUserFav fav : favorites) {
-				ExamUserFav tempFav = getByUserIdAndTarget(fav);
-				if (tempFav == null) {
-					fav.setCommonValue(TenantConstant.DEFAULT_TENANT_CODE, TenantConstant.DEFAULT_TENANT_CODE);
-					insert(fav);
-				}
-			}
-		}
-		log.info("update fav relation success, size: {}", favorites.size());
 	}
 
 	public void incrStartCount(Long id, int targetType) {
@@ -229,81 +222,26 @@ public class UserFavService extends CrudService<UserFavMapper, ExamUserFav>
 		return redisCounterService.getCounts(key, ids);
 	}
 
-	@Transactional
-	public void updateFavCount(List<Long> ids, int targetType) {
-		Map<Long, Long> countMap = findFavCount(ids, targetType);
-		if (MapUtils.isEmpty(countMap)) {
-			return;
-		}
-		List<ExamFavStartCount> list = Lists.newArrayListWithExpectedSize(countMap.size());
-		List<ExamFavStartCount> inserts = Lists.newArrayList();
-		for (Map.Entry<Long, Long> entry : countMap.entrySet()) {
-			ExamFavStartCount count = favStartCountMapper.findByTarget(entry.getKey(), targetType);
-			if (count != null) {
-				if (!entry.getValue().equals(count.getFavCount())) {
-					count.setFavCount(entry.getValue());
-					list.add(count);
-				}
-			} else {
-				count = new ExamFavStartCount();
-				count.setCommonValue(TenantConstant.DEFAULT_TENANT_CODE, TenantConstant.DEFAULT_TENANT_CODE);
-				count.setTargetId(entry.getKey());
-				count.setTargetType(targetType);
-				count.setFavCount(entry.getValue());
-				count.setStartCount(0L);
-				inserts.add(count);
+	/**
+	 * 更新 Redis 的收藏列表和收藏数量
+	 */
+	private void updateUserFavorites(ExamUserFav fav, boolean isFav, boolean updateFavCount) {
+		Long userId = fav.getUserId();
+		Long targetId = fav.getTargetId();
+		Integer targetType = fav.getTargetType();
+		String favKey = getUserFavKey(userId, targetType);
+		String favCountKey = getFavCountKey(targetType);
+		if (isFav) {
+			longRedisTemplate.opsForZSet().add(favKey, targetId, Objects.requireNonNull(fav.getCreateTime()).getTime());
+			if (updateFavCount) {
+				redisCounterService.incrCount(favCountKey, targetId);
+			}
+		} else {
+			longRedisTemplate.opsForZSet().remove(favKey, targetId);
+			if (updateFavCount) {
+				redisCounterService.decrCount(favCountKey, targetId);
 			}
 		}
-		if (CollectionUtils.isNotEmpty(list)) {
-			for (List<ExamFavStartCount> tempList : Lists.partition(list, 50)) {
-				favStartCountMapper.bathUpdate(tempList);
-			}
-			log.info("update fav count success, size: {}", list.size());
-		}
-		if (CollectionUtils.isNotEmpty(inserts)) {
-			favStartCountMapper.batchInsert(inserts);
-			log.info("insert fav count success, size: {}", inserts.size());
-		}
-	}
-
-	@Transactional
-	public void updateStartCount(List<Long> ids, int targetType) {
-		String key = getStartCountKey(targetType);
-		Map<Long, Long> countMap = redisCounterService.getCounts(key, ids);
-		if (MapUtils.isEmpty(countMap)) {
-			return;
-		}
-		List<ExamFavStartCount> updates = Lists.newArrayList();
-		List<ExamFavStartCount> inserts = Lists.newArrayList();
-		for (Map.Entry<Long, Long> entry : countMap.entrySet()) {
-			ExamFavStartCount count = favStartCountMapper.findByTarget(entry.getKey(), targetType);
-			if (count != null) {
-				if (!entry.getValue().equals(count.getStartCount())) {
-					count.setStartCount(entry.getValue());
-					updates.add(count);
-				}
-			} else {
-				count = new ExamFavStartCount();
-				count.setCommonValue(TenantConstant.DEFAULT_TENANT_CODE, TenantConstant.DEFAULT_TENANT_CODE);
-				count.setTargetId(entry.getKey());
-				count.setTargetType(targetType);
-				count.setFavCount(0L);
-				count.setStartCount(entry.getValue());
-				inserts.add(count);
-			}
-		}
-		if (CollectionUtils.isNotEmpty(updates)) {
-			favStartCountMapper.bathUpdate(updates);
-			log.info("update start count success, size: {}", updates.size());
-		}
-		if (CollectionUtils.isNotEmpty(inserts)) {
-			favStartCountMapper.batchInsert(inserts);
-			log.info("insert start count success, size: {}", inserts.size());
-		}
-	}
-
-	private ExamUserFav getByUserIdAndTarget(ExamUserFav favorites) {
-		return this.dao.getByUserIdAndTarget(favorites);
 	}
 
 	private String getFavCountKey(int targetType) {
@@ -318,16 +256,16 @@ public class UserFavService extends CrudService<UserFavMapper, ExamUserFav>
 		return validKey(key);
 	}
 
-	private String getUserFavKey(int targetType) {
-		String key = "";
+	private String getUserFavKey(Long userId, int targetType) {
+		String key = null;
 		switch (targetType) {
-			case FAV_TYPE_EXAM -> key = USER_FAVORITES_EXAMINATION;
-			case FAV_TYPE_COURSE -> key = USER_FAVORITES_COURSE;
-			case FAV_TYPE_SUBJECT -> key = USER_FAVORITES_SUBJECT;
+			case FAV_TYPE_EXAM -> key = USER_FAVORITES_EXAMINATION + userId;
+			case FAV_TYPE_COURSE -> key = USER_FAVORITES_COURSE + userId;
+			case FAV_TYPE_SUBJECT -> key = USER_FAVORITES_SUBJECT + userId;
 			default -> {
 			}
 		}
-		return validKey(key);
+		return Objects.requireNonNull(key);
 	}
 
 	private String getStartCountKey(int targetType) {

@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
-public class LuceneInitializr {
+public final class LuceneInitializr {
 
 	private static final int MAX_WAIT_CNT = 3;
 
@@ -50,12 +50,13 @@ public class LuceneInitializr {
 	private final IExamPermissionService examinationMemberService;
 
 	interface Initializr {
+
 		List<Long> getIds();
 
 		void init();
 	}
 
-	private class CourseInitializr extends IndexCrudService implements Initializr {
+	private final class CourseInitializr extends IndexCrudService implements Initializr {
 		@Override
 		public List<Long> getIds() {
 			List<Long> ids = waitGetIdsFromCache(cache.getIfPresent(CommonCache.COURSE_IDS), CommonCache.COURSE_IDS);
@@ -86,7 +87,7 @@ public class LuceneInitializr {
 		}
 	}
 
-	private class ExamInitializr extends IndexCrudService implements Initializr {
+	private final class ExamInitializr extends IndexCrudService implements Initializr {
 		@Override
 		public List<Long> getIds() {
 			List<Long> ids = waitGetIdsFromCache(cache.getIfPresent(CommonCache.EXAM_IDS), CommonCache.EXAM_IDS);
