@@ -72,3 +72,10 @@ export function anonymousUserGetSubjectIds (id, query) {
     params: query
   })
 }
+
+export function favoriteExamination (id, userId, type) {
+  return request({
+    url: VUE_APP_API_CONTEXT_PATH + '/v1/favorites/favExam/' + id + '?userId=' + userId + '&type=' + type,
+    method: 'post'
+  })
+}

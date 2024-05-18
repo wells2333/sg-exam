@@ -7,45 +7,20 @@
       <div class="clever-main-menu">
         <div class="classy-nav-container breakpoint-off">
           <nav class="classy-navbar justify-content-between" id="cleverNav">
-            <a class="nav-brand hidden-sm-only" href="/">{{ sysConfig.sys_web_name }}</a>
+            <a class="nav-brand hidden-sm-only" href="/">{{ sysConfig.sys_web_name || '' }}</a>
             <div class="classy-menu">
               <div class="classynav">
-                <div class="search-area hidden-sm-only">
-                  <el-input type="search" prefix-icon="el-icon-search" v-model="query" name="search"
-                            id="search" :placeholder="$t('search')" @keyup.enter.native="search()"/>
-                </div>
                 <el-menu :default-active="activeIndex"
                          mode="horizontal"
                          text-color="rgba(0, 0, 0, 0.45)"
-                         active-text-color="#232323"
+                         active-text-color="#3762f0"
                          :unique-opened=true
                          @select="handleSelect">
                   <el-menu-item index="/index" @click="open('/home')">{{ $t('home') }}</el-menu-item>
                   <el-menu-item index="/exams" @click="open('/exams')">{{ $t('examination') }}</el-menu-item>
                   <el-menu-item index="/courses" @click="open('/courses')">{{ $t('course') }}</el-menu-item>
                   <el-menu-item index="/exam-record" @click="open('/exam-record')">{{$t('exam.records.records')}}</el-menu-item>
-                  <el-submenu index="/u">
-                    <template slot="title">{{ $t('help') }}</template>
-                    <el-menu-item index="u-source"
-                                  @click="open('https://gitee.com/wells2333/sg-exam')">
-                      {{$t('header.sourceCode')}}
-                    </el-menu-item>
-                    <el-menu-item index="u-deploy"
-                                  @click="open('https://www.yuque.com/tangyi-5ldnl/rzv4xd/nl8d6g6mobdgylk7?singleDoc#')">
-                      {{$t('header.document')}}
-                    </el-menu-item>
-                    <el-menu-item index="c-log"
-                                  @click="open('https://gitee.com/wells2333/sg-exam/blob/master/CHANGELOG.md')">
-                      {{$t('header.changeLog')}}
-                    </el-menu-item>
-                    <el-menu-item index="c-overview"
-                                  @click="open('https://www.yuque.com/tangyi-5ldnl/paf15u/cwvtvfd0a07ozfk2?singleDoc#')">
-                      {{$t('header.roadmap')}}
-                    </el-menu-item>
-                    <el-menu-item index="u-admin" @click="openAdmin()">
-                      {{$t('header.admin')}}
-                    </el-menu-item>
-                  </el-submenu>
+                  <el-menu-item index="u-admin" @click="openAdmin()">{{$t('header.admin')}}</el-menu-item>
                   <el-submenu v-if="login" index="/user-info">
                     <template slot="title">
                       <img v-if="userInfo.avatar && userInfo.avatar !== ''" :src="userInfo.avatar"
@@ -221,9 +196,6 @@ export default {
           content: res
         })
       }
-    },
-    todo() {
-      messageWarn(this, '功能正在开发中！')
     }
   }
 }
@@ -231,6 +203,7 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss" scoped>
 @import "../assets/css/style.scss";
+@import "../assets/css/subject.scss";
 
 .international {
   padding: 20px;

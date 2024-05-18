@@ -9,8 +9,21 @@ export const formSchema: FormSchema[] = [
     show: false,
   },
   {
-    field: 'subjectCount',
-    label: '目标题目数量',
+    field: 'type',
+    label: '组题方式',
+    component: 'RadioButtonGroup',
+    defaultValue: 0,
+    componentProps: {
+      options: [
+        { label: '题目数量', value: 0 },
+        { label: '考试总分', value: 1 }
+      ],
+    },
+    required: true,
+  },
+  {
+    field: 'target',
+    label: '目标值',
     component: 'InputNumber',
     required: true,
     componentProps: {

@@ -8,14 +8,6 @@
     v-show="getShow"
     @keypress.enter="handleLogin"
   >
-    <FormItem name="tenantCode" class="enter-x">
-      <Input
-        size="large"
-        v-model:value="formData.tenantCode"
-        :placeholder="t('sys.login.tenantCode')"
-        class="fix-auto-fill"
-      />
-    </FormItem>
     <FormItem name="account" class="enter-x">
       <Input
         size="large"
@@ -130,7 +122,7 @@ import {getSysDefaultConfig} from "/@/api/sys/config";
       sysConfig.value = await getSysDefaultConfig();
       sysConfigStore.setSysConfig(sysConfig.value);
       sysConfig.value = sysConfigStore.getSysConfig;
-      formData.tenantCode =  sysConfig.value.sys_tenant_code
+      formData.tenantCode = 'gitee'
   });
 
   const { validForm } = useFormValid(formRef);
@@ -148,7 +140,7 @@ import {getSysDefaultConfig} from "/@/api/sys/config";
       const userInfo = await userStore.login({
         password: data.password,
         username: data.account,
-        tenantCode: data.tenantCode,
+        tenantCode: 'gitee',
         remember: unref(remember),
         mode: 'none',
         sceneStr: ''
@@ -195,7 +187,7 @@ import {getSysDefaultConfig} from "/@/api/sys/config";
     const userInfo = await userStore.qrCodeLogin({
       password: '',
       username: '',
-      tenantCode: '',
+      tenantCode: 'gitee',
       remember: false,
       mode: 'none',
       sceneStr

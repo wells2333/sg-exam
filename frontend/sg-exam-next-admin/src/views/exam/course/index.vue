@@ -1,14 +1,38 @@
 <template>
   <div>
-    <BasicTable @register="registerTable">
+    <BasicTable @register="registerTable" :rowSelection="{ type: 'checkbox' }">
       <template #toolbar>
         <a-button v-if="hasPermission(['exam:course:add'])" type="primary" @click="handleCreate">
           {{ t('common.addText') }}
         </a-button>
+        <PopConfirmButton
+          v-if="hasPermission(['exam:course:del'])"
+          title="确定删除么？"
+          okText="确认"
+          cancelText="取消"
+          @confirm="handleDelete"
+          color="error"
+        >删除
+        </PopConfirmButton>
       </template>
       <template #action="{ record }">
         <TableAction
           :actions="[
+             {
+              icon: 'ant-design:upload-outlined',
+              tooltip: '修改发布状态',
+              auth: 'exam:course:edit',
+              popConfirm: {
+                title: '确定修改发布状态吗？',
+                confirm: handlePublic.bind(null, record),
+              },
+            },
+            {
+              icon: 'clarity:note-edit-line',
+              tooltip: t('common.editText'),
+              onClick: handleEdit.bind(null, record),
+              auth: 'exam:course:edit'
+            },
             {
               icon: 'ant-design:align-right-outlined',
               tooltip: '章节管理',
@@ -27,22 +51,6 @@
               onClick: handleEditEvaluate.bind(null, record),
               auth: 'exam:course:edit'
             },
-            {
-              icon: 'clarity:note-edit-line',
-              tooltip: t('common.editText'),
-              onClick: handleEdit.bind(null, record),
-              auth: 'exam:course:edit'
-            },
-            {
-              icon: 'ant-design:delete-outlined',
-              tooltip: t('common.delText'),
-              color: 'error',
-              auth: 'exam:course:del',
-              popConfirm: {
-                title: t('common.confirmDelText'),
-                confirm: handleDelete.bind(null, record),
-              },
-            },
           ]"
         />
       </template>
@@ -54,9 +62,9 @@
   </div>
 </template>
 <script lang="ts">
-import {defineComponent} from 'vue';
+import {defineComponent, unref} from 'vue';
 import {BasicTable, TableAction, useTable} from '/@/components/Table';
-import {deleteCourse, getCourseList} from '/@/api/exam/course';
+import {getCourseList, deleteBatchCourse, updateCourse} from '/@/api/exam/course';
 import {useModal} from '/@/components/Modal';
 import CourseModal from './CourseModal.vue';
 import CourseImageModal from './CourseImageModal.vue';
@@ -67,10 +75,13 @@ import {useI18n} from '/@/hooks/web/useI18n';
 import {usePermission} from '/@/hooks/web/usePermission';
 import {useGo} from "/@/hooks/web/usePage";
 import {useMessage} from "/@/hooks/web/useMessage";
+import {PopConfirmButton} from "/@/components/Button";
 
 export default defineComponent({
   name: 'CourseManagement',
-  components: {BasicTable, CourseModal, CourseImageModal, EvaluateModal, MemberModal, TableAction},
+  components: {
+    PopConfirmButton,
+    BasicTable, CourseModal, CourseImageModal, EvaluateModal, MemberModal, TableAction},
   setup() {
     const {t} = useI18n();
     const {hasPermission} = usePermission();
@@ -80,7 +91,7 @@ export default defineComponent({
     const [registerEvaluateModal, {openModal: openEvaluateModal}] = useModal();
     const [registerMemberModal, {openModal: openMemberModal}] = useModal();
     const go = useGo();
-    const [registerTable, {reload}] = useTable({
+    const [registerTable, {reload, getSelectRows, clearSelectedRowKeys}] = useTable({
       title: t('common.modules.exam.course') + t('common.list'),
       api: getCourseList,
       columns,
@@ -137,19 +148,55 @@ export default defineComponent({
       });
     }
 
-    async function handleDelete(record: Recordable) {
-      await deleteCourse(record.id);
+    async function handleDelete() {
+      const ids = getSelectedRowIds();
+      if (!ids || ids.length === 0) {
+        return;
+      }
+
+      await deleteBatchCourse(ids);
+      createMessage.success(t('common.operationSuccessText'));
+      clearSelectedRowKeys();
+      await reload();
+    }
+
+    function handleSuccess(isUpdate) {
+      let msg = t('common.operationSuccessText');
+      if (isUpdate && !unref(isUpdate)) {
+        msg = '新增成功，状态未未发布，需要发布后才生效';
+      }
+      createMessage.success(msg);
+      reload();
+    }
+
+    async function handlePublic(record: Recordable) {
+      const data = {...record}
+      if (data.courseStatus === 0) {
+        data.courseStatus = 1;
+      } else {
+        data.courseStatus = 0;
+      }
+
+      await updateCourse(data.id, data);
       createMessage.success(t('common.operationSuccessText'));
       await reload();
     }
 
-    function handleSuccess() {
-      createMessage.success(t('common.operationSuccessText'));
+    function handleUploadSuccess() {
       reload();
     }
 
-    function handleUploadSuccess() {
-      reload();
+    function getSelectedRowIds() {
+      const rows = getSelectRows();
+      if (!rows || rows.length === 0) {
+        return undefined;
+      }
+
+      const ids = [];
+      rows.forEach(e => {
+        ids.push(e.id);
+      });
+      return ids;
     }
 
     return {
@@ -167,6 +214,7 @@ export default defineComponent({
       handleEditMembers,
       handleDelete,
       handleSuccess,
+      handlePublic,
       handleUploadSuccess,
     };
   },

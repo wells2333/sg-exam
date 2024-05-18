@@ -28,6 +28,7 @@ import {BasicForm, useForm, ApiSelect} from '/@/components/Form/index';
 import {formSchema} from './examination.data';
 import {createExamination, getExaminationMembers, updateExamination} from "/@/api/exam/examination";
 import {getSelectDeptList, getSelectUserList} from "/@/api/sys/select";
+import {message} from "ant-design-vue";
 
 export default defineComponent({
   name: 'ExaminationModal',
@@ -92,7 +93,7 @@ export default defineComponent({
           await createExamination(values);
         }
         closeModal();
-        emit('success');
+        emit('success', isUpdate);
       } finally {
         setModalProps({confirmLoading: false});
       }

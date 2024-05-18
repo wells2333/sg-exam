@@ -77,3 +77,10 @@ export function getCourseAttach (id) {
     method: 'get'
   })
 }
+
+export function favoriteCourse (id, userId, type) {
+  return request({
+    url: VUE_APP_API_CONTEXT_PATH + '/v1/favorites/favCourse/' + id + '?userId=' + userId + '&type=' + type,
+    method: 'post'
+  })
+}

@@ -15,7 +15,7 @@
               tooltip: t('common.modules.exam.scoreAnalysis'),
             },
             {
-              icon: 'ant-design:export-outlined',
+              icon: 'ant-design:arrow-down-outlined',
               tooltip: t('common.modules.exam.export'),
               popConfirm: {
                 title: t('common.confirmExportText'),

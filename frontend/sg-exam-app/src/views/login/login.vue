@@ -10,10 +10,6 @@
       <el-tabs v-model="activeName">
         <el-tab-pane :label="$t('register')" name="/register" class="login-wrap-title">
           <el-form ref="registerForm" :model="register.form" :rules="register.rules" class="register-form" label-position="left" auto-complete="off">
-            <el-form-item prop="tenantCode" v-if="sysConfig.sys_login_show_tenant_code && sysConfig.sys_login_show_tenant_code ==='true'">
-              <el-input :placeholder="$t('tenantCode')" v-model="register.form.tenantCode"
-                        name="tenantCode" type="text" auto-complete="off"/>
-            </el-form-item>
             <el-form-item prop="identifier">
               <el-input :placeholder="$t('username')" v-model="register.form.identifier"
                         name="identifier"
@@ -58,11 +54,6 @@
         <el-tab-pane :label="$t('login')" name="/login" class="login-wrap-title">
           <div v-if="!useSmsLogin">
             <el-form ref="loginForm" :model="login.form" :rules="login.rules" class="login-form" auto-complete="on" label-position="left">
-              <el-form-item prop="tenantCode" v-if="sysConfig.sys_login_show_tenant_code && sysConfig.sys_login_show_tenant_code ==='true'">
-                <el-input :placeholder="$t('tenantCode')" v-model="login.form.tenantCode"
-                          name="tenantCode"
-                          type="text" auto-complete="off"/>
-              </el-form-item>
               <el-form-item prop="identifier">
                 <el-input :placeholder="$t('usernameOrEmail')" v-model="login.form.identifier"
                           name="identifier"
@@ -157,8 +148,8 @@ export default {
       }
       // 检查用户名是否存在
       checkExist(value).then(response => {
-        if (isNotEmpty(response.data) && response.data.data) {
-          callback(new Error(this.$t('usernameExists')))
+        if (isNotEmpty(response.data) && response.data.result) {
+          callback(new Error(this.$t('validate.usernameExists')))
         } else {
           callback()
         }
@@ -271,6 +262,10 @@ export default {
   },
   methods: {
     refreshLoginCode () {
+      if (this.login.loading) {
+        return
+      }
+
       this.login.form.code = ''
       this.login.form.randomStr = randomLenNum(this.login.code.len, true)
       this.login.code.type === 'text'
@@ -278,6 +273,10 @@ export default {
         : (this.login.code.src = `/sg-user-service/v1/code/${this.login.form.randomStr}?tenantCode=` + getTenantCode())
     },
     refreshRegisterCode () {
+      if (this.register.loading) {
+        return
+      }
+
       this.register.form.code = ''
       this.register.form.randomStr = randomLenNum(this.register.code.len, true)
       this.register.code.type === 'text'
@@ -312,13 +311,22 @@ export default {
       this.$refs.registerForm.validate(valid => {
         if (valid) {
           this.register.loading = true
-          this.$store.dispatch('RegisterByUsername', this.register.form).then(() => {
-            this.register.loading = false
-            this.$message.success(this.$t('registerSuccess'))
-            this.$router.push({ path: '/login' })
-          }).catch(() => {
-            this.register.loading = false
+          this.$store.dispatch('RegisterByUsername', this.register.form).then((response) => {
+            const {data} = response
+            if (data && data.code === 0) {
+              this.$message.success(this.$t('registerSuccess'))
+              // 自动填充用户名
+              this.login.form.identifier = this.register.form.identifier
+              // 切换到登录 tab
+              this.activeName = '/login'
+            } else {
+              this.refreshRegisterCode()
+            }
+          }).catch((err) => {
+            console.error(err)
             this.refreshRegisterCode()
+          }).finally(() => {
+            this.register.loading = false
           })
         } else {
           return false

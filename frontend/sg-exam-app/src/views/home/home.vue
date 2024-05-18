@@ -3,10 +3,10 @@
     <el-row class="hero-area" type="flex" justify="center" align="middle">
       <el-col :span="24">
         <div class="hero-content">
-          <h2>{{sysConfig.sys_web_main_title}}</h2>
-          <h4>{{sysConfig.sys_web_sub_title_one}}</h4>
-          <h4>{{sysConfig.sys_web_sub_title_two}}</h4>
-          <router-link to="/courses" class="btn clever-btn">{{$t('homePage.startUsing')}}</router-link>
+          <h4>{{ sysConfig.sys_web_sub_title_one }}</h4>
+          <h4>{{ sysConfig.sys_web_sub_title_two }}</h4>
+          <router-link to="/courses" class="btn clever-btn">{{ $t('homePage.startUsing') }}
+          </router-link>
         </div>
       </el-col>
     </el-row>
@@ -21,7 +21,7 @@
               <h2>
                 <count-to :start-val="0" :end-val="userCount" :duration="2600" class="counter"/>
               </h2>
-              <h5>{{$t('homePage.userCnt')}}</h5>
+              <h5>{{ $t('homePage.userCnt') }}</h5>
             </div>
           </transition>
         </el-col>
@@ -32,9 +32,10 @@
                 <img src="static/img/core-img/star.png" alt="">
               </div>
               <h2>
-                <count-to :start-val="0" :end-val="examinationCount" :duration="2600" class="counter"/>
+                <count-to :start-val="0" :end-val="examinationCount" :duration="2600"
+                          class="counter"/>
               </h2>
-              <h5>{{$t('homePage.examinationCnt')}}</h5>
+              <h5>{{ $t('homePage.examinationCnt') }}</h5>
             </div>
           </transition>
         </el-col>
@@ -47,7 +48,7 @@
               <h2>
                 <count-to :start-val="0" :end-val="subjectCount" :duration="2600" class="counter"/>
               </h2>
-              <h5>{{$t('homePage.subjectCnt')}}</h5>
+              <h5>{{ $t('homePage.subjectCnt') }}</h5>
             </div>
           </transition>
         </el-col>
@@ -60,43 +61,45 @@
               <h2>
                 <count-to :start-val="0" :end-val="courseCount" :duration="2600" class="counter"/>
               </h2>
-              <h5>{{$t('homePage.courseCnt')}}</h5>
+              <h5>{{ $t('homePage.courseCnt') }}</h5>
             </div>
           </transition>
         </el-col>
       </el-row>
     </div>
 
-    <div class="popular-courses-area padding-30-0"  ref="coursesContainer">
+    <div class="popular-courses-area padding-30-0" ref="coursesContainer">
       <el-row>
         <el-col :span="24">
           <div class="section-heading">
-            <h3>{{$t('homePage.popularCourses')}}</h3>
+            <h3>{{ $t('homePage.popularCourses') }}</h3>
           </div>
         </el-col>
       </el-row>
-      <el-row  type="flex" justify="center" :gutter="20" class="custom-row">
-        <el-col :span="6" v-for="(course, index) in courses" :key="index" >
+      <el-row type="flex" justify="center" :gutter="20" class="custom-row">
+        <el-col :span="6" v-for="(course, index) in courses" :key="index">
           <transition name="fade-transform" mode="out-in">
             <div class="single-popular-course" v-show="showCourses" @click="courseDetail(course)">
               <img :src="course.imageUrl" alt="">
               <div class="course-content">
-                <h4>{{course.courseName}}</h4>
+                <h3>{{ course.courseName | simpleStrFilter }}</h3>
                 <div class="meta d-flex align-items-center">
-                  <a href="#">{{course.teacher}}</a>
+                  <a href="#">{{ course.teacher }}</a>
                   <span><i class="fa fa-circle" aria-hidden="true"></i></span>
-                  <a href="#">{{course.major !== null ? course.major : ''}}</a>
+                  <a href="#">{{ course.major !== null ? course.major : '' }}</a>
                 </div>
-                <p class="clamp">{{course.simpleDesc !== null ? course.simpleDesc : '暂无简介'}}</p>
+                <p class="clamp">
+                  {{ course.simpleDesc !== null ? course.simpleDesc : '暂无简介' }}</p>
               </div>
               <div class="seat-rating-fee d-flex justify-content-between">
                 <div class="seat-rating h-100 d-flex align-items-center">
                   <div class="seat">
-                    <i class="el-icon-user-solid" aria-hidden="true"></i> {{course.memberCount}}
+                    <i class="el-icon-user-solid" aria-hidden="true"></i> {{ course.memberCount }}
                   </div>
                 </div>
                 <div class="course-fee h-100">
-                  <a href="#" class="free">{{course.chargeType === 0 ? $t('exam.course.free') : '$' + course.chargePrice}}</a>
+                  <a href="#"
+                     class="free">{{ course.chargeType === 0 ? $t('exam.course.free') : '$' + course.chargePrice }}</a>
                 </div>
               </div>
             </div>
@@ -115,9 +118,9 @@
 import OFooter from '../common/footer'
 import CountTo from 'vue-count-to'
 import {mapGetters} from 'vuex'
-import { popularCourses } from '@/api/exam/course'
-import { summary } from '@/api/exam/home'
-import { notifyFail } from '@/utils/util'
+import {popularCourses} from '@/api/exam/course'
+import {summary} from '@/api/exam/home'
+import {notifyFail} from '@/utils/util'
 
 export default {
   props: {
@@ -126,7 +129,7 @@ export default {
       default: 50
     }
   },
-  data () {
+  data() {
     return {
       isActive: false,
       showFacts: false,
@@ -196,7 +199,7 @@ export default {
       'sysConfig'
     ])
   },
-  created () {
+  created() {
     let vm = this
     window.onscroll = function () {
       vm.isActive = document.documentElement.scrollTop > 60
@@ -223,24 +226,25 @@ export default {
 
 <style scoped>
 .custom-row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center; /* 水平居中对齐 */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .custom-row.el-row--flex {
-    justify-content: flex-start; /* 水平左对齐 */
+  justify-content: flex-start; /* 水平左对齐 */
 }
 
 .el-col {
-    margin-bottom: 20px; /* 可选的间距 */
+  margin-bottom: 20px; /* 可选的间距 */
 }
+
 .clamp {
-    height: 70px;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    -webkit-line-clamp: 3; 
-    text-overflow: ellipsis; /* 超出部分显示省略号 */
+  height: 70px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  -webkit-line-clamp: 3;
+  text-overflow: ellipsis; /* 超出部分显示省略号 */
 }
 </style>

@@ -9,7 +9,7 @@ export function fmtDate (date, format) {
 
 export function simpleStrFilter (str, length) {
   if (length === undefined) {
-    length = 20
+    length = 15
   }
   return commonFilter(str, length)
 }

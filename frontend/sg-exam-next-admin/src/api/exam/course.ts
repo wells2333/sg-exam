@@ -32,10 +32,11 @@ export const updateCourse = (id: string, params?: object
   );
 };
 
-export const deleteCourse = (id: string) => {
-  return defHttp.delete<ApiRes>(
+export const deleteBatchCourse = (obj) => {
+  return defHttp.post<ApiRes>(
     {
-      url: CourseApi.Base + '/' + id,
+      url: CourseApi.Base + '/deleteAll',
+      data: obj
     }
   );
 };
