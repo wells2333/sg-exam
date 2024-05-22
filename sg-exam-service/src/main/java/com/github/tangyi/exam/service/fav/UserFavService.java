@@ -189,7 +189,7 @@ public class UserFavService extends CrudService<UserFavMapper, ExamUserFav>
 	@Override
 	public Set<Long> findUserFavoritesFromCache(Long userId, int targetType) {
 		String favKey = getUserFavKey(userId, targetType);
-		Set<Long> values = longRedisTemplate.opsForSet().members(favKey);
+		Set<Long> values = longRedisTemplate.opsForZSet().range(favKey, 0, -1);
 		return CollectionUtils.isNotEmpty(values) ? values : Collections.emptySet();
 	}
 
