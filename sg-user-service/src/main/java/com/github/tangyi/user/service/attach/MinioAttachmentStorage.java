@@ -245,7 +245,7 @@ public class MinioAttachmentStorage extends AbstractAttachmentStorage {
 			ObjectWriteResponse response = minioClient.putObject(args);
 			doAfterUpload(attachment, response.object(), fileName, watch);
 		} catch (Exception ex) {
-			throw new OssException(ex, "Failed to upload file");
+			throw new OssException(ex, ex.getMessage());
 		}
 	}
 
