@@ -185,7 +185,7 @@ public class MinioAttachmentStorage extends AbstractAttachmentStorage {
 					.stream(in, in.available(), -1).contentType(contentType).build();
 			return minioClient.putObject(args).object();
 		} catch (Exception ex) {
-			throw new OssException(ex, "Failed to upload file");
+			throw new OssException(ex, ex.getMessage());
 		}
 	}
 
@@ -213,7 +213,7 @@ public class MinioAttachmentStorage extends AbstractAttachmentStorage {
 				this.deleteTempChunkFiles(chunkNames, prepare.getHash(), prepare.getTenantCode());
 			}
 		} catch (Exception e) {
-			throw new CommonException(e, "Failed to merge chunks.");
+			throw new CommonException(e, ex.getMessage());
 		}
 		return prepare;
 	}
