@@ -212,8 +212,8 @@ public class MinioAttachmentStorage extends AbstractAttachmentStorage {
 				prepare.setUrl(this.getDownloadUrl(key, -1));
 				this.deleteTempChunkFiles(chunkNames, prepare.getHash(), prepare.getTenantCode());
 			}
-		} catch (Exception e) {
-			throw new CommonException(e, ex.getMessage());
+		} catch (Exception ex) {
+			throw new CommonException(ex, ex.getMessage());
 		}
 		return prepare;
 	}

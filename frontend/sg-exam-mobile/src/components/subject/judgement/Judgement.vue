@@ -3,7 +3,7 @@
     <a-video :subject="subject"></a-video>
      <div class="subject-choice-checkbox">
        <div v-for="(option, idx) in options" :key="option.value" :class="genOptionClasses(option)"
-            @tap="handleClick(idx)">
+            @click="handleClick(idx)">
          <div class="subject-choice-checkbox__option-wrap">
            <div class="subject-choice-checkbox__option-cnt">
              <div class="subject-choice-checkbox__title">

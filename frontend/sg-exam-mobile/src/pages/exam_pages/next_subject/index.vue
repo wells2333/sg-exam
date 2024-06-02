@@ -1,25 +1,24 @@
 <template>
-  <AtMessage/>
    <div class="fixed-top">
      <div class="subject-exam-title bg-white">
        <div style="display: flex; justify-content: space-between">
-        <text>{{ subject.sort }}/{{ subjectTotalCount }}</text>
-        <at-tag type="primary" class="duration-info" :circle="true">{{ duration }}</at-tag>
+        <span>{{ subject.sort }}/{{ subjectTotalCount }}</span>
+        <nut-tag type="primary" plain class="duration-info" :circle="true">{{ duration }}</nut-tag>
        </div>
        <div class="subject-exam-progress">
-        <at-progress :percent="percentage" size="small" strokeWidth="8"/>
+        <nut-progress :percentage="percentage" :show-text="false" size="small" strokeWidth="8"/>
        </div>
      </div>
    </div>
    <div class="fixed-top-next subject-box">
      <div class="subject-content bg-white">
        <div class="subject-type-label">
-        <at-tag size="small" type="primary">{{ subject.typeLabel }}</at-tag>
-        <at-icon v-if="examination.type !== 0" @click="handleFavSubject(subject)" value="star-2" size='10'
-                 :color="subject.favorite === true ? '#FFC82C': '#AAAAAA'"></at-icon>
+        <nut-tag size="small" type="primary">{{ subject.typeLabel }}</nut-tag>
+        <IconFont v-if="examination.type !== 0" @click="handleFavSubject(subject)" name="star-2" size='10'
+                 :color="subject.favorite === true ? '#FFC82C': '#AAAAAA'"></IconFont>
        </div>
        <div class="subject-title">
-        <text class="subject-title-content">{{ subject.sort }}.&nbsp;</text>
+        <span class="subject-title-content">{{ subject.sort }}.&nbsp;</span>
         <div class="subject-title-content" v-html="subject.subjectName"></div>
        </div>
        <div>
@@ -43,46 +42,42 @@
 
      <div class="submit-btn">
        <div class="submit-btn-item">
-        <AtButton type="primary" :circle="true" @click="handleSaveAndNext('1')" :loading="preLoading">上一题</AtButton>
+        <nut-button type="primary" :circle="true" @click="handleSaveAndNext('1')" :loading="preLoading">上一题</nut-button>
        </div>
        <div class="submit-btn-item">
-        <AtButton type="primary" :circle="true" @click="handleSaveAndNext('0')" :loading="nextLoading">下一题</AtButton>
+        <nut-button type="primary" :circle="true" @click="handleSaveAndNext('0')" :loading="nextLoading">下一题</nut-button>
        </div>
        <div class="submit-btn-item">
-        <AtButton type="primary" :circle="true" @click="handleOpenCards">答题卡</AtButton>
+        <nut-button type="primary" :circle="true" @click="handleOpenCards">答题卡</nut-button>
        </div>
        <div class="submit-btn-item" v-if="!hasMore">
-        <AtButton type="primary" :circle="true" @click="handleSubmit('0')" :loading="submitLoading">提交</AtButton>
+        <nut-button type="primary" :circle="true" @click="handleSubmit('0')" :loading="submitLoading">提交</nut-button>
        </div>
      </div>
    </div>
 
-  <at-modal :isOpened="isOpenedCardModal" @click="handleCloseCards" @cancel="handleCloseCards">
-    <at-modal-header>答题卡</at-modal-header>
-    <at-modal-content>
-       <div class="card-box">
-         <div class="card-item" v-for="card in cards">
-          <at-button class="card-item-btn" :type="getCardItemType(card)" :circle="true"
-                     @click="handleClickCardSubject(card.sort)">
-            {{ card.sort }}
-          </at-button>
-         </div>
+  <nut-dialog v-model:visible="isOpenedCardModal" title="答题卡"
+              @cancel="handleCloseCards"
+              @ok="handleCloseCards">
+     <div class="card-box">
+       <div class="card-item" v-for="card in cards">
+        <nut-button class="card-item-btn" :type="getCardItemType(card)" :circle="true"
+                   @click="handleClickCardSubject(card.sort)">
+          {{ card.sort }}
+        </nut-button>
        </div>
-    </at-modal-content>
-    <at-modal-action>
-      <button @click="handleCloseCards">关闭</button>
-    </at-modal-action>
-  </at-modal>
+     </div>
+  </nut-dialog>
 
-  <at-modal :isOpened="isOpenedSubmitModal" title="确定提交吗？" cancelText="取消"
-            confirmText="确认"
-            @close="handleCloseSubmitModal"
+  <nut-dialog v-model:visible="isOpenedSubmitModal" title="确定提交吗？"
             @cancel="handleCloseSubmitModal"
-            @confirm="handleConfirmSubmitModal"></at-modal>
+            @ok="handleConfirmSubmitModal">
+  </nut-dialog>
 </template>
 <script lang="ts">
 import {onMounted, ref, unref} from 'vue';
 import Taro from "@tarojs/taro";
+import {IconFont} from '@nutui/icons-vue-taro';
 import examApi from '../../../api/exam.api';
 import api from '../../../api/api';
 import {initRecorderManager, playAudio, pleaseStartRecord, startRecordAudio, stopRecordAudio} from "./audio";
@@ -95,7 +90,8 @@ export default {
   components: {
     'choice': Choice,
     'judgement': Judgement,
-    'short-answer': ShortAnswer
+    'short-answer': ShortAnswer,
+    IconFont
   },
   setup() {
     const choiceRef = ref<any>(undefined);
@@ -355,7 +351,7 @@ export default {
         submitLoading.value = false;
         successMessage('提交成功');
         setTimeout(() => {
-          Taro.redirectTo({url: "/pages/record/index?type=" + examination.value.type})
+          Taro.redirectTo({url: "/pages/exam_pages/record/index?type=" + examination.value.type})
         }, 1000);
       }).catch(() => {
         warnMessage('提交失败');
@@ -432,19 +428,12 @@ export default {
 </script>
 
 <style>
-page {
-  background-color: rgba(242, 244, 248, 1);
+.nut-tag--primary.nut-tag--plain {
+  border: none;
 }
 
-.at-tag--primary {
-  color: #E65D05;
-  border-color: #E65D05;
-  background-color: #FFF;
-  font-weight: bold;
-}
-
-.at-checkbox::after {
-  display: none;
+.subject-exam-progress {
+  margin-top: 12px;
 }
 
 .subject-type-label {
