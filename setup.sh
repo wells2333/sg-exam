@@ -139,7 +139,7 @@ function setup() {
     echo "redis:latest.tar exists."
   else
     echo "Download redis:latest.tar ..."
-    wget "$DOWNLOAD_SG_EXAM_IMAGE_URL"/minio.tar
+    wget "$DOWNLOAD_SG_EXAM_IMAGE_URL"/redis:latest.tar
     docker load -i redis:latest.tar
   fi
 
