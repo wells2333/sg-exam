@@ -96,6 +96,7 @@ function start_service() {
   docker-compose up --remove-orphans --no-build -d
   echo "Services has been started successfully."
   docker ps
+  sleep 2s
   tail -f logs/sg-user-service.log
 }
 
@@ -132,7 +133,6 @@ function setup() {
   else
     echo "Download minio.tar ..."
     wget "$DOWNLOAD_SG_EXAM_IMAGE_URL"/minio.tar
-    docker load -i minio.tar
   fi
 
   if [ -e "redis:latest.tar" ]; then
@@ -140,7 +140,6 @@ function setup() {
   else
     echo "Download redis:latest.tar ..."
     wget "$DOWNLOAD_SG_EXAM_IMAGE_URL"/redis:latest.tar
-    docker load -i redis:latest.tar
   fi
 
   if [ -e "mysql:5.7.27.tar" ]; then
@@ -148,7 +147,6 @@ function setup() {
   else
     echo "Download mysql:5.7.27.tar ..."
     wget "$DOWNLOAD_SG_EXAM_IMAGE_URL"/mysql:5.7.27.tar
-    docker load -i mysql:5.7.27.tar
   fi
 
   if [ -e "sg-exam:latest.tar" ]; then
@@ -156,14 +154,17 @@ function setup() {
   else
     echo "Download sg-exam:latest.tar ..."
     wget "$DOWNLOAD_SG_EXAM_IMAGE_URL"/sg-exam:latest.tar
-    docker load -i sg-exam:latest.tar
   fi
+
+  docker load -i minio.tar
+  docker load -i redis:latest.tar
+  docker load -i mysql:5.7.27.tar
+  docker load -i sg-exam:latest.tar
   echo "Setup images finished."
 
   local branch=master
-  local repo_raw=https://raw.githubusercontent.com/wells2333/sg-exam/"$branch"
+  local repo_raw=https://raw.gitmirror.com/wells2333/sg-exam/"$branch"
 
-  wget "$repo_raw"/.env
   wget "$repo_raw"/docker-compose.yml
   wget -P config-repo "$repo_raw"/config-repo/application.yml
   wget -P config-repo "$repo_raw"/config-repo/sg-user-service.yml
