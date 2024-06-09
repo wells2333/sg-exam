@@ -1,13 +1,13 @@
 version: '2.1'
 
 services:
-  # 内嵌 MySQL 服务，如果使用外部 MySQL，可以这这里的 mysql-service 删掉
+  # 内嵌 MySQL 服务，如果使用外部 MySQL，可以把这里的 mysql-service 删掉
   mysql-service:
     image: mysql:5.7.27
     container_name: mysql-service
     restart: always
     networks:
-      - my-network
+      - sg-network
     volumes:
       # 数据存储目录
       - ./data/mysql-data:/var/lib/mysql
@@ -29,7 +29,7 @@ services:
     container_name: redis-service
     restart: always
     networks:
-      - my-network
+      - sg-network
     command: redis-server /usr/local/etc/redis/redis.conf
     ports:
       - "6379:6379"
@@ -43,7 +43,7 @@ services:
     container_name: minio-service
     restart: always
     networks:
-      - my-network
+      - sg-network
     command: server /data --address "0.0.0.0:9000" --console-address "0.0.0.0:9090"
     ports:
       - "9000:9000"
@@ -56,11 +56,11 @@ services:
       - ./data/minio/config:/root/.minio
 
   sg-exam:
-    image: ${SG_EXAM_REGISTRY}/sg-exam:latest
+    image: sg-exam:latest
     restart: always
     networks:
-      - my-network
-    env_file: .env
+      - sg-network
+    env_file: config-repo/sg-exam.env
     ports:
       - "80:80"
       - "8080:8080"
@@ -74,6 +74,6 @@ services:
       - minio-service
 
 networks:
-  my-network:
-    name: my-network
+  sg-network:
+    name: sg-network
     driver: bridge

@@ -6,14 +6,14 @@ SG_EXAM_WEB="sg-exam-web"
 SG_EXAM_ADMIN="sg-exam-admin"
 SG_EXAM_MOBILE="sg-exam-mobile"
 SG_EXAM_USER_SERVICE="sg-user-service"
-SG_EXAM_IMAGE_NAME="registry.cn-hangzhou.aliyuncs.com/sg-exam-next/sg-exam"
+SG_EXAM_IMAGE_NAME="sg-exam"
+DOWNLOAD_SG_EXAM_IMAGE_URL="http://116.205.237.35:9000/public"
 
 function update_version() {
   local version="$1"
   echo "Updating project version to $version ..."
   sed -i "" "s/version = '[0-9]\{1,2\}.[0-9]\{1,2\}.[0-9]\{1,2\}'/version = '$version'/" build.gradle
   sed -i "" "s/version=[0-9]\{1,2\}.[0-9]\{1,2\}.[0-9]\{1,2\}/version=$version/" gradle.properties
-  sed -i "" "s/SG_EXAM_VERSION=[0-9]\{1,2\}.[0-9]\{1,2\}.[0-9]\{1,2\}/SG_EXAM_VERSION=$version/" .env
   sed -i "" "s/version-[0-9]\{1,2\}.[0-9]\{1,2\}.[0-9]\{1,2\}/version-$version/" README.md
   cd sg-api && update_build "$version"
   cd ../sg-common && update_build "$version"
@@ -92,10 +92,7 @@ function push_service() {
 }
 
 function start_service() {
-  echo "Pulling docker image ..."
-  docker-compose pull
   echo "Starting services ..."
-  docker-compose config
   docker-compose up --remove-orphans --no-build -d
   echo "Services has been started successfully."
   docker ps
@@ -130,6 +127,39 @@ function install_docker() {
 
 function setup() {
   echo "Start to setup, current directory: $(pwd)"
+  if [ -e "minio.tar" ]; then
+    echo "minio.tar exists."
+  else
+    echo "Download minio.tar ..."
+    wget "$DOWNLOAD_SG_EXAM_IMAGE_URL"/minio.tar
+    docker load -i minio.tar
+  fi
+
+  if [ -e "redis:latest.tar" ]; then
+    echo "redis:latest.tar exists."
+  else
+    echo "Download redis:latest.tar ..."
+    wget "$DOWNLOAD_SG_EXAM_IMAGE_URL"/minio.tar
+    docker load -i redis:latest.tar
+  fi
+
+  if [ -e "mysql:5.7.27.tar" ]; then
+    echo "mysql:5.7.27.tar exists."
+  else
+    echo "Download mysql:5.7.27.tar ..."
+    wget "$DOWNLOAD_SG_EXAM_IMAGE_URL"/mysql:5.7.27.tar
+    docker load -i mysql:5.7.27.tar
+  fi
+
+  if [ -e "sg-exam:latest.tar" ]; then
+    echo "sg-exam:latest.tar exists."
+  else
+    echo "Download sg-exam:latest.tar ..."
+    wget "$DOWNLOAD_SG_EXAM_IMAGE_URL"/sg-exam:latest.tar
+    docker load -i sg-exam:latest.tar
+  fi
+  echo "Setup images finished."
+
   local branch=master
   local repo_raw=https://raw.githubusercontent.com/wells2333/sg-exam/"$branch"
 
@@ -137,6 +167,7 @@ function setup() {
   wget "$repo_raw"/docker-compose.yml
   wget -P config-repo "$repo_raw"/config-repo/application.yml
   wget -P config-repo "$repo_raw"/config-repo/sg-user-service.yml
+  wget -P config-repo "$repo_raw"/config-repo/sg-exam.env
   wget -P config-repo/mysql "$repo_raw"/config-repo/mysql/init.sql
   wget -P config-repo/mysql "$repo_raw"/config-repo/mysql/update.sql
   wget -P config-repo/mysql/conf "$repo_raw"/config-repo/mysql/conf/my.cnf
