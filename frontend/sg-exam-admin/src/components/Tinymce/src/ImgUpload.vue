@@ -78,12 +78,13 @@
         const result = await uploadApi(formData);
         const { data } = result;
         if (data && data.code === 0) {
-          const {id, url} = data.result;
+          const {url} = data.result;
           emit('done', formData.file.name, url);
           message.success('上传成功');
         } else {
           message.error('上传失败');
         }
+        uploading = false;
       }
 
       return {
