@@ -72,8 +72,20 @@ public abstract class AbstractAttachmentStorage implements AttachmentStorage {
 	}
 
 	protected String getShardName(String groupCode, String fileName, String hash) {
+		return this.getShardName(groupCode, fileName, hash, true);
+	}
+
+	/**
+	 * 计算文件的完成路径
+	 * @param groupCode 文件分组
+	 * @param fileName 文件名
+	 * @param hash 文件的哈希值
+	 * @param md5WithNanoTime 计算 md5 时是否加入当期时间（nanoTime）
+	 */
+	protected String getShardName(String groupCode, String fileName, String hash, boolean md5WithNanoTime) {
 		// 基于 md5 重新命名文件名
-		String md5 = SecureUtil.md5(System.nanoTime() + fileName + hash);
+		String md5Params = md5WithNanoTime ? System.nanoTime() + fileName + hash : fileName + hash;
+		String md5 = SecureUtil.md5(md5Params);
 		String newFilename = md5 + "." + FilenameUtils.getExtension(fileName);
 		if (groupCode != null) {
 			String id = StringUtils.isNotBlank(hash) ? hash : newFilename;
