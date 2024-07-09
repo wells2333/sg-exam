@@ -308,7 +308,7 @@ export default defineComponent({
           }
         )
         task.then(() => {
-          taskPool.splice(taskPool.findIndex(item => item === task))
+          taskPool.splice(taskPool.findIndex(item => item === task), 1)
         })
         taskPool.push(task)
         if (taskPool.length === max) {
