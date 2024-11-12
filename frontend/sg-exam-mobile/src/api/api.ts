@@ -162,7 +162,7 @@ class api {
                 url: USER_SERVICE + url,
                 data,
                 method,
-                header: { 'Authorization': token, 'Tenant-Code': tenantCode },
+                header: { 'Content-Type': 'application/json;charset=utf-8', 'Authorization': token, 'Tenant-Code': tenantCode },
                 success: res => {
                     const { code, result } = res.data || {};
                     // token 失效

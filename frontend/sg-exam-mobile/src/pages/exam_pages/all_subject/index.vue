@@ -141,7 +141,7 @@ export default {
           let {id, answerValue} = subject;
           data.value.push({examRecordId: recordId.value, subjectId: id, answer: answerValue});
         })
-        await examApi.submitAllSubjects(data.value);
+        await examApi.submitAllSubjects(JSON.stringify(data.value));
         await successMessage('提交成功');
       } finally {
         submitting.value = false;
