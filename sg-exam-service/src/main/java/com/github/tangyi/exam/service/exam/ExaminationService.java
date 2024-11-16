@@ -616,9 +616,9 @@ public class ExaminationService extends CrudService<ExaminationMapper, Examinati
 			});
 		}
 		if (Status.OPEN.equals(params.get("favorite"))) {
-			examFavService.findStartCounts(dtoList);
+			examFavService.fillStartCounts(dtoList);
+			examFavService.fillFavCount(dtoList);
 			examFavService.findUserFavorites(dtoList);
-			examFavService.findFavCount(dtoList);
 		}
 		return PageUtil.newPageInfo(page, dtoList);
 	}
