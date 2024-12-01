@@ -71,7 +71,10 @@ export const columns: BasicColumn[] = [
     width: 80,
     customRender: ({ record }) => {
       const status = record.status;
-      const enable = ~~status === 1;
+      let enable = false;
+      if (status === 1) {
+        enable = true;
+      }
       const color = enable ? 'green' : 'red';
       const text = enable ? '已发布' : '未发布';
       return h(Tag, { color: color }, () => text);
