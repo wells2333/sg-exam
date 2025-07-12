@@ -5,6 +5,7 @@ import {
   LAYOUT,
   EXCEPTION_COMPONENT,
   PAGE_NOT_FOUND_NAME,
+  EXCEPTION_COMPONENT_NAME,
 } from '/@/router/constant';
 
 // 404 on a page
@@ -20,7 +21,7 @@ export const PAGE_NOT_FOUND_ROUTE: AppRouteRecordRaw = {
   children: [
     {
       path: '/:path(.*)*',
-      name: PAGE_NOT_FOUND_NAME,
+      name: EXCEPTION_COMPONENT_NAME,
       component: EXCEPTION_COMPONENT,
       meta: {
         title: 'ErrorPage',
