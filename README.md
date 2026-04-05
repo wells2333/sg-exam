@@ -48,7 +48,7 @@
 
 ## 部署文档 & 操作手册 & 源码解析 & 视频教程
 
-- **获取方式**：关注公众号，发送“文档”关键词获取。
+- **获取方式**：关注公众号 “AI 程序员 Gary”，发送“文档”关键词获取。
 
 <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp.jeg" height="130"/>
 
