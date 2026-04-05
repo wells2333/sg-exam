@@ -44,8 +44,29 @@
             </if>
         </if>
         <choose>
-            <when test="params.sortField != null and params.sortField != '' and params.sortOrder != null and params.sortOrder != ''">
-                ORDER BY #{params.sortField} #{params.sortOrder}
+            <when test="params.sortField == 'id' and params.sortOrder == 'asc'">
+                ORDER BY id ASC
+            </when>
+            <when test="params.sortField == 'id'">
+                ORDER BY id DESC
+            </when>
+            <when test="(params.sortField == 'create_time' or params.sortField == 'createTime') and params.sortOrder == 'asc'">
+                ORDER BY create_time ASC
+            </when>
+            <when test="params.sortField == 'create_time' or params.sortField == 'createTime'">
+                ORDER BY create_time DESC
+            </when>
+            <when test="(params.sortField == 'update_time' or params.sortField == 'updateTime') and params.sortOrder == 'asc'">
+                ORDER BY update_time ASC
+            </when>
+            <when test="params.sortField == 'update_time' or params.sortField == 'updateTime'">
+                ORDER BY update_time DESC
+            </when>
+            <when test="params.sortField == 'sort' and params.sortOrder == 'asc'">
+                ORDER BY sort ASC
+            </when>
+            <when test="params.sortField == 'sort'">
+                ORDER BY sort DESC
             </when>
             <otherwise>
                 ORDER BY update_time DESC

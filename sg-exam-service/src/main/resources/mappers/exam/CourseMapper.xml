@@ -64,12 +64,18 @@
         </if>
         )
         <choose>
-            <when test="params.sortField != null">
-                ORDER BY #{params.sortField} DESC
+            <when test="params.sortField == 'id'">
+                ORDER BY id DESC
             </when>
-            <when test="params.sortField == null">
+            <when test="params.sortField == 'create_time' or params.sortField == 'createTime'">
+                ORDER BY create_time DESC
+            </when>
+            <when test="params.sortField == 'update_time' or params.sortField == 'updateTime'">
+                ORDER BY update_time DESC
+            </when>
+            <otherwise>
                 ORDER BY sort DESC
-            </when>
+            </otherwise>
         </choose>
     </select>
 
