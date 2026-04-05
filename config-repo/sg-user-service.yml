@@ -104,11 +104,11 @@ server:
 spring:
   profiles: dev
   datasource:
-    url: jdbc:mysql://${SG_DB_USER_HOST:localhost}:${SG_DB_USER_POST:3306}/${SG_DB_USER_NAME:sg-exam-user}?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:h2:file:./data/h2/sg-exam-user;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;NON_KEYWORDS=USER,VALUE;AUTO_SERVER=TRUE
     type: com.zaxxer.hikari.HikariDataSource
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ${SG_DB_USER_USERNAME:sg}
-    password: ${SG_DB_USER_PASSWORD:123456}
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
     hikari:
       minimum-idle: 5
       maximum-pool-size: 15
@@ -117,6 +117,14 @@ spring:
       max-lifetime: 500000
       connection-timeout: 30000
       connection-test-query: SELECT 1
+  h2:
+    console:
+      enabled: true
+      path: /h2
+  sql:
+    init:
+      mode: always
+      schema-locations: optional:file:config-repo/h2/schema-h2.sql,optional:file:../config-repo/h2/schema-h2.sql
   redis:
     host: ${SG_REDIS_USER_HOST:127.0.0.1}
     username: ${SG_REDIS_USER_USERNAME:}
