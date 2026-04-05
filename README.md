@@ -19,19 +19,11 @@
 
 ## 功能演示
 
-### 前台 & 后台
-
-| 平台 | 访问链接 | 账号密码 |
-|-------|-------|-------|
-| 前台 | [访问前台](https://yunmianshi.com.cn/) | 账号：preview，密码：123456 |
-| 后台 | [访问后台](https://yunmianshi.com.cn/admin) | 默认租户账号：preview，密码：123456 |
-
 ### 公众号 & H5
 
 | 平台 | 二维码 | 说明 |
 |-------|-------|------|
 | 公众号 | <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp.jpeg" height="130"/> | 发布部署文档、源码解析相关的文章 |
-| H5 | <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/h5.png" width="130"/> | H5 |
 
 ## 功能概述
 
@@ -56,9 +48,9 @@
 
 ## 部署文档 & 操作手册 & 源码解析 & 视频教程
 
-- **获取方式**：关注“小傻笔记”公众号，发送“文档”关键词获取。
+- **获取方式**：关注公众号，发送“文档”关键词获取。
 
-<img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp.jpeg" height="130"/>
+<img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp.jeg" height="130"/>
 
 - [Roadmap](https://www.yuque.com/tangyi-5ldnl/paf15u/cwvtvfd0a07ozfk2?singleDoc#)
 - [开源使用用户登记](https://gitee.com/wells2333/sg-exam/issues/I63AI3)
@@ -116,20 +108,6 @@
 
 - Gitee: [@wells2333](https://gitee.com/wells2333)
 - Github: [@wells2333](https://github.com/wells2333)
-
-### 微信交流群
-
-<img src="https://yunmianshi.com.cn/storage/yunmianshi/static/wx_sg.png" width="130"/>
-
-### QQ 交流群
-
-<img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/qq.png" width="130"/>
-
-<img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/qq_new.png" width="130"/>
-
-<img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/qq_3.png" width="130"/>
-
-<img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/qq_4.png" width="130"/>
 
 ### 请作者喝咖啡
 
