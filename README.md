@@ -23,7 +23,7 @@
 
 | 平台 | 二维码 | 说明 |
 |-------|-------|------|
-| 公众号 | <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp.jpeg" height="130"/> | 发布部署文档、源码解析相关的文章 |
+| 公众号 | <img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp.jpg" height="130"/> | 发布部署文档、源码解析相关的文章 |
 
 ## 功能概述
 
@@ -50,7 +50,7 @@
 
 - **获取方式**：关注公众号 “AI 程序员 Gary”，发送“文档”关键词获取。
 
-<img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp.jeg" height="130"/>
+<img src="https://gitee.com/wells2333/sg-exam/raw/master/docs/images/wxapp.jpg" height="130"/>
 
 - [Roadmap](https://www.yuque.com/tangyi-5ldnl/paf15u/cwvtvfd0a07ozfk2?singleDoc#)
 - [开源使用用户登记](https://gitee.com/wells2333/sg-exam/issues/I63AI3)
